@@ -20,3 +20,5 @@ Owner must sign in to GoatCounter and allow https://skodytunez-maker.github.io i
 Source: https://www.goatcounter.com/help/frame
 
 Removing the navigation entry only hides the shortcut; it is not an authorization check. The #admin login shell remains accessible by URL, while access to statistics is enforced by GoatCounter server authentication. SALAH cannot inspect the cross-origin provider session to identify the owner or show an owner-only menu. Do not store a local owner flag as authorization.
+
+On phones the primary owner action opens the private GoatCounter dashboard as a top-level browser tab. Embedding remains an explicit optional action, because cross-site cookie restrictions can prevent iframe login. Production embedding was verified on 2026-10-02 by observing the provider sign-in form inside the frame; no authenticated dashboard session was available for testing.
