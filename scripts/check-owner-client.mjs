@@ -11,8 +11,8 @@ globalThis.window={supabase:{createClient:(_url,key,options)=>{
   signOut:async()=>{session=null;authCallback('SIGNED_OUT',null);return{error:null};}
  }};
 }}};
-globalThis.fetch=async(url,options)=>{requests++;assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');assert.ok(url.startsWith('https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/owner-access'));return allowed?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});};
-const {verifyOwner,ownerVerified,onOwnerChange,signOutOwner}=await import('../dist/js/owner-auth.js');
+globalThis.fetch=async(url,options)=>{requests++;assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');assert.ok(url.startsWith('https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/owner-access'));if(allowed&&url.includes('mode=stats'))return Response.json({error:'statistics_not_connected'},{status:503});return allowed?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});};
+const {verifyOwner,ownerVerified,onOwnerChange,signOutOwner,ownerStatistics}=await import('../dist/js/owner-auth.js');
 onOwnerChange(()=>changed++);
 assert.equal(await verifyOwner(),false);assert.equal(requests,0);assert.equal(ownerVerified(),false);
 session={access_token:'forged-token'};
@@ -20,6 +20,7 @@ await assert.rejects(verifyOwner(),/не имеет доступа/);assert.equa
 // Only the successful server response authorizes menu visibility.
 session={access_token:'verified-user-session'};allowed=true;
 assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(changed,1);
+await assert.rejects(ownerStatistics(7),/ещё не подключена/);assert.equal(ownerVerified(),true);
 // A later server denial removes access immediately, even with a saved session.
 allowed=false;await assert.rejects(verifyOwner());assert.equal(ownerVerified(),false);assert.equal(changed,2);
 allowed=true;await verifyOwner();await signOutOwner();assert.equal(ownerVerified(),false);
