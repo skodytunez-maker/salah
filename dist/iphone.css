@@ -180,3 +180,9 @@
 .settings-group summary:focus-visible,.settings-extra summary:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
 .settings-save{max-width:720px;margin:18px auto 0}.settings-save>.button{width:100%}
 @media(max-width:600px){.settings-group>summary{padding:16px 18px;font-size:15px}.settings-group-body{padding:18px}.settings-group .adjustments{grid-template-columns:repeat(3,minmax(0,1fr))}.settings-group select{max-width:100%;font-size:13px}}
+
+/* One author signature, without additional brand slogans. */
+.workspace>header{justify-content:flex-end}
+.home-page .app-home-brand{display:flex;flex-direction:column;align-items:center;gap:5px}
+.home-page .app-home-brand small{font-family:Manrope,'Segoe UI',sans-serif;font-size:10px;font-weight:400;line-height:1.5;letter-spacing:.4px;color:#b7becc}
+footer.author-footer{flex-wrap:wrap;row-gap:4px}
