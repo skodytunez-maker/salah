@@ -226,3 +226,7 @@ footer.author-footer{flex-wrap:wrap;row-gap:4px}
 .calendar-export-preview{display:block;width:100%;height:auto;margin:12px 0 18px;border-radius:8px}
 
 .calendar-export-title{margin:22px 0 0}.calendar-export-title+.calendar-downloads{margin-top:10px}
+
+/* Keep the home tab bar compact: the iPhone gesture inset belongs below it. */
+.home-page #mobile-nav{height:74px;min-height:0;align-items:center;bottom:max(12px,env(safe-area-inset-bottom,0px));padding:10px 4px}
+.home-page #mobile-nav .nav-item{height:52px;min-height:52px;flex:1 1 0;align-self:center;padding:6px 2px;gap:5px}

@@ -136,3 +136,8 @@ footer.author-footer{justify-content:center;align-items:baseline;gap:9px;color:v
 .owner-install{margin-top:24px;padding-top:18px;border-top:1px solid #ffffff0b}.owner-install h2{font-size:15px;font-weight:500;margin:0 0 12px}.owner-install p{font-size:13px;line-height:1.65}.owner-install .button{font-size:13px;min-height:46px;margin-top:8px}
 
 .owner-mfa-qr{display:block;width:220px;max-width:100%;height:auto;margin:20px auto;background:white;padding:12px;border-radius:16px}.owner-mfa-key{margin:18px 0}.owner-mfa-key code{display:block;overflow-wrap:anywhere;padding:12px;background:rgba(255,255,255,.05);border-radius:12px}.owner-login #owner-totp{font-size:24px;letter-spacing:.18em}
+
+/* Compact city picker: suggestions stay directly below the input. */
+#city-search .field{margin-bottom:8px}.city-suggestion{min-height:48px;padding:12px 14px}.city-suggestion span{font-size:16px}.city-suggestion small{font-size:12px;max-width:58%;text-align:right}.city-status{font-size:13px;line-height:1.5;margin:10px 0}.city-status:empty{display:none}.city-geolocate{margin-top:12px}.city-privacy-note,.city-privacy{font-size:11px;line-height:1.5;color:var(--muted,#a4adbb)}.city-privacy-note{margin:10px 0 5px}.city-privacy{margin-top:5px}.city-privacy p{margin:10px 0}.city-privacy summary{cursor:pointer}
+
+#city-results{max-height:250px;overflow-y:auto;overscroll-behavior:contain}.city-suggestion:focus-visible{outline-offset:-3px}
