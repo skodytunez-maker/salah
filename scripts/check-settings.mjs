@@ -28,3 +28,10 @@ const reopened=await import('../dist/js/storage.js?settings-release-reopened');
 assert.deepEqual(reopened.settings,first.settings);
 assert.equal(JSON.parse(data.get('salah:adhkar-stats-v2')).totals.shared,25);
 console.log('PASS: legacy Asr selection, complete preferences across releases, partial changes from stale tabs, and personal counters preserved.');
+
+assert.equal(first.settings.tableOffsets.Asr,0,'Legacy calculation offsets never move the published local table');
+assert.equal(first.updateSettings({tableOffsets:{Asr:2}}),true);
+assert.equal(first.settings.tableOffsets.Asr,2);assert.equal(first.settings.highLatitude,2);
+assert.equal(first.updateSettings({weather:true}),true);assert.equal(first.settings.tableOffsets.Asr,2);
+assert.throws(()=>first.normalizeSettings({tableOffsets:{Asr:61}},{strict:true}));
+console.log('PASS: explicit local timetable offsets survive partial saves without changing high-latitude choice.');

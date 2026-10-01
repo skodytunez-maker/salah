@@ -31,13 +31,13 @@ export function preferences(value){
  if(typeof c.name!=='string'||!c.name.trim()||c.name.length>160||!Number.isFinite(c.latitude)||Math.abs(c.latitude)>90||!Number.isFinite(c.longitude)||Math.abs(c.longitude)>180||typeof c.timezone!=='string'||c.timezone.length>80)fail(400,'Недопустимый город');
  try{new Intl.DateTimeFormat('en',{timeZone:c.timezone}).format(0);}catch{fail(400,'Недопустимый часовой пояс');}
  if(![1,2,3,4,5,13].includes(value.method)||![0,1].includes(value.school)||![1,2,3].includes(value.highLatitude))fail(400,'Недопустимый расчёт');
- const offsets={},mosqueTimes={};
- for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;
+ const offsets={},tableOffsets={},mosqueTimes={};
+ for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;const tableN=value.tableOffsets?.[key]??0;if(!Number.isInteger(tableN)||Math.abs(tableN)>60)fail(400,'Недопустимая поправка');tableOffsets[key]=tableN;
   if(value.mosque===true){if(!validLocalTime(value.mosqueTimes?.[key]))fail(400,'Недопустимое личное расписание');mosqueTimes[key]=value.mosqueTimes[key];}}
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,offsets,mosque:value.mosque===true,mosqueTimes,reminders};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders};
 }
 export function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 export function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
@@ -46,6 +46,7 @@ export function serverTimings(day,rows,p){
  const times={};for(const key of PRAYER_KEYS){
   let stamp=Date.parse(row.timings?.[key]);
   if(isTyumen(p)&&key==='Asr'&&p.school===0)stamp=Date.parse(row.asrFirst);
+  if(isTyumen(p))stamp+=p.tableOffsets?.[key]*60000||0;
   if(!isTyumen(p)){
    if(p.mosque)stamp=localTimestamp(day,p.mosqueTimes[key],p.city.timezone);
    stamp+=p.offsets[key]*60000;
@@ -56,7 +57,7 @@ export function serverTimings(day,rows,p){
 }
 export function eventsFor(p,rows,now){
  const today=cityDay(now,p.city.timezone);
- return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.offsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
+ return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
 }
 export function dueEvents(events,now){return events.filter(e=>e.at<=now&&now-e.at<90000);}
 export async function scheduleRows(p,now,{cache,fetcher=fetch}){
@@ -113,7 +114,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
       if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).then(rows=>eventsFor(p,rows,clock())).catch(()=>[]));
       const events=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
-       const hash=await digest(event.id);if(!await db.claim(device.id,hash,event.at,clock()))continue;
+       const hash=await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
        const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
        if(result==='expired')break;
       }

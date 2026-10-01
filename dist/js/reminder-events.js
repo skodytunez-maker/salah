@@ -8,7 +8,7 @@ const DAY = 86400000;
 export const reminderDefaults = {
   enabled:false, voice:'mansour', browserNotifications:false,
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
-  adhkar:{morning:{enabled:false,time:'07:00'},evening:{enabled:false,time:'18:00'}}
+  adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}}
 };
 
 export function validLocalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
@@ -23,7 +23,8 @@ export function normalizeReminders(value){
   }));
   const adhkar=Object.fromEntries(['morning','evening'].map(key=>{
     const row=saved.adhkar?.[key]||{};
-    return [key,{enabled:row.enabled===true,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
+    const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
+    return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
   return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar};
 }
@@ -86,7 +87,7 @@ export function buildReminderEvents(value,context){
     for(const key of ['morning','evening']){
       const row=settings.adhkar[key];
       if(!row.enabled)continue;
-      const at=localTimestamp(day,row.time,context.timeZone);
+      const at=row.mode==='prayer'?timestamp(times[key==='morning'?'Fajr':'Maghrib']):localTimestamp(day,row.time,context.timeZone);
       if(!Number.isFinite(at))continue;
       events.push({id:JSON.stringify([String(context.cityKey),day,'adhkar',key,at,'at']),day,kind:'adhkar',key,phase:'at',at,adhan:false,message:key==='morning'?'Время утренних азкаров':'Время вечерних азкаров'});
     }

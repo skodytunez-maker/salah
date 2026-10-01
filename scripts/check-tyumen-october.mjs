@@ -46,3 +46,9 @@ settings.offsets.Asr=20;settings.mosque=true;settings.mosqueTimes.Asr='17:00';
 assert.equal(timingsFor('2026-10-01',loaded).Asr,Date.parse('2026-10-01T16:10:00+05:00'),'Published local table must not be shifted by calculation overrides');
 assert.equal(asrInfo('2026-10-01',loaded).sourceUrl,'./assets/tyumen-october-2026.png');
 console.log('PASS: all 31 Tyumen dates, both Asr columns, offline refresh, stale-cache precedence and unchanged September');
+
+settings.mosque=false;settings.school=1;settings.tableOffsets.Asr=2;
+assert.equal(timingsFor('2026-10-01',loaded).Asr,Date.parse('2026-10-01T16:12:00+05:00'),'Only an explicit table correction shifts published times');
+settings.school=0;
+assert.equal(timingsFor('2026-10-01',loaded).Asr,Date.parse('2026-10-01T15:25:00+05:00'),'Same explicit correction respects the selected first Asr');
+console.log('PASS: separate explicit table corrections respect both Asr variants; old calculation offsets remain unchanged.');

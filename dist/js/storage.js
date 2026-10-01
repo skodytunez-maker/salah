@@ -39,13 +39,13 @@ export function read(key,fallback){
 export function write(key,value){
  try{localStorage.setItem('salah:'+key,JSON.stringify(value));return true}catch{storageProblem('Не удалось сохранить данные. Проверьте свободное место и доступ к хранилищу.');return false}
 }
-export const defaults={madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
+export const defaults={madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
 const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const BOOLEAN_FIELDS=['weather','weatherAnimation','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
 const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders']);
 const validTime=value=>typeof value==='string'&&(value===''||personalTime(value)!=='');
 export function normalizeSettings(value,{strict=false,warnings=[]}={}){
- const result={...defaults,offsets:{...defaults.offsets},mosqueTimes:{}};
+ const result={...defaults,offsets:{...defaults.offsets},tableOffsets:{...defaults.tableOffsets},mosqueTimes:{}};
  const bad=(message)=>{if(strict)throw Error(message);warn(warnings,message)};
  if(!isRecord(value)){bad('Настройки должны быть объектом.');return result}
  for(const key of Object.keys(value))if(!SETTINGS_KEYS.has(key))bad('Неизвестная настройка «'+key+'».');
@@ -74,11 +74,11 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
    result.city={name:city.name.trim(),country:city.country??'',latitude:city.latitude,longitude:city.longitude,timezone:city.timezone};
   }catch{bad('Некорректный город, координаты или часовой пояс.')}
  }
- for(const key of ['offsets','mosqueTimes'])if(Object.hasOwn(value,key)){
+ for(const key of ['offsets','tableOffsets','mosqueTimes'])if(Object.hasOwn(value,key)){
   if(!isRecord(value[key])){bad('Некорректные данные «'+key+'».');continue}
   for(const [prayer,item]of Object.entries(value[key])){
    if(!PRAYERS.includes(prayer)){bad('Неизвестный намаз в «'+key+'».');continue}
-   if(key==='offsets'?Number.isInteger(item)&&Math.abs(item)<=60:validTime(item))result[key][prayer]=item;
+   if(key!=='mosqueTimes'?Number.isInteger(item)&&Math.abs(item)<=60:validTime(item))result[key][prayer]=item;
    else bad('Некорректное время «'+prayer+'».');
   }
  }
@@ -117,7 +117,7 @@ export function updateSettings(value){
  // A resumed tab may have an older in-memory snapshot. Partial changes must
  // preserve the latest saved choices from other tabs / the installed app.
  const latest=normalizeSettings(read('settings',settings),{warnings:storageWarnings});
- const merged={...latest,...value,offsets:{...latest.offsets,...(isRecord(value.offsets)?value.offsets:{})},mosqueTimes:{...latest.mosqueTimes,...(isRecord(value.mosqueTimes)?value.mosqueTimes:{})}};
+ const merged={...latest,...value,offsets:{...latest.offsets,...(isRecord(value.offsets)?value.offsets:{})},tableOffsets:{...latest.tableOffsets,...(isRecord(value.tableOffsets)?value.tableOffsets:{})},mosqueTimes:{...latest.mosqueTimes,...(isRecord(value.mosqueTimes)?value.mosqueTimes:{})}};
  if(!Object.hasOwn(value,'backgroundMode')&&Object.hasOwn(value,'dynamic'))merged.backgroundMode=value.dynamic===false?'dark':'auto';
  const normalized=normalizeSettings(merged,{warnings:storageWarnings});replace(settings,normalized);const saved=write('settings',settings);if(saved&&typeof window!=='undefined')window.dispatchEvent(new Event('salah:settings-changed'));return saved;
 }

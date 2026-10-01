@@ -8,7 +8,7 @@ The generated index.ts is deployed as background-reminders. JWT verification is 
 4. Run migration 2026100202_background_reminders_cron.sql after these checks. It calls dispatch once per minute; the cron query retrieves its secret privately at execution.
 5. Publish the app. Each user opts in on their own device. On iPhone use the Home Screen web app on iOS 16.4 or later. The first registration checks the push gateway and sends a fixed welcome notification. Test on the physical installed device with the screen locked.
 
-The master reminder switch, city, method, Asr variant, high-latitude rule, offsets, legacy personal times and selected adhkar times are synchronized. Aladhan receives city coordinates/calculation parameters for non-Tyumen schedules, as in the existing app. Approved Tyumen rows come from the public SALAH bundled table; no unsupported month is fabricated.
+The master reminder switch, city, method, Asr variant, high-latitude rule, calculation offsets, explicit local-table offsets, legacy personal times and selected adhkar times/modes are synchronized. Aladhan receives city coordinates/calculation parameters for non-Tyumen schedules, as in the existing app. Approved Tyumen rows come from the public SALAH bundled table; no unsupported month is fabricated.
 
 Endpoint requests are limited to official Apple/FCM/Mozilla/Windows push hosts. Delivery uses a short expiry, a private deduplication ledger and bounded retries. Existing saved settings and backup allow-lists exclude subscription credentials. Private responses are never cached.
 
@@ -22,3 +22,5 @@ Build: node scripts/build-push-function.mjs
 Verify: node scripts/build-push-function.mjs --check; node scripts/check-push.mjs; node scripts/check-push-client.mjs
 
 Pause delivery reversibly with: select cron.unschedule('salah-background-reminders'); No personal settings need to be cleared.
+
+Adhkar defaults follow Fajr (morning) and Maghrib (evening); previously saved custom HH:mm values retain manual mode. Published Tyumen times are unchanged until a user explicitly adjusts tableOffsets; old calculation offsets continue to be separate.

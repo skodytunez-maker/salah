@@ -12,7 +12,7 @@ const DAY = 86400000;
 const reminderDefaults = {
   enabled:false, voice:'mansour', browserNotifications:false,
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
-  adhkar:{morning:{enabled:false,time:'07:00'},evening:{enabled:false,time:'18:00'}}
+  adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}}
 };
 
 function validLocalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
@@ -27,7 +27,8 @@ function normalizeReminders(value){
   }));
   const adhkar=Object.fromEntries(['morning','evening'].map(key=>{
     const row=saved.adhkar?.[key]||{};
-    return [key,{enabled:row.enabled===true,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
+    const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
+    return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
   return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar};
 }
@@ -90,7 +91,7 @@ function buildReminderEvents(value,context){
     for(const key of ['morning','evening']){
       const row=settings.adhkar[key];
       if(!row.enabled)continue;
-      const at=localTimestamp(day,row.time,context.timeZone);
+      const at=row.mode==='prayer'?timestamp(times[key==='morning'?'Fajr':'Maghrib']):localTimestamp(day,row.time,context.timeZone);
       if(!Number.isFinite(at))continue;
       events.push({id:JSON.stringify([String(context.cityKey),day,'adhkar',key,at,'at']),day,kind:'adhkar',key,phase:'at',at,adhan:false,message:key==='morning'?'Время утренних азкаров':'Время вечерних азкаров'});
     }
@@ -159,13 +160,13 @@ function preferences(value){
  if(typeof c.name!=='string'||!c.name.trim()||c.name.length>160||!Number.isFinite(c.latitude)||Math.abs(c.latitude)>90||!Number.isFinite(c.longitude)||Math.abs(c.longitude)>180||typeof c.timezone!=='string'||c.timezone.length>80)fail(400,'Недопустимый город');
  try{new Intl.DateTimeFormat('en',{timeZone:c.timezone}).format(0);}catch{fail(400,'Недопустимый часовой пояс');}
  if(![1,2,3,4,5,13].includes(value.method)||![0,1].includes(value.school)||![1,2,3].includes(value.highLatitude))fail(400,'Недопустимый расчёт');
- const offsets={},mosqueTimes={};
- for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;
+ const offsets={},tableOffsets={},mosqueTimes={};
+ for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;const tableN=value.tableOffsets?.[key]??0;if(!Number.isInteger(tableN)||Math.abs(tableN)>60)fail(400,'Недопустимая поправка');tableOffsets[key]=tableN;
   if(value.mosque===true){if(!validLocalTime(value.mosqueTimes?.[key]))fail(400,'Недопустимое личное расписание');mosqueTimes[key]=value.mosqueTimes[key];}}
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,offsets,mosque:value.mosque===true,mosqueTimes,reminders};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders};
 }
 function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
@@ -174,6 +175,7 @@ function serverTimings(day,rows,p){
  const times={};for(const key of PRAYER_KEYS){
   let stamp=Date.parse(row.timings?.[key]);
   if(isTyumen(p)&&key==='Asr'&&p.school===0)stamp=Date.parse(row.asrFirst);
+  if(isTyumen(p))stamp+=p.tableOffsets?.[key]*60000||0;
   if(!isTyumen(p)){
    if(p.mosque)stamp=localTimestamp(day,p.mosqueTimes[key],p.city.timezone);
    stamp+=p.offsets[key]*60000;
@@ -184,7 +186,7 @@ function serverTimings(day,rows,p){
 }
 function eventsFor(p,rows,now){
  const today=cityDay(now,p.city.timezone);
- return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.offsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
+ return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
 }
 function dueEvents(events,now){return events.filter(e=>e.at<=now&&now-e.at<90000);}
 async function scheduleRows(p,now,{cache,fetcher=fetch}){
@@ -241,7 +243,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
       if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).then(rows=>eventsFor(p,rows,clock())).catch(()=>[]));
       const events=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
-       const hash=await digest(event.id);if(!await db.claim(device.id,hash,event.at,clock()))continue;
+       const hash=await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
        const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
        if(result==='expired')break;
       }

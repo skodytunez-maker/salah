@@ -13,6 +13,15 @@ assert.equal(dueEvents(eventsFor(p,table,now),now)[0].key,'Asr');
 assert.equal(dueEvents(eventsFor(p,table,now),now+90000).length,0,'Never send a stale reminder');
 assert.equal(eventsFor({...p,reminders:{enabled:false}},table,now).length,0);
 assert.equal(serverTimings('2026-11-01',table,p),null,'No unapproved Tyumen fallback');
+assert.equal(serverTimings('2026-10-02',table,{...p,tableOffsets:{Asr:2}}).Asr,Date.parse('2026-10-02T15:23:00+05:00'));
+const automatic=preferences({...settings,reminders:{enabled:true,adhkar:{morning:{enabled:true,mode:'prayer'},evening:{enabled:true,mode:'prayer'}}}});
+const automaticEvents=eventsFor(automatic,table,now).filter(e=>e.kind==='adhkar'&&e.day==='2026-10-02');
+assert.equal(automaticEvents.find(e=>e.key==='morning').at,Date.parse(table['2026-10-02'].timings.Fajr));
+assert.equal(automaticEvents.find(e=>e.key==='evening').at,Date.parse(table['2026-10-02'].timings.Maghrib));
+const legacyCustom=preferences({...settings,reminders:{enabled:true,adhkar:{morning:{enabled:true,time:'08:15'}}}});
+assert.equal(legacyCustom.reminders.adhkar.morning.mode,'time','An old saved personal reminder must be preserved');
+assert.equal(eventsFor(legacyCustom,table,now).find(e=>e.kind==='adhkar'&&e.key==='morning'&&e.day==='2026-10-02').at,Date.parse('2026-10-02T08:15:00+05:00'));
+
 const tokyo={...p,city:{name:'Tokyo',latitude:35.7,longitude:139.7,timezone:'Asia/Tokyo'},offsets:{Fajr:2,Dhuhr:0,Asr:-3,Maghrib:0,Isha:0},mosque:true,mosqueTimes:{Fajr:'05:00',Dhuhr:'12:00',Asr:'15:00',Maghrib:'18:00',Isha:'20:00'}};
 assert.equal(serverTimings('2026-10-02',table,tokyo).Asr,Date.parse('2026-10-02T14:57:00+09:00'));
 assert.throws(()=>preferences({...settings,school:'0'}));

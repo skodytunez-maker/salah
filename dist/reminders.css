@@ -3,3 +3,5 @@
 .reminder-check input{min-width:25px;min-height:25px;padding:0}.reminder-adhkar-row input[type=checkbox],.reminder-notification input[type=checkbox]{min-width:19px;min-height:19px;padding:0}
 
 .reminder-background{margin-top:24px;padding-top:20px;border-top:1px solid rgba(216,190,132,.2)}.reminder-background h3{font-size:17px;margin:0 0 10px}.reminder-background .button{margin-top:12px;width:100%}
+
+.reminder-adhkar-row{flex-wrap:wrap;gap:10px}.reminder-adhkar-row label{flex:1 1 110px}.reminder-adhkar-row select{max-width:150px;min-height:38px;padding:8px;border-radius:10px;font-size:13px}.reminder-adhkar-row input[type=time]{max-width:120px}
