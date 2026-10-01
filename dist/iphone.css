@@ -230,3 +230,9 @@ footer.author-footer{flex-wrap:wrap;row-gap:4px}
 /* Keep the home tab bar compact: the iPhone gesture inset belongs below it. */
 .home-page #mobile-nav{height:74px;min-height:0;align-items:center;bottom:max(12px,env(safe-area-inset-bottom,0px));padding:10px 4px}
 .home-page #mobile-nav .nav-item{height:52px;min-height:52px;flex:1 1 0;align-self:center;padding:6px 2px;gap:5px}
+
+/* A quiet gold glow marks today's city-local date in every calendar view. */
+.calendar-panel .calendar-table .calendar-today{box-shadow:0 0 18px rgba(220,190,124,.10)}
+.calendar-panel .calendar-table .calendar-today td{background:rgba(216,190,132,.085);border-bottom-color:rgba(216,190,132,.28);box-shadow:inset 0 1px rgba(216,190,132,.20);color:#f0e8d7}
+.calendar-panel .calendar-table .calendar-today td:first-child{color:var(--gold);font-weight:600;box-shadow:inset 2px 0 rgba(225,199,141,.65),inset 0 1px rgba(216,190,132,.20);border-radius:8px 0 0 8px}
+.calendar-panel .calendar-table .calendar-today td:last-child{border-radius:0 8px 8px 0}
