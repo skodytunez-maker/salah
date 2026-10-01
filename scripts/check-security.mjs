@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+import {createHash} from 'node:crypto';
+const root=new URL('../',import.meta.url);
+const html=await readFile(new URL('dist/index.html',root),'utf8');
+const policy=html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+assert.ok(policy.includes("script-src 'self' https://gc.zgo.at;"));
+assert.doesNotMatch(policy,/unsafe-eval/);
+assert.match(policy,/script-src-attr 'none'/);
+assert.match(policy,/object-src 'none'/);
+assert.match(policy,/base-uri 'none'/);
+assert.match(html,/<meta name="referrer" content="no-referrer">/);
+assert.match(policy,/connect-src[^;]*https:\/\/kbltwszfvphgbxdbczsb\.supabase\.co/);
+const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
+assert.equal(createHash('sha256').update(sdk).digest('hex'),'59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd');
+const events={};
+const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://skodytunez-maker.github.io/salah/'},location:{origin:'https://skodytunez-maker.github.io'},addEventListener:(type,fn)=>events[type]=fn}});
+vm.runInContext(await readFile(new URL('dist/sw.js',root),'utf8'),context);
+function handled(path,{method='GET',auth=false}={}){let result=false;const request=new Request('https://skodytunez-maker.github.io'+path,{method,headers:auth?{Authorization:'Bearer test'}:{}});events.fetch({request,respondWith:()=>{result=true},waitUntil:()=>{}});return result;}
+// Never invoke shell serving for an API, authenticated request, or another app.
+assert.equal(handled('/salah/api/private'),false);
+assert.equal(handled('/salah/js/app.js',{auth:true}),false);
+assert.equal(handled('/salah/api/private',{method:'POST'}),false);
+assert.equal(handled('/other-app/js/app.js'),false);
+assert.equal(handled('/salah/data/quran/1.json'),false);
+// Existing backup validation rejects injected keys without replacing user data.
+const values=new Map();globalThis.localStorage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k),get length(){return values.size},key:i=>[...values.keys()][i]};
+const {createBackup,validateBackup,restoreBackup}=await import('../dist/js/backup.js');
+const {defaults}=await import('../dist/js/storage.js');
+const document={version:2,app:'SALAH',settings:defaults,history:{},personal:{'adhkar-progress-v2':{version:2,totals:{tasbih:27},days:{}}}};
+const prepared=validateBackup(document);
+assert.equal(prepared.preview.adhkarRepetitions,27);
+assert.throws(()=>validateBackup(JSON.stringify(document).replace('"tasbih":27','"__proto__":{}')),/Недопустимый ключ/);
+assert.throws(()=>validateBackup({...document,personal:{'admin-role':true}}),/Неизвестные личные/);
+assert.throws(()=>restoreBackup(prepared,{confirmed:false}),/подтвердите/);
+prepared.backup.personal['adhkar-progress-v2'].totals.tasbih=0;
+assert.throws(()=>restoreBackup(prepared,{confirmed:true}),/изменилась/);
+assert.equal(values.size,0);
+const validated=validateBackup(document);restoreBackup(validated,{confirmed:true});
+assert.equal(JSON.parse(values.get('salah:adhkar-progress-v2')).totals.tasbih,27);
+values.set('salah-owner-session-v1','private-session-test-value');
+assert.ok(!JSON.stringify(createBackup({storage:localStorage,settings:defaults,history:{}})).includes('private-session-test-value'));
+console.log('PASS: CSP restrictions, private requests bypass offline cache, malicious/mutated backups rejected, cumulative counts preserved.');
