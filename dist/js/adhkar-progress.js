@@ -16,7 +16,9 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
   }
   function normalizeDocument(value){
     const doc=empty();
-    for(const id of targets.keys())doc.totals[id]=cleanCount(value.totals?.[id]);
+    // Preserve totals even if a later catalogue temporarily omits an item.
+    for(const [id,count]of Object.entries(value.totals||{}))if(/^[\w-]+$/.test(id))doc.totals[id]=cleanCount(count);
+    for(const id of targets.keys())if(!Object.hasOwn(doc.totals,id))doc.totals[id]=0;
     for(const [date,groups] of Object.entries(value.days||{})){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!groups||typeof groups!=='object')continue;
       doc.days[date]={};
