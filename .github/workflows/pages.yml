@@ -23,6 +23,7 @@ jobs:
         run: |
           node scripts/check-pages.mjs
           node scripts/check-tyumen-october.mjs
+          node scripts/check-quran-session.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload SALAH

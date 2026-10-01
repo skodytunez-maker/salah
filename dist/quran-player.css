@@ -1,0 +1,26 @@
+.quran-global-player{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:calc(100% - 32px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));max-width:640px;display:flex;align-items:center;gap:10px;min-height:74px;padding:10px 12px 10px 16px;border:1px solid #43516a;border-radius:18px;background:rgba(10,20,36,.97);color:#edf1f7;box-shadow:0 8px 28px #0005;backdrop-filter:blur(18px)}
+.quran-global-player[hidden]{display:none}
+.quran-now-playing{flex:1;min-width:0;display:grid;gap:4px;padding:5px 0}
+.quran-now-playing strong{font-size:14px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.quran-now-playing small{font-size:11px;line-height:1.5;color:#b8c4d5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.quran-global-controls{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.quran-global-controls button{display:grid;place-items:center;width:44px;height:44px;padding:10px;border-radius:12px;color:#d9c398}
+.quran-global-controls svg{width:22px;height:22px}
+.quran-global-controls [data-toggle]{background:#d9c398;color:#101c2d}
+.quran-global-controls [data-close]{color:#aab8cc}
+.quran-global-controls button:disabled{opacity:.3;cursor:default}
+body.has-quran-audio .workspace{padding-bottom:110px}
+body.home-page .quran-global-player{max-width:350px;bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+body.home-page.has-quran-audio .app-home-shell{padding-bottom:calc(205px + env(safe-area-inset-bottom,0px));height:auto;min-height:100svh}
+body.home-page.has-quran-audio .home-prayer-center{min-height:480px}
+body.has-quran-audio.learning-focus .lesson-content,body.has-quran-audio.adhkar-focus .adhkar-shell,body.has-quran-audio.adhkar-focus .dhikr-list-shell{padding-bottom:calc(210px + env(safe-area-inset-bottom,0px))}
+body.learning-focus .quran-global-player,body.adhkar-focus .quran-global-player{bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+@media(min-width:851px){body:not(.home-page):not(.quran-focus):not(.learning-focus):not(.adhkar-focus) .quran-global-player{left:calc(50% + 103px);max-width:calc(100% - 265px)}}
+@media(min-width:1201px){body:not(.home-page):not(.quran-focus):not(.learning-focus):not(.adhkar-focus) .quran-global-player{left:calc(50% + 118px);max-width:640px}}
+@media(max-width:850px){body:not(.quran-focus) .quran-global-player{bottom:calc(100px + env(safe-area-inset-bottom,0px))}body.has-quran-audio .workspace{padding-bottom:calc(205px + env(safe-area-inset-bottom,0px))}body.quran-focus.has-quran-audio .workspace{padding-bottom:0}}
+@media(max-width:390px){.quran-global-player{padding-left:12px;gap:6px}.quran-now-playing strong{font-size:13px}.quran-global-controls{gap:0}.quran-global-controls button{width:40px;padding:9px}.quran-now-playing small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.quran-global-player{backdrop-filter:none}}
+
+#quran-play-surah{gap:10px}.quran-listen-icon{width:22px;height:22px;flex-shrink:0;color:var(--gold)}
+
+body.home-page.has-quran-audio .workspace{padding-bottom:0}
