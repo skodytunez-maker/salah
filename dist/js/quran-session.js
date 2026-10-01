@@ -18,7 +18,7 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
   try{
    const catalog=await loadCatalog();if(id!==request)return;
    view.meta=catalog.surahs[surah.number-1];
-   player=createPlayer({surah,reciter,onState:state=>{if(id!==request)return;view={...view,index:state.index,status:state.status};emit()},onVerse:()=>{},onError:()=>{}});
+   player=createPlayer({surah,reciter,onState:state=>{if(id!==request)return;view={...view,index:state.index,status:state.status};emit();if(state.status==='ended'&&id===request&&surah.number<114)void changeSurah(1)},onVerse:()=>{},onError:()=>{}});
    player.play(index,true);
   }catch{if(id===request){view.status='error';emit()}}
  }
