@@ -21,6 +21,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Verify SALAH files
         run: |
+          node scripts/build-push-function.mjs --check
+          node scripts/check-push.mjs
+          node scripts/check-push-client.mjs
           node scripts/check-pages.mjs
           node scripts/check-security.mjs
           node scripts/check-settings.mjs

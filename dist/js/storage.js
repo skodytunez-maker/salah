@@ -119,7 +119,7 @@ export function updateSettings(value){
  const latest=normalizeSettings(read('settings',settings),{warnings:storageWarnings});
  const merged={...latest,...value,offsets:{...latest.offsets,...(isRecord(value.offsets)?value.offsets:{})},mosqueTimes:{...latest.mosqueTimes,...(isRecord(value.mosqueTimes)?value.mosqueTimes:{})}};
  if(!Object.hasOwn(value,'backgroundMode')&&Object.hasOwn(value,'dynamic'))merged.backgroundMode=value.dynamic===false?'dark':'auto';
- const normalized=normalizeSettings(merged,{warnings:storageWarnings});replace(settings,normalized);return write('settings',settings);
+ const normalized=normalizeSettings(merged,{warnings:storageWarnings});replace(settings,normalized);const saved=write('settings',settings);if(saved&&typeof window!=='undefined')window.dispatchEvent(new Event('salah:settings-changed'));return saved;
 }
 export function markPrayer(day,key,value){
  if(!validDay(day)||!PRAYERS.includes(key)||!['done','ontime','later',null].includes(value))return false;
