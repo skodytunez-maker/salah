@@ -24,4 +24,12 @@ await assert.rejects(ownerStatistics(7),/ещё не подключена/);asse
 // A later server denial removes access immediately, even with a saved session.
 allowed=false;await assert.rejects(verifyOwner());assert.equal(ownerVerified(),false);assert.equal(changed,2);
 allowed=true;await verifyOwner();await signOutOwner();assert.equal(ownerVerified(),false);
+// Refresh arriving while the gate request is running must recheck the new
+// session; it cannot authorize the stale response or strand a valid owner.
+const originalFetch=globalThis.fetch;let refreshDuringGate=true;
+await verifyOwner(); // Finish the sign-out callback's empty-session check.
+session={access_token:'verified-user-session'};allowed=true;
+globalThis.fetch=async(...args)=>{const response=await originalFetch(...args);if(refreshDuringGate){refreshDuringGate=false;authCallback('TOKEN_REFRESHED',session);}return response;};
+const beforeRefresh=requests;assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(requests,beforeRefresh+2);
+await signOutOwner();assert.equal(ownerVerified(),false);
 console.log('PASS: saved session alone does not authorize; server deny removes owner access; sign-out revokes the menu.');

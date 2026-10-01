@@ -27,13 +27,20 @@ async function callOwner(session,query=''){
 export async function verifyOwner(){
  if(pending)return pending;
  const task=(async()=>{
-  const auth=authClient();const {data,error}=await auth.auth.getSession();
-  if(error||!data.session){revoke();return false;}
-  const started=revision;
-  const result=await callOwner(data.session);
-  if(started!==revision)return false;
-  if(result.owner!==true){revoke();return false;}
-  const changed=!verified;verified=true;verifiedAt=Date.now();if(changed)publish();return true;
+  const auth=authClient();
+  // A session refresh can finish during the server check. Recheck the current
+  // session instead of displaying a login form for a successfully renewed one.
+  for(let attempt=0;attempt<3;attempt++){
+   const started=revision;
+   const {data,error}=await auth.auth.getSession();
+   if(started!==revision)continue;
+   if(error||!data.session){revoke();return false;}
+   const result=await callOwner(data.session);
+   if(started!==revision)continue;
+   if(result.owner!==true){revoke();return false;}
+   const changed=!verified;verified=true;verifiedAt=Date.now();if(changed)publish();return true;
+  }
+  revoke();return false;
  })();
  pending=task;try{return await task;}finally{if(pending===task)pending=null;}
 }

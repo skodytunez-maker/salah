@@ -36,7 +36,7 @@ export function createOwnerHandler({getUser,statsToken='',fetcher=fetch,now=Date
   const start=new Date(end.getTime()-days*86400000);
   const upstream=new URL(STATS_URL);upstream.searchParams.set('start',start.toISOString());upstream.searchParams.set('end',end.toISOString());
   try{
-   const response=await fetcher(upstream,{method:'GET',headers:{Authorization:'Bearer '+statsToken,Accept:'application/json'},cache:'no-store',redirect:'error',signal:AbortSignal.timeout(10000)});
+   const response=await fetcher(upstream,{method:'GET',headers:{Authorization:'Bearer '+statsToken,Accept:'application/json','Content-Type':'application/json'},cache:'no-store',redirect:'error',signal:AbortSignal.timeout(10000)});
    if(!response.ok)return reply(502,{error:'statistics_unavailable'});
    const data=await response.json();
    if(!Number.isSafeInteger(data.total)||data.total<0||!Array.isArray(data.stats))return reply(502,{error:'invalid_statistics'});
@@ -50,5 +50,6 @@ export function createOwnerHandler({getUser,statsToken='',fetcher=fetch,now=Date
 if(typeof Deno!=='undefined'){
  const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||''}));
+ // Accept the already saved legacy name while preferring the canonical name.
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }
