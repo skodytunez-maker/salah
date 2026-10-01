@@ -13,8 +13,10 @@ Source: https://www.goatcounter.com/help/js and https://www.goatcounter.com/help
 
 ## Owner dashboard inside SALAH
 
-More → Owner cabinet (#admin) can show the private GoatCounter dashboard in a frame. This reuses the existing GoatCounter owner account; SALAH does not create its own user accounts or store passwords, API keys, roles, sessions or secret dashboard tokens. Merely visiting #admin does not grant access to statistics. Keep Dashboard viewable by logged in users only.
+The private owner link https://skodytunez-maker.github.io/salah/#admin can show the GoatCounter dashboard in a frame. The owner cabinet is not listed in the public menu. This reuses the existing GoatCounter owner account; SALAH does not create its own user accounts or store passwords, API keys, roles, sessions or secret dashboard tokens. Merely visiting #admin does not grant access to statistics. Keep Dashboard viewable by logged in users only.
 
 Owner must sign in to GoatCounter and allow https://skodytunez-maker.github.io in Settings → Sites that can embed GoatCounter. The external dashboard link is available if embedding is not configured or a phone browser blocks third-party login cookies. Cross-origin authentication state cannot be inspected by SALAH, so it must not claim successful login based on iframe load. No fake statistics or totals are rendered locally.
 
 Source: https://www.goatcounter.com/help/frame
+
+Removing the navigation entry only hides the shortcut; it is not an authorization check. The #admin login shell remains accessible by URL, while access to statistics is enforced by GoatCounter server authentication. SALAH cannot inspect the cross-origin provider session to identify the owner or show an owner-only menu. Do not store a local owner flag as authorization.
