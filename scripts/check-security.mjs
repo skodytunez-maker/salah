@@ -17,6 +17,12 @@ assert.equal(createHash('sha256').update(sdk).digest('hex'),'59d39487c3589843b41
 const events={};
 const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://skodytunez-maker.github.io/salah/'},location:{origin:'https://skodytunez-maker.github.io'},addEventListener:(type,fn)=>events[type]=fn}});
 vm.runInContext(await readFile(new URL('dist/sw.js',root),'utf8'),context);
+// The installed cabinet must retain its launch page even offline; the public
+// application must keep its own manifest and home entry.
+assert.equal(vm.runInContext("navigationShell(new URL('https://skodytunez-maker.github.io/salah/owner.html'))",context),'https://skodytunez-maker.github.io/salah/owner.html');
+assert.equal(vm.runInContext("navigationShell(new URL('https://skodytunez-maker.github.io/salah/'))",context),'https://skodytunez-maker.github.io/salah/index.html');
+assert.equal(ownerPolicy(await readFile(new URL('dist/owner.html',root),'utf8')),policy);
+function ownerPolicy(source){return source.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];}
 function handled(path,{method='GET',auth=false}={}){let result=false;const request=new Request('https://skodytunez-maker.github.io'+path,{method,headers:auth?{Authorization:'Bearer test'}:{}});events.fetch({request,respondWith:()=>{result=true},waitUntil:()=>{}});return result;}
 // Never invoke shell serving for an API, authenticated request, or another app.
 assert.equal(handled('/salah/api/private'),false);

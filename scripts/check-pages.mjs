@@ -14,6 +14,14 @@ async function exists(ref,context=base){
 const manifest=JSON.parse(await fs.readFile(path.join(dist,'manifest.json'),'utf8'));
 for(const key of ['id','start_url','scope'])assert.equal(new URL(manifest[key],base).href,base.href);
 for(const icon of manifest.icons)await exists(icon.src);
+const ownerManifest=JSON.parse(await fs.readFile(path.join(dist,'owner-manifest.json'),'utf8'));
+assert.notEqual(new URL(ownerManifest.id,base).href,new URL(manifest.id,base).href);
+assert.equal(new URL(ownerManifest.start_url,base).href,new URL('owner.html#admin',base).href);
+assert.equal(new URL(ownerManifest.scope,base).href,base.href);
+const ownerHtml=await fs.readFile(path.join(dist,'owner.html'),'utf8');
+assert.match(ownerHtml,/href="\.\/owner-manifest\.json"/);
+assert.match(ownerHtml,/src="\.\/js\/owner-entry\.js"/);
+for(const match of ownerHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g))await exists(match[1]);
 const worker=await fs.readFile(path.join(dist,'sw.js'),'utf8');
 const assets=JSON.parse(worker.match(/const ASSETS=(\[[^;]+\]);/)[1]);
 for(const asset of assets)await exists(asset);

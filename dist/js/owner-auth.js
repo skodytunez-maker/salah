@@ -2,10 +2,10 @@
 export const OWNER_PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 export const OWNER_PUBLIC_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const SESSION_KEY='salah-owner-session-v1'; // Excluded from personal backups.
-let client=null,verified=false,verifiedAt=0,pending=null,revision=0;
+let client=null,verified=false,verifiedAt=0,pending=null,revision=0,mfaRequired=false;
 const listeners=new Set();
 function publish(){for(const fn of listeners)fn();}
-function revoke(){const changed=verified;verified=false;verifiedAt=0;if(changed)publish();}
+function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;if(changed)publish();}
 function authClient(){
  if(!client){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
@@ -15,6 +15,7 @@ function authClient(){
  return client;
 }
 export function ownerVerified(){return verified&&Date.now()-verifiedAt<60000;}
+export function ownerNeedsMfa(){return mfaRequired;}
 export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}
 async function callOwner(session,query=''){
  if(!session?.access_token)throw Error('Войдите в аккаунт владельца.');
@@ -37,7 +38,7 @@ export async function verifyOwner(){
    if(error||!data.session){revoke();return false;}
    const result=await callOwner(data.session);
    if(started!==revision)continue;
-   if(result.owner!==true){revoke();return false;}
+   if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
    const changed=!verified;verified=true;verifiedAt=Date.now();if(changed)publish();return true;
   }
   revoke();return false;
@@ -47,8 +48,29 @@ export async function verifyOwner(){
 export async function signInOwner(email,password){
  const {error}=await authClient().auth.signInWithPassword({email:email.trim(),password});
  if(error)throw Error('Не удалось войти. Проверьте почту и пароль.');
- if(!await verifyOwner())throw Error('Не удалось подтвердить доступ владельца. Попробуйте снова.');
+ if(!await verifyOwner()&&!mfaRequired)throw Error('Не удалось подтвердить доступ владельца. Попробуйте снова.');
 }
+
+export async function ownerMfaFactors(){
+ if(!mfaRequired)throw Error('Сначала войдите в аккаунт владельца.');
+ const {data,error}=await authClient().auth.mfa.listFactors();
+ if(error)throw Error('Не удалось проверить Google Authenticator. Повторите попытку.');
+ return (data.totp||[]).filter(factor=>factor.status==='verified');
+}
+export async function enrollOwnerMfa(){
+ if(!mfaRequired||!await verifyOwner()&&!mfaRequired)throw Error('Сначала войдите в аккаунт владельца.');
+ const {data,error}=await authClient().auth.mfa.enroll({factorType:'totp',friendlyName:'SALAH '+Date.now(),issuer:'SALAH'});
+ if(error)throw Error('Не удалось подготовить привязку. Повторите попытку.');
+ return data;
+}
+export async function verifyOwnerMfa(factorId,code){
+ if(!mfaRequired)throw Error('Сначала войдите в аккаунт владельца.');
+ if(!/^[0-9]{6}$/.test(code))throw Error('Введите шесть цифр из Google Authenticator.');
+ const {error}=await authClient().auth.mfa.challengeAndVerify({factorId,code});
+ if(error)throw Error('Код не подошёл. Введите новый код из Google Authenticator.');
+ if(!await verifyOwner())throw Error('Не удалось подтвердить защищённый вход. Попробуйте снова.');
+}
+
 export async function signOutOwner(){
  revision++;revoke();
  const {error}=await authClient().auth.signOut({scope:'local'});

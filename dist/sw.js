@@ -1,8 +1,10 @@
-const CACHE='salah-shell-v86';
-const ASSETS=["./","./index.html","./iphone.css","./icon-180.png","./style.css","./home-selected.css","./day-night.css","./weather.css","./js/weather-data.js","./js/day-night.js","./assets/day-mosque.webp","./knowledge.css","./quran.css","./js/quran.js","./js/quran-transcription.js","./js/tajweed.js","./js/quran-data.js","./js/quran-audio.js","./js/quran-session.js","./js/quran-player-bar.js","./quran-player.css","./js/quran-reciters.js","./data/quran-index.json","./assets/amiri-quran.ttf","./assets/amiri-OFL.txt","./qibla.css","./js/qibla.js","./js/qibla-view.js","./js/qibla-math.js","./js/knowledge.js","./js/home-swipe.js","./assets/journal-bookmark.svg","./assets/house.svg","./assets/clock.svg","./assets/book.svg","./assets/three-dots.svg","./assets/gear.svg","./assets/person.svg","./assets/circle.svg","./js/app.js","./js/prayer-display.js","./js/home-event.js","./js/tahajjud.js","./js/learning.js","./js/learning-state.js","./js/adhkar.js","./js/adhkar-progress.js","./js/adhkar-period.js","./js/calendar-pdf.js","./js/analytics.js","./js/admin.js","./js/owner-auth.js","./js/vendor/supabase.js","./js/vendor/supabase-LICENSE.txt","./assets/salah-mark.svg","./data/adhkar.json","./data/al-hakk-tyumen.json","./data/tyumen-october-2026.json","./assets/tyumen-october-2026.png","./data/learning-content.json","./data/learning-quran.json","./assets/night-mosque.webp","./assets/prayer-poses.png","./assets/star.svg","./assets/star-fill.svg","./assets/sun.svg","./assets/moon-stars.svg","./assets/list-ul.svg","./assets/arrow-left.svg","./assets/x-lg.svg","./assets/info-circle.svg","./js/storage.js","./js/backup.js","./js/prayers.js","./js/asr-first.js","./data/tyumen-first-asr.json","./js/weather.js","./js/ui.js","./manifest.json","./favicon.svg","./icon-192.png","./icon-512.png","./icon-maskable.png","./js/learning-illustrations.js","./js/reminders.js","./js/reminder-events.js","./reminders.css","./data/adhan-sources.json","./js/qibla-access.js","./js/geomagnetism.js","./assets/geomagnetism-LICENSE.txt","./js/orientation.js","./js/pwa-updates.js","./js/hijri.js","./js/sourced-audio.js","./data/learning-adhkar-audio-sources.json"];
+const CACHE='salah-shell-v87';
+const ASSETS=["./owner.html","./owner-manifest.json","./js/owner-entry.js","./","./index.html","./iphone.css","./icon-180.png","./style.css","./home-selected.css","./day-night.css","./weather.css","./js/weather-data.js","./js/day-night.js","./assets/day-mosque.webp","./knowledge.css","./quran.css","./js/quran.js","./js/quran-transcription.js","./js/tajweed.js","./js/quran-data.js","./js/quran-audio.js","./js/quran-session.js","./js/quran-player-bar.js","./quran-player.css","./js/quran-reciters.js","./data/quran-index.json","./assets/amiri-quran.ttf","./assets/amiri-OFL.txt","./qibla.css","./js/qibla.js","./js/qibla-view.js","./js/qibla-math.js","./js/knowledge.js","./js/home-swipe.js","./assets/journal-bookmark.svg","./assets/house.svg","./assets/clock.svg","./assets/book.svg","./assets/three-dots.svg","./assets/gear.svg","./assets/person.svg","./assets/circle.svg","./js/app.js","./js/prayer-display.js","./js/home-event.js","./js/tahajjud.js","./js/learning.js","./js/learning-state.js","./js/adhkar.js","./js/adhkar-progress.js","./js/adhkar-period.js","./js/calendar-pdf.js","./js/analytics.js","./js/admin.js","./js/owner-auth.js","./js/vendor/supabase.js","./js/vendor/supabase-LICENSE.txt","./assets/salah-mark.svg","./data/adhkar.json","./data/al-hakk-tyumen.json","./data/tyumen-october-2026.json","./assets/tyumen-october-2026.png","./data/learning-content.json","./data/learning-quran.json","./assets/night-mosque.webp","./assets/prayer-poses.png","./assets/star.svg","./assets/star-fill.svg","./assets/sun.svg","./assets/moon-stars.svg","./assets/list-ul.svg","./assets/arrow-left.svg","./assets/x-lg.svg","./assets/info-circle.svg","./js/storage.js","./js/backup.js","./js/prayers.js","./js/asr-first.js","./data/tyumen-first-asr.json","./js/weather.js","./js/ui.js","./manifest.json","./favicon.svg","./icon-192.png","./icon-512.png","./icon-maskable.png","./js/learning-illustrations.js","./js/reminders.js","./js/reminder-events.js","./reminders.css","./data/adhan-sources.json","./js/qibla-access.js","./js/geomagnetism.js","./assets/geomagnetism-LICENSE.txt","./js/orientation.js","./js/pwa-updates.js","./js/hijri.js","./js/sourced-audio.js","./data/learning-adhkar-audio-sources.json"];
 
 const shellPaths=new Set(ASSETS.map(path=>new URL(path,self.registration.scope).pathname));
 const shellIndex=new URL('./index.html',self.registration.scope).href;
+const ownerShell=new URL('./owner.html',self.registration.scope).href;
+const navigationShell=url=>url.pathname===new URL(ownerShell).pathname?ownerShell:shellIndex;
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(path=>new Request(new URL(path,self.registration.scope).href,{cache:'reload'})))));
 });
@@ -24,7 +26,7 @@ async function serve(event,url){
  const request=event.request;
  const cache=await caches.open(CACHE);
  if(request.mode==='navigate'){
-  const cached=await cache.match(shellIndex);
+  const cached=await cache.match(navigationShell(url));
   if(cached)return cached;
  }else if(shellPaths.has(url.pathname)){
   const cached=await cache.match(request,{ignoreSearch:true});
@@ -35,11 +37,11 @@ async function serve(event,url){
   if(response.ok){remember(event,request,response);return response}
   const cached=await cache.match(request);
   if(cached)return cached;
-  if(request.mode==='navigate'){const index=await cache.match(shellIndex);if(index)return index}
+  if(request.mode==='navigate'){const index=await cache.match(navigationShell(url));if(index)return index}
   return response;
  }catch{
   const cached=await cache.match(request);
-  return cached||(request.mode==='navigate'?await cache.match(shellIndex):null)||Response.error();
+  return cached||(request.mode==='navigate'?await cache.match(navigationShell(url)):null)||Response.error();
  }
 }
 self.addEventListener('fetch',event=>{

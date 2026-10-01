@@ -6,7 +6,7 @@ const PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,statsToken='',fetcher=fetch,now=Date.now}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -26,6 +26,12 @@ export function createOwnerHandler({getUser,statsToken='',fetcher=fetch,now=Date
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
   if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'))return reply(400,{error:'invalid_parameters'});
+  let claims;
+  try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
+  catch{return reply(503,{error:'auth_unavailable'});}
+  if(!claims||claims.sub!==OWNER_ID||claims.iss!==PROJECT_URL+'/auth/v1')return reply(401,{error:'invalid_session'});
+  const secondFactor=claims.aal==='aal2'&&user.factors?.some(factor=>factor.status==='verified'&&factor.factor_type==='totp');
+  if(!secondFactor)return mode==='gate'?reply(200,{owner:false,mfaRequired:true}):reply(403,{error:'mfa_required'});
   if(mode==='gate')return reply(200,{owner:true,statisticsConnected:Boolean(statsToken)});
   if(mode!=='stats')return reply(400,{error:'invalid_mode'});
   if(!statsToken)return reply(503,{error:'statistics_not_connected'});
@@ -51,5 +57,5 @@ if(typeof Deno!=='undefined'){
  const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

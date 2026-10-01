@@ -1,7 +1,46 @@
 import{analyticsSite}from './analytics.js';
 import{esc,title}from './ui.js';
-import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics}from './owner-auth.js';
+import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa}from './owner-auth.js';
 let screen=0,period=7;
+function installation(){return '<div class="owner-install"><h2>Кабинет на iPhone</h2>'+ (location.pathname.endsWith('/owner.html')?'<p class="muted">В Safari нажмите «Поделиться» → «На экран Домой». Этот значок будет открывать вход в кабинет.</p>':'<p class="muted">Откройте личный вход в Safari и добавьте его на экран «Домой».</p><a class="button secondary" href="./owner.html#admin">Открыть вход для значка</a>')+'</div>';}
+
+async function showMfa(app,active){
+ app.innerHTML=title('Защищённый вход')+'<section class="panel section owner-login"><h2>Google Authenticator</h2><div id="owner-mfa-step"><p class="muted" role="status">Проверяем второй этап входа…</p></div><button class="text-button" id="owner-mfa-logout">Выйти из аккаунта</button></section>';
+ app.querySelector('#owner-mfa-logout').onclick=async()=>{await signOutOwner();if(active())showAdmin(app);};
+ const area=app.querySelector('#owner-mfa-step');
+ let factors;
+ try{factors=await ownerMfaFactors();}catch(error){if(active())area.textContent=error.message;return;}
+ if(!active())return;
+ const codeForm=factorId=>{
+  const form=app.querySelector('#owner-mfa-code');
+  form.onsubmit=async event=>{
+   event.preventDefault();const button=form.querySelector('button'),input=form.querySelector('input'),status=form.querySelector('[role="status"]');button.disabled=true;status.textContent='Проверяем код…';
+   try{await verifyOwnerMfa(factorId,input.value.trim());if(active())showAdmin(app);}
+   catch(error){if(active())status.textContent=error.message;}
+   finally{input.value='';button.disabled=false;}
+  };
+ };
+ const formHtml='<form id="owner-mfa-code"><div class="field"><label for="owner-totp">Код из Google Authenticator</label><input id="owner-totp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required placeholder="000000"></div><button class="button" type="submit">Подтвердить вход</button><p class="muted" role="status" aria-live="polite"></p></form>';
+ if(factors.length){
+  area.innerHTML='<p class="muted">Введите одноразовый код для SALAH.</p>'+ (factors.length>1?'<div class="field"><label for="owner-factor">Аутентификатор</label><select id="owner-factor">'+factors.map(f=>'<option value="'+esc(f.id)+'">'+esc(f.friendly_name||'SALAH')+'</option>').join('')+'</select></div>':'')+formHtml;
+  codeForm(factors[0].id);
+  if(factors.length>1)app.querySelector('#owner-factor').onchange=event=>codeForm(event.target.value);
+  return;
+ }
+ area.innerHTML='<p class="muted">Привяжите Google Authenticator к кабинету SALAH. Статистика откроется после подтверждения шестизначным кодом.</p><button class="button" id="owner-mfa-enroll">Настроить Google Authenticator</button><p class="muted" role="status" aria-live="polite"></p>';
+ app.querySelector('#owner-mfa-enroll').onclick=async event=>{
+  event.target.disabled=true;
+  try{
+   const enrollment=await enrollOwnerMfa();if(!active())return;
+   area.innerHTML='<p class="muted">В Google Authenticator нажмите «+» и отсканируйте QR-код. Сохраните ключ в надёжном месте: он позволит восстановить коды при потере телефона.</p><img class="owner-mfa-qr" alt="QR-код для привязки Google Authenticator"><details class="owner-mfa-key"><summary>Ключ для ручного ввода и резервной копии</summary><p class="muted">Название: SALAH. Тип ключа: по времени. Не отправляйте этот ключ другим людям.</p><code></code></details>'+formHtml;
+   const qr=enrollment.totp.qr_code;
+   app.querySelector('.owner-mfa-qr').src=qr.startsWith('data:image/')?qr:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(qr);
+   app.querySelector('.owner-mfa-key code').textContent=enrollment.totp.secret;
+   codeForm(enrollment.id);
+  }catch(error){if(active()){area.querySelector('[role="status"]').textContent=error.message;event.target.disabled=false;}}
+ };
+}
+
 export async function showAdmin(app){
  const id=++screen;app.dataset.ownerScreen=String(id);
  const active=()=>app.dataset.ownerScreen===String(id)&&location.hash.split('?')[0]==='#admin';
@@ -9,8 +48,10 @@ export async function showAdmin(app){
  let allowed=ownerVerified();
  if(!allowed)try{allowed=await verifyOwner();}catch{}
  if(!active())return;
+ if(!allowed&&ownerNeedsMfa()){await showMfa(app,active);return;}
  if(!allowed){
   app.innerHTML=title('Вход владельца')+'<section class="panel section owner-login"><p class="muted">Войдите в личный аккаунт SALAH. Доступ к кабинету проверяется на сервере.</p><form id="owner-login"><div class="field"><label for="owner-email">Электронная почта</label><input id="owner-email" type="email" autocomplete="username" required maxlength="254"></div><div class="field"><label for="owner-password">Пароль</label><input id="owner-password" type="password" autocomplete="current-password" required maxlength="256"></div><button class="button" type="submit">Войти</button><p class="owner-status muted" role="status" aria-live="polite"></p></form><a class="text-button" href="#more">Вернуться в «Ещё»</a></section>';
+  app.querySelector('.owner-login').insertAdjacentHTML('beforeend',installation());
   const form=app.querySelector('#owner-login');
   form.onsubmit=async event=>{
    event.preventDefault();const button=form.querySelector('button');const password=form.querySelector('#owner-password');const status=form.querySelector('.owner-status');button.disabled=true;status.textContent='Проверяем вход…';
@@ -22,6 +63,7 @@ export async function showAdmin(app){
  }
  const site=analyticsSite();
  app.innerHTML=title('Кабинет владельца','Посещения SALAH')+'<section class="panel section admin-intro"><div class="owner-topline"><span class="owner-private"><span aria-hidden="true">●</span> Личный кабинет</span><button class="text-button" id="owner-sign-out">Выйти</button></div><div class="owner-periods" role="group" aria-label="Период статистики">'+[[1,'Сутки'],[7,'Неделя'],[30,'Месяц']].map(([days,label])=>'<button type="button" data-period="'+days+'" aria-pressed="'+(period===days)+'">'+label+'</button>').join('')+'</div><div id="owner-statistics" aria-live="polite"><p class="muted">Загружаем статистику…</p></div>'+(site?'<details class="owner-fallback"><summary>Подробные отчёты</summary><p class="muted">Страны, устройства и другие отчёты доступны в вашем аккаунте GoatCounter.</p><a class="button secondary" href="'+esc(site)+'" target="_blank" rel="noopener noreferrer">Открыть GoatCounter</a></details>':'')+'</section>';
+ app.querySelector('.admin-intro').insertAdjacentHTML('beforeend',installation());
  let load=0;
  const readStats=async()=>{
   const version=++load,area=app.querySelector('#owner-statistics');area.innerHTML='<p class="muted" role="status">Загружаем статистику…</p>';
