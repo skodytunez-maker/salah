@@ -20,7 +20,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Verify SALAH files
-        run: node scripts/check-pages.mjs
+        run: |
+          node scripts/check-pages.mjs
+          node scripts/check-tyumen-october.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload SALAH
