@@ -52,10 +52,11 @@ assert.equal(racing.state.surah.number,3,'A late load must not replace the lates
 const closing=racing.changeSurah(1);racing.stop();deferred.get(4)(surah(4));await closing;await flush();assert.equal(racing.state.status,'stopped','Closing while loading must not restart audio');
 await racing.start(surah(1),'ar.alafasy');await flush();const pending=racing.changeSurah(1);racing.pause();deferred.get(2)(surah(2));await pending;await flush();assert.equal(racing.state.status,'paused','Pause must cancel an in-flight surah start');
 let resumed=racing.toggle();deferred.get(2)(surah(2));await flush();assert.equal(racing.state.status,'playing');racing.stop();
-for(const reciter of ['ar.alafasy','ar.badralturki']){
+for(const reciter of ['ar.alafasy','ar.badralturki','ar.tariqmuhammad']){
  const automatic=createQuranSession(options);await automatic.start(surah(1),reciter);await flush();
  tracks.at(-1).onended();await flush();if(reciter==='ar.alafasy'){assert.equal(automatic.state.index,1);tracks.at(-1).onended();await flush()}
  assert.equal(automatic.state.surah.number,2,'Al-Fatiha must continue automatically to Al-Baqara');
  assert.equal(automatic.state.reciter,reciter);assert.equal(automatic.state.status,'playing');assert.equal(automatic.state.index,0);automatic.stop();
 }
+const limited=createQuranSession(options);await limited.start(surah(2),'ar.tariqmuhammad');await flush();assert.ok(tracks.at(-1).src.endsWith('/002.mp3'));await limited.changeSurah(1);await flush();assert.equal(limited.state.surah.number,12,'Partial catalogs advance to the next available recording');await limited.start(surah(3),'ar.tariqmuhammad');assert.equal(limited.state.surah.number,12,'An absent recording must not replace current playback');await limited.start(surah(86),'ar.tariqmuhammad');await flush();assert.equal(limited.state.canNext,false);tracks.at(-1).onended();await flush();assert.equal(limited.state.status,'ended','The final available recording ends without error');limited.stop();
 console.log('PASS: automatic surah continuation, persistent playback, continuous ayahs, pause/resume, previous/next surahs, reciter preservation, errors, boundaries and stale-load cancellation');

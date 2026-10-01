@@ -140,3 +140,17 @@
 .calendar-hijri{display:flex;flex-direction:column;gap:5px;margin:18px 0 24px}.calendar-hijri strong{font-weight:500;color:#e4d6b9}.calendar-hijri .muted{font-size:11px}.calendar-friday{margin-top:22px;padding-top:20px;border-top:1px solid rgba(150,170,199,.15)}.backup-preview{padding:12px 16px;background:rgba(150,170,199,.06);border-radius:14px;margin:16px 0}.backup-preview p{margin:8px 0}
 
 .app-update{position:fixed;z-index:130;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(330px,calc(100% - 28px));display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #53627b;border-radius:16px;background:#121e31;color:#e7edf6;box-shadow:0 5px 22px #0005;font-size:12px}.app-update button{border:0;background:#d1bd92;color:#102039;border-radius:9px;font-size:12px;min-height:36px;padding:7px 12px}
+
+/* All seven calendar columns fit a portrait phone. */
+.calendar-panel .calendar-table{table-layout:fixed;font-variant-numeric:tabular-nums}
+.calendar-panel .calendar-table th,.calendar-panel .calendar-table td{text-align:center}
+.calendar-panel .calendar-table th:first-child,.calendar-panel .calendar-table td:first-child{width:15%;text-align:left}
+@media(max-width:600px){
+ .calendar-panel{padding:18px 10px}
+ .calendar-panel .calendar-table{font-size:clamp(10px,2.9vw,14px)}
+ .calendar-panel .calendar-table th{font-size:clamp(9px,2.55vw,12px);font-weight:500;line-height:1.5;hyphens:manual}
+ .calendar-panel .calendar-table th,.calendar-panel .calendar-table td{padding:13px 2px;letter-spacing:-.2px}
+ .calendar-panel .calendar-table td{white-space:nowrap}
+ .calendar-panel .button-row{gap:6px;flex-wrap:nowrap}
+ .calendar-panel .button-row .button{flex:1;padding:12px 7px;font-size:12px}
+}

@@ -38,3 +38,14 @@ body.quran-focus .sidebar,body.quran-focus header,body.quran-focus footer,body.q
 .quran-light .tajweed-ghunnah{color:#934300}.quran-light .tajweed-ikhfa{color:#803995}
 .quran-light .tajweed-idgham{color:#14613b}.quran-light .tajweed-iqlab{color:#056675}
 .quran-light .tajweed-qalqalah{color:#a12838}.quran-light .tajweed-silent{color:#626875}
+
+/* The playing ayah remains obvious while the reader scrolls. */
+.quran-reader-title{display:flex;flex-direction:column;gap:4px}
+#quran-current-verse{font-size:10px;color:var(--gold);font-weight:500}
+#quran-current-verse[hidden],.quran-verse-playing[hidden]{display:none}
+.quran-verse-meta{flex-wrap:wrap;align-items:center;gap:6px 12px}
+.quran-verse-playing{display:inline-flex;align-items:center;gap:6px;margin-left:auto;color:var(--gold);font-size:10px;font-weight:600}
+.quran-verse-playing:before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.quran-verse.is-playing{background:rgba(200,188,156,.12);box-shadow:inset 3px 0 var(--gold);outline:1px solid rgba(200,188,156,.22);outline-offset:-1px}
+.quran-verse.is-playing[data-playback=paused] .quran-verse-playing:before{opacity:.45}
+.quran-light .quran-verse.is-playing{background:rgba(121,102,56,.09);outline-color:rgba(121,102,56,.3)}

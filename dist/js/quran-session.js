@@ -1,16 +1,16 @@
 import{createQuranPlayer}from './quran-audio.js';
 import{loadIndex,loadSurah}from './quran-data.js';
-import{reciterInfo}from './quran-reciters.js';
+import{reciterInfo,reciterHasSurah,adjacentReciterSurah}from './quran-reciters.js';
 
 // Playback belongs to the app session, independent of mounted reader screens.
 export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createPlayer=createQuranPlayer}={}){
  let player=null,request=0,view={status:'stopped',surah:null,meta:null,reciter:null,index:0};
  const listeners=new Set();
- const snapshot=()=>({...view,canPrevious:!!view.surah&&view.surah.number>1,canNext:!!view.surah&&view.surah.number<114});
+ const snapshot=()=>({...view,canPrevious:!!view.surah&&adjacentReciterSurah(view.reciter,view.surah.number,-1)!==null,canNext:!!view.surah&&adjacentReciterSurah(view.reciter,view.surah.number,1)!==null});
  const emit=()=>{for(const listener of listeners)listener(snapshot())};
  function stop(){request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0};emit()}
  async function start(surah,reciter,index=0){
-  reciterInfo(reciter);
+  reciterInfo(reciter);if(!reciterHasSurah(reciter,surah?.number))return;
   if(!surah?.verses?.length||!Number.isInteger(index)||index<0||index>=surah.verses.length)return;
   if(player&&view.surah.number===surah.number&&view.reciter===reciter){player.play(index,true);return}
   const id=++request;player?.destroy();player=null;
@@ -24,7 +24,7 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
  }
  async function changeSurah(delta){
   if(![-1,1].includes(delta)||!view.surah)return;
-  const number=view.surah.number+delta;if(number<1||number>114)return;
+  const number=adjacentReciterSurah(view.reciter,view.surah.number,delta);if(number===null)return;
   const reciter=view.reciter,id=++request;player?.destroy();player=null;
   view={...view,surah:{number},meta:{number,name:'Сура '+number},index:0,status:'loading'};emit();
   try{const surah=await load(number);if(id!==request)return;await start(surah,reciter)}catch{if(id===request){view.status='error';emit()}}

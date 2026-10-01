@@ -1,4 +1,4 @@
-import{reciterInfo}from './quran-reciters.js';
+import{reciterInfo,reciterHasSurah}from './quran-reciters.js';
 export const TEXT_CACHE='salah-quran-text-v1';
 export const AUDIO_CACHE='salah-quran-audio-v1';
 let indexPromise=null,searchPromise=null;
@@ -55,7 +55,7 @@ export async function saveAllTexts(index,onProgress){
  // The translation search is part of offline reading, so save it with the texts.
  await verifiedFile('./data/quran-search.json',index.searchSha256,{validate:rows=>verifySearch(rows,index),cachedFirst:true,requireStored:true});
 }
-export function audioUrl(number,reciter,surahNumber){if(!Number.isInteger(number)||number<1||number>6236)throw Error('Неизвестная аудиозапись');const r=reciterInfo(reciter);if(r.format==='surah'){if(!Number.isInteger(surahNumber)||surahNumber<1||surahNumber>114)throw Error('Неизвестная сура');return r.server+String(surahNumber).padStart(3,'0')+'.mp3'}if(r.folder){const s=numberToPosition(number);return 'https://everyayah.com/data/'+r.folder+'/'+String(s.surah).padStart(3,'0')+String(s.ayah).padStart(3,'0')+'.mp3'}return 'https://cdn.islamic.network/quran/audio/128/'+reciter+'/'+number+'.mp3'}
+export function audioUrl(number,reciter,surahNumber){if(!Number.isInteger(number)||number<1||number>6236)throw Error('Неизвестная аудиозапись');const r=reciterInfo(reciter);if(r.format==='surah'){if(!Number.isInteger(surahNumber)||surahNumber<1||surahNumber>114||!reciterHasSurah(reciter,surahNumber))throw Error('Неизвестная сура');return r.server+String(surahNumber).padStart(3,'0')+'.mp3'}if(r.folder){const s=numberToPosition(number);return 'https://everyayah.com/data/'+r.folder+'/'+String(s.surah).padStart(3,'0')+String(s.ayah).padStart(3,'0')+'.mp3'}return 'https://cdn.islamic.network/quran/audio/128/'+reciter+'/'+number+'.mp3'}
 function numberToPosition(number){if(!audioPositions)throw Error('Библиотека не загружена');return audioPositions[number]}
 let audioPositions=null;
 

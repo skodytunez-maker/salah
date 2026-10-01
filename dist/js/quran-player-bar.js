@@ -17,7 +17,7 @@ export function mountQuranPlayer(){
   link.href='#quran?surah='+state.surah.number+'&ayah='+(state.index+1);
   link.querySelector('strong').textContent=state.meta.name;
   const status={loading:'Загрузка…',paused:'На паузе',ended:'Сура завершена',error:'Аудио недоступно — повторить'}[state.status];
-  link.querySelector('small').textContent=(status||(reciterInfo(state.reciter).format==='surah'?'Сура целиком':'Аят '+(state.index+1)))+' · '+reciterInfo(state.reciter).name;
+  link.querySelector('small').textContent=(reciterInfo(state.reciter).format==='surah'?'Сура целиком':'Аят '+(state.index+1))+(status?' · '+status:'')+' · '+reciterInfo(state.reciter).name;
   const playing=['playing','loading'].includes(state.status);toggle.innerHTML=playing?pause:play;toggle.setAttribute('aria-label',playing?'Пауза Корана':'Воспроизвести Коран');
   panel.querySelector('[data-previous]').disabled=!state.canPrevious;panel.querySelector('[data-next]').disabled=!state.canNext;
  });
