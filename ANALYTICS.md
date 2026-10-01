@@ -1,6 +1,6 @@
 # SALAH visitor statistics
 
-Status: prepared, disabled until the owner supplies a GoatCounter site address. No data is currently sent.
+Status: enabled for production SALAH at https://salah-saadi.goatcounter.com. The owner supplied this site address on 2026-10-02. Dashboard access stays protected by the owner account.
 
 1. Owner registers at https://www.goatcounter.com/signup and keeps the dashboard private. Use skodytunez-maker.github.io/salah/ as the site.
 2. Set ANALYTICS_SITE in dist/js/analytics.js to the public site address, e.g. https://your-name.goatcounter.com (never an API token or password).
