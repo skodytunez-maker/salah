@@ -49,3 +49,12 @@ body.quran-focus .sidebar,body.quran-focus header,body.quran-focus footer,body.q
 .quran-verse.is-playing{background:rgba(200,188,156,.12);box-shadow:inset 3px 0 var(--gold);outline:1px solid rgba(200,188,156,.22);outline-offset:-1px}
 .quran-verse.is-playing[data-playback=paused] .quran-verse-playing:before{opacity:.45}
 .quran-light .quran-verse.is-playing{background:rgba(121,102,56,.09);outline-color:rgba(121,102,56,.3)}
+
+.quran-reciter-catalog{margin:16px auto 0;text-align:left;max-width:480px;border:1px solid var(--reader-line);border-radius:14px}
+.quran-reciter-catalog[hidden]{display:none}
+.quran-reciter-catalog>summary{padding:14px 16px;min-height:48px;font-size:13px;color:var(--reader-text);cursor:pointer}
+.quran-reciter-surahs{display:grid;grid-template-columns:1fr 1fr;max-height:300px;overflow:auto;overscroll-behavior:contain;border-top:1px solid var(--reader-line);padding:8px}
+.quran-reciter-surahs a{display:flex;gap:9px;align-items:center;min-height:44px;padding:8px;font-size:12px;color:var(--reader-text);border-radius:8px}
+.quran-reciter-surahs a span{color:var(--reader-muted);font-variant-numeric:tabular-nums}
+.quran-reciter-surahs a[aria-current=page]{background:rgba(201,180,127,.12);color:var(--gold)}
+.quran-reciter-surahs a:focus-visible,.quran-reciter-catalog summary:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}

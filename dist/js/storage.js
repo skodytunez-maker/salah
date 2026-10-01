@@ -82,7 +82,8 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
  for(const key of ['juma','tahajjudTime'])if(Object.hasOwn(value,key)){
   if(validTime(value[key]))result[key]=value[key];else bad('Некорректное время «'+key+'».');
  }
- if(result.mosque&&!PRAYERS.every(key=>personalTime(result.mosqueTimes[key]))){result.mosque=false;bad('Для режима мечети нужны времена всех пяти намазов.')}
+ // Retain legacy fields for backup compatibility; the removed manual schedule is inactive.
+ result.mosque=false;
  if(Object.hasOwn(value,'reminders')){
   try{if(!isRecord(value.reminders))throw Error();result.reminders=jsonCopy(value.reminders)}catch{bad('Некорректные настройки напоминаний.')}
  }

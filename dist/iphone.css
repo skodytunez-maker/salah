@@ -149,8 +149,34 @@
  .calendar-panel{padding:18px 10px}
  .calendar-panel .calendar-table{font-size:clamp(10px,2.9vw,14px)}
  .calendar-panel .calendar-table th{font-size:clamp(9px,2.55vw,12px);font-weight:500;line-height:1.5;hyphens:manual}
- .calendar-panel .calendar-table th,.calendar-panel .calendar-table td{padding:13px 2px;letter-spacing:-.2px}
+ .calendar-panel .calendar-table th,.calendar-panel .calendar-table td{padding:10px 2px;letter-spacing:-.2px}
  .calendar-panel .calendar-table td{white-space:nowrap}
  .calendar-panel .button-row{gap:6px;flex-wrap:nowrap}
  .calendar-panel .button-row .button{flex:1;padding:12px 7px;font-size:12px}
 }
+
+@media(max-width:600px){
+ .calendar-panel .button-row{margin-bottom:14px!important}
+ .calendar-panel .field{display:flex;align-items:center;gap:12px;margin:12px 0}
+ .calendar-panel .field label{flex:0 0 78px;margin:0;font-size:11px;line-height:1.5}
+ .calendar-panel .field input{flex:1;min-width:0;width:100%;padding-left:9px;padding-right:9px;font-size:13px}
+ .calendar-panel .calendar-hijri{margin:14px 0 16px;gap:4px;font-size:13px}
+}
+
+/* Settings are grouped by purpose, with advanced controls tucked away. */
+.settings-grid{grid-template-columns:1fr;gap:12px;max-width:720px;margin:auto}
+.settings-group{padding:0;overflow:hidden}
+.settings-group>summary{display:flex;justify-content:space-between;align-items:center;min-height:64px;padding:18px 22px;list-style:none;cursor:pointer;font-size:16px;font-weight:600}
+.settings-group>summary::-webkit-details-marker,.settings-extra>summary::-webkit-details-marker{display:none}
+.settings-group>summary:after,.settings-extra>summary:after{content:'+';font-size:20px;font-weight:400;color:var(--gold)}
+.settings-group[open]>summary:after,.settings-extra[open]>summary:after{content:'−'}
+.settings-group[open]>summary{border-bottom:1px solid var(--line)}
+.settings-group-body{padding:20px 22px}
+.settings-group-body>.muted{font-size:12px}
+.settings-group-body>.button{width:100%}
+.settings-extra{border-top:1px solid var(--line);margin-top:18px}
+.settings-extra>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:54px;list-style:none;cursor:pointer;font-size:14px}
+.settings-extra>.muted,.settings-extra .muted{font-size:12px}
+.settings-group summary:focus-visible,.settings-extra summary:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+.settings-save{max-width:720px;margin:18px auto 0}.settings-save>.button{width:100%}
+@media(max-width:600px){.settings-group>summary{padding:16px 18px;font-size:15px}.settings-group-body{padding:18px}.settings-group .adjustments{grid-template-columns:repeat(3,minmax(0,1fr))}.settings-group select{max-width:100%;font-size:13px}}
