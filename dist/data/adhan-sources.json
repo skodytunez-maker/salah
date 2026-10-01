@@ -1,0 +1,37 @@
+{
+  "title": "Записи Азана SALAH",
+  "publisher": "Islamic Network / AlAdhan",
+  "verified": "2026-10-01",
+  "catalog": "https://aladhan.com/play",
+  "permission": {
+    "url": "https://community.islamic.network/d/232-request-to-use-your-adhan-audio-in-a-non-commercial-islamic-app",
+    "summary": "Владелец Islamic Network публично разрешил загрузку, включение в бесплатное приложение и распространение записей. Это публичное разрешение для описанного бесплатного использования, а не переписка SALAH с владельцем."
+  },
+  "tracks": [
+    {
+      "id": "mansour",
+      "reader": "Мансур аз-Захрани",
+      "local": "assets/audio/adhan-mansour.mp3",
+      "source": "https://cdn.aladhan.com/audio/adhans/a11-mansour-al-zahrani.mp3",
+      "bytes": 3358625,
+      "sha256": "aa900fd91c1a25a195951c4b7a8c094e06e94cab2664777cb1b3e9993a7e79da"
+    },
+    {
+      "id": "mansour-fajr",
+      "reader": "Мансур аз-Захрани · Фаджр",
+      "local": "assets/audio/adhan-mansour-fajr.mp3",
+      "source": "https://cdn.aladhan.com/audio/adhans/fajr/f2-mansour-al-zahrani.mp3",
+      "bytes": 3905851,
+      "sha256": "ade99d55c16ea1155c6e17dc04a906eea6febea78877d8148944f782b86e57c6"
+    },
+    {
+      "id": "mishary",
+      "reader": "Мишари Рашид аль-Афаси",
+      "local": "assets/audio/adhan-mishary.mp3",
+      "source": "https://cdn.aladhan.com/audio/adhans/a9.mp3",
+      "bytes": 4114842,
+      "sha256": "f75249b8ebd4ec8c31cacbdf8ea9dc9dd3bbbf992cb9e10903e0c0a5fe486abf"
+    }
+  ],
+  "fajr": "Для всех голосов используется подтверждённая отдельная запись Фаджра Мансура аз-Захрани; не приписывать её Мишари аль-Афаси."
+}

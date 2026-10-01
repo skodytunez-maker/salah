@@ -1,0 +1,7 @@
+// Independently authored reading preview from the Arabic text, not from Sajda.
+// Editorial draft: not approved as a pronunciation guide.
+const FATIHA=[[1,"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ","Бисмиллаахир-рахмаанир-рахиим"],[2,"ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ","Аль-хамду лиллаахи раббиль-‘ааламиин"],[3,"ٱلرَّحْمَٰنِ ٱلرَّحِيمِ","Ар-рахмаанир-рахиим"],[4,"مَٰلِكِ يَوْمِ ٱلدِّينِ","Маалики йаумид-диин"],[5,"إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ","Иййаака на‘буду уа иййаака наста‘иин"],[6,"ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ","Ихдинас-сырааталь-мустакыым"],[7,"صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ","Сырааталь-лазиина ан‘амта ‘алейхим, гайриль-магдууби ‘алейхим уа лад-дааллиин"]];
+const clean=t=>String(t).replace(/\ufeff/g,'');
+export function hasOwnTranscription(surah){return surah?.number===1&&surah.verses?.length===7&&surah.verses.every((v,i)=>v.ayah===FATIHA[i][0]&&clean(v.arabic)===FATIHA[i][1]);}
+export function readingTranscription(surah,verse,edition){return edition==='salah-preview'&&hasOwnTranscription(surah)?FATIHA[verse.ayah-1][2]:verse.transliteration;}
+export const ownTranscriptionNote='Пробная транскрипция SALAH · Аль-Фатиха. Составлена по арабскому тексту; проверка преподавателем ещё не выполнена. Две гласные обозначают удлинение, а не точное число счётов. Знак ‘ обозначает ‘айн. Для точного произношения слушайте чтеца.';

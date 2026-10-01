@@ -1,0 +1,142 @@
+/* Safe content areas for the installed iPhone app; load after the section styles. */
+@supports (padding-top: env(safe-area-inset-top)) {
+  :root {
+    --salah-safe-top: env(safe-area-inset-top, 0px);
+    --salah-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --salah-safe-left: env(safe-area-inset-left, 0px);
+    --salah-safe-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* The background remains edge to edge; only content avoids the sensor housing. */
+  .workspace {
+    padding-top: var(--salah-safe-top);
+    padding-left: max(48px, var(--salah-safe-left));
+    padding-right: max(48px, var(--salah-safe-right));
+  }
+  @media (max-width: 1200px) {
+    .workspace {
+      padding-left: max(28px, var(--salah-safe-left));
+      padding-right: max(28px, var(--salah-safe-right));
+    }
+  }
+  @media (max-width: 850px) {
+    .workspace {
+      padding-left: max(22px, var(--salah-safe-left));
+      padding-right: max(22px, var(--salah-safe-right));
+      padding-bottom: calc(112px + var(--salah-safe-bottom));
+    }
+    #mobile-nav {
+      width: calc(100% - 32px - var(--salah-safe-left) - var(--salah-safe-right));
+    }
+    #toast { bottom: calc(100px + var(--salah-safe-bottom)); }
+  }
+  @media (max-width: 600px) {
+    .workspace {
+      padding-left: max(18px, var(--salah-safe-left));
+      padding-right: max(18px, var(--salah-safe-right));
+    }
+  }
+
+  .home-page .workspace {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: max(20px, var(--salah-safe-left));
+    padding-right: max(20px, var(--salah-safe-right));
+  }
+  .home-page .app-home-shell {
+    padding-top: calc(24px + var(--salah-safe-top));
+    padding-bottom: calc(112px + var(--salah-safe-bottom));
+  }
+  .home-page #mobile-nav {
+    width: calc(100% - 32px - var(--salah-safe-left) - var(--salah-safe-right));
+  }
+  @media (max-height: 700px) {
+    .home-page .app-home-shell {
+      padding-top: calc(16px + var(--salah-safe-top));
+      padding-bottom: calc(104px + var(--salah-safe-bottom));
+    }
+  }
+  @media (max-width: 350px) {
+    .home-page .workspace {
+      padding-left: max(16px, var(--salah-safe-left));
+      padding-right: max(16px, var(--salah-safe-right));
+    }
+  }
+
+  .learning-focus .workspace,
+  .adhkar-focus .workspace {
+    padding-top: calc(20px + var(--salah-safe-top));
+    padding-left: max(24px, var(--salah-safe-left));
+    padding-right: max(24px, var(--salah-safe-right));
+    padding-bottom: 20px;
+  }
+  @media (max-width: 700px) {
+    .learning-focus .workspace {
+      padding-top: calc(10px + var(--salah-safe-top));
+      padding-bottom: 10px;
+    }
+    .adhkar-focus .workspace {
+      padding-top: calc(12px + var(--salah-safe-top));
+      padding-bottom: 12px;
+    }
+    .learning-focus .workspace,
+    .adhkar-focus .workspace {
+      padding-left: max(18px, var(--salah-safe-left));
+      padding-right: max(18px, var(--salah-safe-right));
+    }
+  }
+  .lesson-content { padding-bottom: calc(110px + var(--salah-safe-bottom)); }
+  .adhkar-shell { padding-bottom: calc(60px + var(--salah-safe-bottom)); }
+  .dhikr-list-shell { padding-bottom: calc(125px + var(--salah-safe-bottom)); }
+  .lesson-controls {
+    padding-left: max(18px, var(--salah-safe-left));
+    padding-right: max(18px, var(--salah-safe-right));
+  }
+  .dhikr-list-footer {
+    padding-left: max(24px, var(--salah-safe-left));
+    padding-right: max(24px, var(--salah-safe-right));
+  }
+
+  /* A sticky reader toolbar owns its inset so it remains safe while scrolling. */
+  body.quran-focus .workspace {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: max(24px, var(--salah-safe-left));
+    padding-right: max(24px, var(--salah-safe-right));
+  }
+  .quran-reader { padding-bottom: calc(150px + var(--salah-safe-bottom)); }
+  .quran-reader-top {
+    padding-top: calc(12px + var(--salah-safe-top));
+    min-height: calc(66px + var(--salah-safe-top));
+  }
+  .quran-options-body {
+    top: calc(70px + var(--salah-safe-top));
+    max-height: calc(100svh - 110px - var(--salah-safe-top) - var(--salah-safe-bottom));
+  }
+  .quran-verse { scroll-margin-top: calc(80px + var(--salah-safe-top)); }
+  .quran-player {
+    width: calc(100% - 32px - var(--salah-safe-left) - var(--salah-safe-right));
+  }
+  @media (max-width: 600px) {
+    body.quran-focus .workspace {
+      padding-left: max(12px, var(--salah-safe-left));
+      padding-right: max(12px, var(--salah-safe-right));
+    }
+    .quran-reader { padding-bottom: calc(140px + var(--salah-safe-bottom)); }
+  }
+
+  dialog {
+    width: calc(100% - 32px - var(--salah-safe-left) - var(--salah-safe-right));
+    max-height: calc(85vh - var(--salah-safe-top) - var(--salah-safe-bottom));
+  }
+  .scene-preview-controls {
+    max-width: calc(100% - 32px - var(--salah-safe-left) - var(--salah-safe-right));
+  }
+  @media (min-width: 851px) {
+    #toast { bottom: calc(30px + var(--salah-safe-bottom)); }
+  }
+}
+
+.calendar-hijri{display:flex;flex-direction:column;gap:5px;margin:18px 0 24px}.calendar-hijri strong{font-weight:500;color:#e4d6b9}.calendar-hijri .muted{font-size:11px}.calendar-friday{margin-top:22px;padding-top:20px;border-top:1px solid rgba(150,170,199,.15)}.backup-preview{padding:12px 16px;background:rgba(150,170,199,.06);border-radius:14px;margin:16px 0}.backup-preview p{margin:8px 0}
+
+.app-update{position:fixed;z-index:130;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(330px,calc(100% - 28px));display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #53627b;border-radius:16px;background:#121e31;color:#e7edf6;box-shadow:0 5px 22px #0005;font-size:12px}.app-update button{border:0;background:#d1bd92;color:#102039;border-radius:9px;font-size:12px;min-height:36px;padding:7px 12px}

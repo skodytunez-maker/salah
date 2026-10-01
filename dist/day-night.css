@@ -1,0 +1,31 @@
+/* One composition, changing light. The schedule stays still and readable. */
+#home-scene{display:none;position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--scene-day:0;--scene-dawn:0;--scene-dusk:0;background:#061020}
+.home-page #home-scene{display:block}
+.home-page:before{display:none}
+#home-scene>div{position:absolute;inset:0;pointer-events:none}
+.scene-night,.scene-day{background-size:cover;background-position:85% center;background-repeat:no-repeat}
+.scene-night{background-image:url('./assets/night-mosque.webp')}
+.scene-day{background-image:url('./assets/day-mosque.webp');opacity:var(--scene-day);transition:opacity 4s linear;filter:brightness(.83) saturate(.8)}
+.scene-dawn{background:radial-gradient(ellipse at 55% 64%,rgba(226,173,149,.42),rgba(152,127,164,.18) 40%,transparent 72%);opacity:var(--scene-dawn);transition:opacity 4s linear;mix-blend-mode:screen}
+.scene-dusk{background:linear-gradient(180deg,rgba(62,44,112,.3),rgba(198,110,93,.24) 59%,rgba(104,76,134,.08) 80%);opacity:var(--scene-dusk);transition:opacity 4s linear;mix-blend-mode:screen}
+.scene-shade{background:linear-gradient(180deg,rgba(5,10,20,.12),rgba(5,10,20,.28) 45%,rgba(5,10,20,.5) 100%)}
+.home-page .app-home-brand,.home-page .app-home-top .location{text-shadow:0 2px 10px rgba(2,8,19,.55)}
+.scene-preview #home-scene>div{transition-duration:1s}
+.scene-preview-controls{display:flex;align-items:center;gap:2px;position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:calc(105px + env(safe-area-inset-bottom));padding:3px 7px;max-width:calc(100% - 32px);border:1px solid rgba(202,212,233,.25);border-radius:30px;background:rgba(6,13,26,.95);color:#e3e9f2;box-shadow:0 5px 20px rgba(0,0,0,.15)}.scene-preview-controls span{font-size:11px;padding:0 8px}.scene-preview-controls button{min-width:40px;min-height:40px;font-size:20px;border-radius:50%;color:#d2dbea}.scene-preview-controls button[aria-pressed=true]{color:#ead09b;background:rgba(228,195,123,.12)}
+@media(min-width:601px){.scene-night,.scene-day{background-position:center center}}
+@media(prefers-reduced-motion:reduce){#home-scene>div{transition:none!important}}
+body.reduce-motion #home-scene>div,body.reduce-motion *:after{transition:none!important;animation:none!important}
+
+.background-mode-label{font-size:14px;color:var(--muted)}
+.background-mode-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.background-mode-buttons button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-width:0;min-height:76px;padding:12px 5px;border:1px solid var(--line);border-radius:14px;background:rgba(6,12,24,.42);color:#bcc7da;font-size:13px;font-weight:500;line-height:1.2;transition:background .2s,border-color .2s,color .2s}
+.background-mode-buttons button img{width:21px;height:21px;filter:invert(83%) sepia(12%) saturate(422%) hue-rotate(177deg)}
+.background-mode-buttons button[aria-pressed=true]{border-color:rgba(234,208,155,.7);background:rgba(228,195,123,.12);color:#ead09b}
+.background-mode-buttons button[aria-pressed=true] img{filter:invert(86%) sepia(18%) saturate(826%) hue-rotate(350deg)}
+@media(hover:hover){.background-mode-buttons button:hover{border-color:rgba(234,208,155,.5)}}
+
+/* Mobile zoom keeps the horizon small; the same sky and water fill the edges. */
+@media(max-width:600px){
+ .scene-night,.scene-day{background-size:auto 100%;background-position:85% center;-webkit-mask-image:none;mask-image:none}
+ .scene-night::after,.scene-day::after{content:"";position:absolute;inset:0;background-image:inherit;background-repeat:no-repeat;background-size:auto 90%;background-position:85% center;-webkit-mask-image:linear-gradient(to bottom,transparent 5%,#000 10%,#000 90%,transparent 95%);mask-image:linear-gradient(to bottom,transparent 5%,#000 10%,#000 90%,transparent 95%)}
+}

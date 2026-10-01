@@ -1,0 +1,34 @@
+{
+  "library": {
+    "name": "geomagnetism",
+    "version": "0.2.0",
+    "url": "https://github.com/naturalatlas/geomagnetism",
+    "license": "Apache-2.0"
+  },
+  "model": {
+    "name": "WMM2025",
+    "url": "https://www.ncei.noaa.gov/products/world-magnetic-model",
+    "doi": "https://doi.org/10.25921/aqfd-sd83",
+    "validFrom": "2025-01-01",
+    "validUntilExclusive": "2030-01-01"
+  },
+  "tests": "https://www.ncei.noaa.gov/sites/default/files/2025-02/WMM2025_TEST_VALUES.txt",
+  "modifications": [
+    "Browser-only static ESM bundle",
+    "UTC fractional year including leap years",
+    "Official 2025–2030 validity bounds",
+    "Reject invalid dates/coordinates and magnetic blackout zones"
+  ],
+  "sourceHashes": {
+    "lib/model.js": "682834204e6dc283b6afa0a9875daf79f044efb409998529c7f84d1181c9b844",
+    "data/wmm-2025.json": "dbe6da60dbd74b846a4dd3988a8060eb95cf121791ba24dc864da96cbabdda43",
+    "lib/coords/geodetic.js": "89b66f00c6281bdc00254c115f7d1873991359d142afdd0e23607250835e5cbc",
+    "lib/magnetic_elements.js": "8f9f1e37f69da55a3724fcee25f318c7cdeaf44138d72636fd3072ad1e04ba88",
+    "lib/magnetic_vector.js": "51b565d65dbe098a43dea047df6b34706383005ed261946e46d17f7064d950fd",
+    "lib/coords/spherical.js": "4b8c9c824d6e429d14deeaa9529b9eb96fd71328db4424905b02046224d35552",
+    "lib/ellipsoid.js": "e7897e14df4b1396dcbe60e3d57b12e4fff596798863e108ac83f7c990255e06",
+    "lib/coords/cartesian.js": "5349fe5f7f381e3a7f01e931a0976e7f4a69b59610216230991923cf869d31b9",
+    "lib/legendre.js": "b1f796fa11e00936d054f96671ebd76203b3b0145e077b45be098a6603ead3ee"
+  },
+  "bundleSha256": "02fe1d2377adcb004a2bb18fd1a3d67b69f0749dbf2435b9b9f8cf6d3f46186a"
+}

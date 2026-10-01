@@ -1,0 +1,117 @@
+{
+  "1": {
+    "name": "سُورَةُ ٱلْفَاتِحَةِ",
+    "number": 1,
+    "translationAuthor": "Эльмир Кулиев",
+    "source": "https://alquran.cloud/api",
+    "verses": [
+      {
+        "number": 1,
+        "arabic": "﻿بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+        "translation": "Во имя Аллаха, Милостивого, Милосердного!",
+        "transliteration": "Bismillaahir Rahmaanir Raheem",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3"
+      },
+      {
+        "number": 2,
+        "arabic": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ",
+        "translation": "Хвала Аллаху, Господу миров,",
+        "transliteration": "Alhamdu lillaahi Rabbil 'aalameen",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/2.mp3"
+      },
+      {
+        "number": 3,
+        "arabic": "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+        "translation": "Милостивому, Милосердному,",
+        "transliteration": "Ar-Rahmaanir-Raheem",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/3.mp3"
+      },
+      {
+        "number": 4,
+        "arabic": "مَٰلِكِ يَوْمِ ٱلدِّينِ",
+        "translation": "Властелину Дня воздаяния!",
+        "transliteration": "Maaliki Yawmid-Deen",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/4.mp3"
+      },
+      {
+        "number": 5,
+        "arabic": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+        "translation": "Тебе одному мы поклоняемся и Тебя одного молим о помощи.",
+        "transliteration": "Iyyaaka na'budu wa lyyaaka nasta'een",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/5.mp3"
+      },
+      {
+        "number": 6,
+        "arabic": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ",
+        "translation": "Веди нас прямым путем,",
+        "transliteration": "Ihdinas-Siraatal-Mustaqeem",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/6.mp3"
+      },
+      {
+        "number": 7,
+        "arabic": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ",
+        "translation": "путем тех, кого Ты облагодетельствовал, не тех, на кого пал гнев, и не заблудших.",
+        "transliteration": "Siraatal-lazeena an'amta 'alaihim ghayril-maghdoobi 'alaihim wa lad-daaalleen",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/7.mp3"
+      }
+    ]
+  },
+  "112": {
+    "name": "سُورَةُ الإِخۡلَاصِ",
+    "number": 112,
+    "translationAuthor": "Эльмир Кулиев",
+    "source": "https://alquran.cloud/api",
+    "verses": [
+      {
+        "number": 1,
+        "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+        "translation": "Скажи: «Он - Аллах Единый,",
+        "transliteration": "Qul huwal laahu ahad",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/6222.mp3"
+      },
+      {
+        "number": 2,
+        "arabic": "ٱللَّهُ ٱلصَّمَدُ",
+        "translation": "Аллах Самодостаточный.",
+        "transliteration": "Allah hus-samad",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/6223.mp3"
+      },
+      {
+        "number": 3,
+        "arabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+        "translation": "Он не родил и не был рожден,",
+        "transliteration": "Lam yalid wa lam yoolad",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/6224.mp3"
+      },
+      {
+        "number": 4,
+        "arabic": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+        "translation": "и нет никого равного Ему».",
+        "transliteration": "Wa lam yakul-lahu kufuwan ahad",
+        "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/6225.mp3"
+      }
+    ]
+  },
+  "dua": [
+    {
+      "edition": "quran-uthmani",
+      "text": "وَمِنْهُم مَّن يَقُولُ رَبَّنَآ ءَاتِنَا فِى ٱلدُّنْيَا حَسَنَةًۭ وَفِى ٱلْءَاخِرَةِ حَسَنَةًۭ وَقِنَا عَذَابَ ٱلنَّارِ",
+      "audio": null
+    },
+    {
+      "edition": "ru.kuliev",
+      "text": "Но среди них есть такие, которые говорят: «Господь наш! Одари нас добром в этом мире и добром в Последней жизни и защити нас от мучений в Огне».",
+      "audio": null
+    },
+    {
+      "edition": "en.transliteration",
+      "text": "Wa minhum mai yaqoolu rabbanaaa aatina fid dunyaa hasanatawn wa fil aakhirati hasanatanw wa qinaa azaaban Naar",
+      "audio": null
+    },
+    {
+      "edition": "ar.alafasy",
+      "text": "وَمِنْهُم مَّن يَقُولُ رَبَّنَآ ءَاتِنَا فِى ٱلدُّنْيَا حَسَنَةًۭ وَفِى ٱلْءَاخِرَةِ حَسَنَةًۭ وَقِنَا عَذَابَ ٱلنَّارِ",
+      "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/208.mp3"
+    }
+  ]
+}
