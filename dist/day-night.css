@@ -9,7 +9,8 @@
 .scene-dawn{background:radial-gradient(ellipse at 55% 64%,rgba(226,173,149,.42),rgba(152,127,164,.18) 40%,transparent 72%);opacity:var(--scene-dawn);transition:opacity 4s linear;mix-blend-mode:screen}
 .scene-dusk{background:linear-gradient(180deg,rgba(62,44,112,.3),rgba(198,110,93,.24) 59%,rgba(104,76,134,.08) 80%);opacity:var(--scene-dusk);transition:opacity 4s linear;mix-blend-mode:screen}
 .scene-shade{background:linear-gradient(180deg,rgba(5,10,20,.12),rgba(5,10,20,.28) 45%,rgba(5,10,20,.5) 100%)}
-.home-page .app-home-brand,.home-page .app-home-top .location{text-shadow:0 2px 10px rgba(2,8,19,.55)}
+.home-page .app-home-brand{text-shadow:none}
+.home-page .app-home-top .location{text-shadow:0 2px 10px rgba(2,8,19,.55)}
 .scene-preview #home-scene>div{transition-duration:1s}
 .scene-preview-controls{display:flex;align-items:center;gap:2px;position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:calc(105px + env(safe-area-inset-bottom));padding:3px 7px;max-width:calc(100% - 32px);border:1px solid rgba(202,212,233,.25);border-radius:30px;background:rgba(6,13,26,.95);color:#e3e9f2;box-shadow:0 5px 20px rgba(0,0,0,.15)}.scene-preview-controls span{font-size:11px;padding:0 8px}.scene-preview-controls button{min-width:40px;min-height:40px;font-size:20px;border-radius:50%;color:#d2dbea}.scene-preview-controls button[aria-pressed=true]{color:#ead09b;background:rgba(228,195,123,.12)}
 @media(min-width:601px){.scene-night,.scene-day{background-position:center center}}

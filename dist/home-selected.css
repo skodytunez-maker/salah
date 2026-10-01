@@ -50,8 +50,10 @@
 
 .home-page .central-prayer.timetable .central-row.next[data-prayer=Sunrise]>span{color:#bfd5ee}
 
-/* A slightly higher brand when the full daily schedule is open. */
-.home-page .app-home-top{transition:transform .25s ease}
-.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{transform:translateY(-20px)}
-@media(max-height:700px){.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{transform:translateY(-12px)}}
-@media(max-height:600px){.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{transform:none}}
+/* Move the heading through layout, keeping live text off a transformed layer. */
+.home-page .app-home-top{position:relative;z-index:1;transform:none;transition:none}
+.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:-20px;margin-bottom:20px}
+@media(max-height:700px){.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:-12px;margin-bottom:12px}}
+@media(max-height:600px){.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:0;margin-bottom:0}}
+/* Seven rows already raise the heading; retain clearance below the iPhone status bar. */
+.home-page .app-home-shell:has(.central-prayer.timetable .tahajjud-row) .app-home-top{margin-top:0;margin-bottom:0}
