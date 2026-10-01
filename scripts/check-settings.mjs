@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+const data=new Map();
+globalThis.localStorage={getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,String(value))};
+const chosen={city:{name:'Тюмень',country:'Россия',latitude:57.1522,longitude:65.5272,timezone:'Asia/Yekaterinburg'},method:'3',school:'0',highLatitude:'2',hijriOffset:'-1',offsets:{Fajr:2,Dhuhr:3,Asr:-4,Maghrib:1,Isha:5},weather:true,weatherAnimation:false,backgroundMode:'light',dynamic:false,transitions:false,motion:true,haptic:false,showTahajjud:true,tahajjudTime:'01:17',onboarded:true,reminders:{enabled:true}};
+data.set('salah:settings',JSON.stringify(chosen));
+data.set('salah:adhkar-stats-v2',JSON.stringify({version:2,totals:{shared:25},days:{}}));
+const first=await import('../dist/js/storage.js?settings-release-first');
+assert.equal(first.settings.school,0,'Legacy three-imam choice must not fall back to Hanafi');
+assert.equal(first.settings.highLatitude,2);assert.equal(first.settings.hijriOffset,-1);
+assert.equal(first.settings.weather,true);assert.equal(first.settings.backgroundMode,'light');
+assert.throws(()=>first.normalizeSettings({school:'0'},{strict:true}));
+assert.equal(first.normalizeSettings({school:'01'}).school,1); // Invalid strings are not migrated.
+assert.equal(first.updateSettings({school:0}),true);
+const saved=JSON.parse(data.get('salah:settings'));
+assert.equal(saved.school,0);assert.deepEqual(saved.offsets,chosen.offsets);
+const later=await import('../dist/js/storage.js?settings-release-later');
+assert.deepEqual(later.settings,saved,'Reload / a new app release must retain the complete saved preferences');
+// A stale tab changing only one setting cannot undo another tab's selections.
+assert.equal(later.updateSettings({weather:false,backgroundMode:'dark'}),true);
+assert.equal(first.updateSettings({haptic:true}),true);
+assert.equal(first.settings.weather,false);assert.equal(first.settings.backgroundMode,'dark');
+assert.equal(first.settings.school,0);assert.equal(first.settings.showTahajjud,true);
+assert.equal(first.settings.tahajjudTime,'01:17');assert.deepEqual(first.settings.offsets,chosen.offsets);
+assert.equal(first.settings.weatherAnimation,false);assert.equal(first.settings.transitions,false);
+assert.equal(first.settings.motion,true);assert.equal(first.settings.haptic,true);
+assert.deepEqual(first.settings.city,chosen.city);assert.deepEqual(first.settings.reminders,chosen.reminders);
+const reopened=await import('../dist/js/storage.js?settings-release-reopened');
+assert.deepEqual(reopened.settings,first.settings);
+assert.equal(JSON.parse(data.get('salah:adhkar-stats-v2')).totals.shared,25);
+console.log('PASS: legacy Asr selection, complete preferences across releases, partial changes from stale tabs, and personal counters preserved.');

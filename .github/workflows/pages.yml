@@ -23,6 +23,7 @@ jobs:
         run: |
           node scripts/check-pages.mjs
           node scripts/check-security.mjs
+          node scripts/check-settings.mjs
           node scripts/check-owner-access.mjs
           node scripts/check-owner-client.mjs
           node scripts/check-adhkar.mjs

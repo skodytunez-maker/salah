@@ -53,7 +53,10 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
   if(typeof value[key]==='boolean')result[key]=value[key];else bad('Некорректная настройка «'+key+'».');
  }
  for(const [key,allowed]of [['method',[1,2,3,4,5,13]],['school',[0,1]],['highLatitude',[1,2,3]],['hijriOffset',[-1,0,1]]])if(Object.hasOwn(value,key)){
-  if(allowed.includes(value[key]))result[key]=value[key];else bad('Некорректная настройка «'+key+'».');
+  // Earlier releases stored select values as strings. Keep an explicit old
+  // choice (especially school "0") instead of replacing it with the default.
+  const selected=!strict&&typeof value[key]==='string'&&allowed.map(String).includes(value[key])?Number(value[key]):value[key];
+  if(allowed.includes(selected))result[key]=selected;else bad('Некорректная настройка «'+key+'».');
  }
  if(Object.hasOwn(value,'madhhab')){
   if(typeof value.madhhab==='string'&&/^[a-z][a-z-]{0,29}$/.test(value.madhhab))result.madhhab=value.madhhab;else bad('Некорректное значение мазхаба.');
@@ -111,7 +114,10 @@ const replace=(target,value)=>{for(const key of Object.keys(target))delete targe
 export function replacePersonalState(nextSettings,nextHistory){replace(settings,nextSettings);replace(history,nextHistory)}
 export function updateSettings(value){
  if(!isRecord(value))return false;
- const merged={...settings,...value,offsets:{...settings.offsets,...(isRecord(value.offsets)?value.offsets:{})},mosqueTimes:{...settings.mosqueTimes,...(isRecord(value.mosqueTimes)?value.mosqueTimes:{})}};
+ // A resumed tab may have an older in-memory snapshot. Partial changes must
+ // preserve the latest saved choices from other tabs / the installed app.
+ const latest=normalizeSettings(read('settings',settings),{warnings:storageWarnings});
+ const merged={...latest,...value,offsets:{...latest.offsets,...(isRecord(value.offsets)?value.offsets:{})},mosqueTimes:{...latest.mosqueTimes,...(isRecord(value.mosqueTimes)?value.mosqueTimes:{})}};
  if(!Object.hasOwn(value,'backgroundMode')&&Object.hasOwn(value,'dynamic'))merged.backgroundMode=value.dynamic===false?'dark':'auto';
  const normalized=normalizeSettings(merged,{warnings:storageWarnings});replace(settings,normalized);return write('settings',settings);
 }
