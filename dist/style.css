@@ -122,3 +122,5 @@
  .adhkar-hybrid .dhikr-open strong,.adhkar-signature .dhikr-open strong{font-size:17px;line-height:1.35}
  .adhkar-hybrid .dhikr-open p,.dhikr-open p{font-size:14px;line-height:1.5;margin:7px 0 12px}
 }
+
+footer.author-footer{justify-content:center;align-items:baseline;gap:9px;color:var(--gold)}footer.author-footer .author-brand{font-family:Georgia,serif;font-size:17px;letter-spacing:2.5px}footer.author-footer small{font-size:12px;letter-spacing:.3px;color:var(--muted)}
