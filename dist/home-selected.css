@@ -57,3 +57,15 @@
 @media(max-height:600px){.home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:0;margin-bottom:0}}
 /* Seven rows already raise the heading; retain clearance below the iPhone status bar. */
 .home-page .app-home-shell:has(.central-prayer.timetable .tahajjud-row) .app-home-top{margin-top:0;margin-bottom:0}
+
+/* Make room for the optional seventh row while preserving readable type. */
+.home-page .central-prayer.timetable:has(.tahajjud-row) .central-table{padding-top:12px;padding-bottom:12px}
+.home-page .central-prayer.timetable:has(.tahajjud-row) .central-row{min-height:44px;padding-top:6px;padding-bottom:6px}
+.home-page .central-prayer.timetable:has(.tahajjud-row) .central-row.next{min-height:64px;margin-top:4px;margin-bottom:4px;padding-top:6px;padding-bottom:6px}
+.home-page .central-prayer.timetable:has(.tahajjud-row) .central-row.tahajjud-row{margin-top:5px;padding-top:8px}
+@media(max-height:700px){
+ .home-page .central-prayer.timetable:has(.tahajjud-row) .central-table{padding-top:10px;padding-bottom:10px}
+ .home-page .central-prayer.timetable:has(.tahajjud-row) .central-row{min-height:42px;padding-top:5px;padding-bottom:5px}
+ .home-page .central-prayer.timetable:has(.tahajjud-row) .central-row.next{min-height:60px;padding-top:5px;padding-bottom:5px}
+ .home-page .central-prayer.timetable:has(.tahajjud-row) .central-row.tahajjud-row{padding-top:8px}
+}
