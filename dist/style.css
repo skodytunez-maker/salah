@@ -163,3 +163,8 @@ footer.author-footer{justify-content:center;align-items:baseline;gap:9px;color:v
 /* Release date and the owner's foreground presence list. */
 .app-release-date{margin:18px 0 0;font-size:13px;color:var(--muted,#a9b2c0);line-height:1.6}.app-release-date time{color:var(--gold,#d9c38e);font-weight:500}
 .owner-users-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px}.owner-users .owner-user-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #ffffff10}.owner-user-row>div{min-width:0}.owner-user-row strong{display:block;overflow-wrap:anywhere}.owner-user-row small{display:block;color:var(--muted,#a9b2c0);font-size:12px;margin-top:6px;line-height:1.5}.presence-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;white-space:nowrap;color:var(--muted,#a9b2c0)}.presence-status i{width:6px;height:6px;border-radius:50%;background:#8792a1}.presence-status.is-online{color:#a6d6b9}.presence-status.is-online i{background:#88cba4;box-shadow:0 0 0 3px #88cba415}
+
+/* Keep the private dashboard inside My Account. */
+.owner-account{margin:16px 0 22px}.owner-account>summary{color:var(--gold,#d9bf84);font-weight:600}.owner-account-body{padding-top:12px}.owner-account-body>.panel{margin:0;border:0;box-shadow:none;background:transparent;padding:0}.owner-account-body h2{font-size:1.15rem}.owner-account-body .owner-periods{margin-top:12px}
+
+#account-owner-panel[hidden],#account-mfa[hidden],#counter-password-mfa[hidden]{display:none!important}

@@ -1,11 +1,11 @@
 import{analyticsSite}from './analytics.js';
 import{esc,title}from './ui.js';
-import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerUsers,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa}from './owner-auth.js';
+import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerUsers,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
 let screen=0,period=7,usersExpanded=false;
 
-async function showMfa(app,active){
- app.innerHTML=title('Защищённый вход')+'<section class="panel section owner-login"><h2>Google Authenticator</h2><div id="owner-mfa-step"><p class="muted" role="status">Проверяем второй этап входа…</p></div><button class="text-button" id="owner-mfa-logout">Выйти из аккаунта</button></section>';
- app.querySelector('#owner-mfa-logout').onclick=async()=>{await signOutOwner();if(active())showAdmin(app);};
+async function showMfa(app,active,options){
+ app.innerHTML=(options.embedded?'<h2>Защищённый вход</h2>':title('Защищённый вход'))+'<section class="panel section owner-login"><h2>Google Authenticator</h2><div id="owner-mfa-step"><p class="muted" role="status">Проверяем второй этап входа…</p></div><button class="text-button" id="owner-mfa-logout">Выйти из аккаунта</button></section>';
+ app.querySelector('#owner-mfa-logout').onclick=async()=>{await signOutOwner();if(active())showAdmin(app,options);};
  const area=app.querySelector('#owner-mfa-step');
  let factors;
  try{factors=await ownerMfaFactors();}catch(error){if(active())area.textContent=error.message;return;}
@@ -14,7 +14,7 @@ async function showMfa(app,active){
   const form=app.querySelector('#owner-mfa-code');
   form.onsubmit=async event=>{
    event.preventDefault();const button=form.querySelector('button'),input=form.querySelector('input'),status=form.querySelector('[role="status"]');button.disabled=true;status.textContent='Проверяем код…';
-   try{await verifyOwnerMfa(factorId,input.value.trim());if(active())showAdmin(app);}
+   try{await verifyOwnerMfa(factorId,input.value.trim());if(active())showAdmin(app,options);}
    catch(error){if(active())status.textContent=error.message;}
    finally{input.value='';button.disabled=false;}
   };
@@ -40,20 +40,21 @@ async function showMfa(app,active){
  };
 }
 
-export async function showAdmin(app){
+export async function showAdmin(app,options={}){
  const id=++screen;app.dataset.ownerScreen=String(id);
- const active=()=>app.dataset.ownerScreen===String(id)&&location.hash.split('?')[0]==='#admin';
- app.innerHTML=title('Кабинет владельца')+'<section class="panel section"><p role="status">Проверяем доступ…</p></section>';
+ const active=()=>app.dataset.ownerScreen===String(id)&&(options.isActive?options.isActive():location.hash.split('?')[0]==='#admin');
+ app.innerHTML=(options.embedded?'':title('Кабинет владельца'))+'<section class="panel section"><p role="status">Проверяем доступ…</p></section>';
  let allowed=ownerVerified();
  if(!allowed)try{allowed=await verifyOwner();}catch{}
  if(!active())return;
- if(!allowed&&ownerNeedsMfa()){await showMfa(app,active);return;}
+ if(!allowed&&ownerNeedsMfa()){await showMfa(app,active,options);return;}
  if(!allowed){
+  if(options.embedded){app.innerHTML='';return;}
   app.innerHTML=title('Вход владельца')+'<section class="panel section owner-login"><p class="muted">Войдите в личный аккаунт SALAH. Доступ к кабинету проверяется на сервере.</p><form id="owner-login"><div class="field"><label for="owner-email">Электронная почта</label><input id="owner-email" type="email" autocomplete="username" required maxlength="254"></div><div class="field"><label for="owner-password">Пароль</label><input id="owner-password" type="password" autocomplete="current-password" required maxlength="256"></div><button class="button" type="submit">Войти</button><p class="owner-status muted" role="status" aria-live="polite"></p></form><a class="text-button" href="#more">Вернуться в меню</a></section>';
   const form=app.querySelector('#owner-login');
   form.onsubmit=async event=>{
    event.preventDefault();const button=form.querySelector('button');const password=form.querySelector('#owner-password');const status=form.querySelector('.owner-status');button.disabled=true;status.textContent='Проверяем вход…';
-   try{await signInOwner(form.querySelector('#owner-email').value,password.value);if(active())showAdmin(app);}
+   try{await signInOwner(form.querySelector('#owner-email').value,password.value);if(active())showAdmin(app,options);}
    catch(error){if(active())status.textContent=error.message;}
    finally{password.value='';button.disabled=false;}
   };
@@ -61,7 +62,7 @@ export async function showAdmin(app){
  }
  const site=analyticsSite();
  const detailedReports=(site?'<details class="owner-fallback"><summary>Подробные отчёты</summary><p class="muted">Страны, устройства и другие отчёты доступны в вашем аккаунте GoatCounter.</p><a class="button secondary" href="'+esc(site)+'" target="_blank" rel="noopener noreferrer">Открыть GoatCounter</a></details>':'');
- app.innerHTML=title('Кабинет владельца','Посещения SALAH')+'<section class="panel section admin-intro"><div class="owner-topline"><span class="owner-private"><span aria-hidden="true">●</span> Личный кабинет</span><button class="text-button" id="owner-sign-out">Выйти</button></div><div class="owner-periods" role="group" aria-label="Период статистики">'+[[1,'Сутки'],[7,'Неделя'],[30,'Месяц']].map(([days,label])=>'<button type="button" data-period="'+days+'" aria-pressed="'+(period===days)+'">'+label+'</button>').join('')+'</div><div id="owner-statistics" aria-live="polite"><p class="muted">Загружаем статистику…</p></div>'+'</section>';
+ app.innerHTML=(options.embedded?'':title('Кабинет владельца','Посещения SALAH'))+'<section class="panel section admin-intro"><div class="owner-topline"><span class="owner-private"><span aria-hidden="true">●</span> Личный кабинет</span>'+(options.embedded?'':'<button class="text-button" id="owner-sign-out">Выйти</button>')+'</div><div class="owner-periods" role="group" aria-label="Период статистики">'+[[1,'Сутки'],[7,'Неделя'],[30,'Месяц']].map(([days,label])=>'<button type="button" data-period="'+days+'" aria-pressed="'+(period===days)+'">'+label+'</button>').join('')+'</div><div id="owner-statistics" aria-live="polite"><p class="muted">Загружаем статистику…</p></div>'+'</section>';
  app.querySelector('.admin-intro').insertAdjacentHTML('beforeend','<details class="owner-users settings-extra"'+(usersExpanded?' open':'')+'><summary><span>Пользователи<span id="owner-users-count" aria-live="polite"> — …</span></span></summary><div id="owner-users-list"></div></details>');
  let usersPage=1,usersLoad=0;
  const readUsers=async(quiet=false)=>{const version=++usersLoad,area=app.querySelector('#owner-users-list'),count=app.querySelector('#owner-users-count');if(!quiet||!area.children.length)area.innerHTML='<p class="muted" role="status">Загружаем пользователей…</p>';try{const result=await ownerUsers(usersPage);if(!active()||version!==usersLoad)return;if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('Список пользователей временно недоступен.');count.textContent=' — '+result.total.toLocaleString('ru-RU');const date=value=>value?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Ещё не входил';area.innerHTML='<p class="owner-users-heading"><span>Зарегистрировано: '+result.total+'</span><span class="presence-status is-online">'+(result.online||0)+' в сети</span></p><div class="owner-user-rows">'+(result.users.length?result.users.map(user=>'<div class="owner-user-row"><div><strong>'+esc(user.nickname)+'</strong><small>'+(user.online?'В приложении':user.lastSeenAt?'Был(а) '+esc(date(user.lastSeenAt)):'Последний вход: '+esc(date(user.lastSignInAt)))+'</small></div><span class="presence-status'+(user.online?' is-online':'')+'"><i aria-hidden="true"></i>'+(user.online?'В сети':'Не в сети')+'</span></div>').join(''):'<p class="muted">Пока нет зарегистрированных пользователей.</p>')+'</div><div class="button-row"><button class="text-button" id="users-prev" '+(usersPage===1?'disabled':'')+'>Назад</button><span>'+usersPage+'</span><button class="text-button" id="users-next" '+(usersPage*50>=result.total?'disabled':'')+'>Далее</button><button class="text-button" id="users-refresh">Обновить</button></div>';area.querySelector('#users-prev').onclick=()=>{usersPage--;readUsers();};area.querySelector('#users-next').onclick=()=>{usersPage++;readUsers();};area.querySelector('#users-refresh').onclick=()=>readUsers();}catch(error){if(active()&&version===usersLoad){count.textContent=' — недоступно';area.innerHTML='<p class="muted" role="status">'+esc(error.message)+'</p>';}}};
@@ -83,6 +84,29 @@ export async function showAdmin(app){
   }catch(error){if(active()&&version===load){area.innerHTML='<p class="muted" role="status">'+esc(error.message)+'</p><button class="button secondary" id="owner-retry">Повторить</button>';area.querySelector('#owner-retry')?.addEventListener('click',readStats);}}
  };
  app.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{period=Number(button.dataset.period);app.querySelectorAll('[data-period]').forEach(item=>item.setAttribute('aria-pressed',String(Number(item.dataset.period)===period)));readStats();});
- app.querySelector('#owner-sign-out').onclick=async()=>{try{await signOutOwner();if(active())showAdmin(app);}catch(error){if(active())app.querySelector('#owner-statistics').textContent=error.message;}};
+ if(app.querySelector('#owner-sign-out'))app.querySelector('#owner-sign-out').onclick=async()=>{try{await signOutOwner();if(active())showAdmin(app,options);}catch(error){if(active())app.querySelector('#owner-statistics').textContent=error.message;}};
  readUsers();readStats();
+}
+
+// The account shell owns navigation. This panel never grants access from a
+// saved session or client-side identity; the existing server gate and MFA stay.
+export async function mountOwnerAccount(container,{isActive}={}){
+ if(container.dataset.ownerAccountMount)return;
+ container.dataset.ownerAccountMount='1';
+ const active=()=>container.isConnected&&location.hash.split('?')[0]==='#account'&&(!isActive||isActive());
+ let unsubscribe=()=>{};
+ const cleanup=()=>{if(!active()){unsubscribe();window.removeEventListener('hashchange',cleanup);}};
+ const update=()=>{
+  if(!active()){cleanup();return;}
+  if(!ownerVerified()&&!ownerNeedsMfa()){container.hidden=true;container.innerHTML='';return;}
+  container.hidden=false;
+  if(container.querySelector('.owner-account'))return;
+  container.innerHTML='<details class="settings-extra owner-account"><summary>Кабинет владельца</summary><div class="owner-account-body"></div></details>';
+  const panel=container.querySelector('.owner-account'),body=container.querySelector('.owner-account-body');
+  panel.ontoggle=()=>{if(panel.open&&active())void showAdmin(body,{embedded:true,isActive:()=>active()&&panel.open&&container.querySelector('.owner-account-body')===body});else body.dataset.ownerScreen='';};
+  if(new URLSearchParams(location.hash.split('?')[1]||'').get('owner')==='1')panel.open=true;
+ };
+ unsubscribe=onOwnerChange(update);window.addEventListener('hashchange',cleanup);
+ try{await verifyOwner();}catch{}
+ update();
 }
