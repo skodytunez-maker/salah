@@ -1,5 +1,9 @@
 import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
-export function createPresence({send,visible,nextSequence,schedule,listen}){let stopped=false;const update=()=>{if(!stopped)void send(visible(),nextSequence()).catch(()=>{});};update();const timer=schedule(update),events=listen(update);return()=>{if(stopped)return;stopped=true;timer();events();void send(false,nextSequence()).catch(()=>{});};}
+export function createPresence({send,visible,nextSequence,schedule,listen}){ let stopped=false,inFlight=0,lastActive;
+ const update=()=>{if(stopped)return;const current=visible();if(current===lastActive&&(!current||inFlight>0))return;lastActive=current;inFlight++;Promise.resolve(send(current,nextSequence())).catch(()=>{}).finally(()=>inFlight--);};
+ update();const stopTimer=schedule(update),stopListen=listen(update);
+ return()=>{if(stopped)return;stopped=true;stopTimer();stopListen();if(lastActive!==false)void send(false,nextSequence()).catch(()=>{});};
+}
 let initialized=false;
 export function initAccountPresence(){if(initialized)return;initialized=true;let tab,sequence=0;try{tab=sessionStorage.getItem('salah-presence-tab')||crypto.randomUUID();sequence=Number(sessionStorage.getItem('salah-presence-sequence'))||0;sessionStorage.setItem('salah-presence-tab',tab)}catch{tab=crypto.randomUUID()}
  const nextSequence=()=>{sequence++;try{sessionStorage.setItem('salah-presence-sequence',String(sequence))}catch{}return sequence;};let stop=()=>{},token=null,revision=0;

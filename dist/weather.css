@@ -26,3 +26,6 @@ body.reduce-motion #weather-layer *{animation:none!important;transition:none!imp
 body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{opacity:0!important}
 
 #weather-layer:not([data-kind=rain]):not([data-kind=storm]) .weather-rain span,#weather-layer:not([data-kind=snow]) .weather-snow span,#weather-layer[data-clouds=off] .weather-clouds>div{animation-play-state:paused!important}
+
+/* Invisible precipitation needs no compositor layers. */
+#weather-layer:not([data-kind=rain]):not([data-kind=storm]) .weather-rain span,#weather-layer:not([data-kind=snow]) .weather-snow span,#weather-layer[data-motion=off] span{will-change:auto}

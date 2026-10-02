@@ -29,7 +29,7 @@ function paintWeather(effect,now,weather,frame,home){
  const view=weatherPreview!==null?weatherPreviews[weatherPreview]:weatherFrame(settings.weather?weather:null,now);
  const active=home&&view.fresh;
  const reduced=settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const moving=settings.weatherAnimation&&!reduced&&!document.hidden;
+ const moving=active&&settings.weatherAnimation&&!reduced&&!document.hidden;
  effect.className='';effect.dataset.kind=active?view.kind:'none';effect.dataset.source=active?(weatherPreview!==null?'preview':'live'):'none';effect.dataset.motion=moving?'on':'off';effect.dataset.clouds=active&&view.clouds>0?'on':'off';
  effect.style.setProperty('--weather-clouds',active?String(view.clouds):'0');
  effect.style.setProperty('--weather-day',String(frame.day));
@@ -46,6 +46,7 @@ function paintWeather(effect,now,weather,frame,home){
 }
 
 let previousSkyTime=null,previousSkyContext=null,previousSky=null;
+let inactiveContext=null;
 function paintSky(scene,sky,now){
  const context=[settings.wallpaper,settings.backgroundMode,settings.city?.latitude,settings.city?.longitude,previewOverride,previewStarted].join(':');
  const reset=previousSkyContext!==context||previousSkyTime===null||Math.abs(now-previousSkyTime)>5000||previousSky&&['sunX','moonX'].some(key=>Math.abs(sky[key]-previousSky[key])>15);
@@ -62,6 +63,10 @@ export function atmosphere(now,times,weather){
  lastContext={times,weather};
  const layer=document.getElementById('atmosphere'),effect=document.getElementById('weather-layer'),home=document.body.classList.contains('home-page');
  document.body.classList.toggle('reduce-motion',settings.motion||!settings.transitions);
+ if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';return;}
+ const staticContext=[home,settings.wallpaper,settings.backgroundMode,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');
+ if(!home&&previewStarted===null&&weatherPreview===null&&inactiveContext===staticContext)return;
+ inactiveContext=home?null:staticContext;
  if(previewStarted!==null&&(!home||(previewOverride===null&&performance.now()-previewStarted>=22000)))stopScenePreview();
  const preview=previewStarted!==null,frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode),scene=sceneLayer();
  document.body.classList.toggle('scene-preview',preview);
