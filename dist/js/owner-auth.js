@@ -98,7 +98,14 @@ export function initOwnerAccess(onChanged){
  const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive())verifyOwner({verifySession:true}).catch(()=>{});};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
  window.addEventListener('online',resume);
- window.addEventListener('storage',event=>{if(event.key===SESSION_KEY){revision++;revoke();resume();}});
+ window.addEventListener('storage',event=>{if(event.key!==SESSION_KEY)return;
+  // The SDK broadcasts routine renewals itself. Refreshing again on its storage
+  // write makes all open tabs rotate and rebroadcast the session indefinitely.
+  // Removal, malformed data or another account still revoke the UI immediately.
+  let next;try{next=event.newValue&&JSON.parse(event.newValue);}catch{}
+  if(!next?.user?.id||next.user.id!==verifiedUserId){revision++;revoke();}
+  if(ownerScreenActive())setTimeout(()=>verifyOwner().catch(()=>{}),0);
+ });
  setInterval(()=>{if(!document.hidden&&ownerScreenActive())verifyOwner().catch(()=>{});},45000);
  resume();
 }
