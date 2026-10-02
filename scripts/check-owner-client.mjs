@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
-let session=null,authCallback,allowed=false,requests=0,changed=0,needsMfa=false;
+let session=null,authCallback,allowed=false,requests=0,changed=0,needsMfa=false,notifyRefresh=false;
 globalThis.window={supabase:{createClient:(_url,key,options)=>{
  assert.ok(key.startsWith('sb_publishable_'));
  assert.equal(options.auth.detectSessionInUrl,false);
@@ -9,6 +9,7 @@ globalThis.window={supabase:{createClient:(_url,key,options)=>{
  return {auth:{
   onAuthStateChange:fn=>{authCallback=fn;},
   getSession:async()=>({data:{session}}),
+  refreshSession:async()=>{if(notifyRefresh){session={...session,access_token:session.access_token+'-renewed'};authCallback('TOKEN_REFRESHED',session);}return{data:{session}};},
   mfa:{listFactors:async()=>({data:{totp:[{id:'fixture-factor',status:'verified'}]}}),enroll:async()=>({data:{id:'fixture-factor',totp:{qr_code:'<svg/>',secret:'TEST-ONLY'}}}),challengeAndVerify:async({factorId,code})=>{assert.equal(factorId,'fixture-factor');if(code!=='123456')return {error:Error('invalid code')};needsMfa=false;return{error:null};}},
   signInWithPassword:async()=>({error:null}),
   signOut:async()=>{session=null;authCallback('SIGNED_OUT',null);return{error:null};}
@@ -34,6 +35,7 @@ await verifyOwner(); // Finish the sign-out callback's empty-session check.
 session={access_token:'verified-user-session'};allowed=true;
 globalThis.fetch=async(...args)=>{const response=await originalFetch(...args);if(refreshDuringGate){refreshDuringGate=false;authCallback('TOKEN_REFRESHED',session);}return response;};
 const beforeRefresh=requests;assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(requests,beforeRefresh+2);
+notifyRefresh=true;assert.equal(await verifyOwner({verifySession:true}),true);notifyRefresh=false;
 await signOutOwner();assert.equal(ownerVerified(),false);
 console.log('PASS: saved session alone does not authorize; server deny removes owner access; sign-out revokes the menu.');
 

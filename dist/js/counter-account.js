@@ -1,4 +1,4 @@
-import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
+import{accountAuthClient,checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{createCounterSync}from './counter-sync-core.js';
 import{esc}from './ui.js';
 let engine=null,session=null,timer=null,busy=null,status='local',reason='',host=null,accountScreen=0,accountArea=null;
@@ -16,16 +16,20 @@ function getEngine(){return engine||(engine=createCounterSync({storage:localStor
  const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/adhkar-sync',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify(component),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
  const result=await response.json();if(!response.ok)throw Error(result.error||'storage_unavailable');return result;
 }}));}
-export async function synchronizeCounters(){
- if(busy){schedule();return busy;}
- busy=(async()=>{try{const {data,error}=await accountAuthClient().auth.getSession();if(error)throw error;const next=data.session;const uid=next?.user?.id||null;session=next;await getEngine().activate(uid);if(!uid){status='local';reason='';notice();return{ok:false,reason:'signed_out'};}status='saving';notice();const result=await getEngine().sync();status=result.ok?'saved':'pending';reason=result.reason||'';notice();return result;}catch{status='pending';reason='storage_unavailable';notice();return{ok:false,reason};}})();try{return await busy;}finally{busy=null;}
+export async function synchronizeCounters({verifySession=false}={}){
+ if(busy){schedule(verifySession);return busy;}
+ const wasSignedIn=counterSyncStatus().signedIn;
+ busy=(async()=>{try{const checked=await checkAccountSession({force:verifySession});if(checked.state==='unavailable'||checked.state==='changed')throw Error('auth_unavailable');const next=checked.session;const uid=next?.user?.id||null;session=next;await getEngine().activate(uid);if(!uid){status='local';reason=checked.state==='revoked'?'session_expired':'';notice();return{ok:false,reason:'signed_out'};}status='saving';notice();const result=await getEngine().sync();status=result.ok?'saved':'pending';reason=result.reason||'';notice();return result;}catch{status='pending';reason='storage_unavailable';notice();return{ok:false,reason};}})();let result;try{result=await busy;}finally{busy=null;}
+ if(wasSignedIn&&!counterSyncStatus().signedIn&&host&&location.hash.split('?')[0]==='#account'&&host.querySelector('#account-form-area')===accountArea)await showCounterAccount(host,'Вход завершён. Войдите снова с новым паролем или кодом из письма.',true);
+ return result;
 }
-function schedule(){clearTimeout(timer);timer=setTimeout(()=>synchronizeCounters(),700);}
+let pendingSessionCheck=false;
+function schedule(verify=false){pendingSessionCheck=pendingSessionCheck||verify===true;clearTimeout(timer);timer=setTimeout(()=>{const verifySession=pendingSessionCheck;pendingSessionCheck=false;synchronizeCounters({verifySession});},700);}
 export function initCounterAccounts(){
  accountAuthClient().auth.onAuthStateChange(()=>queueMicrotask(schedule));
  window.addEventListener('salah:counter-changed',schedule);
  window.addEventListener('storage',e=>{if(e.key==='salah:adhkar-progress-v2')schedule();});
- window.addEventListener('online',schedule);document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});setInterval(()=>{if(session&&!document.hidden)synchronizeCounters();},30000);schedule();
+ window.addEventListener('online',()=>schedule(true));window.addEventListener('pageshow',()=>schedule(true));document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(true);});setInterval(()=>{if(session&&!document.hidden)synchronizeCounters({verifySession:true});},30000);schedule(true);
 }
 function statusText(){return status==='saved'?'Накопительный счёт сохранён в аккаунте.':status==='saving'?'Сохраняем счёт…':reason==='mfa_required'?'Подтвердите вход через Google Authenticator.':status==='pending'?'Счёт сохранён на устройстве. Синхронизация ожидает соединения.':'Счёт хранится на этом устройстве.';}
 function updateStatus(){const el=document.getElementById('account-sync-status');if(el&&counterSyncStatus().signedIn)el.textContent=statusText();const mfa=document.getElementById('account-mfa');if(mfa)mfa.hidden=reason!=='mfa_required';}

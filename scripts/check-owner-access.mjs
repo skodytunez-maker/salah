@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 const source=await readFile(new URL('../supabase/functions/owner-access/index.ts',import.meta.url),'utf8');
-const {createOwnerHandler}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {createOwnerHandler:createRawOwnerHandler}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const createOwnerHandler=args=>createRawOwnerHandler({isSessionActive:async()=>true,...args});
 let authCalls=0,statsCalls=0;
 const user={id:'dc1eb1cc-6f8f-472f-a937-735fbfbba4b7',email_confirmed_at:'2026-10-02',is_anonymous:false,factors:[{status:'verified',factor_type:'totp'}]};
-const claims={sub:user.id,iss:'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',aal:'aal2'};
+const claims={sub:user.id,iss:'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',aal:'aal2',session_id:'11111111-1111-4111-8111-111111111111'};
 const getClaims=async()=>({data:{claims}});
 const handler=createOwnerHandler({getClaims,getUser:async token=>{authCalls++;return token==='valid-owner-token'?{data:{user}}:token==='other-user-token'?{data:{user:{...user,id:'someone-else',user_metadata:{owner:true}}}}:{error:new Error('invalid')};},statsToken:'server-only-test-token',fetcher:async(url,options)=>{statsCalls++;assert.equal(url.origin,'https://salah-saadi.goatcounter.com');assert.equal(url.pathname,'/api/v0/stats/total');assert.equal(options.headers.Authorization,'Bearer server-only-test-token');return Response.json({total:12,stats:[{day:'2026-10-02',daily:12}],token:'never expose'});}});
 const request=(token,query='',extra={})=>new Request('https://project.supabase.co/functions/v1/owner-access'+query,{headers:{...(token?{Authorization:'Bearer '+token}:{}),...extra}});
@@ -50,3 +51,8 @@ assert.equal((await usersFirstFactor(request('valid-owner-token','?mode=users'))
 const usersOther=createOwnerHandler({getUser:async()=>({data:{user:{...user,id:'11111111-1111-4111-8111-111111111111',user_metadata:{owner:true}}}}),getClaims,readUsers:async()=>{throw Error('private user list leaked');}});
 assert.equal((await usersOther(request('valid-owner-token','?mode=users'))).status,403);
 console.log('PASS: only MFA owner sees paginated nicknames and sign-in dates; emails/metadata/secrets excluded; password alone and forged role cannot read users.');
+
+for(const mode of ['gate','stats','users']){let leaked=false;const revokedHandler=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,isSessionActive:async(uid,sid)=>{assert.equal(uid,user.id);assert.equal(sid,claims.session_id);return false;},statsToken:'never-return',fetcher:async()=>{leaked=true;return Response.json({});},readUsers:async()=>{leaked=true;return{};}});assert.equal((await revokedHandler(request('valid-owner-token','?mode='+mode))).status,401);assert.equal(leaked,false);}
+const missingSessionId=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims:async()=>({data:{claims:{...claims,session_id:undefined}}})});assert.equal((await missingSessionId(request('valid-owner-token'))).status,401);
+const sessionDbUnavailable=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,isSessionActive:async()=>{throw Error('Private database error');}});assert.equal((await sessionDbUnavailable(request('valid-owner-token'))).status,503);
+console.log('PASS: revoked or missing signed session denied before owner data; unavailable session check fails closed.');

@@ -4,10 +4,10 @@ const core=await import('../dist/js/counter-sync-core.js');
 const source=await readFile(new URL('../supabase/functions/adhkar-sync/index.ts',import.meta.url),'utf8');
 const {createCounterHandler,aggregateCounters,initialSeed}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const A='11111111-1111-4111-8111-111111111111',B='22222222-2222-4222-8222-222222222222',OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
-let actor=A,confirmed=true,anonymous=false,aal='aal1',issuer='https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',valid=true,rate=true;
+let actor=A,confirmed=true,anonymous=false,aal='aal1',issuer='https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',valid=true,rate=true,sessionAlive=true;
 const rows=new Map();let reads=0;
 const db={rate:async()=>rate,read:async uid=>{reads++;return aggregateCounters([...(rows.get(uid)?.values()||[])]);},merge:async(uid,c)=>{let list=rows.get(uid);if(!list)rows.set(uid,list=new Map());const old=list.get(c.device);if(!old)list.set(c.device,{...c,seed:initialSeed(aggregateCounters([...list.values()]),c.seed)});else if(c.sequence>old.sequence)list.set(c.device,{...c,seed:old.seed});return aggregateCounters([...list.values()]);}};
-const h=createCounterHandler({db,getUser:async()=>valid?{data:{user:{id:actor,is_anonymous:anonymous,email_confirmed_at:confirmed?'date':null,factors:[{status:'verified',factor_type:'totp'}]}}}:{error:true},getClaims:async()=>({data:{claims:{sub:actor,iss:issuer,aal}}})});
+const h=createCounterHandler({db,isSessionActive:async()=>sessionAlive,getUser:async()=>valid?{data:{user:{id:actor,is_anonymous:anonymous,email_confirmed_at:confirmed?'date':null,factors:[{status:'verified',factor_type:'totp'}]}}}:{error:true},getClaims:async()=>({data:{claims:{sub:actor,iss:issuer,aal,session_id:'33333333-3333-4333-8333-333333333333'}}})});
 const request=(body=null,extra={})=>new Request('https://project.supabase.co/functions/v1/adhkar-sync'+(extra.query||''),{method:body?'POST':extra.method||'GET',headers:{Authorization:'Bearer valid-test-token',Origin:'https://skodytunez-maker.github.io','Content-Type':'application/json',...extra.headers},...(body?{body:JSON.stringify(body)}:{})});
 assert.equal((await h(new Request('https://x.test'))).status,401);valid=false;assert.equal((await h(request())).status,401);valid=true;
 for(const flag of ['confirmed','anonymous','issuer']){confirmed=flag!=='confirmed';anonymous=flag==='anonymous';issuer=flag==='issuer'?'https://evil.test':'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1';assert.equal((await h(request())).status,403);}confirmed=true;anonymous=false;issuer='https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1';
@@ -39,3 +39,6 @@ const stale=create(phone);await stale.activate(A);await e.activate(B);assert.equ
 const corrupt=new Memory();corrupt.setItem(KEY,'broken');const ce=create(corrupt);await ce.activate(A);assert.equal((await ce.sync()).ok,false);assert.equal(corrupt.getItem(KEY),'broken');
 const denied=new Memory();set(denied,4);const de=create(denied);await de.activate(A);const original=denied.setItem.bind(denied);denied.setItem=()=>{throw Error('quota')};assert.equal((await de.sync()).ok,false);denied.setItem=original;assert.equal(get(denied),4);
 console.log('PASS: signed confirmed accounts isolated; owner requires MFA; duplicate/out-of-order retry, reinstall, legacy import, two devices, offline, concurrent increment, logout, cross-tab switch and failed storage preserve counters.');
+
+sessionAlive=false;const readsBeforeRevoked=reads;assert.equal((await h(request())).status,401);assert.equal((await h(request(comp))).status,401);assert.equal(reads,readsBeforeRevoked);sessionAlive=true;
+console.log('PASS: revoked session cannot read or change counters while its old access token has not expired.');

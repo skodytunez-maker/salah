@@ -1,3 +1,4 @@
+import{createSessionGuard}from './auth-session.js';
 // Public connection key; owner authority is always checked by the server.
 export const OWNER_PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 export const OWNER_PUBLIC_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
@@ -25,7 +26,7 @@ async function callOwner(session,query=''){
  if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403)throw Error('Этот аккаунт не имеет доступа к кабинету.');if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
  return response.json();
 }
-export async function verifyOwner(){
+export async function verifyOwner({verifySession=false}={}){
  if(pending)return pending;
  const task=(async()=>{
   const auth=authClient();
@@ -33,10 +34,10 @@ export async function verifyOwner(){
   // session instead of displaying a login form for a successfully renewed one.
   for(let attempt=0;attempt<3;attempt++){
    const started=revision;
-   const {data,error}=await auth.auth.getSession();
+   const checked=await checkAccountSession({force:verifySession&&attempt===0});
    if(started!==revision)continue;
-   if(error||!data.session){revoke();return false;}
-   const result=await callOwner(data.session);
+   if(checked.state!=='valid'||!checked.session){revoke();return false;}
+   const result=await callOwner(checked.session);
    if(started!==revision)continue;
    if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
    const changed=!verified;verified=true;verifiedAt=Date.now();if(changed)publish();return true;
@@ -85,7 +86,7 @@ export async function ownerStatistics(days=7){
 }
 export function initOwnerAccess(onChanged){
  onOwnerChange(onChanged);
- const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored)verifyOwner().catch(()=>{});};
+ const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored)verifyOwner({verifySession:true}).catch(()=>{});};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){revoke();resume();}});
  window.addEventListener('online',resume);
  window.addEventListener('storage',event=>{if(event.key===SESSION_KEY){revision++;revoke();resume();}});
@@ -95,5 +96,6 @@ export function initOwnerAccess(onChanged){
 
 // Shared session; authority is still checked only by protected server functions.
 export const accountAuthClient=()=>authClient();
+export const checkAccountSession=createSessionGuard({getAuth:()=>authClient().auth});
 
 export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error("Неизвестная страница.");const {data,error}=await authClient().auth.getSession();if(error)throw Error("Войдите снова.");return callOwner(data.session,"?mode=users&page="+page);}

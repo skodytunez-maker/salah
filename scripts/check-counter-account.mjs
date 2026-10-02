@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
 import {createCounterSync} from '../dist/js/counter-sync-core.js';
+import {createSessionGuard} from '../dist/js/auth-session.js';
 
 const source=await readFile(new URL('../dist/js/counter-account.js',import.meta.url),'utf8');
 const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({showCounterAccount,counterSyncStatus,synchronizeCounters});';
@@ -25,19 +26,20 @@ function deferred(){let resolve;const promise=new Promise(done=>resolve=done);re
 function browser(){
  const app=new Element(),location={hash:'#account'},storage=new Storage();
  const listeners=new Map(),window={addEventListener(type,callback){if(!listeners.has(type))listeners.set(type,[]);listeners.get(type).push(callback);},dispatchEvent(event){for(const callback of listeners.get(event.type)||[])callback(event);}};
- const fixture={now:0,session:null,otpError:null,verifyError:null,passwordError:null,verifySession:true,otpGate:null,verifyGate:null,passwordGate:null,sessionGate:null,mail:[],codes:[],passwords:[],updates:[],updateError:null,updateGate:null,factors:[],factorError:null,levelError:null,level:{currentLevel:"aal1",nextLevel:"aal1"},syncRequests:0};
+ const fixture={now:0,session:null,otpError:null,verifyError:null,passwordError:null,verifySession:true,otpGate:null,verifyGate:null,passwordGate:null,sessionGate:null,mail:[],codes:[],passwords:[],updates:[],updateError:null,updateGate:null,factors:[],factorError:null,levelError:null,level:{currentLevel:"aal1",nextLevel:"aal1"},syncRequests:0,refreshes:0,refreshError:null,refreshGate:null,signOuts:[]};
  const confirmed=(email,nickname='Fixture')=>({access_token:'fixture-token',user:{id:'11111111-1111-4111-8111-111111111111',email,email_confirmed_at:'2026-10-02T01:00:00Z',user_metadata:{nickname}}});
  const auth={
   getSession:async()=>{if(fixture.sessionGate)await fixture.sessionGate.promise;return{data:{session:fixture.session},error:null};},
+  refreshSession:async()=>{fixture.refreshes++;if(fixture.refreshGate)await fixture.refreshGate.promise;return{data:{session:fixture.session},error:fixture.refreshError};},
   signInWithOtp:async options=>{fixture.mail.push(options);if(fixture.otpGate)await fixture.otpGate.promise;return{data:{user:null,session:null},error:fixture.otpError};},
   verifyOtp:async options=>{fixture.codes.push(options);if(fixture.verifyGate)await fixture.verifyGate.promise;if(fixture.verifyError)return{error:fixture.verifyError};if(!fixture.verifySession)return{data:{session:null},error:null};fixture.session=confirmed(options.email);return{data:{session:fixture.session},error:null};},
   signInWithPassword:async options=>{fixture.passwords.push(options);if(fixture.passwordGate)await fixture.passwordGate.promise;if(fixture.passwordError)return{error:fixture.passwordError};fixture.session=confirmed(options.email);return{data:{session:fixture.session},error:null};},
   mfa:{listFactors:async()=>({data:{totp:fixture.factors},error:fixture.factorError}),getAuthenticatorAssuranceLevel:async()=>({data:fixture.level,error:fixture.levelError})},
   updateUser:async options=>{fixture.updates.push(options);if(fixture.updateGate)await fixture.updateGate.promise;if(fixture.updateError)return{error:fixture.updateError};fixture.session.user.user_metadata={...fixture.session.user.user_metadata,...options.data};return{error:null};},
-  signOut:async()=>{fixture.session=null;return{error:null};}
+  signOut:async options=>{fixture.signOuts.push(options);fixture.session=null;return{error:null};}
  };
  const navigator={onLine:true};class FixtureDate extends Date{static now(){return fixture.now;}}
- const context=createContext({Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,createCounterSync,accountAuthClient:()=>({auth}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
+ const context=createContext({Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
   fetch:async(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/adhkar-sync');assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');fixture.syncRequests++;return Response.json({totals:{}});},
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
  return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
@@ -122,3 +124,13 @@ const offlineReset=browser();await recover(offlineReset);await confirm(offlineRe
 const failedReset=browser();await recover(failedReset);await confirm(failedReset);failedReset.fixture.updateError=Error('Private provider error');await newPassword(failedReset).submit();assert.match(failedReset.select('#account-sync-status').textContent,/Не удалось изменить пароль/);assert.doesNotMatch(failedReset.app.textContent,/Private provider error/);assert.equal(failedReset.select('#counter-new-password').value,'');
 const invalidReset=browser();await recover(invalidReset);invalidReset.fixture.verifyError=Error('invalid');await confirm(invalidReset);assert.equal(invalidReset.select('#counter-password-update'),null);assert.equal(invalidReset.fixture.updates.length,0);
 console.log('PASS: forgotten password uses existing-account OTP only; verification required before password form; profile preserved; length, confirmation, duplicates, offline/provider errors and enrolled MFA fail closed.');
+
+// A revoked session must leave the account screen, while its local counters remain available for a later login.
+const revoked=browser();await open(revoked);await confirm(await (async()=>{await requestCode(revoked);return revoked;})());
+const savedAccount=revoked.select('#counter-profile');revoked.fixture.now=30001;revoked.fixture.refreshError={code:'refresh_token_not_found',status:400,message:'Private token detail'};
+await revoked.synchronizeCounters({verifySession:true});assert.equal(revoked.counterSyncStatus().signedIn,false);assert.equal(revoked.select('#counter-account-heading').textContent,'Вход и регистрация');assert.match(revoked.select('#account-sync-status').textContent,/Вход завершён/);assert.equal(revoked.fixture.signOuts.at(-1).scope,'local');assert.doesNotMatch(revoked.app.textContent,/Private token/);assert.notEqual(revoked.select('#counter-profile'),savedAccount);
+for(const error of [{status:500},{status:429},{message:'Network unavailable'}]){const transient=browser();await open(transient);await requestCode(transient);await confirm(transient);const before=transient.fixture.syncRequests;transient.fixture.refreshError=error;await transient.synchronizeCounters({verifySession:true});assert.equal(transient.counterSyncStatus().signedIn,true);assert.equal(transient.fixture.signOuts.length,0);assert.equal(transient.fixture.syncRequests,before);assert.ok(transient.select('#counter-profile'));}
+const guardUser={access_token:'test-old-token'},replacement={access_token:'test-new-token'};let guardSession=guardUser,guardRefreshes=0,guardNow=0,guardFailure=null,guardGate=null,guardOut=0;
+const guardAuth={getSession:async()=>({data:{session:guardSession}}),refreshSession:async()=>{guardRefreshes++;if(guardGate)await guardGate.promise;return{data:{session:guardSession},error:guardFailure};},signOut:async()=>{guardOut++;guardSession=null;return{};}};
+const guard=createSessionGuard({getAuth:()=>guardAuth,now:()=>guardNow});await guard();await guard();assert.equal(guardRefreshes,1);await guard({force:true});assert.equal(guardRefreshes,2);guardGate=deferred();guardFailure={code:'refresh_token_not_found'};const staleGuard=guard({force:true});await new Promise(done=>setImmediate(done));guardSession=replacement;guardGate.resolve();assert.equal((await staleGuard).state,'changed');assert.equal(guardOut,0,'A stale failure cannot sign out a new session');guardGate=null;guardFailure=null;assert.equal((await guard({force:true})).state,'valid');
+console.log('PASS: revoked sessions require login on recheck; counters and temporary offline/429/5xx sessions preserved; refresh coalesced and stale failures cannot log out a new account.');

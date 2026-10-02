@@ -16,7 +16,7 @@ export function initialSeed(current,seed){const result={};for(const [id,n]of Obj
 const ORIGIN='https://skodytunez-maker.github.io';
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 const OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
-export function createCounterHandler({getUser,getClaims,db}){return async req=>{
+export function createCounterHandler({getUser,getClaims,db,isSessionActive=null}){return async req=>{
  const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Vary':'Origin','X-Content-Type-Options':'nosniff'};
  if(origin===ORIGIN)Object.assign(headers,{'Access-Control-Allow-Origin':ORIGIN,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'GET, POST, OPTIONS'});
  const reply=(status,value)=>new Response(JSON.stringify(value),{status,headers});
@@ -26,6 +26,8 @@ export function createCounterHandler({getUser,getClaims,db}){return async req=>{
  const auth=req.headers.get('Authorization')||'';if(!/^Bearer [A-Za-z0-9._-]{16,8192}$/.test(auth))return reply(401,{error:'sign_in_required'});
  let user,claims;try{const result=await getUser(auth.slice(7));if(result.error)return reply(401,{error:'invalid_session'});user=result.data?.user;const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}catch{return reply(503,{error:'auth_unavailable'});}
  if(!user||!UUID.test(user.id)||user.is_anonymous||!user.email_confirmed_at||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1')return reply(403,{error:'confirmed_account_required'});
+ if(!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
+ try{if(!isSessionActive||!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'});}
  if(user.id===OWNER&&(claims.aal!=='aal2'||!user.factors?.some(f=>f.status==='verified'&&f.factor_type==='totp')))return reply(403,{error:'mfa_required'});
  try{
  if(!await db.rate(user.id))return reply(429,{error:'try_later'});
@@ -46,5 +48,5 @@ if(typeof Deno!=='undefined'){
   async read(uid){return aggregateCounters(await readRows(sql,uid));},
   async merge(uid,c){return sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(hashtextextended(${uid},43))`;const [existing]=await tx`select sequence from salah_counter_private.components where user_id=${uid}::uuid and device=${c.device}::uuid`;if(!existing){const [n]=await tx`select count(*)::int as n from salah_counter_private.components where user_id=${uid}::uuid`;if(n.n>=100)throw Error('device_limit');}const seed=existing?c.seed:initialSeed(aggregateCounters(await readRows(tx,uid)),c.seed);await tx`insert into salah_counter_private.components(user_id,device,sequence,seed,delta) values(${uid}::uuid,${c.device}::uuid,${c.sequence},${tx.json(seed)},${tx.json(c.delta)}) on conflict(user_id,device) do update set sequence=excluded.sequence,delta=excluded.delta where salah_counter_private.components.sequence<excluded.sequence`;return aggregateCounters(await readRows(tx,uid));});}
  };
- Deno.serve(createCounterHandler({getUser:token=>auth.auth.getUser(token),getClaims:token=>auth.auth.getClaims(token),db}));
+ Deno.serve(createCounterHandler({getUser:token=>auth.auth.getUser(token),getClaims:token=>auth.auth.getClaims(token),db,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;}}));
 }
