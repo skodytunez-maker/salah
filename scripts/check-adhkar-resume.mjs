@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
+import {createFreeCounterStore} from '../dist/js/free-counter.js';
 import {createAdhkarProgressStore} from '../dist/js/adhkar-progress.js';
 
 // Exercise the actual screen module with its real progress store. The small DOM
@@ -52,7 +53,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
   const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},
     read:(key,fallback)=>{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)},write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},settings:{haptic:false},
-    esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),toast:notice=>notices.push(notice),modal(){},closeModal(){},dateKey:()=>currentDay,createAdhkarProgressStore,
+    esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),toast:notice=>notices.push(notice),modal(){},closeModal(){},dateKey:()=>currentDay,createAdhkarProgressStore,createFreeCounterStore,
     recordingFor:(_kind,id)=>({url:'https://test.invalid/'+id+'.mp3'}),
     Audio:class {constructor(url){this.src=url;this.paused=true;this.pauseCalls=0;audio.push(this)}play(){this.paused=false;return Promise.resolve()}pause(){this.paused=true;this.pauseCalls++}},
     fetch:async()=>{fetches++;return {ok:true,json:async()=>structuredClone(items)}}

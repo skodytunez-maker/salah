@@ -33,6 +33,7 @@ jobs:
           node scripts/check-owner-client.mjs
           node scripts/check-adhkar.mjs
           node scripts/check-adhkar-resume.mjs
+          node scripts/check-free-counter.mjs
           node scripts/check-counter-sync.mjs
           node scripts/check-counter-account.mjs
           node scripts/check-tyumen-october.mjs

@@ -1,3 +1,4 @@
+import{prepareFreeCounter,freeRound,counterTransaction}from './free-counter.js';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const record=v=>v&&typeof v==='object'&&!Array.isArray(v);
 export function cleanCounters(value,signed=false){
@@ -23,11 +24,20 @@ export function createCounterSync({storage,request,uuid,changed=()=>{},withLock=
  function collect(uid){if(storage.getItem('salah:counter-active-account')!==uid)throw Error('account_changed');const missing=storage.getItem(PROGRESS)===null,d=doc(),s=state(uid,d);if(missing){s.observed={};saveState(uid,s);return s;}let dirty=false;for(const id of new Set([...Object.keys(d.totals),...Object.keys(s.observed)])){const diff=(d.totals[id]||0)-(s.observed[id]||0);if(diff){s.delta[id]=(s.delta[id]||0)+diff;dirty=true;}}if(dirty){s.sequence++;s.observed={...d.totals};}saveState(uid,s);return s;}
  function transaction(writes){const old=writes.map(([k])=>[k,storage.getItem(k)]);try{for(const [k,v]of writes)storage.setItem(k,v);}catch(error){for(const [k,v]of old)try{if(v===null)storage.removeItem(k);else storage.setItem(k,v);}catch{}throw error;}}
  async function activate(uid){await withLock(()=>{
- const current=storage.getItem('salah:counter-active-account')||'guest';if(current===(uid||'guest')){active=uid;return;}
+ const current=storage.getItem('salah:counter-active-account')||'guest';
+ // Import the existing free round once, before it is assigned to an account.
+ // A missing progress file with surviving sync metadata must first be restored.
+ if(storage.getItem(PROGRESS)!==null||current==='guest'||!storage.getItem(key(current)))try{prepareFreeCounter(storage)}catch{} // damaged data stays intact; sync reports the failure
+
+ if(current===(uid||'guest')){active=uid;return;}
  const raw=storage.getItem(PROGRESS),next=storage.getItem('salah:counter-local:'+(uid||'guest'));
  const first=uid&&current==='guest'&&!storage.getItem(key(uid))&&!next;
  const writes=[['salah:counter-local:'+current,raw||JSON.stringify({version:2,totals:{},days:{}})],['salah:counter-active-account',uid||'guest'],[PROGRESS,next||(first?raw:null)||JSON.stringify({version:2,totals:{},days:{}})]];
- if(first)writes[0][1]=JSON.stringify({version:2,totals:{},days:{}});transaction(writes);active=uid;changed('account');
+ const free=storage.getItem('salah:dhikr-free'),nextFree=storage.getItem('salah:counter-free:'+(uid||'guest'));
+ const emptyFree=JSON.stringify({count:0,target:33});
+ freeRound(free);freeRound(nextFree);
+ writes.push(['salah:counter-free:'+current,first?emptyFree:free||emptyFree],['salah:dhikr-free',nextFree||(first?free:null)||emptyFree]);
+ if(first)writes[0][1]=JSON.stringify({version:2,totals:{},days:{}});counterTransaction(storage,writes);active=uid;changed('account');
  });}
  async function sync(){if(!active)return{ok:false,reason:'signed_out'};if(pending)return pending;
  const uid=active;pending=(async()=>{try{
