@@ -41,7 +41,7 @@ export async function showCounterAccount(container,message='',force=false,mode='
  container.innerHTML='<section class="panel section owner-login"><h1 id="counter-account-heading">Вход и регистрация</h1><p id="account-sync-status" class="muted" role="status">Проверяем вход…</p><div id="account-form-area"></div><a class="button" id="account-mfa" href="#admin" hidden>Подтвердить защищённый вход</a><a class="text-button" href="#more">Назад</a></section>';
  const area=container.querySelector('#account-form-area');accountArea=area;
  const active=()=>host===container&&screen===accountScreen&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===area;
- const report=text=>{if(active())container.querySelector('#account-sync-status').textContent=text;};
+ const report=text=>{if(active()){const notice=container.querySelector('#account-sync-status');notice.textContent=text;if(text)notice.scrollIntoView?.({block:'nearest'});}};
  await synchronizeCounters();if(!active())return;
  if(counterSyncStatus().signedIn){
   container.querySelector('#counter-account-heading').textContent='Мой аккаунт';
@@ -82,13 +82,15 @@ export async function showCounterAccount(container,message='',force=false,mode='
   };
  }else{
   const recovery=mode==='recover';if(recovery)container.querySelector('#counter-account-heading').textContent='Восстановить пароль';
-  area.innerHTML=recovery?'<form id="counter-account-email-form"><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" type="email" autocomplete="email" required><button class="button" type="submit">Получить код</button><p class="muted owner-note">Введите почту вашего аккаунта. После подтверждения можно задать новый пароль.</p></form><button class="text-button" id="counter-recovery-back">Вернуться ко входу</button>':'<form id="counter-account-email-form"><label for="counter-account-nickname">Ник</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" type="email" autocomplete="email" required><button class="button" type="submit">Получить код для входа или регистрации</button><p class="muted owner-note">При первом входе создаётся личный аккаунт. Подтвердите почту кодом из письма.</p></form><details class="settings-extra"><summary>Войти с паролем</summary><form id="counter-account-login"><label for="counter-password-email">Электронная почта</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">Пароль</label><input id="counter-account-password" type="password" autocomplete="current-password" required><button class="button" type="submit">Войти</button><button class="text-button" type="button" id="counter-password-forgot">Забыли пароль?</button></form></details>';
+  area.innerHTML=recovery?'<form id="counter-account-email-form" novalidate><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">Получить код</button><p class="muted owner-note">Введите почту вашего аккаунта. После подтверждения можно задать новый пароль.</p></form><button class="text-button" id="counter-recovery-back">Вернуться ко входу</button>':'<form id="counter-account-email-form" novalidate><label for="counter-account-nickname">Ник</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">Получить код для входа или регистрации</button><p class="muted owner-note">При первом входе создаётся личный аккаунт. Подтвердите почту кодом из письма.</p></form><details class="settings-extra"><summary>Войти с паролем</summary><form id="counter-account-login" novalidate><label for="counter-password-email">Электронная почта</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">Пароль</label><input id="counter-account-password" type="password" autocomplete="current-password" required><button class="button" type="submit">Войти</button><button class="text-button" type="button" id="counter-password-forgot">Забыли пароль?</button></form></details>';
   const forgot=area.querySelector('#counter-password-forgot');if(forgot)forgot.onclick=()=>{if(active())return showCounterAccount(container,'',true,'recover');};
   if(recovery)area.querySelector('#counter-recovery-back').onclick=()=>{if(active())return showCounterAccount(container,'',true);};
   const mailForm=area.querySelector('#counter-account-email-form'),mailActive=()=>active()&&area.querySelector('#counter-account-email-form')===mailForm;
   mailForm.onsubmit=async e=>{
    e.preventDefault();if(!mailActive())return;const email=mailForm.querySelector('input[type=email]').value.trim(),nickname=recovery?null:mailForm.querySelector('#counter-account-nickname').value.trim(),button=mailForm.querySelector('button');if(button.disabled)return;button.disabled=true;
-   if(!recovery&&(nickname.length<2||nickname.length>40)){button.disabled=false;report('Укажите ник: от 2 до 40 символов.');return;}
+   if(!email||!mailForm.querySelector('input[type=email]').checkValidity()){button.disabled=false;report('Введите электронную почту в формате name@mail.ru.');mailForm.querySelector('input[type=email]').focus();return;}
+   if(!recovery&&(nickname.length<2||nickname.length>40)){button.disabled=false;report('Укажите ник: от 2 до 40 символов.');mailForm.querySelector('#counter-account-nickname').focus();return;}
+   const label=button.textContent;button.textContent='Отправляем код…';report('Отправляем письмо с кодом…');
    try{
     if(navigator.onLine===false)throw Error('offline');
     const {error}=await accountAuthClient().auth.signInWithOtp({email,options:recovery?{shouldCreateUser:false}:{shouldCreateUser:true,data:{nickname}}});if(error)throw error;if(!mailActive())return;
@@ -118,12 +120,16 @@ export async function showCounterAccount(container,message='',force=false,mode='
      if(mailActive())await showCounterAccount(container,nicknameSaved?'':'Вход подтверждён. Не удалось сохранить ник. Его можно изменить здесь.',true);
     };
     mailForm.querySelector('input').focus();report(recovery?'Если аккаунт с этой почтой существует, письмо с кодом отправлено.':'Письмо с кодом отправлено.');
-   }catch(error){if(mailActive()){button.disabled=false;report(recovery&&['otp_disabled','user_not_found','signup_disabled'].includes(error?.code)?'Если аккаунт с этой почтой существует, письмо с кодом отправлено.':emailErrorMessage(error));}}
+   }catch(error){if(mailActive()){button.disabled=false;button.textContent=label;report(recovery&&['otp_disabled','user_not_found','signup_disabled'].includes(error?.code)?'Если аккаунт с этой почтой существует, письмо с кодом отправлено.':emailErrorMessage(error));}}
   };
   const passwordLogin=area.querySelector('#counter-account-login');if(passwordLogin)passwordLogin.onsubmit=async e=>{
-   e.preventDefault();if(!active())return;const form=e.currentTarget,button=form.querySelector('button'),password=form.querySelector('input[type=password]');if(button.disabled)return;button.disabled=true;
+   e.preventDefault();if(!active())return;const form=e.currentTarget,button=form.querySelector('button'),password=form.querySelector('input[type=password]');if(button.disabled)return;
+   const emailInput=form.querySelector('input[type=email]');if(!emailInput.value.trim()||!emailInput.checkValidity()){report('Введите электронную почту в формате name@mail.ru.');emailInput.focus();return;}
+   if(!password.value){report('Введите пароль.');password.focus();return;}
+   if(navigator.onLine===false){report('Нет соединения. Подключитесь к интернету и повторите.');return;}
+   button.disabled=true;button.textContent='Входим…';report('Проверяем почту и пароль…');
    try{const {data,error}=await accountAuthClient().auth.signInWithPassword({email:form.querySelector('input[type=email]').value.trim(),password:password.value});password.value='';if(error||!data?.session?.user?.email_confirmed_at)throw Error('invalid_login');if(active())await showCounterAccount(container,'',true);}
-   catch{password.value='';if(active()){button.disabled=false;report('Не удалось войти. Проверьте почту и пароль.');}}
+   catch{password.value='';if(active()){button.disabled=false;button.textContent='Войти';report('Не удалось войти. Проверьте почту и пароль.');}}
   };
  }
  updateStatus();if(!counterSyncStatus().signedIn)report('');if(message)report(message);
