@@ -1,3 +1,4 @@
+import{createAuthTransport}from './auth-transport.js';
 import{createSessionGuard}from './auth-session.js';
 // Public connection key; owner authority is always checked by the server.
 export const OWNER_PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
@@ -10,8 +11,8 @@ function revoke(){mfaRequired=false;const changed=verified;verified=false;verifi
 function authClient(){
  if(!client){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
-  client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-  client.auth.onAuthStateChange(()=>{revision++;revoke();queueMicrotask(()=>verifyOwner().catch(()=>{}));});
+  client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});
+  client.auth.onAuthStateChange(()=>{revision++;revoke();setTimeout(()=>verifyOwner().catch(()=>{}),0);});
  }
  return client;
 }
