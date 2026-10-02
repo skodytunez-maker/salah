@@ -98,7 +98,7 @@ export async function mountOwnerAccount(container,{isActive}={}){
  container.dataset.ownerAccountMount='1';
  const active=()=>container.isConnected&&location.hash.split('?')[0]==='#account'&&(!isActive||isActive());
  let unsubscribe=()=>{};
- const cleanup=()=>{if(!active()){unsubscribe();window.removeEventListener('hashchange',cleanup);}};
+ const cleanup=()=>{if(!active()){unsubscribe();delete container.dataset.ownerAccountMount;window.removeEventListener('hashchange',cleanup);}};
  const update=()=>{
   if(!active()){cleanup();return;}
   if(!ownerVerified()&&!ownerNeedsMfa()){container.hidden=true;container.innerHTML='';return;}

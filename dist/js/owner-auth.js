@@ -4,15 +4,23 @@ import{createSessionGuard}from './auth-session.js';
 export const OWNER_PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 export const OWNER_PUBLIC_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const SESSION_KEY='salah-owner-session-v1'; // Excluded from personal backups.
-let client=null,verified=false,verifiedAt=0,pending=null,revision=0,mfaRequired=false;
+let client=null,verified=false,verifiedAt=0,verifiedUserId=null,pending=null,revision=0,mfaRequired=false;
 const listeners=new Set();
 function publish(){for(const fn of listeners)fn();}
-function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;if(changed)publish();}
+function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;if(changed)publish();}
+const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin'].includes(location.hash.split('?')[0]);
 function authClient(){
  if(!client){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});
-  client.auth.onAuthStateChange(()=>{revision++;revoke();setTimeout(()=>verifyOwner().catch(()=>{}),0);});
+  client.auth.onAuthStateChange((event,session)=>{
+   const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&ownerVerified();
+   if(event==='TOKEN_REFRESHED')checkAccountSession.acceptRefresh(session);
+   revision++;if(!sameOwner)revoke();
+   // A routine renewal must not collapse the already verified cabinet. Its
+   // existing 60-second grant still expires; every data request checks the server.
+   if(ownerScreenActive())setTimeout(()=>verifyOwner().catch(()=>{}),0);
+  });
  }
  return client;
 }
@@ -41,7 +49,7 @@ export async function verifyOwner({verifySession=false}={}){
    const result=await callOwner(checked.session);
    if(started!==revision)continue;
    if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
-   const changed=!verified;verified=true;verifiedAt=Date.now();if(changed)publish();return true;
+   const changed=!verified;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;if(changed)publish();return true;
   }
   revoke();return false;
  })();
@@ -87,11 +95,11 @@ export async function ownerStatistics(days=7){
 }
 export function initOwnerAccess(onChanged){
  onOwnerChange(onChanged);
- const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored)verifyOwner({verifySession:true}).catch(()=>{});};
- document.addEventListener('visibilitychange',()=>{if(!document.hidden){revoke();resume();}});
+ const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive())verifyOwner({verifySession:true}).catch(()=>{});};
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
  window.addEventListener('online',resume);
  window.addEventListener('storage',event=>{if(event.key===SESSION_KEY){revision++;revoke();resume();}});
- setInterval(()=>{if(!document.hidden&&verified)verifyOwner().catch(()=>{});},45000);
+ setInterval(()=>{if(!document.hidden&&ownerScreenActive())verifyOwner().catch(()=>{});},45000);
  resume();
 }
 

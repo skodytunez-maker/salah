@@ -42,3 +42,11 @@ console.log('PASS: signed confirmed accounts isolated; owner requires MFA; dupli
 
 sessionAlive=false;const readsBeforeRevoked=reads;assert.equal((await h(request())).status,401);assert.equal((await h(request(comp))).status,401);assert.equal(reads,readsBeforeRevoked);sessionAlive=true;
 console.log('PASS: revoked session cannot read or change counters while its old access token has not expired.');
+
+const unchanged=new Memory(),signals=[];set(unchanged,5);let cloudCount=5;
+const stable=core.createCounterSync({storage:unchanged,uuid:()=>B,request:async()=>({totals:{sayyid:cloudCount,'free-dhikr':0}}),changed:kind=>signals.push(kind)});
+await stable.activate(A);signals.length=0;await stable.sync();await stable.sync();
+assert.deepEqual(signals,['synced','synced']);
+cloudCount=7;await stable.sync();assert.equal(signals.at(-1),'saved');assert.equal(get(unchanged),7);
+await stable.sync();assert.equal(signals.at(-1),'synced');
+console.log('PASS: unchanged cloud totals do not rebuild the reading view; real changes still restore the counter.');

@@ -35,7 +35,7 @@ export async function synchronizeCounters({verifySession=false}={}){
 let pendingSessionCheck=false;
 function schedule(verify=false){pendingSessionCheck=pendingSessionCheck||verify===true;clearTimeout(timer);timer=setTimeout(()=>{const verifySession=pendingSessionCheck;pendingSessionCheck=false;synchronizeCounters({verifySession});},700);}
 export function initCounterAccounts(){
- accountAuthClient().auth.onAuthStateChange(()=>queueMicrotask(schedule));
+ accountAuthClient().auth.onAuthStateChange(event=>{if(event!=='TOKEN_REFRESHED')queueMicrotask(schedule);});
  window.addEventListener('salah:counter-changed',schedule);
  window.addEventListener('storage',e=>{if(e.key==='salah:adhkar-progress-v2')schedule();});
  window.addEventListener('online',()=>schedule(true));window.addEventListener('pageshow',()=>schedule(true));document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(true);});setInterval(()=>{if(session&&!document.hidden)synchronizeCounters({verifySession:true});},30000);schedule(true);
