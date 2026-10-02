@@ -16,7 +16,7 @@ assert.match(policy,/connect-src[^;]*https:\/\/kbltwszfvphgbxdbczsb\.supabase\.c
 // Both media playback and offline fetch must permit the redirect destination.
 for(const directive of ['media-src','connect-src']){
  const sources=policy.split(';').map(x=>x.trim()).find(x=>x.startsWith(directive+' ')).split(/\s+/).slice(1);
- for(const url of ['https://server8.mp3quran.net/lhdan/001.mp3','https://cdn.mp3quran.net/audio/muhammad-luhaidan/r1/001.mp3'])assert.ok(sources.includes(new URL(url).origin),directive+' must allow the verified recitation redirect');
+ for(const url of ['https://server8.mp3quran.net/lhdan/001.mp3','https://cdn.mp3quran.net/audio/muhammad-luhaidan/r1/001.mp3','https://server6.mp3quran.net/s_bud/001.mp3','https://server7.mp3quran.net/shur/001.mp3','https://server9.mp3quran.net/hthfi/001.mp3','https://server11.mp3quran.net/sds/001.mp3','https://server13.mp3quran.net/jhn/001.mp3'])assert.ok(sources.includes(new URL(url).origin),directive+' must allow the verified recitation redirect');
 }
 assert.doesNotMatch(policy,/script-src[^;]*cdn\.mp3quran\.net/);
 const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
