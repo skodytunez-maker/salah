@@ -4,7 +4,7 @@ import {Script,createContext} from 'node:vm';
 import {createCounterSync} from '../dist/js/counter-sync-core.js';
 
 const source=await readFile(new URL('../dist/js/counter-account.js',import.meta.url),'utf8');
-const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({showCounterAccount,counterSyncStatus});';
+const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({showCounterAccount,counterSyncStatus,synchronizeCounters});';
 const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 const menuExecutable=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf('\nfunction render(){'))+'\n;({more});';
 const decode=value=>String(value).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
@@ -41,12 +41,14 @@ function browser(){
  return{app,location,window,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
 }
 function menu(b){const app=new Element(),context=createContext({app,window:b.window,currentRoute:'more',counterSyncStatus:b.counterSyncStatus,ownerVerified:()=>false,title:()=>''});const screen=new Script(menuExecutable).runInContext(context);screen.more();return{app,...screen};}
-async function open(b){await b.showCounterAccount(b.app);assert.equal(b.select('#counter-account-heading').textContent,'Вход и регистрация');assert.match(b.app.textContent,/Сохраняйте накопительный счёт азкаров/);}
+async function open(b){await b.showCounterAccount(b.app);assert.equal(b.select('#counter-account-heading').textContent,'Вход и регистрация');assert.ok(b.select('#counter-account-nickname'));assert.ok(b.select('#counter-account-email'));assert.match(b.app.textContent,/Подтвердите почту кодом из письма/);assert.doesNotMatch(b.app.textContent,/сч[её]т|азкар|подписк|Какие данные сохраняются/i);}
 async function requestCode(b){const form=b.select('#counter-account-email-form');form.querySelector('#counter-account-nickname').value='  Fixture Nick  ';form.querySelector('input[type=email]').value=' fixture@example.test ';await form.submit();return form;}
 async function confirm(b,token='123456'){const form=b.select('#counter-account-email-form');form.querySelector('input').value=token;await form.submit();}
-const successful=browser();await open(successful);const accountMenu=menu(successful),firstEntry=accountMenu.app.querySelectorAll('a')[0];assert.equal(firstEntry.attributes.href,'#account');assert.ok(firstEntry.matches('.account-entry'));assert.match(firstEntry.textContent,/Вход и регистрация/);const savedMailForm=await requestCode(successful);
+const successful=browser();await open(successful);const accountMenu=menu(successful),firstEntry=accountMenu.app.querySelectorAll('a')[0];assert.equal(firstEntry.attributes.href,'#account');assert.ok(firstEntry.matches('.account-entry'));assert.match(firstEntry.textContent,/Вход и регистрацияЛичный аккаунт SALAH/);const savedMailForm=await requestCode(successful);
 assert.equal(successful.fixture.mail.length,1);assert.equal(successful.fixture.mail[0].email,'fixture@example.test');assert.equal(successful.fixture.mail[0].options.shouldCreateUser,true);assert.equal(successful.fixture.mail[0].options.data.nickname,'Fixture Nick');
 assert.ok(successful.select('#counter-email-code').focused);assert.match(successful.select('#account-sync-status').textContent,/Письмо с кодом отправлено/);
+assert.doesNotMatch(successful.app.textContent,/сч[её]т|азкар|подписк/i);assert.equal(successful.select('#counter-account-email-form').querySelector('button').textContent,'Подтвердить и войти');
+await successful.synchronizeCounters();assert.doesNotMatch(successful.app.textContent,/сч[её]т|азкар|подписк/i);assert.match(successful.select('#account-sync-status').textContent,/Письмо с кодом отправлено/);
 assert.equal(successful.counterSyncStatus().signedIn,false);assert.equal(successful.fixture.syncRequests,0);assert.equal(successful.select('#counter-profile'),null,'Sending the code cannot display a signed-in account');
 assert.equal(successful.select('#counter-account-authorized'),null);assert.doesNotMatch(accountMenu.app.textContent,/Авторизован/);
 const savedCode=successful.select('#counter-email-code');savedCode.value='123456';await successful.showCounterAccount(successful.app);assert.equal(successful.select('#counter-account-email-form'),savedMailForm);assert.equal(successful.select('#counter-email-code'),savedCode);assert.equal(savedCode.value,'123456');assert.match(savedMailForm.textContent,/fixture@example.test/);assert.equal(successful.fixture.mail.length,1,'Returning from mail must not send another code');

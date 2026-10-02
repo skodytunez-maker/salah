@@ -22,13 +22,13 @@ export function initCounterAccounts(){
  window.addEventListener('online',schedule);document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});setInterval(()=>{if(session&&!document.hidden)synchronizeCounters();},30000);schedule();
 }
 function statusText(){return status==='saved'?'Накопительный счёт сохранён в аккаунте.':status==='saving'?'Сохраняем счёт…':reason==='mfa_required'?'Подтвердите вход через Google Authenticator.':status==='pending'?'Счёт сохранён на устройстве. Синхронизация ожидает соединения.':'Счёт хранится на этом устройстве.';}
-function updateStatus(){const el=document.getElementById('account-sync-status');if(el)el.textContent=statusText();const mfa=document.getElementById('account-mfa');if(mfa)mfa.hidden=reason!=='mfa_required';}
+function updateStatus(){const el=document.getElementById('account-sync-status');if(el&&counterSyncStatus().signedIn)el.textContent=statusText();const mfa=document.getElementById('account-mfa');if(mfa)mfa.hidden=reason!=='mfa_required';}
 export async function showCounterAccount(container,message='',force=false){
  // Returning from the mail app repaints this route. Keep the current form and
  // code step; explicit account actions below request a fresh screen.
  if(!force&&host===container&&accountArea&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===accountArea)return;
  const screen=++accountScreen;host=container;
- container.innerHTML='<section class="panel section owner-login"><h1 id="counter-account-heading">Вход и регистрация</h1><p class="muted">Сохраняйте накопительный счёт азкаров в аккаунте и восстанавливайте его после переустановки или на другом телефоне.</p><p id="account-sync-status" class="muted" role="status">Проверяем вход…</p><div id="account-form-area"></div><a class="button" id="account-mfa" href="#admin" hidden>Подтвердить защищённый вход</a><details class="settings-extra"><summary>Какие данные сохраняются</summary><p class="muted">В аккаунте сохраняются ник, почта для входа и накопительные счётчики азкаров. История намазов, настройки и закладки остаются на устройстве.</p></details><a class="text-button" href="#more">Назад</a></section>';
+ container.innerHTML='<section class="panel section owner-login"><h1 id="counter-account-heading">Вход и регистрация</h1><p id="account-sync-status" class="muted" role="status">Проверяем вход…</p><div id="account-form-area"></div><a class="button" id="account-mfa" href="#admin" hidden>Подтвердить защищённый вход</a><a class="text-button" href="#more">Назад</a></section>';
  const area=container.querySelector('#account-form-area');accountArea=area;
  const active=()=>host===container&&screen===accountScreen&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===area;
  const report=text=>{if(active())container.querySelector('#account-sync-status').textContent=text;};
@@ -50,14 +50,14 @@ export async function showCounterAccount(container,message='',force=false){
    finally{if(active())button.disabled=false;}
   };
  }else{
-  area.innerHTML='<form id="counter-account-email-form"><label for="counter-account-nickname">Ник</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" type="email" autocomplete="email" required><button class="button" type="submit">Получить код для входа или регистрации</button><p class="muted owner-note">При первом входе создаётся личный аккаунт. Счёт сохраняется только после подтверждения почты.</p></form><details class="settings-extra"><summary>Войти с паролем</summary><form id="counter-account-login"><label for="counter-password-email">Электронная почта</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">Пароль</label><input id="counter-account-password" type="password" autocomplete="current-password" required><button class="button" type="submit">Войти и сохранить счёт</button></form></details>';
+  area.innerHTML='<form id="counter-account-email-form"><label for="counter-account-nickname">Ник</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" type="email" autocomplete="email" required><button class="button" type="submit">Получить код для входа или регистрации</button><p class="muted owner-note">При первом входе создаётся личный аккаунт. Подтвердите почту кодом из письма.</p></form><details class="settings-extra"><summary>Войти с паролем</summary><form id="counter-account-login"><label for="counter-password-email">Электронная почта</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">Пароль</label><input id="counter-account-password" type="password" autocomplete="current-password" required><button class="button" type="submit">Войти</button></form></details>';
   const mailForm=area.querySelector('#counter-account-email-form'),mailActive=()=>active()&&area.querySelector('#counter-account-email-form')===mailForm;
   mailForm.onsubmit=async e=>{
    e.preventDefault();if(!mailActive())return;const email=mailForm.querySelector('input[type=email]').value.trim(),nickname=mailForm.querySelector('#counter-account-nickname').value.trim(),button=mailForm.querySelector('button');if(button.disabled)return;button.disabled=true;
    if(nickname.length<2||nickname.length>40){button.disabled=false;report('Укажите ник: от 2 до 40 символов.');return;}
    try{
     const {error}=await accountAuthClient().auth.signInWithOtp({email,options:{shouldCreateUser:true,data:{nickname}}});if(error)throw error;if(!mailActive())return;
-    mailForm.innerHTML='<p class="muted">Введите код из письма SALAH, отправленного на '+esc(email)+'. Можно проверить папку «Спам».</p><label for="counter-email-code">Код из письма</label><input id="counter-email-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required><button class="button" type="submit">Подтвердить и сохранить счёт</button><button class="text-button" type="button" id="counter-email-change">Изменить почту</button>';
+    mailForm.innerHTML='<p class="muted">Введите код из письма SALAH, отправленного на '+esc(email)+'. Можно проверить папку «Спам».</p><label for="counter-email-code">Код из письма</label><input id="counter-email-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required><button class="button" type="submit">Подтвердить и войти</button><button class="text-button" type="button" id="counter-email-change">Изменить почту</button>';
     mailForm.querySelector('#counter-email-change').onclick=()=>{if(mailActive())return showCounterAccount(container,'',true);};
     mailForm.onsubmit=async event=>{
      event.preventDefault();if(!mailActive())return;const code=mailForm.querySelector('input'),submit=mailForm.querySelector('button'),token=code.value.trim();if(submit.disabled)return;submit.disabled=true;
@@ -76,5 +76,5 @@ export async function showCounterAccount(container,message='',force=false){
    catch{password.value='';if(active()){button.disabled=false;report('Не удалось войти. Проверьте почту и пароль.');}}
   };
  }
- updateStatus();if(message)report(message);
+ updateStatus();if(!counterSyncStatus().signedIn)report('');if(message)report(message);
 }
