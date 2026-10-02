@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {Script,createContext} from 'node:vm';
 let session=null,authCallback,allowed=false,requests=0,changed=0,needsMfa=false;
 globalThis.window={supabase:{createClient:(_url,key,options)=>{
  assert.ok(key.startsWith('sb_publishable_'));
@@ -44,3 +46,39 @@ await assert.rejects(verifyOwnerMfa('fixture-factor','000000'),/не подош�
 await verifyOwnerMfa('fixture-factor','123456');assert.equal(ownerVerified(),true);
 await signOutOwner();assert.equal(ownerNeedsMfa(),false);
 console.log('PASS: MFA setup/challenge keeps cabinet hidden until a valid second factor and server confirmation.');
+
+// Exercise the dashboard itself with fixture responses, including a total that
+// exceeds the displayed page. No owner session or live account data is used.
+const adminSource=await readFile(new URL('../dist/js/admin.js',import.meta.url),'utf8');
+const adminExecutable=adminSource.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdmin});';
+class Element {
+ constructor(tag='div',attributes={},parent=null){this.tag=tag;this.attributes=attributes;this.parent=parent;this.children=[];this.dataset={};this.open=false;this.text='';for(const [key,value]of Object.entries(attributes))if(key.startsWith('data-'))this.dataset[key.slice(5)]=value;}
+ set innerHTML(html){this.html=String(html);this.children=[];this.text='';const stack=[this];for(const token of this.html.match(/<[^>]*>|[^<]+/g)||[]){if(token.startsWith('</')){if(stack.length>1)stack.pop();continue;}if(token.startsWith('<')){const tag=/^<([\w-]+)/.exec(token)?.[1];if(!tag)continue;const attributes={};for(const match of token.matchAll(/([\w-]+)="([^"]*)"/g))attributes[match[1]]=match[2];const parent=stack.at(-1),child=new Element(tag,attributes,parent);parent.children.push(child);if(!['input','img','br'].includes(tag))stack.push(child);}else stack.at(-1).text+=token;}}
+ get innerHTML(){return this.html||'';}
+ set textContent(value){this.text=String(value);this.children=[];}
+ get textContent(){return this.text+this.children.map(child=>child.textContent).join('');}
+ insertAdjacentHTML(position,html){assert.equal(position,'beforeend');const fragment=new Element();fragment.innerHTML=html;for(const child of fragment.children){child.parent=this;this.children.push(child);}}
+ matches(selector){return selector.startsWith('#')?this.attributes.id===selector.slice(1):selector.startsWith('.')?(this.attributes.class||'').split(' ').includes(selector.slice(1)):selector.startsWith('[')?Object.hasOwn(this.attributes,selector.slice(1,-1)):this.tag===selector;}
+ querySelectorAll(selector){const found=[];const visit=node=>{for(const child of node.children){if(child.matches(selector))found.push(child);visit(child);}};visit(this);return found;}
+ querySelector(selector){return this.querySelectorAll(selector)[0]||null;}
+ setAttribute(key,value){this.attributes[key]=String(value);}
+}
+function dashboard({allowed=true,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},request}={}){
+ const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[];
+ const context=createContext({location,Date,analyticsSite:()=>'',esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,ownerNeedsMfa:()=>false,ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>({total:0,stats:[]}),signOutOwner:async()=>{allowed=false;}});
+ return{app,location,calls,result,...new Script(adminExecutable).runInContext(context)};
+}
+const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
+const cabinet=dashboard();await cabinet.showAdmin(cabinet.app);await settle();
+assert.equal(cabinet.app.querySelector('.owner-users').open,false);
+assert.equal(cabinet.app.querySelector('#owner-users-count').textContent,' — 125');
+assert.equal(cabinet.app.querySelectorAll('.owner-user-row').length,1);
+assert.deepEqual(cabinet.calls,[1],'The protected users endpoint loads without opening the section');
+cabinet.app.querySelector('#users-next').onclick();await settle();assert.deepEqual(cabinet.calls,[1,2]);assert.equal(cabinet.app.querySelector('#owner-users-count').textContent,' — 125');
+cabinet.result.total=126;cabinet.app.querySelector('#users-refresh').onclick();await settle();assert.equal(cabinet.app.querySelector('#owner-users-count').textContent,' — 126');
+const empty=dashboard({result:{total:0,users:[]}});await empty.showAdmin(empty.app);await settle();assert.equal(empty.app.querySelector('#owner-users-count').textContent,' — 0');
+const denied=dashboard({allowed:false});await denied.showAdmin(denied.app);await settle();assert.deepEqual(denied.calls,[]);assert.equal(denied.app.querySelector('#owner-users-count'),null);
+const unavailable=dashboard({request:async()=>{throw Error('Fixture service failure');}});await unavailable.showAdmin(unavailable.app);await settle();assert.equal(unavailable.app.querySelector('#owner-users-count').textContent,' — недоступно');
+const invalid=dashboard({result:{total:'125',users:[]}});await invalid.showAdmin(invalid.app);await settle();assert.equal(invalid.app.querySelector('#owner-users-count').textContent,' — недоступно');
+let finish;const departed=dashboard({request:()=>new Promise(resolve=>finish=resolve)});await departed.showAdmin(departed.app);departed.location.hash='#more';finish({total:125,users:[]});await settle();assert.equal(departed.app.querySelector('#owner-users-count').textContent,' — …');
+console.log('PASS: collapsed users section shows protected total across pages, including zero; refresh updates count; denied, unavailable and stale screens never show a guessed count.');

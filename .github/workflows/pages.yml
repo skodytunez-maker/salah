@@ -34,6 +34,7 @@ jobs:
           node scripts/check-adhkar.mjs
           node scripts/check-adhkar-resume.mjs
           node scripts/check-counter-sync.mjs
+          node scripts/check-counter-account.mjs
           node scripts/check-tyumen-october.mjs
           node scripts/check-calendar-export.mjs
           node scripts/check-quran-session.mjs
