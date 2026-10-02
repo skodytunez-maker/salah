@@ -39,7 +39,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    if(url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
    const page=Number(url.searchParams.get('page')||1);if(!Number.isSafeInteger(page)||page<1||page>10000)return reply(400,{error:'invalid_page'});
    if(!readUsers)return reply(503,{error:'users_not_connected'});
-   try{const result=await readUsers(page);if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('invalid');const date=v=>Number.isFinite(Date.parse(v))?new Date(v).toISOString():null;return reply(200,{total:result.total,page,users:result.users.slice(0,50).map(row=>({nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника',joinedAt:date(row.joinedAt),lastSignInAt:date(row.lastSignInAt)}))});}catch{return reply(503,{error:'users_unavailable'});}
+   try{const result=await readUsers(page);if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('invalid');const date=v=>Number.isFinite(Date.parse(v))?new Date(v).toISOString():null;return reply(200,{total:result.total,online:Number.isSafeInteger(result.online)&&result.online>=0?result.online:0,page,users:result.users.slice(0,50).map(row=>({nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника',joinedAt:date(row.joinedAt),lastSignInAt:date(row.lastSignInAt),lastSeenAt:date(row.lastSeenAt),online:row.online===true&&Number.isFinite(Date.parse(row.lastSeenAt))&&Date.parse(row.lastSeenAt)>=now()-90000}))});}catch{return reply(503,{error:'users_unavailable'});}
   }
   if(url.searchParams.has('page'))return reply(400,{error:'invalid_parameters'});
   if(mode!=='stats')return reply(400,{error:'invalid_mode'});
@@ -66,7 +66,12 @@ if(typeof Deno!=='undefined'){
  const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
  const {default:postgres}=await import('npm:postgres@3.4.9');
  const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
- const readUsers=async page=>sql.begin(async tx=>{const [count]=await tx`select count(*)::int as total from auth.users where email_confirmed_at is not null and coalesce(is_anonymous,false)=false`;const users=await tx`select raw_user_meta_data->>'nickname' as nickname,created_at as "joinedAt",last_sign_in_at as "lastSignInAt" from auth.users where email_confirmed_at is not null and coalesce(is_anonymous,false)=false order by last_sign_in_at desc nulls last,id limit 50 offset ${(page-1)*50}`;return{total:count.total,users};});
+ const readUsers=async page=>sql.begin(async tx=>{
+ const [count]=await tx`select count(*)::int as total from auth.users where email_confirmed_at is not null and coalesce(is_anonymous,false)=false`;
+ const [presence]=await tx`select count(distinct p.user_id)::int as online from public.app_presence p join auth.users u on u.id=p.user_id where p.app='salah' and p.active and p.last_seen>=now()-interval '90 seconds' and u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false`;
+ const users=await tx`select u.raw_user_meta_data->>'nickname' as nickname,u.created_at as "joinedAt",u.last_sign_in_at as "lastSignInAt",p.last_seen as "lastSeenAt",coalesce(p.online,false) as online from auth.users u left join lateral(select max(last_seen) as last_seen,bool_or(active and last_seen>=now()-interval '90 seconds') as online from public.app_presence where user_id=u.id and app='salah') p on true where u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false order by coalesce(p.online,false) desc,p.last_seen desc nulls last,u.id limit 50 offset ${(page-1)*50}`;
+ return{total:count.total,online:presence.online,users};
+ });
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
