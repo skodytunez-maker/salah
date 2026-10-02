@@ -1,3 +1,4 @@
+import{skyObjects}from './wallpapers.js';
 import{settings}from './storage.js';
 import{sceneAt,previewScene,sceneForMode}from './day-night.js';
 import{weatherFrame}from './weather-data.js';
@@ -8,7 +9,7 @@ export function startScenePreview(){stopWeatherPreview();previewStarted=performa
 function stopScenePreview(){previewStarted=null;previewOverride=null;document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview')}
 function sceneLayer(){
  let scene=document.getElementById('home-scene');
- if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene)}
+ if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-sky"><span class="scene-sun"></span><span class="scene-moon"><svg viewBox="0 0 100 100"><path d="M66 7 A44 44 0 1 0 93 73 A38 38 0 0 1 66 7Z" fill="currentColor"/></svg></span></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene)}
  return scene;
 }
 
@@ -50,7 +51,9 @@ export function atmosphere(now,times,weather){
  if(previewStarted!==null&&(!home||(previewOverride===null&&performance.now()-previewStarted>=22000)))stopScenePreview();
  const preview=previewStarted!==null,frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode),scene=sceneLayer();
  document.body.classList.toggle('scene-preview',preview);
- scene.dataset.phase=frame.phase;
+ scene.dataset.phase=frame.phase;scene.dataset.wallpaper=settings.wallpaper;document.body.dataset.wallpaper=settings.wallpaper;
+ const sky=skyObjects(now,times,previewOverride==='day'?'light':previewOverride==='night'?'dark':settings.backgroundMode,preview&&previewOverride===null?performance.now()-previewStarted:null);
+ for(const key of ['x','y','sun','moon'])scene.style.setProperty('--sky-'+key,String(sky[key]));
  for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));
  if(preview&&!document.getElementById('scene-preview-controls')){const controls=document.createElement('div');controls.id='scene-preview-controls';controls.className='scene-preview-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Просмотр фона');controls.innerHTML='<span>Фон</span><button type="button" data-scene-preview="day" aria-label="Посмотреть дневной фон">☼</button><button type="button" data-scene-preview="night" aria-label="Посмотреть ночной фон">☾</button><button type="button" data-scene-preview="auto" aria-label="Показать смену суток">▶</button><button type="button" data-scene-preview="close" aria-label="Завершить просмотр смены дня и ночи">×</button>';controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{const choice=button.dataset.scenePreview;if(choice==='close')stopScenePreview();else{previewOverride=choice==='auto'?null:choice;if(choice==='auto')previewStarted=performance.now()}atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls)}
  if(preview)for(const button of document.querySelectorAll('[data-scene-preview]'))button.setAttribute('aria-pressed',String(button.dataset.scenePreview===(previewOverride||'auto')));

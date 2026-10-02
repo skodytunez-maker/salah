@@ -30,3 +30,28 @@ body.reduce-motion #home-scene>div,body.reduce-motion *:after{transition:none!im
  .scene-night,.scene-day{background-size:auto 100%;background-position:85% center;-webkit-mask-image:none;mask-image:none}
  .scene-night::after,.scene-day::after{content:"";position:absolute;inset:0;background-image:inherit;background-repeat:no-repeat;background-size:auto 90%;background-position:85% center;-webkit-mask-image:linear-gradient(to bottom,transparent 5%,#000 10%,#000 90%,transparent 95%);mask-image:linear-gradient(to bottom,transparent 5%,#000 10%,#000 90%,transparent 95%)}
 }
+
+/* A portrait panorama fills the screen without the mosque's zoom extension. */
+#home-scene[data-wallpaper="new-york"] .scene-night{background-image:url('./assets/window-new-york-night.webp')}
+#home-scene[data-wallpaper="new-york"] .scene-day{background-image:url('./assets/window-new-york-day.webp');filter:brightness(.85) saturate(.88)}
+#home-scene[data-wallpaper="new-york"] .scene-night,#home-scene[data-wallpaper="new-york"] .scene-day{background-size:cover;background-position:center center}
+#home-scene[data-wallpaper="new-york"] .scene-night::after,#home-scene[data-wallpaper="new-york"] .scene-day::after{display:none}
+#home-scene[data-wallpaper="new-york"] .scene-shade{background:linear-gradient(180deg,rgba(5,10,20,.12),rgba(5,10,20,.2) 45%,rgba(5,10,20,.23) 100%)}
+#home-scene[data-wallpaper="new-york"] .scene-dawn{background:radial-gradient(ellipse at 14% 46%,rgba(255,185,109,.5),rgba(146,163,210,.12) 42%,transparent 65%)}
+#home-scene[data-wallpaper="new-york"] .scene-dusk{background:radial-gradient(ellipse at 86% 46%,rgba(255,139,95,.4),rgba(113,78,156,.15) 44%,transparent 66%)}
+.scene-sky{display:none}
+#home-scene[data-wallpaper="new-york"] .scene-sky{display:block;overflow:hidden}
+.scene-sun,.scene-moon{position:absolute;left:calc(var(--sky-x,50)*1%);top:calc(var(--sky-y,22)*1%);width:38px;height:38px;transform:translate(-50%,-50%);transition:left 2s linear,top 2s linear,opacity 2s linear}
+.scene-sun{border-radius:50%;background:radial-gradient(circle,#fffbe9 20%,#ffedb4 70%,#f7c982 100%);box-shadow:0 0 22px 5px rgba(255,215,157,.4);opacity:var(--sky-sun,0)}
+.scene-moon{color:#e8eef7;filter:drop-shadow(0 0 9px rgba(190,216,248,.28));opacity:var(--sky-moon,1)}
+.scene-moon svg{display:block;width:100%;height:100%}
+.scene-preview .scene-sun,.scene-preview .scene-moon{transition-duration:.5s}
+body[data-wallpaper="new-york"] #weather-layer{clip-path:polygon(2% 0,98% 0,98% 66%,2% 66%)}
+@media(prefers-reduced-motion:reduce){.scene-sun,.scene-moon{transition:none!important}}
+body.reduce-motion .scene-sun,body.reduce-motion .scene-moon{transition:none!important}
+.wallpaper-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px;margin-bottom:20px}
+.wallpaper-options button{padding:0;overflow:hidden;border:1px solid var(--line);border-radius:15px;background:rgba(6,12,24,.5);color:#d2dbea;text-align:left}
+.wallpaper-options img{display:block;width:100%;height:105px;object-fit:cover;object-position:center 64%}
+.wallpaper-options span{display:block;padding:11px 13px;font-size:14px;line-height:1.3}
+.wallpaper-options button[aria-pressed=true]{border-color:#ead09b;box-shadow:0 0 0 1px rgba(234,208,155,.35);color:#ead09b}
+

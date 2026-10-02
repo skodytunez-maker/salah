@@ -69,3 +69,19 @@
  .home-page .central-prayer.timetable:has(.tahajjud-row) .central-row.next{min-height:60px;padding-top:5px;padding-bottom:5px}
  .home-page .central-prayer.timetable:has(.tahajjud-row) .central-row.tahajjud-row{padding-top:8px}
 }
+
+/* A single text avoids spacer-induced scrolling; long passages remain reachable. */
+.adhkar-shell.adhkar-single-text .translation-label{display:none!important}
+.adhkar-shell.adhkar-single-text .dhikr-reading-title{padding-bottom:10px}
+.adhkar-shell.adhkar-single-text .lesson-passage{margin-top:12px}
+.adhkar-shell.adhkar-single-text .lesson-translation,.adhkar-shell.adhkar-single-text .transliteration p{margin-top:0}
+.adhkar-shell .lesson-audio #dhikr-play{display:inline-flex;align-items:center;gap:10px;color:var(--gold);border-color:var(--line);min-height:44px}
+.dhikr-audio-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+@media(prefers-reduced-motion:no-preference){
+ body:not(.reduce-motion) .adhkar-shell[data-slide="next"] .dhikr-passage{animation:dhikr-next .24s cubic-bezier(.2,.65,.3,1)}
+ body:not(.reduce-motion) .adhkar-shell[data-slide="previous"] .dhikr-passage{animation:dhikr-previous .24s cubic-bezier(.2,.65,.3,1)}
+ @keyframes dhikr-next{from{opacity:.3;transform:translateX(18px)}to{opacity:1;transform:none}}
+ @keyframes dhikr-previous{from{opacity:.3;transform:translateX(-18px)}to{opacity:1;transform:none}}
+}
+body.reduce-motion .dhikr-passage{animation:none!important}
