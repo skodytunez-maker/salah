@@ -66,9 +66,9 @@ class Element {
  setAttribute(key,value){this.attributes[key]=String(value);}
 }
 function dashboard({allowed=true,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},request}={}){
- const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[];
- const context=createContext({location,Date,analyticsSite:()=>'',esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,ownerNeedsMfa:()=>false,ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>({total:0,stats:[]}),signOutOwner:async()=>{allowed=false;}});
- return{app,location,calls,result,...new Script(adminExecutable).runInContext(context)};
+ const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false};let timerId=0;
+ const context=createContext({location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>'',esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,ownerNeedsMfa:()=>false,ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>({total:0,stats:[]}),signOutOwner:async()=>{allowed=false;}});
+ return{app,location,calls,result,intervals,events,document,...new Script(adminExecutable).runInContext(context)};
 }
 const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
 const cabinet=dashboard();await cabinet.showAdmin(cabinet.app);await settle();
@@ -83,6 +83,8 @@ const denied=dashboard({allowed:false});await denied.showAdmin(denied.app);await
 const unavailable=dashboard({request:async()=>{throw Error('Fixture service failure');}});await unavailable.showAdmin(unavailable.app);await settle();assert.equal(unavailable.app.querySelector('#owner-users-count').textContent,' — недоступно');
 const invalid=dashboard({result:{total:'125',users:[]}});await invalid.showAdmin(invalid.app);await settle();assert.equal(invalid.app.querySelector('#owner-users-count').textContent,' — недоступно');
 let finish;const departed=dashboard({request:()=>new Promise(resolve=>finish=resolve)});await departed.showAdmin(departed.app);departed.location.hash='#more';finish({total:125,users:[]});await settle();assert.equal(departed.app.querySelector('#owner-users-count').textContent,' — …');
+const statusList=cabinet.app.querySelector('.owner-users');statusList.open=true;statusList.ontoggle({currentTarget:statusList});await settle();const beforePoll=cabinet.calls.length;for(const callback of cabinet.intervals.values())callback();await settle();assert.equal(cabinet.calls.length,beforePoll+1);cabinet.document.hidden=true;for(const callback of cabinet.intervals.values())callback();await settle();assert.equal(cabinet.calls.length,beforePoll+1);cabinet.location.hash='#home';cabinet.events.get('hashchange')();assert.equal(cabinet.intervals.size,0);assert.equal(cabinet.events.size,0);
+console.log('PASS: presence refresh runs only for the open foreground list and stops on navigation.');
 console.log('PASS: collapsed users section shows protected total across pages, including zero; refresh updates count; denied, unavailable and stale screens never show a guessed count.');
 
 // A stalled Auth request is cancelled, while caller cancellation and private headers remain intact.
