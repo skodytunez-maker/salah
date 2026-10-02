@@ -1,0 +1,9 @@
+{
+  "library": "SunCalc",
+  "version": "2.1.0",
+  "repository": "https://github.com/mourner/suncalc",
+  "commit": "ecb6bb0b0f3a5003298cfb536e46176117caf4e5",
+  "source": "https://raw.githubusercontent.com/mourner/suncalc/ecb6bb0b0f3a5003298cfb536e46176117caf4e5/index.js",
+  "license": "BSD-2-Clause",
+  "sha256": "65169cd1f50e6d1020d0672778fb544ebd2b799d5dc1d5fe90054e7392a27eda"
+}
