@@ -13,7 +13,7 @@ function write(state){localStorage.setItem(KEY,JSON.stringify(state));}
 function newDevice(){const state={id:crypto.randomUUID(),token:Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join(''),saved:false,pendingRemoval:false,lastSync:0};write(state);return state;}
 function keyBytes(value){return Uint8Array.from(atob(value.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));}
 export function createPushReminders({getSettings,toast=()=>{}}){
- let mounted=null,busy=false,status='',config=null,onlineReady=false,needsSync=false,timer,state=read(),lastSignature=state?.signature||'';
+ let mounted=null,busy=false,status='',config=null,onlineReady=false,needsSync=false,timer,state=read(),lastSignature=state?.signature||'',configLoading=null,lastConfigAttempt=0;
  const supported=()=>globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
  async function call(action,body){
   const response=await fetch(API+'/'+action,{method:body?'POST':'GET',mode:'cors',cache:'no-store',credentials:'omit',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(20000)});
@@ -21,12 +21,19 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  }
  const deviceBody=()=>({id:state.id,token:state.token});
  async function registration(){const found=await navigator.serviceWorker.getRegistration();return found?.active?found:await navigator.serviceWorker.ready;}
- async function loadConfig(){try{config=await call('config');if(typeof config.publicKey!=='string'||keyBytes(config.publicKey).length!==65)throw Error();}catch{config=null;status='Сервис доставки пока недоступен. Настройки напоминаний сохранены.';}draw();}
+ async function loadConfig(force=false){
+  if(configLoading)return configLoading;
+  if(!force&&lastConfigAttempt&&Date.now()-lastConfigAttempt<30000)return;
+  lastConfigAttempt=Date.now();
+  configLoading=(async()=>{try{const next=await call('config'),bytes=typeof next.publicKey==='string'?keyBytes(next.publicKey):null;if(!bytes||bytes.length!==65||bytes[0]!==4)throw Error();config=next;if(!state||status.startsWith('Сервис доставки пока недоступен.'))status=state?.saved&&onlineReady?(normalizeReminders(getSettings().reminders).enabled?'Фоновые уведомления подключены.':'Подписка сохранена. Напоминания выключены переключателем выше.'):'Доставка готова к подключению.';}catch{config=null;status='Сервис доставки пока недоступен. Настройки напоминаний сохранены.';}finally{draw();}})();
+  try{await configLoading}finally{configLoading=null}
+ }
+
  async function sync(force=false){
   if(busy){needsSync=true;return;}
   if(!state||(!state.pendingRemoval&&(!supported()||Notification.permission!=='granted')))return;
   const p=pushPreferences(getSettings()),signature=JSON.stringify(p);
-  if(!force&&!state.pendingRemoval&&state.saved&&signature===lastSignature&&Date.now()-state.lastSync<86400000)return;
+  if(!force&&!state.pendingRemoval&&state.saved&&onlineReady&&signature===lastSignature&&Date.now()-state.lastSync<86400000)return;
   busy=true;draw();
   try{
    if(state.pendingRemoval){await call('unsubscribe',deviceBody());localStorage.removeItem(KEY);state=null;onlineReady=false;status='Фоновая подписка отключена.';return;}
@@ -45,7 +52,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   const permissionTask=Notification.requestPermission();busy=true;status='Подключаем…';draw();
   try{
    if(await permissionTask!=='granted')throw Error('Разрешите уведомления в настройках телефона.');
-   if(!config){config=await call('config');}
+   if(!config)await loadConfig(true);if(!config)throw Error('Сервис доставки пока недоступен. Повторите позже.');
    if(!state)state=newDevice();
    const reg=await registration();let sub=await reg.pushManager.getSubscription();
    const wanted=keyBytes(config.publicKey),actual=sub?.options?.applicationServerKey;
@@ -75,14 +82,14 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   let guide='';if(IOS()&&!installed())guide='На iPhone откройте SALAH в Safari → «Поделиться» → «На экран Домой». Затем включите уведомления из установленного приложения (iOS 16.4 или новее).';
   else if(!supported())guide='Этот браузер не поддерживает фоновые уведомления. На телефоне попробуйте установленное SALAH в Safari или Chrome.';
   else if(Notification.permission==='denied')guide='Уведомления запрещены. Разрешите их в системных настройках SALAH.';
-  mounted.innerHTML='<h3>Когда SALAH свёрнуто</h3><p class="reminder-voice-note">Уведомления о намазах, азкарах и Джума по настройкам выше. Звук — системный; полный Азан прослушивается в открытом приложении.</p>'+(!active?'<p class="reminder-voice-note">При включении Supabase сохранит подписку, координаты выбранного города и параметры напоминаний. История молитв и счётчики останутся на телефоне.</p>':'')+(guide?'<p class="reminder-notice">'+esc(guide)+'</p>':'')+(!p.enabled?'<p class="reminder-voice-note">Сначала включите напоминания переключателем выше.</p>':'')+'<div class="reminder-preview"><button type="button" data-push-enable '+(!supported()||!p.enabled||!getSettings().city||!config||busy||!!guide?'disabled':'')+'>'+(active?'Обновить подключение':'Включить фоновые уведомления')+'</button>'+(state?'<button type="button" data-push-disable '+(busy?'disabled':'')+'>Отключить</button>':'')+'</div>'+(active?'<button class="button secondary" type="button" data-push-test '+(busy||!onlineReady?'disabled':'')+'>Тестовое уведомление</button>':'')+'<p class="reminder-status" role="status">'+esc(status||(config?'Доставка готова к подключению.':'Проверяем доступность доставки…'))+'</p>';
+  mounted.innerHTML='<h3>Когда SALAH свёрнуто</h3><p class="reminder-voice-note">Уведомления о намазах, азкарах и Джума по настройкам выше. Звук — системный; полный Азан прослушивается в открытом приложении.</p>'+(!active?'<p class="reminder-voice-note">При включении Supabase сохранит подписку, координаты выбранного города и параметры напоминаний. История молитв и счётчики не передаются сервису уведомлений.</p>':'')+(guide?'<p class="reminder-notice">'+esc(guide)+'</p>':'')+(!p.enabled?'<p class="reminder-voice-note">Сначала включите напоминания переключателем выше.</p>':'')+'<div class="reminder-preview"><button type="button" data-push-enable '+(!supported()||!p.enabled||!getSettings().city||!config||busy||!!guide?'disabled':'')+'>'+(active?'Обновить подключение':'Включить фоновые уведомления')+'</button>'+(state?'<button type="button" data-push-disable '+(busy?'disabled':'')+'>Отключить</button>':'')+'</div>'+(active?'<button class="button secondary" type="button" data-push-test '+(busy||!onlineReady?'disabled':'')+'>Тестовое уведомление</button>':'')+'<p class="reminder-status" role="status">'+esc(status||(config?'Доставка готова к подключению.':'Проверяем доступность доставки…'))+'</p>';
   mounted.querySelector('[data-push-enable]').onclick=enable;const off=mounted.querySelector('[data-push-disable]');if(off)off.onclick=disable;const check=mounted.querySelector('[data-push-test]');if(check)check.onclick=test;
  }
  function queue(){clearTimeout(timer);timer=setTimeout(()=>sync(),1200);}
  window.addEventListener('salah:settings-changed',queue);
  window.addEventListener('storage',event=>{if(event.key==='salah:settings'){queue();}else if(event.key===KEY){state=read();onlineReady=false;queue();draw();}});
- window.addEventListener('online',()=>{loadConfig();sync(true);});
- document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();sync();}});
+ window.addEventListener('online',()=>{loadConfig(true);sync(true);});
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();if(!config)loadConfig();sync();}});
  loadConfig();sync(true);
  return {mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&supported()&&Notification.permission==='granted',sync};
 }

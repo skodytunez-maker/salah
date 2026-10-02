@@ -9,6 +9,14 @@ function emailErrorMessage(error){
  if(error?.status>=500||error?.code==='unexpected_failure')return 'Отправка писем временно недоступна. Попробуйте позже.';
  return 'Не удалось отправить письмо. Попробуйте через минуту.';
 }
+function loginErrorMessage(error,method){
+ if(navigator.onLine===false||error?.message==='offline')return 'Нет соединения. Подключитесь к интернету и повторите вход.';
+ if(error?.status===429||error?.code==='over_request_rate_limit')return 'Слишком много попыток входа. Подождите немного и попробуйте снова.';
+ if(error?.status>=500||error?.status===408||['unexpected_failure','request_timeout'].includes(error?.code)||['AuthRetryableFetchError','AbortError','TimeoutError'].includes(error?.name))return 'Сервис входа временно недоступен. Попробуйте ещё раз чуть позже.';
+ if(method==='code'&&['otp_expired','invalid_credentials','invalid_code'].includes(error?.code))return 'Код неверен или истёк. Проверьте код из последнего письма или запросите новый.';
+ if(method==='password'&&['invalid_credentials','invalid_login'].includes(error?.code))return 'Не удалось войти. Проверьте почту и пароль.';
+ return 'Не удалось проверить '+(method==='code'?'код':'вход')+'. Попробуйте ещё раз.';
+}
 const notice=()=>{window.dispatchEvent(new Event('salah:counter-status'));updateStatus();};
 function lock(fn){return navigator.locks?.request?navigator.locks.request('salah:adhkar-progress-v2',fn):Promise.resolve(fn());}
 function getEngine(){return engine||(engine=createCounterSync({storage:localStorage,uuid:()=>crypto.randomUUID(),withLock:lock,changed:kind=>{if(kind==='saved'||kind==='account')window.dispatchEvent(new Event('salah:counter-restored'));},request:async(uid,component)=>{
@@ -95,24 +103,36 @@ export async function showCounterAccount(container,message='',force=false,mode='
     if(navigator.onLine===false)throw Error('offline');
     const {error}=await accountAuthClient().auth.signInWithOtp({email,options:recovery?{shouldCreateUser:false}:{shouldCreateUser:true,data:{nickname}}});if(error)throw error;if(!mailActive())return;
     mailForm.innerHTML='<p class="muted">Введите код из письма SALAH, отправленного на '+esc(email)+'. Можно проверить папку «Спам».</p><label for="counter-email-code">Код из письма</label><input id="counter-email-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required><button class="button" type="submit">Подтвердить и войти</button><button class="text-button" type="button" id="counter-email-resend">Отправить новый код</button><button class="text-button" type="button" id="counter-email-change">Изменить почту</button>';
-    let sentAt=Date.now(),resending=false;
+    let sentAt=Date.now(),resending=false,verifying=false;
     mailForm.querySelector('#counter-email-resend').onclick=async()=>{
-     if(!mailActive()||resending)return;
+     if(!mailActive()||resending||verifying)return;
      const remaining=Math.ceil((60000-(Date.now()-sentAt))/1000);
      if(remaining>0){report('Новый код можно отправить через '+remaining+' с.');return;}
-     const resend=mailForm.querySelector('#counter-email-resend');resending=true;resend.disabled=true;
+     const resend=mailForm.querySelector('#counter-email-resend'),confirm=mailForm.querySelector('button[type=submit]');resending=true;resend.disabled=true;confirm.disabled=true;resend.textContent='Отправляем код…';
      try{
       if(navigator.onLine===false)throw Error('offline');
       const {error}=await accountAuthClient().auth.signInWithOtp({email,options:recovery?{shouldCreateUser:false}:{shouldCreateUser:true,data:{nickname}}});if(error)throw error;
       if(!mailActive())return;sentAt=Date.now();mailForm.querySelector('#counter-email-code').value='';report('Новое письмо отправлено. Введите код из последнего письма.');
      }catch(error){if(mailActive())report(emailErrorMessage(error));}
-     finally{resending=false;if(mailActive())resend.disabled=false;}
+     finally{resending=false;if(mailActive()){resend.disabled=false;confirm.disabled=false;resend.textContent='Отправить новый код';}}
     };
     mailForm.querySelector('#counter-email-change').onclick=()=>{if(mailActive())return showCounterAccount(container,'',true,recovery?'recover':'');};
     mailForm.onsubmit=async event=>{
-     event.preventDefault();if(!mailActive())return;const code=mailForm.querySelector('input'),submit=mailForm.querySelector('button'),token=code.value.trim();if(submit.disabled)return;submit.disabled=true;
-     try{if(!/^[0-9]{6,8}$/.test(token))throw Error('invalid_code');const {data,error}=await accountAuthClient().auth.verifyOtp({email,token,type:'email'});code.value='';if(error||!data?.session?.user?.email_confirmed_at)throw Error('invalid_code');}
-     catch{code.value='';if(mailActive()){submit.disabled=false;report('Код неверен или истёк. Запросите новое письмо.');}return;}
+     event.preventDefault();if(!mailActive()||resending||verifying)return;
+     const code=mailForm.querySelector('input'),submit=mailForm.querySelector('button[type=submit]'),resend=mailForm.querySelector('#counter-email-resend'),token=code.value.trim();
+     if(!/^[0-9]{6,8}$/.test(token)){report('Введите код из письма: от 6 до 8 цифр.');code.focus();return;}
+     if(navigator.onLine===false){report('Нет соединения. Подключитесь к интернету и повторите вход.');return;}
+     verifying=true;submit.disabled=true;resend.disabled=true;submit.textContent='Проверяем код…';report('Проверяем код из письма…');
+     try{
+      const {data,error}=await accountAuthClient().auth.verifyOtp({email,token,type:'email'});
+      if(error)throw error;
+      if(!data?.session?.user?.email_confirmed_at)throw {code:'invalid_code'};
+      code.value='';
+     }catch(error){
+      verifying=false;
+      if(mailActive()){submit.disabled=false;resend.disabled=false;submit.textContent='Подтвердить и войти';report(loginErrorMessage(error,'code'));}
+      return;
+     }
      if(!mailActive())return;
      // Recovery keeps the existing nickname and never creates an account.
      if(recovery){if(mailActive())await showCounterAccount(container,'Почта подтверждена. Задайте новый пароль.',true,'password');return;}
@@ -130,8 +150,8 @@ export async function showCounterAccount(container,message='',force=false,mode='
    if(!password.value){report('Введите пароль.');password.focus();return;}
    if(navigator.onLine===false){report('Нет соединения. Подключитесь к интернету и повторите.');return;}
    button.disabled=true;button.textContent='Входим…';report('Проверяем почту и пароль…');
-   try{const {data,error}=await accountAuthClient().auth.signInWithPassword({email:form.querySelector('input[type=email]').value.trim(),password:password.value});password.value='';if(error||!data?.session?.user?.email_confirmed_at)throw Error('invalid_login');if(active())await showCounterAccount(container,'',true);}
-   catch{password.value='';if(active()){button.disabled=false;button.textContent='Войти';report('Не удалось войти. Проверьте почту и пароль.');}}
+   try{const {data,error}=await accountAuthClient().auth.signInWithPassword({email:form.querySelector('input[type=email]').value.trim(),password:password.value});password.value='';if(error)throw error;if(!data?.session?.user?.email_confirmed_at)throw {code:'invalid_login'};if(active())await showCounterAccount(container,'',true);}
+   catch(error){password.value='';if(active()){button.disabled=false;button.textContent='Войти';report(loginErrorMessage(error,'password'));}}
   };passwordLogin.onsubmit=submitPassword;passwordLogin.querySelector('button[type=submit]').onclick=submitPassword;
   }
  }
