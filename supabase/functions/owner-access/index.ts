@@ -6,7 +6,7 @@ const PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -25,7 +25,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   if(!user||user.id!==OWNER_ID||!user.email_confirmed_at||user.is_anonymous)return reply(403,{error:'owner_only'});
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
-  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'))return reply(400,{error:'invalid_parameters'});
+  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'))return reply(400,{error:'invalid_parameters'});
   let claims;
   try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
   catch{return reply(503,{error:'auth_unavailable'});}
@@ -34,7 +34,16 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   try{if(!isSessionActive||!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'});}
   const secondFactor=claims.aal==='aal2'&&user.factors?.some(factor=>factor.status==='verified'&&factor.factor_type==='totp');
   if(!secondFactor)return mode==='gate'?reply(200,{owner:false,mfaRequired:true}):reply(403,{error:'mfa_required'});
+  if(mode==='gate'&&url.searchParams.has('ids'))return reply(400,{error:'invalid_parameters'});
   if(mode==='gate')return reply(200,{owner:true,statisticsConnected:Boolean(statsToken)});
+  if(mode==='profiles'){
+   if(url.searchParams.has('days')||url.searchParams.has('page'))return reply(400,{error:'invalid_parameters'});
+   const ids=(url.searchParams.get('ids')||'').split(',');
+   if(ids.length>50||new Set(ids).size!==ids.length||ids.some(id=>! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)))return reply(400,{error:'invalid_ids'});
+   if(!readProfiles)return reply(503,{error:'profiles_unavailable'});
+   try{const rows=await readProfiles(ids);if(!Array.isArray(rows))throw Error('invalid');return reply(200,{profiles:rows.filter(row=>ids.includes(row.id)).slice(0,50).map(row=>({id:row.id,nickname:typeof row.nickname==='string'?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):''}))});}catch{return reply(503,{error:'profiles_unavailable'});}
+  }
+  if(url.searchParams.has('ids'))return reply(400,{error:'invalid_parameters'});
   if(mode==='users'){
    if(url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
    const page=Number(url.searchParams.get('page')||1);if(!Number.isSafeInteger(page)||page<1||page>10000)return reply(400,{error:'invalid_page'});
@@ -72,7 +81,8 @@ if(typeof Deno!=='undefined'){
  const users=await tx`select u.raw_user_meta_data->>'nickname' as nickname,u.created_at as "joinedAt",u.last_sign_in_at as "lastSignInAt",p.last_seen as "lastSeenAt",coalesce(p.online,false) as online from auth.users u left join lateral(select max(last_seen) as last_seen,bool_or(active and last_seen>=now()-interval '90 seconds') as online from public.app_presence where user_id=u.id and app='salah') p on true where u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false order by coalesce(p.online,false) desc,p.last_seen desc nulls last,u.id limit 50 offset ${(page-1)*50}`;
  return{total:count.total,online:presence.online,users};
  });
+ const readProfiles=async ids=>sql`select id::text as id,raw_user_meta_data->>'nickname' as nickname from auth.users where id=any(${ids}::uuid[]) and email_confirmed_at is not null and coalesce(is_anonymous,false)=false`;
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }
