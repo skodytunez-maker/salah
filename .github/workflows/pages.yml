@@ -31,6 +31,7 @@ jobs:
           node scripts/check-settings-resume.mjs
           node scripts/check-city.mjs
           node scripts/check-wallpapers.mjs
+          node scripts/check-shared-account.mjs
           node scripts/check-owner-access.mjs
           node scripts/check-owner-client.mjs
           node scripts/check-adhkar.mjs
