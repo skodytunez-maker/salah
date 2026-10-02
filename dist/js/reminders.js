@@ -187,7 +187,7 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   function draw(){
     if(!mounted?.isConnected||destroyed)return;
     const oldFocus=mounted.contains(document.activeElement)?document.activeElement.dataset.reminderControl:null;
-    const jumuahSection=jumuahMounted?.closest('details');
+    const jumuahSection=jumuahMounted?.isConnected?jumuahMounted.closest('details'):null;
     const opened=Array.from(mounted.querySelectorAll('details[open]')).map(element=>element.className);
     const p=preferences(),canNotify=notificationAvailable(),permission=canNotify?Notification.permission:'unavailable';
     const available=!!getSettings()?.city;
