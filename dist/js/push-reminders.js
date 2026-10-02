@@ -13,7 +13,7 @@ function write(state){localStorage.setItem(KEY,JSON.stringify(state));}
 function newDevice(){const state={id:crypto.randomUUID(),token:Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join(''),saved:false,pendingRemoval:false,lastSync:0};write(state);return state;}
 function keyBytes(value){return Uint8Array.from(atob(value.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));}
 export function createPushReminders({getSettings,toast=()=>{}}){
- let mounted=null,busy=false,status='',config=null,onlineReady=false,timer,state=read(),lastSignature=state?.signature||'';
+ let mounted=null,busy=false,status='',config=null,onlineReady=false,needsSync=false,timer,state=read(),lastSignature=state?.signature||'';
  const supported=()=>globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
  async function call(action,body){
   const response=await fetch(API+'/'+action,{method:body?'POST':'GET',mode:'cors',cache:'no-store',credentials:'omit',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(20000)});
@@ -23,7 +23,8 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  async function registration(){const found=await navigator.serviceWorker.getRegistration();return found?.active?found:await navigator.serviceWorker.ready;}
  async function loadConfig(){try{config=await call('config');if(typeof config.publicKey!=='string'||keyBytes(config.publicKey).length!==65)throw Error();}catch{config=null;status='Сервис доставки пока недоступен. Настройки напоминаний сохранены.';}draw();}
  async function sync(force=false){
-  if(busy||!state||(!state.pendingRemoval&&(!supported()||Notification.permission!=='granted')))return;
+  if(busy){needsSync=true;return;}
+  if(!state||(!state.pendingRemoval&&(!supported()||Notification.permission!=='granted')))return;
   const p=pushPreferences(getSettings()),signature=JSON.stringify(p);
   if(!force&&!state.pendingRemoval&&state.saved&&signature===lastSignature&&Date.now()-state.lastSync<86400000)return;
   busy=true;draw();
@@ -36,7 +37,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
    state={...state,saved:true,lastSync:Date.now(),signature};write(state);lastSignature=signature;onlineReady=true;
    status=p.reminders.enabled?'Фоновые уведомления подключены.':'Подписка сохранена. Напоминания выключены переключателем выше.';
   }catch(error){onlineReady=false;status='Не удалось сохранить доставку: '+error.message+'. Попробуем при следующем подключении.';}
-  finally{busy=false;draw();}
+  finally{busy=false;draw();if(needsSync){needsSync=false;queue();}}
  }
  async function enable(){
   if(busy||!supported()||!getSettings().city||!normalizeReminders(getSettings().reminders).enabled)return;
@@ -83,6 +84,6 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  window.addEventListener('online',()=>{loadConfig();sync(true);});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();sync();}});
  loadConfig();sync(true);
- return {mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&supported()&&Notification.permission==='granted',sync};
+ return {mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&supported()&&Notification.permission==='granted',sync};
 }
 function sameKey(a,b){return a.length===b.length&&a.every((n,i)=>n===b[i]);}

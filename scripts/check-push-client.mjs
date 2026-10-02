@@ -10,8 +10,8 @@ Object.defineProperty(globalThis,'navigator',{value:{userAgent:'Chrome',platform
 let prefs={city:{name:'Тюмень',latitude:57.1522,longitude:65.5272,timezone:'Asia/Yekaterinburg'},method:3,school:0,highLatitude:3,offsets:{Asr:2},reminders:{enabled:true},weather:true};
 data.set('salah:settings',JSON.stringify(prefs));
 data.set('salah:push-install-v1',JSON.stringify({id:'7e3c95b2-feba-4c41-9de4-1260d0201d11',token:'a'.repeat(64),saved:true,lastSync:0}));
-let outage=false;
-globalThis.fetch=async(url,options)=>{assert.ok(url.startsWith('https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/background-reminders/'));if(outage)throw Error('offline');const body=options.body?JSON.parse(options.body):null;requests.push({url,body});return new Response(JSON.stringify(url.endsWith('/config')?{publicKey:Buffer.from([4,...Array(64).fill(1)]).toString('base64url')}:{saved:true}),{status:200});};
+let outage=false,waitForSave=null;
+globalThis.fetch=async(url,options)=>{assert.ok(url.startsWith('https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/background-reminders/'));if(outage)throw Error('offline');const body=options.body?JSON.parse(options.body):null;requests.push({url,body});if(waitForSave&&body?.preferences){const gate=waitForSave;waitForSave=null;await gate;}return new Response(JSON.stringify(url.endsWith('/config')?{publicKey:Buffer.from([4,...Array(64).fill(1)]).toString('base64url')}:{saved:true}),{status:200});};
 const {createPushReminders}=await import('../dist/js/push-reminders.js');
 const background=createPushReminders({getSettings:()=>prefs});
 for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
@@ -26,3 +26,14 @@ outage=true;prefs={...prefs,school:0};await background.sync();assert.equal(backg
 assert.equal(JSON.parse(data.get('salah:push-install-v1')).signature.includes('"school":1'),true,'Failed sync cannot mark new preferences as delivered');
 outage=false;await background.sync();assert.equal(background.active(),true);assert.equal(requests.at(-1).body.preferences.school,0,'Retry preserves the unsent choice');
 console.log('PASS: no permission prompts at startup, separate device subscription, saved Asr synchronization, unrelated preferences unchanged, master off reaches server, failed writes stay pending and reconnect retry.');
+
+let releaseSave;waitForSave=new Promise(resolve=>{releaseSave=resolve;});
+prefs={...prefs,school:1};const firstSave=background.sync();
+for(let i=0;i<4;i++)await new Promise(resolve=>setImmediate(resolve));
+prefs={...prefs,school:0};await background.sync();
+releaseSave();await firstSave;
+assert.equal(background.active(),false,'The late acknowledgement cannot claim the newest preference was saved');
+await new Promise(resolve=>setTimeout(resolve,1400));
+assert.equal(requests.at(-1).body.preferences.school,0,'A choice changed during an in-flight request must be sent next');
+assert.equal(background.active(),true);
+console.log('PASS: a settings change during a slow save is queued and cannot be lost.');
