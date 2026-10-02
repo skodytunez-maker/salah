@@ -95,17 +95,79 @@ export const commonCities=[
     "timezone": "Asia/Dubai",
     "country": "ОАЭ",
     "admin1": "Dubai"
+  },
+  {
+    "name": "Тюкалинск",
+    "latitude": 55.87245,
+    "longitude": 72.19796,
+    "timezone": "Asia/Omsk",
+    "country": "Россия",
+    "admin1": "Омская Область"
+  },
+  {
+    "name": "Тюльган",
+    "latitude": 52.34127,
+    "longitude": 56.16157,
+    "timezone": "Asia/Yekaterinburg",
+    "country": "Россия",
+    "admin1": "Оренбургская Область"
+  },
+  {
+    "name": "Тюп",
+    "latitude": 42.7276,
+    "longitude": 78.36476,
+    "timezone": "Asia/Bishkek",
+    "country": "Кыргызстан",
+    "admin1": "Issyk-Kul’skaya Oblast’"
+  },
+  {
+    "name": "Тюмень",
+    "latitude": 58.41553,
+    "longitude": 49.23639,
+    "timezone": "Europe/Kirov",
+    "country": "Россия",
+    "admin1": "Кировская Область"
+  },
+  {
+    "name": "Тюмень",
+    "latitude": 58.8742,
+    "longitude": 54.9044,
+    "timezone": "Asia/Yekaterinburg",
+    "country": "Россия",
+    "admin1": "Пермский край"
+  },
+  {
+    "name": "Тюмень",
+    "latitude": 52.9333,
+    "longitude": 84.5915,
+    "timezone": "Asia/Barnaul",
+    "country": "Россия",
+    "admin1": "Алтайский Край"
   }
 ];
 const normal=value=>String(value||'').trim().toLocaleLowerCase('ru').replaceAll('ё','е');
 export function validTimezone(value){try{if(typeof value!=='string'||!value)return false;new Intl.DateTimeFormat('ru',{timeZone:value});return true}catch{return false}}
 export function validCoordinates(latitude,longitude){return typeof latitude==='number'&&Number.isFinite(latitude)&&Math.abs(latitude)<=90&&typeof longitude==='number'&&Number.isFinite(longitude)&&Math.abs(longitude)<=180}
 export function cleanCity(value){if(!value||typeof value.name!=='string'||!value.name.trim()||!validCoordinates(value.latitude,value.longitude)||!validTimezone(value.timezone))return null;return {name:value.name.trim().slice(0,160),country:String(value.country||'').slice(0,160),admin1:String(value.admin1||'').slice(0,160),latitude:value.latitude,longitude:value.longitude,timezone:value.timezone}}
-export function mergeCities(...groups){const cities=[];for(const value of groups.flat()){const city=cleanCity(value);if(city&&!cities.some(other=>normal(other.name)===normal(city.name)&&Math.abs(other.latitude-city.latitude)<.1&&Math.abs(other.longitude-city.longitude)<.1))cities.push(city)}return cities.slice(0,10)}
-export function localCities(query,currentCity){const text=normal(query);return text.length<2?[]:mergeCities([currentCity,...commonCities].filter(city=>city&&normal(city.name).startsWith(text)))}
+export function mergeCities(...groups){const cities=[];for(const value of groups.flat()){const city=cleanCity(value);if(city&&!cities.some(other=>normal(other.name)===normal(city.name)&&normal(other.country)===normal(city.country)&&Math.abs(other.latitude-city.latitude)<.01&&Math.abs(other.longitude-city.longitude)<.01))cities.push(city)}return cities.slice(0,10)}
+export function localCities(query,currentCity){const text=normal(query);return text.length<2?[]:mergeCities([...commonCities,currentCity].filter(city=>city&&normal(city.name).startsWith(text)).sort((a,b)=>a.name.localeCompare(b.name,'ru')||String(a.admin1||'').localeCompare(String(b.admin1||''),'ru')))}
 async function json(url,signal,fetcher){const controller=new AbortController();const abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)controller.abort();const timer=setTimeout(abort,12000);try{const response=await fetcher(url,{signal:controller.signal,credentials:'omit',cache:'no-store'});if(!response.ok)throw Error('City lookup unavailable');return await response.json()}finally{clearTimeout(timer);signal?.removeEventListener('abort',abort)}}
 export async function searchCities(query,{signal,fetcher=fetch}={}){const text=String(query||'').trim();if(text.length<2)return [];const url=new URL('https://geocoding-api.open-meteo.com/v1/search');url.search=new URLSearchParams({name:text,count:'10',language:'ru',format:'json'});const data=await json(url,signal,fetcher);return mergeCities(Array.isArray(data.results)?data.results:[])}
-export function cityFromLocation(place,zone,coords){const name=typeof place.city==='string'&&place.city.trim()?place.city:place.locality;return cleanCity({name,country:place.countryName,admin1:place.principalSubdivision,latitude:coords.latitude,longitude:coords.longitude,timezone:zone.timezone})}
+// Display a settlement, never a region/district returned as the provider's city field.
+export function settlementName(value){
+ if(typeof value!=='string')return '';let name=value.trim();
+ name=name.replace(/^(?:муниципальное образование\s+)?городской округ(?:\s*[-—]\s*город)?\s+/iu,'').replace(/^(?:город|г\.)\s+/iu,'').replace(/\s*[,—-]?\s+городской округ$/iu,'').trim();
+ if(!name||/(?:округ|район|область|муниципальн|district|county|borough|region|oblast|okrug)/iu.test(name))return '';
+ return name;
+}
+export function cityFromLocation(place,zone,coords){
+ const namedPlaces=[...(place.localityInfo?.informative||[]),...(place.localityInfo?.administrative||[])];
+ const settlement=namedPlaces.find(item=>/(?:city|town|village|settlement|город|село|деревня|пос[её]лок)/iu.test(String(item.description||''))&&!/(?:district|county|borough|municipal|район|округ|муниципальн)/iu.test(String(item.description||''))&&settlementName(item.name));
+ const city=settlementName(place.city),locality=settlementName(place.locality),named=settlementName(settlement?.name);
+ const administrativeCity=/(?:округ|район|область|муниципальн|district|county|borough|region|oblast|okrug)/iu.test(String(place.city||''));
+ const name=administrativeCity?(named||locality||city):(city||named||locality);
+ return cleanCity({name,country:place.countryName,admin1:place.principalSubdivision,latitude:coords.latitude,longitude:coords.longitude,timezone:zone.timezone});
+}
 // Only call from the current device's fresh, consented Geolocation position. No IP fallback.
 export async function locateCity(coords,{signal,fetcher=fetch}={}){if(!validCoordinates(coords.latitude,coords.longitude))throw Error('Invalid coordinates');const reverse=new URL('https://api.bigdatacloud.net/data/reverse-geocode-client');reverse.search=new URLSearchParams({latitude:String(coords.latitude),longitude:String(coords.longitude),localityLanguage:'ru'});const timezone=new URL('https://api.open-meteo.com/v1/forecast');timezone.search=new URLSearchParams({latitude:String(coords.latitude),longitude:String(coords.longitude),timezone:'auto'});const [place,zone]=await Promise.all([json(reverse,signal,fetcher),json(timezone,signal,fetcher)]);const city=cityFromLocation(place,zone,coords);if(!city)throw Error('City not resolved');return city}
 // Every new query invalidates the previous request, even if a provider ignores cancellation.
