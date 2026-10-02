@@ -6,7 +6,7 @@ const PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -25,7 +25,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   if(!user||user.id!==OWNER_ID||!user.email_confirmed_at||user.is_anonymous)return reply(403,{error:'owner_only'});
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
-  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'))return reply(400,{error:'invalid_parameters'});
+  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'))return reply(400,{error:'invalid_parameters'});
   let claims;
   try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
   catch{return reply(503,{error:'auth_unavailable'});}
@@ -33,6 +33,13 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   const secondFactor=claims.aal==='aal2'&&user.factors?.some(factor=>factor.status==='verified'&&factor.factor_type==='totp');
   if(!secondFactor)return mode==='gate'?reply(200,{owner:false,mfaRequired:true}):reply(403,{error:'mfa_required'});
   if(mode==='gate')return reply(200,{owner:true,statisticsConnected:Boolean(statsToken)});
+  if(mode==='users'){
+   if(url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
+   const page=Number(url.searchParams.get('page')||1);if(!Number.isSafeInteger(page)||page<1||page>10000)return reply(400,{error:'invalid_page'});
+   if(!readUsers)return reply(503,{error:'users_not_connected'});
+   try{const result=await readUsers(page);if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('invalid');const date=v=>Number.isFinite(Date.parse(v))?new Date(v).toISOString():null;return reply(200,{total:result.total,page,users:result.users.slice(0,50).map(row=>({nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника',joinedAt:date(row.joinedAt),lastSignInAt:date(row.lastSignInAt)}))});}catch{return reply(503,{error:'users_unavailable'});}
+  }
+  if(url.searchParams.has('page'))return reply(400,{error:'invalid_parameters'});
   if(mode!=='stats')return reply(400,{error:'invalid_mode'});
   if(!statsToken)return reply(503,{error:'statistics_not_connected'});
   const days=Number(url.searchParams.get('days')||7);
@@ -47,7 +54,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    const data=await response.json();
    if(!Number.isSafeInteger(data.total)||data.total<0||!Array.isArray(data.stats))return reply(502,{error:'invalid_statistics'});
    const stats=data.stats.filter(row=>/^\d{4}-\d{2}-\d{2}$/.test(row?.day)&&Number.isSafeInteger(row.daily)&&row.daily>=0).slice(0,32).map(row=>({day:row.day,visitors:row.daily}));
-   // Only aggregates reach the browser. No tokens, upstream errors or user list.
+   // Statistics contains aggregates only. Never return tokens or upstream errors.
    return reply(200,{period:days,total:data.total,stats,updatedAt:new Date(now()).toISOString()});
   }catch{return reply(502,{error:'statistics_unavailable'});}
  };
@@ -55,7 +62,10 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
 
 if(typeof Deno!=='undefined'){
  const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
+ const {default:postgres}=await import('npm:postgres@3.4.9');
+ const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
+ const readUsers=async page=>sql.begin(async tx=>{const [count]=await tx`select count(*)::int as total from auth.users where email_confirmed_at is not null and coalesce(is_anonymous,false)=false`;const users=await tx`select raw_user_meta_data->>'nickname' as nickname,created_at as "joinedAt",last_sign_in_at as "lastSignInAt" from auth.users where email_confirmed_at is not null and coalesce(is_anonymous,false)=false order by last_sign_in_at desc nulls last,id limit 50 offset ${(page-1)*50}`;return{total:count.total,users};});
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

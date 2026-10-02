@@ -92,3 +92,8 @@ export function initOwnerAccess(onChanged){
  setInterval(()=>{if(!document.hidden&&verified)verifyOwner().catch(()=>{});},45000);
  resume();
 }
+
+// Shared session; authority is still checked only by protected server functions.
+export const accountAuthClient=()=>authClient();
+
+export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error("Неизвестная страница.");const {data,error}=await authClient().auth.getSession();if(error)throw Error("Войдите снова.");return callOwner(data.session,"?mode=users&page="+page);}

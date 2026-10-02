@@ -124,6 +124,11 @@ export function restoreBackup(prepared,{storage=localStorage,confirmed=false}={}
  const fingerprint=preparedBackups.get(prepared);
  if(!fingerprint||fingerprint!==JSON.stringify(prepared))fail('Резервная копия изменилась. Проверьте её ещё раз перед восстановлением.');
  const backup=validDocument(prepared.backup);
+ // Restoring an older file must not subtract account-backed lifetime totals.
+ if(storage.getItem('salah:counter-active-account')&&storage.getItem('salah:counter-active-account')!=='guest'){
+  const current=storage.getItem('salah:adhkar-progress-v2');
+  if(current){const old=JSON.parse(current);counts(old.totals,'счётчики аккаунта');const incoming=backup.personal['adhkar-progress-v2']||{version:2,totals:{},days:{}};for(const [id,n]of Object.entries(old.totals))incoming.totals[id]=Math.max(incoming.totals[id]||0,n);backup.personal['adhkar-progress-v2']=incoming;}
+ }
  const writes=[['salah:settings',JSON.stringify(backup.settings)],['salah:history',JSON.stringify(backup.history)],...Object.entries(backup.personal).map(([key,value])=>['salah:'+key,JSON.stringify(value)])];
  const previous=[];
  try{for(const [key]of writes)previous.push([key,storage.getItem(key)])}

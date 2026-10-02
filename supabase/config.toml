@@ -4,3 +4,6 @@ project_id = "kbltwszfvphgbxdbczsb"
 # Modern session JWTs are validated by Auth getUser on every request in the handler.
 # The platform's legacy-secret-only check does not support this signing-key setup.
 verify_jwt = false
+
+[functions.adhkar-sync]
+verify_jwt = false

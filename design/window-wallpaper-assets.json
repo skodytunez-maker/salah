@@ -1,0 +1,22 @@
+{
+  "tool": "Built-in image generator",
+  "date": "2026-10-02",
+  "assets": [
+    {
+      "path": "dist/assets/window-new-york-day.webp",
+      "original": "exec-7ff63892-f8ee-4917-b7c5-2ce1a43baef1.png",
+      "description": "Daylight frame matched to accepted Brooklyn Bridge night panorama.",
+      "prompt": "Use case: lighting-weather. Edit target: the supplied accepted New York Brooklyn Bridge night prayer-room wallpaper. Create matching DAYLIGHT frame with exact same image dimensions, all building/bridge/rug/floor/window geometry, all shapes and camera strictly unchanged. Change illumination ONLY: airy soft pale blue sky (no stars), Manhattan and Brooklyn Bridge lit by neutral afternoon daylight, city lights off, gentle blue East River reflections, warm natural wooden floor, elegant navy/gold prayer rug. Keep huge open sky, no sun or moon because animated separately. Keep each bridge tower and suspension cable, One World Trade Center, city building silhouette exact to allow pixel-aligned day-night crossfade. No text, no people, no logos, no UI."
+    },
+    {
+      "path": "dist/assets/window-new-york-night.webp",
+      "original": "exec-abe940b8-2d6e-4283-95d0-648d6e15a625.png",
+      "prompt": "Use case: lighting-weather. Edit only the exterior nighttime artificial lighting in this exact portrait New York/Brooklyn Bridge prayer room wallpaper. Keep all geometry, image dimensions, sky, building silhouettes, bridge, river, window framing, navy prayer rug and dark interior unchanged. Make city lights photorealistically natural, not a uniform golden illuminated model. Many windows must be unlit, irregular patches of occupied windows with mixed subtle warm-white and neutral/cool-white illumination, restrained street lighting, subtle red aircraft obstruction lights only where already appropriate. Bridge lighting realistic warm-white, reduce overly bright broad gold outlines and glow. The water reflects broken localized streaks from actual illuminated windows and lamps, with more dark navy water between; no uniformly golden wash. A lively authentic Lower Manhattan at night with believable contrast and no oversaturation, no added objects, no text, no people, no moon/sun."
+    },
+    {
+      "path": "dist/assets/window-moon.webp",
+      "original": "exec-c498c40f-9292-47da-b254-432a69fae256.png",
+      "prompt": "Use case: transparent-background cutout. Create one photorealistic small waxing crescent MOON asset for a premium nighttime city panorama, isolated on fully transparent background, square canvas. Real lunar surface with fine craters and subtle mottled maria; slender white-silver crescent illuminated from the right, realistic terminator shading into a nearly invisible deep charcoal shadowed disk with faint earthshine. No illustrated style, no cartoon outlines, no vector shape, no blue neon glow, no exaggerated bloom or halo. Astronomical photograph look, physically plausible soft silver highlights, calm restrained appearance. Moon fills 75 percent of canvas so details survive a 38 pixel UI rendering. One moon only, no stars, no sky, no scenery, no text."
+    }
+  ]
+}

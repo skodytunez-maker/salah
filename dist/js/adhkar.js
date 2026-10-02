@@ -42,3 +42,5 @@ export function updateAdhkarPeriod(period){
  const counter=host.querySelector('#adhkar-count');
  if(counter&&!counter.dataset.pending&&data.groups[group]){const item=data.items.find(item=>item.id===counter.dataset.dhikrId);if(item)updateCount(item,progress(group))}
 }
+
+window.addEventListener('salah:counter-restored',()=>{if(!document.body.classList.contains('adhkar-signature')||!group||!data)return;const button=host?.querySelector('#adhkar-count');if(button){const item=data.items.find(i=>i.id===button.dataset.dhikrId);if(item)updateCount(item,progress(group));}else if(host?.querySelector('.dhikr-list'))list();});

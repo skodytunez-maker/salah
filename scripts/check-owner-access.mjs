@@ -39,3 +39,14 @@ assert.equal((await wrongIssuer(request('valid-owner-token'))).status,401);
 const removedFactor=createOwnerHandler({getUser:async()=>({data:{user:{...user,factors:[]}}}),getClaims});
 assert.deepEqual(await (await removedFactor(request('valid-owner-token'))).json(),{owner:false,mfaRequired:true});
 console.log('PASS: owner password alone cannot read statistics; signed AAL2 and active TOTP required; bad signature, wrong issuer, removed factor denied.');
+
+let usersCalls=0;
+const usersOwner=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,readUsers:async page=>{usersCalls++;assert.equal(page,1);return{total:1,users:[{email:'never-return@example.test',nickname:'<test>',joinedAt:'2026-10-02T01:00:00Z',lastSignInAt:'2026-10-02T01:05:00Z',privateSecret:'never-return'}]};}});
+const listed=await usersOwner(request('valid-owner-token','?mode=users&page=1'));assert.equal(listed.status,200);const list=await listed.json();assert.equal(list.users[0].nickname,'<test>');assert.ok(!JSON.stringify(list).includes('never-return'));assert.equal(usersCalls,1);
+assert.equal((await usersOwner(request('valid-owner-token','?mode=users&page=0'))).status,400);
+assert.equal((await usersOwner(request('valid-owner-token','?mode=users&days=7'))).status,400);
+const usersFirstFactor=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims:async()=>({data:{claims:{...claims,aal:'aal1'}}}),readUsers:async()=>{throw Error('private user list leaked');}});
+assert.equal((await usersFirstFactor(request('valid-owner-token','?mode=users'))).status,403);
+const usersOther=createOwnerHandler({getUser:async()=>({data:{user:{...user,id:'11111111-1111-4111-8111-111111111111',user_metadata:{owner:true}}}}),getClaims,readUsers:async()=>{throw Error('private user list leaked');}});
+assert.equal((await usersOther(request('valid-owner-token','?mode=users'))).status,403);
+console.log('PASS: only MFA owner sees paginated nicknames and sign-in dates; emails/metadata/secrets excluded; password alone and forged role cannot read users.');

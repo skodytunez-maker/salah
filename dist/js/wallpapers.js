@@ -11,5 +11,5 @@ export function skyObjects(now,times,mode='auto',preview=null){
  else if(mode==='light'){progress=.5;isDay=true;}
  else if(mode==='dark'){progress=.62;isDay=false;}
  else{const rise=times?.Sunrise,set=times?.Maghrib;if(!Number.isFinite(now)||!Number.isFinite(rise)||!Number.isFinite(set)||set<=rise||set-rise>=86400000)return {x:70,y:22,sun:0,moon:1};isDay=now>=rise&&now<set;progress=isDay?(now-rise)/(set-rise):(((now-set)%86400000+86400000)%86400000)/(rise+86400000-set);}
- progress=clamp(progress);return {x:14+72*progress,y:48-40*Math.sin(Math.PI*progress),sun:isDay?1:0,moon:isDay?0:1};
+ progress=clamp(progress);const visibility=clamp(Math.min(progress/.04,(1-progress)/.04));return {x:14+72*progress,y:48-44*Math.sin(Math.PI*progress),sun:isDay?visibility:0,moon:isDay?0:visibility};
 }

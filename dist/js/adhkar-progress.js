@@ -48,7 +48,7 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
     }catch{return null}
   }
   function commit(loaded){
-    try{loaded.backend.setItem(KEY,JSON.stringify(loaded.doc));return true}catch{return false}
+    try{loaded.backend.setItem(KEY,JSON.stringify(loaded.doc));if(typeof window!=='undefined')window.dispatchEvent(new Event('salah:counter-changed'));return true}catch{return false}
   }
   function snapshot(doc,date,group){
     return {_day:date,...normalizeProgress(doc.days[date]?.[group])};
