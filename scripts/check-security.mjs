@@ -12,6 +12,13 @@ assert.match(policy,/object-src 'none'/);
 assert.match(policy,/base-uri 'none'/);
 assert.match(html,/<meta name="referrer" content="no-referrer">/);
 assert.match(policy,/connect-src[^;]*https:\/\/kbltwszfvphgbxdbczsb\.supabase\.co/);
+// The API-backed Luhaidan endpoint redirects MP3 downloads and streaming to the official CDN.
+// Both media playback and offline fetch must permit the redirect destination.
+for(const directive of ['media-src','connect-src']){
+ const sources=policy.split(';').map(x=>x.trim()).find(x=>x.startsWith(directive+' ')).split(/\s+/).slice(1);
+ for(const url of ['https://server8.mp3quran.net/lhdan/001.mp3','https://cdn.mp3quran.net/audio/muhammad-luhaidan/r1/001.mp3'])assert.ok(sources.includes(new URL(url).origin),directive+' must allow the verified recitation redirect');
+}
+assert.doesNotMatch(policy,/script-src[^;]*cdn\.mp3quran\.net/);
 const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
 assert.equal(createHash('sha256').update(sdk).digest('hex'),'59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd');
 const events={};
