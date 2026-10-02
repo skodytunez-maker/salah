@@ -50,3 +50,13 @@ assert.deepEqual(signals,['synced','synced']);
 cloudCount=7;await stable.sync();assert.equal(signals.at(-1),'saved');assert.equal(get(unchanged),7);
 await stable.sync();assert.equal(signals.at(-1),'synced');
 console.log('PASS: unchanged cloud totals do not rebuild the reading view; real changes still restore the counter.');
+
+// Older devices may have no cloud component for the newly added zero free counter.
+// Retain that local zero; dropping/recreating it bounces storage events between tabs.
+const sparse=new Memory();set(sparse,5);let progressWrites=0;const sparseWrite=sparse.setItem.bind(sparse);sparse.setItem=(key,value)=>{if(key===KEY)progressWrites++;sparseWrite(key,value)};
+const sparseTabs=Array.from({length:3},()=>core.createCounterSync({storage:sparse,uuid:()=>B,request:async()=>({totals:{sayyid:5}})}));
+for(const tab of sparseTabs)await tab.activate(A);progressWrites=0;
+for(let round=0;round<8;round++)for(const tab of sparseTabs){await tab.activate(A);assert.equal((await tab.sync()).ok,true)}
+assert.equal(progressWrites,0,'An absent cloud zero cannot repeatedly rewrite the progress document');
+assert.deepEqual(JSON.parse(sparse.getItem(KEY)).totals,{sayyid:5,'free-dhikr':0});
+console.log('PASS: an old cloud record without the zero free counter causes no progress writes across three tabs; existing totals stay intact.');

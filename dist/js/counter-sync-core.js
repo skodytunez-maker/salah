@@ -43,7 +43,7 @@ export function createCounterSync({storage,request,uuid,changed=()=>{},withLock=
  const uid=active;pending=(async()=>{try{
  const captured=await withLock(()=>collect(uid));const sent=cleanComponent({device:captured.device,sequence:captured.sequence,seed:captured.seed,delta:captured.delta});const response=await request(uid,sent);const totals=cleanCounters(response.totals);
  if(active!==uid)return{ok:false,reason:'account_changed'};
- await withLock(()=>{if(active!==uid)return;const current=collect(uid),d=doc();if(current.device!==captured.device)throw Error('device_changed');const merged={};for(const id of new Set([...Object.keys(totals),...Object.keys(current.delta),...Object.keys(captured.delta)]))merged[id]=Math.max(0,(totals[id]||0)+(current.delta[id]||0)-(captured.delta[id]||0));
+ await withLock(()=>{if(active!==uid)return;const current=collect(uid),d=doc();if(current.device!==captured.device)throw Error('device_changed');const merged={};for(const id of new Set([...Object.keys(d.totals),...Object.keys(totals),...Object.keys(current.delta),...Object.keys(captured.delta)]))merged[id]=Math.max(0,(totals[id]||0)+(current.delta[id]||0)-(captured.delta[id]||0));
  const updated=Object.keys(merged).length!==Object.keys(d.totals).length||Object.entries(merged).some(([id,n])=>d.totals[id]!==n);
  current.observed=merged;d.totals=merged;
  transaction([[key(uid),JSON.stringify(current)],...(updated?[[PROGRESS,JSON.stringify(d)]]:[])]);
