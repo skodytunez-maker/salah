@@ -35,7 +35,7 @@ for(const endpoint of ['http://web.push.apple.com/test','https://localhost/a','h
 assert.throws(()=>subscription({...sub,keys:{...sub.keys,p256dh:Buffer.alloc(65).toString('base64url')}}));
 assert.throws(()=>subscription({...sub,keys:{...sub.keys,auth:'abc'}}));
 const id='7e3c95b2-feba-4c41-9de4-1260d0201d11',token='a'.repeat(64);
-function fixture(){
+function fixture({scheduleUnavailable=false}={}){
  const devices=new Map(),ledger=new Map(),rates=new Map(),cacheMap=new Map(),sent=[];let leased=false;
  const config={cron_secret:'test-cron-secret',vapid:{publicKey:'public-test',privateKey:'private-test'}};
  const db={config:async()=>config,ensureConfig:async()=>config,get:async k=>devices.get(k),count:async()=>devices.size,
@@ -45,7 +45,7 @@ function fixture(){
   claim:async(k,h)=>{const key=k+h;if(ledger.get(key)&&ledger.get(key)!=='retry')return false;ledger.set(key,'sending');return true;},complete:async(k,h,s)=>ledger.set(k+h,s),cleanup:async()=>{},
   cache:{get:async k=>cacheMap.get(k),put:async(k,v)=>cacheMap.set(k,v)}};
  const webpush={generateVAPIDKeys:()=>config.vapid,sendNotification:async(s,b,o)=>sent.push({s,body:JSON.parse(b),options:o})};
- const fetcher=async url=>new Response(JSON.stringify({days:url.endsWith('tyumen-first-asr.json')?{}:table}),{status:200});
+ const fetcher=async url=>{if(scheduleUnavailable)throw Error('offline-schedule');return new Response(JSON.stringify({days:url.endsWith('tyumen-first-asr.json')?{}:table}),{status:200});};
  const handler=createPushHandler({db,webpush,fetcher,clock:()=>now});
  const call=(action,body,headers={},method='POST')=>handler(new Request('https://example.test/background-reminders/'+action,{method,headers:{Origin:PUSH_ORIGIN,...headers},body:body===undefined?undefined:JSON.stringify(body)}));
  return {db,devices,ledger,sent,call,handler};
@@ -76,3 +76,28 @@ assert.ok(client.includes('crypto.getRandomValues(new Uint8Array(32))'));
 assert.ok(worker.includes("self.addEventListener('push'"));assert.ok(worker.includes('Date.now()<data.expiresAt'));
 assert.ok(!client.includes('privateKey'));assert.ok(!worker.includes('privateKey'));
 console.log('PASS: Asr variants, city timezone, personal offsets, freshness, no invented times, push endpoint SSRF guard, device capability isolation, rate limit, fixed test messages, dispatch authentication, duplicate prevention, private RLS schema and secret-free personal backups.');
+
+// Friday is determined in the selected city's timezone, independently of prayer data.
+const jumPrefs=preferences({...settings,reminders:{enabled:true,jumuah:{enabled:true,time:'02:00'}}});
+assert.equal(jumPrefs.reminders.jumuah.time,'09:00','Friday notice has the requested fixed local time');
+assert.equal(preferences(settings).reminders.jumuah.enabled,false,'Existing users are not subscribed without choosing it');
+const fridayAt=Date.parse('2026-10-02T09:00:00+05:00');
+const friday=eventsFor(jumPrefs,{},fridayAt).filter(e=>e.kind==='jumuah');
+assert.equal(friday.length,1);assert.equal(friday[0].at,fridayAt);assert.equal(friday[0].message,'Сегодня Джума');assert.equal(friday[0].adhan,false);
+assert.equal(dueEvents(friday,fridayAt-1).length,0);assert.equal(dueEvents(friday,fridayAt+90000).length,0);
+assert.equal(eventsFor(jumPrefs,{},Date.parse('2026-10-06T09:00:00+05:00')).filter(e=>e.kind==='jumuah').length,0,'No weekday notice');
+const utcThursday=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'Pacific/Auckland'}},{},Date.parse('2026-10-01T20:00:20Z')).filter(e=>e.kind==='jumuah');
+assert.equal(utcThursday[0].day,'2026-10-02');assert.equal(utcThursday[0].at,Date.parse('2026-10-01T20:00:00Z'));
+const nyFriday=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'America/New_York'}},{},Date.parse('2026-10-02T13:00:20Z')).filter(e=>e.kind==='jumuah');
+assert.equal(nyFriday[0].at,Date.parse('2026-10-02T13:00:00Z'));
+const nyWinter=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'America/New_York'}},{},Date.parse('2026-12-04T14:00:20Z')).filter(e=>e.kind==='jumuah');
+assert.equal(nyWinter[0].at,Date.parse('2026-12-04T14:00:00Z'),'Seasonal timezone offsets are respected');
+assert.equal(eventsFor({...jumPrefs,reminders:{...jumPrefs.reminders,enabled:false}},{},fridayAt).length,0);
+assert.equal(eventsFor({...jumPrefs,reminders:{...jumPrefs.reminders,jumuah:{enabled:false}}},{},fridayAt).filter(e=>e.kind==='jumuah').length,0);
+now=fridayAt+20000;f=fixture({scheduleUnavailable:true});
+f.devices.set(id,{id,token_hash:await digest(token),subscription:sub,preferences:jumPrefs});
+result=await f.call('dispatch',{}, {'X-Salah-Cron':'test-cron-secret'});
+assert.equal(result.status,200);assert.equal((await result.json()).delivered,1,'Jumuah works even when a prayer provider is unavailable');
+assert.equal(f.sent[0].body.body,'Сегодня Джума');assert.equal(f.sent[0].body.url,'#home');
+result=await f.call('dispatch',{}, {'X-Salah-Cron':'test-cron-secret'});assert.equal((await result.json()).delivered,0,'Minute retries do not repeat Friday notice');
+console.log('PASS: opt-in Friday 09:00 city-local delivery, timezones and DST, no stale/repeated notice, master-off, and unavailable prayer provider.');

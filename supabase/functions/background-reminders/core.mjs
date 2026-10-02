@@ -111,7 +111,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
-      if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).then(rows=>eventsFor(p,rows,clock())).catch(()=>[]));
+      if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})).then(rows=>eventsFor(p,rows,clock())));
       const events=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
        const hash=await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;

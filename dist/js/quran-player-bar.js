@@ -16,8 +16,9 @@ export function mountQuranPlayer(){
  toggle.onclick=()=>quranPlayback.toggle();
  const reciterSelect=panel.querySelector('select');
  reciterSelect.onchange=async()=>{const reciter=reciterSelect.value;if(!reciterHasSurah(reciter,quranPlayback.state.surah?.number))return;const saved=write('quran-preferences',{...read('quran-preferences',{}),reciter});if(!saved)toast('Не удалось сохранить выбор чтеца');await quranPlayback.changeReciter(reciter)};
- return quranPlayback.subscribe(state=>{
-  const visible=!!state.surah;panel.hidden=!visible;document.body.classList.toggle('has-quran-audio',visible);if(!visible)return;
+ const draw=state=>{
+  const route=location.hash.slice(1).split('?')[0]||'home';
+  const visible=!!state.surah&&['home','quran'].includes(route);panel.hidden=!visible;document.body.classList.toggle('has-quran-audio',visible);if(!visible)return;
   link.href='#quran?surah='+state.surah.number+'&ayah='+(state.index+1);
   link.querySelector('strong').textContent=state.meta.name;
   const catalogKey=state.surah.number+'|'+state.reciter;if(reciterSelect.dataset.catalog!==catalogKey){reciterSelect.dataset.catalog=catalogKey;reciterSelect.replaceChildren(...RECITERS.map(r=>{const option=document.createElement('option');option.value=r.id;option.disabled=!reciterHasSurah(r.id,state.surah.number);option.textContent=r.name+(option.disabled?' · нет записи':'');option.selected=r.id===state.reciter;return option}))}
@@ -25,5 +26,9 @@ export function mountQuranPlayer(){
   link.querySelector('small').textContent=(reciterInfo(state.reciter).format==='surah'?'Сура целиком':'Аят '+(state.index+1))+(status?' · '+status:'');
   const playing=['playing','loading'].includes(state.status);toggle.innerHTML=playing?pause:play;toggle.setAttribute('aria-label',playing?'Пауза Корана':'Воспроизвести Коран');
   panel.querySelector('[data-previous]').disabled=!state.canPrevious;panel.querySelector('[data-next]').disabled=!state.canNext;
- });
+ };
+ const routeChanged=()=>draw(quranPlayback.state);
+ window.addEventListener('hashchange',routeChanged);
+ const unsubscribe=quranPlayback.subscribe(draw);
+ return()=>{unsubscribe();window.removeEventListener('hashchange',routeChanged);panel.remove();document.body.classList.remove('has-quran-audio');};
 }

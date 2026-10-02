@@ -37,3 +37,9 @@ await new Promise(resolve=>setTimeout(resolve,1400));
 assert.equal(requests.at(-1).body.preferences.school,0,'A choice changed during an in-flight request must be sent next');
 assert.equal(background.active(),true);
 console.log('PASS: a settings change during a slow save is queued and cannot be lost.');
+
+prefs={...prefs,reminders:{...prefs.reminders,enabled:true,jumuah:{enabled:true}}};await background.sync();
+assert.equal(requests.at(-1).body.preferences.reminders.jumuah.enabled,true);
+assert.equal(requests.at(-1).body.preferences.reminders.jumuah.time,'09:00');
+assert.equal(JSON.parse(data.get('salah:settings')).reminders.jumuah,undefined,'Push sync must never replace existing local choices');
+console.log('PASS: Friday choice reaches the private delivery service without changing unrelated settings.');

@@ -12,7 +12,8 @@ const DAY = 86400000;
 const reminderDefaults = {
   enabled:false, voice:'mansour', browserNotifications:false,
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
-  adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}}
+  adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}},
+  jumuah:{enabled:false,time:'09:00'}
 };
 
 function validLocalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
@@ -30,7 +31,7 @@ function normalizeReminders(value){
     const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
     return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
-  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar};
+  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'}};
 }
 
 function shiftDay(day,amount){
@@ -94,6 +95,11 @@ function buildReminderEvents(value,context){
       const at=row.mode==='prayer'?timestamp(times[key==='morning'?'Fajr':'Maghrib']):localTimestamp(day,row.time,context.timeZone);
       if(!Number.isFinite(at))continue;
       events.push({id:JSON.stringify([String(context.cityKey),day,'adhkar',key,at,'at']),day,kind:'adhkar',key,phase:'at',at,adhan:false,message:key==='morning'?'Время утренних азкаров':'Время вечерних азкаров'});
+    }
+    // The city's calendar day determines Friday; prayer data is not required.
+    if(settings.jumuah.enabled&&new Date(day+'T12:00:00Z').getUTCDay()===5){
+      const at=localTimestamp(day,settings.jumuah.time,context.timeZone);
+      if(Number.isFinite(at))events.push({id:JSON.stringify([String(context.cityKey),day,'jumuah',at,'at']),day,kind:'jumuah',key:'jumuah',phase:'at',at,adhan:false,message:'Сегодня Джума'});
     }
   }
   return events.sort((a,b)=>a.at-b.at||a.id.localeCompare(b.id));
@@ -240,7 +246,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
-      if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).then(rows=>eventsFor(p,rows,clock())).catch(()=>[]));
+      if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})).then(rows=>eventsFor(p,rows,clock())));
       const events=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
        const hash=await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
