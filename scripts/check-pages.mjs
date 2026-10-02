@@ -31,5 +31,5 @@ async function scan(dir){for(const entry of await fs.readdir(dir,{withFileTypes:
 await scan(dist);
 const index=JSON.parse(await fs.readFile(path.join(dist,'data/quran-index.json'),'utf8'));
 assert.equal(index.surahs.length,114);
-for(const surah of index.surahs){const bytes=await fs.readFile(path.join(dist,'data/quran',surah.number+'.json'));assert.equal(createHash('sha256').update(bytes).digest('hex'),surah.sha256,'Quran integrity: '+surah.number);}
+for(const surah of index.surahs){const bytes=await fs.readFile(path.join(dist,'data/quran',surah.number+'.json'));assert.equal(createHash('sha256').update(bytes).digest('hex'),surah.sha256,'Quran integrity: '+surah.number);if(surah.readingSha256){const reading=await fs.readFile(path.join(dist,'data/quran-reading',surah.number+'.json'));assert.equal(createHash('sha256').update(reading).digest('hex'),surah.readingSha256,'Transcription integrity: '+surah.number);assert.equal(reading.length,surah.readingBytes);}}
 console.log('PASS: Pages subpath, PWA identity, '+assets.length+' offline assets, relative imports and CSS, all 114 Quran files.');
