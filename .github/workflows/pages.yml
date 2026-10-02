@@ -25,6 +25,7 @@ jobs:
           node scripts/check-push.mjs
           node scripts/check-push-client.mjs
           node scripts/check-pages.mjs
+          node scripts/check-app-sharing.mjs
           node scripts/check-security.mjs
           node scripts/check-settings.mjs
           node scripts/check-settings-resume.mjs
