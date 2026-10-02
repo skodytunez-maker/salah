@@ -25,20 +25,22 @@ function deferred(){let resolve;const promise=new Promise(done=>resolve=done);re
 function browser(){
  const app=new Element(),location={hash:'#account'},storage=new Storage();
  const listeners=new Map(),window={addEventListener(type,callback){if(!listeners.has(type))listeners.set(type,[]);listeners.get(type).push(callback);},dispatchEvent(event){for(const callback of listeners.get(event.type)||[])callback(event);}};
- const fixture={session:null,otpError:null,verifyError:null,passwordError:null,verifySession:true,otpGate:null,verifyGate:null,passwordGate:null,sessionGate:null,mail:[],codes:[],passwords:[],updates:[],syncRequests:0};
+ const fixture={now:0,session:null,otpError:null,verifyError:null,passwordError:null,verifySession:true,otpGate:null,verifyGate:null,passwordGate:null,sessionGate:null,mail:[],codes:[],passwords:[],updates:[],updateError:null,updateGate:null,factors:[],factorError:null,levelError:null,level:{currentLevel:"aal1",nextLevel:"aal1"},syncRequests:0};
  const confirmed=(email,nickname='Fixture')=>({access_token:'fixture-token',user:{id:'11111111-1111-4111-8111-111111111111',email,email_confirmed_at:'2026-10-02T01:00:00Z',user_metadata:{nickname}}});
  const auth={
   getSession:async()=>{if(fixture.sessionGate)await fixture.sessionGate.promise;return{data:{session:fixture.session},error:null};},
   signInWithOtp:async options=>{fixture.mail.push(options);if(fixture.otpGate)await fixture.otpGate.promise;return{data:{user:null,session:null},error:fixture.otpError};},
   verifyOtp:async options=>{fixture.codes.push(options);if(fixture.verifyGate)await fixture.verifyGate.promise;if(fixture.verifyError)return{error:fixture.verifyError};if(!fixture.verifySession)return{data:{session:null},error:null};fixture.session=confirmed(options.email);return{data:{session:fixture.session},error:null};},
   signInWithPassword:async options=>{fixture.passwords.push(options);if(fixture.passwordGate)await fixture.passwordGate.promise;if(fixture.passwordError)return{error:fixture.passwordError};fixture.session=confirmed(options.email);return{data:{session:fixture.session},error:null};},
-  updateUser:async options=>{fixture.updates.push(options);fixture.session.user.user_metadata={...fixture.session.user.user_metadata,...options.data};return{error:null};},
+  mfa:{listFactors:async()=>({data:{totp:fixture.factors},error:fixture.factorError}),getAuthenticatorAssuranceLevel:async()=>({data:fixture.level,error:fixture.levelError})},
+  updateUser:async options=>{fixture.updates.push(options);if(fixture.updateGate)await fixture.updateGate.promise;if(fixture.updateError)return{error:fixture.updateError};fixture.session.user.user_metadata={...fixture.session.user.user_metadata,...options.data};return{error:null};},
   signOut:async()=>{fixture.session=null;return{error:null};}
  };
- const context=createContext({location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator:{},crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,createCounterSync,accountAuthClient:()=>({auth}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
+ const navigator={onLine:true};class FixtureDate extends Date{static now(){return fixture.now;}}
+ const context=createContext({Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,createCounterSync,accountAuthClient:()=>({auth}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
   fetch:async(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/adhkar-sync');assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');fixture.syncRequests++;return Response.json({totals:{}});},
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
- return{app,location,window,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
+ return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
 }
 function menu(b){const app=new Element(),context=createContext({app,window:b.window,currentRoute:'more',counterSyncStatus:b.counterSyncStatus,ownerVerified:()=>false,title:()=>''});const screen=new Script(menuExecutable).runInContext(context);screen.more();return{app,...screen};}
 async function open(b){await b.showCounterAccount(b.app);assert.equal(b.select('#counter-account-heading').textContent,'Вход и регистрация');assert.ok(b.select('#counter-account-nickname'));assert.ok(b.select('#counter-account-email'));assert.match(b.app.textContent,/Подтвердите почту кодом из письма/);assert.doesNotMatch(b.app.textContent,/сч[её]т|азкар|подписк|Какие данные сохраняются/i);}
@@ -75,3 +77,48 @@ const opening=browser();opening.fixture.sessionGate=deferred();const oldOpening=
 const pendingRepaint=browser();pendingRepaint.fixture.sessionGate=deferred();const firstPaint=pendingRepaint.showCounterAccount(pendingRepaint.app),pendingArea=pendingRepaint.select('#account-form-area');await pendingRepaint.showCounterAccount(pendingRepaint.app);assert.equal(pendingRepaint.select('#account-form-area'),pendingArea);pendingRepaint.fixture.sessionGate.resolve();await firstPaint;assert.equal(pendingRepaint.select('#account-form-area'),pendingArea);assert.ok(pendingRepaint.select('#counter-account-email'));
 const unconfirmedSession=browser();unconfirmedSession.fixture.session={access_token:'fixture-token',user:{id:'11111111-1111-4111-8111-111111111111',email:'fixture@example.test',email_confirmed_at:null,user_metadata:{}}};await open(unconfirmedSession);assert.equal(unconfirmedSession.counterSyncStatus().signedIn,false);assert.equal(unconfirmedSession.select('#counter-account-authorized'),null);assert.doesNotMatch(menu(unconfirmedSession).app.textContent,/Авторизован/);
 console.log('PASS: first prominent entry updates after confirmed login/logout; authorized account shows editable nickname and profile; email code then confirmed account, no cloud before confirmation; safe code/send/password failures; mail-app return preserves forms; route changes reject stale responses. No email or network requests sent.');
+
+// Resending remains on the same code screen, respects the minute interval,
+// handles offline/provider failures, and ignores replies for a replaced form.
+const resend=browser();await open(resend);const resendForm=await requestCode(resend);
+await resend.select('#counter-email-resend').onclick();assert.equal(resend.fixture.mail.length,1);assert.match(resend.select('#account-sync-status').textContent,/через 60 с/);
+resend.fixture.now=60001;resend.fixture.otpGate=deferred();const sendAgain=resend.select('#counter-email-resend').onclick();await resend.select('#counter-email-resend').onclick();assert.equal(resend.fixture.mail.length,2);assert.equal(resend.select('#counter-email-resend').disabled,true);
+resend.select('#counter-email-code').value='654321';resend.fixture.otpGate.resolve();await sendAgain;resend.fixture.otpGate=null;
+assert.equal(resend.select('#counter-account-email-form'),resendForm);assert.equal(resend.select('#counter-email-code').value,'');assert.equal(resend.fixture.mail[1].email,'fixture@example.test');assert.equal(resend.fixture.mail[1].options.data.nickname,'Fixture Nick');assert.match(resend.select('#account-sync-status').textContent,/последнего письма/);assert.equal(resend.select('#counter-email-resend').disabled,false);
+resend.fixture.now=120002;resend.fixture.otpError={status:429,code:'over_email_send_rate_limit',message:'Private limit'};await resend.select('#counter-email-resend').onclick();assert.match(resend.select('#account-sync-status').textContent,/Слишком много запросов/);assert.ok(resend.select('#counter-email-code'));assert.doesNotMatch(resend.app.textContent,/Private limit/);
+resend.fixture.otpError={status:500,code:'unexpected_failure',message:'Private SMTP password'};await resend.select('#counter-email-resend').onclick();assert.match(resend.select('#account-sync-status').textContent,/временно недоступна/);assert.doesNotMatch(resend.app.textContent,/Private SMTP password/);
+resend.navigator.onLine=false;const requestsBeforeOffline=resend.fixture.mail.length;await resend.select('#counter-email-resend').onclick();assert.equal(resend.fixture.mail.length,requestsBeforeOffline);assert.match(resend.select('#account-sync-status').textContent,/Нет соединения/);assert.equal(resend.select('#counter-email-resend').disabled,false);
+const initialOffline=browser();await open(initialOffline);initialOffline.navigator.onLine=false;await requestCode(initialOffline);assert.equal(initialOffline.fixture.mail.length,0);assert.ok(initialOffline.select('#counter-account-email'));assert.match(initialOffline.select('#account-sync-status').textContent,/Нет соединения/);assert.equal(initialOffline.select('#counter-account-email-form').querySelector('button').disabled,false);
+const staleResend=browser();await open(staleResend);await requestCode(staleResend);staleResend.fixture.now=60001;staleResend.fixture.otpGate=deferred();const oldResend=staleResend.select('#counter-email-resend').onclick();staleResend.location.hash='#more';staleResend.app.innerHTML='<p id="new-screen">Меню</p>';staleResend.fixture.otpGate.resolve();await oldResend;assert.equal(staleResend.select('#new-screen').textContent,'Меню');assert.equal(staleResend.select('#counter-email-code'),null);
+console.log('PASS: resend respects cooldown, prevents duplicate sends, keeps the code form and nickname, handles offline/429/SMTP failures without leaking details, and ignores stale replies.');
+
+async function recover(b){
+ await open(b);await b.select('#counter-password-forgot').onclick();
+ assert.equal(b.select('#counter-account-heading').textContent,'Восстановить пароль');
+ assert.equal(b.select('#counter-account-nickname'),null);
+ b.select('#counter-account-email').value='fixture@example.test';
+ await b.select('#counter-account-email-form').submit();
+ assert.equal(b.fixture.mail[0].options.shouldCreateUser,false);
+ assert.equal(b.fixture.mail[0].options.data,undefined);
+}
+function newPassword(b,password='a-secure-test-password',repeat=password){
+ const form=b.select('#counter-password-update');form.querySelector('#counter-new-password').value=password;form.querySelector('#counter-repeat-password').value=repeat;return form;
+}
+const reset=browser();await recover(reset);
+const resetForm=reset.select('#counter-account-email-form');await reset.showCounterAccount(reset.app);assert.equal(reset.select('#counter-account-email-form'),resetForm);
+reset.fixture.now=60001;await reset.select('#counter-email-resend').onclick();assert.equal(reset.fixture.mail[1].options.shouldCreateUser,false);
+await confirm(reset);assert.equal(reset.fixture.updates.length,0,'Recovery must not overwrite the existing nickname');
+assert.equal(reset.select('#counter-password-settings').attributes.open,'');assert.match(reset.select('#account-sync-status').textContent,/Почта подтверждена/);
+await newPassword(reset,'short').submit();assert.equal(reset.fixture.updates.length,0);
+await newPassword(reset,'a-secure-test-password','another-test-password').submit();assert.equal(reset.fixture.updates.length,0);
+const edit=newPassword(reset);reset.fixture.updateGate=deferred();const setting=edit.submit();await edit.submit();
+await new Promise(done=>setImmediate(done));assert.equal(reset.fixture.updates.length,1);assert.equal(reset.fixture.updates[0].password,'a-secure-test-password');reset.fixture.updateGate.resolve();await setting;
+assert.match(reset.select('#account-sync-status').textContent,/Пароль изменён/);assert.equal(edit.querySelector('#counter-new-password').value,'');assert.equal(edit.querySelector('#counter-repeat-password').value,'');
+const mfaReset=browser();await recover(mfaReset);await confirm(mfaReset);mfaReset.fixture.factors=[{status:'verified'}];mfaReset.fixture.level={currentLevel:'aal1',nextLevel:'aal2'};await newPassword(mfaReset).submit();
+assert.equal(mfaReset.fixture.updates.length,0,'Email recovery cannot bypass an enrolled second factor');assert.equal(mfaReset.select('#counter-password-mfa').hidden,false);assert.match(mfaReset.select('#account-sync-status').textContent,/Google Authenticator/);
+mfaReset.fixture.level={currentLevel:'aal2',nextLevel:'aal2'};await newPassword(mfaReset).submit();assert.equal(mfaReset.fixture.updates.length,1);
+const uncertainReset=browser();await recover(uncertainReset);await confirm(uncertainReset);uncertainReset.fixture.factorError=Error('Private factor failure');await newPassword(uncertainReset).submit();assert.equal(uncertainReset.fixture.updates.length,0);assert.doesNotMatch(uncertainReset.app.textContent,/Private factor failure/);
+const offlineReset=browser();await recover(offlineReset);await confirm(offlineReset);offlineReset.navigator.onLine=false;await newPassword(offlineReset).submit();assert.equal(offlineReset.fixture.updates.length,0);assert.match(offlineReset.select('#account-sync-status').textContent,/Нет соединения/);
+const failedReset=browser();await recover(failedReset);await confirm(failedReset);failedReset.fixture.updateError=Error('Private provider error');await newPassword(failedReset).submit();assert.match(failedReset.select('#account-sync-status').textContent,/Не удалось изменить пароль/);assert.doesNotMatch(failedReset.app.textContent,/Private provider error/);assert.equal(failedReset.select('#counter-new-password').value,'');
+const invalidReset=browser();await recover(invalidReset);invalidReset.fixture.verifyError=Error('invalid');await confirm(invalidReset);assert.equal(invalidReset.select('#counter-password-update'),null);assert.equal(invalidReset.fixture.updates.length,0);
+console.log('PASS: forgotten password uses existing-account OTP only; verification required before password form; profile preserved; length, confirmation, duplicates, offline/provider errors and enrolled MFA fail closed.');
