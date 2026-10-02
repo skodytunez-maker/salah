@@ -2,7 +2,7 @@ import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.j
 import{createCounterSync}from './counter-sync-core.js';
 import{esc}from './ui.js';
 let engine=null,session=null,timer=null,busy=null,status='local',reason='',host=null,accountScreen=0,accountArea=null;
-export const counterSyncStatus=()=>({status,reason,signedIn:!!session});
+export const counterSyncStatus=()=>({status,reason,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous});
 const notice=()=>{window.dispatchEvent(new Event('salah:counter-status'));updateStatus();};
 function lock(fn){return navigator.locks?.request?navigator.locks.request('salah:adhkar-progress-v2',fn):Promise.resolve(fn());}
 function getEngine(){return engine||(engine=createCounterSync({storage:localStorage,uuid:()=>crypto.randomUUID(),withLock:lock,changed:kind=>{if(kind==='saved'||kind==='account')window.dispatchEvent(new Event('salah:counter-restored'));},request:async(uid,component)=>{
@@ -33,9 +33,9 @@ export async function showCounterAccount(container,message='',force=false){
  const active=()=>host===container&&screen===accountScreen&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===area;
  const report=text=>{if(active())container.querySelector('#account-sync-status').textContent=text;};
  await synchronizeCounters();if(!active())return;
- if(session){
+ if(counterSyncStatus().signedIn){
   container.querySelector('#counter-account-heading').textContent='Мой аккаунт';
-  area.innerHTML='<form id="counter-profile"><label for="counter-profile-nick">Ник</label><input id="counter-profile-nick" type="text" autocomplete="nickname" minlength="2" maxlength="40" required value="'+esc(session.user.user_metadata?.nickname||'')+'"><button class="text-button" type="submit">Сохранить ник</button></form><p>'+esc(session.user.email||'Ваш аккаунт')+'</p><button class="button" id="counter-sync-now">Сохранить счёт</button><button class="text-button" id="counter-account-out">Выйти</button>';
+  area.innerHTML='<p class="account-authorized" id="counter-account-authorized" role="status">Авторизован</p><h2>Данные аккаунта</h2><form id="counter-profile"><label for="counter-profile-nick">Ник</label><input id="counter-profile-nick" type="text" autocomplete="nickname" minlength="2" maxlength="40" required value="'+esc(session.user.user_metadata?.nickname||'')+'"><button class="text-button" type="submit">Сохранить ник</button></form><p>'+esc(session.user.email||'Ваш аккаунт')+'</p><button class="button" id="counter-sync-now">Сохранить счёт</button><button class="text-button" id="counter-account-out">Выйти</button>';
   area.querySelector('#counter-profile').onsubmit=async e=>{
    e.preventDefault();if(!active())return;const form=e.currentTarget,button=form.querySelector('button');if(button.disabled)return;button.disabled=true;
    try{const {error}=await accountAuthClient().auth.updateUser({data:{nickname:form.querySelector('input').value.trim()}});if(error)throw error;if(active())button.textContent='Ник сохранён';}
