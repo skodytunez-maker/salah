@@ -33,6 +33,9 @@ if(typeof Deno!=='undefined'){
  Deno.serve(createPresenceHandler({
   getUser:token=>auth.auth.getUser(token),getClaims:token=>auth.auth.getClaims(token),
   isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},
-  record:async(uid,input)=>{await sql`insert into public.app_presence(user_id,app,tab_id,active,sequence,last_seen) values(${uid}::uuid,'salah',${input.p_tab}::uuid,${input.p_active},${input.p_sequence},clock_timestamp()) on conflict(user_id,app,tab_id) do update set active=excluded.active,sequence=excluded.sequence,last_seen=excluded.last_seen where excluded.sequence>app_presence.sequence`;}
+  record:async(uid,input)=>{
+   if(!input.p_active){await sql`update public.app_presence set active=false,sequence=${input.p_sequence} where user_id=${uid}::uuid and app='salah' and tab_id=${input.p_tab}::uuid and sequence<${input.p_sequence}`;return;}
+   await sql`insert into public.app_presence(user_id,app,tab_id,active,sequence,last_seen) values(${uid}::uuid,'salah',${input.p_tab}::uuid,true,${input.p_sequence},clock_timestamp()) on conflict(user_id,app,tab_id) do update set active=excluded.active,sequence=excluded.sequence,last_seen=excluded.last_seen where excluded.sequence>app_presence.sequence`;
+  }
  }));
 }

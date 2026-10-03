@@ -39,4 +39,5 @@ assert.equal((await createPresenceHandler({...services,isSessionActive:async()=>
 const failed=await createPresenceHandler({...services,record:async()=>{throw Error('private database failure')}})(request());assert.equal(failed.status,503);assert.ok(!(await failed.text()).includes('private database failure'));
 assert.match(source,/clock_timestamp\(\)/,'Visit time must come from the server');
 assert.match(source,/where excluded\.sequence>app_presence\.sequence/,'A delayed offline request cannot replace a newer foreground record');
+assert.match(source,/if\(!input\.p_active\)\{await sql`update public\.app_presence set active=false,sequence=\$\{input\.p_sequence\} where/,'An offline request only closes existing presence and cannot create a visit or change the last foreground time');
 console.log('PASS: presence writes only for the verified caller; anonymous, forged, revoked, foreign origin and supplied user ID denied; database errors fail closed; no user data returned.');
