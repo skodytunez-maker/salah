@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createHash,webcrypto} from 'node:crypto';
-import {hasOwnTranscription,readingTranscription,arabicReadingKey} from '../dist/js/quran-transcription.js';
+import {hasOwnTranscription,readingTranscription,arabicReadingKey,formatSalahTranscription} from '../dist/js/quran-transcription.js';
 const dir=new URL('../dist/',import.meta.url),load=async p=>JSON.parse(await fs.readFile(new URL(p,dir),'utf8'));
 const index=await load('data/quran-index.json');
 assert.equal(createHash('sha256').update(index.surahs.map(s=>s.number+':'+s.sha256).join('\n')).digest('hex'),'14c84bbd21b3694aa368e566dbbbd5e22daad65fc3488c95f6227dd27f211bb3','All existing Arabic, translations, tajweed and source transcriptions stay byte-for-byte intact');
@@ -15,11 +15,17 @@ for(const meta of index.surahs){
   const verse=source.verses[i];assert.equal(row.ayah,verse.ayah);assert.equal(row.arabicKey,arabicReadingKey(verse.arabic));
   assert.ok(row.text.trim());assert.ok(!/[A-Za-z\u0600-\u06ff<>вВ]/.test(row.text),'Only safe Cyrillic notation: '+meta.number+':'+row.ayah);
   assert.equal(readingTranscription(surah,verse,'source'),verse.transliteration);
-  assert.equal(readingTranscription(surah,verse,'salah-preview'),row.text);count++;
+  assert.equal(readingTranscription(surah,verse,'salah-preview'),formatSalahTranscription(row.text));count++;
  }
  const changed=structuredClone(surah);changed.verses[0].arabic+=' ا';assert.equal(hasOwnTranscription(changed),false);assert.equal(readingTranscription(changed,changed.verses[0],'salah-preview'),changed.verses[0].transliteration);
 }
 assert.equal(count,6236);assert.equal(total,index.transcriptionBytes);
+// Existing verified/offline files receive the current spelling without changing Arabic or hashes.
+const kafirunSource=await load('data/quran/109.json'),kafirunReading=await load('data/quran-reading/109.json'),kafirun={...kafirunSource,salahReading:kafirunReading};
+assert.equal(readingTranscription(kafirun,kafirun.verses[1],'salah-preview'),'Ля а‘буду маа та‘будуун');
+assert.equal(readingTranscription(kafirun,kafirun.verses[2],'salah-preview'),'Уаля антум ‘аабидууна маа а‘буд');
+assert.equal(formatSalahTranscription('Аллаах ляа иляаха илляа ‘аляа Бисмилляах Ляа Фаляа ал-ляа'),'Аллаах ля иляаха илляа ‘аляа Бисмилляах Ля Фаля ал-ля');
+
 const readings=await load('data/quran-reading/109.json');assert.match(readings.verses[0].text,/Қуль?/);assert.match(readings.verses[0].text,/каафируун/);assert.match(readings.verses[1].text,/та‘будуун$/);
 const alaq=await load('data/quran-reading/96.json');assert.match(alaq.verses[0].text,/Иқра/);assert.match(alaq.verses[0].text,/халяқ$/);
 const kahf=await load('data/quran-reading/18.json');assert.match(kahf.verses[2].text,/абадаа$/);

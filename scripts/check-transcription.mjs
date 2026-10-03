@@ -11,6 +11,7 @@ for(const item of data.items){
  assert.equal(/[вВ]/.test(reading),false,item.id+': waw is read with у');
  assert.equal((arabic.match(/ق/g)||[]).length,(reading.match(/[қҚ]/g)||[]).length,item.id+': qaf must stay distinct from kaf');
 }
+assert.match(data.items.find(x=>x.id==='sayyid').transliteration,/раббии, ля иляаха илляа ант\./);
 assert.match(data.items.find(x=>x.id==='sayyid').transliteration,/илляа ант\.$/);
 assert.match(data.items.find(x=>x.id==='tasbih').transliteration,/бихамдих\.$/);
 assert.match(data.items.find(x=>x.id==='raditu').transliteration,/набиййаа\.$/);
