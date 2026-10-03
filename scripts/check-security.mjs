@@ -42,6 +42,22 @@ assert.equal(handled('/salah/js/app.js',{auth:true}),false);
 assert.equal(handled('/salah/api/private',{method:'POST'}),false);
 assert.equal(handled('/other-app/js/app.js'),false);
 assert.equal(handled('/salah/data/quran/1.json'),false);
+// Root and owner launches remain offline-capable. Standalone public pages
+// and private/API documents must never be replaced with the cached app shell.
+context.caches={open:async()=>({match:async key=>new Response('cached:'+key)})};
+async function navigate(path){
+ let response;
+ events.fetch({request:{mode:'navigate',method:'GET',url:'https://skodytunez-maker.github.io'+path,headers:new Headers()},respondWith:value=>{response=value},waitUntil:()=>{}});
+ return response?await response:null;
+}
+for(const path of ['/salah/','/salah/index.html','/salah/owner.html']){
+ const response=await navigate(path);
+ assert.equal(await response.text(),'cached:https://skodytunez-maker.github.io'+(path==='/salah/'?'/salah/index.html':path));
+}
+for(const path of ['/salah/wallpapers/preview.html','/salah/api/private','/salah/unknown.html','/other-app/']){
+ assert.equal(await navigate(path),null,'Non-app documents bypass the shell: '+path);
+}
+console.log('PASS: offline app/owner launches stay separate from standalone public pages and private documents.');
 // Existing backup validation rejects injected keys without replacing user data.
 const values=new Map();globalThis.localStorage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k),get length(){return values.size},key:i=>[...values.keys()][i]};
 const {createBackup,validateBackup,restoreBackup}=await import('../dist/js/backup.js');

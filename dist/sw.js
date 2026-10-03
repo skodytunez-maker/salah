@@ -1,10 +1,11 @@
-const CACHE='salah-shell-v145';
+const CACHE='salah-shell-v146';
 const ASSETS=["./js/landmarks.js","./assets/landmark.svg","./js/broadcast-audio.js","./js/vendor/hls-light.min.js","./js/vendor/hls-LICENSE.txt","./js/quran-timing.js","./js/quran-broadcast.js","./daily-dua.css","./js/daily-dua.js","./js/daily-dua-core.js","./data/daily-dua.json","./data/quran-reading-LICENSE.txt","./js/account-presence.js","./js/app-release.js","./assets/salah-qr.svg","./assets/salah-qr.png","./js/app-sharing.js","./js/free-counter.js","./js/auth-transport.js","./js/auth-session.js","./assets/window-sky-mask.svg","./js/vendor/suncalc.js","./js/vendor/suncalc-LICENSE.txt","./js/vendor/suncalc-source.json","./assets/window-weather-mask.svg","./js/counter-account.js","./js/counter-sync-core.js","./assets/window-moon.webp","./js/wallpapers.js","./assets/window-new-york-night.webp","./assets/window-new-york-day.webp","./js/city-dialog.js","./js/city-data.js","./owner.html","./owner-manifest.json","./js/owner-entry.js","./","./index.html","./iphone.css","./icon-180.png","./style.css","./home-selected.css","./day-night.css","./weather.css","./js/weather-data.js","./js/day-night.js","./assets/day-mosque.webp","./knowledge.css","./quran.css","./js/quran.js","./js/quran-transcription.js","./js/tajweed.js","./js/quran-data.js","./js/quran-audio.js","./js/quran-session.js","./js/quran-player-bar.js","./quran-player.css","./js/quran-reciters.js","./data/quran-index.json","./assets/amiri-quran.ttf","./assets/amiri-OFL.txt","./qibla.css","./js/qibla.js","./js/qibla-view.js","./js/qibla-math.js","./js/knowledge.js","./js/home-swipe.js","./assets/journal-bookmark.svg","./assets/house.svg","./assets/clock.svg","./assets/book.svg","./assets/three-dots.svg","./assets/gear.svg","./assets/person.svg","./assets/circle.svg","./js/app.js","./js/prayer-display.js","./js/home-event.js","./js/tahajjud.js","./js/learning.js","./js/learning-state.js","./js/adhkar.js","./js/adhkar-progress.js","./js/adhkar-period.js","./js/calendar-pdf.js","./js/analytics.js","./js/admin.js","./js/owner-auth.js","./js/vendor/supabase.js","./js/vendor/supabase-LICENSE.txt","./assets/salah-mark.svg","./data/adhkar.json","./data/al-hakk-tyumen.json","./data/tyumen-october-2026.json","./assets/tyumen-october-2026.png","./data/learning-content.json","./data/learning-quran.json","./assets/night-mosque.webp","./assets/prayer-poses.png","./assets/star.svg","./assets/star-fill.svg","./assets/sun.svg","./assets/moon-stars.svg","./assets/list-ul.svg","./assets/arrow-left.svg","./assets/x-lg.svg","./assets/info-circle.svg","./js/storage.js","./js/backup.js","./js/prayers.js","./js/asr-first.js","./data/tyumen-first-asr.json","./js/weather.js","./js/ui.js","./manifest.json","./favicon.svg","./icon-192.png","./icon-512.png","./icon-maskable.png","./js/learning-illustrations.js","./js/reminders.js","./js/push-reminders.js","./js/reminder-events.js","./reminders.css","./data/adhan-sources.json","./js/qibla-access.js","./js/geomagnetism.js","./assets/geomagnetism-LICENSE.txt","./js/orientation.js","./js/pwa-updates.js","./js/calendar-occasions.js","./js/hijri.js","./js/sourced-audio.js","./data/learning-adhkar-audio-sources.json"];
 
 const shellPaths=new Set(ASSETS.map(path=>new URL(path,self.registration.scope).pathname));
 const shellIndex=new URL('./index.html',self.registration.scope).href;
 const ownerShell=new URL('./owner.html',self.registration.scope).href;
-const navigationShell=url=>url.pathname===new URL(ownerShell).pathname?ownerShell:shellIndex;
+const appNavigationPaths=new Set([new URL(self.registration.scope).pathname,new URL(shellIndex).pathname]);
+const navigationShell=url=>url.pathname===new URL(ownerShell).pathname?ownerShell:appNavigationPaths.has(url.pathname)?shellIndex:null;
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(path=>new Request(new URL(path,self.registration.scope).href,{cache:'reload'})))));
 });
@@ -48,6 +49,8 @@ self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);
  const scopePath=new URL(self.registration.scope).pathname;
  if(event.request.method!=='GET'||url.origin!==self.location.origin||!url.pathname.startsWith(scopePath)||event.request.headers.has('Authorization'))return;
+ // Standalone public pages must load their own document, rather than the app shell.
+ if(event.request.mode==='navigate'&&!navigationShell(url))return;
  // Only explicitly bundled public shell files and Azan audio belong in this cache.
  // Private/API responses and resources from other GitHub Pages apps must bypass it.
  if(event.request.mode!=='navigate'&&!shellPaths.has(url.pathname)&&!isAdhan(url))return;
@@ -125,7 +128,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":145,"date":"2026-10-03","changes":["В обоях «Достопримечательность» появились Москва, Омск, Худжанд, Душанбе, Алматы, Астана, Ташкент, Грозный и Махачкала.","Для каждого города подготовлены дневные и ночные обои с плавной сменой освещения и анимацией солнца, луны и погоды.","Обои подбираются по выбранному городу и загружаются отдельно, чтобы приложение не скачивало всю коллекцию."]};
+const RELEASE={"version":146,"date":"2026-10-03","changes":["В обоях «Достопримечательность» появились Москва, Омск, Худжанд, Душанбе, Алматы, Астана, Ташкент, Грозный и Махачкала.","Для каждого города подготовлены дневные и ночные обои с плавной сменой освещения и анимацией солнца, луны и погоды.","Обои подбираются по выбранному городу и загружаются отдельно, чтобы приложение не скачивало всю коллекцию.","Исправлено открытие подборки обоев из установленного приложения."]};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
