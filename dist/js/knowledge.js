@@ -1,6 +1,7 @@
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
 const entries = [
+  {kind:'umrah',icon:'landmark',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
   {
     kind: 'basic',
     icon: 'book',
@@ -39,7 +40,7 @@ export function showKnowledge(container, { onStart } = {}) {
     </div>
     ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail">Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
     <div class="knowledge-cards">
-      ${entries.map(entry => `<a class="knowledge-card" href="#learning" data-learning-entry="${entry.kind}">
+      ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'}>
         <div class="knowledge-card-top">
           <span class="knowledge-icon" aria-hidden="true"><img src="./assets/${entry.icon}.svg" alt="" width="24" height="24"></span>
           <span class="knowledge-detail">${entry.detail}</span>
