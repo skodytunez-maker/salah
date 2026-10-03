@@ -18,6 +18,9 @@ globalThis.location={reload:()=>reloads++};
 const realSetInterval=globalThis.setInterval,realClearInterval=globalThis.clearInterval;
 globalThis.setInterval=(fn,ms)=>{const t={fn,ms};intervals.push(t);return t;};globalThis.clearInterval=t=>t.cleared=true;
 const oldNavigator=Object.getOwnPropertyDescriptor(globalThis,'navigator');
+const oldMessageChannel=globalThis.MessageChannel;
+// Deterministic worker-message delivery avoids an OS-thread timing race.
+globalThis.MessageChannel=class{constructor(){this.port1={onmessage:null,close(){}};this.port2={postMessage:value=>queueMicrotask(()=>this.port1.onmessage?.({data:value})),close(){}}}};
 const upcoming={version:APP_VERSION+1,date:'2026-10-04',changes:['Следующее улучшение']};
 const waiting={postMessage(message,ports){if(message.type==='SALAH_RELEASE_INFO')ports[0].postMessage(upcoming);else automaticMessages++;},addEventListener(){}};
 const registration={waiting,installing:null,addEventListener(){},update:async()=>updates++};
@@ -39,5 +42,5 @@ vm.runInContext(await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),
 let release;events.message({data:{type:'SALAH_RELEASE_INFO'},ports:[{postMessage:v=>release=JSON.parse(JSON.stringify(v))}]});
 assert.deepEqual(release,{version:APP_VERSION,date:APP_UPDATED_AT,changes:APP_CHANGES});
 assert.match(vm.runInContext('CACHE',context),new RegExp('v'+APP_VERSION+'$'));
-globalThis.setInterval=realSetInterval;globalThis.clearInterval=realClearInterval;Object.defineProperty(globalThis,'navigator',oldNavigator);
+globalThis.setInterval=realSetInterval;globalThis.clearInterval=realClearInterval;globalThis.MessageChannel=oldMessageChannel;Object.defineProperty(globalThis,'navigator',oldNavigator);
 console.log('PASS: waiting release metadata, safe dates, visible-only checks, deliberate single reload, settings and counters preserved.');

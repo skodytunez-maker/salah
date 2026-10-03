@@ -1,7 +1,8 @@
 import{getPosition,getTimes,getMoonPosition,getMoonTimes}from './vendor/suncalc.js';
 export const wallpapers=[
  {id:'mosque',name:'Мечеть',day:'./assets/day-mosque.webp',night:'./assets/night-mosque.webp'},
- {id:'new-york',name:'Нью-Йорк',day:'./assets/window-new-york-day.webp',night:'./assets/window-new-york-night.webp'}
+ {id:'new-york',name:'Нью-Йорк',day:'./assets/window-new-york-day.webp',night:'./assets/window-new-york-night.webp'},
+ {id:'landmark',name:'Достопримечательность',day:'./assets/landmark.svg',night:'./assets/landmark.svg'}
 ];
 export const wallpaperChoice=value=>wallpapers.some(item=>item.id===value)?value:'mosque';
 const day=86400000,rad=Math.PI/180,clamp=value=>Math.max(0,Math.min(1,value));

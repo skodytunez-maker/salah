@@ -1,4 +1,5 @@
 import{skyObjects}from './wallpapers.js';
+import{loadLandmark}from './landmarks.js';
 import{settings}from './storage.js';
 import{sceneAt,previewScene,sceneForMode}from './day-night.js';
 import{weatherFrame}from './weather-data.js';
@@ -6,6 +7,24 @@ export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey}from './wea
 
 let skyAnimation=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
+let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null;
+function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark';note.textContent=landmarkState==='ready'?landmarkEntry.name+' · '+landmarkEntry.landmark:landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':landmarkState==='offline'?'Для первой загрузки фона нужен интернет.':'Фон подбирается по выбранному городу.'}
+function clearLandmark(scene){landmarkRequest?.abort();landmarkRequest=null;for(const url of landmarkUrls)URL.revokeObjectURL(url);landmarkUrls=[];landmarkEntry=null;for(const key of ['day','night','mask'])scene.style.removeProperty('--landmark-'+key)}
+function prepareLandmark(scene,home){
+ const key=settings.wallpaper==='landmark'?[settings.city?.latitude,settings.city?.longitude].join(':'):null;
+ if(key!==landmarkKey){clearLandmark(scene);landmarkKey=key;landmarkState='idle'}
+ scene.dataset.wallpaper=settings.wallpaper==='landmark'&&landmarkState!=='ready'?'mosque':settings.wallpaper;document.body.dataset.wallpaper=scene.dataset.wallpaper;
+ landmarkNote();if(key===null||!home||landmarkState!=='idle')return;
+ const controller=new AbortController();landmarkRequest=controller;landmarkState='loading';landmarkNote();
+ loadLandmark(settings.city,{signal:controller.signal}).then(async result=>{
+  if(controller.signal.aborted)return;
+  if(result.status!=='ready'){landmarkState=result.status;landmarkNote();return}
+  const urls=result.blobs.map(blob=>URL.createObjectURL(blob));
+  try{await Promise.all(urls.slice(0,2).map(url=>{const image=new Image();image.src=url;return image.decode()}));if(controller.signal.aborted){urls.forEach(url=>URL.revokeObjectURL(url));return}landmarkUrls=urls;landmarkEntry=result.entry;landmarkState='ready';for(const [i,key]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+key,'url("'+urls[i]+'")');scene.dataset.wallpaper='landmark';document.body.dataset.wallpaper='landmark';landmarkNote()}
+  catch{urls.forEach(url=>URL.revokeObjectURL(url));if(!controller.signal.aborted){landmarkState='offline';landmarkNote()}}
+ }).catch(()=>{if(!controller.signal.aborted){landmarkState='offline';landmarkNote()}});
+}
+window.addEventListener('online',()=>{if(landmarkState==='offline'){landmarkState='idle';inactiveContext=null}});
 export function startScenePreview(){stopWeatherPreview();previewStarted=performance.now();previewOverride=null}
 function stopScenePreview(){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewOverride=null;document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview')}
 function sceneLayer(){
@@ -70,7 +89,7 @@ export function atmosphere(now,times,weather){
  if(previewStarted!==null&&(!home||(previewOverride===null&&performance.now()-previewStarted>=22000)))stopScenePreview();
  const preview=previewStarted!==null,frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode),scene=sceneLayer();
  document.body.classList.toggle('scene-preview',preview);
- scene.dataset.phase=frame.phase;scene.dataset.wallpaper=settings.wallpaper;document.body.dataset.wallpaper=settings.wallpaper;
+ scene.dataset.phase=frame.phase;prepareLandmark(scene,home);
  const sky=skyObjects(now,times,previewOverride==='day'?'light':previewOverride==='night'?'dark':settings.backgroundMode,preview&&previewOverride===null?Math.min(performance.now()-previewStarted,19999):null,settings.city);
  paintSky(scene,sky,previewStarted!==null?performance.now():now);
  for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));

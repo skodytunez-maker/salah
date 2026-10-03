@@ -4,8 +4,10 @@ import {wallpaperChoice,skyObjects,wallpapers,previewClock,skyGeometry} from '..
 import {getTimes,getPosition,getMoonTimes,getMoonPosition} from '../dist/js/vendor/suncalc.js';
 const store=new Map();globalThis.localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
 const {settings,updateSettings,normalizeSettings}=await import('../dist/js/storage.js');
-assert.equal(settings.wallpaper,'mosque');assert.equal(wallpapers.length,2);assert.equal(wallpaperChoice('external-url'),'mosque');assert.throws(()=>normalizeSettings({wallpaper:'external-url'},{strict:true}));
+assert.equal(settings.wallpaper,'mosque');assert.equal(wallpapers.length,3);assert.equal(wallpaperChoice('external-url'),'mosque');assert.throws(()=>normalizeSettings({wallpaper:'external-url'},{strict:true}));
 updateSettings({school:0,weather:true,wallpaper:'new-york'});updateSettings({backgroundMode:'dark'});assert.equal(settings.wallpaper,'new-york');assert.equal(settings.school,0);assert.equal(settings.weather,true);assert.equal(normalizeSettings(JSON.parse(store.get('salah:settings'))).wallpaper,'new-york');
+
+updateSettings({wallpaper:'landmark'});assert.equal(settings.school,0);assert.equal(normalizeSettings(JSON.parse(store.get('salah:settings'))).wallpaper,'landmark');
 
 const day=86400000,minute=60000;
 const tyumen={latitude:57.15222,longitude:65.52722},nyc={latitude:40.7128,longitude:-74.006},svalbard={latitude:78.2232,longitude:15.6469};

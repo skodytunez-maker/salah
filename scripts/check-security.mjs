@@ -19,6 +19,9 @@ for(const directive of ['media-src','connect-src']){
  for(const url of ['https://server8.mp3quran.net/lhdan/001.mp3','https://cdn.mp3quran.net/audio/muhammad-luhaidan/r1/001.mp3','https://server6.mp3quran.net/s_bud/001.mp3','https://server7.mp3quran.net/shur/001.mp3','https://server9.mp3quran.net/hthfi/001.mp3','https://server11.mp3quran.net/sds/001.mp3','https://server13.mp3quran.net/jhn/001.mp3'])assert.ok(sources.includes(new URL(url).origin),directive+' must allow the verified recitation redirect');
 }
 assert.doesNotMatch(policy,/script-src[^;]*cdn\.mp3quran\.net/);
+for(const directive of ['media-src','connect-src'])assert.ok(policy.split(';').find(x=>x.trim().startsWith(directive+' ')).trim().split(/\s+/).includes('https://cdn-globecast.akamaized.net'));
+assert.doesNotMatch(policy,/script-src[^;]*akamaized/,'Live streams cannot supply application scripts');
+const hls=await readFile(new URL('dist/js/vendor/hls-light.min.js',root));assert.equal(createHash('sha256').update(hls).digest('hex'),'0251332c00a216a35d7d6919044d60da82b78beb3bd50ac6c662ae74a2f5474b');
 const connectSources=policy.split(';').find(x=>x.trim().startsWith('connect-src '));assert.ok(connectSources.trim().split(/\s+/).includes('https://www.mp3quran.net'));
 const frameSources=policy.split(';').find(x=>x.trim().startsWith('frame-src ')).trim().split(/\s+/).slice(1);assert.deepEqual(frameSources.sort(),['https://salah-saadi.goatcounter.com','https://www.youtube-nocookie.com'].sort());
 const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
