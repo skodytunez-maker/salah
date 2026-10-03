@@ -2,9 +2,14 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {createLandmarkLoader,validateLandmarkCatalog,matchLandmark,landmarkDistance,LANDMARK_CACHE} from '../dist/js/landmarks.js';
 const root=new URL('../dist/',import.meta.url),catalog=JSON.parse(await readFile(new URL('wallpapers/catalog.json',root),'utf8')),entries=validateLandmarkCatalog(catalog),city={latitude:57.15222,longitude:65.52722};
-assert.equal(entries.length,1);assert.equal(matchLandmark(city,entries).id,'tyumen');assert.ok(landmarkDistance(city,entries[0])<1);
+assert.equal(entries.length,10);
+assert.equal(new Set(entries.map(x=>x.id)).size,entries.length);
+assert.ok(!entries.some(x=>x.id==='yekaterinburg'),'Excluded city must not appear in the collection');
+for(const entry of entries)assert.equal(matchLandmark({latitude:entry.latitude,longitude:entry.longitude},entries)?.id,entry.id,'Each city must select its own pair');assert.equal(matchLandmark(city,entries).id,'tyumen');assert.ok(landmarkDistance(city,entries[0])<1);
 assert.equal(matchLandmark({name:'Тюмень',latitude:0,longitude:0},entries),null,'Matching a duplicate name elsewhere must not choose Tyumen');
-assert.equal(matchLandmark({latitude:NaN,longitude:65},entries),null);assert.equal(matchLandmark({latitude:55.75,longitude:37.6},entries),null);
+assert.equal(matchLandmark({latitude:NaN,longitude:65},entries),null);assert.equal(matchLandmark({latitude:55.75,longitude:37.6},entries).id,'moscow');
+assert.equal(matchLandmark({latitude:56.8389,longitude:60.6057},entries),null);
+assert.equal(matchLandmark({latitude:35.6762,longitude:139.6503},entries),null);
 for(const day of ['https://evil.test/picture.webp','wallpapers/tyumen/../../secrets.webp','wallpapers/tyumen/day.svg','wallpapers/another/day.webp'])assert.equal(validateLandmarkCatalog({...catalog,cities:[{...entries[0],day}]}).length,0);
 const data=new Map(),privateSettings=new Map([['school',0],['adhkar-total',170]]),requests=[];
 const store={match:async url=>data.get(typeof url==='string'?url:url.url)?.clone(),put:async(url,response)=>data.set(url,response.clone()),keys:async()=>[...data.keys()].map(url=>({url})),delete:async request=>data.delete(request.url)};
@@ -16,8 +21,10 @@ data.set(new URL('wallpapers/old/day.webp',root).href,new Response('old'));
 const result=await load(city);assert.equal(result.status,'ready');assert.equal(result.blobs.length,3);assert.equal(requests.length,4);assert.equal(data.size,4,'Only catalogue and selected pair/mask are retained');
 for(const request of requests){assert.equal(request.options.credentials,'omit');assert.equal(request.options.referrerPolicy,'no-referrer');assert.ok(!new URL(request.url).search,'City coordinates are not sent in a request');}
 const savedRequests=requests.length;await load(city);assert.equal(requests.length,savedRequests,'Repeated atmosphere paints must use saved assets');
+const moscow=await load({latitude:55.7558,longitude:37.6173});assert.equal(moscow.entry.id,'moscow');assert.equal(requests.length,savedRequests+3,'Switching cities downloads only the new pair and mask');assert.equal(data.size,4,'The previous city does not accumulate in the offline cache');assert.ok([...data.keys()].filter(x=>!x.endsWith('catalog.json')).every(x=>x.includes('/moscow/')));await load(city);
 const offline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage});assert.equal((await offline(city)).status,'ready','Previously chosen city works offline');assert.equal(privateSettings.get('school'),0);assert.equal(privateSettings.get('adhkar-total'),170);
 const controller=new AbortController();controller.abort();await assert.rejects(load(city,{signal:controller.signal}),error=>error.name==='AbortError');
 for(const item of entries)for(const key of ['day','night','mask'])assert.ok((await stat(new URL(item[key],root))).size<3145728);
-const sw=await readFile(new URL('sw.js',root),'utf8');assert.ok(!sw.includes('"./wallpapers/tyumen/day-v1.webp"'),'City pictures are not precached for all users');
+for(const item of entries){const mask=await readFile(new URL(item.mask,root),'utf8');assert.match(mask,/viewBox="0 0 853 1844"/);assert.ok(!/<script|<image|(?:href|src)\s*=|url\(['"]?(?:https?:|data:)/i.test(mask),'Sky masks have no scripts or external resources');assert.ok((await stat(new URL(item.mask,root))).size<32768);}
+const sw=await readFile(new URL('sw.js',root),'utf8');for(const item of entries)for(const key of ['day','night','mask'])assert.ok(!sw.includes('"./'+item[key]+'"'),'City assets are not precached for all users');
 console.log('PASS: lazy city catalogue, coordinate matching, safe paths, no wrong-city downloads, bounded separate offline cache, aborted requests, preserved personal stores.');

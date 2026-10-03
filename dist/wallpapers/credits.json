@@ -1,0 +1,92 @@
+[
+  {
+    "id": "omsk",
+    "city": "Омск",
+    "landmark": "Иртыш и Ленинградский мост",
+    "source": "https://pikabu.ru/story/vecherniy_omsk_7982361",
+    "referenceAuthor": "Сергей Брун (Petzel / @tamuro_roof)",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "moscow",
+    "city": "Москва",
+    "landmark": "Московская соборная мечеть",
+    "source": "https://commons.wikimedia.org/wiki/File:Moscow_Cathedral_Mosque_01-2016.jpg",
+    "referenceAuthor": "A. Savin",
+    "referenceLicense": "Free Art License",
+    "referenceLicenseUrl": "https://artlibre.org/licence/lal/en/",
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "khujand",
+    "city": "Худжанд",
+    "landmark": "Худжандская крепость",
+    "source": "https://www.aliph-foundation.org/en/projects/revitalizing-traditional-decorative-arts-at-the-khujand-fortress-tajikistan",
+    "referenceAuthor": "ALIPH / Alliance Française",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "dushanbe",
+    "city": "Душанбе",
+    "landmark": "Соборная мечеть Имама Абу Ханифы",
+    "source": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D1%81%D2%B7%D0%B8%D0%B4%D0%B8_%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D0%B7%D0%B8%D0%B8_%D2%B7%D0%BE%D0%BC%D0%B5%D0%B8_%D1%88%D0%B0%D2%B3%D1%80%D0%B8_%D0%94%D1%83%D1%88%D0%B0%D0%BD%D0%B1%D0%B5._%D0%90%D0%BA%D1%81%D2%B3%D0%BE_20.jpg",
+    "referenceAuthor": "Rumsor",
+    "referenceLicense": "CC0 1.0",
+    "referenceLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "almaty",
+    "city": "Алматы",
+    "landmark": "Центральная мечеть Алматы",
+    "source": "https://www.muftiyat.kz/ru/mosque/3308/",
+    "referenceAuthor": "ДУМ Казахстана",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "astana",
+    "city": "Астана",
+    "landmark": "Главная мечеть Астаны",
+    "source": "https://tmatic.travel/en/view/story/the-astana-grand-mosque_LPm9eSl/en",
+    "referenceAuthor": "Astana Development Centre",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "tashkent",
+    "city": "Ташкент",
+    "landmark": "Мечеть Минор",
+    "source": "https://uzbekistan.travel/ru/o/mechet-minor/",
+    "referenceAuthor": "Uzbekistan Travel",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "grozny",
+    "city": "Грозный",
+    "landmark": "Мечеть «Сердце Чечни»",
+    "source": "https://commons.wikimedia.org/wiki/File:Grozny._Grozny-City_Towers._Mosque_%22The_Heart_of_Chechnya%22_PB040177_2700.jpg",
+    "referenceAuthor": "Alexxx1979",
+    "referenceLicense": "CC BY-SA 4.0",
+    "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "makhachkala",
+    "city": "Махачкала",
+    "landmark": "Центральная Джума-мечеть",
+    "source": "https://commons.wikimedia.org/wiki/File:%D0%96%D1%83%D0%BC%D0%B3%D0%86%D0%B0_%D0%BC%D0%B0%D0%B6%D0%B3%D0%B8%D1%82%2C_%D0%9C%D0%B0%D1%85%D0%86%D0%B0%D1%87%D1%85%D1%8A%D0%B0%D0%BB%D0%B0_%28crop%29.jpg",
+    "referenceAuthor": "Шамиль Магомедов; кадрирование Danloud",
+    "referenceLicense": "CC BY-SA 4.0",
+    "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  }
+]

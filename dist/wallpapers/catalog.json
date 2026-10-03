@@ -11,6 +11,105 @@
       "day": "wallpapers/tyumen/day-v1.webp",
       "night": "wallpapers/tyumen/night-v1.webp",
       "mask": "wallpapers/tyumen/sky-v1.svg"
+    },
+    {
+      "id": "omsk",
+      "name": "Омск",
+      "landmark": "Иртыш и Ленинградский мост",
+      "latitude": 54.9914,
+      "longitude": 73.3645,
+      "radius": 30,
+      "day": "wallpapers/omsk/day-v1.webp",
+      "night": "wallpapers/omsk/night-v1.webp",
+      "mask": "wallpapers/omsk/sky-v1.svg"
+    },
+    {
+      "id": "moscow",
+      "name": "Москва",
+      "landmark": "Московская соборная мечеть",
+      "latitude": 55.7558,
+      "longitude": 37.6173,
+      "radius": 30,
+      "day": "wallpapers/moscow/day-v1.webp",
+      "night": "wallpapers/moscow/night-v1.webp",
+      "mask": "wallpapers/moscow/sky-v1.svg"
+    },
+    {
+      "id": "khujand",
+      "name": "Худжанд",
+      "landmark": "Худжандская крепость",
+      "latitude": 40.2833,
+      "longitude": 69.6222,
+      "radius": 30,
+      "day": "wallpapers/khujand/day-v1.webp",
+      "night": "wallpapers/khujand/night-v1.webp",
+      "mask": "wallpapers/khujand/sky-v1.svg"
+    },
+    {
+      "id": "dushanbe",
+      "name": "Душанбе",
+      "landmark": "Соборная мечеть Имама Абу Ханифы",
+      "latitude": 38.5598,
+      "longitude": 68.787,
+      "radius": 30,
+      "day": "wallpapers/dushanbe/day-v1.webp",
+      "night": "wallpapers/dushanbe/night-v1.webp",
+      "mask": "wallpapers/dushanbe/sky-v1.svg"
+    },
+    {
+      "id": "almaty",
+      "name": "Алматы",
+      "landmark": "Центральная мечеть Алматы",
+      "latitude": 43.2389,
+      "longitude": 76.8897,
+      "radius": 30,
+      "day": "wallpapers/almaty/day-v1.webp",
+      "night": "wallpapers/almaty/night-v1.webp",
+      "mask": "wallpapers/almaty/sky-v1.svg"
+    },
+    {
+      "id": "astana",
+      "name": "Астана",
+      "landmark": "Главная мечеть Астаны",
+      "latitude": 51.1694,
+      "longitude": 71.4491,
+      "radius": 30,
+      "day": "wallpapers/astana/day-v1.webp",
+      "night": "wallpapers/astana/night-v1.webp",
+      "mask": "wallpapers/astana/sky-v1.svg"
+    },
+    {
+      "id": "tashkent",
+      "name": "Ташкент",
+      "landmark": "Мечеть Минор",
+      "latitude": 41.2995,
+      "longitude": 69.2401,
+      "radius": 30,
+      "day": "wallpapers/tashkent/day-v1.webp",
+      "night": "wallpapers/tashkent/night-v1.webp",
+      "mask": "wallpapers/tashkent/sky-v1.svg"
+    },
+    {
+      "id": "grozny",
+      "name": "Грозный",
+      "landmark": "Мечеть «Сердце Чечни»",
+      "latitude": 43.3178,
+      "longitude": 45.6984,
+      "radius": 30,
+      "day": "wallpapers/grozny/day-v1.webp",
+      "night": "wallpapers/grozny/night-v1.webp",
+      "mask": "wallpapers/grozny/sky-v1.svg"
+    },
+    {
+      "id": "makhachkala",
+      "name": "Махачкала",
+      "landmark": "Центральная Джума-мечеть",
+      "latitude": 42.9849,
+      "longitude": 47.5047,
+      "radius": 30,
+      "day": "wallpapers/makhachkala/day-v1.webp",
+      "night": "wallpapers/makhachkala/night-v1.webp",
+      "mask": "wallpapers/makhachkala/sky-v1.svg"
     }
   ]
 }
