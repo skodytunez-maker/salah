@@ -1,3 +1,4 @@
+import{loadAyahTimings}from './quran-timing.js';
 import{arabicReadingKey}from './quran-transcription.js';
 import{reciterInfo,reciterHasSurah}from './quran-reciters.js';
 export const TEXT_CACHE='salah-quran-text-v1';
@@ -66,5 +67,5 @@ let audioPositions=null;
 export function estimatedAudioBytes(surah){return Math.round(surah.verses.reduce((sum,v)=>sum+[...v.arabic].length,0)/15*16000)}
 export async function saveSurahAudio(surah,reciter,onProgress,signal){
  if(!('caches'in window))throw Error('Офлайн-хранилище недоступно');const cache=await caches.open(AUDIO_CACHE);let next=0,done=0,bytes=0;const verses=reciterInfo(reciter).format==='surah'?[surah.verses[0]]:surah.verses;
- await Promise.all(Array.from({length:2},async()=>{while(next<verses.length){if(signal.aborted)throw new DOMException('Загрузка отменена','AbortError');const v=verses[next++],url=audioUrl(v.number,reciter,surah.number);let r=await cache.match(url);if(!r){r=await fetch(url,{signal});if(!r.ok||r.type==='opaque'||!r.headers.get('Content-Type')?.startsWith('audio/'))throw Error('Аудио не удалось загрузить');const blob=await r.blob();bytes+=blob.size;await cache.put(url,new Response(blob,{headers:{'Content-Type':'audio/mpeg'}}))}else bytes+=(await r.blob()).size;onProgress(++done,bytes)}}));return bytes
+ await Promise.all(Array.from({length:2},async()=>{while(next<verses.length){if(signal.aborted)throw new DOMException('Загрузка отменена','AbortError');const v=verses[next++],url=audioUrl(v.number,reciter,surah.number);let r=await cache.match(url);if(!r){r=await fetch(url,{signal});if(!r.ok||r.type==='opaque'||!r.headers.get('Content-Type')?.startsWith('audio/'))throw Error('Аудио не удалось загрузить');const blob=await r.blob();bytes+=blob.size;await cache.put(url,new Response(blob,{headers:{'Content-Type':'audio/mpeg'}}))}else bytes+=(await r.blob()).size;onProgress(++done,bytes)}}));await loadAyahTimings(surah,reciter,{signal});if(signal.aborted)throw new DOMException('Загрузка отменена','AbortError');return bytes
 }

@@ -12,7 +12,7 @@ class FakeAudio{
  async play(){this.playCalls++;this.paused=false}
  pause(){this.pauseCalls++;this.paused=true}
 }
-const options={load:async n=>surah(n),loadCatalog:async()=>catalog,createPlayer:opts=>createQuranPlayer({...opts,createAudio:url=>new FakeAudio(url)})};
+const options={load:async n=>surah(n),loadCatalog:async()=>catalog,createPlayer:opts=>createQuranPlayer({...opts,loadTimings:async()=>null,createAudio:url=>new FakeAudio(url)})};
 const session=createQuranSession(options);
 let screenUpdates=0;
 const detachReader=session.subscribe(()=>screenUpdates++);

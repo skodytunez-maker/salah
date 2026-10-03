@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import{normalizeTimings,ayahAtTime,loadAyahTimings,timingUrl,TIMING_CACHE}from '../dist/js/quran-timing.js';
+import{createQuranPlayer}from '../dist/js/quran-audio.js';
+import{createQuranSession}from '../dist/js/quran-session.js';
+const rows=[{ayah:0,start_time:0,end_time:1000},{ayah:1,start_time:1000,end_time:3000},{ayah:2,start_time:4000,end_time:7000}];
+const table=normalizeTimings(rows,2);assert.ok(table);
+for(const [time,expected]of [[0,null],[.9,null],[1,1],[2.999,1],[3,null],[3.9,null],[4,2],[6.999,2],[7,null],[NaN,null],[-1,null]])assert.equal(ayahAtTime(table,time),expected);
+for(const invalid of [rows.slice(0,2),[rows[0],rows[2],rows[1]],[rows[0],rows[1],{...rows[2],start_time:2999}],[rows[0],rows[1],{...rows[2],ayah:1}],[rows[0],rows[1],{...rows[2],start_time:'4000'}],[rows[0],rows[1],{...rows[2],end_time:Infinity}]])assert.equal(normalizeTimings(invalid,2),null);
+const surah={number:1,verses:[{number:1,ayah:1},{number:2,ayah:2}]};
+assert.equal(timingUrl(surah,'ar.abdurrahmanalsudais'),'https://www.mp3quran.net/api/v3/ayat_timing?surah=1&read=54');assert.equal(timingUrl(surah,'ar.tariqmuhammad'),null);
+const entries=new Map();const cache={match:async key=>entries.get(key)?.clone(),put:async(key,value)=>entries.set(key,value.clone()),delete:async key=>entries.delete(key)},cacheStorage={open:async name=>{assert.equal(name,TIMING_CACHE);return cache}};
+let calls=0;const fetcher=async(url,opts)=>{calls++;assert.equal(opts.credentials,'omit');return new Response(JSON.stringify(rows.map(r=>({...r,svg:'<script>untrusted</script>'}))))};
+assert.deepEqual(await loadAyahTimings(surah,'ar.abdurrahmanalsudais',{fetcher,cacheStorage}),table);
+assert.ok(!(await entries.values().next().value.clone().text()).includes('script'));
+assert.deepEqual(await loadAyahTimings(surah,'ar.abdurrahmanalsudais',{fetcher:async()=>{throw Error('offline')},cacheStorage}),table);assert.equal(calls,1,'Offline playback can reuse verified timing data');
+assert.equal(await loadAyahTimings(surah,'ar.saudalshuraim',{fetcher:async()=>new Response(JSON.stringify(rows.slice(0,2))),cacheStorage}),null);assert.equal(entries.size,1,'Incomplete timing must not be cached');
+const controller=new AbortController();const pending=loadAyahTimings(surah,'ar.saudalshuraim',{signal:controller.signal,cacheStorage:null,fetcher:async(_url,opts)=>new Promise(resolve=>opts.signal.addEventListener('abort',()=>resolve(new Response(JSON.stringify(rows))),{once:true}))});await new Promise(r=>setImmediate(r));controller.abort();assert.equal(await pending,null);
+globalThis.window={};const flush=async()=>{for(let i=0;i<4;i++)await new Promise(r=>setImmediate(r))};
+const tracks=[];class Audio{constructor(){this.currentTime=0;this.duration=20;this.paused=true;tracks.push(this)}async play(){this.paused=false}pause(){this.paused=true}}
+let state;const player=createQuranPlayer({surah,reciter:'ar.abdurrahmanalsudais',loadTimings:async()=>table,createAudio:()=>new Audio(),onState:s=>state=s,onVerse:()=>{},onError:()=>assert.fail('Timing cannot break audio')});
+await player.play();await flush();const audio=tracks.at(-1);assert.equal(state.status,'playing');assert.equal(state.ayah,null,'Intro is never ayah 1');
+audio.currentTime=2;audio.ontimeupdate();assert.equal(state.ayah,1);audio.currentTime=3.5;audio.ontimeupdate();assert.equal(state.ayah,null,'Unmarked gaps are not guessed');audio.currentTime=4.5;audio.onseeked();assert.equal(state.ayah,2);player.pause();assert.equal(state.ayah,2);player.toggle();await flush();assert.equal(tracks.at(-1),audio);assert.equal(state.ayah,2,'Pause/resume retains the actual ayah');
+audio.currentTime=1.5;audio.onseeked();assert.equal(state.ayah,1,'Seeking backwards updates the ayah');player.destroy();assert.equal(audio.ontimeupdate,null);assert.equal(audio.onseeked,null);
+let resolveTiming,lateUpdates=0;const late=createQuranPlayer({surah,reciter:'ar.abdurrahmanalsudais',loadTimings:()=>new Promise(r=>resolveTiming=r),createAudio:()=>new Audio(),onState:()=>lateUpdates++,onVerse:()=>{},onError:()=>{}});await late.play();await flush();late.destroy();const before=lateUpdates;resolveTiming(table);await flush();assert.equal(lateUpdates,before,'A late timing response must not restore destroyed playback');
+const session=createQuranSession({loadCatalog:async()=>({surahs:[{number:1,name:'Аль-Фатиха'}]}),createPlayer:opts=>createQuranPlayer({...opts,createAudio:()=>new Audio(),loadTimings:async()=>table})});await session.start(surah,'ar.abdurrahmanalsudais');await flush();const detach=session.subscribe(()=>{});detach();tracks.at(-1).currentTime=4.5;tracks.at(-1).ontimeupdate();assert.equal(session.state.ayah,2,'Ayah tracking survives leaving the reader');session.stop();
+const fallback=createQuranPlayer({surah,reciter:'ar.abdurrahmanalsudais',loadTimings:async()=>null,createAudio:()=>new Audio(),onState:s=>state=s,onVerse:()=>{},onError:()=>assert.fail('Unavailable timing must not stop audio')});await fallback.play();await flush();assert.equal(state.status,'playing');assert.equal(state.ayah,null);assert.equal(state.timingStatus,'unavailable');fallback.destroy();
+console.log('PASS: exact ayah boundaries, intro/gap handling, incomplete/unsafe data rejection, offline timing cache, cancellation, seeking, pause/resume, cross-screen session and uninterrupted fallback.');
