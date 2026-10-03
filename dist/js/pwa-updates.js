@@ -18,7 +18,7 @@ export function showAppRelease(release=currentRelease,{available=false}={}){
  if(!available)acknowledge();
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
-export async function registerAppWorker({toast=()=>{}}={}) {
+export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,showRelease=showAppRelease}={}) {
  if(!('serviceWorker' in navigator))return;
  manualCheck=null;
  let requested=false,reloaded=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
@@ -63,8 +63,12 @@ export async function registerAppWorker({toast=()=>{}}={}) {
   function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed')void offer();});if(worker.state==='installed')void offer();}
   // Apply already downloaded updates only before the user starts interacting.
   if(registration.waiting&&navigator.serviceWorker.controller&&startupUntouched&&document.visibilityState==='visible'&&Date.now()-startedAt<1000){try{requested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});}catch{requested=false}}
+  const quietStartup=startupUntouched&&document.visibilityState==='visible'&&Date.now()-startedAt<1000&&!document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]');
   finishStartup();watch(registration.installing);
-  if(!requested){if(registration.waiting)void offer();else if(!hasSeen())makeBanner();}
+  if(!requested){if(registration.waiting)void offer();else if(!hasSeen()){
+   // Show the installed release once; never replace an open form or dialog.
+   if(quietStartup&&canShowRelease()&&!document.getElementById?.('modal')?.open){showRelease(currentRelease);acknowledge();}else makeBanner();
+  }}
   registration.addEventListener('updatefound',()=>watch(registration.installing));
   async function check(force=false){
    void offer(force);

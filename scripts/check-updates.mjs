@@ -37,6 +37,15 @@ workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(rel
 document.visibilityState='hidden';docEvents.visibilitychange();assert.ok(intervals.at(-1).cleared,'No periodic checks in background');
 registration.waiting=null;document.visibilityState='visible';docEvents.visibilitychange();await checkAppUpdate();assert.equal(updates,1);
 navigator.onLine=false;assert.equal(await checkAppUpdate(),'offline');
+// On a quiet launch the actual installed release opens once, without changing personal data.
+let releaseDialogs=0;serviceWorker.register=async()=>registration;navigator.onLine=true;
+values.delete('salah:update-last-seen-v1');
+await registerAppWorker({showRelease:release=>{releaseDialogs++;assert.equal(release.version,APP_VERSION)}});
+assert.equal(releaseDialogs,1);assert.equal(values.get('salah:update-last-seen-v1'),String(APP_VERSION));
+await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,1);
+values.delete('salah:update-last-seen-v1');
+await registerAppWorker({canShowRelease:()=>false,showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,1,'Onboarding must not be covered');
+assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);
 const events={};const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://example.test/salah/'},location:{origin:'https://example.test'},addEventListener:(k,f)=>events[k]=f}});
 vm.runInContext(await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),context);
 let release;events.message({data:{type:'SALAH_RELEASE_INFO'},ports:[{postMessage:v=>release=JSON.parse(JSON.stringify(v))}]});

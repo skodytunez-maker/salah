@@ -3,7 +3,7 @@ import{loadLandmark}from './landmarks.js';
 import{settings}from './storage.js';
 import{sceneAt,previewScene,sceneForMode}from './day-night.js';
 import{weatherFrame}from './weather-data.js';
-export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey}from './weather-data.js';
+export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REFRESH_INTERVAL}from './weather-data.js';
 
 let skyAnimation=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;

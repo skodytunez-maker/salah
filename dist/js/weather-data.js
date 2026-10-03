@@ -1,6 +1,8 @@
 import{settings,read,write}from './storage.js';
 
-const minute=60000,cacheAge=30*minute,maxAge=120*minute,clockTolerance=5*minute;
+const minute=60000;
+export const WEATHER_REFRESH_INTERVAL=10*minute;
+const cacheAge=WEATHER_REFRESH_INTERVAL,maxAge=120*minute,clockTolerance=5*minute;
 const pending=new Map();
 const codes={
  0:['Ясно','clear'],1:['Преимущественно ясно','clear'],2:['Переменная облачность','clouds'],3:['Пасмурно','overcast'],
@@ -43,7 +45,7 @@ export function weatherFrame(weather,now=Date.now()){
  const wet=['rain','snow','storm'].includes(kind);
  // Current precipitation is a sum over interval seconds, not necessarily over one hour.
  const hourlyPrecipitation=weather.precipitation*3600/weather.interval;
- return {kind,clouds:clamp(weather.cloud_cover/100),precipitation:wet?clamp(hourlyPrecipitation/8):0,fresh:true};
+ return {kind,clouds:clamp(weather.cloud_cover/100),precipitation:wet?Math.max(.28,clamp(hourlyPrecipitation/8)):0,fresh:true};
 }
 
 export function cachedWeather(city=settings.city){
@@ -65,7 +67,7 @@ async function requestWeather(point,key){
  const query=new URLSearchParams({...point,current:'temperature_2m,apparent_temperature,weather_code,cloud_cover,precipitation,wind_speed_10m',timezone:'UTC',temperature_unit:'celsius',wind_speed_unit:'ms',precipitation_unit:'mm'});
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
  try{
-  const response=await fetch('https://api.open-meteo.com/v1/forecast?'+query,{signal:controller.signal});
+  const response=await fetch('https://api.open-meteo.com/v1/forecast?'+query,{signal:controller.signal,cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer'});
   if(!response.ok)throw Error('Погода временно недоступна');
   const json=await response.json(),current=json?.current;
   if(!current||json.utc_offset_seconds!==0)throw Error('Нет данных погоды');
