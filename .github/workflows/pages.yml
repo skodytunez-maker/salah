@@ -44,6 +44,7 @@ jobs:
           node scripts/check-calendar-export.mjs
           node scripts/check-quran-session.mjs
           node scripts/check-quran-timing.mjs
+          node scripts/check-quran-broadcast.mjs
           node scripts/check-updates.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5

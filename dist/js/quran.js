@@ -1,4 +1,4 @@
-import{broadcastButton,bindQuranBroadcast,stopQuranBroadcast}from './quran-broadcast.js';
+import{broadcastButton,bindQuranBroadcast,minimizeQuranBroadcast}from './quran-broadcast.js';
 import{hasOwnTranscription,readingTranscription,ownTranscriptionNote}from './quran-transcription.js';
 import{arabicWithHints,hintsLegend,TAJWEED_RULES}from './tajweed.js';
 import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from './quran-reciters.js';
@@ -22,7 +22,7 @@ function preferences(){
 function positionUrl(surah,ayah=1){return '#quran?surah='+surah+'&ayah='+ayah}
 function bookmarks(){const saved=read('quran-bookmarks',[]);return Array.isArray(saved)?saved.filter(v=>validPosition(index,v)):[]}
 function savePosition(){clearTimeout(saveTimer);if(lastPosition&&index&&validPosition(index,lastPosition)){if(!write('quran-last-position',lastPosition))toast('Не удалось сохранить место чтения')}lastPosition=null}
-export function stopQuran(){stopQuranBroadcast();generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;audioDownload?.abort();audioDownload=null;document.body.classList.remove('quran-focus')}
+export function stopQuran(){minimizeQuranBroadcast();generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;audioDownload?.abort();audioDownload=null;document.body.classList.remove('quran-focus')}
 export async function showQuran(container){
  stopQuran();host=container;const token=generation;
  host.innerHTML='<section class="panel section"><h2>Коран</h2><p class="muted">Открываем библиотеку…</p></section>';
