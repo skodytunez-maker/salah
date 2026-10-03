@@ -14,7 +14,7 @@ function acknowledge(){try{localStorage.setItem(SEEN_KEY,String(APP_VERSION));}c
 function hasSeen(){try{return localStorage.getItem(SEEN_KEY)===String(APP_VERSION);}catch{return true;}}
 export function showAppRelease(release=currentRelease,{available=false}={}){
  const safe=validatedRelease(release)||(available?{version:0,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']}:currentRelease);
- modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2>'+(available?'Что изменится':'Что нового')+'</h2><ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><button class="button secondary" type="button" data-close>Понятно</button></div>');
+ modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2 tabindex="-1" autofocus>'+(available?'Что изменится':'Что нового')+'</h2><ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><button class="button secondary" type="button" data-close>Понятно</button></div>');
  if(!available)acknowledge();
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}

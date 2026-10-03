@@ -36,6 +36,8 @@ jobs:
           node scripts/check-shared-account.mjs
           node scripts/check-owner-access.mjs
           node scripts/check-owner-client.mjs
+          node scripts/check-account-presence.mjs
+          node scripts/check-presence-load.mjs
           node scripts/check-adhkar.mjs
           node scripts/check-adhkar-resume.mjs
           node scripts/check-daily-dua.mjs

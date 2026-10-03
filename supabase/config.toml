@@ -7,3 +7,7 @@ verify_jwt = false
 
 [functions.adhkar-sync]
 verify_jwt = false
+
+[functions.account-presence]
+# Auth validates the modern signing-key JWT and its active session in the handler.
+verify_jwt = false
