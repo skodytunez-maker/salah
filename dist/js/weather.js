@@ -9,20 +9,47 @@ let skyAnimation=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null;
 function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';note.textContent=landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':'Для первой загрузки фона нужен интернет.'}
-function clearLandmark(scene){landmarkRequest?.abort();landmarkRequest=null;for(const url of landmarkUrls)URL.revokeObjectURL(url);landmarkUrls=[];landmarkEntry=null;delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.removeProperty('--landmark-'+key)}
+function stopLandmarkRequest(){landmarkRequest?.abort();landmarkRequest=null}
+function releaseLandmarkUrls(urls){for(const url of urls)URL.revokeObjectURL(url)}
+function neutralLandmark(scene){landmarkEntry=null;delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
+function clearLandmark(scene){stopLandmarkRequest();releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];neutralLandmark(scene)}
+function keepLandmarkSurface(scene){
+ scene.dataset.wallpaper='landmark';document.body.dataset.wallpaper='landmark';
+ if(!landmarkUrls.length)neutralLandmark(scene);
+}
+function discardDisplayedLandmark(scene){
+ if(!landmarkUrls.length){neutralLandmark(scene);return}
+ releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];neutralLandmark(scene);
+}
 function prepareLandmark(scene,home){
- const key=settings.wallpaper==='landmark'?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude].join(':'):null;
- if(key!==landmarkKey){clearLandmark(scene);landmarkKey=key;landmarkState='idle'}
- scene.dataset.wallpaper=settings.wallpaper==='landmark'&&landmarkState!=='ready'?'mosque':settings.wallpaper;document.body.dataset.wallpaper=scene.dataset.wallpaper;
+ const selected=settings.wallpaper==='landmark';
+ const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude].join(':'):null;
+ if(key!==landmarkKey){
+  stopLandmarkRequest();landmarkKey=key;landmarkState='idle';
+  // While another landmark is loading, keep the currently decoded city visible.
+  // Do not flash the bundled mosque wallpaper between two explicit city choices.
+  if(!selected)clearLandmark(scene);
+ }
+ if(selected)keepLandmarkSurface(scene);
+ else{scene.dataset.wallpaper=settings.wallpaper;document.body.dataset.wallpaper=scene.dataset.wallpaper}
  landmarkNote();if(key===null||!home||landmarkState!=='idle')return;
  const controller=new AbortController();landmarkRequest=controller;landmarkState='loading';landmarkNote();
  loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity}).then(async result=>{
   if(controller.signal.aborted)return;
-  if(result.status!=='ready'){landmarkState=result.status;landmarkNote();return}
+  if(result.status!=='ready'){landmarkRequest=null;landmarkState=result.status;discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote();return}
   const urls=result.blobs.map(blob=>URL.createObjectURL(blob));
-  try{await Promise.all(urls.slice(0,2).map(url=>{const image=new Image();image.src=url;return image.decode()}));if(controller.signal.aborted){urls.forEach(url=>URL.revokeObjectURL(url));return}landmarkUrls=urls;landmarkEntry=result.entry;landmarkState='ready';for(const [i,key]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+key,'url("'+urls[i]+'")');scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';landmarkNote()}
-  catch{urls.forEach(url=>URL.revokeObjectURL(url));if(!controller.signal.aborted){landmarkState='offline';landmarkNote()}}
- }).catch(()=>{if(!controller.signal.aborted){landmarkState='offline';landmarkNote()}});
+  try{
+   await Promise.all(urls.slice(0,2).map(url=>{const image=new Image();image.src=url;return image.decode()}));
+   if(controller.signal.aborted){releaseLandmarkUrls(urls);return}
+   const previous=landmarkUrls;
+   // Swap only after both photographs are decoded, then release the old city.
+   for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');
+   landmarkUrls=urls;landmarkEntry=result.entry;landmarkRequest=null;landmarkState='ready';
+   scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
+   releaseLandmarkUrls(previous);landmarkNote();
+  }
+  catch{releaseLandmarkUrls(urls);if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote()}}
+ }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote()}});
 }
 window.addEventListener('online',()=>{if(landmarkState==='offline'){landmarkState='idle';inactiveContext=null}});
 export function startScenePreview(){stopWeatherPreview();previewStarted=performance.now();previewOverride=null}
