@@ -11,7 +11,12 @@
 .qibla-page h1 { margin: 0 0 5px; color: var(--qibla-ink); line-height:1.2; }
 .qibla-page .qibla-location { color: var(--qibla-muted); font-size: 13px; margin: 0; line-height: 1.5; overflow-wrap: anywhere; }
 .qibla-page .qibla-card { text-align: center; border: 1px solid rgba(147,166,192,.18); border-radius: 25px; padding: 25px 24px 20px; background: linear-gradient(160deg, #101e2e, #10182a 68%); }
-.qibla-page .qibla-stage { position: relative; width: min(100%, 340px); aspect-ratio: 1; margin: 4px auto 20px; isolation: isolate; }
+.qibla-page .qibla-stage { position: relative; width: min(100%, 340px); aspect-ratio: 1; margin: 4px auto 20px; isolation: isolate; border-radius: 50%; }
+.qibla-page .qibla-stage::before { content:''; position:absolute; inset:30px; border-radius:50%; background:radial-gradient(circle at 50% 28%,rgba(255,254,246,.62) 0,rgba(255,250,236,.20) 30%,rgba(255,248,224,0) 68%); opacity:var(--qibla-light); filter:blur(10px); transform:scale(.94); transition:opacity 320ms ease-out,transform 320ms ease-out; pointer-events:none; z-index:-1; }
+.qibla-page .qibla-stage::after { content:''; position:absolute; inset:3px; border-radius:50%; border:1px solid rgba(232,222,197,.16); box-shadow:0 0 0 1px rgba(255,255,255,.02),0 0 34px rgba(244,236,215,.10); opacity:var(--qibla-light); transition:opacity 300ms ease-out,box-shadow 300ms ease-out; pointer-events:none; }
+.qibla-page .qibla-stage.has-heading::before { transform:scale(.97); }
+.qibla-page .qibla-stage.is-aligned::before { transform:scale(1); }
+.qibla-page .qibla-stage.is-aligned::after { box-shadow:0 0 0 1px rgba(255,255,255,.05),0 0 48px rgba(255,248,232,.22),inset 0 0 24px rgba(255,248,232,.04); border-color:rgba(245,236,211,.34); }
 .qibla-page .qibla-compass { position: absolute; inset: 0; border: 1px solid rgba(172,185,200,.18); border-radius: 50%; transform: rotate(var(--compass-rotation)); transition: transform 140ms linear; }
 .qibla-page .qibla-compass::after { content: ''; position: absolute; inset: 33px; border: 1px solid rgba(144,165,187,.09); border-radius: 50%; }
 .qibla-page .qibla-ticks { position: absolute; inset: 9px; border-radius: 50%; background: repeating-conic-gradient(from -.25deg, rgba(190,185,158,.24) 0 .5deg, transparent .5deg 5deg); -webkit-mask: radial-gradient(circle closest-side, transparent calc(100% - 6px), #000 calc(100% - 5px)); mask: radial-gradient(circle closest-side, transparent calc(100% - 6px), #000 calc(100% - 5px)); }
@@ -26,13 +31,15 @@
 .qibla-page .qibla-rug-body { filter: drop-shadow(0 5px 7px rgba(0,0,0,.22)); }
 .qibla-page .qibla-direction { opacity: 0; transition: opacity 250ms ease; }
 .qibla-page .has-heading .qibla-direction, .qibla-page .has-heading .qibla-phone-axis { opacity: 1; }
-.qibla-page .qibla-rug-light { opacity: calc(var(--qibla-light) * .9); transition: opacity 280ms ease-out; }
-.qibla-page .qibla-arrow-light { opacity: calc(var(--qibla-light) * .78); transition: opacity 280ms ease-out; }
-.qibla-page .qibla-light-trail { opacity: calc(var(--qibla-light) * var(--qibla-light) * .75); transition: opacity 320ms ease-out; }
+.qibla-page .qibla-rug-light { opacity: var(--qibla-light); transition: opacity 280ms ease-out; }
+.qibla-page .qibla-arrow-light { opacity: var(--qibla-light); transition: opacity 280ms ease-out; }
+.qibla-page .qibla-light-trail { opacity: var(--qibla-light); transition: opacity 320ms ease-out; }
 .qibla-page .qibla-arrow { transition: fill 240ms ease; }
 .qibla-page .is-aligned .qibla-arrow { fill: #fff9eb; }
-.qibla-page .qibla-guidance { display: flex; gap: 6px; justify-content: center; align-items: center; min-height: 42px; margin: 0 0 15px; color: var(--qibla-ink); }
+.qibla-page .qibla-guidance { display: flex; gap: 7px; justify-content: center; align-items: center; min-height: 42px; margin: 0 0 15px; color: var(--qibla-ink); transition:color 240ms ease,text-shadow 240ms ease; }
+.qibla-page .is-aligned + .qibla-guidance { color:#fffaf0; text-shadow:0 0 18px rgba(255,248,232,.18); }
 .qibla-page #qibla-instruction { max-width: 290px; font-size: 14px; font-weight: 500; line-height: 1.5; margin: 0; text-wrap: balance; }
+.qibla-page .qibla-light-hint { max-width: 290px; margin: -7px auto 17px; color: #899bb4; font-size: 10px; line-height: 1.55; text-wrap: balance; }
 .qibla-page .qibla-check { flex: none; color: #e8dec5; }
 .qibla-page [hidden] { display: none !important; }
 .qibla-page .qibla-readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 19px 0 16px; border-top: 1px solid rgba(165,180,204,.13); border-bottom: 1px solid rgba(165,180,204,.13); }
@@ -51,6 +58,7 @@
   .qibla-page .qibla-card { padding: 19px 17px 18px; border-radius: 22px; }
   .qibla-page .qibla-stage { width: min(100%, 310px); margin-bottom: 14px; }
   .qibla-page .qibla-guidance { margin-bottom: 12px; }
+  .qibla-page .qibla-light-hint { margin-bottom: 14px; }
 }
 
 @media (max-width: 350px), (max-height: 640px) and (max-width: 600px) {
@@ -69,7 +77,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .qibla-page .qibla-compass, .qibla-page .qibla-orientation { transition: none; }
+  .qibla-page .qibla-compass,
+  .qibla-page .qibla-orientation,
+  .qibla-page .qibla-rug-light,
+  .qibla-page .qibla-arrow-light,
+  .qibla-page .qibla-light-trail,
+  .qibla-page .qibla-stage::before,
+  .qibla-page .qibla-stage::after,
+  .qibla-page .qibla-guidance { transition: none; }
 }
 
 .qibla-page .qibla-stage:not(.has-heading) .qibla-compass span{opacity:0}

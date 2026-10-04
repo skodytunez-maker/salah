@@ -63,6 +63,7 @@ export function renderQiblaView({ cityName = '', bearing, hasCity = false } = {}
         <div class="qibla-orientation">${rug}</div>
       </div>
       <div class="qibla-guidance" role="status" aria-live="polite" aria-atomic="true"><svg id="qibla-check" class="qibla-check" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" hidden><path d="m4 9 3.1 3.1L14 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><p id="qibla-instruction">Определяем направление Киблы</p></div>
+      <p class="qibla-light-hint">Чем точнее направление, тем ярче становится свет.</p>
       <div class="qibla-readouts"><div><span class="qibla-readout-label">Угол Киблы</span><strong class="qibla-bearing">${hasCity ? angle : '—'}</strong><span class="qibla-readout-note">от географического севера</span></div><div><span class="qibla-readout-label">Отклонение телефона</span><strong id="qibla-error">—</strong><span class="qibla-readout-note">от направления Киблы</span></div></div>
       <p id="sensor-state" class="qibla-sensor-state" role="status">Для определения направления Киблы требуется доступ к датчикам устройства.</p>
       ${hasCity ? '' : '<button class="button qibla-enable" id="qibla-city">Выбрать город</button>'}
