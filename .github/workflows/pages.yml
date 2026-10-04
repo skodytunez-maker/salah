@@ -64,6 +64,7 @@ jobs:
           node scripts/check-umrah.mjs
           node scripts/check-tahajjud.mjs
           node scripts/check-qibla.mjs
+          node scripts/check-learning-navigation.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload SALAH
