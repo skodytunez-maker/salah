@@ -44,13 +44,16 @@ for (const [native, available] of [[true, true], [true, false], [false, false]])
   const context = vm.createContext({
     Capacitor,
     registerPlugin: name => {
-      assert.equal(name, 'SalahWidget');
-      order.push('register');
+      assert.ok(['SalahWidget','LocalNotifications'].includes(name));
+      order.push('register:'+name);
       return proxy;
     },
     boot: () => {
       order.push('boot');
-      if (native && available) assert.equal(Capacitor.Plugins.SalahWidget, proxy);
+      if (native && available) {
+        assert.equal(Capacitor.Plugins.SalahWidget, proxy);
+        assert.equal(Capacitor.Plugins.LocalNotifications, proxy);
+      }
     }
   });
 
@@ -61,7 +64,7 @@ for (const [native, available] of [[true, true], [true, false], [false, false]])
     context
   );
 
-  assert.deepEqual(order, native && available ? ['register', 'boot'] : ['boot']);
+  assert.deepEqual(order, native && available ? ['register:SalahWidget','register:LocalNotifications','boot'] : ['boot']);
 }
 
 const base = Date.parse('2026-10-04T00:00:00+05:00');
