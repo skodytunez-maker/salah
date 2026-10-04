@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import {orientationSample,createCompassController} from '../dist/js/qibla.js';
 import {bearing} from '../dist/js/prayers.js';
 import {magneticField,magneticDeclination} from '../dist/js/geomagnetism.js';
@@ -28,6 +29,7 @@ const tracker=createDirectionTracker();assert.equal(tracker.update(359,1,0).sign
 for(const [a,b] of [[0,1],[1,2],[2,5],[5,10],[10,15],[15,30]])assert.ok(glowForError(a)>=glowForError(b),'Qibla light must strengthen as alignment improves');
 assert.equal(glowForError(0),1);assert.equal(glowForError(30),0);assert.equal(glowForError(90),0);
 const qiblaHtml=renderQiblaView({cityName:'Тюмень',bearing:218.5,hasCity:true});assert.match(qiblaHtml,/Чем точнее направление, тем ярче становится свет\./);
+const qiblaCss=await readFile(new URL('../dist/qibla.css',import.meta.url),'utf8');assert.doesNotMatch(qiblaCss,/var\(--qibla-light\)\s*\*/,'Qibla glow must not rely on unsupported CSS multiplication');
 const states=[];let listener,visibility,screenChanged,now=0,visible=true,headingAngle=0,off=0,vibrations=0,frame=0;const frames=new Map(),timers=new Map();let counter=0;
 const environment={supported:()=>true,requestPermission:async()=> 'granted',subscribe:fn=>{listener=fn;return()=>{listener=null;off++;}},watchVisibility:fn=>{visibility=fn;return()=>visibility=null;},watchScreen:fn=>{screenChanged=fn;return()=>screenChanged=null;},screenAngle:()=>headingAngle,visible:()=>visible,now:()=>now,setTimer:fn=>{const id=++counter;timers.set(id,fn);return id;},clearTimer:id=>timers.delete(id),requestFrame:fn=>{const id=++frame;frames.set(id,fn);return id;},cancelFrame:id=>frames.delete(id)};
 function flush(){for(const [id,fn]of [...frames]){frames.delete(id);fn(now);}}
