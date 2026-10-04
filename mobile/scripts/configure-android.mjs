@@ -1,0 +1,50 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const here=path.dirname(fileURLToPath(import.meta.url));
+const mobileRoot=path.resolve(here,'..');
+const androidRoot=path.join(mobileRoot,'android','app','src','main');
+const templateRoot=path.join(mobileRoot,'native','android');
+const config=JSON.parse(await fs.readFile(path.join(mobileRoot,'capacitor.config.json'),'utf8'));
+const packagePath=config.appId.split('.').join(path.sep);
+const javaRoot=path.join(androidRoot,'java',packagePath);
+const resRoot=path.join(androidRoot,'res');
+
+async function copy(name,target){
+  await fs.mkdir(path.dirname(target),{recursive:true});
+  await fs.copyFile(path.join(templateRoot,name),target);
+}
+
+try{await fs.access(androidRoot)}catch{
+  throw new Error('Android project is missing. Run "npx cap add android" first.');
+}
+
+await copy('MainActivity.java',path.join(javaRoot,'MainActivity.java'));
+await copy('SalahWidgetPlugin.java',path.join(javaRoot,'SalahWidgetPlugin.java'));
+await copy('SalahPrayerWidgetProvider.java',path.join(javaRoot,'SalahPrayerWidgetProvider.java'));
+await copy('salah_widget.xml',path.join(resRoot,'layout','salah_widget.xml'));
+await copy('salah_widget_bg.xml',path.join(resRoot,'drawable','salah_widget_bg.xml'));
+await copy('salah_widget_info.xml',path.join(resRoot,'xml','salah_widget_info.xml'));
+await copy('widget_strings.xml',path.join(resRoot,'values','widget_strings.xml'));
+
+const manifestPath=path.join(androidRoot,'AndroidManifest.xml');
+let manifest=await fs.readFile(manifestPath,'utf8');
+const receiver=`        <receiver
+            android:name=".SalahPrayerWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/salah_widget_info" />
+        </receiver>
+`;
+if(!manifest.includes('android:name=".SalahPrayerWidgetProvider"')){
+  if(!manifest.includes('</application>'))throw new Error('AndroidManifest.xml has no application element.');
+  manifest=manifest.replace('</application>',receiver+'    </application>');
+  await fs.writeFile(manifestPath,manifest);
+}
+
+console.log('SALAH Android native widget configured.');

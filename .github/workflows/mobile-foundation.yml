@@ -21,3 +21,5 @@ jobs:
         with:
           node-version: '22'
       - run: node scripts/check-mobile-foundation.mjs
+      - run: node scripts/check-native-widget.mjs
+      - run: node scripts/check-android-widget.mjs
