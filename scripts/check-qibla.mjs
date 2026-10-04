@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import {orientationSample,createCompassController} from '../dist/js/qibla.js';
 import {bearing} from '../dist/js/prayers.js';
 import {magneticField,magneticDeclination} from '../dist/js/geomagnetism.js';
-import {createDirectionTracker,signedAngleDifference} from '../dist/js/qibla-math.js';
+import {createDirectionTracker,signedAngleDifference,glowForError} from '../dist/js/qibla-math.js';
+import {renderQiblaView} from '../dist/js/qibla-view.js';
 // Independent AlAdhan Qibla API results fetched 2026-10-04; tolerance covers Kaaba coordinate rounding.
 for(const [lat,lon,expected] of [[57.1522,65.5272,218.55214147374403],[40.7128,-74.006,58.481712034206865],[-33.8688,151.2093,277.499589412883]])assert.ok(Math.abs(bearing(lat,lon)-expected)<.001);
 for(const [lat,lon] of [[NaN,0],[0,181],[91,0],[21.422487,39.826206],[-21.422487,-140.173794]])assert.ok(Number.isNaN(bearing(lat,lon)));
@@ -24,6 +25,9 @@ assert.equal(orientationSample({...level,beta:36,webkitCompassHeading:10}).level
 assert.equal(orientationSample({...level,webkitCompassHeading:10,webkitCompassAccuracy:-1}).accurate,false);
 assert.equal(orientationSample({...level,webkitCompassHeading:10,webkitCompassAccuracy:26}).accurate,false);
 const tracker=createDirectionTracker();assert.equal(tracker.update(359,1,0).signedError,2);assert.ok(Math.abs(tracker.update(1,1,100).signedError)<2);assert.equal(signedAngleDifference(1,359),-2);
+for(const [a,b] of [[0,1],[1,2],[2,5],[5,10],[10,15],[15,30]])assert.ok(glowForError(a)>=glowForError(b),'Qibla light must strengthen as alignment improves');
+assert.equal(glowForError(0),1);assert.equal(glowForError(30),0);assert.equal(glowForError(90),0);
+const qiblaHtml=renderQiblaView({cityName:'Тюмень',bearing:218.5,hasCity:true});assert.match(qiblaHtml,/Чем точнее направление, тем ярче становится свет\./);
 const states=[];let listener,visibility,screenChanged,now=0,visible=true,headingAngle=0,off=0,vibrations=0,frame=0;const frames=new Map(),timers=new Map();let counter=0;
 const environment={supported:()=>true,requestPermission:async()=> 'granted',subscribe:fn=>{listener=fn;return()=>{listener=null;off++;}},watchVisibility:fn=>{visibility=fn;return()=>visibility=null;},watchScreen:fn=>{screenChanged=fn;return()=>screenChanged=null;},screenAngle:()=>headingAngle,visible:()=>visible,now:()=>now,setTimer:fn=>{const id=++counter;timers.set(id,fn);return id;},clearTimer:id=>timers.delete(id),requestFrame:fn=>{const id=++frame;frames.set(id,fn);return id;},cancelFrame:id=>frames.delete(id)};
 function flush(){for(const [id,fn]of [...frames]){frames.delete(id);fn(now);}}
@@ -38,4 +42,5 @@ headingAngle=90;screenChanged();assert.equal(states.at(-1).hasHeading,false);now
 controller.destroy();assert.equal(listener,null);assert.equal(visibility,null);assert.equal(screenChanged,null);assert.equal(frames.size,0);assert.equal(timers.size,0);assert.ok(off>=2);
 const denied=[];const access=createCompassController({bearing:90,onState:s=>denied.push(s),environment:{...environment,requestPermission:async()=> 'denied'}});await access.enable();assert.equal(denied.at(-1).hasHeading,false);assert.equal(denied.at(-1).phase,'denied');access.destroy();
 const stalled=[];const unavailable=createCompassController({bearing:90,onState:s=>stalled.push(s),environment});await unavailable.enable();[...timers.values()][0]();assert.equal(stalled.at(-1).phase,'unavailable');assert.equal(stalled.at(-1).hasHeading,false);unavailable.destroy();
-console.log('PASS: independent Qibla bearings, NOAA magnetic model, magnetic-to-true north, screen rotations, relative/missing/tilted/invalid sensors, circular smoothing, permission denial, timeout and resume cleanup.');
+const gentle=[];let gentleListener;const gentleEnvironment={...environment,subscribe:fn=>{gentleListener=fn;return()=>gentleListener=null;},screenAngle:()=>0,visible:()=>true};const gentleController=createCompassController({bearing:90,declination:0,onState:s=>gentle.push(s),environment:gentleEnvironment});await gentleController.enable();now=500;gentleListener({...level,webkitCompassHeading:70});flush();assert.equal(gentle.at(-1).instruction,'Поверните немного правее');gentleController.destroy();
+console.log('PASS: independent Qibla bearings, NOAA magnetic model, magnetic-to-true north, screen rotations, relative/missing/tilted/invalid sensors, circular smoothing, graded light, gentle turn guidance, permission denial, timeout and resume cleanup.');
