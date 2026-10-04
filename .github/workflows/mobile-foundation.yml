@@ -35,3 +35,5 @@ jobs:
       - run: node scripts/check-settings.mjs
       - run: node scripts/check-settings-resume.mjs
       - run: node scripts/check-notification-status.mjs
+      - run: node scripts/check-pages.mjs
+      - run: node scripts/check-updates.mjs
