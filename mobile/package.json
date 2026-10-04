@@ -8,10 +8,12 @@
     "cap:sync": "npm run sync:web && npx cap sync",
     "android:add": "npx cap add android && npm run android:configure",
     "android:open": "npx cap open android",
-    "ios:add": "npx cap add ios",
+    "ios:add": "npx cap add ios && npm run ios:configure",
     "ios:open": "npx cap open ios",
     "android:configure": "node ./scripts/configure-android.mjs",
-    "android:sync": "npm run sync:web && npx cap sync android && npm run android:configure"
+    "android:sync": "npm run sync:web && npx cap sync android && npm run android:configure",
+    "ios:configure": "ruby ./scripts/configure-ios.rb",
+    "ios:sync": "npm run sync:web && npx cap sync ios && npm run ios:configure"
   },
   "dependencies": {
     "@capacitor/core": "8.5.2"
