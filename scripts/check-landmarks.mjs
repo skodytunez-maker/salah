@@ -32,6 +32,10 @@ const controller=new AbortController();controller.abort();await assert.rejects(l
 for(const item of entries)for(const key of ['day','night','mask'])assert.ok((await stat(new URL(item[key],root))).size<3145728);
 for(const item of entries){const mask=await readFile(new URL(item.mask,root),'utf8');assert.match(mask,/viewBox="0 0 853 1844"/);assert.ok(!/<script|<image|(?:href|src)\s*=|url\(['"]?(?:https?:|data:)/i.test(mask),'Sky masks have no scripts or external resources');assert.ok((await stat(new URL(item.mask,root))).size<32768);}
 const sw=await readFile(new URL('sw.js',root),'utf8');for(const item of entries)for(const key of ['day','night','mask'])assert.ok(!sw.includes('"./'+item[key]+'"'),'City assets are not precached for all users');
+const weatherSource=await readFile(new URL('js/weather.js',root),'utf8');
+assert.ok(!weatherSource.includes("landmarkState!=='ready'?'mosque'"),'Landmark loading must never fall back to the bundled mosque');
+assert.match(weatherSource,/keep the currently decoded city visible/i,'City switch keeps the previous decoded landmark until the next one is ready');
+assert.match(weatherSource,/Swap only after both photographs are decoded/i,'Landmark swap must happen only after decode');
 console.log('PASS: lazy city catalogue, coordinate matching, safe paths, no wrong-city downloads, bounded separate offline cache, aborted requests, preserved personal stores.');
 
 const otherCity={latitude:35.6762,longitude:139.6503},copy={...otherCity};
