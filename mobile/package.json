@@ -1,0 +1,22 @@
+{
+  "name": "salah-mobile-shell",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native iOS/Android shell for SALAH",
+  "scripts": {
+    "sync:web": "node ./scripts/sync-web.mjs",
+    "cap:sync": "npm run sync:web && npx cap sync",
+    "android:add": "npx cap add android",
+    "android:open": "npx cap open android",
+    "ios:add": "npx cap add ios",
+    "ios:open": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/cli": "8.5.2",
+    "@capacitor/ios": "8.5.2"
+  }
+}
