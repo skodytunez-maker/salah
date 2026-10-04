@@ -31,7 +31,7 @@ Android can be developed and built on Windows.
 4. Run `npm install`.
 5. Run `npm run sync:web`.
 6. First Android setup: `npm run android:add`.
-7. Sync future web changes: `npm run cap:sync`.
+7. Sync future web changes: `npm run android:sync`.
 8. Open Android Studio: `npm run android:open`.
 
 Do not commit signing passwords, keystores, service-role keys or store credentials.
@@ -54,8 +54,8 @@ First release:
 
 - Small widget: next prayer, prayer time, time remaining.
 - Medium widget: next prayer plus all five prayer times.
-- Android: native AppWidget/Glance layer.
-- iOS: WidgetKit layer.
+- Android: native home-screen widget is wired through AppWidget + the `SalahWidget` Capacitor bridge. The same responsive layout covers small and medium widths.
+- iOS: WidgetKit layer follows the same snapshot contract.
 
 Both platforms consume the same versioned prayer snapshot contract in `shared/prayer-widget.schema.json`.
 
