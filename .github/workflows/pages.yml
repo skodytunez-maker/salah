@@ -66,6 +66,7 @@ jobs:
           node scripts/check-qibla.mjs
           node scripts/check-learning-navigation.mjs
           node scripts/check-native-widget.mjs
+          node scripts/check-android-widget.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload SALAH
