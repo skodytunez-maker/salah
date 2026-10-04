@@ -58,12 +58,12 @@ async function claimEvent(event,now){
   });
 }
 
-export function createReminders({getSettings,updateSettings,getContext,toast=()=>{}}){
+export function createReminders({getSettings,updateSettings,getContext,toast=()=>{},onChange=()=>{}}){
   const background=createPushReminders({getSettings,toast});
   const tracker=createReminderTracker({read:readSeen,write:writeSeen});
   const audio=typeof Audio==='function'?new Audio():null;
   if(audio)audio.preload='none';
-  let mounted=null,jumuahMounted=null,player=null,status='',soundReady=false,generation=0,destroyed=false,ticking=false,contextIdentity=null,playAttempt=0,currentTrack=null;
+  let mounted=null,jumuahMounted=null,tahajjudMounted=null,player=null,status='',soundReady=false,generation=0,destroyed=false,ticking=false,contextIdentity=null,playAttempt=0,currentTrack=null;
   const preferences=()=>normalizeReminders(getSettings()?.reminders);
   const say=message=>{if(!destroyed)toast(message);};
 
@@ -170,9 +170,19 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   }
 
   function save(value){
-    updateSettings({reminders:normalizeReminders(value)});
+    if(!updateSettings({reminders:normalizeReminders(value)}))say('Не удалось сохранить напоминание.');
+    Promise.resolve(onChange()).catch(()=>{});
     tracker.reset();generation++;contextIdentity=null;
-    draw();drawJumuah();
+    draw();drawJumuah();drawTahajjud();
+  }
+
+  function drawTahajjud(){
+    if(!tahajjudMounted?.isConnected||destroyed)return;
+    const p=preferences(),focused=tahajjudMounted.contains(document.activeElement);
+    tahajjudMounted.innerHTML='<label class="switch-row" for="tahajjud-reminder"><span>Напоминать о Тахаджуде</span><input id="tahajjud-reminder" type="checkbox"'+checked(p.tahajjud.enabled)+disabled(!p.enabled)+'></label>'+(!p.enabled?'<p class="reminder-notice">Включите «Азан и напоминания» ниже.</p>':'');
+    const control=tahajjudMounted.querySelector('input');
+    control.onchange=()=>{const next=preferences();next.tahajjud.enabled=control.checked;save(next);};
+    if(focused)control.focus({preventScroll:true});
   }
 
   function drawJumuah(){
@@ -236,9 +246,10 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   }
 
   function mountSettings(container){mounted=container;draw();}
+  function mountTahajjud(container){tahajjudMounted=container;drawTahajjud();}
   function mountJumuah(container){jumuahMounted=container;if(container)mounted?.querySelector('[data-jumuah-slot]')?.append(container.closest('details'));drawJumuah();}
-  function destroy(){destroyed=true;generation++;tracker.reset();stopAudio();if(audio){audio.removeAttribute('src');audio.load();}player?.remove();player=null;mounted=null;jumuahMounted=null;document.removeEventListener('visibilitychange',visibilityChanged);}
-  return {mountSettings,mountJumuah,tick,reset,destroy};
+  function destroy(){destroyed=true;generation++;tracker.reset();stopAudio();if(audio){audio.removeAttribute('src');audio.load();}player?.remove();player=null;mounted=null;jumuahMounted=null;tahajjudMounted=null;document.removeEventListener('visibilitychange',visibilityChanged);}
+  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy};
 }
 
 function validTime(value){return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);}

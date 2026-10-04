@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {wallpaperChoice,skyObjects,wallpapers,previewClock,skyGeometry} from '../dist/js/wallpapers.js';
+import {solarSceneAt,sceneForMode} from '../dist/js/day-night.js';
 import {getTimes,getPosition,getMoonTimes,getMoonPosition} from '../dist/js/vendor/suncalc.js';
 const store=new Map();globalThis.localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
 const {settings,updateSettings,normalizeSettings}=await import('../dist/js/storage.js');
@@ -99,3 +100,26 @@ assert.match(css,/aspect-ratio:\s*853\s*\/\s*1844/);assert.match(css,/mask-image
 for(const property of ['sunX','sunY','moonX','moonY'])assert.ok(css.includes('--sky-'+property),'each body needs its own projected coordinates');
 assert.match(css,/#home-scene\.sky-reset[^}]*transition:none/s,'re-entry and city changes must not streak across the panorama');
 console.log('PASS: wallpaper/settings persistence; real independent daylight Sun/Moon paths; upper-limb rise/set; previous-day lunar arcs; polar/invalid cities; preview clock; cache rollover; panorama mask.');
+
+// Wallpaper preferences never change the prayer city or its calculation.
+const place={name:'Тюмень',latitude:57.15222,longitude:65.52722,timezone:'Asia/Yekaterinburg'};
+updateSettings({city:place,school:0,landmarkCity:'pamir',wallpaper:'landmark'});
+assert.deepEqual(settings.city,{...place,country:''});assert.equal(settings.school,0);
+assert.equal(normalizeSettings(JSON.parse(store.get('salah:settings'))).landmarkCity,'pamir');
+assert.equal(normalizeSettings({}).landmarkCity,'auto');
+assert.throws(()=>normalizeSettings({landmarkCity:'../../private'},{strict:true}));
+assert.throws(()=>normalizeSettings({landmarkCity:123},{strict:true}));
+// Twilight and the moving Sun use the same astronomical clock.
+for(const city of [tyumen,nyc,svalbard,{latitude:-33.8688,longitude:151.2093}]){
+ const stamp=Date.parse('2026-10-04T12:00:00Z'),events=getTimes(new Date(stamp),city.latitude,city.longitude);
+ for(const event of [events.dawn,events.sunrise,events.sunset,events.dusk])if(Number.isFinite(+event)){
+  const a=solarSceneAt(+event-1000,city),b=solarSceneAt(+event+1000,city);
+  for(const key of ['day','dawn','dusk']){assert.ok(a[key]>=0&&a[key]<=1);assert.ok(Math.abs(a[key]-b[key])<.01,'No light jump around sunrise/twilight');}
+ }
+ const frame=solarSceneAt(stamp,city);assert.deepEqual(sceneForMode(stamp,{Fajr:stamp+day,Sunrise:stamp+day,Maghrib:stamp-day},'auto',city),frame,'Manual offsets never change astronomical light');
+}
+const winter=solarSceneAt(Date.parse('2026-12-21T12:00:00Z'),svalbard);assert.ok(winter.day<.01,'Polar winter can retain a faint midday twilight');
+assert.equal(solarSceneAt(Date.parse('2026-06-21T00:00:00Z'),svalbard).day,1);
+assert.equal(solarSceneAt(NaN,tyumen),null);assert.equal(solarSceneAt(observed,{latitude:91,longitude:0}),null);
+assert.equal(sceneForMode(observed,null,'dark',tyumen).day,0);assert.equal(sceneForMode(observed,null,'light',tyumen).day,1);
+console.log('PASS: independent saved landmark city; safe preference validation; astronomical twilight continuity; polar light; explicit modes; prayer offsets do not affect the scene.');

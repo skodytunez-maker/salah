@@ -24,7 +24,7 @@ export function orientationSample(event,screenAngle=0,declination=0){
   else if(event.absolute===true&&Number.isFinite(event.alpha)&&event.alpha>=0&&event.alpha<=360)heading=360-event.alpha;
   if(heading===null)return null;
   const angle=Number.isFinite(screenAngle)?screenAngle:0;
-  const level=!(Number.isFinite(event.beta)&&Math.abs(event.beta)>35||Number.isFinite(event.gamma)&&Math.abs(event.gamma)>35);
+  const level=Number.isFinite(event.beta)&&Number.isFinite(event.gamma)&&Math.abs(event.beta)<=35&&Math.abs(event.gamma)<=35;
   const accuracy=event.webkitCompassAccuracy;
   const accurate=!Number.isFinite(accuracy)||(accuracy>=0&&accuracy<=25);
   return {heading:normalizeAngle(heading+angle+declination),level,accurate};
@@ -97,7 +97,7 @@ export function createCompassController({bearing,declination=0,onState,onHaptic=
     if(!sample)return;
     lastEvent=event;armWatch(2500);
     if(!sample.level||!sample.accurate){
-      cancelPaint();
+      tracker.reset();cancelPaint();
       emit({phase:'unreliable',instruction:'Для большей точности держите телефон ровно.',
         message:!sample.accurate?'Датчик не даёт точного направления. Уберите телефон от металлических предметов.':
           'Направление появится, когда телефон будет лежать ровно.'});
@@ -119,7 +119,7 @@ export function createCompassController({bearing,declination=0,onState,onHaptic=
   function visibilityChanged(){
     if(!enabled)return;
     if(!env.visible()){
-      detachSensor();
+      detachSensor();tracker.reset();lastPaint=-Infinity;
       emit({phase:'paused',instruction:'Компас приостановлен',message:'Вернитесь на экран для определения направления.'});
     }else attachSensor();
   }

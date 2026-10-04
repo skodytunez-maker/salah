@@ -29,3 +29,13 @@ body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{opacity:0!impo
 
 /* Invisible precipitation needs no compositor layers. */
 #weather-layer:not([data-kind=rain]):not([data-kind=storm]) .weather-rain span,#weather-layer:not([data-kind=snow]) .weather-snow span,#weather-layer[data-motion=off] span{will-change:auto}
+
+/* Crossfade outgoing precipitation while its particles keep moving. */
+#weather-layer .weather-rain,#weather-layer .weather-snow{transition:opacity 2.5s ease}
+#weather-layer .weather-clouds,#weather-layer .weather-overcast,#weather-layer .weather-mist,#weather-layer .weather-clouds>div{transition:opacity 6s ease}
+#weather-layer[data-rain=on] .weather-rain span,#weather-layer[data-snow=on] .weather-snow span{animation-play-state:running!important;will-change:transform}
+#weather-layer[data-motion=off] .weather-rain span,#weather-layer[data-motion=off] .weather-snow span{animation-play-state:paused!important;will-change:auto}
+.weather-rain span:nth-child(3n){opacity:.4;width:.7px;height:18px}
+.weather-rain span:nth-child(3n+1){opacity:.7}
+.weather-snow span:nth-child(3n){opacity:.4;filter:blur(.4px)}
+.weather-snow span:nth-child(3n+1){opacity:.8}

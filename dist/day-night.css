@@ -75,3 +75,25 @@ body[data-wallpaper="landmark"] #weather-layer{clip-path:none;-webkit-mask-image
 
 
 .scene-preview:not(.reduce-motion) #home-scene>.scene-day,.scene-preview:not(.reduce-motion) #home-scene>.scene-dawn,.scene-preview:not(.reduce-motion) #home-scene>.scene-dusk{transition:none}
+
+/* Cloud cover changes the light on the photograph, not only the sky overlay. */
+#home-scene{--scene-clouds:0;--scene-direct-light:1;--scene-sky-visibility:1;--scene-mist:0}
+#home-scene .scene-day,#home-scene[data-wallpaper="new-york"] .scene-day,#home-scene[data-wallpaper="landmark"] .scene-day{filter:brightness(calc(.74 + var(--scene-day)*.2 - var(--scene-clouds)*.14)) saturate(calc(.78 + var(--scene-day)*.15 - var(--scene-clouds)*.12));transition:opacity 4s linear,filter 6s ease}
+#home-scene .scene-night{filter:brightness(calc(1 - var(--scene-clouds)*.1)) saturate(.92);transition:filter 6s ease}
+#home-scene .scene-dawn{opacity:calc(var(--scene-dawn)*var(--scene-direct-light));transition:opacity 6s ease}
+#home-scene .scene-dusk{opacity:calc(var(--scene-dusk)*var(--scene-direct-light));transition:opacity 6s ease}
+#home-scene .scene-sky{opacity:var(--scene-sky-visibility);transition:opacity 6s ease}
+#home-scene .scene-shade{background:linear-gradient(180deg,rgba(5,10,20,.1),rgba(5,10,20,.16) 48%,rgba(5,10,20,.27));transition:opacity 6s ease}
+/* The landmark picker is part of the same tile and has no photo grid. */
+.landmark-choice{grid-column:1/-1;min-width:0;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:rgba(6,12,24,.5)}
+.wallpaper-options .landmark-choice [data-wallpaper="landmark"]{width:100%;border:0;border-radius:0}
+.landmark-choice:has([aria-pressed=true]){border-color:#ead09b;box-shadow:0 0 0 1px rgba(234,208,155,.35)}
+.landmark-cities{border-top:1px solid var(--line);padding:0 13px}
+.landmark-cities[hidden]{display:none}
+.landmark-cities summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;min-height:48px;list-style:none;color:#d2dbea}
+.landmark-cities summary::-webkit-details-marker{display:none}
+.landmark-cities summary:after{content:'⌄';font-size:20px;color:var(--muted);transform:rotate(0);transition:transform .2s}
+.landmark-cities[open] summary:after{transform:rotate(180deg)}
+.wallpaper-options .landmark-cities summary span{padding:0;font-size:14px}
+.landmark-cities select{width:100%;margin:0 0 13px;min-height:44px}
+.landmark-cities .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

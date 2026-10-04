@@ -88,5 +88,25 @@
     "referenceLicense": "CC BY-SA 4.0",
     "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
     "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
+  },
+  {
+    "id": "derbent",
+    "city": "Дербент",
+    "landmark": "Нарын-Кала и Каспийское море",
+    "source": "https://derbentmuseum.ru/monuments/derbentskaya-czitadel-naryn-kala/",
+    "referenceAuthor": "Дербентский музей-заповедник",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного."
+  },
+  {
+    "id": "pamir",
+    "city": "Памир",
+    "landmark": "Озеро Каракуль и горы Памира",
+    "source": "https://www.orexca.com/rus/tajikistan/tours/ultimate-pamir-highway-tour.htm",
+    "referenceAuthor": "OrexCA",
+    "referenceLicense": "Фотографический ориентир",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного."
   }
 ]

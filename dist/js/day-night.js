@@ -1,3 +1,4 @@
+import{getPosition}from './vendor/suncalc.js';
 const minute=60000;
 const clamp=x=>Math.min(1,Math.max(0,x));
 const smooth=x=>{const t=clamp(x);return t*t*(3-2*t)};
@@ -25,4 +26,14 @@ export function previewScene(elapsed){
 }
 
 export function backgroundMode(value,legacyDynamic){return ['dark','light','auto'].includes(value)?value:legacyDynamic===false?'dark':'auto'}
-export function sceneForMode(now,times,mode){return mode==='light'?{day:1,dawn:0,dusk:0,phase:'day'}:mode==='dark'?night():sceneAt(now,times)}
+// The landscape follows astronomical twilight, independently of prayer offsets.
+export function solarSceneAt(now,city){
+ if(!Number.isFinite(now)||!Number.isFinite(city?.latitude)||Math.abs(city.latitude)>90||!Number.isFinite(city?.longitude)||Math.abs(city.longitude)>180)return null;
+ const sun=getPosition(new Date(now),city.latitude,city.longitude);
+ if(!Number.isFinite(sun.altitude)||!Number.isFinite(sun.azimuth))return null;
+ const day=smooth((sun.altitude+12)/18);
+ const warm=smooth((sun.altitude+4)/5)*(1-smooth((sun.altitude-1)/9));
+ const morning=sun.azimuth<0,dawn=morning?warm:0,dusk=morning?0:warm;
+ return {day,dawn,dusk,phase:day===0?'night':warm>.01?(morning?'dawn':'dusk'):day>.5?'day':'night'};
+}
+export function sceneForMode(now,times,mode,city=null){return mode==='light'?{day:1,dawn:0,dusk:0,phase:'day'}:mode==='dark'?night():solarSceneAt(now,city)||sceneAt(now,times)}

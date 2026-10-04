@@ -1,3 +1,4 @@
+import {lastThirdNight} from './tahajjud.js';
 // Reminder scheduling is independent of the next-prayer display and browser APIs.
 export const PRAYER_KEYS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 export const BEFORE_MINUTES = [0, 5, 10, 15, 30];
@@ -9,7 +10,8 @@ export const reminderDefaults = {
   enabled:false, voice:'mansour', browserNotifications:false,
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
   adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}},
-  jumuah:{enabled:false,time:'09:00'}
+  jumuah:{enabled:false,time:'09:00'},
+  tahajjud:{enabled:false}
 };
 
 export function validLocalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
@@ -27,7 +29,7 @@ export function normalizeReminders(value){
     const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
     return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
-  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'}};
+  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'},tahajjud:{enabled:saved.tahajjud?.enabled===true}};
 }
 
 export function shiftDay(day,amount){
@@ -91,6 +93,12 @@ export function buildReminderEvents(value,context){
       const at=row.mode==='prayer'?timestamp(times[key==='morning'?'Fajr':'Maghrib']):localTimestamp(day,row.time,context.timeZone);
       if(!Number.isFinite(at))continue;
       events.push({id:JSON.stringify([String(context.cityKey),day,'adhkar',key,at,'at']),day,kind:'adhkar',key,phase:'at',at,adhan:false,message:key==='morning'?'Время утренних азкаров':'Время вечерних азкаров'});
+    }
+    // Anchor to the night ending with this day's Fajr, even across a month or DST boundary.
+    if(settings.tahajjud.enabled){
+      let previous;try{previous=context.timingsFor(shiftDay(day,-1))||{};}catch{previous={};}
+      const at=lastThirdNight(timestamp(previous.Maghrib),timestamp(times.Fajr));
+      if(Number.isFinite(at))events.push({id:JSON.stringify([String(context.cityKey),day,'tahajjud',at,'at']),day,kind:'tahajjud',key:'tahajjud',phase:'at',at,adhan:false,message:'Тахаджуд: началась последняя треть ночи'});
     }
     // The city's calendar day determines Friday; prayer data is not required.
     if(settings.jumuah.enabled&&new Date(day+'T12:00:00Z').getUTCDay()===5){

@@ -2,6 +2,28 @@
 import postgres from 'npm:postgres@3.4.9';
 import webpush from 'npm:web-push@3.6.7';
 
+const minute=60000;
+function personalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value)?value:''}
+// Timestamps carry the city's offset: no device timezone or fixed 24-hour night.
+function lastThirdNight(maghrib,fajr){
+  if(!Number.isFinite(maghrib)||!Number.isFinite(fajr))return null;
+  const duration=fajr-maghrib;
+  if(duration<=0||duration>=24*60*minute)return null;
+  // Round forward so the displayed minute is already within the last third.
+  const time=Math.ceil((maghrib+duration*2/3)/minute)*minute;
+  return time<fajr?time:null;
+}
+function tahajjudFor(now,{previous,today,next}={},chosenTime=''){
+  const text=personalTime(chosenTime);
+  if(text)return {kind:'manual',text,label:'Личное время'};
+  if(!Number.isFinite(now)||!Number.isFinite(today?.Fajr))return null;
+  const beforeFajr=now<today.Fajr;
+  const nightStart=beforeFajr?previous?.Maghrib:today?.Maghrib;
+  const nightEnd=beforeFajr?today.Fajr:next?.Fajr;
+  const time=lastThirdNight(nightStart,nightEnd);
+  return time===null?null:{kind:'last-third',time,nightStart,nightEnd,label:'Начало последней трети ночи'};
+}
+
 // Reminder scheduling is independent of the next-prayer display and browser APIs.
 const PRAYER_KEYS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 const BEFORE_MINUTES = [0, 5, 10, 15, 30];
@@ -13,7 +35,8 @@ const reminderDefaults = {
   enabled:false, voice:'mansour', browserNotifications:false,
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
   adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}},
-  jumuah:{enabled:false,time:'09:00'}
+  jumuah:{enabled:false,time:'09:00'},
+  tahajjud:{enabled:false}
 };
 
 function validLocalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
@@ -31,7 +54,7 @@ function normalizeReminders(value){
     const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
     return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
-  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'}};
+  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'},tahajjud:{enabled:saved.tahajjud?.enabled===true}};
 }
 
 function shiftDay(day,amount){
@@ -95,6 +118,12 @@ function buildReminderEvents(value,context){
       const at=row.mode==='prayer'?timestamp(times[key==='morning'?'Fajr':'Maghrib']):localTimestamp(day,row.time,context.timeZone);
       if(!Number.isFinite(at))continue;
       events.push({id:JSON.stringify([String(context.cityKey),day,'adhkar',key,at,'at']),day,kind:'adhkar',key,phase:'at',at,adhan:false,message:key==='morning'?'Время утренних азкаров':'Время вечерних азкаров'});
+    }
+    // Anchor to the night ending with this day's Fajr, even across a month or DST boundary.
+    if(settings.tahajjud.enabled){
+      let previous;try{previous=context.timingsFor(shiftDay(day,-1))||{};}catch{previous={};}
+      const at=lastThirdNight(timestamp(previous.Maghrib),timestamp(times.Fajr));
+      if(Number.isFinite(at))events.push({id:JSON.stringify([String(context.cityKey),day,'tahajjud',at,'at']),day,kind:'tahajjud',key:'tahajjud',phase:'at',at,adhan:false,message:'Тахаджуд: началась последняя треть ночи'});
     }
     // The city's calendar day determines Friday; prayer data is not required.
     if(settings.jumuah.enabled&&new Date(day+'T12:00:00Z').getUTCDay()===5){
@@ -236,7 +265,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:2,features:['tahajjud'],publicKey:config.vapid.publicKey});}
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');

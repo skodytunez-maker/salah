@@ -8,11 +8,18 @@ export function landmarkDistance(a,b){
  const h=Math.sin(dlat/2)**2+Math.cos(a.latitude*rad)*Math.cos(b.latitude*rad)*Math.sin(dlon/2)**2;
  return 6371*2*Math.asin(Math.sqrt(Math.min(1,h)));
 }
+const validRegion=r=>r&&['south','north','west','east'].every(k=>Number.isFinite(r[k]))&&r.south>=-90&&r.north<=90&&r.west>=-180&&r.east<=180&&r.south<r.north&&r.west<r.east&&r.north-r.south<=6&&r.east-r.west<=6;
 export function validateLandmarkCatalog(value){
  if(value?.version!==1||!Array.isArray(value.cities)||value.cities.length>500)return [];
- return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&['day','night','mask'].every(key=>typeof c[key]==='string'&&new RegExp('^wallpapers/'+c.id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(c[key])));
+ return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&(!c.region||validRegion(c.region))&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&['day','night','mask'].every(key=>typeof c[key]==='string'&&new RegExp('^wallpapers/'+c.id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(c[key])));
 }
-export function matchLandmark(city,catalog){return catalog.filter(c=>landmarkDistance(city,c)<=c.radius).sort((a,b)=>landmarkDistance(city,a)-landmarkDistance(city,b))[0]||null}
+export function matchLandmark(city,catalog,chosen='auto'){
+ if(chosen!=='auto')return catalog.find(c=>c.id===chosen)||null;
+ if(!validPoint(city))return null;
+ const nearby=catalog.filter(c=>!c.region&&landmarkDistance(city,c)<=c.radius).sort((a,b)=>landmarkDistance(city,a)-landmarkDistance(city,b))[0];
+ if(nearby)return nearby;
+ return catalog.find(c=>validRegion(c.region)&&city.latitude>=c.region.south&&city.latitude<=c.region.north&&city.longitude>=c.region.west&&city.longitude<=c.region.east)||null;
+}
 const abort=signal=>{if(signal?.aborted)throw Object.assign(new Error('Aborted'),{name:'AbortError'})};
 export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=globalThis.caches}={}){
  let catalogTask=null;
@@ -34,9 +41,10 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   catch{response=await store?.match(catalogUrl).catch(()=>null);return response?validateLandmarkCatalog(await response.json()):[]}
   finally{clearTimeout(timer)}
  }
- return async function load(city,{signal}={}){
-  abort(signal);const entries=await(catalogTask??=catalogue().then(entries=>{if(!entries.length)catalogTask=null;return entries})),entry=matchLandmark(city,entries);abort(signal);
-  if(!entry)return {status:entries.length?'unavailable':'offline',entry:null};
+ const entries=()=>catalogTask??=catalogue().then(entries=>{if(!entries.length)catalogTask=null;return entries});
+ const load=async function load(city,{signal,chosen='auto'}={}){
+  abort(signal);const entry=matchLandmark(city,await entries(),chosen);abort(signal);
+  if(!entry)return {status:(await entries()).length?'unavailable':'offline',entry:null};
   const responses=await Promise.all(['day','night','mask'].map(key=>publicFile(new URL(entry[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/webp/,limit:key==='mask'?32768:3145728})));
   abort(signal);
   const blobs=await Promise.all(responses.map(r=>r.blob()));abort(signal);
@@ -45,5 +53,7 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   if(store)for(const request of await store.keys())if(!keep.has(request.url))await store.delete(request).catch(()=>{});
   return {status:'ready',entry,blobs};
  };
+ load.catalogue=entries;
+ return load;
 }
 export const loadLandmark=createLandmarkLoader();

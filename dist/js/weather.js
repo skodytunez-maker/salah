@@ -1,4 +1,4 @@
-import{skyObjects}from './wallpapers.js';
+import{skyObjects,previewClock}from './wallpapers.js';
 import{loadLandmark}from './landmarks.js';
 import{settings}from './storage.js';
 import{sceneAt,previewScene,sceneForMode}from './day-night.js';
@@ -8,15 +8,15 @@ export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REF
 let skyAnimation=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null;
-function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark';note.textContent=landmarkState==='ready'?landmarkEntry.name+' · '+landmarkEntry.landmark:landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':landmarkState==='offline'?'Для первой загрузки фона нужен интернет.':'Фон подбирается по выбранному городу.'}
+function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';note.textContent=landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':'Для первой загрузки фона нужен интернет.'}
 function clearLandmark(scene){landmarkRequest?.abort();landmarkRequest=null;for(const url of landmarkUrls)URL.revokeObjectURL(url);landmarkUrls=[];landmarkEntry=null;for(const key of ['day','night','mask'])scene.style.removeProperty('--landmark-'+key)}
 function prepareLandmark(scene,home){
- const key=settings.wallpaper==='landmark'?[settings.city?.latitude,settings.city?.longitude].join(':'):null;
+ const key=settings.wallpaper==='landmark'?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude].join(':'):null;
  if(key!==landmarkKey){clearLandmark(scene);landmarkKey=key;landmarkState='idle'}
  scene.dataset.wallpaper=settings.wallpaper==='landmark'&&landmarkState!=='ready'?'mosque':settings.wallpaper;document.body.dataset.wallpaper=scene.dataset.wallpaper;
  landmarkNote();if(key===null||!home||landmarkState!=='idle')return;
  const controller=new AbortController();landmarkRequest=controller;landmarkState='loading';landmarkNote();
- loadLandmark(settings.city,{signal:controller.signal}).then(async result=>{
+ loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity}).then(async result=>{
   if(controller.signal.aborted)return;
   if(result.status!=='ready'){landmarkState=result.status;landmarkNote();return}
   const urls=result.blobs.map(blob=>URL.createObjectURL(blob));
@@ -42,13 +42,24 @@ function weatherLayer(effect){
  effect.innerHTML='<div class="weather-overcast"></div><div class="weather-clouds"><div class="weather-cloud-dark"></div><div class="weather-cloud-light"></div></div><div class="weather-mist"></div>'+particles(38,'weather-rain')+particles(36,'weather-snow');
  effect.dataset.ready='true';
 }
-function paintWeather(effect,now,weather,frame,home){
+let weatherTail={rain:0,snow:0},previousWet='none';
+function paintWeather(effect,now,weather,frame,home,scene){
  if(!home&&weatherPreview!==null)stopWeatherPreview();
  weatherLayer(effect);
  const view=weatherPreview!==null?weatherPreviews[weatherPreview]:weatherFrame(settings.weather?weather:null,now);
  const active=home&&view.fresh;
  const reduced=settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const moving=active&&settings.weatherAnimation&&!reduced&&!document.hidden;
+ const clouds=active?view.clouds:0;
+ // Dense cloud hides celestial discs and removes warm, direct sunlight.
+ scene.style.setProperty('--scene-clouds',String(clouds));
+ scene.style.setProperty('--scene-sky-visibility',String(1-clouds*clouds*.96));
+ scene.style.setProperty('--scene-direct-light',String(1-clouds*.92));
+ scene.style.setProperty('--scene-mist',active&&view.kind==='fog'?'.28':'0');
+ const wet=active&&moving?view.kind==='snow'?'snow':['rain','storm'].includes(view.kind)?'rain':'none':'none';
+ if(wet!==previousWet){if(previousWet!=='none'&&moving)weatherTail[previousWet]=now+2500;previousWet=wet}
+ effect.dataset.rain=moving&&(wet==='rain'||weatherTail.rain>now)?'on':'off';
+ effect.dataset.snow=moving&&(wet==='snow'||weatherTail.snow>now)?'on':'off';
  effect.className='';effect.dataset.kind=active?view.kind:'none';effect.dataset.source=active?(weatherPreview!==null?'preview':'live'):'none';effect.dataset.motion=moving?'on':'off';effect.dataset.clouds=active&&view.clouds>0?'on':'off';
  effect.style.setProperty('--weather-clouds',active?String(view.clouds):'0');
  effect.style.setProperty('--weather-day',String(frame.day));
@@ -67,7 +78,7 @@ function paintWeather(effect,now,weather,frame,home){
 let previousSkyTime=null,previousSkyContext=null,previousSky=null;
 let inactiveContext=null;
 function paintSky(scene,sky,now){
- const context=[settings.wallpaper,settings.backgroundMode,settings.city?.latitude,settings.city?.longitude,previewOverride,previewStarted].join(':');
+ const context=[settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.city?.latitude,settings.city?.longitude,previewOverride,previewStarted].join(':');
  const reset=previousSkyContext!==context||previousSkyTime===null||Math.abs(now-previousSkyTime)>5000||previousSky&&['sunX','moonX'].some(key=>Math.abs(sky[key]-previousSky[key])>15);
  scene.classList.toggle('sky-reset',reset);previousSkyContext=context;previousSkyTime=now;previousSky=sky;
  for(const key of ['sunX','sunY','sun','moonX','moonY','moon'])scene.style.setProperty('--sky-'+key,String(sky[key]));
@@ -75,7 +86,7 @@ function paintSky(scene,sky,now){
 function smoothPreview(){
  if(skyAnimation!==null||previewStarted===null||previewOverride!==null||settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden)return;
  const draw=()=>{skyAnimation=null;if(previewStarted===null||previewOverride!==null||!document.body.classList.contains('home-page')||document.hidden||settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const elapsed=performance.now()-previewStarted;if(elapsed>=22000){stopScenePreview();return;}
- const scene=sceneLayer(),frame=previewScene(elapsed),sky=skyObjects(Date.now(),lastContext?.times,'auto',Math.min(elapsed,19999),settings.city);
+ const scene=sceneLayer(),instant=previewClock(Date.now(),lastContext?.times,Math.min(elapsed,19999),settings.city),frame=sceneForMode(instant,lastContext?.times,'auto',settings.city),sky=skyObjects(Date.now(),lastContext?.times,'auto',Math.min(elapsed,19999),settings.city);
  paintSky(scene,sky,performance.now());for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));scene.dataset.phase=frame.phase;skyAnimation=requestAnimationFrame(draw);};skyAnimation=requestAnimationFrame(draw);
 }
 export function atmosphere(now,times,weather){
@@ -83,11 +94,12 @@ export function atmosphere(now,times,weather){
  const layer=document.getElementById('atmosphere'),effect=document.getElementById('weather-layer'),home=document.body.classList.contains('home-page');
  document.body.classList.toggle('reduce-motion',settings.motion||!settings.transitions);
  if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';return;}
- const staticContext=[home,settings.wallpaper,settings.backgroundMode,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');
+ const staticContext=[home,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');
  if(!home&&previewStarted===null&&weatherPreview===null&&inactiveContext===staticContext)return;
  inactiveContext=home?null:staticContext;
  if(previewStarted!==null&&(!home||(previewOverride===null&&performance.now()-previewStarted>=22000)))stopScenePreview();
- const preview=previewStarted!==null,frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode),scene=sceneLayer();
+ const preview=previewStarted!==null,instant=preview&&previewOverride===null?previewClock(now,times,Math.min(performance.now()-previewStarted,19999),settings.city):now;
+ const frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):settings.city?sceneForMode(instant,times,'auto',settings.city):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode,settings.city),scene=sceneLayer();
  document.body.classList.toggle('scene-preview',preview);
  scene.dataset.phase=frame.phase;prepareLandmark(scene,home);
  const sky=skyObjects(now,times,previewOverride==='day'?'light':previewOverride==='night'?'dark':settings.backgroundMode,preview&&previewOverride===null?Math.min(performance.now()-previewStarted,19999):null,settings.city);
@@ -96,5 +108,5 @@ export function atmosphere(now,times,weather){
  if(preview&&!document.getElementById('scene-preview-controls')){const controls=document.createElement('div');controls.id='scene-preview-controls';controls.className='scene-preview-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Просмотр фона');controls.innerHTML='<span>Фон</span><button type="button" data-scene-preview="day" aria-label="Посмотреть дневной фон">☼</button><button type="button" data-scene-preview="night" aria-label="Посмотреть ночной фон">☾</button><button type="button" data-scene-preview="auto" aria-label="Показать смену суток">▶</button><button type="button" data-scene-preview="close" aria-label="Завершить просмотр смены дня и ночи">×</button>';controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{const choice=button.dataset.scenePreview;if(choice==='close')stopScenePreview();else{previewOverride=choice==='auto'?null:choice;if(choice==='auto')previewStarted=performance.now()}atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls)}
  if(preview)for(const button of document.querySelectorAll('[data-scene-preview]'))button.setAttribute('aria-pressed',String(button.dataset.scenePreview===(previewOverride||'auto')));
  if(settings.backgroundMode!=='dark'){layer.style.filter='brightness('+(.76+frame.day*.55)+')';layer.style.background='radial-gradient(ellipse at 75% 25%,rgba(69,90,151,'+(.04+frame.day*.12)+'),transparent 60%),linear-gradient(160deg,#10182b,#060914 75%)'}else{layer.style.filter='';layer.style.background=''}
- paintWeather(effect,now,weather,frame,home);smoothPreview();
+ paintWeather(effect,now,weather,frame,home,scene);smoothPreview();
 }

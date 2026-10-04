@@ -110,6 +110,34 @@
       "day": "wallpapers/makhachkala/day-v1.webp",
       "night": "wallpapers/makhachkala/night-v1.webp",
       "mask": "wallpapers/makhachkala/sky-v1.svg"
+    },
+    {
+      "id": "derbent",
+      "name": "Дербент",
+      "latitude": 42.0578,
+      "longitude": 48.2889,
+      "radius": 30,
+      "landmark": "Нарын-Кала и Каспийское море",
+      "day": "wallpapers/derbent/day-v1.webp",
+      "night": "wallpapers/derbent/night-v1.webp",
+      "mask": "wallpapers/derbent/sky-v1.svg"
+    },
+    {
+      "id": "pamir",
+      "name": "Памир",
+      "latitude": 39.0167,
+      "longitude": 73.45,
+      "radius": 80,
+      "region": {
+        "south": 36.65,
+        "north": 39.55,
+        "west": 70.6,
+        "east": 75.15
+      },
+      "landmark": "Озеро Каракуль и горы Памира",
+      "day": "wallpapers/pamir/day-v1.webp",
+      "night": "wallpapers/pamir/night-v1.webp",
+      "mask": "wallpapers/pamir/sky-v1.svg"
     }
   ]
 }
