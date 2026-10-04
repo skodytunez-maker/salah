@@ -4,11 +4,17 @@ on:
     paths:
       - 'mobile/**'
       - 'scripts/check-mobile-foundation.mjs'
+      - 'scripts/check-native-widget.mjs'
+      - 'scripts/check-android-widget.mjs'
+      - 'scripts/check-ios-widget.mjs'
       - '.github/workflows/mobile-foundation.yml'
   pull_request:
     paths:
       - 'mobile/**'
       - 'scripts/check-mobile-foundation.mjs'
+      - 'scripts/check-native-widget.mjs'
+      - 'scripts/check-android-widget.mjs'
+      - 'scripts/check-ios-widget.mjs'
       - '.github/workflows/mobile-foundation.yml'
 permissions:
   contents: read
@@ -23,3 +29,4 @@ jobs:
       - run: node scripts/check-mobile-foundation.mjs
       - run: node scripts/check-native-widget.mjs
       - run: node scripts/check-android-widget.mjs
+      - run: node scripts/check-ios-widget.mjs

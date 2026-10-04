@@ -6,7 +6,8 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        // Register before BridgeActivity creates the WebView and native plugin headers.
         registerPlugin(SalahWidgetPlugin.class);
+        super.onCreate(savedInstanceState);
     }
 }
