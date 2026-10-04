@@ -7,6 +7,7 @@ on:
       - 'scripts/check-native-widget.mjs'
       - 'scripts/check-android-widget.mjs'
       - 'scripts/check-ios-widget.mjs'
+      - 'scripts/check-native-local-reminders.mjs'
       - '.github/workflows/mobile-foundation.yml'
   pull_request:
     paths:
@@ -30,3 +31,4 @@ jobs:
       - run: node scripts/check-native-widget.mjs
       - run: node scripts/check-android-widget.mjs
       - run: node scripts/check-ios-widget.mjs
+      - run: node scripts/check-native-local-reminders.mjs
