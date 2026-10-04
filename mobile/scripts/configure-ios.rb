@@ -157,17 +157,15 @@ unless embed.files_references.include?(widget.product_reference)
 end
 
 storyboard_path = File.join(project_dir, 'App', 'Base.lproj', 'Main.storyboard')
-storyboard = File.read(storyboard_path)
+document = REXML::Document.new(File.read(storyboard_path))
+already_custom = REXML::XPath.first(document, '//*[@customClass="SalahBridgeViewController"]')
+default_controller = REXML::XPath.first(document, '//*[@customClass="CAPBridgeViewController"]')
 
-unless storyboard.include?('customClass="SalahBridgeViewController"')
-  abort 'Unknown main view controller; refusing to replace it.' unless storyboard.include?('customClass="CAPBridgeViewController"')
-
-  document = REXML::Document.new(storyboard)
-  REXML::XPath.each(document, '//*[@customClass="CAPBridgeViewController"]') do |node|
-    node.attributes['customClass'] = 'SalahBridgeViewController'
-    node.attributes['customModule'] = 'App'
-    node.attributes['customModuleProvider'] = 'target'
-  end
+unless already_custom
+  abort 'Unknown main view controller; refusing to replace it.' unless default_controller
+  default_controller.attributes['customClass'] = 'SalahBridgeViewController'
+  default_controller.attributes['customModule'] = 'App'
+  default_controller.attributes['customModuleProvider'] = 'target'
   File.write(storyboard_path, document.to_s)
 end
 
