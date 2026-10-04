@@ -100,3 +100,19 @@ body[data-wallpaper="landmark"] #weather-layer{clip-path:none;-webkit-mask-image
 
 #home-scene[data-landmark-city="khujand"] .scene-night,#home-scene[data-landmark-city="khujand"] .scene-day{background-position:center calc(50% - 2px)}
 #home-scene[data-landmark-city="khujand"] .scene-sky{-webkit-mask-position:center calc(50% - 2px);mask-position:center calc(50% - 2px)}
+
+/* Tablet-only composition. All layers use exactly the same source rectangle.
+   Portrait-only artwork has bounded cropping and quiet side space in landscape;
+   a true full-width scene requires a separate landscape day/night/mask trio. */
+#home-scene[data-scene-layout^="tablet"]::before{content:"";position:absolute;inset:0;background:linear-gradient(150deg,#304c66,#172b42 65%,#0b192a);opacity:var(--scene-day);pointer-events:none}
+#home-scene[data-scene-layout^="tablet"]>div{inset:auto;left:var(--scene-photo-left);top:var(--scene-photo-top);width:var(--scene-photo-width);height:var(--scene-photo-height)}
+#home-scene[data-scene-layout^="tablet"] .scene-night,#home-scene[data-scene-layout^="tablet"] .scene-day{background-size:cover;background-position:center center}
+#home-scene[data-scene-layout^="tablet"] .scene-night::after,#home-scene[data-scene-layout^="tablet"] .scene-day::after{display:none}
+#home-scene[data-scene-layout^="tablet"] .scene-sky{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-position:0 0;mask-position:0 0}
+#home-scene[data-scene-layout^="tablet"] .scene-sky-plane{inset:0;left:0;top:0;width:100%;height:100%;aspect-ratio:auto;transform:none}
+#home-scene[data-scene-layout^="tablet"][data-needs-landscape="true"] .scene-shade{background:linear-gradient(90deg,#061020 0%,rgba(6,16,32,.55) 4%,transparent 14%,transparent 90%,rgba(6,16,32,.45) 100%),linear-gradient(180deg,rgba(5,10,20,.1),rgba(5,10,20,.12) 48%,rgba(5,10,20,.27))}
+#weather-layer[data-scene-layout^="tablet"]{inset:auto;left:var(--scene-photo-left);top:var(--scene-photo-top);width:var(--scene-photo-width);height:var(--scene-photo-height)}
+body[data-wallpaper="new-york"] #weather-layer[data-scene-layout^="tablet"]{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-position:0 0;mask-position:0 0}
+/* Leave the narrow photograph visible beside the timetable in wide layouts. */
+.home-page[data-scene-layout="tablet-wide"] .workspace{width:52%;max-width:680px;margin-left:0;margin-right:auto}
+.home-page[data-scene-layout="tablet-wide"] .app-home-shell{width:100%;max-width:350px}

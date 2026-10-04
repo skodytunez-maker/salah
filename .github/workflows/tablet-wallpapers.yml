@@ -1,0 +1,35 @@
+name: Verify tablet wallpapers
+on:
+  pull_request:
+    paths:
+      - 'dist/**'
+      - 'scripts/**'
+      - '.github/workflows/tablet-wallpapers.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify scene, phone regression and mobile foundation
+        run: |
+          node scripts/check-pages.mjs
+          node scripts/check-calendar-occasions.mjs
+          node scripts/check-wallpapers.mjs
+          node scripts/check-tablet-wallpapers.mjs
+          node scripts/check-scene-load.mjs
+          node scripts/check-landmarks.mjs
+          node scripts/check-updates.mjs
+          node scripts/check-settings.mjs
+          node scripts/check-settings-resume.mjs
+          node scripts/check-security.mjs
+          node scripts/check-mobile-foundation.mjs
+          node scripts/check-native-widget.mjs
+          node scripts/check-android-widget.mjs
+          node scripts/check-ios-widget.mjs

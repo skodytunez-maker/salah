@@ -29,12 +29,14 @@ jobs:
           node scripts/check-push.mjs
           node scripts/check-push-client.mjs
           node scripts/check-pages.mjs
+          node scripts/check-calendar-occasions.mjs
           node scripts/check-app-sharing.mjs
           node scripts/check-security.mjs
           node scripts/check-settings.mjs
           node scripts/check-settings-resume.mjs
           node scripts/check-city.mjs
           node scripts/check-wallpapers.mjs
+          node scripts/check-tablet-wallpapers.mjs
           node scripts/check-weather-data.mjs
           node scripts/check-scene-load.mjs
           node scripts/check-landmarks.mjs
