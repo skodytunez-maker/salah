@@ -5,6 +5,10 @@ on:
     paths:
       - 'mobile/**'
       - '.github/workflows/android-debug.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/android-debug.yml'
 permissions:
   contents: read
 jobs:
