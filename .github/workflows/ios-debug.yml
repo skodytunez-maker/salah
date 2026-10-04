@@ -33,6 +33,7 @@ jobs:
           node scripts/check-native-widget.mjs
           node scripts/check-android-widget.mjs
           node scripts/check-ios-widget.mjs --fixture "$RUNNER_TEMP/salah-widget-fixture.json"
+          node scripts/check-native-local-reminders.mjs
       - name: Run Swift widget model tests
         run: |
           swiftc mobile/native/ios/PrayerWidgetModel.swift mobile/tests/ios/main.swift -o "$RUNNER_TEMP/salah-widget-tests"
