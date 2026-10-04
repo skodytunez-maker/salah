@@ -42,11 +42,14 @@ The shared mobile foundation is prepared here from Windows, but Xcode/WidgetKit 
 
 First iOS setup on macOS:
 
-1. `npm install`
-2. `npm run sync:web`
-3. `npm run ios:add`
-4. `npm run cap:sync`
-5. `npm run ios:open`
+1. `gem install xcodeproj -v 1.27.0 --user-install --no-document`
+2. `npm install`
+3. `npm run sync:web`
+4. `npm run ios:add`
+5. `npm run ios:sync`
+6. `npm run ios:open`
+
+The iOS generator now creates and embeds the real WidgetKit target. Simulator compilation is checked in GitHub Actions from a Windows-led workflow; device signing and TestFlight still require an Apple Developer team.
 
 ## Widget plan
 
@@ -55,7 +58,7 @@ First release:
 - Small widget: next prayer, prayer time, time remaining.
 - Medium widget: next prayer plus all five prayer times.
 - Android: native home-screen widget is wired through AppWidget + the `SalahWidget` Capacitor bridge. The same responsive layout covers small and medium widths.
-- iOS: WidgetKit layer follows the same snapshot contract.
+- iOS: real WidgetKit small and medium widgets are generated and embedded, using the same snapshot contract and App Group storage.
 
 Both platforms consume the same versioned prayer snapshot contract in `shared/prayer-widget.schema.json`.
 
