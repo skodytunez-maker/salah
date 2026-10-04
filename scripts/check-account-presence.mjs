@@ -41,3 +41,13 @@ assert.match(source,/clock_timestamp\(\)/,'Visit time must come from the server'
 assert.match(source,/where excluded\.sequence>app_presence\.sequence/,'A delayed offline request cannot replace a newer foreground record');
 assert.match(source,/if\(!input\.p_active\)\{await sql`update public\.app_presence set active=false,sequence=\$\{input\.p_sequence\} where/,'An offline request only closes existing presence and cannot create a visit or change the last foreground time');
 console.log('PASS: presence writes only for the verified caller; anonymous, forged, revoked, foreign origin and supplied user ID denied; database errors fail closed; no user data returned.');
+
+const notification={enabled:true,permission:'granted',browser:true,device:{id:tab,token:'a'.repeat(64)}};
+let receivedSid;const notificationHandler=createPresenceHandler({...services,record:async(uid,data,session)=>{receivedSid=session;assert.equal(uid,id);assert.deepEqual(data.p_notifications,notification);}});
+assert.equal((await notificationHandler(request({...input,p_notifications:notification}))).status,200);assert.equal(receivedSid,sid,'Identity and session must come from signed claims');
+for(const value of [null,{...notification,user_id:id},{...notification,enabled:'true'},{...notification,permission:'fake'},{...notification,device:{...notification.device,token:'bad'}},{...notification,device:{...notification.device,other:'value'}}])assert.equal((await handler(request({...input,p_notifications:value}))).status,400);
+assert.equal((await handler(request({...input,p_active:false,p_notifications:notification}))).status,400,'Closing a tab cannot change device preferences');
+assert.match(source,/token_hash=\$\{tokenHash\}/,'Background linking requires the existing device capability');
+assert.match(source,/!changed.length\|\|!input.p_notifications/,'Delayed reports cannot replace newer preferences');
+assert.match(source,/session_id=excluded.session_id/);assert.match(source,/checked_at=excluded.checked_at/);
+console.log('PASS: optional notification reports are bounded and validated; device capability required, signed session retained, old clients remain compatible.');

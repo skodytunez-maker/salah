@@ -9,7 +9,8 @@ export function pushPreferences(s){
  p.reminders.browserNotifications=false;return p;
 }
 function read(){try{const state=JSON.parse(localStorage.getItem(KEY)||'null');return state&&/^[a-f0-9]{64}$/.test(state.token)&&typeof state.id==='string'?state:null;}catch{return null;}}
-function write(state){localStorage.setItem(KEY,JSON.stringify(state));}
+function notifyStatus(){window.dispatchEvent(new Event('salah:notification-status-changed'));}
+function write(state){localStorage.setItem(KEY,JSON.stringify(state));notifyStatus();}
 function newDevice(){const state={id:crypto.randomUUID(),token:Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join(''),saved:false,pendingRemoval:false,lastSync:0};write(state);return state;}
 function keyBytes(value){return Uint8Array.from(atob(value.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));}
 export function createPushReminders({getSettings,toast=()=>{}}){
@@ -36,7 +37,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   if(!force&&!state.pendingRemoval&&state.saved&&onlineReady&&signature===lastSignature&&Date.now()-state.lastSync<86400000)return;
   busy=true;draw();
   try{
-   if(state.pendingRemoval){await call('unsubscribe',deviceBody());localStorage.removeItem(KEY);state=null;onlineReady=false;status='Фоновая подписка отключена.';return;}
+   if(state.pendingRemoval){await call('unsubscribe',deviceBody());localStorage.removeItem(KEY);state=null;notifyStatus();onlineReady=false;status='Фоновая подписка отключена.';return;}
    if(!p.city)throw Error('Сначала выберите город.');
    const reg=await registration(),sub=await reg.pushManager.getSubscription();
    if(!sub){onlineReady=false;status='Нажмите «Включить фоновые уведомления», чтобы возобновить подписку.';return;}
@@ -67,7 +68,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   try{
    const reg=await registration(),sub=await reg.pushManager.getSubscription();if(sub&&!await sub.unsubscribe())throw Error('Телефон не отключил подписку. Повторите попытку.');
    onlineReady=false;state={...state,saved:false,pendingRemoval:true};write(state);
-   try{await call('unsubscribe',deviceBody());localStorage.removeItem(KEY);state=null;status='Фоновые уведомления отключены.';}catch{status='На телефоне отключены. Удалим серверную подписку при следующем подключении.';}
+   try{await call('unsubscribe',deviceBody());localStorage.removeItem(KEY);state=null;notifyStatus();status='Фоновые уведомления отключены.';}catch{status='На телефоне отключены. Удалим серверную подписку при следующем подключении.';}
   }catch(error){status=error.message;}
   finally{busy=false;draw();}
  }
