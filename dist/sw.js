@@ -128,7 +128,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":159,"date":"2026-10-04","changes":["Исправлено отображение дождя: анимация погоды работает независимо от плавных переходов.","Осадки стали заметнее; при уменьшении движения показываются без анимации.","Погода обновляется чаще. В её карточке появилась кнопка «Обновить погоду»."]};
+const RELEASE={"version":160,"date":"2026-10-04","changes":["Обучение намазу стало понятнее: добавлены явные кнопки «Назад» и «Далее».","Свайпы сохранены как дополнительный способ навигации, а кнопки адаптированы для маленьких экранов."]};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
