@@ -1,5 +1,6 @@
 import{setForegroundAudio}from './audio-focus.js';
 import {createPushReminders} from './push-reminders.js';
+import {createNativeLocalReminders} from './native-local-reminders.js';
 import {buildReminderEvents,createReminderTracker,normalizeReminders,reminderDefaults,PRAYER_KEYS,PRAYER_NAMES,BEFORE_MINUTES} from './reminder-events.js';
 import {esc} from './ui.js';
 export {normalizeReminders};
@@ -61,7 +62,9 @@ async function claimEvent(event,now){
 
 export function createReminders({getSettings,updateSettings,getContext,toast=()=>{},onChange=()=>{}}){
   const audioOwner={};
-  const background=createPushReminders({getSettings,toast});
+  const native=createNativeLocalReminders({getSettings,getContext,toast});
+  const background=native.supported()?null:createPushReminders({getSettings,toast});
+  const delivery=native.supported()?native:background;
   const tracker=createReminderTracker({read:readSeen,write:writeSeen});
   const audio=typeof Audio==='function'?new Audio():null;
   if(audio)audio.preload='none';
@@ -131,7 +134,7 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
 
   async function systemNotification(event){
     const token=generation;
-    if(background.active()||!preferences().browserNotifications||!notificationAvailable()||Notification.permission!=='granted')return;
+    if(delivery?.active()||!preferences().browserNotifications||!notificationAvailable()||Notification.permission!=='granted')return;
     try{
       const registration=await navigator.serviceWorker.getRegistration();
       if(!registration?.active||destroyed||token!==generation||document.visibilityState!=='visible'||Date.now()-event.at>60000)return;
@@ -174,7 +177,7 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
 
   function save(value){
     if(!updateSettings({reminders:normalizeReminders(value)}))say('Не удалось сохранить напоминание.');
-    Promise.resolve(onChange()).catch(()=>{});
+    Promise.resolve(onChange()).catch(()=>{}).finally(()=>native.sync());
     tracker.reset();generation++;contextIdentity=null;
     draw();drawJumuah();drawTahajjud();
   }
@@ -213,7 +216,11 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
       '<section class="reminder-background" data-push-settings></section><details class="reminder-help"><summary>Звук и уведомления на iPhone</summary><p>Азан и выбранные напоминания срабатывают, пока SALAH открыто. После возврата старые напоминания не воспроизводятся.</p><p>Когда приложение закрыто или экран заблокирован, iPhone может остановить его работу. Фоновые уведомления включаются отдельно в панели выше и требуют подключения к интернету. Полный Азан из закрытого PWA не поддерживается.</p><p>Записи сохраняются вместе с приложением для прослушивания без интернета после первого полного кэширования. Громкость регулируется кнопками устройства.</p><div class="reminder-notification">'+(canNotify?(permission==='granted'?'<label><input type="checkbox" data-reminder-control="browserNotifications"'+checked(p.browserNotifications)+'> Уведомления в открытом приложении</label>':permission==='denied'?'<p>Разрешение на уведомления выключено. Его можно изменить в настройках устройства.</p>':'<button type="button" data-reminder-permission>Разрешить уведомления</button><p>Запрос появится только после нажатия этой кнопки.</p>'):'<p>Если эта функция недоступна в Safari, добавьте SALAH на экран «Домой». Поддержка уведомлений требует iOS 16.4 или новее.</p>')+'</div><p class="reminder-source">Записи: <a href="https://aladhan.com/play" target="_blank" rel="noopener noreferrer">AlAdhan / Islamic Network</a>. <a href="https://community.islamic.network/d/232-request-to-use-your-adhan-audio-in-a-non-commercial-islamic-app" target="_blank" rel="noopener noreferrer">Разрешение на использование</a></p></details>';
 
     if(jumuahSection)mounted.querySelector('[data-jumuah-slot]').append(jumuahSection);
-    background.mount(mounted.querySelector('[data-push-settings]'));
+    delivery?.mount(mounted.querySelector('[data-push-settings]'));
+    if(native.supported()){
+      const help=mounted.querySelector('.reminder-help');
+      if(help)help.innerHTML='<summary>Звук и уведомления в приложении</summary><p>В установленном SALAH системные напоминания планируются на самом телефоне и могут сработать, когда приложение свёрнуто или закрыто.</p><p>Полный Азан в фоне пока не включён: фоновое уведомление использует возможности системы телефона. Запись Азана можно прослушать в открытом SALAH.</p><p>Разрешение на системные уведомления запрашивается только после нажатия кнопки в панели выше.</p><p class="reminder-source">Записи: <a href="https://aladhan.com/play" target="_blank" rel="noopener noreferrer">AlAdhan / Islamic Network</a>. <a href="https://community.islamic.network/d/232-request-to-use-your-adhan-audio-in-a-non-commercial-islamic-app" target="_blank" rel="noopener noreferrer">Разрешение на использование</a></p>';
+    }
     mounted.querySelectorAll('[data-reminder-control]').forEach(control=>control.addEventListener('change',()=>{
       const next=preferences(),key=control.dataset.reminderControl;
       if(key==='enabled')next.enabled=control.checked;
@@ -251,8 +258,8 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   function mountSettings(container){mounted=container;draw();}
   function mountTahajjud(container){tahajjudMounted=container;drawTahajjud();}
   function mountJumuah(container){jumuahMounted=container;if(container)mounted?.querySelector('[data-jumuah-slot]')?.append(container.closest('details'));drawJumuah();}
-  function destroy(){destroyed=true;generation++;tracker.reset();stopAudio();if(audio){audio.removeAttribute('src');audio.load();}player?.remove();player=null;mounted=null;jumuahMounted=null;tahajjudMounted=null;document.removeEventListener('visibilitychange',visibilityChanged);}
-  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy};
+  function destroy(){destroyed=true;generation++;tracker.reset();stopAudio();native.destroy();if(audio){audio.removeAttribute('src');audio.load();}player?.remove();player=null;mounted=null;jumuahMounted=null;tahajjudMounted=null;document.removeEventListener('visibilitychange',visibilityChanged);}
+  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy,syncNative:()=>native.sync()};
 }
 
 function validTime(value){return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
