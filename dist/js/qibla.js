@@ -107,7 +107,9 @@ export function createCompassController({bearing,declination=0,onState,onHaptic=
     if(!value)return;
     if(value.haptic){try{onHaptic();}catch{}}
     const instruction=value.aligned?'Направление Киблы найдено':value.error<10?
-      'Вы почти на правильном направлении':value.signedError>0?'Поверните правее':'Поверните левее';
+      'Вы почти на правильном направлении':value.error<30?
+      (value.signedError>0?'Поверните немного правее':'Поверните немного левее'):
+      (value.signedError>0?'Поверните правее':'Поверните левее');
     pending={...value,phase:'active',hasHeading:true,instruction,message:'Держите телефон ровно.'};
     if(frame===null)frame=env.requestFrame(paint);
   }
