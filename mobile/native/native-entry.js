@@ -1,9 +1,15 @@
 import {Capacitor, registerPlugin} from './vendor/capacitor-core.js';
 
-if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('SalahWidget')) {
-  const widget = registerPlugin('SalahWidget');
+if (Capacitor.isNativePlatform()) {
   Capacitor.Plugins ??= {};
-  Capacitor.Plugins.SalahWidget = widget;
+
+  if (Capacitor.isPluginAvailable('SalahWidget')) {
+    Capacitor.Plugins.SalahWidget = registerPlugin('SalahWidget');
+  }
+
+  if (Capacitor.isPluginAvailable('LocalNotifications')) {
+    Capacitor.Plugins.LocalNotifications = registerPlugin('LocalNotifications');
+  }
 }
 
 await import('./app.js');
