@@ -14,7 +14,7 @@ export async function readNotificationSnapshot(){
 }
 const date=value=>Number.isFinite(Date.parse(value))?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
 export function notificationLabels(value){
- if(!value||!Number.isFinite(Date.parse(value.checkedAt)))return {state:'unknown',primary:'Намаз: нет данных',secondary:'После открытия обновлённого SALAH',checked:''};
+ if(!value||!Number.isFinite(Date.parse(value.checkedAt)))return {state:'unknown',primary:'Намаз: нет данных',secondary:'',checked:''};
  const enabled=value.enabled===true,background=value.background===true&&enabled;
  return {state:enabled?'enabled':'disabled',primary:'Намаз: '+(enabled?'напоминания включены':'напоминания выключены'),secondary:background?'Фоновая доставка подключена':!enabled?'':value.permissionGranted===true?'Фоновая доставка не подключена':value.permissionDenied===true?'Уведомления запрещены на устройстве':'Уведомления не разрешены на устройстве',checked:'Проверено '+date(value.checkedAt)};
 }
