@@ -8,7 +8,7 @@ This folder is the native shell for the existing SALAH web/PWA product.
 - Package it with Capacitor for Android and iOS.
 - Add native capabilities only where the operating system provides clear value:
   - home-screen widgets;
-  - native prayer notifications;
+  - native prayer notifications (device-local scheduling; explicit permission only);
   - more reliable compass/orientation access;
   - platform share/install behavior;
   - background refresh for widget data.
@@ -61,6 +61,10 @@ First release:
 - iOS: real WidgetKit small and medium widgets are generated and embedded, using the same snapshot contract and App Group storage.
 
 Both platforms consume the same versioned prayer snapshot contract in `shared/prayer-widget.schema.json`.
+
+## Native prayer reminders
+
+The mobile shell also includes Capacitor Local Notifications. SALAH never asks for notification permission at startup. The request is made only from the reminder settings after the user explicitly taps the permission button. Once permission is granted, the closest future prayer/adhkar/Tahajjud/Jumuah reminders are scheduled on-device from the already verified SALAH timetable; the native notification payload contains no precise coordinates, account tokens or worship history. Existing unrelated pending notifications are never cancelled. Android exact-alarm permission is intentionally not requested in this stage; delivery timing still needs real-device validation before store release.
 
 ## Privacy rule for native widgets
 
