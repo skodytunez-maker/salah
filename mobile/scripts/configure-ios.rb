@@ -125,6 +125,10 @@ widget.build_configurations.each do |configuration|
     app.build_configurations.first
 
   configuration.build_settings.merge!({
+    'PRODUCT_NAME' => 'SalahPrayerWidget',
+    'PRODUCT_MODULE_NAME' => 'SalahPrayerWidget',
+    'EXECUTABLE_NAME' => '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_SUFFIX)',
+    'WRAPPER_EXTENSION' => 'appex',
     'PRODUCT_BUNDLE_IDENTIFIER' => "#{app_id}.prayerwidget",
     'INFOPLIST_FILE' => 'SalahWidgets/Info.plist',
     'GENERATE_INFOPLIST_FILE' => 'NO',
@@ -144,6 +148,9 @@ widget.build_configurations.each do |configuration|
     'CURRENT_PROJECT_VERSION' => inherited.build_settings.fetch('CURRENT_PROJECT_VERSION', '1')
   })
 end
+
+widget.product_reference.path = 'SalahPrayerWidget.appex'
+widget.product_reference.name = 'SalahPrayerWidget.appex'
 
 app.add_dependency(widget) unless app.dependencies.any? { |dependency| dependency.target == widget }
 
