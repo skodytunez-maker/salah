@@ -53,3 +53,8 @@ assert.deepEqual(release,{version:APP_VERSION,date:APP_UPDATED_AT,changes:APP_CH
 assert.match(vm.runInContext('CACHE',context),new RegExp('v'+APP_VERSION+'$'));
 globalThis.setInterval=realSetInterval;globalThis.clearInterval=realClearInterval;globalThis.MessageChannel=oldMessageChannel;Object.defineProperty(globalThis,'navigator',oldNavigator);
 console.log('PASS: waiting release metadata, safe dates, visible-only checks, deliberate single reload, settings and counters preserved.');
+
+assert.equal(validatedRelease({version:158,date:'2026-10-04',changes:['Кабинет владельца: список пользователей']}),null);
+assert.deepEqual(validatedRelease({version:158,date:'2026-10-04',changes:['Улучшена погода','Изменения админа','Owner release']}).changes,['Улучшена погода']);
+assert.ok(APP_CHANGES.every(x=>!/владел|админ|owner|admin/iu.test(x)));
+console.log('PASS: private owner notes excluded from installed and waiting public update dialogs.');

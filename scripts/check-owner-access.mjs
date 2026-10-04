@@ -69,3 +69,11 @@ const notificationOwner=createOwnerHandler({getUser:async()=>({data:{user}}),get
 const notificationResponse=await notificationOwner(request('valid-owner-token','?mode=users'));const notifications=await notificationResponse.json();assert.deepEqual(notifications.users[0].notifications,{enabled:true,background:true,permissionGranted:true,permissionDenied:false,checkedAt:'2026-10-04T01:00:00.000Z'});assert.equal(notifications.users[1].notifications,null);assert.ok(!JSON.stringify(notifications).includes('private'));
 assert.match(source,/join auth.sessions a on a.id=s.session_id and a.user_id=s.user_id/,'Revoked device sessions must be excluded');assert.match(source,/d.subscription is not null/);assert.match(source,/d.updated_at>now\(\)-interval '90 days'/);assert.match(source,/jsonb_each/,'A saved subscription for adhkar alone is not a prayer subscription');
 console.log('PASS: only MFA owner receives minimal notification states; absent reports stay unknown; revoked sessions, expired subscriptions and non-prayer reminders excluded.');
+
+const releases=await handler(request('valid-owner-token','?mode=releases'));assert.equal(releases.status,200);assert.equal(releases.headers.get('Cache-Control'),'no-store, private');const privateChanges=await releases.json();assert.ok(privateChanges.releases[0].changes[0].includes('кабинета'));
+const sahabaChanges=await(await handler(request('valid-owner-token','?mode=releases&app=sahaba'))).json();assert.ok(sahabaChanges.releases[0].changes.some(x=>x.includes('SAHABA')));
+for(const token of [null,'forged-owner-token','other-user-token'])assert.ok([401,403].includes((await handler(request(token,'?mode=releases'))).status));
+assert.equal((await firstFactor(request('valid-owner-token','?mode=releases'))).status,403);
+for(const query of ['?mode=releases&app=unknown','?mode=releases&page=1','?mode=releases&days=7','?mode=stats&app=salah'])assert.equal((await handler(request('valid-owner-token',query))).status,400);
+const revokedReleases=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,isSessionActive:async()=>false});assert.equal((await revokedReleases(request('valid-owner-token','?mode=releases'))).status,401);
+console.log('PASS: private release history is available only to the active MFA owner, separately for each app.');

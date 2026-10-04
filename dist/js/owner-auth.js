@@ -115,3 +115,5 @@ export const accountAuthClient=()=>authClient();
 export const checkAccountSession=createSessionGuard({getAuth:()=>authClient().auth});
 
 export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error("Неизвестная страница.");const {data,error}=await authClient().auth.getSession();if(error)throw Error("Войдите снова.");return callOwner(data.session,"?mode=users&page="+page);}
+
+export async function ownerReleases(){const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');return callOwner(data.session,'?mode=releases');}

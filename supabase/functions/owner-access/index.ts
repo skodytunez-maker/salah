@@ -4,6 +4,8 @@ const OWNER_ID='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 const APP_ORIGIN='https://skodytunez-maker.github.io';
 const PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
+// Returned only after fresh identity, active session and MFA verification.
+const OWNER_RELEASES={salah:[{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
 export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,isSessionActive=null}){
@@ -25,7 +27,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   if(!user||user.id!==OWNER_ID||!user.email_confirmed_at||user.is_anonymous)return reply(403,{error:'owner_only'});
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
-  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'))return reply(400,{error:'invalid_parameters'});
+  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'&&key!=='app'))return reply(400,{error:'invalid_parameters'});
   let claims;
   try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
   catch{return reply(503,{error:'auth_unavailable'});}
@@ -34,6 +36,12 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   try{if(!isSessionActive||!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'});}
   const secondFactor=claims.aal==='aal2'&&user.factors?.some(factor=>factor.status==='verified'&&factor.factor_type==='totp');
   if(!secondFactor)return mode==='gate'?reply(200,{owner:false,mfaRequired:true}):reply(403,{error:'mfa_required'});
+  if(mode==='releases'){
+   if(url.searchParams.has('ids')||url.searchParams.has('page')||url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
+   const app=url.searchParams.get('app')||'salah';if(!Object.hasOwn(OWNER_RELEASES,app))return reply(400,{error:'invalid_app'});
+   return reply(200,{releases:OWNER_RELEASES[app]});
+  }
+  if(url.searchParams.has('app'))return reply(400,{error:'invalid_parameters'});
   if(mode==='gate'&&url.searchParams.has('ids'))return reply(400,{error:'invalid_parameters'});
   if(mode==='gate')return reply(200,{owner:true,statisticsConnected:Boolean(statsToken)});
   if(mode==='profiles'){

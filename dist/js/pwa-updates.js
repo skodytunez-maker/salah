@@ -3,11 +3,12 @@ import {esc,modal} from './ui.js';
 let manualCheck=null;
 const CHECK_INTERVAL=5*60*1000;
 const SEEN_KEY='salah:update-last-seen-v1';
-const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:APP_CHANGES};
+export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8):[];}
+const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES)};
 export function releaseDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value)).replace(/ г\.$/,''):'';}
 export function validatedRelease(value){
  if(!value||!Number.isSafeInteger(value.version)||value.version<1||!releaseDate(value.date)||!Array.isArray(value.changes))return null;
- const changes=value.changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240).slice(0,8);
+ const changes=publicReleaseChanges(value.changes);
  return changes.length?{version:value.version,date:value.date,changes}:null;
 }
 function acknowledge(){try{localStorage.setItem(SEEN_KEY,String(APP_VERSION));}catch{}}
