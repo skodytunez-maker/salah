@@ -16,7 +16,8 @@
     "ios:sync": "npm run sync:web && npx cap sync ios && npm run ios:configure"
   },
   "dependencies": {
-    "@capacitor/core": "8.5.2"
+    "@capacitor/core": "8.5.2",
+    "@capacitor/local-notifications": "8.3.1"
   },
   "devDependencies": {
     "@capacitor/android": "8.5.2",
