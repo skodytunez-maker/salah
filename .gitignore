@@ -3,3 +3,7 @@ node_modules/
 .env
 .env.*
 salah-backup-*.json
+mobile/node_modules/
+mobile/www/
+mobile/android/
+mobile/ios/
