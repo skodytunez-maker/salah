@@ -43,7 +43,7 @@ export function buildNativeLocalNotifications(setting,context,{now=Date.now(),ho
 export function createNativeLocalReminders({getSettings,getContext,toast=()=>{},cap=globalThis.Capacitor}={}){
  const plugin=pluginFor(cap);
  const supported=()=>nativeLocalNotificationsAvailable(cap);
- let mounted=null,lastPermission='prompt',lastCount=0,busy=false,status='',queued=null,destroyed=false;
+ let mounted=null,lastPermission='prompt',lastCount=0,busy=false,status='',timer=null,needsSync=false,destroyed=false;
 
  async function pending(){const value=await plugin.getPending();return Array.isArray(value?.notifications)?value.notifications:[]}
  async function clearManaged(){
@@ -67,7 +67,7 @@ export function createNativeLocalReminders({getSettings,getContext,toast=()=>{},
  async function permission(){if(!supported())return'unsupported';try{return lastPermission=permissionValue(await plugin.checkPermissions())}catch{return lastPermission='prompt'}}
  async function sync(force=false){
   if(!supported()||destroyed)return{status:'unavailable',count:0};
-  if(busy){queued=true;return{status:'queued',count:lastCount}};
+  if(busy){needsSync=true;return{status:'queued',count:lastCount}};
   const setting=getSettings?.()||{},context=getContext?.()||{},preferences=normalizeReminders(setting.reminders);
   if(!preferences.enabled||!setting.city){
    busy=true;draw();try{const cleared=await clearManaged();status=preferences.enabled?'Выберите город, чтобы подготовить напоминания.':'Системные напоминания выключены.';return{status:'cleared',count:0,cleared}}catch{status='Не удалось обновить системные напоминания.';return{status:'error',count:lastCount}}finally{busy=false;draw();}
@@ -81,11 +81,12 @@ export function createNativeLocalReminders({getSettings,getContext,toast=()=>{},
    const same=!force&&have.size===need.size&&[...need].every(id=>have.has(id));
    if(same){lastCount=ours.length;status='Системные напоминания актуальны.';return{status:'unchanged',count:lastCount}}
    if(ours.length)await plugin.cancel({notifications:ours.map(item=>({id:item.id}))});
+   if(await permission()!=='granted'){status='Разрешение на уведомления изменилось. Проверьте настройки телефона.';return{status:'permission',permission:lastPermission,count:0}}
    const scheduled=await plugin.schedule({notifications:wanted});
    const scheduledIds=Array.isArray(scheduled?.notifications)?scheduled.notifications.map(item=>item.id):wanted.map(item=>item.id);
    lastCount=scheduledIds.length;status='Системные напоминания обновлены: '+lastCount+'.';return{status:'updated',count:lastCount};
   }catch(error){status='Не удалось запланировать системные напоминания.';toast(status);return{status:'error',count:lastCount,error:error?.message||''}}
-  finally{busy=false;draw();if(queued){queued=false;queue();}}
+  finally{busy=false;draw();if(needsSync){needsSync=false;queue();}}
  }
  async function requestPermission(){
   if(!supported()||destroyed)return{status:'unavailable'};
@@ -101,11 +102,11 @@ export function createNativeLocalReminders({getSettings,getContext,toast=()=>{},
   finally{busy=false;draw();}
   return sync(true);
  }
- function queue(){if(destroyed)return;clearTimeout(queued);queued=setTimeout(()=>{queued=null;sync();},500)}
+ function queue(){if(destroyed)return;if(timer)clearTimeout(timer);timer=setTimeout(()=>{timer=null;sync();},500)}
  function settingsChanged(){queue()}
  if(typeof window!=='undefined')window.addEventListener('salah:settings-changed',settingsChanged);
  if(supported())Promise.resolve().then(()=>sync()).catch(()=>{});
  function mount(container){mounted=container;draw();permission().then(()=>{draw();if(lastPermission==='granted')sync();});}
- function destroy(){destroyed=true;if(typeof window!=='undefined')window.removeEventListener('salah:settings-changed',settingsChanged);if(queued)clearTimeout(queued);queued=null;mounted=null}
+ function destroy(){destroyed=true;if(typeof window!=='undefined')window.removeEventListener('salah:settings-changed',settingsChanged);if(timer)clearTimeout(timer);timer=null;needsSync=false;mounted=null}
  return{mount,sync,requestPermission,active:()=>supported()&&lastPermission==='granted'&&lastCount>0,supported,destroy};
 }
