@@ -3,7 +3,7 @@
   "name": "SALAH",
   "short_name": "SALAH",
   "lang": "ru",
-  "description": "Намаз. Каждый день.",
+  "description": "Время намаза, Коран, азкары, Кибла и обучение — в одном спокойном приложении.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -29,5 +29,29 @@
       "purpose": "maskable"
     }
   ],
-  "orientation": "portrait-primary"
+  "orientation": "portrait-primary",
+  "categories": [
+    "lifestyle",
+    "education"
+  ],
+  "shortcuts": [
+    {
+      "name": "Коран",
+      "short_name": "Коран",
+      "description": "Открыть чтение и прослушивание Корана",
+      "url": "./#quran"
+    },
+    {
+      "name": "Азкары",
+      "short_name": "Азкары",
+      "description": "Открыть утренние и вечерние азкары",
+      "url": "./#adhkar"
+    },
+    {
+      "name": "Кибла",
+      "short_name": "Кибла",
+      "description": "Открыть направление Киблы",
+      "url": "./#qibla"
+    }
+  ]
 }
