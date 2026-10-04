@@ -1,3 +1,4 @@
+import{setForegroundAudio}from './audio-focus.js';
 import{createQuranPlayer}from './quran-audio.js';
 import{loadIndex,loadSurah}from './quran-data.js';
 import{reciterInfo,reciterHasSurah,adjacentReciterSurah}from './quran-reciters.js';
@@ -5,9 +6,9 @@ import{reciterInfo,reciterHasSurah,adjacentReciterSurah}from './quran-reciters.j
 // Playback belongs to the app session, independent of mounted reader screens.
 export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createPlayer=createQuranPlayer}={}){
  let player=null,request=0,view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};
- const listeners=new Set();
+ const listeners=new Set(),audioOwner={};
  const snapshot=()=>({...view,canPrevious:!!view.surah&&adjacentReciterSurah(view.reciter,view.surah.number,-1)!==null,canNext:!!view.surah&&adjacentReciterSurah(view.reciter,view.surah.number,1)!==null});
- const emit=()=>{for(const listener of listeners)listener(snapshot())};
+ const emit=()=>{setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
  function stop(){request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};emit()}
  async function start(surah,reciter,index=0,autoplay=true){
   reciterInfo(reciter);if(!reciterHasSurah(reciter,surah?.number))return;

@@ -1,3 +1,4 @@
+import{setForegroundAudio}from './audio-focus.js';
 import{quranPlayback}from './quran-session.js';
 import{createBroadcastAudio}from './broadcast-audio.js';
 export const BROADCAST_CHANNELS=Object.freeze([
@@ -9,6 +10,7 @@ export function broadcastButton(compact=false){return '<button type="button" cla
 // Keep the same iframe connected to the body: reparenting or recreating it restarts YouTube.
 export function createQuranBroadcast({doc=document,win=window,playback=quranPlayback,createAudio=createBroadcastAudio}={}){
  let root=null,section=null,screen=null,selected=null,mini=false,detach=null,returnFocus=null,inertSiblings=[],audioMode=false,liveAudio=null;
+ const audioOwner={};
  const restorePage=()=>{for(const [element,previous]of inertSiblings)element.inert=previous;inertSiblings=[]};
  const lockPage=()=>{restorePage();for(const element of doc.body.children){if(element===root||element.matches('dialog,script,style,link'))continue;inertSiblings.push([element,element.inert]);element.inert=true}};
  const focusBack=()=>{if(returnFocus?.isConnected&&!returnFocus.inert)returnFocus.focus();else doc.querySelector('#app')?.focus({preventScroll:true})};
@@ -20,7 +22,7 @@ export function createQuranBroadcast({doc=document,win=window,playback=quranPlay
  function minimize(options){setMode(true,options)}
  function renderAudio(){
   screen.innerHTML='<div class="quran-live-audio"><span class="quran-live-audio-icon" aria-hidden="true">'+broadcastIcon+'</span><div><strong>Аудиоэфир</strong><span data-audio-status role="status">Подключаем эфир…</span></div><button type="button" data-audio-toggle aria-label="Приостановить эфир">Ⅱ</button></div>';
-  liveAudio??=createAudio({doc,win,onState:state=>{if(!audioMode||!screen)return;const button=screen.querySelector('[data-audio-toggle]'),note=screen.querySelector('[data-audio-status]');if(!button||!note)return;const paused=['paused','error','idle'].includes(state.status);button.textContent=paused?'▶':'Ⅱ';button.setAttribute('aria-label',paused?'Воспроизвести эфир':'Приостановить эфир');note.textContent={playing:'Звук в фоне',paused:'На паузе',loading:'Подключаем эфир…',error:'Не удалось подключиться. Нажмите ▶',idle:'Эфир остановлен'}[state.status]}});
+  liveAudio??=createAudio({doc,win,onState:state=>{if(!audioMode||!screen)return;setForegroundAudio(audioOwner,['loading','playing'].includes(state.status));const button=screen.querySelector('[data-audio-toggle]'),note=screen.querySelector('[data-audio-status]');if(!button||!note)return;const paused=['paused','error','idle'].includes(state.status);button.textContent=paused?'▶':'Ⅱ';button.setAttribute('aria-label',paused?'Воспроизвести эфир':'Приостановить эфир');note.textContent={playing:'Звук в фоне',paused:'На паузе',loading:'Подключаем эфир…',error:'Не удалось подключиться. Нажмите ▶',idle:'Эфир остановлен'}[state.status]}});
   screen.querySelector('[data-audio-toggle]').onclick=()=>{if(['error','idle'].includes(liveAudio.state.status)){const element=liveAudio.start(selected);if(element)screen.append(element)}else liveAudio.toggle()};
   const element=liveAudio.start(selected);if(element)screen.append(element);
  }
@@ -29,11 +31,11 @@ export function createQuranBroadcast({doc=document,win=window,playback=quranPlay
   for(const button of section.querySelectorAll('[data-channel]'))button.setAttribute('aria-pressed',String(button.dataset.channel===id));
   section.querySelector('.quran-broadcast-place').textContent=channel.place;section.querySelector('.quran-broadcast-title').textContent=channel.name;section.querySelector('a').href=channel.url;
   if(audioMode){screen.replaceChildren();renderAudio();return}
-  const frame=doc.createElement('iframe');frame.title='Прямой эфир · '+channel.name;frame.src='https://www.youtube-nocookie.com/embed/'+channel.video+'?autoplay=1&playsinline=1&rel=0';frame.referrerPolicy='strict-origin-when-cross-origin';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-presentation');screen.replaceChildren(frame);
+  setForegroundAudio(audioOwner,true);const frame=doc.createElement('iframe');frame.title='Прямой эфир · '+channel.name;frame.src='https://www.youtube-nocookie.com/embed/'+channel.video+'?autoplay=1&playsinline=1&rel=0';frame.referrerPolicy='strict-origin-when-cross-origin';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-presentation');screen.replaceChildren(frame);
  }
  function switchAudio(){audioMode=!audioMode;root.classList.toggle('is-audio',audioMode);if(!audioMode){liveAudio?.stop();liveAudio=null}section.querySelector('[data-broadcast-audio]').textContent=audioMode?'Смотреть видео':'Слушать в фоне';section.querySelector('[data-broadcast-audio]').setAttribute('aria-pressed',String(audioMode));section.querySelector('.quran-broadcast-note').textContent=audioMode?'Поток Saudi Quran TV / Saudi Sunnah TV · Quran.tv':'Каналы Saudi Quran TV и Saudi Sunnah TV · YouTube';show(selected.id,{force:true})}
  function stop(){
-  if(!root)return;const wasFull=!mini;restorePage();detach?.();detach=null;win.removeEventListener('hashchange',route);liveAudio?.stop();liveAudio=null;audioMode=false;screen.replaceChildren();root.remove();root=section=screen=selected=null;doc.body.classList.remove('has-quran-broadcast');if(wasFull)focusBack();returnFocus=null;
+  setForegroundAudio(audioOwner,false);if(!root)return;const wasFull=!mini;restorePage();detach?.();detach=null;win.removeEventListener('hashchange',route);liveAudio?.stop();liveAudio=null;audioMode=false;screen.replaceChildren();root.remove();root=section=screen=selected=null;doc.body.classList.remove('has-quran-broadcast');if(wasFull)focusBack();returnFocus=null;
  }
  const route=()=>minimize({focus:false});
  function open(){

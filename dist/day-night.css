@@ -97,3 +97,6 @@ body[data-wallpaper="landmark"] #weather-layer{clip-path:none;-webkit-mask-image
 .wallpaper-options .landmark-cities summary span{padding:0;font-size:14px}
 .landmark-cities select{width:100%;margin:0 0 13px;min-height:44px}
 .landmark-cities .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+#home-scene[data-landmark-city="khujand"] .scene-night,#home-scene[data-landmark-city="khujand"] .scene-day{background-position:center calc(50% - 2px)}
+#home-scene[data-landmark-city="khujand"] .scene-sky{-webkit-mask-position:center calc(50% - 2px);mask-position:center calc(50% - 2px)}

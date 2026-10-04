@@ -1,3 +1,4 @@
+import{setForegroundAudio}from './audio-focus.js';
 import {createPushReminders} from './push-reminders.js';
 import {buildReminderEvents,createReminderTracker,normalizeReminders,reminderDefaults,PRAYER_KEYS,PRAYER_NAMES,BEFORE_MINUTES} from './reminder-events.js';
 import {esc} from './ui.js';
@@ -59,6 +60,7 @@ async function claimEvent(event,now){
 }
 
 export function createReminders({getSettings,updateSettings,getContext,toast=()=>{},onChange=()=>{}}){
+  const audioOwner={};
   const background=createPushReminders({getSettings,toast});
   const tracker=createReminderTracker({read:readSeen,write:writeSeen});
   const audio=typeof Audio==='function'?new Audio():null;
@@ -86,7 +88,7 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   }
 
   function stopAudio(){
-    playAttempt++;
+    setForegroundAudio(audioOwner,false);playAttempt++;
     if(audio){audio.pause();try{audio.currentTime=0;}catch{}}
     if(player)player.hidden=true;
   }
@@ -105,12 +107,12 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
     showPlayer('Азан · '+track.name);
     try{
       // Call play before awaiting anything so a preview keeps the user gesture.
-      const playing=audio.play();if(playing?.then)await playing;
+      setForegroundAudio(audioOwner,true);const playing=audio.play();if(playing?.then)await playing;
       if(attempt!==playAttempt||destroyed)return;
       soundReady=true;status='Звук проверен для этого открытого приложения.';draw();
     }catch(error){
       if(attempt!==playAttempt||destroyed)return;
-      const blocked=error?.name==='NotAllowedError';
+      setForegroundAudio(audioOwner,false);const blocked=error?.name==='NotAllowedError';
       if(blocked)soundReady=false;
       status=blocked?'Для звука нажмите «Прослушать».':'Не удалось воспроизвести запись. Проверьте подключение или откройте приложение ещё раз.';
       showPlayer('Азан · '+track.name,true);draw();say(status);
@@ -118,8 +120,9 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   }
 
   if(audio){
-    audio.addEventListener('ended',()=>{if(player)player.hidden=true;});
+    audio.addEventListener('ended',()=>{setForegroundAudio(audioOwner,false);if(player)player.hidden=true;});
     audio.addEventListener('error',()=>{
+      setForegroundAudio(audioOwner,false);
       if(!currentTrack||destroyed||!player||player.hidden)return;
       status='Запись пока недоступна. Проверьте подключение.';
       showPlayer('Азан · '+currentTrack.name,true);draw();
