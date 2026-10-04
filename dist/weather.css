@@ -21,9 +21,9 @@
 .weather-settings-status[hidden]{display:none}
 .weather-preview-controls span{padding:0 5px;font-size:10px;white-space:nowrap}
 .weather-preview-controls button{min-width:36px;min-height:38px;font-size:18px}
-@media(prefers-reduced-motion:reduce){#weather-layer *,#weather-layer>div{animation:none!important;transition:none!important}.weather-rain,.weather-snow{opacity:0!important}}
+@media(prefers-reduced-motion:reduce){#weather-layer *,#weather-layer>div{animation:none!important;transition:none!important}.weather-rain,.weather-snow{animation:none!important}}
 body.reduce-motion #weather-layer *{animation:none!important;transition:none!important}
-body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{opacity:0!important}
+body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{animation:none!important}
 
 #weather-layer:not([data-kind=rain]):not([data-kind=storm]) .weather-rain span,#weather-layer:not([data-kind=snow]) .weather-snow span,#weather-layer[data-clouds=off] .weather-clouds>div{animation-play-state:paused!important}
 
@@ -39,3 +39,9 @@ body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{opacity:0!impo
 .weather-rain span:nth-child(3n+1){opacity:.7}
 .weather-snow span:nth-child(3n){opacity:.4;filter:blur(.4px)}
 .weather-snow span:nth-child(3n+1){opacity:.8}
+
+/* Weather remains readable with motion disabled, without falling particles. */
+#weather-layer[data-motion=off] .weather-rain span,#weather-layer[data-motion=off] .weather-snow span{display:none}
+#weather-layer[data-motion=off][data-kind=rain] .weather-rain::after,#weather-layer[data-motion=off][data-kind=storm] .weather-rain::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 61px,rgba(208,222,240,.24) 62px 63px,transparent 64px 128px);-webkit-mask-image:repeating-linear-gradient(to bottom,#000 0 18px,transparent 19px 76px);mask-image:repeating-linear-gradient(to bottom,#000 0 18px,transparent 19px 76px)}
+#weather-layer[data-motion=off][data-kind=snow] .weather-snow::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 18px 23px,rgba(239,246,252,.6) 1.5px,transparent 2.5px),radial-gradient(circle at 53px 68px,rgba(239,246,252,.35) 1px,transparent 2px);background-size:91px 113px}
+body.no-transitions *,body.no-transitions *::before,body.no-transitions *::after{transition:none!important;scroll-behavior:auto!important}

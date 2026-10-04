@@ -48,7 +48,7 @@ function paintWeather(effect,now,weather,frame,home,scene){
  weatherLayer(effect);
  const view=weatherPreview!==null?weatherPreviews[weatherPreview]:weatherFrame(settings.weather?weather:null,now);
  const active=home&&view.fresh;
- const reduced=settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const reduced=settings.motion||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const moving=active&&settings.weatherAnimation&&!reduced&&!document.hidden;
  const clouds=active?view.clouds:0;
  // Dense cloud hides celestial discs and removes warm, direct sunlight.
@@ -64,8 +64,8 @@ function paintWeather(effect,now,weather,frame,home,scene){
  effect.style.setProperty('--weather-clouds',active?String(view.clouds):'0');
  effect.style.setProperty('--weather-day',String(frame.day));
  effect.style.setProperty('--weather-dark',String(1-frame.day));
- effect.style.setProperty('--weather-rain',active&&moving&&['rain','storm'].includes(view.kind)?String(view.precipitation):'0');
- effect.style.setProperty('--weather-snow',active&&moving&&view.kind==='snow'?String(view.precipitation):'0');
+ effect.style.setProperty('--weather-rain',active&&['rain','storm'].includes(view.kind)?String(view.precipitation):'0');
+ effect.style.setProperty('--weather-snow',active&&view.kind==='snow'?String(view.precipitation):'0');
  effect.style.setProperty('--weather-mist',active?(view.kind==='fog'?'.55':view.kind==='overcast'?'.12':'0'):'0');
  if(weatherPreview!==null&&!document.getElementById('weather-preview-controls')){
   const controls=document.createElement('div');controls.id='weather-preview-controls';controls.className='scene-preview-controls weather-preview-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Просмотр погоды');
@@ -92,7 +92,8 @@ function smoothPreview(){
 export function atmosphere(now,times,weather){
  lastContext={times,weather};
  const layer=document.getElementById('atmosphere'),effect=document.getElementById('weather-layer'),home=document.body.classList.contains('home-page');
- document.body.classList.toggle('reduce-motion',settings.motion||!settings.transitions);
+ document.body.classList.toggle('reduce-motion',settings.motion);
+ document.body.classList.toggle('no-transitions',!settings.transitions);
  if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';return;}
  const staticContext=[home,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');
  if(!home&&previewStarted===null&&weatherPreview===null&&inactiveContext===staticContext)return;

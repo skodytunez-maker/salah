@@ -1,7 +1,7 @@
 import{settings,read,write}from './storage.js';
 
 const minute=60000;
-export const WEATHER_REFRESH_INTERVAL=10*minute;
+export const WEATHER_REFRESH_INTERVAL=5*minute;
 const cacheAge=WEATHER_REFRESH_INTERVAL,maxAge=120*minute,clockTolerance=5*minute;
 const pending=new Map();
 const codes={
@@ -45,7 +45,7 @@ export function weatherFrame(weather,now=Date.now()){
  const wet=['rain','snow','storm'].includes(kind);
  // Current precipitation is a sum over interval seconds, not necessarily over one hour.
  const hourlyPrecipitation=weather.precipitation*3600/weather.interval;
- return {kind,clouds:clamp(weather.cloud_cover/100),precipitation:wet?Math.max(.28,clamp(hourlyPrecipitation/8)):0,fresh:true};
+ return {kind,clouds:clamp(weather.cloud_cover/100),precipitation:wet?Math.max(kind==='snow'?.28:.48,clamp(hourlyPrecipitation/8)):0,fresh:true};
 }
 
 export function cachedWeather(city=settings.city){
@@ -85,11 +85,11 @@ async function requestWeather(point,key){
  }finally{clearTimeout(timer)}
 }
 
-export async function loadWeather(city=settings.city){
+export async function loadWeather(city=settings.city,{force=false}={}){
  if(!settings.weather)return null;
  const point=coordinates(city),key=weatherKey(city);if(!point||!key)return null;
  const old=cachedWeather(city),now=Date.now();
- if(old&&now-old.fetchedAt>=0&&now-old.fetchedAt<cacheAge&&weatherFrame(old,now).fresh)return old;
+ if(!force&&old&&now-old.fetchedAt>=0&&now-old.fetchedAt<cacheAge&&weatherFrame(old,now).fresh)return old;
  if(pending.has(key))return pending.get(key);
  const task=requestWeather(point,key);pending.set(key,task);
  try{return await task}finally{if(pending.get(key)===task)pending.delete(key)}
