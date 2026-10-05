@@ -4,7 +4,7 @@ import {esc} from './ui.js';
 export const INVITE_KEY='salah:notification-invite-v2';
 export function inviteEligible({signedIn=false,city=null,reminders,push={},seen=false}={}){
  // This invitation may explain a past refusal, but never changes settings by rendering.
- return signedIn===true&&!!city&&!push.hasDevice&&!seen;
+ return signedIn===true&&!!city&&(!push.hasDevice||push.permission==='denied')&&!seen;
 }
 export function standardReminderPreferences(value){
  const next=normalizeReminders(value);next.enabled=true;next.jumuah.enabled=true;
