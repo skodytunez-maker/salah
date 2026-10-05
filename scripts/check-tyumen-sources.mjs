@@ -75,7 +75,7 @@ context.settingsPage();
 assert.match(rootElement.innerHTML,/id="tyumen-time-source"/);assert.match(rootElement.innerHTML,/Календарь Тюмени/);assert.match(rootElement.innerHTML,/Сайт «Аль-Хакк»/);
 element('tyumen-time-source').onchange({target:{value:'al-hakk'}});
 assert.equal(settings.tyumenTimeSource,'al-hakk');assert.equal(settings.school,0);assert.equal(refreshes,1);assert.equal(resets,1);
-assert.match(element('tyumen-source-note').innerHTML,/Aladhan/,'First Asr supplement is explicitly identified');
+assert.doesNotMatch(rootElement.innerHTML,/tyumen-source-note|Данные календаря|Данные: сентябрь/,'Source choice is shown without explanatory text');
 updateSettings({city:{name:'Москва',latitude:55.75,longitude:37.61,timezone:'Europe/Moscow'}});
 assert.equal(context.tyumenSourceSettings(),'','No Tyumen selection for a different city');
 console.log('PASS: selectable Tyumen sources, offline data, no fallback or stale source, Asr, explicit offsets, settings persistence, separated server caches, identical Azan/azkar and widget times, legacy migration and other cities.');
