@@ -258,11 +258,11 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   function mountTahajjud(container){tahajjudMounted=container;drawTahajjud();}
   function mountJumuah(container){jumuahMounted=container;if(container)mounted?.querySelector('[data-jumuah-slot]')?.append(container.closest('details'));drawJumuah();}
   function destroy(){destroyed=true;generation++;tracker.reset();stopAudio();if(audio){audio.removeAttribute('src');audio.load();}player?.remove();player=null;mounted=null;jumuahMounted=null;tahajjudMounted=null;document.removeEventListener('visibilitychange',visibilityChanged);}
-  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy,invitationState:background.invitationState,enableStandard(){
+  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy,invitationState:background.invitationState,enableStandard({allowDisabled=false}={}){
    const access=background.invitationState();
    if(!access.supported||access.permission==='denied'||!getSettings().city)return {ready:false,message:'Откройте настройки уведомлений на этом устройстве.'};
-   if(access.hasDevice||(getSettings().reminders!==undefined&&!preferences().enabled))return {ready:false,message:'Настройки уже выбраны. Измените их в разделе уведомлений.'};
-   if(getSettings().reminders===undefined&&!save(standardReminderPreferences()))return {ready:false,message:'Не удалось сохранить настройки. Подключение не выполнено.'};
+   if(access.hasDevice||(getSettings().reminders!==undefined&&!preferences().enabled&&!allowDisabled))return {ready:false,message:'Настройки уже выбраны. Измените их в разделе уведомлений.'};
+   if((getSettings().reminders===undefined||(allowDisabled&&!preferences().enabled))&&!save(standardReminderPreferences(getSettings().reminders)))return {ready:false,message:'Не удалось сохранить настройки. Подключение не выполнено.'};
    return background.enable();
   }};
 }
