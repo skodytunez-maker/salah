@@ -1,3 +1,4 @@
+import{bindSwipeMotion}from '../dist/js/swipe-motion.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
@@ -7,10 +8,11 @@ import {bindOwnerCardNavigation} from '../dist/js/owner-card-navigation.js';
 const files=Object.fromEntries(await Promise.all(['adhkar','learning'].map(async name=>[name,await readFile(new URL('../dist/js/'+name+'.js',import.meta.url),'utf8')])));
 function horizontal(kind){
  const listeners=new Map(),moves=[];let selected='';
- const shell={tabIndex:0,addEventListener:(type,fn)=>listeners.set(type,fn),setPointerCapture(){}};
+ const shell={tabIndex:0,dataset:{},addEventListener:(type,fn)=>listeners.set(type,fn),removeEventListener(){},setPointerCapture(){},getBoundingClientRect:()=>({width:360,left:0,top:0}),querySelector(){return shell}};
  const host={querySelector:selector=>selector.endsWith('shell')?shell:{click:()=>moves.push(selector.endsWith('next')?1:-1),focus(){}}};
  const name=kind==='adhkar'?'bindSwipe':'bindLessonNavigation';
- const context=createContext({host,window:{getSelection:()=>({toString:()=>selected})},Date,cursor:1,suppressTapUntil:0,moveLesson:direction=>moves.push(direction)});
+ const win={getSelection:()=>({toString:()=>selected}),addEventListener(){},removeEventListener(){},clearTimeout};
+ const context=createContext({host,window:win,bindSwipeMotion:(node,options)=>bindSwipeMotion(node,{...options,win}),settings:{},Date,cursor:1,suppressTapUntil:0,disposeSwipe:null,moveLesson:direction=>moves.push(direction)});
  new Script(files[kind].split('\n').find(line=>line.startsWith('function '+name+'('))+';'+name+'()').runInContext(context);
  return{listeners,moves,context,select:text=>selected=text};
 }
@@ -28,7 +30,7 @@ for(const kind of ['adhkar','learning']){
  for(const ignored of [{isPrimary:false},{button:2},{target:{closest:()=>({})}}]){emit('pointerdown',pointer(190,200));emit('pointerdown',pointer(190,200,ignored));emit('pointerup',pointer(70,205));}
  assert.equal(h.moves.length,before,kind+' scrolling, cancellation, selection, mouse and controls cannot turn a page');
  emit('keydown',{key:'ArrowLeft',target:{closest:()=>({})},preventDefault(){}});assert.equal(h.moves.length,before,'Keyboard controls retain their own actions');
- if(kind==='adhkar'){emit('pointerdown',pointer(190,200));emit('pointercancel',{});let blocked=false;emit('click',{isTrusted:true,preventDefault(){blocked=true},stopPropagation(){}});assert.equal(blocked,true,'Cancelled scroll cannot open the explanation as a tap');}
+ if(kind==='adhkar'){emit('pointerdown',pointer(190,200));emit('pointercancel',{});let blocked=false;emit('click',{isTrusted:true,preventDefault(){blocked=true},stopPropagation(){},stopImmediatePropagation(){}});assert.equal(blocked,true,'Cancelled scroll cannot open the explanation as a tap');}
 }
 const listeners=new Map();let opened=0,selection='';
 const surface={ownerDocument:{defaultView:{getSelection:()=>({toString:()=>selection})}},addEventListener:(type,fn)=>listeners.set(type,fn),setPointerCapture(){}};
