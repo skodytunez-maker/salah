@@ -28,6 +28,10 @@ jobs:
           node scripts/check-updates.mjs
           node scripts/check-location-permissions.mjs
           node scripts/check-dhikr-reminder.mjs
+          node scripts/check-notification-status.mjs
+          node scripts/check-push.mjs
+          node scripts/check-push-client.mjs
+          node scripts/check-adhkar-resume.mjs
           node scripts/check-settings.mjs
           node scripts/check-settings-resume.mjs
           node scripts/check-security.mjs
