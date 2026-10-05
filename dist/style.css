@@ -188,3 +188,7 @@ button.owner-user-row{width:100%;text-align:left;font:inherit;color:inherit;back
 .owner-user-card header{height:auto;min-height:44px;border:0;padding:0;margin:0}
 
 #owner-user-card{touch-action:pan-y}
+
+.owner-card-notifications{display:flex;flex-wrap:wrap;gap:18px}.owner-notification-flag{display:inline-flex;align-items:center;gap:7px;border:0;padding:7px 0;background:transparent;color:var(--text);font:inherit;cursor:pointer}.owner-notification-flag svg{width:20px;height:20px;fill:none;stroke:#596273;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.owner-notification-flag.is-connected svg{stroke:#57c99a}.owner-notification-flag:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}.owner-notification-info{font-size:11px;color:var(--muted);margin:5px 0 0}
+
+.owner-notification-flag span{color:var(--text);font-size:12px}
