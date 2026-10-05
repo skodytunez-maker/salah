@@ -1,4 +1,4 @@
-export const APP_VERSION=181;
+export const APP_VERSION=182;
 export const APP_UPDATED_AT='2026-10-06';
 export const APP_CHANGES=["Улучшена стабильность интерфейса."];
 // Keep this announcement unchanged for minor builds. Advance it only for major public features.
