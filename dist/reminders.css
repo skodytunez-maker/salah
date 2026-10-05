@@ -5,3 +5,9 @@
 .reminder-background{margin-top:24px;padding-top:20px;border-top:1px solid rgba(216,190,132,.2)}.reminder-background h3{font-size:17px;margin:0 0 10px}.reminder-background .button{margin-top:12px;width:100%}
 
 .reminder-adhkar-row{flex-wrap:wrap;gap:10px}.reminder-adhkar-row label{flex:1 1 110px}.reminder-adhkar-row select{max-width:150px;min-height:38px;padding:8px;border-radius:10px;font-size:13px}.reminder-adhkar-row input[type=time]{max-width:120px}
+
+.notification-invite{width:100%;text-align:left;padding:18px 20px;margin-top:18px;border:1px solid var(--line);border-radius:22px;background:rgba(12,20,36,.94);color:var(--ivory);box-sizing:border-box}.notification-invite h2{font-size:18px;margin:0 0 8px}.notification-invite p{font-size:13px;line-height:1.65;color:var(--muted);margin:8px 0}.notification-invite summary{font-size:13px;color:var(--gold);padding:10px 0;cursor:pointer}.notification-invite-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:12px}.notification-invite-actions .button{font-size:13px;min-height:44px;padding:11px 15px}.notification-invite-actions .text-button{font-size:13px;min-height:44px}.notification-invite:empty{display:none}
+
+#home-notification-invite{width:100%}.home-page .app-home-shell:has(.notification-invite){height:auto;min-height:100svh}.notification-invite p.notification-invite-consent{font-size:11px;line-height:1.5}.notification-invite-actions button:disabled{opacity:.65;cursor:wait}
+
+#home-notification-invite:empty{display:none}
