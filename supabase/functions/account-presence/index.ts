@@ -21,7 +21,7 @@ export function createPresenceHandler({getUser,getClaims,isSessionActive,record}
  if(!/^Bearer [A-Za-z0-9._-]{16,8192}$/.test(authorization))return reply(401,{error:'sign_in_required'});
  let input;
  try{const raw=await req.text();if(new TextEncoder().encode(raw).length>1024)return reply(413,{error:'too_large'});input=JSON.parse(raw);}catch{return reply(400,{error:'invalid_presence'});}
- if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['p_app','p_tab','p_active','p_sequence','p_notifications'].includes(k))||input.p_app!=='salah'||!UUID.test(input.p_tab||'')||typeof input.p_active!=='boolean'||!Number.isSafeInteger(input.p_sequence)||input.p_sequence<1||Object.hasOwn(input,'p_notifications')&&(!input.p_active||!validNotification(input.p_notifications)))return reply(400,{error:'invalid_presence'});
+ if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['p_app','p_tab','p_active','p_sequence','p_notifications','p_version'].includes(k))||input.p_app!=='salah'||!UUID.test(input.p_tab||'')||typeof input.p_active!=='boolean'||!Number.isSafeInteger(input.p_sequence)||input.p_sequence<1||Object.hasOwn(input,'p_notifications')&&(!input.p_active||!validNotification(input.p_notifications))||Object.hasOwn(input,'p_version')&&(!input.p_active||!Number.isSafeInteger(input.p_version)||input.p_version<1||input.p_version>1000000))return reply(400,{error:'invalid_presence'});
  let user,claims;
  try{
   const result=await getUser(authorization.slice(7));if(result.error)return reply(401,{error:'invalid_session'});user=result.data?.user;
@@ -41,7 +41,7 @@ if(typeof Deno!=='undefined'){
   record:async(uid,input,sid)=>{
    if(!input.p_active){await sql`update public.app_presence set active=false,sequence=${input.p_sequence} where user_id=${uid}::uuid and app='salah' and tab_id=${input.p_tab}::uuid and sequence<${input.p_sequence}`;return;}
    await sql.begin(async tx=>{
-    const changed=await tx`insert into public.app_presence(user_id,app,tab_id,active,sequence,last_seen) values(${uid}::uuid,'salah',${input.p_tab}::uuid,true,${input.p_sequence},clock_timestamp()) on conflict(user_id,app,tab_id) do update set active=excluded.active,sequence=excluded.sequence,last_seen=excluded.last_seen where excluded.sequence>app_presence.sequence returning user_id`;
+    const changed=await tx`insert into public.app_presence(user_id,app,tab_id,active,sequence,last_seen,app_version,version_checked_at) values(${uid}::uuid,'salah',${input.p_tab}::uuid,true,${input.p_sequence},clock_timestamp(),${input.p_version??null},case when ${input.p_version??null}::integer is not null then clock_timestamp() else null end) on conflict(user_id,app,tab_id) do update set active=excluded.active,sequence=excluded.sequence,last_seen=excluded.last_seen,app_version=coalesce(excluded.app_version,app_presence.app_version),version_checked_at=coalesce(excluded.version_checked_at,app_presence.version_checked_at) where excluded.sequence>app_presence.sequence returning user_id`;
     if(!changed.length||!input.p_notifications)return;
     const n=input.p_notifications;let pushId=null;
     if(n.device&&n.permission==='granted'){

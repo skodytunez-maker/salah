@@ -51,3 +51,9 @@ assert.match(source,/token_hash=\$\{tokenHash\}/,'Background linking requires th
 assert.match(source,/!changed.length\|\|!input.p_notifications/,'Delayed reports cannot replace newer preferences');
 assert.match(source,/session_id=excluded.session_id/);assert.match(source,/checked_at=excluded.checked_at/);
 console.log('PASS: optional notification reports are bounded and validated; device capability required, signed session retained, old clients remain compatible.');
+
+for(const p_version of [0,-1,1000001,1.5,'180',true,null])assert.equal((await handler(request({...input,p_version}))).status,400);
+assert.equal((await handler(request({...input,p_active:false,p_version:180}))).status,400);
+assert.equal((await handler(request({...input,p_version:180}))).status,200);assert.equal(writes.at(-1).data.p_version,180);assert.equal(writes.at(-1).uid,id);
+assert.match(source,/version_checked_at=coalesce\(excluded.version_checked_at,app_presence.version_checked_at\)/,'Legacy clients do not pretend to refresh version evidence');
+console.log('PASS: bounded optional client version; authenticated identity and server report time preserved.');
