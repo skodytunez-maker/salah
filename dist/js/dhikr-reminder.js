@@ -6,25 +6,31 @@ export const DHIKR_MESSAGES=[
 export const DHIKR_ACTIVITY_KEY='salah:dhikr-last-use-v1';
 const DHIKR_DAY=86400000;
 export function dhikrTimestamp(value){return Number.isSafeInteger(value)&&value>0&&value<4102444800000?value:0;}
-export function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:value?.days===2?2:3,time:'20:00',since:dhikrTimestamp(value?.since)};}
+export function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:value?.days===2?2:3,time:'12:00',mode:'prayer',prayer:'Dhuhr',since:dhikrTimestamp(value?.since)};}
+export function dhikrAllowedAt(at,zone){
+ try{const parts=new Intl.DateTimeFormat('en',{timeZone:zone,hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date(at));const hour=Number(parts.find(p=>p.type==='hour')?.value);return hour>=8&&hour<22;}catch{return false;}
+}
 export function readDhikrActivity(storage=globalThis.localStorage){try{return dhikrTimestamp(Number(storage.getItem(DHIKR_ACTIVITY_KEY)));}catch{return 0;}}
 export function markDhikrActivity(now=Date.now(),storage=globalThis.localStorage,target=globalThis.window){
  if(!dhikrTimestamp(now))return false;
  try{storage.setItem(DHIKR_ACTIVITY_KEY,String(Math.max(now,readDhikrActivity(storage))));target?.dispatchEvent(new Event('salah:dhikr-activity'));return true;}catch{return false;}
 }
 // The time refers to use of SALAH, never to a claim about worship outside the app.
-export function dhikrEventForDay(value,lastUse,day,zone,{localTimestamp,shiftDay,cityDay}){
+export function dhikrEventForDay(value,lastUse,day,zone,{localTimestamp,shiftDay,cityDay,timingsFor=()=>null}){
  const row=normalizeDhikrReminder(value),baseline=Math.max(row.since,dhikrTimestamp(lastUse));
  if(!row.enabled||!baseline)return null;
  const threshold=baseline+row.days*DHIKR_DAY;
  let firstDay;try{firstDay=cityDay(threshold,zone);}catch{return null;}
- let firstAt=localTimestamp(firstDay,row.time,zone);
+ // Use the selected timetable's Dhuhr; unavailable or out-of-window times fall back to noon.
+ const timeFor=date=>{let raw;try{raw=timingsFor(date)?.Dhuhr;}catch{}const prayer=typeof raw==='number'?raw:typeof raw==='string'?Date.parse(raw):NaN;
+  return Number.isFinite(prayer)&&cityDay(prayer,zone)===date&&dhikrAllowedAt(prayer,zone)?prayer:localTimestamp(date,row.time,zone);};
+ let firstAt=timeFor(firstDay);
  if(!Number.isFinite(firstAt))return null;
- if(firstAt<threshold){firstDay=shiftDay(firstDay,1);firstAt=localTimestamp(firstDay,row.time,zone);}
+ if(firstAt<threshold){firstDay=shiftDay(firstDay,1);firstAt=timeFor(firstDay);}
  const dayGap=(Date.parse(day+'T12:00:00Z')-Date.parse(firstDay+'T12:00:00Z'))/DHIKR_DAY;
  if(!Number.isInteger(dayGap)||dayGap<0||dayGap%row.days!==0)return null;
- const at=localTimestamp(day,row.time,zone);
+ const at=timeFor(day);
  if(!Number.isFinite(at)||at<threshold)return null;
  const slot=(dayGap/row.days)%DHIKR_MESSAGES.length;
- return {id:JSON.stringify(['dhikr',day,at]),day,kind:'dhikr',key:'return',phase:'at',at,adhan:false,message:DHIKR_MESSAGES[slot].text};
+ return {id:JSON.stringify(['dhikr',day,at]),day,kind:'dhikr',key:'return',phase:'at',at,timeZone:zone,adhan:false,message:DHIKR_MESSAGES[slot].text};
 }

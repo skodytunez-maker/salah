@@ -1,4 +1,4 @@
-import {dhikrTimestamp} from '../../../dist/js/dhikr-reminder.js';
+import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
 import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
 
 import {TYUMEN_SOURCES,normalizeTyumenSource,tyumenSourceFiles,matchesTyumenSource} from '../../../dist/js/tyumen-source.js';
@@ -93,11 +93,11 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.at+120000};}
+export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
-  try{const now=clock();await webpush.sendNotification(device.subscription,JSON.stringify(notification(event,now)),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((event.at+120000-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
+  try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
@@ -108,7 +108,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:3,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
@@ -118,14 +118,15 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
-      if(!grouped.has(signature))grouped.set(signature,(needsPrayerTimings(p)?scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})):Promise.resolve({})).then(rows=>eventsFor(p,rows,clock())));
-      const events=await grouped.get(signature);
+      if(!grouped.has(signature))grouped.set(signature,(needsPrayerTimings(p)||p.reminders.enabled&&p.reminders.dhikr.enabled?scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})):Promise.resolve({})).then(rows=>({rows,events:eventsFor(p,rows,clock())})));
+      const {rows,events}=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
        if(event.kind==='dhikr'){
         // A resumed reader or an opt-out during timetable fetching must cancel this send.
         const fresh=await db.get(device.id);if(!fresh)continue;
         const latest=preferences(fresh.preferences);
-        if(!eventsFor(latest,{},clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
+        if(!dhikrAllowedAt(clock(),event.timeZone)||JSON.stringify({...latest,reminders:p.reminders,dhikrLastAt:p.dhikrLastAt})!==signature)continue;
+        if(!eventsFor(latest,rows,clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
         const previous=await db.lastDhikrSent(device.id);
         if(previous&&clock()-previous<(latest.reminders.dhikr.days*24-2)*3600000)continue;
        }

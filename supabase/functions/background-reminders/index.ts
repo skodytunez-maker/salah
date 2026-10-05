@@ -73,27 +73,33 @@ const DHIKR_MESSAGES=[
 const DHIKR_ACTIVITY_KEY='salah:dhikr-last-use-v1';
 const DHIKR_DAY=86400000;
 function dhikrTimestamp(value){return Number.isSafeInteger(value)&&value>0&&value<4102444800000?value:0;}
-function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:value?.days===2?2:3,time:'20:00',since:dhikrTimestamp(value?.since)};}
+function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:value?.days===2?2:3,time:'12:00',mode:'prayer',prayer:'Dhuhr',since:dhikrTimestamp(value?.since)};}
+function dhikrAllowedAt(at,zone){
+ try{const parts=new Intl.DateTimeFormat('en',{timeZone:zone,hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date(at));const hour=Number(parts.find(p=>p.type==='hour')?.value);return hour>=8&&hour<22;}catch{return false;}
+}
 function readDhikrActivity(storage=globalThis.localStorage){try{return dhikrTimestamp(Number(storage.getItem(DHIKR_ACTIVITY_KEY)));}catch{return 0;}}
 function markDhikrActivity(now=Date.now(),storage=globalThis.localStorage,target=globalThis.window){
  if(!dhikrTimestamp(now))return false;
  try{storage.setItem(DHIKR_ACTIVITY_KEY,String(Math.max(now,readDhikrActivity(storage))));target?.dispatchEvent(new Event('salah:dhikr-activity'));return true;}catch{return false;}
 }
 // The time refers to use of SALAH, never to a claim about worship outside the app.
-function dhikrEventForDay(value,lastUse,day,zone,{localTimestamp,shiftDay,cityDay}){
+function dhikrEventForDay(value,lastUse,day,zone,{localTimestamp,shiftDay,cityDay,timingsFor=()=>null}){
  const row=normalizeDhikrReminder(value),baseline=Math.max(row.since,dhikrTimestamp(lastUse));
  if(!row.enabled||!baseline)return null;
  const threshold=baseline+row.days*DHIKR_DAY;
  let firstDay;try{firstDay=cityDay(threshold,zone);}catch{return null;}
- let firstAt=localTimestamp(firstDay,row.time,zone);
+ // Use the selected timetable's Dhuhr; unavailable or out-of-window times fall back to noon.
+ const timeFor=date=>{let raw;try{raw=timingsFor(date)?.Dhuhr;}catch{}const prayer=typeof raw==='number'?raw:typeof raw==='string'?Date.parse(raw):NaN;
+  return Number.isFinite(prayer)&&cityDay(prayer,zone)===date&&dhikrAllowedAt(prayer,zone)?prayer:localTimestamp(date,row.time,zone);};
+ let firstAt=timeFor(firstDay);
  if(!Number.isFinite(firstAt))return null;
- if(firstAt<threshold){firstDay=shiftDay(firstDay,1);firstAt=localTimestamp(firstDay,row.time,zone);}
+ if(firstAt<threshold){firstDay=shiftDay(firstDay,1);firstAt=timeFor(firstDay);}
  const dayGap=(Date.parse(day+'T12:00:00Z')-Date.parse(firstDay+'T12:00:00Z'))/DHIKR_DAY;
  if(!Number.isInteger(dayGap)||dayGap<0||dayGap%row.days!==0)return null;
- const at=localTimestamp(day,row.time,zone);
+ const at=timeFor(day);
  if(!Number.isFinite(at)||at<threshold)return null;
  const slot=(dayGap/row.days)%DHIKR_MESSAGES.length;
- return {id:JSON.stringify(['dhikr',day,at]),day,kind:'dhikr',key:'return',phase:'at',at,adhan:false,message:DHIKR_MESSAGES[slot].text};
+ return {id:JSON.stringify(['dhikr',day,at]),day,kind:'dhikr',key:'return',phase:'at',at,timeZone:zone,adhan:false,message:DHIKR_MESSAGES[slot].text};
 }
 
 // Reminder scheduling is independent of the next-prayer display and browser APIs.
@@ -204,7 +210,7 @@ function buildReminderEvents(value,context){
     }
   }
   for(const day of new Set(dates.filter(Boolean))){
-    const event=dhikrEventForDay(settings.dhikr,context.dhikrLastAt,day,context.timeZone,{localTimestamp,shiftDay,cityDay:(at,zone)=>{const p=partsAt(at,zone);return p.year+'-'+p.month+'-'+p.day;}});
+    const event=dhikrEventForDay(settings.dhikr,context.dhikrLastAt,day,context.timeZone,{localTimestamp,shiftDay,timingsFor:context.timingsFor,cityDay:(at,zone)=>{const p=partsAt(at,zone);return p.year+'-'+p.month+'-'+p.day;}});
     if(event)events.push(event);
   }
   return events.sort((a,b)=>a.at-b.at||a.id.localeCompare(b.id));
@@ -330,11 +336,11 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.at+120000};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
-  try{const now=clock();await webpush.sendNotification(device.subscription,JSON.stringify(notification(event,now)),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((event.at+120000-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
+  try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
@@ -345,7 +351,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:3,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
@@ -355,14 +361,15 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
-      if(!grouped.has(signature))grouped.set(signature,(needsPrayerTimings(p)?scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})):Promise.resolve({})).then(rows=>eventsFor(p,rows,clock())));
-      const events=await grouped.get(signature);
+      if(!grouped.has(signature))grouped.set(signature,(needsPrayerTimings(p)||p.reminders.enabled&&p.reminders.dhikr.enabled?scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})):Promise.resolve({})).then(rows=>({rows,events:eventsFor(p,rows,clock())})));
+      const {rows,events}=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
        if(event.kind==='dhikr'){
         // A resumed reader or an opt-out during timetable fetching must cancel this send.
         const fresh=await db.get(device.id);if(!fresh)continue;
         const latest=preferences(fresh.preferences);
-        if(!eventsFor(latest,{},clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
+        if(!dhikrAllowedAt(clock(),event.timeZone)||JSON.stringify({...latest,reminders:p.reminders,dhikrLastAt:p.dhikrLastAt})!==signature)continue;
+        if(!eventsFor(latest,rows,clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
         const previous=await db.lastDhikrSent(device.id);
         if(previous&&clock()-previous<(latest.reminders.dhikr.days*24-2)*3600000)continue;
        }

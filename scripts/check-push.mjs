@@ -50,7 +50,7 @@ function fixture({scheduleUnavailable=false}={}){
  const call=(action,body,headers={},method='POST')=>handler(new Request('https://example.test/background-reminders/'+action,{method,headers:{Origin:PUSH_ORIGIN,...headers},body:body===undefined?undefined:JSON.stringify(body)}));
  return {db,devices,ledger,sent,call,handler};
 }
-let f=fixture();let result=await f.call('config',undefined,{},'GET');assert.equal(result.status,200);assert.deepEqual(await result.json(),{version:1,remindersVersion:3,features:['tahajjud','dhikr-inactivity'],publicKey:'public-test'});
+let f=fixture();let result=await f.call('config',undefined,{},'GET');assert.equal(result.status,200);assert.deepEqual(await result.json(),{version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:'public-test'});
 assert.equal((await f.call('subscribe',{id,token,subscription:sub,preferences:settings},{Origin:'https://evil.test'})).status,403);
 assert.equal((await f.call('dispatch',{},{})).status,401);
 assert.equal((await f.call('test',{id,token})).status,404);
