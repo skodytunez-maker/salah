@@ -52,7 +52,7 @@ console.log('PASS: MFA setup/challenge keeps cabinet hidden until a valid second
 // Exercise the dashboard itself with fixture responses, including a total that
 // exceeds the displayed page. No owner session or live account data is used.
 const {notificationLabels}=await import('../dist/js/notification-status.js');
-const {bindOwnerCardNavigation}=await import('../dist/js/owner-card-navigation.js');
+const {bindOwnerCardNavigation,createOwnerCardHistory}=await import('../dist/js/owner-card-navigation.js');
 const {ownerUserCard,validOwnerUserId,ownerUserDate,bindOwnerNotificationInfo}=await import('../dist/js/owner-user-card.js');
 const adminSource=await readFile(new URL('../dist/js/admin.js',import.meta.url),'utf8');
 const adminExecutable=adminSource.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdmin,mountOwnerAccount});';
@@ -70,9 +70,9 @@ class Element {
  getAttribute(key){return this.attributes[key]??null;}
  focus(){this.focused=true;}
 }
-function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request}={}){
+function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request,browser=null}={}){
  const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false};let timerId=0;
- const context=createContext({bindOwnerNotificationInfo,bindOwnerCardNavigation,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>stats,signOutOwner:async()=>{allowed=false;}});
+ const context=createContext({bindOwnerNotificationInfo,bindOwnerCardNavigation,createOwnerCardHistory,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:browser||{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>stats,signOutOwner:async()=>{allowed=false;}});
  return{app,location,calls,result,intervals,events,document,setAllowed:value=>{allowed=value;events.get('owner-change')?.()},...new Script(adminExecutable).runInContext(context)};
 }
 const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
@@ -134,7 +134,7 @@ const cardRevoked=dashboard({result:{total:1,users:[{id:firstId,nickname:'Privat
 console.log('PASS: private cards use stable IDs, distinguish unknown settings, survive polling failures and reordering, escape names and disappear on access revocation.');
 
 // The actual card binding returns to the same stable row, while vertical/right gestures stay open.
-cards.app.querySelector('#owner-user-card').onclick({target:{closest:()=>null}});assert.equal(cards.app.querySelector('#owner-user-detail').hidden,true);assert.equal(cards.app.querySelector('[data-user]').focused,true);
+cards.app.querySelector('#owner-user-detail').onclick({target:{closest:()=>null}});assert.equal(cards.app.querySelector('#owner-user-detail').hidden,true);assert.equal(cards.app.querySelector('[data-user]').focused,true);
 let open=true,closed=0,clock=1000,selection='',surface={};
 bindOwnerCardNavigation(surface,{dismiss:()=>{open=false;closed++},isOpen:()=>open,now:()=>clock,win:{getSelection:()=>({toString:()=>selection})}});
 const pointer=(x,y,type='touch')=>({pointerId:1,clientX:x,clientY:y,pointerType:type,isPrimary:true,target:{closest:()=>null}});
@@ -151,3 +151,40 @@ console.log('PASS: card tap, left swipe, vertical scrolling, text selection, con
 for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Версия проверена|Последнее сохранение|Проверено/.test(cardMarkup));}
 assert.equal((ownerUserCard({notifications:{enabled:true,background:false,permissionDenied:true,checkedAt:'2026-10-06T12:00:00Z'}}).match(/is-connected/g)||[]).length,1,'Namaz preference and delivery are separate');
 console.log('PASS: compact green/dark checks keep enabled, disabled and unknown meanings accessible; technical times removed.');
+
+// Model asynchronous browser Back (including an iOS edge swipe), rather than
+// just calling the card's close button. Fixtures contain no live account data.
+function browserHistory(){
+ const listeners=new Map(),entries=[{url:'https://fixture.invalid/#settings',state:null},{url:'https://fixture.invalid/#account',state:{existing:'preserved'}}];
+ let index=1,queued=0;
+ const win={location:{href:entries[index].url},scrollX:0,scrollY:620,
+  addEventListener(type,fn){if(!listeners.has(type))listeners.set(type,new Set());listeners.get(type).add(fn)},
+  removeEventListener(type,fn){listeners.get(type)?.delete(fn)},
+  scrollTo({left,top}){this.scrollX=left;this.scrollY=top},
+  history:{get state(){return entries[index].state},pushState(state){entries.splice(++index);entries.push({url:win.location.href,state})},replaceState(state){entries[index].state=state},back(){queued++}}
+ };
+ const pop=()=>{win.location.href=entries[index].url;for(const fn of [...listeners.get('popstate')||[]])fn({state:entries[index].state})};
+ return{win,entries,listeners,get index(){return index},get queued(){return queued},flush(){if(queued){queued--;index=Math.max(0,index-1);pop()}},forward(){index=Math.min(entries.length-1,index+1);pop()}};
+}
+const browser=browserHistory(),backCards=dashboard({browser:browser.win,result:{total:125,users:[{id:firstId,nickname:'Private test user'}]}});
+backCards.location.hash='#account';await backCards.showAdmin(backCards.app,{isActive:()=>browser.win.location.href.endsWith('#account')});await settle();
+backCards.app.querySelector('#owner-tab-users').onclick();await settle();
+backCards.app.querySelector('#users-next').onclick();await settle();
+const openBackCard=()=>backCards.app.querySelector('[data-user]').onclick();
+openBackCard();assert.equal(browser.index,2);assert.equal(browser.entries[2].state.existing,'preserved');assert.ok(!JSON.stringify(browser.entries).includes(firstId));assert.ok(!JSON.stringify(browser.entries).includes('Private test user'));
+browser.win.scrollY=100;browser.win.history.back();browser.flush();
+assert.equal(browser.win.location.href,'https://fixture.invalid/#account','First native Back stays in the account');
+assert.equal(backCards.app.querySelector('#owner-user-detail').hidden,true);assert.equal(backCards.app.querySelector('#owner-users-list').hidden,false);
+assert.equal(browser.win.scrollY,620,'Return restores the list position');assert.match(backCards.app.querySelector('#owner-users-list').textContent,/2 \/ 3/,'Return keeps pagination');
+assert.equal(backCards.app.querySelector('[data-user]').focused,true);
+browser.win.history.back();browser.flush();assert.equal(browser.win.location.href,'https://fixture.invalid/#settings','Only the next Back leaves the account');
+backCards.app.ownerDispose();assert.equal(browser.listeners.get('popstate').size,0,'Leaving removes the card history listener');
+
+const clickHistory=browserHistory();let closedCards=0,activeCard=true;
+const navigation=createOwnerCardHistory({win:clickHistory.win,isActive:()=>activeCard,dismiss:()=>closedCards++});
+assert.equal(navigation.open(),true);navigation.open();assert.equal(clickHistory.entries.length,3,'Repeated open cannot push duplicate entries');
+navigation.back();navigation.back();assert.equal(closedCards,1);assert.equal(clickHistory.queued,1,'Repeated close cannot go back twice');assert.equal(navigation.open(),false,'Wait for the pending browser traversal before reopening');
+clickHistory.flush();assert.equal(clickHistory.index,1);assert.equal(navigation.open(),true);assert.equal(clickHistory.entries.length,3,'Reopen replaces the old forward entry');
+navigation.back();clickHistory.flush();clickHistory.forward();assert.equal(closedCards,2);assert.ok(!clickHistory.win.history.state.salahOwnerCard,'Forward does not restore a private card from browser state');
+navigation.open();activeCard=false;navigation.dispose();assert.equal(clickHistory.listeners.get('popstate').size,0);assert.ok(!clickHistory.win.history.state.salahOwnerCard);assert.equal(navigation.open(),false);
+console.log('PASS: native Back returns card → same list/page/scroll → previous route; button/swipe consume one entry, rapid actions cannot skip pages, disposal removes private navigation state.');
