@@ -1,4 +1,4 @@
-import { normalizeAngle, signedAngleDifference, createDirectionTracker } from './qibla-math.js';
+import { normalizeAngle, createCompassPresentation, createDirectionTracker } from './qibla-math.js';
 import { renderQiblaView } from './qibla-view.js';
 import { bearing as qiblaBearing } from './prayers.js';
 import { createSensorAccess, createAutomaticSensorAccess } from './qibla-access.js';
@@ -68,14 +68,14 @@ export function browserSensorEnvironment(){
 export function createCompassController({bearing,declination=0,onState,onHaptic=()=>{},environment=browserSensorEnvironment()}){
   const env=environment,tracker=createDirectionTracker();
   let enabled=false,disposed=false,generation=0,sensorOff=null,visibilityOff=null,screenOff=null;
-  let timer=null,frame=null,pending=null,lastPaint=-Infinity,lastEvent=null;
+  let timer=null,frame=null,pending=null,lastPaint=-Infinity,recovering=false,reliableSince=null,unreliableReason=null;
   const idle={phase:'idle',hasHeading:false,error:null,intensity:0,aligned:false,
     instruction:'Определяем направление Киблы',message:'Держите телефон ровно.'};
 
   function emit(value){if(!disposed)onState({...idle,...value});}
   function clearWatch(){if(timer!==null)env.clearTimer(timer);timer=null;}
   function cancelPaint(){if(frame!==null)env.cancelFrame(frame);frame=null;pending=null;}
-  function detachSensor(){sensorOff?.();sensorOff=null;clearWatch();cancelPaint();lastEvent=null;}
+  function detachSensor(){sensorOff?.();sensorOff=null;clearWatch();cancelPaint();recovering=false;reliableSince=null;unreliableReason=null;}
   function detachAll(){detachSensor();visibilityOff?.();visibilityOff=null;screenOff?.();screenOff=null;}
 
   function noData(){
@@ -95,15 +95,28 @@ export function createCompassController({bearing,declination=0,onState,onHaptic=
     if(!enabled||disposed||!env.visible())return;
     const sample=orientationSample(event,env.screenAngle(),declination);
     if(!sample)return;
-    lastEvent=event;armWatch(2500);
+    armWatch(2500);
     if(!sample.level||!sample.accurate){
-      tracker.reset();cancelPaint();
-      emit({phase:'unreliable',instruction:'Для большей точности держите телефон ровно.',
-        message:!sample.accurate?'Датчик не даёт точного направления. Уберите телефон от металлических предметов.':
-          'Направление появится, когда телефон будет лежать ровно.'});
+      if(!recovering){tracker.reset({rearmHaptic:false});cancelPaint();}
+      recovering=true;reliableSince=null;
+      const reason=sample.accurate?'tilt':'accuracy';
+      if(reason!==unreliableReason){
+        unreliableReason=reason;
+        emit({phase:'unreliable',instruction:'Для большей точности держите телефон ровно.',
+          message:!sample.accurate?'Датчик не даёт точного направления. Уберите телефон от металлических предметов.':
+            'Направление появится, когда телефон будет лежать ровно.'});
+      }
       return;
     }
-    const value=tracker.update(sample.heading,bearing,env.now());
+    const now=env.now();
+    // Require a brief steady interval after tilting instead of flashing the
+    // found state each time a noisy sensor crosses its reliability threshold.
+    if(recovering){
+      if(reliableSince===null)reliableSince=now;
+      if(now-reliableSince<160)return;
+      recovering=false;reliableSince=null;unreliableReason=null;
+    }
+    const value=tracker.update(sample.heading,bearing,now);
     if(!value)return;
     if(value.haptic){try{onHaptic();}catch{}}
     const instruction=value.aligned?'Направление Киблы найдено':value.error<10?
@@ -171,7 +184,8 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
   const stage=container.querySelector('#qibla-stage'),instruction=container.querySelector('#qibla-instruction');
   const check=container.querySelector('#qibla-check'),error=container.querySelector('#qibla-error');
   const status=container.querySelector('#sensor-state');
-  let rotation=null,compassRotation=null,retryAvailable=false;
+  const presentation=createCompassPresentation();
+  let retryAvailable=false;
   const controller=createCompassController({bearing,declination,environment,onHaptic:()=>{
     if(haptics()&&typeof navigator.vibrate==='function'){try{navigator.vibrate(12);}catch{}}
   },onState:state=>{
@@ -179,16 +193,10 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
     stage.classList.toggle('is-aligned',state.aligned);
     check.toggleAttribute('hidden',!state.aligned);
     stage.style.setProperty('--qibla-light',state.intensity.toFixed(4));
-    if(state.hasHeading){
-      rotation=rotation===null?state.signedError:rotation+signedAngleDifference(rotation,state.signedError);
-      const north=-state.heading;
-      compassRotation=compassRotation===null?north:compassRotation+signedAngleDifference(compassRotation,north);
-      stage.style.setProperty('--qibla-rotation',rotation+'deg');
-      stage.style.setProperty('--compass-rotation',compassRotation+'deg');
-    }else{
-      rotation=null;compassRotation=null;
-      stage.style.setProperty('--qibla-rotation','0deg');
-      stage.style.setProperty('--compass-rotation','0deg');
+    const rotation=presentation.update(state);
+    if(rotation){
+      stage.style.setProperty('--qibla-rotation',rotation.target+'deg');
+      stage.style.setProperty('--compass-rotation',rotation.north+'deg');
     }
     setText(instruction,state.instruction);
     setText(error,state.error===null?'—':state.error.toLocaleString('ru-RU',{maximumFractionDigits:1})+'°');
