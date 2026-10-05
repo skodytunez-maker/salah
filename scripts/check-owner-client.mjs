@@ -52,6 +52,7 @@ console.log('PASS: MFA setup/challenge keeps cabinet hidden until a valid second
 // Exercise the dashboard itself with fixture responses, including a total that
 // exceeds the displayed page. No owner session or live account data is used.
 const {notificationLabels}=await import('../dist/js/notification-status.js');
+const {bindOwnerCardNavigation}=await import('../dist/js/owner-card-navigation.js');
 const {ownerUserCard,validOwnerUserId,ownerUserDate}=await import('../dist/js/owner-user-card.js');
 const adminSource=await readFile(new URL('../dist/js/admin.js',import.meta.url),'utf8');
 const adminExecutable=adminSource.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdmin,mountOwnerAccount});';
@@ -70,7 +71,7 @@ class Element {
 }
 function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request}={}){
  const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false};let timerId=0;
- const context=createContext({ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>stats,signOutOwner:async()=>{allowed=false;}});
+ const context=createContext({bindOwnerCardNavigation,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>stats,signOutOwner:async()=>{allowed=false;}});
  return{app,location,calls,result,intervals,events,document,setAllowed:value=>{allowed=value;events.get('owner-change')?.()},...new Script(adminExecutable).runInContext(context)};
 }
 const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
@@ -130,3 +131,18 @@ assert.ok(!ownerUserCard({nickname:'<img src=x onerror=alert(1)>',online:false})
 const cardFailure=dashboard({request:async()=>{if(cardFailure.calls.length>1)throw Error('Fixture refresh unavailable');return{total:1,users:[{id:firstId,nickname:'Saved card'}]};}});await cardFailure.showAdmin(cardFailure.app);await settle();cardFailure.app.querySelector('[data-user]').onclick();await cardFailure.app.querySelector('#owner-user-refresh').onclick();await settle();assert.match(cardFailure.app.querySelector('#owner-user-card').textContent,/Saved card/);assert.match(cardFailure.app.querySelector('#owner-user-card-status').textContent,/unavailable/);
 const cardRevoked=dashboard({result:{total:1,users:[{id:firstId,nickname:'Private fixture'}]}});cardRevoked.location.hash='#account';await cardRevoked.mountOwnerAccount(cardRevoked.app);const cardPanel=cardRevoked.app.querySelector('.owner-account');cardPanel.open=true;cardPanel.ontoggle();await settle();cardRevoked.app.querySelector('[data-user]').onclick();cardRevoked.setAllowed(false);assert.equal(cardRevoked.app.querySelector('#owner-user-card'),null);
 console.log('PASS: private cards use stable IDs, distinguish unknown settings, survive polling failures and reordering, escape names and disappear on access revocation.');
+
+// The actual card binding returns to the same stable row, while vertical/right gestures stay open.
+cards.app.querySelector('#owner-user-card').onclick({target:{closest:()=>null}});assert.equal(cards.app.querySelector('#owner-user-detail').hidden,true);assert.equal(cards.app.querySelector('[data-user]').focused,true);
+let open=true,closed=0,clock=1000,selection='',surface={};
+bindOwnerCardNavigation(surface,{dismiss:()=>{open=false;closed++},isOpen:()=>open,now:()=>clock,win:{getSelection:()=>({toString:()=>selection})}});
+const pointer=(x,y,type='touch')=>({pointerId:1,clientX:x,clientY:y,pointerType:type,isPrimary:true,target:{closest:()=>null}});
+surface.onpointerdown(pointer(200,100));surface.onpointerup(pointer(100,112));assert.equal(closed,1,'A clear left swipe closes');
+open=true;surface.onclick(pointer(100,112));assert.equal(closed,1,'Synthetic click after swipe cannot close another card');clock+=600;
+for(const [endX,endY,type]of [[250,100,'touch'],[198,220,'touch'],[100,100,'mouse']]){surface.onpointerdown(pointer(200,100,type));surface.onpointerup(pointer(endX,endY,type));assert.equal(open,true);clock+=600;}
+surface.onpointerdown(pointer(200,100));surface.onpointercancel();surface.onclick(pointer(200,100));assert.equal(open,true,'Scrolling cancels the gesture without turning it into a tap');clock+=600;
+selection='selected text';surface.onclick(pointer(200,100));assert.equal(open,true);selection='';surface.onclick({target:{closest:()=>({})}});assert.equal(open,true,'Controls retain their own actions');surface.onclick(pointer(200,100));assert.equal(open,false,'A second tap closes');
+open=true;surface.onkeydown({key:'Escape',preventDefault(){}});assert.equal(open,false);
+assert.match(ownerUserCard({nickname:'Health',appVersion:180,versionCheckedAt:'2026-10-06T10:00:00Z',lastSavedAt:'2026-10-06T09:00:00Z'}),/Версия SALAH<\/dt><dd>180/);
+assert.match(ownerUserCard({nickname:'Legacy',appVersion:180}),/Версия SALAH<\/dt><dd>Нет данных/);
+console.log('PASS: card tap, left swipe, vertical scrolling, text selection, controls, stable focus return and diagnostic unknown states.');

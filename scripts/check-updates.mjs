@@ -63,6 +63,22 @@ await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(release
 values.set('salah:update-last-seen-v1',String(APP_ANNOUNCEMENT.version-1));
 await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,2,'Users who skip a major release see it even on a later minor build');
 assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);
+// A build discovered after launch applies automatically at a resting screen, exactly once.
+const realNow=Date.now;let fakeNow=100000,safe=true,installChanged,updateFound,automaticBefore=automaticMessages;
+Date.now=()=>fakeNow;registration.waiting=null;registration.installing=null;
+registration.addEventListener=(type,fn)=>{if(type==='updatefound')updateFound=fn;};
+await registerAppWorker({canAutoUpdate:()=>safe});
+const lateWorker={state:'installing',postMessage:waiting.postMessage,addEventListener:(type,fn)=>installChanged=fn};
+registration.installing=lateWorker;updateFound();registration.installing=null;registration.waiting=lateWorker;lateWorker.state='installed';
+safe=false;installChanged();assert.equal(automaticMessages,automaticBefore,'Reading, counting, forms and playback can block reload');
+safe=true;document.visibilityState='hidden';intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'Never auto reload a hidden app');document.visibilityState='visible';
+docEvents.pointerdown();fakeNow+=1000;intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'Recent touch delays activation');
+fakeNow+=5000;document.activeElement={matches:()=>true};intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'Focused inputs are protected');document.activeElement=null;
+document.querySelector=()=>({open:true});intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'An open dialog is protected');document.querySelector=()=>null;
+intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore+1,'A late download applies without the Update button');intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore+1);
+const reloadBefore=reloads;workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(reloads,reloadBefore+1);
+assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);Date.now=realNow;
+console.log('PASS: automatic late updates respect foreground, idle input, safe screens and dialogs; personal storage and single activation preserved.');
 const events={};const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://example.test/salah/'},location:{origin:'https://example.test'},addEventListener:(k,f)=>events[k]=f}});
 vm.runInContext(await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),context);
 let release;events.message({data:{type:'SALAH_RELEASE_INFO'},ports:[{postMessage:v=>release=JSON.parse(JSON.stringify(v))}]});

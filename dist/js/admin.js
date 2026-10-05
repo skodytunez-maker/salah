@@ -1,3 +1,4 @@
+import{bindOwnerCardNavigation}from './owner-card-navigation.js';
 import{analyticsSite}from './analytics.js';
 import{esc,title}from './ui.js';
 import{notificationLabels}from './notification-status.js';
@@ -78,7 +79,9 @@ export async function showAdmin(app,options={}){
  const detail=app.querySelector('#owner-user-detail'),card=app.querySelector('#owner-user-card'),cardStatus=app.querySelector('#owner-user-card-status');
  const renderCard=()=>{if(!selectedUser)return;const focused=document.activeElement?.id==='owner-user-name',markup=ownerUserCard(selectedUser);if(card.innerHTML!==markup){card.innerHTML=markup;if(focused)card.querySelector('#owner-user-name').focus();}};
  const openUser=user=>{if(!validOwnerUserId(user.id))return;selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;card.querySelector('#owner-user-name').focus();};
- app.querySelector('#owner-user-back').onclick=()=>{const previous=selectedUser?.id;selectedUser=null;detail.hidden=true;card.innerHTML='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus();};
+ const dismissCard=()=>{const previous=selectedUser?.id;selectedUser=null;detail.hidden=true;card.innerHTML='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus();};
+ app.querySelector('#owner-user-back').onclick=dismissCard;
+ bindOwnerCardNavigation(card,{dismiss:dismissCard,isOpen:()=>!!selectedUser});
  app.querySelector('#owner-user-refresh').onclick=()=>readUsers(true);
  const notificationMarkup=user=>{const status=notificationLabels(user.notifications);return '<div class="owner-notifications is-'+status.state+'"'+(status.checked?' title="'+esc(status.checked)+'"':'')+'><span>'+esc(status.primary)+'</span>'+(status.secondary?'<small>'+esc(status.secondary)+'</small>':'')+'</div>';};
  const readUsers=async(quiet=false)=>{if(quiet&&usersBusy)return;usersBusy=true;const version=++usersLoad,area=app.querySelector('#owner-users-list'),count=app.querySelector('#owner-users-count');if(!quiet||!area.children.length)area.innerHTML='<p class="muted" role="status">Загружаем пользователей…</p>';try{const result=await ownerUsers(usersPage);if(!active()||version!==usersLoad)return;if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('Список пользователей временно недоступен.');count.textContent=result.total.toLocaleString('ru-RU');app.querySelector('#owner-registered').textContent=result.total.toLocaleString('ru-RU');app.querySelector('#owner-online').textContent=Number.isSafeInteger(result.online)?result.online.toLocaleString('ru-RU'):'—';const date=value=>value?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Ещё не входил';usersSnapshot=result.users;
