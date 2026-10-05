@@ -2,6 +2,47 @@
 import postgres from 'npm:postgres@3.4.9';
 import webpush from 'npm:web-push@3.6.7';
 
+// Shared by the web timetable and the background reminder service.
+const TYUMEN_SOURCES=['auto','calendar','al-hakk'];
+function normalizeTyumenSource(value){return TYUMEN_SOURCES.includes(value)?value:'auto'}
+function tyumenSourceFiles(value){
+ const source=normalizeTyumenSource(value);
+ return source==='calendar'?['tyumen-october-2026.json']:source==='al-hakk'?['al-hakk-tyumen.json']:['al-hakk-tyumen.json','tyumen-october-2026.json'];
+}
+function matchesTyumenSource(value,row){
+ const source=normalizeTyumenSource(value);
+ return source==='auto'||row?.source===(source==='calendar'?'tyumen-table':'al-hakk');
+}
+
+// The first Asr supplements the published Hanafi time; it never replaces it.
+const firstAsrSourceUrl='https://aladhan.com/prayer-times-api';
+function firstAsrValid(day,row,time){
+  if(typeof time!=='string'||!time.startsWith(day+'T')||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\+05:00$/.test(time))return false;
+  const stamp=Date.parse(time),noon=Date.parse(row?.timings?.Dhuhr),sunset=Date.parse(row?.timings?.Maghrib);
+  return Number.isFinite(stamp)&&Number.isFinite(noon)&&Number.isFinite(sunset)&&stamp>noon&&stamp<sunset;
+}
+function parseFirstAsrCalendar(json,month){
+  if(json?.code!==200||!Array.isArray(json.data))throw Error('Некорректный ответ расчёта Асра');
+  const result={};
+  for(const row of json.data){
+    const date=row.date?.gregorian?.date;
+    if(!/^\d{2}-\d{2}-\d{4}$/.test(date||''))continue;
+    const day=date.split('-').reverse().join('-'),meta=row.meta;
+    if(day.slice(0,7)!==month||meta?.school!=='STANDARD'||meta.timezone!=='Asia/Yekaterinburg'||Number(meta.method?.id)!==3||Math.abs(Number(meta.latitude)-57.1522)>0.0001||Math.abs(Number(meta.longitude)-65.5272)>0.0001||!Number.isFinite(Number(meta.latitude))||!Number.isFinite(Number(meta.longitude)))continue;
+    if(firstAsrValid(day,row,row.timings?.Asr))result[day]={time:row.timings.Asr,source:'Aladhan · расчёт',sourceUrl:firstAsrSourceUrl,kind:'calculated'};
+  }
+  return result;
+}
+function mergeFirstAsr(days,supplement){
+  const result={...days};
+  for(const [day,row]of Object.entries(days)){
+    if(row.source!=='al-hakk'||firstAsrValid(day,row,row.asrFirst))continue;
+    const first=supplement?.[day];
+    if(first?.kind==='calculated'&&firstAsrValid(day,row,first.time))result[day]={...row,asrFirst:first.time,asrFirstSource:first.source,asrFirstSourceUrl:first.sourceUrl,asrFirstKind:'calculated'};
+  }
+  return result;
+}
+
 const minute=60000;
 function personalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value)?value:''}
 // Timestamps carry the city's offset: no device timezone or fixed 24-hour night.
@@ -164,6 +205,7 @@ function createReminderTracker({read=()=>({}),write=()=>{},maxGap=65000,freshnes
 }
 
 
+
 const PUSH_ORIGIN='https://skodytunez-maker.github.io';
 const PUBLIC_APP=PUSH_ORIGIN+'/salah/';
 const DAY_MS=86400000;
@@ -195,21 +237,23 @@ function preferences(value){
  if(typeof c.name!=='string'||!c.name.trim()||c.name.length>160||!Number.isFinite(c.latitude)||Math.abs(c.latitude)>90||!Number.isFinite(c.longitude)||Math.abs(c.longitude)>180||typeof c.timezone!=='string'||c.timezone.length>80)fail(400,'Недопустимый город');
  try{new Intl.DateTimeFormat('en',{timeZone:c.timezone}).format(0);}catch{fail(400,'Недопустимый часовой пояс');}
  if(![1,2,3,4,5,13].includes(value.method)||![0,1].includes(value.school)||![1,2,3].includes(value.highLatitude))fail(400,'Недопустимый расчёт');
+ if(value.tyumenTimeSource!==undefined&&!TYUMEN_SOURCES.includes(value.tyumenTimeSource))fail(400,'Недопустимый источник расписания');
+ const tyumenTimeSource=normalizeTyumenSource(value.tyumenTimeSource);
  const offsets={},tableOffsets={},mosqueTimes={};
  for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;const tableN=value.tableOffsets?.[key]??0;if(!Number.isInteger(tableN)||Math.abs(tableN)>60)fail(400,'Недопустимая поправка');tableOffsets[key]=tableN;
   if(value.mosque===true){if(!validLocalTime(value.mosqueTimes?.[key]))fail(400,'Недопустимое личное расписание');mosqueTimes[key]=value.mosqueTimes[key];}}
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders};
 }
 function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
 function serverTimings(day,rows,p){
- const row=rows[day];if(!row)return null;
+ const row=rows[day];if(!row||isTyumen(p)&&!matchesTyumenSource(p.tyumenTimeSource,row))return null;
  const times={};for(const key of PRAYER_KEYS){
   let stamp=Date.parse(row.timings?.[key]);
-  if(isTyumen(p)&&key==='Asr'&&p.school===0)stamp=Date.parse(row.asrFirst);
+  if(isTyumen(p)&&key==='Asr'&&p.school===0)stamp=firstAsrValid(day,row,row.asrFirst)?Date.parse(row.asrFirst):NaN;
   if(isTyumen(p))stamp+=p.tableOffsets?.[key]*60000||0;
   if(!isTyumen(p)){
    if(p.mosque)stamp=localTimestamp(day,p.mosqueTimes[key],p.city.timezone);
@@ -221,7 +265,7 @@ function serverTimings(day,rows,p){
 }
 function eventsFor(p,rows,now){
  const today=cityDay(now,p.city.timezone);
- return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
+ return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.tyumenTimeSource,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
 }
 function dueEvents(events,now){return events.filter(e=>e.at<=now&&now-e.at<90000);}
 async function scheduleRows(p,now,{cache,fetcher=fetch}){
@@ -230,11 +274,11 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  async function json(url){const response=await fetcher(url,{signal:AbortSignal.timeout(15000),redirect:'error'});if(!response.ok)throw Error('schedule-unavailable');return response.json();}
  if(isTyumen(p)){
   // Never invent a new Tyumen timetable when no approved local month exists.
-  const key='tyumen-published-v1',saved=await cache.get(key,now);
+  const key='tyumen-published-v2:'+normalizeTyumenSource(p.tyumenTimeSource),saved=await cache.get(key,now);
   if(saved)return saved;
-  for(const file of ['al-hakk-tyumen.json','tyumen-october-2026.json']){const data=await json(PUBLIC_APP+'data/'+file);Object.assign(rows,data.days||{});}
+  for(const file of tyumenSourceFiles(p.tyumenTimeSource)){const data=await json(PUBLIC_APP+'data/'+file);Object.assign(rows,data.days||{});}
   const supplement=await json(PUBLIC_APP+'data/tyumen-first-asr.json');
-  for(const [day,value]of Object.entries(supplement.days||{}))if(rows[day]&&!rows[day].asrFirst)rows[day].asrFirst=typeof value==='string'?value:value.asrFirst;
+  rows=mergeFirstAsr(rows,supplement.days||{});
   await cache.put(key,rows,now+6*3600000);return rows;
  }
  for(const month of new Set(dates.map(d=>d.slice(0,7)))){
