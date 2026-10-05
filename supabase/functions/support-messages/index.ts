@@ -1,3 +1,5 @@
+// Accept only contact confirmation returned by Auth; metadata never authorizes access.
+const confirmedContact=user=>!!(user?.email_confirmed_at||(user?.phone_confirmed_at&&/^(?:\+)?(?:79\d{9}|992\d{9})$/.test(user.phone||'')));
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 const KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const ORIGINS=new Map([['https://skodytunez-maker.github.io','salah'],['https://sahaba-learning.skodytunez.chatgpt.site','sahaba']]);
@@ -22,7 +24,7 @@ export function createSupportHandler({getUser,getClaims,invoke}){
   if(Object.hasOwn(args,'p_before')&&args.p_before!==null&&(typeof args.p_before!=='string'||!Number.isFinite(Date.parse(args.p_before))))return reply(400,{error:'22023'});
   if(Object.hasOwn(args,'p_body')&&(typeof args.p_body!=='string'||args.p_body.trim().length<1||args.p_body.length>3000)||Object.hasOwn(args,'p_subject')&&(typeof args.p_subject!=='string'||args.p_subject.trim().length<1||args.p_subject.length>120)||Object.hasOwn(args,'p_version')&&(typeof args.p_version!=='string'||args.p_version.length>40))return reply(400,{error:'22023'});
   let user,claims;try{const checked=await getUser(bearer.slice(7));if(checked.error)return reply(401,{error:'42501'});user=checked.data?.user;const signed=await getClaims(bearer.slice(7));if(signed.error)return reply(401,{error:'42501'});claims=signed.data?.claims;}catch{return reply(503,{error:'auth_unavailable'})}
-  if(!user?.email_confirmed_at||user.is_anonymous||!UUID.test(user.id)||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'42501'});
+  if(!confirmedContact(user)||user.is_anonymous||!UUID.test(user.id)||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'42501'});
   try{return reply(200,{data:await invoke(name,args,claims)});}catch(error){const known=['support_rate_limit','conversation_closed','conversation_full'];if(error?.code==='42501')return reply(403,{error:'42501'});if(error?.code==='22023')return reply(400,{error:'22023'});if(known.includes(error?.message))return reply(429,{error:error.message});return reply(503,{error:'support_unavailable'})}
  };
 }

@@ -1,3 +1,5 @@
+// Accept only contact confirmation returned by Auth; metadata never authorizes access.
+const confirmedContact=user=>!!(user?.email_confirmed_at||(user?.phone_confirmed_at&&/^(?:\+)?(?:79\d{9}|992\d{9})$/.test(user.phone||'')));
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function validNotification(value){
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['enabled','permission','browser','device'].includes(k))||typeof value.enabled!=='boolean'||typeof value.browser!=='boolean'||!['granted','denied','default','unsupported'].includes(value.permission))return false;
@@ -27,7 +29,7 @@ export function createPresenceHandler({getUser,getClaims,isSessionActive,record}
   const result=await getUser(authorization.slice(7));if(result.error)return reply(401,{error:'invalid_session'});user=result.data?.user;
   const checked=await getClaims(authorization.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;
  }catch{return reply(503,{error:'auth_unavailable'});}
- if(!user||!UUID.test(user.id)||user.is_anonymous||!user.email_confirmed_at||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
+ if(!user||!UUID.test(user.id)||user.is_anonymous||!confirmedContact(user)||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
  try{if(!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'});}
  try{await record(user.id,input,claims.session_id);return reply(200,{ok:true});}catch{return reply(503,{error:'storage_unavailable'});}
 };}

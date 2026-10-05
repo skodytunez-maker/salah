@@ -1,0 +1,35 @@
+name: Verify staged phone authentication
+on:
+  pull_request:
+    paths:
+      - 'dist/js/*auth*'
+      - 'dist/js/counter-account.js'
+      - 'supabase/functions/**'
+      - 'supabase/rollout/**'
+      - 'scripts/check-*account*.mjs'
+      - 'scripts/check-phone-auth.mjs'
+      - 'scripts/check-sms-provider.mjs'
+      - '.github/workflows/phone-auth.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify phone flow and existing access controls
+        run: |
+          node scripts/check-phone-auth.mjs
+          node scripts/check-sms-provider.mjs
+          node scripts/check-counter-account.mjs
+          node scripts/check-shared-account.mjs
+          node scripts/check-account-presence.mjs
+          node scripts/check-owner-access.mjs
+          node scripts/check-support-server.mjs
+          node scripts/check-counter-sync.mjs
+          node scripts/check-security.mjs
+          node scripts/check-pages.mjs
