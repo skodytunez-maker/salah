@@ -105,3 +105,25 @@ page.location.hash='#adhkar';await page.open();assertHub(page);await page.select
 const beforeStop=page.container.writes;page.module.stopAdhkar();await page.open();assertList(page);assert.ok(page.container.writes>beforeStop,'Explicitly leaving the section invalidates the same-route guard');
 assert.deepEqual(page.notices,[]);
 console.log('PASS: real adhkar screen retains DOM, scroll, audio and a pending tap on refresh; reload restores exact card, all/favorites, free counter and summary; explicit navigation and invalid routes fall back safely.');
+
+// Basmala is omitted only in the displayed short-surah cards and previews.
+// The source text, other duas and progress IDs remain intact.
+const catalogueBefore=JSON.stringify(catalogue);
+for(const group of ['morning','evening']){
+ const listPage=browser({hash:'#adhkar?group='+group});await listPage.open();
+ assert.doesNotMatch(listPage.container.textContent,/Бисмилляахир-рахмаанир-рахиим/);
+ assert.match(listPage.container.textContent,/Бисмилляахи-ллязии/,'The protective dua keeps its own opening');
+ for(const id of ['surah112','surah113','surah114']){
+  const cardPage=browser({hash:'#adhkar?group='+group+'&view=card&item='+id});await cardPage.open();
+  const passage=cardPage.select('.dhikr-passage');
+  assert.doesNotMatch(passage.textContent,/Бисмилляахир|بِسْمِ/);
+  assert.match(cardPage.select('.dhikr-arabic').textContent,/^قُلْ/);
+  assert.match(cardPage.select('.transliteration').textContent,/^Қуль/);
+  if(id==='surah112')assert.match(passage.textContent,/якул-ляхуу куфуан ахад/);
+  assert.equal(cardId(cardPage),id);assert.match(cardPage.select('#adhkar-count').textContent,/0 \/ 3/);
+  await cardPage.select('#adhkar-count').click();assert.match(cardPage.select('#adhkar-count').textContent,/1 \/ 3/);
+  await assertUnchanged(cardPage);
+ }
+}
+assert.equal(JSON.stringify(catalogue),catalogueBefore,'Presentation never modifies the source catalogue');
+console.log('PASS: six morning/evening short-surah cards and list previews omit basmala, preserve other duas, original Arabic and counter identities.');
