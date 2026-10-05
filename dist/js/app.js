@@ -27,7 +27,7 @@ import{showKnowledge}from './knowledge.js';
 import{showQuran,stopQuran}from './quran.js';
 import{mountQuranPlayer}from './quran-player-bar.js';
 import{bindQiblaSwipe}from './home-swipe.js';
-import{mountQibla,prepareQiblaAccess,initQiblaAccess}from './qibla.js';
+import{mountQibla,prepareQiblaAccess}from './qibla.js';
 import{showLearning,stopLearning}from './learning.js';
 import{showAdhkar,stopAdhkar,adhkarHomeCard,selectAdhkar,updateAdhkarPeriod}from './adhkar.js';
 import{adhkarPeriod}from './adhkar-period.js';
@@ -42,7 +42,7 @@ const topHeader=document.querySelector('.workspace>header'),locationControl=docu
 const reminders=createReminders({getSettings:()=>settings,updateSettings,onChange:()=>ensureTahajjudDays(),getContext:()=>({today:dateKey(),days,cityKey:JSON.stringify([settings.city?.latitude,settings.city?.longitude,settings.city?.timezone,settings.method,settings.school,settings.highLatitude,settings.tyumenTimeSource,settings.offsets,settings.tableOffsets,settings.mosque,settings.mosqueTimes]),timingsFor:day=>timingsFor(day,days)}),toast});
 initPortraitMode();
 mountQuranPlayer();
-initQiblaAccess({onGranted:()=>{if(qiblaHandle?.controller&&!qiblaHandle.controller.enabled)qiblaHandle.controller.enable();}});
+// Compass permission is requested only when opening Qibla, never on ordinary app taps.
 function nav(){const iconNames={home:'house',knowledge:'journal-bookmark',quran:'book',adhkar:'circle',more:'person'};const activeRoute=['learning','umrah'].includes(currentRoute)?'knowledge':['account','admin','support','settings','about','sources','day','prayer','history','calendar'].includes(currentRoute)?'more':currentRoute;for(const id of ['desktop-nav','mobile-nav'])document.getElementById(id).innerHTML=routes.map(([key,name,icon])=>'<a class="nav-item '+(activeRoute===key?'active':'')+'" '+(activeRoute===key?'aria-current="page"':'')+' href="#'+key+'"><span class="nav-symbol" aria-hidden="true">'+('<img src="./assets/'+iconNames[key]+'.svg" alt="">')+'</span>'+name+'</a>').join('');document.getElementById('location-button').textContent=settings.city?settings.city.name:'Укажите город'}
 function dateHeader(){const zone=settings.city?.timezone;const today=new Intl.DateTimeFormat('ru-RU',{timeZone:zone,day:'numeric',month:'long',year:'numeric'}).format(new Date());const h=days[currentDay]?.hijri;return '<div class="date"><strong>'+ (h?esc(h.day+' '+['Мухаррам','Сафар','Раби аль-авваль','Раби аль-ахир','Джумада аль-уля','Джумада аль-ахира','Раджаб','Шаабан','Рамадан','Шавваль','Зуль-када','Зуль-хиджа'][h.month.number-1]+' '+h.year):'')+'</strong><span>'+today+'</span></div>'}
 function schedule(){const times=timingsFor(currentDay,days),next=nextPrayer(Date.now(),currentDay,days);return '<div class="panel-head"><h2>Намазы сегодня</h2><a class="text-button" href="#calendar">Календарь</a></div>'+prayers.map(([key,name])=>'<div class="prayer-row '+(next?.key===key?'next':'')+'"><span class="name">'+name+'</span><button class="schedule-time" data-time-toggle aria-label="Крупный отсчёт до ближайшего намаза"><time>'+ (times?formatTime(times[key]):'—')+'</time></button><button class="mark '+(history[currentDay]?.[key]?'done':'')+'" data-mark="'+key+'" aria-label="'+(history[currentDay]?.[key]?'Изменить отметку: ':'Отметить молитву: ')+name+'">'+(history[currentDay]?.[key]?'✓':'○')+'</button></div>').join('')+'<div class="sunrise"><span>☼ Восход · не является намазом</span><time>'+(times?formatTime(times.Sunrise):'—')+'</time></div>'}

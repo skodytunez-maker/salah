@@ -1,22 +1,24 @@
-import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES} from './app-release.js';
+import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from './app-release.js';
 import {esc,modal} from './ui.js';
 let manualCheck=null;
 const CHECK_INTERVAL=5*60*1000;
-const SEEN_KEY='salah:update-last-seen-v1';
+const LEGACY_SEEN_KEY='salah:update-last-seen-v1';
+const SEEN_KEY='salah:update-announcement-seen-v2';
 export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8):[];}
-const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES)};
+const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES),announcement:APP_ANNOUNCEMENT};
 export function releaseDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value)).replace(/ г\.$/,''):'';}
 export function validatedRelease(value){
  if(!value||!Number.isSafeInteger(value.version)||value.version<1||!releaseDate(value.date)||!Array.isArray(value.changes))return null;
  const changes=publicReleaseChanges(value.changes);
- return changes.length?{version:value.version,date:value.date,changes}:null;
+ const announcement=value.announcement&&value.announcement.version<=value.version?validatedRelease({...value.announcement,announcement:null}):null;
+ return changes.length?{version:value.version,date:value.date,changes,...(announcement?{announcement}:{})}:null;
 }
-function acknowledge(){try{localStorage.setItem(SEEN_KEY,String(APP_VERSION));}catch{}}
-function hasSeen(){try{return localStorage.getItem(SEEN_KEY)===String(APP_VERSION);}catch{return true;}}
-export function showAppRelease(release=currentRelease,{available=false}={}){
- const safe=validatedRelease(release)||(available?{version:0,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']}:currentRelease);
+function acknowledge(release=APP_ANNOUNCEMENT){try{localStorage.setItem(SEEN_KEY,String(Math.max(Number(localStorage.getItem(SEEN_KEY))||0,release.version)));}catch{}}
+export function hasSeenAnnouncement(release=APP_ANNOUNCEMENT){try{return Math.max(Number(localStorage.getItem(SEEN_KEY))||0,Number(localStorage.getItem(LEGACY_SEEN_KEY))||0)>=release.version;}catch{return true;}}
+export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false}={}){
+ const safe=validatedRelease(release)||(available?{version:0,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']}:APP_ANNOUNCEMENT);
  modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2 tabindex="-1" autofocus>'+(available?'Что изменится':'Что нового')+'</h2><ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><button class="button secondary" type="button" data-close>Понятно</button></div>');
- if(!available)acknowledge();
+ if(!available)acknowledge(safe);
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
 export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,showRelease=showAppRelease}={}) {
@@ -45,7 +47,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,sh
    detail.onclick=()=>{showAppRelease(release,{available});if(!available)clearBanner();};copy.append(title,detail);
    const actions=document.createElement('div');actions.className='app-update-actions';
    if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{requested=true;button.disabled=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else location.reload();};actions.append(button);}
-   const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label',available?'Напомнить об обновлении при следующем запуске':'Закрыть уведомление об обновлении');close.onclick=()=>{if(available)dismissedWorker=registration.waiting;else acknowledge();clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
+   const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление об обновлении');close.onclick=()=>{if(available)dismissedWorker=registration.waiting;acknowledge(release.announcement||release);clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
   }
   async function offer(force=false){
    const worker=registration.waiting;
@@ -58,17 +60,18 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,sh
     const timer=setTimeout(()=>done(null),1500);
     try{channel=new MessageChannel();channel.port1.onmessage=event=>done(event.data);worker.postMessage({type:'SALAH_RELEASE_INFO'},[channel.port2]);}catch{done(null);}
    });
-   if(registration.waiting!==worker||requested||dismissedWorker===worker&&!force)return;
-   makeBanner({release:release||{version:APP_VERSION+1,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']},available:true});
+   if(registration.waiting!==worker||requested||dismissedWorker===worker&&!force||offerWorker===worker&&banner)return;
+   if(!force&&(!release?.announcement||hasSeenAnnouncement(release.announcement)))return;
+   makeBanner({release:(!force?release.announcement:release)||{version:APP_VERSION+1,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']},available:true});
   }
   function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed')void offer();});if(worker.state==='installed')void offer();}
   // Apply already downloaded updates only before the user starts interacting.
   if(registration.waiting&&navigator.serviceWorker.controller&&startupUntouched&&document.visibilityState==='visible'&&Date.now()-startedAt<1000){try{requested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});}catch{requested=false}}
   const quietStartup=startupUntouched&&document.visibilityState==='visible'&&Date.now()-startedAt<1000&&!document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]');
   finishStartup();watch(registration.installing);
-  if(!requested){if(registration.waiting)void offer();else if(!hasSeen()){
+  if(!requested){if(registration.waiting)void offer();else if(!hasSeenAnnouncement()){
    // Show the installed release once; never replace an open form or dialog.
-   if(quietStartup&&canShowRelease()&&!document.getElementById?.('modal')?.open){showRelease(currentRelease);acknowledge();}else makeBanner();
+   if(quietStartup&&canShowRelease()&&!document.getElementById?.('modal')?.open){showRelease(APP_ANNOUNCEMENT);acknowledge();}else if(canShowRelease())makeBanner({release:APP_ANNOUNCEMENT});
   }}
   registration.addEventListener('updatefound',()=>watch(registration.installing));
   async function check(force=false){
