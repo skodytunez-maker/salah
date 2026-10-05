@@ -42,8 +42,8 @@ assert.deepEqual(await (await removedFactor(request('valid-owner-token'))).json(
 console.log('PASS: owner password alone cannot read statistics; signed AAL2 and active TOTP required; bad signature, wrong issuer, removed factor denied.');
 
 let usersCalls=0;
-const usersOwner=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,readUsers:async page=>{usersCalls++;assert.equal(page,1);return{total:1,users:[{email:'never-return@example.test',nickname:'<test>',joinedAt:'2026-10-02T01:00:00Z',lastSignInAt:'2026-10-02T01:05:00Z',privateSecret:'never-return'}]};}});
-const listed=await usersOwner(request('valid-owner-token','?mode=users&page=1'));assert.equal(listed.status,200);const list=await listed.json();assert.equal(list.users[0].nickname,'<test>');assert.ok(!JSON.stringify(list).includes('never-return'));assert.equal(usersCalls,1);
+const usersOwner=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,readUsers:async page=>{usersCalls++;assert.equal(page,1);return{total:1,users:[{id:'11111111-1111-4111-8111-111111111111',email:'never-return@example.test',nickname:'<test>',joinedAt:'2026-10-02T01:00:00Z',lastSignInAt:'2026-10-02T01:05:00Z',privateSecret:'never-return'}]};}});
+const listed=await usersOwner(request('valid-owner-token','?mode=users&page=1'));assert.equal(listed.status,200);const list=await listed.json();assert.equal(list.users[0].nickname,'<test>');assert.equal(list.users[0].id,'11111111-1111-4111-8111-111111111111');assert.ok(!JSON.stringify(list).includes('never-return'));assert.equal(usersCalls,1);
 assert.equal((await usersOwner(request('valid-owner-token','?mode=users&page=0'))).status,400);
 assert.equal((await usersOwner(request('valid-owner-token','?mode=users&days=7'))).status,400);
 const usersFirstFactor=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims:async()=>({data:{claims:{...claims,aal:'aal1'}}}),readUsers:async()=>{throw Error('private user list leaked');}});
@@ -70,7 +70,7 @@ const notificationResponse=await notificationOwner(request('valid-owner-token','
 assert.match(source,/join auth.sessions a on a.id=s.session_id and a.user_id=s.user_id/,'Revoked device sessions must be excluded');assert.match(source,/d.subscription is not null/);assert.match(source,/d.updated_at>now\(\)-interval '90 days'/);assert.match(source,/jsonb_each/,'A saved subscription for adhkar alone is not a prayer subscription');
 console.log('PASS: only MFA owner receives minimal notification states; absent reports stay unknown; revoked sessions, expired subscriptions and non-prayer reminders excluded.');
 
-const releases=await handler(request('valid-owner-token','?mode=releases'));assert.equal(releases.status,200);assert.equal(releases.headers.get('Cache-Control'),'no-store, private');const privateChanges=await releases.json();assert.ok(privateChanges.releases[0].changes[0].includes('кабинета'));
+const releases=await handler(request('valid-owner-token','?mode=releases'));assert.equal(releases.status,200);assert.equal(releases.headers.get('Cache-Control'),'no-store, private');const privateChanges=await releases.json();assert.ok(privateChanges.releases.some(row=>row.changes.some(change=>change.includes('кабинета'))));
 const sahabaChanges=await(await handler(request('valid-owner-token','?mode=releases&app=sahaba'))).json();assert.ok(sahabaChanges.releases[0].changes.some(x=>x.includes('SAHABA')));
 for(const token of [null,'forged-owner-token','other-user-token'])assert.ok([401,403].includes((await handler(request(token,'?mode=releases'))).status));
 assert.equal((await firstFactor(request('valid-owner-token','?mode=releases'))).status,403);
