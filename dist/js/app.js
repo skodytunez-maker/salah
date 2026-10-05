@@ -41,7 +41,7 @@ let prayerDisplay='timetable',learningEntry=null,quranRenderedHash=null,umrahRen
 const app=document.getElementById('app');
 const topHeader=document.querySelector('.workspace>header'),locationControl=document.getElementById('location-button'),settingsControl=document.getElementById('settings-button');
 const reminders=createReminders({getSettings:()=>settings,updateSettings,onChange:()=>ensureTahajjudDays(),getContext:()=>({today:dateKey(),days,cityKey:JSON.stringify([settings.city?.latitude,settings.city?.longitude,settings.city?.timezone,settings.method,settings.school,settings.highLatitude,settings.tyumenTimeSource,settings.offsets,settings.tableOffsets,settings.mosque,settings.mosqueTimes]),timingsFor:day=>timingsFor(day,days)}),toast});
-const notificationInvite=createNotificationInvite({getState:()=>({signedIn:counterSyncStatus().signedIn,city:settings.city,reminders:settings.reminders,push:reminders.invitationState()}),enable:()=>reminders.enableStandard(),openSettings:()=>{location.hash='settings';}});
+const notificationInvite=createNotificationInvite({getState:()=>({signedIn:counterSyncStatus().signedIn,city:settings.city,reminders:settings.reminders,push:reminders.invitationState()}),enable:()=>reminders.enableStandard({allowDisabled:true}),openSettings:()=>{location.hash='settings';}});
 initPortraitMode();
 mountQuranPlayer();
 // Compass permission is requested only when opening Qibla, never on ordinary app taps.
