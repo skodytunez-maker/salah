@@ -70,20 +70,21 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   finally{busy=false;draw();if(needsSync){needsSync=false;queue();}}
  }
  async function enable(){
-  if(busy||!supported()||!getSettings().city||!normalizeReminders(getSettings().reminders).enabled)return;
+  if(busy||!supported()||!getSettings().city||!normalizeReminders(getSettings().reminders).enabled||Notification.permission==='denied')return {ready:false,message:'Проверьте разрешение телефона и настройки напоминаний.'};
   // Permission is requested directly by this button, never on app startup.
-  const permissionTask=Notification.requestPermission();busy=true;status='Подключаем…';draw();
+  let connected=false;busy=true;status='Подключаем…';draw();
   try{
-   if(await permissionTask!=='granted')throw Error('Разрешите уведомления в настройках телефона.');
+   if(await Notification.requestPermission()!=='granted')throw Error('Разрешите уведомления в настройках телефона.');
    if(!config)await loadConfig(true);if(!config)throw Error('Сервис доставки пока недоступен. Повторите позже.');
    if(!state)state=newDevice();
    const reg=await registration();let sub=await waitForPushOperation(reg.pushManager.getSubscription());
    const wanted=keyBytes(config.publicKey),actual=sub?.options?.applicationServerKey;
    if(sub&&(!state.saved||actual&&!sameKey(new Uint8Array(actual),wanted))){if(!await waitForPushOperation(sub.unsubscribe()))throw Error('Телефон не обновил подписку. Повторите подключение.');sub=null;}
    if(!sub)sub=await waitForPushOperation(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:wanted}));
-   state.pendingRemoval=false;write(state);busy=false;await sync(true);
+   state.pendingRemoval=false;write(state);busy=false;await sync(true);connected=onlineReady&&!!state?.saved&&!state.pendingRemoval&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&Notification.permission==='granted';
   }catch(error){status=error.message||'Не удалось подключить уведомления.';toast(status);}
   finally{busy=false;draw();}
+  return {ready:connected,message:status};
  }
  async function disable(){
   if(busy||!state)return;busy=true;draw();
@@ -135,6 +136,6 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  window.addEventListener('online',()=>{loadConfig(true);sync(true);});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();if(!config)loadConfig();sync();}});
  loadConfig();sync(true);
- return {mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&supported()&&Notification.permission==='granted',sync};
+ return {enable,invitationState:()=>({supported:supported(),permission:typeof Notification==='undefined'?'unsupported':Notification.permission,hasDevice:!!state,guide:IOS()&&!installed()?'На iPhone добавьте SALAH на экран «Домой» и откройте его оттуда.':!supported()?'Этот режим не поддерживает фоновые веб-уведомления. Откройте установленное веб-приложение SALAH в Safari или Chrome.':''}),mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&supported()&&Notification.permission==='granted',sync};
 }
 function sameKey(a,b){return a.length===b.length&&a.every((n,i)=>n===b[i]);}

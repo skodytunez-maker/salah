@@ -1,3 +1,4 @@
+import {standardReminderPreferences} from './notification-invite.js';
 import {readDhikrActivity,dhikrAllowedAt} from './dhikr-reminder.js';
 import{setForegroundAudio}from './audio-focus.js';
 import {createPushReminders} from './push-reminders.js';
@@ -176,10 +177,10 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   }
 
   function save(value){
-    if(!updateSettings({reminders:normalizeReminders(value)}))say('Не удалось сохранить напоминание.');
+    const saved=updateSettings({reminders:normalizeReminders(value)});if(!saved)say('Не удалось сохранить напоминание.');
     Promise.resolve(onChange()).catch(()=>{});
     tracker.reset();generation++;contextIdentity=null;
-    draw();drawJumuah();drawTahajjud();
+    draw();drawJumuah();drawTahajjud();return saved;
   }
 
   function drawTahajjud(){
@@ -257,7 +258,13 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   function mountTahajjud(container){tahajjudMounted=container;drawTahajjud();}
   function mountJumuah(container){jumuahMounted=container;if(container)mounted?.querySelector('[data-jumuah-slot]')?.append(container.closest('details'));drawJumuah();}
   function destroy(){destroyed=true;generation++;tracker.reset();stopAudio();if(audio){audio.removeAttribute('src');audio.load();}player?.remove();player=null;mounted=null;jumuahMounted=null;tahajjudMounted=null;document.removeEventListener('visibilitychange',visibilityChanged);}
-  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy};
+  return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy,invitationState:background.invitationState,enableStandard(){
+   const access=background.invitationState();
+   if(!access.supported||access.permission==='denied'||!getSettings().city)return {ready:false,message:'Откройте настройки уведомлений на этом устройстве.'};
+   if(getSettings().reminders!==undefined||access.hasDevice)return {ready:false,message:'Настройки уже выбраны. Измените их в разделе уведомлений.'};
+   if(!save(standardReminderPreferences(getSettings().reminders)))return {ready:false,message:'Не удалось сохранить настройки. Подключение не выполнено.'};
+   return background.enable();
+  }};
 }
 
 function validTime(value){return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
