@@ -1,8 +1,9 @@
 import{esc}from './ui.js';
 // This is a display preference, never an authorization grant or a public announcement receipt.
 const SEEN_PREFIX='salah:owner-home-release-seen-v1:';
-export function createOwnerReleaseCard({getState,verify,release,showRelease,storage=globalThis.localStorage,schedule=setTimeout,cancel=clearTimeout}){
- let host=null,userId=null,attempted=false,pending=null,epoch=0,timer=null,signature='',dismissed=new Set(),knownOwner=false;
+const POPUP_SEEN_PREFIX='salah:owner-update-popup-seen-v1:';
+export function createOwnerReleaseCard({getState,verify,release,showRelease,storage=globalThis.localStorage,schedule=setTimeout,cancel=clearTimeout,onVerified=()=>{}}){
+ let host=null,userId=null,attempted=false,pending=null,epoch=0,timer=null,signature='',dismissed=new Set(),knownOwner=false,popupShown=new Set();
  const stop=()=>{if(timer!==null)cancel(timer);timer=null;};
  const seen=id=>{if(dismissed.has(id))return true;try{return Number(storage.getItem(SEEN_PREFIX+id))>=release.version;}catch{return false;}};
  const active=()=>host?.isConnected&&getState().active;
@@ -26,10 +27,11 @@ export function createOwnerReleaseCard({getState,verify,release,showRelease,stor
   attempted=true;const started=epoch;
   const task=(async()=>{try{await verify();}catch{}finally{
    if(epoch!==started)return;
-   pending=null;knownOwner=getState().ownerId===id;draw();stop();
+   pending=null;knownOwner=getState().ownerId===id;draw();if(knownOwner)onVerified(id);stop();
    // Renew only an unread, server-verified owner's card. Ordinary users have no polling.
    if(active()&&getState().ownerId===id&&!seen(id))timer=schedule(()=>{timer=null;refresh({retry:true});},55000);
   }})();pending=task;return task;
  }
- return{mount(container){if(host!==container){host=container;signature='';}if(!host){stop();return;}return refresh({retry:knownOwner});},refresh};
+ function acknowledge(){if(!userId)return;dismissed.add(userId);try{storage.setItem(SEEN_PREFIX+userId,String(release.version));}catch{}stop();draw();}
+ return{mount(container){if(host!==container){host=container;signature='';}if(!host){stop();return;}return refresh({retry:knownOwner});},refresh,acknowledge,popupSeen(id){if(popupShown.has(id))return true;try{return Number(storage.getItem(POPUP_SEEN_PREFIX+id))>=release.version;}catch{return false;}},markPopupSeen(id){popupShown.add(id);try{storage.setItem(POPUP_SEEN_PREFIX+id,String(release.version));}catch{}}};
 }
