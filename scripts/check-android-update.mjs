@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {androidReleaseVersion,configureAndroidVersion,compareAndroidUpdate} from '../mobile/scripts/android-release.mjs';
+import {androidReleaseVersion,configureAndroidVersion,compareAndroidUpdate,verifiedSigningCertificates} from '../mobile/scripts/android-release.mjs';
+const digest='a'.repeat(64);
+assert.deepEqual(verifiedSigningCertificates('Signer #1 certificate SHA-256 digest: '+digest+'\r\n'),[digest]);
+assert.deepEqual(verifiedSigningCertificates('Signer (minSdkVersion=33, maxSdkVersion=2147483647) certificate SHA-256 digest: '+digest+'\n'),[digest]);
+assert.deepEqual(verifiedSigningCertificates('Source Stamp Signer certificate SHA-256 digest: '+digest+'\nSigner #1 public key SHA-256 digest: '+digest+'\n'),[]);
 const release=androidReleaseVersion(await readFile(new URL('../dist/js/app-release.js',import.meta.url),'utf8'));
 const fixture='android {\n defaultConfig {\n  applicationId "com.saadikobilov.salah"\n  versionCode 1\n  versionName "1.0"\n }\n signingConfigs { custom {} }\n}\n';
 const configured=configureAndroidVersion(fixture,release);assert.match(configured,new RegExp('versionCode '+release.versionCode));assert.ok(configured.includes('applicationId "com.saadikobilov.salah"'));assert.ok(configured.includes('signingConfigs { custom {} }'));assert.equal(configureAndroidVersion(configured,release),configured);
