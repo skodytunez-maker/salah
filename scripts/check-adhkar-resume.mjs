@@ -119,7 +119,7 @@ for(const group of ['morning','evening']){
   assert.doesNotMatch(passage.textContent,/Бисмилляахир|بِسْمِ/);
   assert.match(cardPage.select('.dhikr-arabic').textContent,/^قُلْ/);
   assert.match(cardPage.select('.transliteration').textContent,/^Қуль/);
-  if(id==='surah112')assert.match(passage.textContent,/якул-ляхуу куфуан ахад/);
+  if(id==='surah112')assert.match(passage.textContent,/якулляху куфууан Ахад/);
   assert.equal(cardId(cardPage),id);assert.match(cardPage.select('#adhkar-count').textContent,/0 \/ 3/);
   await cardPage.select('#adhkar-count').click();assert.match(cardPage.select('#adhkar-count').textContent,/1 \/ 3/);
   await assertUnchanged(cardPage);

@@ -13,7 +13,8 @@ for(const meta of index.surahs){
  const surah={...source,salahReading:data};assert.equal(hasOwnTranscription(surah),true);
  for(const [i,row] of data.verses.entries()){
   const verse=source.verses[i];assert.equal(row.ayah,verse.ayah);assert.equal(row.arabicKey,arabicReadingKey(verse.arabic));
-  assert.ok(row.text.trim());assert.ok(!/[A-Za-z\u0600-\u06ff<>вВ]/.test(row.text),'Only safe Cyrillic notation: '+meta.number+':'+row.ayah);
+  assert.ok(row.text.trim());assert.ok(!/[A-Za-z\u0600-\u06ff<>]/.test(row.text),'Only safe Cyrillic notation: '+meta.number+':'+row.ayah);
+  if(meta.number===114&&row.ayah===5)assert.equal(row.text,'Аль-Лязи Йувасвису Фи Судурин-Наас');else assert.doesNotMatch(row.text,/[вВ]/);
   assert.equal(readingTranscription(surah,verse,'source'),verse.transliteration);
   assert.equal(readingTranscription(surah,verse,'salah-preview'),formatSalahTranscription(row.text));count++;
  }
