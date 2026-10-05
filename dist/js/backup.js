@@ -56,7 +56,7 @@ function personalValue(key,value){
   if(![16,18,20,22,24,28].includes(value))fail('Некорректный размер текста азкаров.');
  }else if(key==='adhkar-progress-v2'){
   exactKeys(value,['version','totals','days'],key);
-  if(value.version!==2||!isRecord(value.days)||Object.keys(value.days).length>20000)fail('Некорректный накопительный счётчик азкаров.');
+  if(value.version!==2||!isRecord(value.days)||Object.keys(value.days).length>20000)fail('Некорректные данные счётчика азкаров.');
   counts(value.totals,key);
   for(const [day,groups]of Object.entries(value.days)){
    if(!validDay(day))fail('Некорректная дата азкаров.');
