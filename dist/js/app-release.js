@@ -1,6 +1,6 @@
-export const APP_VERSION=187;
+export const APP_VERSION=188;
 export const APP_UPDATED_AT='2026-10-06';
-export const APP_CHANGES=["Добавлены плавные свайпы назад и вперёд между страницами.","Карточки азкаров двигаются за пальцем при перелистывании."];
+export const APP_CHANGES=["В меню появились значки киблы, календаря, поддержки и других разделов."];
 // Public notes list new user-facing features or sections only. Internal settings,
 // maintenance fixes and owner-only changes stay in Git history, not these lists.
 // Keep the announcement unchanged for minor builds; advance only for major public features.

@@ -45,6 +45,7 @@ jobs:
           node scripts/check-shared-account.mjs
           node scripts/check-owner-access.mjs
           node scripts/check-owner-client.mjs
+          node scripts/check-owner-release-card.mjs
           node scripts/check-account-presence.mjs
           node scripts/check-notification-status.mjs
           node scripts/check-presence-load.mjs

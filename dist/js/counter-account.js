@@ -3,7 +3,7 @@ import{accountAuthClient,checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}
 import{createCounterSync}from './counter-sync-core.js';
 import{esc}from './ui.js';
 let engine=null,session=null,timer=null,busy=null,status='local',reason='',host=null,accountScreen=0,accountArea=null;
-export const counterSyncStatus=()=>({status,reason,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous});
+export const counterSyncStatus=()=>({status,reason,userId:session?.user?.id||null,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous});
 function emailErrorMessage(error){
  if(navigator.onLine===false)return 'Нет соединения. Подключитесь к интернету и повторите отправку.';
  if(error?.status===429||['over_email_send_rate_limit','over_request_rate_limit'].includes(error?.code))return 'Слишком много запросов. Подождите немного и попробуйте снова.';

@@ -25,6 +25,7 @@ function authClient(){
  return client;
 }
 export function ownerVerified(){return verified&&Date.now()-verifiedAt<60000;}
+export function verifiedOwnerId(){return ownerVerified()?verifiedUserId:null;}
 export function ownerNeedsMfa(){return mfaRequired;}
 export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}
 async function callOwner(session,query=''){
