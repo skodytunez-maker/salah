@@ -2,7 +2,7 @@ import{bindOwnerCardNavigation}from './owner-card-navigation.js';
 import{analyticsSite}from './analytics.js';
 import{esc,title}from './ui.js';
 import{notificationLabels}from './notification-status.js';
-import{ownerUserCard,validOwnerUserId}from './owner-user-card.js';
+import{ownerUserCard,validOwnerUserId,bindOwnerNotificationInfo}from './owner-user-card.js';
 import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerUsers,ownerReleases,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
 let screen=0,period=7,cabinetView='overview';
 
@@ -77,7 +77,7 @@ export async function showAdmin(app,options={}){
  let selectedView=cabinetView,usersPage=1,usersLoad=0,usersBusy=false,usersSnapshot=[],selectedUser=null;
  const cardArea=app.querySelector('#owner-panel-users');cardArea.insertAdjacentHTML('beforeend','<div id="owner-user-detail" hidden><button type="button" class="text-button" id="owner-user-back">← Пользователи</button><div id="owner-user-card"></div><p class="muted owner-card-status" id="owner-user-card-status" role="status" aria-live="polite"></p><button type="button" class="text-button" id="owner-user-refresh">Обновить</button></div>');
  const detail=app.querySelector('#owner-user-detail'),card=app.querySelector('#owner-user-card'),cardStatus=app.querySelector('#owner-user-card-status');
- const renderCard=()=>{if(!selectedUser)return;const focused=document.activeElement?.id==='owner-user-name',markup=ownerUserCard(selectedUser);if(card.innerHTML!==markup){card.innerHTML=markup;if(focused)card.querySelector('#owner-user-name').focus();}};
+ const renderCard=()=>{if(!selectedUser)return;const focused=document.activeElement?.id==='owner-user-name',markup=ownerUserCard(selectedUser);if(card.innerHTML!==markup){card.innerHTML=markup;bindOwnerNotificationInfo(card);if(focused)card.querySelector('#owner-user-name').focus();}};
  const openUser=user=>{if(!validOwnerUserId(user.id))return;selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;card.querySelector('#owner-user-name').focus();};
  const dismissCard=()=>{const previous=selectedUser?.id;selectedUser=null;detail.hidden=true;card.innerHTML='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus();};
  app.querySelector('#owner-user-back').onclick=dismissCard;
