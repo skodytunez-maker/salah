@@ -74,6 +74,7 @@ console.log('PASS: unchanged subscription retries after an outage; failed public
 const {pushConnectionReport,waitForPushOperation}=await import('../dist/js/push-reminders.js');
 const healthy={supported:true,enabled:true,city:true,permission:'granted',subscription:true,saved:true,current:true,service:true};
 assert.equal(pushConnectionReport(healthy).ready,true);
+assert.equal(pushConnectionReport({...healthy,saved:false}).checks.at(-1).detail,'Подключите фоновые уведомления.');
 for(const missing of [{current:false},{subscription:false},{service:false},{permission:'denied'},{enabled:false},{city:false},{supported:false},{saved:false}])assert.equal(pushConnectionReport({...healthy,...missing}).ready,false);
 assert.ok(!JSON.stringify(pushConnectionReport({...healthy,token:'private',email:'private'})).includes('private'));
 assert.equal(await waitForPushOperation(Promise.resolve('ready'),5),'ready');

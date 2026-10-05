@@ -20,12 +20,12 @@ export async function waitForPushOperation(task,timeoutMs=10000){
 }
 export function pushConnectionReport({supported=false,enabled=false,city=false,permission='default',subscription=false,saved=false,current=false,service=false}={}){
  const checks=[
-  {label:'Напоминания',ok:enabled,detail:'Включите напоминания выше.'},
+  {label:'Напоминания',ok:enabled,detail:'Включите хотя бы одно напоминание выше.'},
   {label:'Город',ok:city,detail:'Выберите город в настройках.'},
   {label:'Разрешение телефона',ok:supported&&permission==='granted',detail:!supported?'В этом режиме фоновые веб-уведомления не поддерживаются.':permission==='denied'?'Разрешите уведомления в системных настройках SALAH.':'Нажмите «Включить фоновые уведомления».'},
   {label:'Подписка телефона',ok:subscription,detail:'Нажмите «Включить фоновые уведомления».'},
   {label:'Сервис доставки',ok:service,detail:'Проверьте интернет и повторите проверку.'},
-  {label:'Сохранение настроек',ok:saved&&current,detail:'Нажмите «Обновить подключение», чтобы сохранить текущие настройки.'}
+  {label:'Сохранение настроек',ok:saved&&current,detail:saved?'Нажмите «Обновить подключение», чтобы сохранить текущие настройки.':'Подключите фоновые уведомления.'}
  ];
  return {ready:checks.every(row=>row.ok),checks:checks.map(row=>({...row,detail:row.ok?'Готово':row.detail}))};
 }
