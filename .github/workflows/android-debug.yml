@@ -5,10 +5,12 @@ on:
     paths:
       - 'mobile/**'
       - '.github/workflows/android-debug.yml'
+      - 'dist/js/app-release.js'
   pull_request:
     paths:
       - 'mobile/**'
       - '.github/workflows/android-debug.yml'
+      - 'dist/js/app-release.js'
 permissions:
   contents: read
 jobs:
@@ -50,9 +52,17 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
+      - name: Verify APK signature and package metadata
+        run: node mobile/scripts/inspect-android-apk.mjs mobile/android/app/build/outputs/apk/debug/app-debug.apk mobile/android/app/build/outputs/apk/debug/apk-report.json
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: salah-android-debug
           path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Upload APK metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-android-debug-metadata
+          path: mobile/android/app/build/outputs/apk/debug/apk-report.json
           if-no-files-found: error
