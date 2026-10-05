@@ -128,7 +128,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":175,"date":"2026-10-05","changes":["На главной появилось добровольное подключение уведомлений о намазах и Джума для тех, кто ещё их не настраивал."],"announcement":{"version":173,"date":"2026-10-05","changes":["Добавлено добровольное напоминание о зикре после паузы в 2 или 3 дня.","Короткие тексты аята и хадиса чередуются. Напоминание можно отключить в настройках."]}};
+const RELEASE={"version":175,"date":"2026-10-05","changes":["На главной появилось добровольное подключение уведомлений о намазах и Джума для тех, кто ещё не подключил фоновую доставку."],"announcement":{"version":173,"date":"2026-10-05","changes":["Добавлено добровольное напоминание о зикре после паузы в 2 или 3 дня.","Короткие тексты аята и хадиса чередуются. Напоминание можно отключить в настройках."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 

@@ -261,8 +261,8 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   return {mountSettings,mountJumuah,mountTahajjud,tick,reset,destroy,invitationState:background.invitationState,enableStandard(){
    const access=background.invitationState();
    if(!access.supported||access.permission==='denied'||!getSettings().city)return {ready:false,message:'Откройте настройки уведомлений на этом устройстве.'};
-   if(getSettings().reminders!==undefined||access.hasDevice)return {ready:false,message:'Настройки уже выбраны. Измените их в разделе уведомлений.'};
-   if(!save(standardReminderPreferences(getSettings().reminders)))return {ready:false,message:'Не удалось сохранить настройки. Подключение не выполнено.'};
+   if(access.hasDevice||(getSettings().reminders!==undefined&&!preferences().enabled))return {ready:false,message:'Настройки уже выбраны. Измените их в разделе уведомлений.'};
+   if(getSettings().reminders===undefined&&!save(standardReminderPreferences()))return {ready:false,message:'Не удалось сохранить настройки. Подключение не выполнено.'};
    return background.enable();
   }};
 }
