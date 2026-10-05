@@ -4,6 +4,12 @@ let manualCheck=null;
 const CHECK_INTERVAL=5*60*1000;
 const LEGACY_SEEN_KEY='salah:update-last-seen-v1';
 const SEEN_KEY='salah:update-announcement-seen-v2';
+const SOFT_RELOAD_KEY='salah:update-reload-transition-v1';
+let reloadInProgress=false,restoreTransition=false;
+try{restoreTransition=sessionStorage.getItem(SOFT_RELOAD_KEY)==='1';if(restoreTransition){sessionStorage.removeItem(SOFT_RELOAD_KEY);document.documentElement.classList.add('salah-update-restoring');}}catch{}
+export function finishAppUpdateTransition(){if(!restoreTransition)return;restoreTransition=false;const root=document.documentElement;requestAnimationFrame(()=>{root.classList.add('salah-update-restoring-done');setTimeout(()=>root.classList.remove('salah-update-restoring','salah-update-restoring-done'),360);});}
+async function reloadAfterUpdate(){if(reloadInProgress)return;reloadInProgress=true;if(!document.documentElement?.classList||typeof requestAnimationFrame!=='function'){location.reload();return}const root=document.documentElement;root.classList.add('salah-update-leaving');requestAnimationFrame(()=>root.classList.add('salah-update-leaving-active'));await new Promise(resolve=>setTimeout(resolve,360));try{sessionStorage.setItem(SOFT_RELOAD_KEY,'1')}catch{}location.reload();}
+
 export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8):[];}
 const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES),announcement:APP_ANNOUNCEMENT};
 export function releaseDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value)).replace(/ г\.$/,''):'';}
@@ -35,7 +41,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  const watched=new WeakSet();
  const clearBanner=()=>{banner?.remove();banner=null;};
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-  if(requested&&!reloaded){reloaded=true;location.reload();}
+  if(requested&&!reloaded){reloaded=true;void reloadAfterUpdate();}
   else if(offerWorker){const announced=Boolean(banner);clearBanner();offerWorker=null;if(announced)toast('Обновление установлено.');}
  });
  try {
@@ -47,7 +53,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    const detail=document.createElement('button');detail.type='button';detail.className='app-update-details';detail.textContent=releaseDate(release.date)?releaseDate(release.date)+' · Что нового':'Посмотреть изменения';
    detail.onclick=()=>{showAppRelease(release,{available});if(!available)clearBanner();};copy.append(title,detail);
    const actions=document.createElement('div');actions.className='app-update-actions';
-   if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{requested=true;button.disabled=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else location.reload();};actions.append(button);}
+   if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{requested=true;button.disabled=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else void reloadAfterUpdate();};actions.append(button);}
    const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление об обновлении');close.onclick=()=>{if(available)dismissedWorker=registration.waiting;acknowledge(release.announcement||release);clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
   }
   async function offer(force=false){

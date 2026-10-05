@@ -192,3 +192,10 @@ button.owner-user-row{width:100%;text-align:left;font:inherit;color:inherit;back
 .owner-card-notifications{display:flex;flex-wrap:wrap;gap:18px}.owner-notification-flag{display:inline-flex;align-items:center;gap:7px;border:0;padding:7px 0;background:transparent;color:var(--text);font:inherit;cursor:pointer}.owner-notification-flag svg{width:20px;height:20px;fill:none;stroke:#596273;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.owner-notification-flag.is-connected svg{stroke:#57c99a}.owner-notification-flag:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}.owner-notification-info{font-size:11px;color:var(--muted);margin:5px 0 0}
 
 .owner-notification-flag span{color:var(--text);font-size:12px}
+
+/* Smoothly mask the service-worker document swap with the app's deep-night base. */
+html.salah-update-leaving::after,html.salah-update-restoring::after{content:"";position:fixed;inset:0;z-index:2147483647;pointer-events:none;background:#0d1326;opacity:1;transition:opacity 320ms ease}
+html.salah-update-leaving::after{opacity:0}
+html.salah-update-leaving.salah-update-leaving-active::after{opacity:1}
+html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
+@media(prefers-reduced-motion:reduce){html.salah-update-leaving::after,html.salah-update-restoring::after{transition-duration:0s}}
