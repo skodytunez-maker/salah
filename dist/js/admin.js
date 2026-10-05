@@ -1,4 +1,4 @@
-import{bindOwnerCardNavigation}from './owner-card-navigation.js';
+import{bindOwnerCardNavigation,createOwnerCardHistory}from './owner-card-navigation.js';
 import{analyticsSite}from './analytics.js';
 import{esc,title}from './ui.js';
 import{notificationLabels}from './notification-status.js';
@@ -44,6 +44,7 @@ async function showMfa(app,active,options){
 }
 
 export async function showAdmin(app,options={}){
+ app.ownerDispose?.();
  const id=++screen;app.dataset.ownerScreen=String(id);
  const active=()=>app.dataset.ownerScreen===String(id)&&(options.isActive?options.isActive():location.hash.split('?')[0]==='#admin');
  app.innerHTML=(options.embedded?'':title('Кабинет владельца'))+'<section class="panel section"><p role="status">Проверяем доступ…</p></section>';
@@ -78,20 +79,23 @@ export async function showAdmin(app,options={}){
  const cardArea=app.querySelector('#owner-panel-users');cardArea.insertAdjacentHTML('beforeend','<div id="owner-user-detail" hidden><button type="button" class="text-button" id="owner-user-back">← Пользователи</button><div id="owner-user-card"></div><p class="muted owner-card-status" id="owner-user-card-status" role="status" aria-live="polite"></p><button type="button" class="text-button" id="owner-user-refresh">Обновить</button></div>');
  const detail=app.querySelector('#owner-user-detail'),card=app.querySelector('#owner-user-card'),cardStatus=app.querySelector('#owner-user-card-status');
  const renderCard=()=>{if(!selectedUser)return;const focused=document.activeElement?.id==='owner-user-name',markup=ownerUserCard(selectedUser);if(card.innerHTML!==markup){card.innerHTML=markup;bindOwnerNotificationInfo(card);if(focused)card.querySelector('#owner-user-name').focus();}};
- const openUser=user=>{if(!validOwnerUserId(user.id))return;selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;card.querySelector('#owner-user-name').focus();};
- const dismissCard=()=>{const previous=selectedUser?.id;selectedUser=null;detail.hidden=true;card.innerHTML='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus();};
- app.querySelector('#owner-user-back').onclick=dismissCard;
- bindOwnerCardNavigation(card,{dismiss:dismissCard,isOpen:()=>!!selectedUser});
+ let listPosition=null;
+ const closeCard=()=>{const previous=selectedUser?.id;selectedUser=null;detail.hidden=true;card.innerHTML='';cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus({preventScroll:true});if(listPosition)window.scrollTo?.({...listPosition,behavior:'instant'});};
+ const cardHistory=createOwnerCardHistory({dismiss:closeCard,isActive:active,win:window});
+ const openUser=user=>{if(!validOwnerUserId(user.id)||!cardHistory.open())return;listPosition={left:window.scrollX||0,top:window.scrollY||0};selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;card.querySelector('#owner-user-name').focus();};
+ app.querySelector('#owner-user-back').onclick=()=>cardHistory.back();
+ bindOwnerCardNavigation(detail,{dismiss:()=>cardHistory.back(),isOpen:()=>!!selectedUser});
  app.querySelector('#owner-user-refresh').onclick=()=>readUsers(true);
  const notificationMarkup=user=>{const status=notificationLabels(user.notifications);return '<div class="owner-notifications is-'+status.state+'"'+(status.checked?' title="'+esc(status.checked)+'"':'')+'><span>'+esc(status.primary)+'</span>'+(status.secondary?'<small>'+esc(status.secondary)+'</small>':'')+'</div>';};
  const readUsers=async(quiet=false)=>{if(quiet&&usersBusy)return;usersBusy=true;const version=++usersLoad,area=app.querySelector('#owner-users-list'),count=app.querySelector('#owner-users-count');if(!quiet||!area.children.length)area.innerHTML='<p class="muted" role="status">Загружаем пользователей…</p>';try{const result=await ownerUsers(usersPage);if(!active()||version!==usersLoad)return;if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('Список пользователей временно недоступен.');count.textContent=result.total.toLocaleString('ru-RU');app.querySelector('#owner-registered').textContent=result.total.toLocaleString('ru-RU');app.querySelector('#owner-online').textContent=Number.isSafeInteger(result.online)?result.online.toLocaleString('ru-RU'):'—';const date=value=>value?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Ещё не входил';usersSnapshot=result.users;
  if(selectedUser){const current=usersSnapshot.find(user=>user.id===selectedUser.id);if(current){selectedUser=current;renderCard();cardStatus.textContent='';}else cardStatus.textContent='Пользователь сейчас на другой странице списка. Данные карточки пока не обновлены.';}
  area.innerHTML='<p class="owner-users-heading"><span>Зарегистрировано: '+result.total+'</span><span class="presence-status is-online">'+(result.online||0)+' в сети</span></p><p class="muted owner-notifications-note">Статус уведомлений обновляется при открытии SALAH.</p><div class="owner-user-rows">'+(result.users.length?result.users.map(user=>'<button type="button" class="owner-user-row" data-user="'+esc(user.id||'')+'" '+(!validOwnerUserId(user.id)?'disabled':'')+' aria-label="Открыть карточку: '+esc(user.nickname)+'"><div><strong>'+esc(user.nickname)+'</strong>'+(user.online?'<small>В приложении</small>':'')+'</div><div class="owner-user-state"><span class="presence-status'+(user.online?' is-online':'')+'"><i aria-hidden="true"></i>'+(user.online?'В сети':'Не в сети')+'</span>'+(!user.online?'<small class="owner-last-seen">'+(user.lastSeenAt?'Был(а) '+esc(date(user.lastSeenAt)):'Посещение пока не зафиксировано')+'</small>':'')+'</div>'+notificationMarkup(user)+'</button>').join(''):'<p class="muted">Пока нет зарегистрированных пользователей.</p>')+'</div>'+(result.total>50?'<div class="button-row"><button class="text-button" id="users-prev" '+(usersPage===1?'disabled':'')+'>Назад</button><span>'+usersPage+' / '+Math.ceil(result.total/50)+'</span><button class="text-button" id="users-next" '+(usersPage*50>=result.total?'disabled':'')+'>Далее</button></div>':'')+'<button class="text-button" id="users-refresh">Обновить список</button>';area.querySelectorAll('[data-user]').forEach(button=>button.onclick=()=>{const user=usersSnapshot.find(row=>row.id===button.dataset.user);if(user)openUser(user);});const prev=area.querySelector('#users-prev'),next=area.querySelector('#users-next');if(prev)prev.onclick=()=>{usersPage--;readUsers();};if(next)next.onclick=()=>{usersPage++;readUsers();};area.querySelector('#users-refresh').onclick=()=>readUsers();}catch(error){if(active()&&version===usersLoad){if(selectedUser){cardStatus.textContent=error.message;return;}count.textContent='—';app.querySelector('#owner-registered').textContent='—';app.querySelector('#owner-online').textContent='—';area.innerHTML='<p class="muted" role="status">'+esc(error.message)+'</p><button type="button" class="text-button" id="users-retry">Повторить</button>';area.querySelector('#users-retry').onclick=()=>readUsers();}}finally{if(version===usersLoad)usersBusy=false;}};
- const selectView=view=>{selectedView=cabinetView=view;for(const [name,panel]of Object.entries(panels))panel.hidden=name!==view;for(const tab of tabs){const selected=tab.dataset.view===view;tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');}app.querySelector('#owner-periods').hidden=view==='users';if(view==='users'&&usersLoad>0)void readUsers(true);};
+ const selectView=view=>{if(view!=='users'&&selectedUser)cardHistory.back();selectedView=cabinetView=view;for(const [name,panel]of Object.entries(panels))panel.hidden=name!==view;for(const tab of tabs){const selected=tab.dataset.view===view;tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');}app.querySelector('#owner-periods').hidden=view==='users';if(view==='users'&&usersLoad>0)void readUsers(true);};
  tabs.forEach((tab,index)=>{tab.onclick=()=>selectView(tab.dataset.view);tab.onkeydown=event=>{const target=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowRight'?(index+1)%tabs.length:event.key==='ArrowLeft'?(index+tabs.length-1)%tabs.length:null;if(target===null)return;event.preventDefault();selectView(tabs[target].dataset.view);tabs[target].focus();};});
  app.querySelector('#owner-open-users').onclick=app.querySelector('#owner-open-online').onclick=()=>{selectView('users');app.querySelector('#owner-tab-users').focus();};selectView(selectedView);
- const presenceTimer=setInterval(()=>{if(!active()){clearInterval(presenceTimer);return;}if(!document.hidden&&selectedView==='users')void readUsers(true);},30000);
- const closePolling=()=>{if(!active()){clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);}};window.addEventListener('hashchange',closePolling);
+ const presenceTimer=setInterval(()=>{if(!active()){app.ownerDispose?.();return;}if(!document.hidden&&selectedView==='users')void readUsers(true);},30000);
+ const closePolling=()=>{if(!active())app.ownerDispose?.();};window.addEventListener('hashchange',closePolling);
+ app.ownerDispose=()=>{cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
  let load=0;
  const readStats=async()=>{
   const version=++load,visits=app.querySelector('#owner-visits'),status=app.querySelector('#owner-stats-status'),metrics=app.querySelector('#owner-metrics'),activity=app.querySelector('#owner-activity-content');visits.textContent='…';status.textContent='Загружаем статистику…';metrics.innerHTML='';activity.innerHTML='<p class="muted" role="status">Загружаем статистику…</p>';app.querySelector('#owner-visits-label').textContent='Посетители за '+({1:'сутки',7:'неделю',30:'месяц'}[period]);
@@ -122,12 +126,12 @@ export async function mountOwnerAccount(container,{isActive}={}){
  const cleanup=()=>{if(!active()){unsubscribe();delete container.dataset.ownerAccountMount;window.removeEventListener('hashchange',cleanup);}};
  const update=()=>{
   if(!active()){cleanup();return;}
-  if(!ownerVerified()&&!ownerNeedsMfa()){container.hidden=true;container.innerHTML='';return;}
+  if(!ownerVerified()&&!ownerNeedsMfa()){container.querySelector('.owner-account-body')?.ownerDispose?.();container.hidden=true;container.innerHTML='';return;}
   container.hidden=false;
   if(container.querySelector('.owner-account'))return;
   container.innerHTML='<details class="settings-extra owner-account"><summary>Кабинет владельца</summary><div class="owner-account-body"></div></details>';
   const panel=container.querySelector('.owner-account'),body=container.querySelector('.owner-account-body');
-  panel.ontoggle=()=>{if(panel.open&&active())void showAdmin(body,{embedded:true,isActive:()=>active()&&panel.open&&container.querySelector('.owner-account-body')===body});else body.dataset.ownerScreen='';};
+  panel.ontoggle=()=>{if(panel.open&&active())void showAdmin(body,{embedded:true,isActive:()=>active()&&panel.open&&container.querySelector('.owner-account-body')===body});else{body.ownerDispose?.();body.dataset.ownerScreen='';}};
   if(new URLSearchParams(location.hash.split('?')[1]||'').get('owner')==='1')panel.open=true;
  };
  unsubscribe=onOwnerChange(update);window.addEventListener('hashchange',cleanup);
