@@ -1,5 +1,6 @@
 import{skyObjects,previewClock}from './wallpapers.js';
 import{loadLandmark}from './landmarks.js';
+import{applyWallpaperLayout}from './wallpaper-layout.js';
 import{settings}from './storage.js';
 import{sceneAt,previewScene,sceneForMode}from './day-night.js';
 import{weatherFrame}from './weather-data.js';
@@ -7,11 +8,20 @@ export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REF
 
 let skyAnimation=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
-let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null;
+let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null;
+function layoutScene(scene,effect=document.getElementById('weather-layer')){
+ const layout=applyWallpaperLayout(scene,effect,{width:document.documentElement?.clientWidth,height:window.innerHeight,wallpaper:scene.dataset.wallpaper,geometry:scene.dataset.wallpaper==='landmark'?landmarkGeometry:null});
+ if(layout){if(document.body.dataset.sceneLayout!==layout.mode)document.body.dataset.sceneLayout=layout.mode;}else if(document.body.dataset.sceneLayout)delete document.body.dataset.sceneLayout;
+}
+let layoutResize=null;
+window.addEventListener('resize',()=>{
+ if(layoutResize!==null)return;
+ layoutResize=requestAnimationFrame(()=>{layoutResize=null;const scene=document.getElementById('home-scene');if(scene)layoutScene(scene)});
+});
 function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';note.textContent=landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':'Для первой загрузки фона нужен интернет.'}
 function stopLandmarkRequest(){landmarkRequest?.abort();landmarkRequest=null}
 function releaseLandmarkUrls(urls){for(const url of urls)URL.revokeObjectURL(url)}
-function neutralLandmark(scene){landmarkEntry=null;delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
+function neutralLandmark(scene){landmarkEntry=null;landmarkGeometry=null;delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
 function clearLandmark(scene){stopLandmarkRequest();releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];neutralLandmark(scene)}
 function keepLandmarkSurface(scene){
  scene.dataset.wallpaper='landmark';document.body.dataset.wallpaper='landmark';
@@ -39,14 +49,14 @@ function prepareLandmark(scene,home){
   if(result.status!=='ready'){landmarkRequest=null;landmarkState=result.status;discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote();return}
   const urls=result.blobs.map(blob=>URL.createObjectURL(blob));
   try{
-   await Promise.all(urls.slice(0,2).map(url=>{const image=new Image();image.src=url;return image.decode()}));
+   const images=await Promise.all(urls.slice(0,2).map(async url=>{const image=new Image();image.src=url;await image.decode();return image}));
    if(controller.signal.aborted){releaseLandmarkUrls(urls);return}
    const previous=landmarkUrls;
    // Swap only after both photographs are decoded, then release the old city.
    for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');
-   landmarkUrls=urls;landmarkEntry=result.entry;landmarkRequest=null;landmarkState='ready';
+   landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight};landmarkRequest=null;landmarkState='ready';
    scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
-   releaseLandmarkUrls(previous);landmarkNote();
+   layoutScene(scene);releaseLandmarkUrls(previous);landmarkNote();
   }
   catch{releaseLandmarkUrls(urls);if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote()}}
  }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote()}});
@@ -129,7 +139,7 @@ export function atmosphere(now,times,weather){
  const preview=previewStarted!==null,instant=preview&&previewOverride===null?previewClock(now,times,Math.min(performance.now()-previewStarted,19999),settings.city):now;
  const frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):settings.city?sceneForMode(instant,times,'auto',settings.city):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode,settings.city),scene=sceneLayer();
  document.body.classList.toggle('scene-preview',preview);
- scene.dataset.phase=frame.phase;prepareLandmark(scene,home);
+ scene.dataset.phase=frame.phase;prepareLandmark(scene,home);layoutScene(scene,effect);
  const sky=skyObjects(now,times,previewOverride==='day'?'light':previewOverride==='night'?'dark':settings.backgroundMode,preview&&previewOverride===null?Math.min(performance.now()-previewStarted,19999):null,settings.city);
  paintSky(scene,sky,previewStarted!==null?performance.now():now);
  for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));
