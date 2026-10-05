@@ -108,7 +108,7 @@ export function buildReminderEvents(value,context){
     }
   }
   for(const day of new Set(dates.filter(Boolean))){
-    const event=dhikrEventForDay(settings.dhikr,context.dhikrLastAt,day,context.timeZone,{localTimestamp,shiftDay,cityDay:(at,zone)=>{const p=partsAt(at,zone);return p.year+'-'+p.month+'-'+p.day;}});
+    const event=dhikrEventForDay(settings.dhikr,context.dhikrLastAt,day,context.timeZone,{localTimestamp,shiftDay,timingsFor:context.timingsFor,cityDay:(at,zone)=>{const p=partsAt(at,zone);return p.year+'-'+p.month+'-'+p.day;}});
     if(event)events.push(event);
   }
   return events.sort((a,b)=>a.at-b.at||a.id.localeCompare(b.id));

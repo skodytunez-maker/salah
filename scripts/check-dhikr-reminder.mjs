@@ -1,19 +1,20 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
 import {normalizeReminders,buildReminderEvents,PRAYER_KEYS} from '../dist/js/reminder-events.js';
-import {readDhikrActivity,markDhikrActivity,DHIKR_ACTIVITY_KEY,DHIKR_MESSAGES} from '../dist/js/dhikr-reminder.js';
+import {readDhikrActivity,markDhikrActivity,DHIKR_ACTIVITY_KEY,DHIKR_MESSAGES,dhikrAllowedAt} from '../dist/js/dhikr-reminder.js';
 import {pushPreferences} from '../dist/js/push-reminders.js';
-import {preferences,eventsFor,createPushHandler,digest,PUSH_ORIGIN} from '../supabase/functions/background-reminders/core.mjs';
+import {preferences,eventsFor,createPushHandler,digest,PUSH_ORIGIN,notification} from '../supabase/functions/background-reminders/core.mjs';
 const city={name:'Тюмень',latitude:57.15,longitude:65.52,timezone:'Asia/Yekaterinburg'};
 const start=Date.parse('2026-10-01T10:00:00+05:00');
 const quietPrayers=Object.fromEntries(PRAYER_KEYS.map(k=>[k,{atTime:false,beforeMinutes:0,adhan:false}]));
 const reminders={enabled:true,prayers:quietPrayers,dhikr:{enabled:true,days:3,since:start}};
 const settings={city,method:3,school:0,highLatitude:3,reminders};
-const p=preferences(settings),at=Date.parse('2026-10-04T20:00:00+05:00');
+const p=preferences(settings),at=Date.parse('2026-10-04T12:00:00+05:00');
 const dhikr=(config,time)=>eventsFor(config,{},time).filter(e=>e.kind==='dhikr'&&e.at===time);
 assert.equal(normalizeReminders({}).dhikr.enabled,false,'Old users are not opted in');
 assert.equal(dhikr(p,at).length,1);assert.equal(dhikr(p,at)[0].message,DHIKR_MESSAGES[0].text);
-for(const day of [2,3,5,6])assert.equal(dhikr(p,Date.parse('2026-10-0'+day+'T20:00:00+05:00')).length,0,'Not daily, and not before the pause');
+for(const day of [2,3,5,6])assert.equal(dhikr(p,Date.parse('2026-10-0'+day+'T12:00:00+05:00')).length,0,'Not daily, and not before the pause');
 const next=at+3*86400000;assert.equal(dhikr(p,next)[0].message,DHIKR_MESSAGES[1].text);
 assert.equal(dhikr({...p,dhikrLastAt:at-60000},at).length,0,'Return to reading cancels an old alert');
 assert.equal(dhikr(preferences({...settings,reminders:{...reminders,enabled:false}}),at).length,0);
@@ -22,7 +23,16 @@ const two=preferences({...settings,reminders:{...reminders,dhikr:{enabled:true,d
 const late=preferences({...settings,reminders:{...reminders,dhikr:{enabled:true,since:Date.parse('2026-10-01T22:00:00+05:00')}}});
 assert.equal(dhikr(late,at).length,0,'Never shorten a full three-day pause');assert.equal(dhikr(late,at+86400000).length,1);
 const client=buildReminderEvents(reminders,{cityKey:'fixture',today:'2026-10-04',timeZone:city.timezone,timingsFor:()=>null});assert.deepEqual(client,eventsFor(p,{},at),'Client and server use the exact same scheduler without prayer data');
-const nyStart=Date.parse('2026-10-30T10:00:00-04:00'),nyAt=Date.parse('2026-11-02T20:00:00-05:00');
+const table=JSON.parse(await readFile(new URL('../dist/data/tyumen-october-2026.json',import.meta.url),'utf8')).days;
+const dhuhrAt=Date.parse(table['2026-10-04'].timings.Dhuhr);
+assert.equal(eventsFor(p,table,dhuhrAt).find(e=>e.kind==='dhikr'&&e.day==='2026-10-04').at,dhuhrAt,'Use the selected real Dhuhr timetable');
+for(const time of ['07:59','22:00','23:30']){
+ const badTimes=buildReminderEvents(reminders,{cityKey:'fixture',today:'2026-10-04',timeZone:city.timezone,timingsFor:day=>({Dhuhr:day+'T'+time+':00+05:00'})}).filter(e=>e.kind==='dhikr');
+ assert.equal(badTimes.find(e=>e.day==='2026-10-04').at,at,'Out-of-window timetable uses noon');
+}
+for(const [time,allowed] of [['07:59',false],['08:00',true],['21:59',true],['22:00',false]])assert.equal(dhikrAllowedAt(Date.parse('2026-10-04T'+time+':00+05:00'),city.timezone),allowed);
+assert.equal(dhikrAllowedAt(at,'invalid/zone'),false);
+const nyStart=Date.parse('2026-10-30T10:00:00-04:00'),nyAt=Date.parse('2026-11-02T12:00:00-05:00');
 const ny=preferences({...settings,city:{...city,timezone:'America/New_York'},reminders:{...reminders,dhikr:{enabled:true,since:nyStart}}});assert.equal(dhikr(ny,nyAt).length,1,'Local evening survives DST');
 const map=new Map(),storage={getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v)},target=new EventTarget();let signals=0;target.addEventListener('salah:dhikr-activity',()=>signals++);
 assert.equal(readDhikrActivity(storage),0);assert.equal(markDhikrActivity(start,storage,target),true);markDhikrActivity(start-1,storage,target);assert.equal(readDhikrActivity(storage),start);assert.equal(signals,2);assert.deepEqual([...map.keys()],[DHIKR_ACTIVITY_KEY]);
@@ -43,5 +53,23 @@ ledger.clear();lastSent=now-3600000;assert.equal((await (await request()).json()
 lastSent=0;latest={...p,dhikrLastAt:now};assert.equal((await (await request()).json()).delivered,0,'Fresh activity during slow schedule lookup cancels delivery');
 latest={...p,reminders:{...p.reminders,dhikr:{enabled:false}}};assert.equal((await (await request()).json()).delivered,0,'Late opt-out cancels delivery');
 latest=p;scheduleCalls=0;response=await handler(new Request('https://fixture/background-reminders/subscribe',{method:'POST',headers:{Origin:PUSH_ORIGIN},body:JSON.stringify({id,token,subscription:sub,preferences:settings})}));assert.equal(response.status,200);assert.equal(scheduleCalls,0,'A dhikr-only subscription does not require prayer provider availability');
+db.cache.get=async()=>table;now=dhuhrAt+20000;latest=p;ledger.clear();lastSent=0;sent=[];
+assert.equal((await (await request()).json()).delivered,1,'Fresh server recheck retains the actual Dhuhr timetable');
+assert.equal(sent[0].at,dhuhrAt);assert.equal(sent[0].kind,'dhikr');assert.equal(sent[0].timeZone,city.timezone);
+const lateRows={...table,'2026-10-04':{...table['2026-10-04'],timings:{...table['2026-10-04'].timings,Dhuhr:'2026-10-04T21:59:30+05:00'}}};
+db.cache.get=async()=>lateRows;now=Date.parse('2026-10-04T22:00:00+05:00');ledger.clear();lastSent=0;sent=[];
+assert.equal((await (await request()).json()).delivered,0,'A delayed minute dispatch does not send in sleeping hours');
+const lateEvent=eventsFor(p,lateRows,now).find(e=>e.kind==='dhikr'&&e.day==='2026-10-04');assert.equal(notification(lateEvent,now).expiresAt,now,'Gateway expiry stops at 22:00');
+const listeners={},shown=[];let workerNow=at;
+class FixtureDate extends Date{constructor(...args){super(...(args.length?args:[workerNow]));}static now(){return workerNow;}}
+const sw=await readFile(new URL('../dist/sw.js',import.meta.url),'utf8');
+vm.runInNewContext(sw,{self:{registration:{scope:PUSH_ORIGIN+'/salah/',showNotification:async(...args)=>shown.push(args)},location:{origin:PUSH_ORIGIN},addEventListener:(name,fn)=>listeners[name]=fn},URL,Intl,Date:FixtureDate,console});
+const push=payload=>listeners.push({data:{json:()=>payload},waitUntil:()=>{}});
+push({kind:'dhikr',timeZone:city.timezone,expiresAt:at+60000,body:'fixture'});assert.equal(shown.length,1,'Daytime delivery is displayed');
+workerNow=Date.parse('2026-10-04T22:00:00+05:00');push({kind:'dhikr',timeZone:city.timezone,expiresAt:workerNow+60000,body:'fixture'});assert.equal(shown.length,1,'Worker suppresses nighttime delayed delivery');
+workerNow=Date.parse('2026-10-05T07:59:00+05:00');push({kind:'dhikr',timeZone:city.timezone,expiresAt:workerNow+60000,body:'fixture'});assert.equal(shown.length,1);
+workerNow=Date.parse('2026-10-05T08:00:00+05:00');push({kind:'dhikr',timeZone:city.timezone,expiresAt:workerNow+60000,body:'fixture'});assert.equal(shown.length,2);
+push({kind:'dhikr',timeZone:city.timezone,expiresAt:workerNow-1,body:'expired'});assert.equal(shown.length,2,'Expired inactivity push never becomes a generic notice');
+workerNow=Date.parse('2026-10-05T04:55:00+05:00');push({expiresAt:workerNow+60000,body:'Фаджр'});assert.equal(shown.length,3,'Prayer notifications retain their nighttime delivery');
 const activitySource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');assert.match(activitySource,/function card\(direction=0\)\{markDhikrActivity\(\)/);assert.match(activitySource,/result.ok&&action==='increment'\)markDhikrActivity/);
-console.log('PASS: opt-in, 2/3 full-day pause, evening timezone and DST, alternating verified excerpts, resumed activity cancellation, no count/email uploads, client/server parity, provider independence, cooldown, no duplicates and late opt-out.');
+console.log('PASS: opt-in, 2/3 full-day pause, Dhuhr/noon timezone and DST, alternating verified excerpts, resumed activity cancellation, no count/email uploads, client/server parity, provider independence, cooldown, no duplicates and late opt-out.');
