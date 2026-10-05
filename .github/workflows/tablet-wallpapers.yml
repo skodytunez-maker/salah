@@ -27,6 +27,7 @@ jobs:
           node scripts/check-landmarks.mjs
           node scripts/check-updates.mjs
           node scripts/check-location-permissions.mjs
+          node scripts/check-dhikr-reminder.mjs
           node scripts/check-settings.mjs
           node scripts/check-settings-resume.mjs
           node scripts/check-security.mjs

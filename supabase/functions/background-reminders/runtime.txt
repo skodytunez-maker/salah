@@ -10,6 +10,7 @@ const db={
  async remove(id){await sql`delete from salah_push_private.devices where id=${id}::uuid`;},
  async expire(id){await sql`update salah_push_private.devices set enabled=false,subscription=null,preferences=null where id=${id}::uuid`;},
  async active(now){return sql`select id,subscription,preferences from salah_push_private.devices where enabled=true and subscription is not null and preferences is not null and updated_at>to_timestamp(${now}/1000.0)-interval '90 days'`;},
+ async lastDhikrSent(id){const [row]=await sql`select extract(epoch from max(event_at))*1000 as at from salah_push_private.deliveries where device_id=${id}::uuid and event_hash like 'dhikr-%' and state='sent'`;return Number(row?.at)||0;},
  async rate(key,limit,now){const minute=Math.floor(now/60000);const rows=await sql`insert into salah_push_private.limits(key,minute,n) values(${key},${minute},1) on conflict(key,minute) do update set n=salah_push_private.limits.n+1 returning n`;return rows[0].n<=limit;},
  async lease(now){const rows=await sql`update salah_push_private.config set lease_until=to_timestamp(${now}/1000.0)+interval '150 seconds' where id=1 and (lease_until is null or lease_until<to_timestamp(${now}/1000.0)) returning id`;return rows.length===1;},
  async release(){await sql`update salah_push_private.config set lease_until=null where id=1`;},
