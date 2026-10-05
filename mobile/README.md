@@ -73,3 +73,7 @@ The widget snapshot may contain only the minimum needed to render prayer times:
 - Hijri date metadata when available.
 
 It must not contain prayer completion history, adhkar counters, Quran reading history, bookmarks, account tokens, email addresses, precise GPS coordinates or support messages.
+
+## Android update verification
+
+The generated project takes versionCode and versionName from the current SALAH web release. Each debug build uploads a separate APK report with application ID, verified signing certificate SHA-256, versionCode, APK checksum and source commit. Debug keys are generated per CI runner; a new artifact may have a different certificate from an already installed APK. The report does not authorize installation until the installed package certificate and version are compared. Use the original signing key for incompatible signatures; never remove the installed app to bypass the mismatch.

@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {androidReleaseVersion,configureAndroidVersion,compareAndroidUpdate} from '../mobile/scripts/android-release.mjs';
+const release=androidReleaseVersion(await readFile(new URL('../dist/js/app-release.js',import.meta.url),'utf8'));
+const fixture='android {\n defaultConfig {\n  applicationId "com.saadikobilov.salah"\n  versionCode 1\n  versionName "1.0"\n }\n signingConfigs { custom {} }\n}\n';
+const configured=configureAndroidVersion(fixture,release);assert.match(configured,new RegExp('versionCode '+release.versionCode));assert.ok(configured.includes('applicationId "com.saadikobilov.salah"'));assert.ok(configured.includes('signingConfigs { custom {} }'));assert.equal(configureAndroidVersion(configured,release),configured);
+assert.throws(()=>configureAndroidVersion('unknown gradle syntax',release));assert.throws(()=>androidReleaseVersion('export const APP_VERSION=0;'));
+const base={applicationId:'com.saadikobilov.salah',versionCode:1,signingCertificateSha256:['a'.repeat(64)]},candidate={...base,versionCode:release.versionCode};
+assert.equal(compareAndroidUpdate(base,candidate).compatible,true);
+for(const modified of [{...candidate,applicationId:'another.app'},{...candidate,versionCode:1},{...candidate,versionCode:0},{...candidate,signingCertificateSha256:['b'.repeat(64)]},{...candidate,signingCertificateSha256:[]},{...candidate,signingCertificateSha256:['invalid']}])assert.equal(compareAndroidUpdate(base,modified).compatible,false);
+assert.equal(compareAndroidUpdate(null,candidate).reason,'missing_metadata');
+console.log('PASS: native release version, idempotent Gradle configuration, signing settings preserved; unknown, foreign-signed and non-newer APKs rejected for in-place update.');

@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {syncAndroidVersion} from './android-release.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const mobileRoot=path.resolve(here,'..');
@@ -47,4 +48,5 @@ if(!manifest.includes('android:name=".SalahPrayerWidgetProvider"')){
   await fs.writeFile(manifestPath,manifest);
 }
 
+await syncAndroidVersion(mobileRoot);
 console.log('SALAH Android native widget configured.');

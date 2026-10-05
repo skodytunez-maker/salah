@@ -1,0 +1,26 @@
+name: Download official Tyumen source tables for review
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/timetable-source-review.yml'
+permissions:
+  contents: read
+jobs:
+  source-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Download published November and December tables
+        run: |
+          mkdir -p source-tables
+          curl --fail --location --retry 2 --retry-max-time 75 --connect-timeout 10 --max-time 25 'https://al-hakk.ru/upload/medialibrary/e7a/e7a2d52389563f7302dbca65aef199e8.jpg' -o source-tables/al-hakk-november.jpg
+          curl --fail --location --retry 2 --retry-max-time 75 --connect-timeout 10 --max-time 25 'https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg' -o source-tables/al-hakk-december.jpg
+          file source-tables/*.jpg
+          sha256sum source-tables/*.jpg > source-tables/SHA256SUMS.txt
+      - name: Upload sources for transcription review
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-tyumen-source-tables
+          path: source-tables/
+          if-no-files-found: error
