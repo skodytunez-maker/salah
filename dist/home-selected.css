@@ -90,3 +90,6 @@ body.reduce-motion .dhikr-passage{animation:none!important}
 #counter-account-email-form,#counter-account-login{display:grid;gap:10px}#counter-account-email-form .button,#counter-account-login .button{margin-top:4px}#counter-account-email-form input,#counter-account-login input{width:100%;min-width:0}
 
 #counter-profile{display:grid;gap:10px;margin:16px 0}#counter-profile input{min-width:0;width:100%}.owner-user-row{display:grid;gap:5px;padding:15px 0;border-bottom:1px solid var(--line)}.owner-user-row strong{overflow-wrap:anywhere}.owner-user-row span,.owner-user-row time{font-size:13px;color:var(--muted)}
+
+.home-schedule-source{font-size:12px;text-align:center;line-height:1.4;margin:12px 0;color:var(--muted)}
+.home-schedule-source a{color:inherit;text-decoration:none}

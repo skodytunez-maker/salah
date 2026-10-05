@@ -40,7 +40,7 @@ export function read(key,fallback){
 export function write(key,value){
  try{localStorage.setItem('salah:'+key,JSON.stringify(value));return true}catch{storageProblem('Не удалось сохранить данные. Проверьте свободное место и доступ к хранилищу.');return false}
 }
-export const defaults={madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
+export const defaults={tyumenTimeSource:'auto',madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
 const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const BOOLEAN_FIELDS=['weather','weatherAnimation','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
 const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders']);
@@ -59,6 +59,7 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
   const selected=!strict&&typeof value[key]==='string'&&allowed.map(String).includes(value[key])?Number(value[key]):value[key];
   if(allowed.includes(selected))result[key]=selected;else bad('Некорректная настройка «'+key+'».');
  }
+ if(Object.hasOwn(value,'tyumenTimeSource')){if(['auto','calendar','al-hakk'].includes(value.tyumenTimeSource))result.tyumenTimeSource=value.tyumenTimeSource;else bad('Некорректный источник расписания Тюмени.')}
  if(Object.hasOwn(value,'madhhab')){
   if(typeof value.madhhab==='string'&&/^[a-z][a-z-]{0,29}$/.test(value.madhhab))result.madhhab=value.madhhab;else bad('Некорректное значение мазхаба.');
  }
