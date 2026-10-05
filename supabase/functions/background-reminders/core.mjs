@@ -6,6 +6,7 @@ import {mergeFirstAsr,firstAsrValid} from '../../../dist/js/asr-first.js';
 
 export const PUSH_ORIGIN='https://skodytunez-maker.github.io';
 export const PUBLIC_APP=PUSH_ORIGIN+'/salah/';
+export const SETUP_INVITE={hash:'setup-invite-20261005',from:Date.parse('2026-10-05T17:00:00Z'),until:Date.parse('2026-10-06T17:00:00Z'),message:'В SALAH есть уведомления о намазах и Джума. Откройте Настройки → Азан и напоминания и выберите нужные уведомления.'};
 const DAY_MS=86400000;
 export class PushError extends Error {constructor(status,message){super(message);this.status=status;}}
 const fail=(status,message)=>{throw new PushError(status,message);};
@@ -93,7 +94,7 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
@@ -109,6 +110,20 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
    if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
+   // One explicitly requested campaign. The date window and immutable hash prevent repeat broadcasts.
+   if(action==='invite-setup'&&request.method==='POST'){
+    const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
+    if(origin||!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
+    const now=clock();if(now<SETUP_INVITE.from||now>=SETUP_INVITE.until)fail(410,'Приглашение больше не отправляется');
+    const devices=await db.active(now);let accepted=0,failed=0,expired=0,skipped=0,cursor=0;
+    await Promise.all(Array.from({length:Math.min(8,devices.length)},async()=>{while(cursor<devices.length){
+     const device=devices[cursor++],fresh=await db.get(device.id);
+     if(!fresh?.subscription||fresh.preferences?.reminders?.enabled!==true){skipped++;continue;}
+     if(!await db.claimInvite(device.id,SETUP_INVITE.hash,now)){skipped++;continue;}
+     const result=await send({...device,subscription:subscription(fresh.subscription)},{kind:'setup-invite',hash:SETUP_INVITE.hash,at:now,message:SETUP_INVITE.message});
+     await db.complete(device.id,SETUP_INVITE.hash,result);if(result==='sent')accepted++;else if(result==='expired')expired++;else failed++;
+    }}));return reply({campaign:SETUP_INVITE.hash,devices:devices.length,accepted,failed,expired,skipped});
+   }
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');

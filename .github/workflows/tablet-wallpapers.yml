@@ -32,6 +32,7 @@ jobs:
           node scripts/check-push.mjs
           node scripts/check-push-client.mjs
           node scripts/check-notification-invite.mjs
+          node scripts/check-setup-invite.mjs
           node scripts/check-adhkar-resume.mjs
           node scripts/check-settings.mjs
           node scripts/check-settings-resume.mjs
