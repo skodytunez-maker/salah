@@ -43,25 +43,25 @@
         {
           "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ هُوَ ٱللَّهُ أَحَدٌ",
           "translation": "Скажи: «Он - Аллах Единый,",
-          "transliteration": "Бисмилляахир-рахмаанир-рахиим. Қуль хуал-лааху ахад.",
+          "transliteration": "Бисмилляахир-рахмаанир-рахиим. Қуль хуАллааху Ахад.",
           "transliterationOriginal": "Qul huwal laahu ahad"
         },
         {
           "arabic": "ٱللَّهُ ٱلصَّمَدُ",
           "translation": "Аллах Самодостаточный.",
-          "transliteration": "Аллаахус-самад.",
+          "transliteration": "Аллаахус-Самад.",
           "transliterationOriginal": "Allah hus-samad"
         },
         {
           "arabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
           "translation": "Он не родил и не был рожден,",
-          "transliteration": "Лям ялид уа лям юуляд.",
+          "transliteration": "Лям ялид уа лям юляд.",
           "transliterationOriginal": "Lam yalid wa lam yoolad"
         },
         {
           "arabic": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
           "translation": "и нет никого равного Ему».",
-          "transliteration": "Уа лям якул-ляхуу куфуан ахад.",
+          "transliteration": "Уа лям якулляху куфууан Ахад.",
           "transliterationOriginal": "Wa lam yakul-lahu kufuwan ahad"
         }
       ],
@@ -70,7 +70,7 @@
       "sourceLabel": "Абу Дауд · 5082 · трижды утром и вечером",
       "textSource": "https://alquran.cloud/api",
       "grade": "Хасан · оценка аль-Альбани",
-      "transliterationNote": "Транскрипция SALAH по арабскому тексту. Точки обозначают остановку; к — ك, қ — ق, двойные гласные — долгий звук."
+      "transliterationNote": "Обозначения SALAH: к — ك, қ — ق. Точки обозначают остановку."
     },
     {
       "id": "surah113",
@@ -80,31 +80,31 @@
         {
           "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
           "translation": "Скажи: «Прибегаю к защите Господа рассвета",
-          "transliteration": "Бисмилляахир-рахмаанир-рахиим. Қуль а‘уузу би-раббиль-фаляқ.",
+          "transliteration": "Бисмилляахир-рахмаанир-рахиим. Қуль А`узу Бираббиль-Фаляқ.",
           "transliterationOriginal": "Qul a'uzoo bi rabbil-falaq"
         },
         {
           "arabic": "مِن شَرِّ مَا خَلَقَ",
           "translation": "от зла того, что Он сотворил,",
-          "transliteration": "Мин шарри маа халақ.",
+          "transliteration": "Мин Шарри Ма Халяқ.",
           "transliterationOriginal": "Min sharri ma khalaq"
         },
         {
           "arabic": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
           "translation": "от зла мрака, когда он наступает,",
-          "transliteration": "Уа мин шарри гаасиқин изаа уақаб.",
+          "transliteration": "Уа Мин Шарри Гасиқыйн Иза Уақаб.",
           "transliterationOriginal": "Wa min sharri ghasiqin iza waqab"
         },
         {
           "arabic": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ",
           "translation": "от зла колдуний, поплевывающих на узлы,",
-          "transliteration": "Уа мин шаррин-наффаасаати филь-‘уқад.",
+          "transliteration": "Уа Мин Шаррин-Наффасати Филь-`Уқад.",
           "transliterationOriginal": "Wa min sharrin-naffaa-thaati fil 'uqad"
         },
         {
           "arabic": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
           "translation": "от зла завистника, когда он завидует».",
-          "transliteration": "Уа мин шарри хаасидин изаа хасад.",
+          "transliteration": "Уа Мин Шарри Хасидин Иза Хасад.",
           "transliterationOriginal": "Wa min shar ri haasidin iza hasad"
         }
       ],
@@ -113,7 +113,7 @@
       "sourceLabel": "Абу Дауд · 5082 · трижды утром и вечером",
       "textSource": "https://alquran.cloud/api",
       "grade": "Хасан · оценка аль-Альбани",
-      "transliterationNote": "Транскрипция SALAH по арабскому тексту. Точки обозначают остановку; к — ك, қ — ق, двойные гласные — долгий звук."
+      "transliterationNote": "Обозначения SALAH: к — ك, қ — ق. Точки обозначают остановку."
     },
     {
       "id": "surah114",
@@ -123,37 +123,37 @@
         {
           "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
           "translation": "Скажи: «Прибегаю к защите Господа людей,",
-          "transliteration": "Бисмилляахир-рахмаанир-рахиим. Қуль а‘уузу би-раббин-наас.",
+          "transliteration": "Бисмилляахир-рахмаанир-рахиим. Қуль А`узу Бираббин-Наас.",
           "transliterationOriginal": "Qul a'uzu birabbin naas"
         },
         {
           "arabic": "مَلِكِ ٱلنَّاسِ",
           "translation": "Царя людей,",
-          "transliteration": "Маликин-наас.",
+          "transliteration": "Маликин-Наас.",
           "transliterationOriginal": "Malikin naas"
         },
         {
           "arabic": "إِلَٰهِ ٱلنَّاسِ",
           "translation": "Бога людей,",
-          "transliteration": "Иляахин-наас.",
+          "transliteration": "Иляхин-Наас.",
           "transliterationOriginal": "Ilaahin naas"
         },
         {
           "arabic": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
           "translation": "от зла искусителя отступающего (или сжимающегося) при поминании Аллаха,",
-          "transliteration": "Мин шарриль-уасуаасиль-ханнаас.",
+          "transliteration": "Мин Шарриль-Уасуасиль-Ханнаас.",
           "transliterationOriginal": "Min sharril was waasil khannaas"
         },
         {
           "arabic": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
           "translation": "который наущает в груди людей",
-          "transliteration": "Аллязии юуасуису фии судуурин-наас.",
+          "transliteration": "Аль-Лязи Йувасвису Фи Судурин-Наас.",
           "transliterationOriginal": "Al lazee yuwas wisu fee sudoorin naas"
         },
         {
           "arabic": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
           "translation": "и бывает из джиннов и людей».",
-          "transliteration": "Миналь-джиннати уан-наас.",
+          "transliteration": "Миналь-Джиннати Уан-Наас.",
           "transliterationOriginal": "Minal jinnati wan naas"
         }
       ],
@@ -162,7 +162,7 @@
       "sourceLabel": "Абу Дауд · 5082 · трижды утром и вечером",
       "textSource": "https://alquran.cloud/api",
       "grade": "Хасан · оценка аль-Альбани",
-      "transliterationNote": "Транскрипция SALAH по арабскому тексту. Точки обозначают остановку; к — ك, қ — ق, двойные гласные — долгий звук."
+      "transliterationNote": "Обозначения SALAH: к — ك, қ — ق. Точки обозначают остановку."
     },
     {
       "id": "asbahna",
