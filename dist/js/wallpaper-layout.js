@@ -1,0 +1,54 @@
+// One source-space rectangle for the photographs, skyline and weather. Phones
+// keep their existing CSS composition. Narrow artwork is never stretched wide.
+const panorama = {width:853,height:1844};
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const validSize = size => Number.isFinite(size?.width) && size.width > 0 &&
+  Number.isFinite(size?.height) && size.height > 0;
+
+export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
+  if (!validSize({width,height}) || Math.min(width,height) < 600) return null;
+  const source = validSize(geometry) ? geometry : wallpaper === 'mosque'
+    ? {width:1536,height:1024} : panorama;
+  const wide = width > height;
+  const contain = Math.min(width/source.width,height/source.height);
+  const cover = Math.max(width/source.width,height/source.height);
+  // At most 12% of a narrow composition can be cropped in either direction.
+  // Full-bleed landscape needs a separate, aligned day/night/sky asset set.
+  const narrow = source.width/source.height < .85;
+  const scale = narrow ? Math.min(cover,contain/.88) : cover;
+  const photoWidth = source.width*scale, photoHeight = source.height*scale;
+  let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : .86);
+  let top = (height-photoHeight)*.5;
+  if (wallpaper === 'mosque') {
+    // Keep the minarets and main dome (right-hand third) in portrait as well.
+    const min = -photoWidth*.65, max = width-photoWidth*.95;
+    if (min <= max) left = clamp(left,min,max);
+  }
+  return {width:photoWidth,height:photoHeight,left,top,scale,
+    mode:wide?'tablet-wide':'tablet-portrait',
+    needsLandscape:wide && narrow};
+}
+
+const layouts = new WeakMap();
+const properties = ['left','top','width','height'];
+export function applyWallpaperLayout(scene,weather,options) {
+  const layout = wallpaperLayout(options);
+  const key = JSON.stringify(layout);
+  if (layouts.get(scene) === key) return layout;
+  layouts.set(scene,key);
+  if (layout) {
+    for (const target of [scene,weather]) {
+      target.dataset.sceneLayout = layout.mode;
+      for (const property of properties)
+        target.style.setProperty('--scene-photo-'+property,layout[property]+'px');
+    }
+    scene.dataset.needsLandscape = String(layout.needsLandscape);
+  } else if (scene.dataset.sceneLayout) {
+    for (const target of [scene,weather]) {
+      delete target.dataset.sceneLayout;
+      for (const property of properties) target.style.removeProperty('--scene-photo-'+property);
+    }
+    delete scene.dataset.needsLandscape;
+  }
+  return layout;
+}
