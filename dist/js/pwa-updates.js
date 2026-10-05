@@ -35,7 +35,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,sh
  const clearBanner=()=>{banner?.remove();banner=null;};
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
   if(requested&&!reloaded){reloaded=true;location.reload();}
-  else if(offerWorker){clearBanner();offerWorker=null;toast('Обновление установлено.');}
+  else if(offerWorker){const announced=Boolean(banner);clearBanner();offerWorker=null;if(announced)toast('Обновление установлено.');}
  });
  try {
   const registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});

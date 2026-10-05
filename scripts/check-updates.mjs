@@ -10,7 +10,7 @@ assert.equal(validatedRelease({version:140,date:'2026-10-03',changes:['x'.repeat
 assert.equal(releaseDate('2026-10-03'),'3 октября 2026');
 const values=new Map([['salah:settings','{"school":0,"weather":false}'],['salah:adhkar-progress-v2','{"totals":{"tasbih":17}}']]);
 const before=[...values];globalThis.localStorage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v)};
-const docEvents={},winEvents={},workerEvents={},elements=[];let reloads=0,updates=0,intervals=[],automaticMessages=0;
+const docEvents={},winEvents={},workerEvents={},elements=[];let reloads=0,updates=0,intervals=[],automaticMessages=0,toasts=0;
 function element(tag){return{tag,children:[],attributes:{},className:'',textContent:'',append(...children){this.children.push(...children);},setAttribute(k,v){this.attributes[k]=v;},remove(){this.removed=true;}};}
 globalThis.document={visibilityState:'visible',createElement:element,addEventListener:(k,f)=>docEvents[k]=f,removeEventListener:(k,f)=>{if(docEvents[k]===f)delete docEvents[k];},body:{append:x=>elements.push(x)}};
 globalThis.window={addEventListener:(k,f)=>winEvents[k]=f,removeEventListener:(k,f)=>{if(winEvents[k]===f)delete winEvents[k];}};
@@ -26,9 +26,10 @@ const waiting={postMessage(message,ports){if(message.type==='SALAH_RELEASE_INFO'
 const registration={waiting,installing:null,addEventListener(){},update:async()=>updates++};
 const serviceWorker={controller:{},addEventListener:(k,f)=>workerEvents[k]=f,register:async()=>{docEvents.pointerdown();return registration;}};
 Object.defineProperty(globalThis,'navigator',{configurable:true,value:{serviceWorker,onLine:true}});
-await registerAppWorker();await new Promise(r=>setTimeout(r,20));
+await registerAppWorker({toast:()=>toasts++});await new Promise(r=>setTimeout(r,20));
 assert.equal(automaticMessages,0,'Never apply an update after the user starts interacting');assert.equal(reloads,0);
 assert.equal(elements.length,0,'Minor waiting builds must stay quiet');
+workerEvents.controllerchange();assert.equal(toasts,0,'Silent minor activation must not create a toast');
 assert.equal(await checkAppUpdate(),'available');await new Promise(r=>setTimeout(r,20));
 const banner=elements.find(x=>x.attributes['aria-label']==='Обновление SALAH');assert.ok(banner,'Manual checking still offers minor builds');
 assert.equal(banner.children[0].children[1].textContent,'4 октября 2026 · Что нового','Waiting worker supplies its own release date');
