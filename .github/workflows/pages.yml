@@ -53,6 +53,8 @@ jobs:
           node scripts/check-daily-dua.mjs
           node scripts/check-free-counter.mjs
           node scripts/check-counter-sync.mjs
+          node scripts/check-sms-provider.mjs
+          node scripts/check-phone-auth.mjs
           node scripts/check-counter-account.mjs
           node scripts/check-tyumen-october.mjs
           node scripts/check-tyumen-sources.mjs

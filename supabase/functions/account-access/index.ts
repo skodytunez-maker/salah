@@ -1,3 +1,5 @@
+// Accept only contact confirmation returned by Auth; metadata never authorizes access.
+const confirmedContact=user=>!!(user?.email_confirmed_at||(user?.phone_confirmed_at&&/^(?:\+)?(?:79\d{9}|992\d{9})$/.test(user.phone||'')));
 // Common identity check for the separate SALAH and SAHABA apps.
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 const KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
@@ -13,7 +15,7 @@ export function createAccountHandler({getUser,getClaims,isSessionActive}){return
  try{
  const [result,verified]=await Promise.all([getUser(bearer.slice(7)),getClaims(bearer.slice(7))]);
  const user=result.data?.user,claims=verified.data?.claims;
- if(result.error||verified.error||!user||!UUID.test(user.id)||user.is_anonymous||!user.email_confirmed_at||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
+ if(result.error||verified.error||!user||!UUID.test(user.id)||user.is_anonymous||!confirmedContact(user)||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
  if(!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});
  return reply(200,{id:user.id});
  }catch{return reply(503,{error:'auth_unavailable'});}

@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {createSmscProvider} from '../supabase/functions/send-sms/smsc.js';
+const requests=[];let fail=false,price='8.36';
+const fetcher=async(url,options)=>{assert.equal(url,'https://smsc.ru/sys/send.php');assert.equal(options.method,'POST');assert.equal(options.redirect,'error');assert.equal(options.body.get('phones'),'+79000000000');assert.equal(options.body.get('apikey'),'private-fixture-key');assert.equal(options.body.get('charset'),'utf-8');requests.push(options.body.get('cost'));if(fail)return Response.json({error:2,error_code:'private details'});return Response.json(options.body.get('cost')==='1'?{cost:price,cnt:1}:{id:1234,cnt:1});};
+const off=createSmscProvider({apiKey:'private-fixture-key',fetcher});await assert.rejects(off.send('+79000000000','123456'),/sms_send_disabled/);assert.equal(requests.length,0);assert.deepEqual(await off.quote('+79000000000','123456'),{kopecks:836,parts:1});assert.deepEqual(requests,['1'],'Price lookup never sends an SMS');
+price='NaN';await assert.rejects(off.quote('+79000000000','123456'),/invalid_sms_cost/);price='8.36';
+const before=requests.length;await assert.rejects(off.quote('+19999999999','123456'),/invalid_sms/);await assert.rejects(off.quote('+79000000000','OTP OR SPAM'),/invalid_sms/);assert.equal(requests.length,before);
+fail=true;try{await off.quote('+79000000000','123456');assert.fail('Provider failure expected')}catch(error){assert.equal(error.message,'sms_provider_unavailable');assert.ok(!String(error).includes('private'))}fail=false;
+const enabled=createSmscProvider({apiKey:'private-fixture-key',fetcher,authorizeSend:async()=>true});assert.deepEqual(await enabled.send('+79000000000','123456'),{id:'1234'});assert.equal(requests.at(-1),'0');
+console.log('PASS: server-only SMSC adapter, closed sending by default, cost-only quote, one recipient/message, validated country/code and safe provider failures; no real SMS sent.');

@@ -1,3 +1,4 @@
+import{confirmedAccount}from '../dist/js/phone-auth-core.js';
 import{bindAppSharing}from '../dist/js/app-sharing.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -42,7 +43,7 @@ function browser(){
   signOut:async options=>{fixture.signOuts.push(options);fixture.session=null;return{error:null};}
  };
  const navigator={onLine:true};class FixtureDate extends Date{static now(){return fixture.now;}}
- const context=createContext({Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
+ const context=createContext({confirmedAccount,mountPhoneAuth:()=>{},Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
   fetch:async(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/adhkar-sync');assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');fixture.syncRequests++;return Response.json({totals:{}});},
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
  return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};

@@ -1,3 +1,5 @@
+// Accept only contact confirmation returned by Auth; metadata never authorizes access.
+const confirmedContact=user=>!!(user?.email_confirmed_at||(user?.phone_confirmed_at&&/^(?:\+)?(?:79\d{9}|992\d{9})$/.test(user.phone||'')));
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const record=v=>v&&typeof v==='object'&&!Array.isArray(v);
 export function cleanCounters(value,signed=false){
@@ -25,7 +27,7 @@ export function createCounterHandler({getUser,getClaims,db,isSessionActive=null}
  if(new URL(req.url).search)return reply(400,{error:'invalid_parameters'});
  const auth=req.headers.get('Authorization')||'';if(!/^Bearer [A-Za-z0-9._-]{16,8192}$/.test(auth))return reply(401,{error:'sign_in_required'});
  let user,claims;try{const result=await getUser(auth.slice(7));if(result.error)return reply(401,{error:'invalid_session'});user=result.data?.user;const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}catch{return reply(503,{error:'auth_unavailable'});}
- if(!user||!UUID.test(user.id)||user.is_anonymous||!user.email_confirmed_at||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1')return reply(403,{error:'confirmed_account_required'});
+ if(!user||!UUID.test(user.id)||user.is_anonymous||!confirmedContact(user)||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1')return reply(403,{error:'confirmed_account_required'});
  if(!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
  try{if(!isSessionActive||!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'});}
  if(user.id===OWNER&&(claims.aal!=='aal2'||!user.factors?.some(f=>f.status==='verified'&&f.factor_type==='totp')))return reply(403,{error:'mfa_required'});
