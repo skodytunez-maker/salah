@@ -249,6 +249,7 @@ function createReminderTracker({read=()=>({}),write=()=>{},maxGap=65000,freshnes
 
 const PUSH_ORIGIN='https://skodytunez-maker.github.io';
 const PUBLIC_APP=PUSH_ORIGIN+'/salah/';
+const SETUP_INVITE={hash:'setup-invite-20261005',from:Date.parse('2026-10-05T17:00:00Z'),until:Date.parse('2026-10-06T17:00:00Z'),message:'В SALAH есть уведомления о намазах и Джума. Откройте Настройки → Азан и напоминания и выберите нужные уведомления.'};
 const DAY_MS=86400000;
 class PushError extends Error {constructor(status,message){super(message);this.status=status;}}
 const fail=(status,message)=>{throw new PushError(status,message);};
@@ -336,7 +337,7 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
@@ -352,6 +353,20 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
    if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
+   // One explicitly requested campaign. The date window and immutable hash prevent repeat broadcasts.
+   if(action==='invite-setup'&&request.method==='POST'){
+    const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
+    if(origin||!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
+    const now=clock();if(now<SETUP_INVITE.from||now>=SETUP_INVITE.until)fail(410,'Приглашение больше не отправляется');
+    const devices=await db.active(now);let accepted=0,failed=0,expired=0,skipped=0,cursor=0;
+    await Promise.all(Array.from({length:Math.min(8,devices.length)},async()=>{while(cursor<devices.length){
+     const device=devices[cursor++],fresh=await db.get(device.id);
+     if(!fresh?.subscription||fresh.preferences?.reminders?.enabled!==true){skipped++;continue;}
+     if(!await db.claimInvite(device.id,SETUP_INVITE.hash,now)){skipped++;continue;}
+     const result=await send({...device,subscription:subscription(fresh.subscription)},{kind:'setup-invite',hash:SETUP_INVITE.hash,at:now,message:SETUP_INVITE.message});
+     await db.complete(device.id,SETUP_INVITE.hash,result);if(result==='sent')accepted++;else if(result==='expired')expired++;else failed++;
+    }}));return reply({campaign:SETUP_INVITE.hash,devices:devices.length,accepted,failed,expired,skipped});
+   }
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
@@ -433,6 +448,7 @@ const db={
  async lease(now){const rows=await sql`update salah_push_private.config set lease_until=to_timestamp(${now}/1000.0)+interval '150 seconds' where id=1 and (lease_until is null or lease_until<to_timestamp(${now}/1000.0)) returning id`;return rows.length===1;},
  async release(){await sql`update salah_push_private.config set lease_until=null where id=1`;},
  async claim(id,hash,at,now){const rows=await sql`insert into salah_push_private.deliveries(device_id,event_hash,event_at,state,claimed_at) values(${id}::uuid,${hash},to_timestamp(${at}/1000.0),'sending',to_timestamp(${now}/1000.0)) on conflict(device_id,event_hash) do update set state='sending',claimed_at=excluded.claimed_at where salah_push_private.deliveries.state='retry' or (salah_push_private.deliveries.state='sending' and salah_push_private.deliveries.claimed_at<to_timestamp(${now}/1000.0)-interval '30 seconds') returning event_hash`;return rows.length===1;},
+ async claimInvite(id,hash,now){const rows=await sql`insert into salah_push_private.deliveries(device_id,event_hash,event_at,state,claimed_at) select id,${hash},to_timestamp(${now}/1000.0),'sending',to_timestamp(${now}/1000.0) from salah_push_private.devices where id=${id}::uuid and enabled=true and subscription is not null and preferences->'reminders'->>'enabled'='true' on conflict(device_id,event_hash) do nothing returning event_hash`;return rows.length===1;},
  async complete(id,hash,state){await sql`update salah_push_private.deliveries set state=${state} where device_id=${id}::uuid and event_hash=${hash}`;},
  async cleanup(now){await sql`delete from salah_push_private.deliveries where event_at<to_timestamp(${now}/1000.0)-interval '7 days'`;await sql`delete from salah_push_private.limits where minute<${Math.floor(now/60000)-1440}`;await sql`delete from salah_push_private.cache where expires_at<to_timestamp(${now}/1000.0)-interval '2 days'`;await sql`delete from salah_push_private.devices where updated_at<to_timestamp(${now}/1000.0)-interval '90 days'`;},
  cache:{

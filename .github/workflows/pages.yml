@@ -29,6 +29,7 @@ jobs:
           node scripts/check-push.mjs
           node scripts/check-push-client.mjs
           node scripts/check-notification-invite.mjs
+          node scripts/check-setup-invite.mjs
           node scripts/check-calendar-occasions.mjs
           node scripts/check-tablet-wallpapers.mjs
           node scripts/check-pages.mjs
