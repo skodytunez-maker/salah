@@ -24,3 +24,6 @@ Verify: node scripts/build-push-function.mjs --check; node scripts/check-push.mj
 Pause delivery reversibly with: select cron.unschedule('salah-background-reminders'); No personal settings need to be cleared.
 
 Adhkar defaults follow Fajr (morning) and Maghrib (evening); previously saved custom HH:mm values retain manual mode. Published Tyumen times are unchanged until a user explicitly adjusts tableOffsets; old calculation offsets continue to be separate.
+
+## Optional return-to-dhikr reminders
+Users opt in separately (disabled by default). Only the last use timestamp from this installation is included in the private subscription preferences; no count, text, history or account identity is uploaded. The first reminder waits 2 or 3 full days from opt-in/latest use, then uses 20:00 in the selected city. Subsequent opportunities are separated by the chosen number of calendar days; short sourced excerpts alternate. A server cooldown and delivery ledger prevent repeated dispatch; preferences are checked again before sending to cancel a late return or opt-out. No database schema changes are required. Prayer-provider availability is unnecessary for a dhikr-only subscription.

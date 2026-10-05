@@ -1,3 +1,4 @@
+import {dhikrTimestamp} from '../../../dist/js/dhikr-reminder.js';
 import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
 
 import {TYUMEN_SOURCES,normalizeTyumenSource,tyumenSourceFiles,matchesTyumenSource} from '../../../dist/js/tyumen-source.js';
@@ -42,7 +43,7 @@ export function preferences(value){
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders,...(reminders.enabled&&reminders.dhikr.enabled?{dhikrLastAt:dhikrTimestamp(value.dhikrLastAt)}:{})};
 }
 export function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 export function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
@@ -62,7 +63,7 @@ export function serverTimings(day,rows,p){
 }
 export function eventsFor(p,rows,now){
  const today=cityDay(now,p.city.timezone);
- return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.tyumenTimeSource,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
+ return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.tyumenTimeSource,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,dhikrLastAt:p.dhikrLastAt,timingsFor:day=>serverTimings(day,rows,p)});
 }
 export function dueEvents(events,now){return events.filter(e=>e.at<=now&&now-e.at<90000);}
 export async function scheduleRows(p,now,{cache,fetcher=fetch}){
@@ -92,10 +93,11 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='adhkar'?'#adhkar':'#home',at:event.at,expiresAt:event.at+120000};}
+export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.at+120000};}
+function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
-  try{const now=clock();await webpush.sendNotification(device.subscription,JSON.stringify(notification(event,now)),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((event.at+120000-now)/1000)),urgency:'high',timeout:8000});return 'sent';}
+  try{const now=clock();await webpush.sendNotification(device.subscription,JSON.stringify(notification(event,now)),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((event.at+120000-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
@@ -106,7 +108,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:2,features:['tahajjud'],publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:3,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
@@ -116,10 +118,18 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
-      if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})).then(rows=>eventsFor(p,rows,clock())));
+      if(!grouped.has(signature))grouped.set(signature,(needsPrayerTimings(p)?scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})):Promise.resolve({})).then(rows=>eventsFor(p,rows,clock())));
       const events=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
-       const hash=await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
+       if(event.kind==='dhikr'){
+        // A resumed reader or an opt-out during timetable fetching must cancel this send.
+        const fresh=await db.get(device.id);if(!fresh)continue;
+        const latest=preferences(fresh.preferences);
+        if(!eventsFor(latest,{},clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
+        const previous=await db.lastDhikrSent(device.id);
+        if(previous&&clock()-previous<(latest.reminders.dhikr.days*24-2)*3600000)continue;
+       }
+       const hash=(event.kind==='dhikr'?'dhikr-':'')+await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
        const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
        if(result==='expired')break;
       }
@@ -145,9 +155,12 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
     if(!device&&!await db.rate('new-devices',20,clock()))fail(429,'Попробуйте немного позже');
     if(!device){const peer=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';if(!await db.rate('new-peer:'+await digest(peer),10,clock()))fail(429,'Попробуйте через минуту');}
     if(!device&&await db.count()>=1000)fail(503,'Доставка временно недоступна');
-    const rows=await scheduleRows(p,clock(),{cache:db.cache,fetcher});
+    if(p.reminders.dhikr.enabled){p.reminders.dhikr.since=Math.min(p.reminders.dhikr.since||clock(),clock());p.dhikrLastAt=Math.min(p.dhikrLastAt||0,clock());
+     if(device?.preferences?.reminders?.dhikr?.enabled===true)p.dhikrLastAt=Math.max(p.dhikrLastAt,Math.min(dhikrTimestamp(device.preferences.dhikrLastAt),clock()));}
+    const needsSchedule=needsPrayerTimings(p);
+    const rows=needsSchedule?await scheduleRows(p,clock(),{cache:db.cache,fetcher}):{};
     const today=cityDay(clock(),p.city.timezone),ready=PRAYER_KEYS.every(key=>Number.isFinite(serverTimings(today,rows,p)?.[key]));
-    if(!ready)fail(503,'На эту дату нет проверенного расписания');
+    if(needsSchedule&&!ready)fail(503,'На эту дату нет проверенного расписания');
     if(!device){const welcome={hash:'connected-'+clock(),at:clock(),kind:'test',message:'Фоновые уведомления SALAH подключены.'};if(await send({id:auth.id,subscription:sub},welcome)!=='sent')fail(400,'Телефон не подтвердил доставку. Повторите подключение.');}
     await db.upsert({id:auth.id,token_hash:tokenHash,endpoint_hash:endpointHash,subscription:sub,preferences:p,now:clock()});
     return reply({saved:true,enabled:p.reminders.enabled});

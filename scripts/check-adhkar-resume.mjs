@@ -1,3 +1,4 @@
+import {markDhikrActivity} from '../dist/js/dhikr-reminder.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
@@ -9,7 +10,7 @@ import {createAdhkarProgressStore} from '../dist/js/adhkar-progress.js';
 // production handlers, not a second implementation of resume behavior.
 const source=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 const catalogue=JSON.parse(await readFile(new URL('../dist/data/adhkar.json',import.meta.url),'utf8'));
-const executable=source.replace(/^import[^\n]*\n/,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdhkar,stopAdhkar});';
+const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdhkar,stopAdhkar});';
 const decode=value=>String(value).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 class Storage {
   data=new Map();get length(){return this.data.size}key(index){return [...this.data.keys()][index]??null}
@@ -51,6 +52,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
   const location={hash},body=new Element('body'),container=new Element(),events=new Map(),audio=[],notices=[];let scroll=0,fetches=0,currentDay=day,deferredLock=null;
   const window={history:{state:null,replaceState(_state,_title,url){location.hash=url}},addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},scrollTo(_x,y){scroll=y}};
   const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
+    markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},
     read:(key,fallback)=>{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)},write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},settings:{haptic:false},
     esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),toast:notice=>notices.push(notice),modal(){},closeModal(){},dateKey:()=>currentDay,createAdhkarProgressStore,createFreeCounterStore,stopDailyDuas(){},showDailyDuas(){},

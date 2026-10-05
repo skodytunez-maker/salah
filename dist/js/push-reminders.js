@@ -1,3 +1,4 @@
+import {readDhikrActivity} from './dhikr-reminder.js';
 import {normalizeReminders,PRAYER_KEYS} from './reminder-events.js';
 import {esc} from './ui.js';
 const API='https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/background-reminders';
@@ -6,7 +7,7 @@ const IOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform=
 const installed=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 export function pushPreferences(s){
  const p={city:s.city&&{name:s.city.name,latitude:s.city.latitude,longitude:s.city.longitude,timezone:s.city.timezone},method:s.method,school:s.school,highLatitude:s.highLatitude,tyumenTimeSource:s.tyumenTimeSource||'auto',offsets:Object.fromEntries(PRAYER_KEYS.map(k=>[k,Number(s.offsets?.[k]||0)])),tableOffsets:Object.fromEntries(PRAYER_KEYS.map(k=>[k,Number(s.tableOffsets?.[k]||0)])),mosque:s.mosque===true,mosqueTimes:s.mosque===true?{...s.mosqueTimes}:{},reminders:normalizeReminders(s.reminders)};
- p.reminders.browserNotifications=false;return p;
+ p.reminders.browserNotifications=false;if(p.reminders.enabled&&p.reminders.dhikr.enabled)p.dhikrLastAt=readDhikrActivity();return p;
 }
 function read(){try{const state=JSON.parse(localStorage.getItem(KEY)||'null');return state&&/^[a-f0-9]{64}$/.test(state.token)&&typeof state.id==='string'?state:null;}catch{return null;}}
 function notifyStatus(){window.dispatchEvent(new Event('salah:notification-status-changed'));}
@@ -30,6 +31,7 @@ export function pushConnectionReport({supported=false,enabled=false,city=false,p
  return {ready:checks.every(row=>row.ok),checks:checks.map(row=>({...row,detail:row.ok?'Готово':row.detail}))};
 }
 export function createPushReminders({getSettings,toast=()=>{}}){
+ let lastActivitySync=0,activityTimer=null;
  let mounted=null,busy=false,status='',config=null,onlineReady=false,needsSync=false,timer,state=read(),lastSignature=state?.signature||'',configLoading=null,lastConfigAttempt=0,diagnostic=null;
  const supported=()=>globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
  async function call(action,body){
@@ -105,7 +107,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
     try{const reg=await registration();subscription=!!await waitForPushOperation(reg.pushManager.getSubscription());}catch{subscription=false;}
    }
    const p=pushPreferences(getSettings());
-   const selected=PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled)||p.reminders.jumuah.enabled||p.reminders.tahajjud.enabled;
+   const selected=PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled)||p.reminders.jumuah.enabled||p.reminders.tahajjud.enabled||p.reminders.dhikr.enabled;
    diagnostic=pushConnectionReport({supported:supported(),enabled:p.reminders.enabled&&selected,city:!!p.city,permission:typeof Notification==='undefined'?'unsupported':Notification.permission,subscription,saved:!!state?.saved&&!state.pendingRemoval,current:onlineReady&&lastSignature===JSON.stringify(p),service:!!config});
    status=diagnostic.ready?'Подключение готово. Доставку проверьте тестовым уведомлением.':'Подключение требует внимания. Проверьте пункты ниже.';
   }catch{status='Не удалось проверить подключение. Повторите позже.';}
@@ -117,13 +119,19 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   let guide='';if(IOS()&&!installed())guide='На iPhone откройте SALAH в Safari → «Поделиться» → «На экран Домой». Затем включите уведомления из установленного приложения (iOS 16.4 или новее).';
   else if(!supported())guide='Этот браузер не поддерживает фоновые уведомления. На телефоне попробуйте установленное SALAH в Safari или Chrome.';
   else if(Notification.permission==='denied')guide='Уведомления запрещены. Разрешите их в системных настройках SALAH.';
-  mounted.innerHTML='<h3>Когда SALAH свёрнуто</h3><p class="reminder-voice-note">Уведомления о намазах, Тахаджуде, азкарах и Джума по настройкам выше. Звук — системный; полный Азан прослушивается в открытом приложении.</p>'+(!active?'<p class="reminder-voice-note">При включении Supabase сохранит подписку, координаты выбранного города и параметры напоминаний. История молитв и счётчики не передаются сервису уведомлений.</p>':'')+(guide?'<p class="reminder-notice">'+esc(guide)+'</p>':'')+(!p.enabled?'<p class="reminder-voice-note">Сначала включите напоминания переключателем выше.</p>':'')+'<div class="reminder-preview"><button type="button" data-push-enable '+(!supported()||!p.enabled||!getSettings().city||!config||busy||!!guide?'disabled':'')+'>'+(active?'Обновить подключение':'Включить фоновые уведомления')+'</button>'+(state?'<button type="button" data-push-disable '+(busy?'disabled':'')+'>Отключить</button>':'')+'</div>'+(active?'<button class="button secondary" type="button" data-push-test '+(busy||!onlineReady?'disabled':'')+'>Тестовое уведомление</button>':'')+'<p class="reminder-status" role="status">'+esc(status||(config?'Доставка готова к подключению.':'Проверяем доступность доставки…'))+'</p>';
+  mounted.innerHTML='<h3>Когда SALAH свёрнуто</h3><p class="reminder-voice-note">Уведомления о намазах, Тахаджуде, азкарах и Джума по настройкам выше. Звук — системный; полный Азан прослушивается в открытом приложении.</p>'+(!active?'<p class="reminder-voice-note">При включении Supabase сохранит подписку, координаты выбранного города и параметры напоминаний. История молитв и счётчики не передаются сервису уведомлений. Для включённого напоминания о паузе сохраняется время последнего использования азкаров.</p>':'')+(guide?'<p class="reminder-notice">'+esc(guide)+'</p>':'')+(!p.enabled?'<p class="reminder-voice-note">Сначала включите напоминания переключателем выше.</p>':'')+'<div class="reminder-preview"><button type="button" data-push-enable '+(!supported()||!p.enabled||!getSettings().city||!config||busy||!!guide?'disabled':'')+'>'+(active?'Обновить подключение':'Включить фоновые уведомления')+'</button>'+(state?'<button type="button" data-push-disable '+(busy?'disabled':'')+'>Отключить</button>':'')+'</div>'+(active?'<button class="button secondary" type="button" data-push-test '+(busy||!onlineReady?'disabled':'')+'>Тестовое уведомление</button>':'')+'<p class="reminder-status" role="status">'+esc(status||(config?'Доставка готова к подключению.':'Проверяем доступность доставки…'))+'</p>';
   mounted.innerHTML+='<button class="button secondary" type="button" data-push-diagnose '+(busy?'disabled':'')+'>Проверить подключение</button>'+(diagnostic?'<ul class="reminder-voice-note">'+diagnostic.checks.map(row=>'<li>'+esc(row.label)+': '+esc(row.detail)+'</li>').join('')+'</ul>':'');
   mounted.querySelector('[data-push-enable]').onclick=enable;const off=mounted.querySelector('[data-push-disable]');if(off)off.onclick=disable;const check=mounted.querySelector('[data-push-test]');if(check)check.onclick=test;mounted.querySelector('[data-push-diagnose]').onclick=diagnose;
  }
- function queue(){clearTimeout(timer);timer=setTimeout(()=>sync(),1200);}
+ function queue(){clearTimeout(timer);timer=setTimeout(()=>{timer=null;sync();},1200);}
+ window.addEventListener('salah:dhikr-activity',()=>{
+  if(!normalizeReminders(getSettings().reminders).dhikr.enabled)return;
+  const gap=Date.now()-lastActivitySync;
+  if(gap>=60000){lastActivitySync=Date.now();queue();}
+  else if(!activityTimer)activityTimer=setTimeout(()=>{activityTimer=null;lastActivitySync=Date.now();queue();},60000-gap);
+ });
  window.addEventListener('salah:settings-changed',()=>{diagnostic=null;queue();draw();});
- window.addEventListener('storage',event=>{if(event.key==='salah:settings'){queue();}else if(event.key===KEY){state=read();onlineReady=false;queue();draw();}});
+ window.addEventListener('storage',event=>{if(event.key==='salah:settings'||event.key==='salah:dhikr-last-use-v1'){queue();}else if(event.key===KEY){state=read();onlineReady=false;queue();draw();}});
  window.addEventListener('online',()=>{loadConfig(true);sync(true);});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();if(!config)loadConfig();sync();}});
  loadConfig();sync(true);

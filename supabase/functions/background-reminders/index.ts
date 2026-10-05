@@ -65,6 +65,37 @@ function tahajjudFor(now,{previous,today,next}={},chosenTime=''){
   return time===null?null:{kind:'last-third',time,nightStart,nightEnd,label:'Начало последней трети ночи'};
 }
 
+// Short excerpts; the hadith wording below is a Russian rendering of its meaning.
+const DHIKR_MESSAGES=[
+ {text:'«Поминайте Меня, и Я буду помнить о вас». Коран, 2:152.',source:'https://quran.com/ru/al-baqarah/152'},
+ {text:'Любимые для Аллаха слова: «Субханаллах, альхамдулиллях, ля иляха илляллах, Аллаху акбар». Муслим, 2137a.',source:'https://sunnah.com/muslim:2137a'}
+];
+const DHIKR_ACTIVITY_KEY='salah:dhikr-last-use-v1';
+const DHIKR_DAY=86400000;
+function dhikrTimestamp(value){return Number.isSafeInteger(value)&&value>0&&value<4102444800000?value:0;}
+function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:value?.days===2?2:3,time:'20:00',since:dhikrTimestamp(value?.since)};}
+function readDhikrActivity(storage=globalThis.localStorage){try{return dhikrTimestamp(Number(storage.getItem(DHIKR_ACTIVITY_KEY)));}catch{return 0;}}
+function markDhikrActivity(now=Date.now(),storage=globalThis.localStorage,target=globalThis.window){
+ if(!dhikrTimestamp(now))return false;
+ try{storage.setItem(DHIKR_ACTIVITY_KEY,String(Math.max(now,readDhikrActivity(storage))));target?.dispatchEvent(new Event('salah:dhikr-activity'));return true;}catch{return false;}
+}
+// The time refers to use of SALAH, never to a claim about worship outside the app.
+function dhikrEventForDay(value,lastUse,day,zone,{localTimestamp,shiftDay,cityDay}){
+ const row=normalizeDhikrReminder(value),baseline=Math.max(row.since,dhikrTimestamp(lastUse));
+ if(!row.enabled||!baseline)return null;
+ const threshold=baseline+row.days*DHIKR_DAY;
+ let firstDay;try{firstDay=cityDay(threshold,zone);}catch{return null;}
+ let firstAt=localTimestamp(firstDay,row.time,zone);
+ if(!Number.isFinite(firstAt))return null;
+ if(firstAt<threshold){firstDay=shiftDay(firstDay,1);firstAt=localTimestamp(firstDay,row.time,zone);}
+ const dayGap=(Date.parse(day+'T12:00:00Z')-Date.parse(firstDay+'T12:00:00Z'))/DHIKR_DAY;
+ if(!Number.isInteger(dayGap)||dayGap<0||dayGap%row.days!==0)return null;
+ const at=localTimestamp(day,row.time,zone);
+ if(!Number.isFinite(at)||at<threshold)return null;
+ const slot=(dayGap/row.days)%DHIKR_MESSAGES.length;
+ return {id:JSON.stringify(['dhikr',day,at]),day,kind:'dhikr',key:'return',phase:'at',at,adhan:false,message:DHIKR_MESSAGES[slot].text};
+}
+
 // Reminder scheduling is independent of the next-prayer display and browser APIs.
 const PRAYER_KEYS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 const BEFORE_MINUTES = [0, 5, 10, 15, 30];
@@ -77,7 +108,7 @@ const reminderDefaults = {
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
   adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}},
   jumuah:{enabled:false,time:'09:00'},
-  tahajjud:{enabled:false}
+  tahajjud:{enabled:false},dhikr:normalizeDhikrReminder(null)
 };
 
 function validLocalTime(value){return typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);}
@@ -95,7 +126,7 @@ function normalizeReminders(value){
     const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
     return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
-  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'},tahajjud:{enabled:saved.tahajjud?.enabled===true}};
+  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'},tahajjud:{enabled:saved.tahajjud?.enabled===true},dhikr:normalizeDhikrReminder(saved.dhikr)};
 }
 
 function shiftDay(day,amount){
@@ -172,6 +203,10 @@ function buildReminderEvents(value,context){
       if(Number.isFinite(at))events.push({id:JSON.stringify([String(context.cityKey),day,'jumuah',at,'at']),day,kind:'jumuah',key:'jumuah',phase:'at',at,adhan:false,message:'Сегодня Джума'});
     }
   }
+  for(const day of new Set(dates.filter(Boolean))){
+    const event=dhikrEventForDay(settings.dhikr,context.dhikrLastAt,day,context.timeZone,{localTimestamp,shiftDay,cityDay:(at,zone)=>{const p=partsAt(at,zone);return p.year+'-'+p.month+'-'+p.day;}});
+    if(event)events.push(event);
+  }
   return events.sort((a,b)=>a.at-b.at||a.id.localeCompare(b.id));
 }
 
@@ -245,7 +280,7 @@ function preferences(value){
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders,...(reminders.enabled&&reminders.dhikr.enabled?{dhikrLastAt:dhikrTimestamp(value.dhikrLastAt)}:{})};
 }
 function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
@@ -265,7 +300,7 @@ function serverTimings(day,rows,p){
 }
 function eventsFor(p,rows,now){
  const today=cityDay(now,p.city.timezone);
- return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.tyumenTimeSource,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,timingsFor:day=>serverTimings(day,rows,p)});
+ return buildReminderEvents(p.reminders,{today,cityKey:JSON.stringify([p.city.latitude,p.city.longitude,p.city.timezone,p.method,p.school,p.highLatitude,p.tyumenTimeSource,p.offsets,p.tableOffsets,p.mosque,p.mosqueTimes]),timeZone:p.city.timezone,dhikrLastAt:p.dhikrLastAt,timingsFor:day=>serverTimings(day,rows,p)});
 }
 function dueEvents(events,now){return events.filter(e=>e.at<=now&&now-e.at<90000);}
 async function scheduleRows(p,now,{cache,fetcher=fetch}){
@@ -295,10 +330,11 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='adhkar'?'#adhkar':'#home',at:event.at,expiresAt:event.at+120000};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.at+120000};}
+function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
-  try{const now=clock();await webpush.sendNotification(device.subscription,JSON.stringify(notification(event,now)),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((event.at+120000-now)/1000)),urgency:'high',timeout:8000});return 'sent';}
+  try{const now=clock();await webpush.sendNotification(device.subscription,JSON.stringify(notification(event,now)),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((event.at+120000-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
@@ -309,7 +345,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:2,features:['tahajjud'],publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:3,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
    if(action==='dispatch'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
     if(!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
@@ -319,10 +355,18 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
-      if(!grouped.has(signature))grouped.set(signature,scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})).then(rows=>eventsFor(p,rows,clock())));
+      if(!grouped.has(signature))grouped.set(signature,(needsPrayerTimings(p)?scheduleRows(p,clock(),{cache:db.cache,fetcher}).catch(()=>({})):Promise.resolve({})).then(rows=>eventsFor(p,rows,clock())));
       const events=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
-       const hash=await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
+       if(event.kind==='dhikr'){
+        // A resumed reader or an opt-out during timetable fetching must cancel this send.
+        const fresh=await db.get(device.id);if(!fresh)continue;
+        const latest=preferences(fresh.preferences);
+        if(!eventsFor(latest,{},clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
+        const previous=await db.lastDhikrSent(device.id);
+        if(previous&&clock()-previous<(latest.reminders.dhikr.days*24-2)*3600000)continue;
+       }
+       const hash=(event.kind==='dhikr'?'dhikr-':'')+await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
        const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
        if(result==='expired')break;
       }
@@ -348,9 +392,12 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
     if(!device&&!await db.rate('new-devices',20,clock()))fail(429,'Попробуйте немного позже');
     if(!device){const peer=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';if(!await db.rate('new-peer:'+await digest(peer),10,clock()))fail(429,'Попробуйте через минуту');}
     if(!device&&await db.count()>=1000)fail(503,'Доставка временно недоступна');
-    const rows=await scheduleRows(p,clock(),{cache:db.cache,fetcher});
+    if(p.reminders.dhikr.enabled){p.reminders.dhikr.since=Math.min(p.reminders.dhikr.since||clock(),clock());p.dhikrLastAt=Math.min(p.dhikrLastAt||0,clock());
+     if(device?.preferences?.reminders?.dhikr?.enabled===true)p.dhikrLastAt=Math.max(p.dhikrLastAt,Math.min(dhikrTimestamp(device.preferences.dhikrLastAt),clock()));}
+    const needsSchedule=needsPrayerTimings(p);
+    const rows=needsSchedule?await scheduleRows(p,clock(),{cache:db.cache,fetcher}):{};
     const today=cityDay(clock(),p.city.timezone),ready=PRAYER_KEYS.every(key=>Number.isFinite(serverTimings(today,rows,p)?.[key]));
-    if(!ready)fail(503,'На эту дату нет проверенного расписания');
+    if(needsSchedule&&!ready)fail(503,'На эту дату нет проверенного расписания');
     if(!device){const welcome={hash:'connected-'+clock(),at:clock(),kind:'test',message:'Фоновые уведомления SALAH подключены.'};if(await send({id:auth.id,subscription:sub},welcome)!=='sent')fail(400,'Телефон не подтвердил доставку. Повторите подключение.');}
     await db.upsert({id:auth.id,token_hash:tokenHash,endpoint_hash:endpointHash,subscription:sub,preferences:p,now:clock()});
     return reply({saved:true,enabled:p.reminders.enabled});
@@ -374,6 +421,7 @@ const db={
  async remove(id){await sql`delete from salah_push_private.devices where id=${id}::uuid`;},
  async expire(id){await sql`update salah_push_private.devices set enabled=false,subscription=null,preferences=null where id=${id}::uuid`;},
  async active(now){return sql`select id,subscription,preferences from salah_push_private.devices where enabled=true and subscription is not null and preferences is not null and updated_at>to_timestamp(${now}/1000.0)-interval '90 days'`;},
+ async lastDhikrSent(id){const [row]=await sql`select extract(epoch from max(event_at))*1000 as at from salah_push_private.deliveries where device_id=${id}::uuid and event_hash like 'dhikr-%' and state='sent'`;return Number(row?.at)||0;},
  async rate(key,limit,now){const minute=Math.floor(now/60000);const rows=await sql`insert into salah_push_private.limits(key,minute,n) values(${key},${minute},1) on conflict(key,minute) do update set n=salah_push_private.limits.n+1 returning n`;return rows[0].n<=limit;},
  async lease(now){const rows=await sql`update salah_push_private.config set lease_until=to_timestamp(${now}/1000.0)+interval '150 seconds' where id=1 and (lease_until is null or lease_until<to_timestamp(${now}/1000.0)) returning id`;return rows.length===1;},
  async release(){await sql`update salah_push_private.config set lease_until=null where id=1`;},
