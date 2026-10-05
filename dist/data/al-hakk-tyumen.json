@@ -1,9 +1,9 @@
 {
   "source": "https://al-hakk.ru/namaz/",
-  "verifiedOn": "2026-09-30",
+  "verifiedOn": "2026-10-05",
   "range": [
     "2026-09-01",
-    "2026-10-31"
+    "2026-12-31"
   ],
   "days": {
     "2026-09-01": {
@@ -861,6 +861,479 @@
       "method": "Аль-Хакк · Тюмень",
       "source": "al-hakk",
       "loadedAt": 1790775665495
+    },
+    "2026-12-01": {
+      "timings": {
+        "Fajr": "2026-12-01T06:27:00+05:00",
+        "Sunrise": "2026-12-01T08:51:00+05:00",
+        "Dhuhr": "2026-12-01T12:30:00+05:00",
+        "Asr": "2026-12-01T14:13:00+05:00",
+        "Maghrib": "2026-12-01T16:01:00+05:00",
+        "Isha": "2026-12-01T18:02:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-02": {
+      "timings": {
+        "Fajr": "2026-12-02T06:29:00+05:00",
+        "Sunrise": "2026-12-02T08:52:00+05:00",
+        "Dhuhr": "2026-12-02T12:31:00+05:00",
+        "Asr": "2026-12-02T14:12:00+05:00",
+        "Maghrib": "2026-12-02T16:00:00+05:00",
+        "Isha": "2026-12-02T18:01:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-03": {
+      "timings": {
+        "Fajr": "2026-12-03T06:30:00+05:00",
+        "Sunrise": "2026-12-03T08:54:00+05:00",
+        "Dhuhr": "2026-12-03T12:31:00+05:00",
+        "Asr": "2026-12-03T14:11:00+05:00",
+        "Maghrib": "2026-12-03T16:00:00+05:00",
+        "Isha": "2026-12-03T18:01:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-04": {
+      "timings": {
+        "Fajr": "2026-12-04T06:31:00+05:00",
+        "Sunrise": "2026-12-04T08:56:00+05:00",
+        "Dhuhr": "2026-12-04T12:31:00+05:00",
+        "Asr": "2026-12-04T14:11:00+05:00",
+        "Maghrib": "2026-12-04T15:59:00+05:00",
+        "Isha": "2026-12-04T18:00:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-05": {
+      "timings": {
+        "Fajr": "2026-12-05T06:33:00+05:00",
+        "Sunrise": "2026-12-05T08:57:00+05:00",
+        "Dhuhr": "2026-12-05T12:32:00+05:00",
+        "Asr": "2026-12-05T14:10:00+05:00",
+        "Maghrib": "2026-12-05T15:58:00+05:00",
+        "Isha": "2026-12-05T18:00:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-06": {
+      "timings": {
+        "Fajr": "2026-12-06T06:34:00+05:00",
+        "Sunrise": "2026-12-06T08:59:00+05:00",
+        "Dhuhr": "2026-12-06T12:32:00+05:00",
+        "Asr": "2026-12-06T14:09:00+05:00",
+        "Maghrib": "2026-12-06T15:57:00+05:00",
+        "Isha": "2026-12-06T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-07": {
+      "timings": {
+        "Fajr": "2026-12-07T06:35:00+05:00",
+        "Sunrise": "2026-12-07T09:00:00+05:00",
+        "Dhuhr": "2026-12-07T12:33:00+05:00",
+        "Asr": "2026-12-07T14:09:00+05:00",
+        "Maghrib": "2026-12-07T15:57:00+05:00",
+        "Isha": "2026-12-07T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-08": {
+      "timings": {
+        "Fajr": "2026-12-08T06:36:00+05:00",
+        "Sunrise": "2026-12-08T09:02:00+05:00",
+        "Dhuhr": "2026-12-08T12:33:00+05:00",
+        "Asr": "2026-12-08T14:09:00+05:00",
+        "Maghrib": "2026-12-08T15:56:00+05:00",
+        "Isha": "2026-12-08T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-09": {
+      "timings": {
+        "Fajr": "2026-12-09T06:37:00+05:00",
+        "Sunrise": "2026-12-09T09:03:00+05:00",
+        "Dhuhr": "2026-12-09T12:34:00+05:00",
+        "Asr": "2026-12-09T14:08:00+05:00",
+        "Maghrib": "2026-12-09T15:56:00+05:00",
+        "Isha": "2026-12-09T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-10": {
+      "timings": {
+        "Fajr": "2026-12-10T06:38:00+05:00",
+        "Sunrise": "2026-12-10T09:05:00+05:00",
+        "Dhuhr": "2026-12-10T12:34:00+05:00",
+        "Asr": "2026-12-10T14:08:00+05:00",
+        "Maghrib": "2026-12-10T15:55:00+05:00",
+        "Isha": "2026-12-10T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-11": {
+      "timings": {
+        "Fajr": "2026-12-11T06:39:00+05:00",
+        "Sunrise": "2026-12-11T09:06:00+05:00",
+        "Dhuhr": "2026-12-11T12:34:00+05:00",
+        "Asr": "2026-12-11T14:08:00+05:00",
+        "Maghrib": "2026-12-11T15:55:00+05:00",
+        "Isha": "2026-12-11T17:58:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-12": {
+      "timings": {
+        "Fajr": "2026-12-12T06:40:00+05:00",
+        "Sunrise": "2026-12-12T09:07:00+05:00",
+        "Dhuhr": "2026-12-12T12:35:00+05:00",
+        "Asr": "2026-12-12T14:08:00+05:00",
+        "Maghrib": "2026-12-12T15:55:00+05:00",
+        "Isha": "2026-12-12T17:58:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-13": {
+      "timings": {
+        "Fajr": "2026-12-13T06:41:00+05:00",
+        "Sunrise": "2026-12-13T09:08:00+05:00",
+        "Dhuhr": "2026-12-13T12:35:00+05:00",
+        "Asr": "2026-12-13T14:07:00+05:00",
+        "Maghrib": "2026-12-13T15:54:00+05:00",
+        "Isha": "2026-12-13T17:58:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-14": {
+      "timings": {
+        "Fajr": "2026-12-14T06:42:00+05:00",
+        "Sunrise": "2026-12-14T09:09:00+05:00",
+        "Dhuhr": "2026-12-14T12:36:00+05:00",
+        "Asr": "2026-12-14T14:07:00+05:00",
+        "Maghrib": "2026-12-14T15:54:00+05:00",
+        "Isha": "2026-12-14T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-15": {
+      "timings": {
+        "Fajr": "2026-12-15T06:43:00+05:00",
+        "Sunrise": "2026-12-15T09:10:00+05:00",
+        "Dhuhr": "2026-12-15T12:36:00+05:00",
+        "Asr": "2026-12-15T14:08:00+05:00",
+        "Maghrib": "2026-12-15T15:54:00+05:00",
+        "Isha": "2026-12-15T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-16": {
+      "timings": {
+        "Fajr": "2026-12-16T06:44:00+05:00",
+        "Sunrise": "2026-12-16T09:11:00+05:00",
+        "Dhuhr": "2026-12-16T12:37:00+05:00",
+        "Asr": "2026-12-16T14:08:00+05:00",
+        "Maghrib": "2026-12-16T15:54:00+05:00",
+        "Isha": "2026-12-16T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-17": {
+      "timings": {
+        "Fajr": "2026-12-17T06:44:00+05:00",
+        "Sunrise": "2026-12-17T09:12:00+05:00",
+        "Dhuhr": "2026-12-17T12:37:00+05:00",
+        "Asr": "2026-12-17T14:08:00+05:00",
+        "Maghrib": "2026-12-17T15:54:00+05:00",
+        "Isha": "2026-12-17T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-18": {
+      "timings": {
+        "Fajr": "2026-12-18T06:45:00+05:00",
+        "Sunrise": "2026-12-18T09:13:00+05:00",
+        "Dhuhr": "2026-12-18T12:38:00+05:00",
+        "Asr": "2026-12-18T14:08:00+05:00",
+        "Maghrib": "2026-12-18T15:55:00+05:00",
+        "Isha": "2026-12-18T17:59:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-19": {
+      "timings": {
+        "Fajr": "2026-12-19T06:46:00+05:00",
+        "Sunrise": "2026-12-19T09:14:00+05:00",
+        "Dhuhr": "2026-12-19T12:38:00+05:00",
+        "Asr": "2026-12-19T14:08:00+05:00",
+        "Maghrib": "2026-12-19T15:55:00+05:00",
+        "Isha": "2026-12-19T18:00:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-20": {
+      "timings": {
+        "Fajr": "2026-12-20T06:46:00+05:00",
+        "Sunrise": "2026-12-20T09:14:00+05:00",
+        "Dhuhr": "2026-12-20T12:39:00+05:00",
+        "Asr": "2026-12-20T14:09:00+05:00",
+        "Maghrib": "2026-12-20T15:55:00+05:00",
+        "Isha": "2026-12-20T18:00:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-21": {
+      "timings": {
+        "Fajr": "2026-12-21T06:47:00+05:00",
+        "Sunrise": "2026-12-21T09:15:00+05:00",
+        "Dhuhr": "2026-12-21T12:39:00+05:00",
+        "Asr": "2026-12-21T14:09:00+05:00",
+        "Maghrib": "2026-12-21T15:56:00+05:00",
+        "Isha": "2026-12-21T18:01:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-22": {
+      "timings": {
+        "Fajr": "2026-12-22T06:47:00+05:00",
+        "Sunrise": "2026-12-22T09:15:00+05:00",
+        "Dhuhr": "2026-12-22T12:40:00+05:00",
+        "Asr": "2026-12-22T14:10:00+05:00",
+        "Maghrib": "2026-12-22T15:56:00+05:00",
+        "Isha": "2026-12-22T18:01:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-23": {
+      "timings": {
+        "Fajr": "2026-12-23T06:48:00+05:00",
+        "Sunrise": "2026-12-23T09:16:00+05:00",
+        "Dhuhr": "2026-12-23T12:40:00+05:00",
+        "Asr": "2026-12-23T14:10:00+05:00",
+        "Maghrib": "2026-12-23T15:57:00+05:00",
+        "Isha": "2026-12-23T18:02:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-24": {
+      "timings": {
+        "Fajr": "2026-12-24T06:48:00+05:00",
+        "Sunrise": "2026-12-24T09:16:00+05:00",
+        "Dhuhr": "2026-12-24T12:41:00+05:00",
+        "Asr": "2026-12-24T14:11:00+05:00",
+        "Maghrib": "2026-12-24T15:57:00+05:00",
+        "Isha": "2026-12-24T18:02:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-25": {
+      "timings": {
+        "Fajr": "2026-12-25T06:49:00+05:00",
+        "Sunrise": "2026-12-25T09:16:00+05:00",
+        "Dhuhr": "2026-12-25T12:41:00+05:00",
+        "Asr": "2026-12-25T14:12:00+05:00",
+        "Maghrib": "2026-12-25T15:58:00+05:00",
+        "Isha": "2026-12-25T18:03:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-26": {
+      "timings": {
+        "Fajr": "2026-12-26T06:49:00+05:00",
+        "Sunrise": "2026-12-26T09:17:00+05:00",
+        "Dhuhr": "2026-12-26T12:42:00+05:00",
+        "Asr": "2026-12-26T14:12:00+05:00",
+        "Maghrib": "2026-12-26T15:59:00+05:00",
+        "Isha": "2026-12-26T18:04:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-27": {
+      "timings": {
+        "Fajr": "2026-12-27T06:49:00+05:00",
+        "Sunrise": "2026-12-27T09:17:00+05:00",
+        "Dhuhr": "2026-12-27T12:42:00+05:00",
+        "Asr": "2026-12-27T14:13:00+05:00",
+        "Maghrib": "2026-12-27T16:00:00+05:00",
+        "Isha": "2026-12-27T18:04:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-28": {
+      "timings": {
+        "Fajr": "2026-12-28T06:49:00+05:00",
+        "Sunrise": "2026-12-28T09:17:00+05:00",
+        "Dhuhr": "2026-12-28T12:43:00+05:00",
+        "Asr": "2026-12-28T14:14:00+05:00",
+        "Maghrib": "2026-12-28T16:01:00+05:00",
+        "Isha": "2026-12-28T18:05:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-29": {
+      "timings": {
+        "Fajr": "2026-12-29T06:49:00+05:00",
+        "Sunrise": "2026-12-29T09:17:00+05:00",
+        "Dhuhr": "2026-12-29T12:43:00+05:00",
+        "Asr": "2026-12-29T14:15:00+05:00",
+        "Maghrib": "2026-12-29T16:02:00+05:00",
+        "Isha": "2026-12-29T18:06:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-30": {
+      "timings": {
+        "Fajr": "2026-12-30T06:50:00+05:00",
+        "Sunrise": "2026-12-30T09:17:00+05:00",
+        "Dhuhr": "2026-12-30T12:44:00+05:00",
+        "Asr": "2026-12-30T14:16:00+05:00",
+        "Maghrib": "2026-12-30T16:03:00+05:00",
+        "Isha": "2026-12-30T18:07:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
+    },
+    "2026-12-31": {
+      "timings": {
+        "Fajr": "2026-12-31T06:50:00+05:00",
+        "Sunrise": "2026-12-31T09:17:00+05:00",
+        "Dhuhr": "2026-12-31T12:44:00+05:00",
+        "Asr": "2026-12-31T14:17:00+05:00",
+        "Maghrib": "2026-12-31T16:04:00+05:00",
+        "Isha": "2026-12-31T18:08:00+05:00"
+      },
+      "timezone": "Asia/Yekaterinburg",
+      "method": "Аль-Хакк · Тюмень",
+      "source": "al-hakk",
+      "sourceImage": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg",
+      "loadedAt": 1791201600000
     }
+  },
+  "coveredMonths": [
+    "2026-09",
+    "2026-10",
+    "2026-12"
+  ],
+  "sourceImages": {
+    "2026-12": "https://al-hakk.ru/upload/medialibrary/5d3/5d32198d0a3fe0454b92f268d9447e8a.jpg"
   }
 }
