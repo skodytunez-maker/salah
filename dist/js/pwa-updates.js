@@ -5,10 +5,10 @@ const CHECK_INTERVAL=5*60*1000;
 const LEGACY_SEEN_KEY='salah:update-last-seen-v1';
 const SEEN_KEY='salah:update-announcement-seen-v2';
 const SOFT_RELOAD_KEY='salah:update-reload-transition-v1';
-let reloadInProgress=false,restoreTransition=false;
+let restoreTransition=false;
 try{restoreTransition=sessionStorage.getItem(SOFT_RELOAD_KEY)==='1';if(restoreTransition){sessionStorage.removeItem(SOFT_RELOAD_KEY);document.documentElement.classList.add('salah-update-restoring');}}catch{}
 export function finishAppUpdateTransition(){if(!restoreTransition)return;restoreTransition=false;const root=document.documentElement;requestAnimationFrame(()=>{root.classList.add('salah-update-restoring-done');setTimeout(()=>root.classList.remove('salah-update-restoring','salah-update-restoring-done'),360);});}
-async function reloadAfterUpdate(){if(reloadInProgress)return;reloadInProgress=true;if(!document.documentElement?.classList||typeof requestAnimationFrame!=='function'){location.reload();return}const root=document.documentElement;root.classList.add('salah-update-leaving');requestAnimationFrame(()=>root.classList.add('salah-update-leaving-active'));await new Promise(resolve=>setTimeout(resolve,360));try{sessionStorage.setItem(SOFT_RELOAD_KEY,'1')}catch{}location.reload();}
+async function reloadAfterUpdate(){if(!document.documentElement?.classList||typeof requestAnimationFrame!=='function'){location.reload();return}const root=document.documentElement;root.classList.add('salah-update-leaving');requestAnimationFrame(()=>root.classList.add('salah-update-leaving-active'));await new Promise(resolve=>setTimeout(resolve,360));try{sessionStorage.setItem(SOFT_RELOAD_KEY,'1')}catch{}location.reload();}
 
 export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8):[];}
 const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES),announcement:APP_ANNOUNCEMENT};
