@@ -70,3 +70,27 @@ try{
  assert.equal(permissionRequests,0,'Retry never asks for new notification permission');
 }finally{Date.now=clock}
 console.log('PASS: unchanged subscription retries after an outage; failed public configuration recovers on return without an online event, duplicate requests or permission prompts.');
+
+const {pushConnectionReport,waitForPushOperation}=await import('../dist/js/push-reminders.js');
+const healthy={supported:true,enabled:true,city:true,permission:'granted',subscription:true,saved:true,current:true,service:true};
+assert.equal(pushConnectionReport(healthy).ready,true);
+for(const missing of [{current:false},{subscription:false},{service:false},{permission:'denied'},{enabled:false},{city:false},{supported:false},{saved:false}])assert.equal(pushConnectionReport({...healthy,...missing}).ready,false);
+assert.ok(!JSON.stringify(pushConnectionReport({...healthy,token:'private',email:'private'})).includes('private'));
+assert.equal(await waitForPushOperation(Promise.resolve('ready'),5),'ready');
+await assert.rejects(waitForPushOperation(Promise.reject(Error('fixture')),5),/fixture/);
+await assert.rejects(waitForPushOperation(new Promise(()=>{}),5),/Телефон не ответил/);
+const readsBefore=requests.length;
+await controls.get('[data-push-diagnose]').onclick();
+assert.match(panel.innerHTML,/Подключение готово/);
+assert.match(panel.innerHTML,/Доставку проверьте тестовым уведомлением/);
+assert.equal(permissionRequests,0,'Connection diagnosis must not ask for permission');
+assert.deepEqual(requests.slice(readsBefore).map(r=>r.url.split('/').at(-1)),['config'],'Connection diagnosis cannot subscribe, remove or send a notification');
+const originalRegistration=navigator.serviceWorker.getRegistration,originalTimer=globalThis.setTimeout;
+navigator.serviceWorker.getRegistration=()=>new Promise(()=>{});
+globalThis.setTimeout=(fn,ms,...args)=>originalTimer(fn,ms===10000?5:ms,...args);
+try{
+ await controls.get('[data-push-diagnose]').onclick();
+ assert.match(panel.innerHTML,/Подключение требует внимания/);
+ assert.doesNotMatch(panel.innerHTML.match(/<button[^>]*data-push-diagnose[^>]*>/)[0],/disabled/,'A stalled platform API must release the checking button');
+}finally{navigator.serviceWorker.getRegistration=originalRegistration;globalThis.setTimeout=originalTimer;}
+console.log('PASS: diagnosis detects missing prerequisites, exposes no secrets, only reads configuration, never claims actual delivery, and recovers from a stalled platform API.');
