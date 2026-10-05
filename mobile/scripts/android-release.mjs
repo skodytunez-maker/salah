@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 export function verifiedSigningCertificates(output){
  // apksigner emits platform-dependent line endings and may label v3.1 signers by SDK range.
- return [...new Set(output.split(/\r?\n/).map(line=>line.trim().match(/^Signer (?:#\d+|\(minSdkVersion=.+\)) certificate SHA-256 digest:\s*([a-f0-9]{64})$/i)?.[1]?.toLowerCase()).filter(Boolean))];
+ return [...new Set(output.split(/\r?\n/).map(line=>line.trim().match(/^(?:Signer (?:#\d+|\(minSdkVersion=.+\))|V[123](?:\.1)? Signer:) certificate SHA-256 digest:\s*([a-f0-9]{64})$/i)?.[1]?.toLowerCase()).filter(Boolean))];
 }
 export function androidReleaseVersion(source){
  const version=Number(source.match(/export const APP_VERSION=(\d+);/)?.[1]);

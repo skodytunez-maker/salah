@@ -3,6 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {androidReleaseVersion,configureAndroidVersion,compareAndroidUpdate,verifiedSigningCertificates} from '../mobile/scripts/android-release.mjs';
 const digest='a'.repeat(64);
 assert.deepEqual(verifiedSigningCertificates('Signer #1 certificate SHA-256 digest: '+digest+'\r\n'),[digest]);
+assert.deepEqual(verifiedSigningCertificates('V2 Signer: certificate SHA-256 digest: 524326f8200d8c91b9fb20d01c9e6c9b3208848d9f2bcfd589d4aaaf4f74a20a\n'),['524326f8200d8c91b9fb20d01c9e6c9b3208848d9f2bcfd589d4aaaf4f74a20a']);
 assert.deepEqual(verifiedSigningCertificates('Signer (minSdkVersion=33, maxSdkVersion=2147483647) certificate SHA-256 digest: '+digest+'\n'),[digest]);
 assert.deepEqual(verifiedSigningCertificates('Source Stamp Signer certificate SHA-256 digest: '+digest+'\nSigner #1 public key SHA-256 digest: '+digest+'\n'),[]);
 const release=androidReleaseVersion(await readFile(new URL('../dist/js/app-release.js',import.meta.url),'utf8'));
