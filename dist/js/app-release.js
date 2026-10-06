@@ -1,6 +1,6 @@
-export const APP_VERSION=200;
+export const APP_VERSION=201;
 export const APP_UPDATED_AT='2026-10-06';
-export const APP_CHANGES=["В меню появились значки киблы, календаря, поддержки и других разделов."];
+export const APP_CHANGES=["Исправлен запуск приложения с главного экрана."];
 // Public notes list new user-facing features or sections only. Internal settings,
 // maintenance fixes and owner-only changes stay in Git history, not these lists.
 // Keep the announcement unchanged for minor builds; advance only for major public features.
