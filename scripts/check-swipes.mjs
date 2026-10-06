@@ -12,7 +12,7 @@ function horizontal(kind){
  const host={querySelector:selector=>selector.endsWith('shell')?shell:{click:()=>moves.push(selector.endsWith('next')?1:-1),focus(){}}};
  const name=kind==='adhkar'?'bindSwipe':'bindLessonNavigation';
  const win={getSelection:()=>({toString:()=>selected}),addEventListener(){},removeEventListener(){},clearTimeout};
- const context=createContext({host,window:win,bindSwipeMotion:(node,options)=>bindSwipeMotion(node,{...options,win}),settings:{},Date,cursor:1,suppressTapUntil:0,disposeSwipe:null,moveLesson:direction=>moves.push(direction)});
+ const context=createContext({host,window:{...win,scrollTo(){}},bindSwipeMotion:(node,options)=>bindSwipeMotion(node,{...options,preview:()=>null,win}),settings:{},Date,cursor:1,group:'morning',data:{groups:{morning:{ids:['one','two','three']}}},card:direction=>moves.push(direction),summary:()=>moves.push('summary'),suppressTapUntil:0,disposeSwipe:null,moveLesson:direction=>moves.push(direction)});
  new Script(files[kind].split('\n').find(line=>line.startsWith('function '+name+'('))+';'+name+'()').runInContext(context);
  return{listeners,moves,context,select:text=>selected=text};
 }
@@ -31,6 +31,21 @@ for(const kind of ['adhkar','learning']){
  assert.equal(h.moves.length,before,kind+' scrolling, cancellation, selection, mouse and controls cannot turn a page');
  emit('keydown',{key:'ArrowLeft',target:{closest:()=>({})},preventDefault(){}});assert.equal(h.moves.length,before,'Keyboard controls retain their own actions');
  if(kind==='adhkar'){emit('pointerdown',pointer(190,200));emit('pointercancel',{});let blocked=false;emit('click',{isTrusted:true,preventDefault(){blocked=true},stopPropagation(){},stopImmediatePropagation(){}});assert.equal(blocked,true,'Cancelled scroll cannot open the explanation as a tap');}
+}
+// Completed gestures change the actual card index in both directions and open
+// the summary only after the final card, independently of navigation controls.
+{
+ const shell={tabIndex:0,dataset:{},isConnected:true,addEventListener(){},removeEventListener(){},setPointerCapture(){},getBoundingClientRect:()=>({width:360,left:0,top:0}),querySelector(){return shell}};
+ let swipeOptions;const transitions=[];
+ const host={querySelector:selector=>selector.endsWith('shell')?shell:{click(){transitions.push('hidden-button')}}};
+ const win={getSelection:()=>({toString:()=>''}),addEventListener(){},removeEventListener(){},clearTimeout(){},scrollTo(){transitions.push('scroll')}};
+ const context=createContext({host,window:win,bindSwipeMotion:(node,options)=>{swipeOptions=options;return()=>{}},settings:{},Date,cursor:0,group:'morning',data:{groups:{morning:{ids:['one','two','three']}}},card:direction=>transitions.push('card:'+direction),summary:()=>transitions.push('summary'),suppressTapUntil:0,disposeSwipe:null});
+ new Script(files.adhkar.split('\n').find(line=>line.startsWith('function bindSwipe('))+';bindSwipe()').runInContext(context);
+ swipeOptions.commit(-1);assert.equal(context.cursor,1,'left swipe advances the adhkar card');assert.deepEqual(transitions,['card:1','scroll']);
+ swipeOptions.commit(1);assert.equal(context.cursor,0,'right swipe returns to the previous adhkar card');assert.deepEqual(transitions,['card:1','scroll','card:-1','scroll']);
+ swipeOptions.commit(1);assert.equal(context.cursor,0,'first adhkar card cannot move before the beginning');
+ context.cursor=2;swipeOptions.commit(-1);assert.equal(transitions.at(-2),'summary','left swipe on the last adhkar card opens the summary');
+ assert(!transitions.includes('hidden-button'),'adhkar swipe does not depend on a hidden button click');
 }
 const listeners=new Map();let opened=0,selection='';
 const surface={ownerDocument:{defaultView:{getSelection:()=>({toString:()=>selection})}},addEventListener:(type,fn)=>listeners.set(type,fn),setPointerCapture(){}};
