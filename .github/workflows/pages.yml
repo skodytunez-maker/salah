@@ -68,6 +68,7 @@ jobs:
           node scripts/check-quran-broadcast.mjs
           node scripts/check-broadcast-audio.mjs
           node scripts/check-updates.mjs
+          node scripts/check-app-start.mjs
           node scripts/check-location-permissions.mjs
           node scripts/check-dhikr-reminder.mjs
           node scripts/check-umrah.mjs

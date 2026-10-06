@@ -1,4 +1,5 @@
 import{initEdgeBack}from './edge-back.js';
+import{normalizeStandaloneLaunch}from './app-start.js';
 import{foregroundAudioBusy}from './audio-focus.js';
 import{createNotificationInvite}from './notification-invite.js';
 import{showSupport,stopSupport}from './support.js';
@@ -66,6 +67,7 @@ let days=cachedDays(),weather=cachedWeather(),error='',loading=false,currentDay=
 const routes=[['home','Главная','⌂'],['knowledge','Знания','▧'],['quran','Коран','▤'],['adhkar','Азкары','◌'],['more','Меню','⋯']];
 let prayerDisplay='timetable',learningEntry=null,quranRenderedHash=null,umrahRenderedHash=null,umrahModule=null,umrahImport=null;
 const app=document.getElementById('app');
+normalizeStandaloneLaunch({locationObject:location,historyObject:history,isStandalone:navigator.standalone===true||window.matchMedia?.('(display-mode: standalone)').matches===true});
 initEdgeBack(app,{reduced:()=>settings.motion||settings.transitions===false});
 const topHeader=document.querySelector('.workspace>header'),locationControl=document.getElementById('location-button'),settingsControl=document.getElementById('settings-button');
 const reminders=createReminders({getSettings:()=>settings,updateSettings,onChange:()=>ensureTahajjudDays(),getContext:()=>({today:dateKey(),days,cityKey:JSON.stringify([settings.city?.latitude,settings.city?.longitude,settings.city?.timezone,settings.method,settings.school,settings.highLatitude,settings.tyumenTimeSource,settings.offsets,settings.tableOffsets,settings.mosque,settings.mosqueTimes]),timingsFor:day=>timingsFor(day,days)}),toast});
