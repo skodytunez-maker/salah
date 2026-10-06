@@ -12,7 +12,8 @@ async function exists(ref,context=base){
  assert.ok((await fs.stat(path.join(dist,relative))).isFile(),'Missing asset: '+ref);
 }
 const manifest=JSON.parse(await fs.readFile(path.join(dist,'manifest.json'),'utf8'));
-for(const key of ['id','start_url','scope'])assert.equal(new URL(manifest[key],base).href,base.href);
+for(const key of ['id','scope'])assert.equal(new URL(manifest[key],base).href,base.href);
+assert.equal(new URL(manifest.start_url,base).href,new URL('#home',base).href);
 for(const icon of manifest.icons)await exists(icon.src);
 assert.ok(Array.isArray(manifest.shortcuts)&&manifest.shortcuts.length>=3,'Install shortcuts missing');
 for(const shortcut of manifest.shortcuts){assert.ok(typeof shortcut.name==='string'&&shortcut.name.trim());const target=new URL(shortcut.url,base);assert.equal(target.origin,base.origin);assert.ok(target.pathname.startsWith(base.pathname),'Shortcut outside Pages project: '+shortcut.url);}
