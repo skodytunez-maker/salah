@@ -138,6 +138,28 @@
       "day": "wallpapers/pamir/day-v1.webp",
       "night": "wallpapers/pamir/night-v1.webp",
       "mask": "wallpapers/pamir/sky-v1.svg"
+    },
+    {
+      "id": "afghanistan",
+      "name": "Афганистан",
+      "landmark": "Голубая мечеть Мазари-Шарифа",
+      "latitude": 36.7069,
+      "longitude": 67.1101,
+      "radius": 25,
+      "day": "wallpapers/afghanistan/afghanistan-day-final.webp",
+      "night": "wallpapers/afghanistan/afghanistan-night-final.webp",
+      "mask": "wallpapers/afghanistan/sky-v1.svg"
+    },
+    {
+      "id": "badakhshan",
+      "name": "Бадахшан",
+      "landmark": "Горная долина и селение",
+      "latitude": 36.69375,
+      "longitude": 71.846423,
+      "radius": 15,
+      "day": "wallpapers/badakhshan/badakhshan-day.webp",
+      "night": "wallpapers/badakhshan/badakhshan-night-v1.webp",
+      "mask": "wallpapers/badakhshan/sky-v1.svg"
     }
   ]
 }

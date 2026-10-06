@@ -1,36 +1,35 @@
-import{loadLandmark,matchLandmark}from './landmarks.js';
-import{settings,updateSettings}from './storage.js';
+import{loadLandmark}from'./landmarks.js';
+import{settings,updateSettings}from'./storage.js';
+import{wallpapers}from'./wallpapers.js';
 
-// One compact selector belongs to the landmark tile, never to prayer location.
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const collator=new Intl.Collator('ru',{sensitivity:'base',numeric:true});
+
+// One alphabetized list combines built-in scenes and every landmark wallpaper.
 export function mountLandmarkSettings(root,onChange=()=>{}){
- const details=root?.querySelector('#landmark-cities'),label=root?.querySelector('#landmark-city-name'),select=root?.querySelector('#landmark-city');
- if(!details||!label||!select)return ()=>{};
- let entries=null,request=0;
- const currentName=()=>settings.landmarkCity==='auto'?(settings.city?.name||'Мой город'):entries?.find(c=>c.id===settings.landmarkCity)?.name||'Выбрать город';
- function draw(){
-  details.hidden=settings.wallpaper!=='landmark';
-  label.textContent=currentName();
-  if(entries){
-   select.replaceChildren();
-   const option=(value,text)=>{const item=document.createElement('option');item.value=value;item.textContent=text;select.append(item)};
-   option('auto','Мой город'+(settings.city?.name?' · '+settings.city.name:''));
-   for(const city of entries)option(city.id,city.name);
-   if(!entries.some(c=>c.id===settings.landmarkCity)&&settings.landmarkCity!=='auto')option(settings.landmarkCity,'Недоступный город');
-   select.value=settings.landmarkCity;select.disabled=false;
-   if(settings.landmarkCity==='auto')label.textContent=matchLandmark(settings.city,entries)?.name||currentName();
-  }
+ const host=root?.querySelector('#wallpaper-options'),status=root?.querySelector('#landmark-status');
+ if(!host)return ()=>{};
+ let entries=[],request=0;
+ const places=()=>[{id:'auto',name:'Мой город',landmark:'По городу намаза'},...entries.map(city=>({id:city.id,name:city.name,landmark:city.landmark}))];
+ const selected=(kind,id)=>kind==='wallpaper'?settings.wallpaper===id:settings.wallpaper==='landmark'&&settings.landmarkCity===id;
+ function render(){
+  const choices=[
+   ...wallpapers.filter(item=>item.id!=='landmark').map(item=>({kind:'wallpaper',id:item.id,name:item.name,landmark:'',image:item.night})),
+   ...places().map(city=>({kind:'landmark',id:city.id,name:city.name,landmark:city.landmark,image:'./assets/landmark.svg'}))
+  ].sort((a,b)=>collator.compare(a.name,b.name)||a.id.localeCompare(b.id));
+  host.innerHTML=choices.map(item=>'<button type="button" data-wallpaper="'+(item.kind==='wallpaper'?esc(item.id):'landmark')+'"'+(item.kind==='landmark'?' data-landmark-city="'+esc(item.id)+'"':'')+' aria-pressed="'+selected(item.kind,item.id)+'"'+(item.landmark?' title="'+esc(item.landmark)+'"':'')+'><img src="'+esc(item.image)+'" alt="" loading="lazy"><span>'+esc(item.name)+'</span></button>').join('');
  }
  async function refresh(){
-  draw();if(details.hidden||entries)return;
-  const id=++request;
-  try{const value=await loadLandmark.catalogue();if(id!==request||!root.isConnected)return;entries=value.length?value:null;draw();if(!entries){select.disabled=true;select.options[0].textContent='Нужен интернет для списка городов'}}catch{if(root.isConnected)select.disabled=true}
+  const id=++request;render();
+  try{const value=await loadLandmark.catalogue();if(id!==request||!root.isConnected)return;entries=value;render();if(status)status.hidden=true}
+  catch{if(id!==request||!root.isConnected)return;if(status){status.textContent='Достопримечательности недоступны без интернета.';status.hidden=false}}
  }
- select.onchange=()=>{
-  const previous=settings.landmarkCity;
-  if(select.value!=='auto'&&!entries?.some(c=>c.id===select.value))return;
-  if(!updateSettings({landmarkCity:select.value})){select.value=previous;return}
-  draw();onChange();
+ host.onclick=event=>{
+  const button=event.target.closest('button[data-wallpaper]');if(!button||!host.contains(button))return;
+  const saved=button.hasAttribute('data-landmark-city')
+   ?updateSettings({wallpaper:'landmark',landmarkCity:button.dataset.landmarkCity})
+   :updateSettings({wallpaper:button.dataset.wallpaper});
+  render();onChange();if(!saved&&status){status.textContent='Не удалось сохранить выбор обоев.';status.hidden=false}
  };
- details.ontoggle=()=>{if(details.open&&!entries)refresh()};
- refresh();return refresh;
+ void refresh();return refresh;
 }

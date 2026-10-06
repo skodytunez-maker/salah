@@ -3,6 +3,8 @@ import {readFile} from 'node:fs/promises';
 import {createAdhkarProgressStore} from '../dist/js/adhkar-progress.js';
 import {adhkarPeriod} from '../dist/js/adhkar-period.js';
 const data=JSON.parse(await readFile(new URL('../dist/data/adhkar.json',import.meta.url),'utf8'));
+const readerSource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
+assert.ok(readerSource.includes("host.querySelector('#dhikr-exit').onclick=()=>{stopAdhkar();hub()}"),'Closing an azkar session returns to the morning/evening hub.');
 class Storage {data=new Map();get length(){return this.data.size}key(i){return [...this.data.keys()][i]??null}getItem(k){return this.data.get(k)??null}setItem(k,v){if(this.fail)throw Error('unavailable');this.data.set(k,v)}}
 let day='2026-10-01';const storage=new Storage();
 const open=()=>{const s=createAdhkarProgressStore({storage:()=>storage,day:()=>day});assert.equal(s.configure(data.items),true);return s};

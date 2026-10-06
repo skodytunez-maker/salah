@@ -1,0 +1,12 @@
+import assert from'node:assert/strict';
+import{createSupportDiagnostics}from'../dist/js/support-diagnostics.js';
+const listeners=new Map(),removed=[],windowRef={location:{hash:'#support?owner=1&token=private'},innerWidth:390,addEventListener:(name,fn)=>listeners.set(name,fn),removeEventListener:(name,fn)=>removed.push([name,fn])};
+const tracker=createSupportDiagnostics({version:206,windowRef,documentRef:{},navigatorRef:{}});
+const initial=tracker.snapshot();
+assert.match(initial,/Версия SALAH: 206/);assert.match(initial,/Раздел: support/);assert.match(initial,/Экран: phone/);assert.match(initial,/Ошибки JavaScript: 0/);
+listeners.get('error')({message:'private text',error:{stack:'private stack'}});
+listeners.get('unhandledrejection')({reason:'secret'});
+const report=tracker.snapshot();assert.match(report,/Ошибки JavaScript: 1/);assert.match(report,/Сбои обещаний: 1/);
+assert.doesNotMatch(report,/private|secret|stack|token/i);
+tracker.dispose();assert.equal(removed.length,2);assert.equal(tracker.snapshot(),'');
+console.log('PASS: opt-in diagnostics report only version, allowlisted section, screen class and error counts; event text/stacks and query parameters are excluded.');
