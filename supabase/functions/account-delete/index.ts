@@ -14,6 +14,11 @@ if(typeof Deno!=='undefined'){
   getUser:token=>auth.auth.getUser(token),
   getClaims:token=>auth.auth.getClaims(token),
   isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},
-  deleteUser:async uid=>{const {error}=await admin.auth.admin.deleteUser(uid);if(error)throw error;}
+  deleteUser:async uid=>sql.begin(async tx=>{
+   await tx`select pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(${uid}::text,0))`;
+   const photos=await tx`select name from storage.objects where bucket_id='support-photos' and (name like ${'salah/'+uid+'/%'} or name like ${'sahaba/'+uid+'/%'})`;
+   for(let i=0;i<photos.length;i+=100){const {error}=await admin.storage.from('support-photos').remove(photos.slice(i,i+100).map(photo=>photo.name));if(error)throw error;}
+   const {error}=await admin.auth.admin.deleteUser(uid);if(error)throw error;
+  })
  }));
 }

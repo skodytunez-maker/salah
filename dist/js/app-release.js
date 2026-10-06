@@ -1,4 +1,4 @@
-export const APP_VERSION=207;
+export const APP_VERSION=208;
 export const APP_UPDATED_AT='2026-10-06';
 export const APP_CHANGES=["Добавлены дуа Кунут и Истихара.","В обоях появились Афганистан и Бадахшан.","В поддержку можно приложить данные о сбое."];
 // Public notes list new user-facing features or sections only. Internal settings,
