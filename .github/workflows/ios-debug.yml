@@ -56,7 +56,9 @@ jobs:
         run: |
           npm run ios:configure
           test -f ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon.png
-          sips -g pixelWidth -g pixelHeight ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon.png | grep -E 'pixelWidth: 1024|pixelHeight: 1024'
+          ICON_INFO=$(sips -g pixelWidth -g pixelHeight ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon.png)
+          printf \"%s\\n\" \"$ICON_INFO\" | grep -F \"pixelWidth: 1024\"
+          printf \"%s\\n\" \"$ICON_INFO\" | grep -F \"pixelHeight: 1024\"
           cp ios/App/App.xcodeproj/project.pbxproj "$RUNNER_TEMP/salah-project.pbxproj"
           npm run ios:configure
           cmp ios/App/App.xcodeproj/project.pbxproj "$RUNNER_TEMP/salah-project.pbxproj"
