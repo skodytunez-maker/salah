@@ -31,7 +31,7 @@ export async function uploadSupportPhoto(storage,args,claims,register){
   created=!error;await register(path,bytes.length);
  }catch(error){if(created){try{await storage.remove([path])}catch{}}throw error;}
 }
-const SHAPES={support_list:['p_app','p_owner','p_before'],support_read:['p_id','p_app','p_owner'],support_create:['p_id','p_app','p_subject','p_body','p_version'],support_create_photo:['p_id','p_app','p_subject','p_body','p_version','p_photo'],support_reply:['p_thread','p_app','p_id','p_body','p_owner'],support_close:['p_id','p_app']};
+const SHAPES={support_owner_status:['p_app'],support_list:['p_app','p_owner','p_before'],support_read:['p_id','p_app','p_owner'],support_create:['p_id','p_app','p_subject','p_body','p_version'],support_create_photo:['p_id','p_app','p_subject','p_body','p_version','p_photo'],support_reply:['p_thread','p_app','p_id','p_body','p_owner'],support_close:['p_id','p_app']};
 export function createSupportHandler({getUser,getClaims,invoke}){
  return async req=>{
   const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff'};
@@ -68,7 +68,8 @@ if(typeof Deno!=='undefined'){
  const invoke=async(name,a,claims)=>{
   return await sql.begin(async tx=>{
    await tx`select pg_catalog.set_config('request.jwt.claims',${JSON.stringify(claims)},true)`;let rows;
-   if(name==='support_list')rows=await tx`select public.support_list(${a.p_app}::text,${a.p_owner}::boolean,${a.p_before}::timestamptz) as data`;
+   if(name==='support_owner_status')rows=await tx`select public.support_owner_status(${a.p_app}::text) as data`;
+   else if(name==='support_list')rows=await tx`select public.support_list(${a.p_app}::text,${a.p_owner}::boolean,${a.p_before}::timestamptz) as data`;
    else if(name==='support_read'){
     rows=await tx`select public.support_read(${a.p_id}::uuid,${a.p_app}::text,${a.p_owner}::boolean) as data`;
     const [manifest]=await tx`select public.support_photo_manifest(${a.p_id}::uuid,${a.p_app}::text,${a.p_owner}::boolean) as data`;

@@ -63,6 +63,7 @@ jobs:
           node scripts/check-support-client.mjs
           node scripts/check-support-diagnostics.mjs
           node scripts/check-support-photos.mjs
+          node scripts/check-owner-support.mjs
           node scripts/check-support-server.mjs
           node scripts/check-support-transport.mjs
           node scripts/check-quran-session.mjs
