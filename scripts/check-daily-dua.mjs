@@ -4,11 +4,14 @@ import {Script,createContext} from 'node:vm';
 import {validateDuaCatalogue,safeDuaSource,cleanDuaFavorites,filterDuas,duaRoute} from '../dist/js/daily-dua-core.js';
 
 const catalogue=validateDuaCatalogue(JSON.parse(await readFile(new URL('../dist/data/daily-dua.json',import.meta.url),'utf8')));
-assert.equal(catalogue.items.length,21);
-assert.equal(catalogue.categories.length,7);
+assert.equal(catalogue.items.length,23);
+assert.equal(catalogue.categories.length,8);
 assert.deepEqual(filterDuas(catalogue,{query:'перед близостью'}).map(i=>i.id),['before-intimacy']);
 assert.deepEqual(filterDuas(catalogue,{query:'перед едой'}).map(i=>i.id),['before-meal','forgot-before-meal']);
 assert.equal(filterDuas(catalogue,{category:'food'}).length,3);
+assert.deepEqual(filterDuas(catalogue,{query:'кунут'}).map(i=>i.id),['dua-qunut']);
+assert.deepEqual(filterDuas(catalogue,{query:'истихара'}).map(i=>i.id),['dua-istikhara']);
+assert.equal(filterDuas(catalogue,{category:'prayer'}).length,2);
 assert.deepEqual(filterDuas(catalogue,{favoritesOnly:true},['after-wudu']).map(i=>i.id),['after-wudu']);
 assert.deepEqual(cleanDuaFavorites(['after-wudu','missing','after-wudu',{},'before-intimacy'],catalogue),['after-wudu','before-intimacy']);
 assert.deepEqual(cleanDuaFavorites({bad:true},catalogue),[]);
@@ -38,7 +41,7 @@ function browser(hash='#adhkar?view=duas',storage=new Storage(),fetchImpl=async(
  const module=new Script(executable).runInContext(context);
  return {host,location,storage,notices,module,open:()=>module.showDailyDuas(host),select:selector=>{const el=host.querySelector(selector);assert.ok(el,selector);return el}};
 }
-let page=browser();await page.open();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,21);
+let page=browser();await page.open();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,23);
 const search=page.select('#dua-search');search.value='близостью';search.oninput({target:search});assert.equal(page.host.querySelectorAll('[data-dua-open]').length,1);
 await page.select('[data-dua-favorite="before-intimacy"]').click();assert.deepEqual(JSON.parse(page.storage.getItem('salah:daily-dua-favorites')),['before-intimacy']);
 await page.select('[data-dua-open="before-intimacy"]').click();assert.match(page.location.hash,/item=before-intimacy/);assert.match(page.host.textContent,/разақтанаа/);assert.equal(page.host.querySelector('#adhkar-count'),null);
@@ -55,4 +58,4 @@ let release;const gate=new Promise(resolve=>release=resolve);
 page=browser('#adhkar?view=duas',new Storage(),async()=>{await gate;return {ok:true,json:async()=>structuredClone(catalogue)}});
 const pending=page.open();page.module.stopDailyDuas();page.host.innerHTML='<p>Другой раздел</p>';release();await pending;assert.equal(page.host.textContent,'Другой раздел','A late load cannot overwrite a newer screen');
 page=browser('#adhkar?view=duas',new Storage(),async()=>{throw Error('offline')});await page.open();assert.ok(page.host.querySelector('#dua-retry'));assert.ok(page.host.querySelector('#dua-back'));
-console.log('PASS: 21 sourced duas, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
+console.log('PASS: 23 sourced duas, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');

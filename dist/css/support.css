@@ -11,3 +11,5 @@
 #counter-profile .account-nickname-save[data-dirty="true"]{color:#57c99a;border-color:rgba(87,201,154,.55);background:rgba(87,201,154,.1)}
 #counter-profile .account-nickname-save:disabled{opacity:.65;cursor:wait}
 #counter-profile .account-nickname-save:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+.support-new-badge{justify-self:start;font-size:.75rem!important;font-style:normal;font-weight:700;letter-spacing:.02em;color:var(--gold,#d6c387)!important;opacity:1!important}.support-diagnostics{display:flex;align-items:center;gap:10px;margin:12px 0;padding:12px;border:1px solid rgba(180,190,210,.2);border-radius:12px;background:rgba(180,190,210,.04);color:inherit;text-align:left;font:inherit;cursor:pointer}.support-diagnostics[aria-pressed=true]{border-color:var(--gold,#d6c387)}.support-diagnostic-preview{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border-radius:10px;background:rgba(0,0,0,.16);font-size:.8rem;line-height:1.5}

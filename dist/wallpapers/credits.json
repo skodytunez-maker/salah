@@ -108,5 +108,25 @@
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
     "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного."
+  },
+  {
+    "id": "afghanistan",
+    "city": "Афганистан",
+    "landmark": "Голубая мечеть Мазари-Шарифа",
+    "source": "https://afg.gov.af/places/blue-mosque-mazar",
+    "referenceAuthor": "Портал правительства Афганистана (архитектурный ориентир)",
+    "referenceLicense": "Использовано как справочный источник",
+    "referenceLicenseUrl": null,
+    "creation": "Стилизованные художественные обои созданы встроенным image_gen; это не документальная фотография, детали изображения могут отличаться от реального комплекса."
+  },
+  {
+    "id": "badakhshan",
+    "city": "Бадахшан",
+    "landmark": "Горная долина и селение",
+    "source": null,
+    "referenceAuthor": "",
+    "referenceLicense": "",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по пользовательскому выбору; это собирательный иллюстративный пейзаж, не документальная фотография."
   }
 ]
