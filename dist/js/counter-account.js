@@ -1,7 +1,7 @@
 import{mountOwnerAccount}from './admin.js';
 import{accountAuthClient,checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{createCounterSync}from './counter-sync-core.js';
-import{esc}from './ui.js';
+import{esc,modal}from './ui.js';
 let engine=null,session=null,timer=null,busy=null,status='local',reason='',host=null,accountScreen=0,accountArea=null;
 export const counterSyncStatus=()=>({status,reason,userId:session?.user?.id||null,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous});
 function emailErrorMessage(error){
@@ -54,7 +54,7 @@ export async function showCounterAccount(container,message='',force=false,mode='
  await synchronizeCounters();if(!active())return;
  if(counterSyncStatus().signedIn){
   container.querySelector('#counter-account-heading').textContent='Мой аккаунт';
-  area.innerHTML='<p class="account-authorized" id="counter-account-authorized" role="status">Авторизован</p><div id="account-owner-panel" hidden></div><details class="settings-extra account-details"'+(mode==='password'?' open':'')+'><summary>Данные аккаунта</summary><div class="account-details-content"><form id="counter-profile"><label for="counter-profile-nick">Ник</label><input id="counter-profile-nick" type="text" autocomplete="nickname" minlength="2" maxlength="40" required value="'+esc(session.user.user_metadata?.nickname||'')+'"><button class="text-button" type="submit">Сохранить ник</button></form><p>'+esc(session.user.email||'Ваш аккаунт')+'</p><button class="button" id="counter-sync-now">Сохранить счёт</button><details class="settings-extra" id="counter-password-settings"'+(mode==='password'?' open':'')+'><summary>Изменить пароль</summary><form id="counter-password-update"><label for="counter-new-password">Новый пароль</label><input id="counter-new-password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><label for="counter-repeat-password">Повторите пароль</label><input id="counter-repeat-password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><p class="muted owner-note">Не менее 12 символов.</p><button class="button" type="submit">Сохранить новый пароль</button><a class="text-button" id="counter-password-mfa" href="#account?owner=1" hidden>Подтвердить через Google Authenticator</a></form></details></div></details><button class="text-button" id="counter-account-out">Выйти</button>';
+  area.innerHTML='<p class="account-authorized" id="counter-account-authorized" role="status">Авторизован</p><div id="account-owner-panel" hidden></div><details class="settings-extra account-details"'+(mode==='password'?' open':'')+'><summary>Данные аккаунта</summary><div class="account-details-content"><form id="counter-profile"><label for="counter-profile-nick">Ник</label><input id="counter-profile-nick" type="text" autocomplete="nickname" minlength="2" maxlength="40" required value="'+esc(session.user.user_metadata?.nickname||'')+'"><button class="text-button" type="submit">Сохранить ник</button></form><p>'+esc(session.user.email||'Ваш аккаунт')+'</p><button class="button" id="counter-sync-now">Сохранить счёт</button><div class="account-delete-area"><h3>Удаление аккаунта</h3><p class="muted">Аккаунт, облачный счёт азкаров и обращения в поддержку будут удалены без возможности восстановления.</p><button class="button account-delete-button" id="counter-account-delete">Удалить аккаунт</button></div><details class="settings-extra" id="counter-password-settings"'+(mode==='password'?' open':'')+'><summary>Изменить пароль</summary><form id="counter-password-update"><label for="counter-new-password">Новый пароль</label><input id="counter-new-password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><label for="counter-repeat-password">Повторите пароль</label><input id="counter-repeat-password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><p class="muted owner-note">Не менее 12 символов.</p><button class="button" type="submit">Сохранить новый пароль</button><a class="text-button" id="counter-password-mfa" href="#account?owner=1" hidden>Подтвердить через Google Authenticator</a></form></details></div></details><button class="text-button" id="counter-account-out">Выйти</button>';
   void mountOwnerAccount(area.querySelector('#account-owner-panel'),{isActive:active});
   area.querySelector('#counter-profile').onsubmit=async e=>{
    e.preventDefault();if(!active())return;const form=e.currentTarget,button=form.querySelector('button');if(button.disabled)return;button.disabled=true;
@@ -84,6 +84,32 @@ export async function showCounterAccount(container,message='',force=false,mode='
    finally{if(active())button.disabled=false;}
   };
   area.querySelector('#counter-sync-now').onclick=()=>synchronizeCounters();
+  area.querySelector('#counter-account-delete').onclick=()=>{
+   if(!active())return;
+   modal('<div class="modal-head"><h2>Удалить аккаунт?</h2><button type="button" class="button secondary" data-close>Закрыть</button></div><p>Будут безвозвратно удалены аккаунт, ник, облачный счёт азкаров и обращения в поддержку. Данные SALAH, сохранённые только на этом устройстве, останутся.</p><label for="counter-delete-confirmation">Для подтверждения введите слово УДАЛИТЬ</label><input id="counter-delete-confirmation" type="text" autocomplete="off" maxlength="16"><p id="counter-delete-status" class="muted" role="status"></p><div class="button-row"><button type="button" class="button account-delete-button" id="counter-delete-submit" disabled>Удалить аккаунт и данные</button><button type="button" class="button secondary" data-close>Отмена</button></div>');
+   const dialog=document.getElementById('modal'),input=dialog.querySelector('#counter-delete-confirmation'),submit=dialog.querySelector('#counter-delete-submit'),statusLine=dialog.querySelector('#counter-delete-status');
+   input.addEventListener('input',()=>{submit.disabled=input.value.trim().toLocaleUpperCase('ru-RU')!=='УДАЛИТЬ';});
+   submit.onclick=async()=>{
+    if(!active()||input.value.trim().toLocaleUpperCase('ru-RU')!=='УДАЛИТЬ'||submit.disabled)return;
+    submit.disabled=true;input.disabled=true;submit.textContent='Удаляем…';statusLine.textContent='Удаляем аккаунт и связанные облачные данные…';
+    try{
+     if(navigator.onLine===false)throw Error('offline');
+     const auth=accountAuthClient().auth,{data,error}=await auth.getSession();if(error||!data.session?.access_token)throw Error('session_expired');
+     const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/account-delete',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify({confirmation:'DELETE'}),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(20000)});
+     if(!response.ok){const failure=await response.json().catch(()=>({}));throw Error(failure.error||'deletion_unavailable');}
+     const uid=session?.user?.id;
+     try{await auth.signOut({scope:'local'});}catch{}
+     let localCleared=true;
+     try{if(uid)await getEngine().activate(null);}catch{localCleared=false;}
+     try{if(uid){localStorage.removeItem('salah:counter-sync:'+uid);localStorage.removeItem('salah:counter-local:'+uid);localStorage.removeItem('salah:counter-free:'+uid);}localStorage.removeItem('salah-owner-session-v1');}catch{localCleared=false;}
+     session=null;status='local';reason='';notice();window.dispatchEvent(new Event('salah:counter-restored'));
+     dialog.close();if(active())await showCounterAccount(container,localCleared?'Аккаунт удалён вместе с облачными данными.':'Аккаунт удалён. Не удалось очистить часть локальных данных на этом устройстве.',true);
+    }catch(error){
+     if(dialog.open){submit.disabled=false;input.disabled=false;submit.textContent='Удалить аккаунт и данные';statusLine.textContent=error?.message==='offline'?'Нет соединения. Подключитесь к интернету и повторите.':error?.message==='session_expired'?'Сеанс завершён. Войдите снова и повторите удаление.':'Не удалось удалить аккаунт. Попробуйте позже.';}
+    }
+   };
+   input.focus();
+  };
   area.querySelector('#counter-account-out').onclick=async()=>{
    if(!active())return;const button=area.querySelector('#counter-account-out');if(button.disabled)return;button.disabled=true;
    try{await synchronizeCounters();const {error}=await accountAuthClient().auth.signOut({scope:'local'});if(error)throw error;await synchronizeCounters();if(active())await showCounterAccount(container,'',true);}
