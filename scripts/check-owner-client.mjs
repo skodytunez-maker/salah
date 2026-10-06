@@ -20,13 +20,13 @@ const {verifyOwner,ownerVerified,onOwnerChange,signOutOwner,ownerStatistics,owne
 onOwnerChange(()=>changed++);
 assert.equal(await verifyOwner(),false);assert.equal(requests,0);assert.equal(ownerVerified(),false);
 session={access_token:'forged-token'};
-await assert.rejects(verifyOwner(),/не имеет доступа/);assert.equal(ownerVerified(),false);assert.equal(changed,0);
+assert.equal(await verifyOwner(),false,'A non-owner 403 is a normal role denial, not a support-page error');assert.equal(ownerVerified(),false);assert.equal(changed,0);
 // Only the successful server response authorizes menu visibility.
 session={access_token:'verified-user-session'};allowed=true;
 assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(changed,1);
 await assert.rejects(ownerStatistics(7),/ещё не подключена/);assert.equal(ownerVerified(),true);
 // A later server denial removes access immediately, even with a saved session.
-allowed=false;await assert.rejects(verifyOwner());assert.equal(ownerVerified(),false);assert.equal(changed,2);
+allowed=false;assert.equal(await verifyOwner(),false);assert.equal(ownerVerified(),false);assert.equal(changed,2);
 allowed=true;await verifyOwner();await signOutOwner();assert.equal(ownerVerified(),false);
 // Refresh arriving while the gate request is running must recheck the new
 // session; it cannot authorize the stale response or strand a valid owner.
@@ -148,8 +148,9 @@ assert.match(ownerUserCard({nickname:'Health',appVersion:180,versionCheckedAt:'2
 assert.match(ownerUserCard({nickname:'Legacy',appVersion:180}),/Версия SALAH<\/dt><dd>Нет данных/);
 console.log('PASS: card tap, left swipe, vertical scrolling, text selection, controls, stable focus return and diagnostic unknown states.');
 
-for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Версия проверена|Последнее сохранение|Проверено/.test(cardMarkup));}
+for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Версия проверена|Последнее сохранение|Проверено/.test(cardMarkup));if(notifications===null)assert.equal((cardMarkup.match(/is-unknown/g)||[]).length,2,'Unknown prayer and delivery states use the dark check');}
 assert.equal((ownerUserCard({notifications:{enabled:true,background:false,permissionDenied:true,checkedAt:'2026-10-06T12:00:00Z'}}).match(/is-connected/g)||[]).length,1,'Namaz preference and delivery are separate');
+assert.match((await readFile(new URL('../dist/style.css',import.meta.url),'utf8')),/\.owner-notification-flag\.is-unknown svg\{stroke:#485572\}/,'Unknown notification checks use dark slate');
 console.log('PASS: compact green/dark checks keep enabled, disabled and unknown meanings accessible; technical times removed.');
 
 // Model asynchronous browser Back (including an iOS edge swipe), rather than
@@ -188,3 +189,10 @@ clickHistory.flush();assert.equal(clickHistory.index,1);assert.equal(navigation.
 navigation.back();clickHistory.flush();clickHistory.forward();assert.equal(closedCards,2);assert.ok(!clickHistory.win.history.state.salahOwnerCard,'Forward does not restore a private card from browser state');
 navigation.open();activeCard=false;navigation.dispose();assert.equal(clickHistory.listeners.get('popstate').size,0);assert.ok(!clickHistory.win.history.state.salahOwnerCard);assert.equal(navigation.open(),false);
 console.log('PASS: native Back returns card → same list/page/scroll → previous route; button/swipe consume one entry, rapid actions cannot skip pages, disposal removes private navigation state.');
+
+const writeId='55555555-5555-4555-8555-555555555555';
+const writeMarkup=ownerUserCard({id:writeId,nickname:'Имя с <разметкой>'});
+assert.ok(writeMarkup.includes('href="#support?owner=1&amp;user='+writeId+'"'),'Compose targets the selected UUID, not its display name');
+assert.match(writeMarkup,/class="button owner-user-write"/);assert.match(writeMarkup,/<span>Написать<\/span>/);
+assert.ok(!ownerUserCard({id:'not-a-user',nickname:'Подделанный'}).includes('owner-user-write'),'An invalid user card has no send action');
+console.log('PASS: the selected owner user card exposes an accessible Write link by stable user ID; invalid identities cannot start compose.');

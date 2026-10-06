@@ -3,28 +3,40 @@ import{mountSupportPanel,supportError}from '../dist/js/support-client.js';
 const flush=async()=>{await new Promise(r=>setTimeout(r,5));for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r))};
 class Root{constructor(){this.isConnected=true;this.innerHTML='';this.note={textContent:'',setAttribute(){}}}querySelector(key){return key==='[data-support-status]'?this.note:null}querySelectorAll(){return[]}contains(){return true}replaceChildren(){this.innerHTML=''}}
 const calls=[],thread={id:'3c1dedec-76b3-4f81-8f47-39d86e5787b4',app:'salah',subject:'<img src=x onerror=alert(1)>',version:'154',status:'open',updated_at:'2026-10-04T02:00:00Z'};
-let user='user-one',callback,createFails=true,pendingResolve=null,hold=false;
-const client={auth:{getSession:async()=>({data:{session:user?{user:{id:user}}:null},error:null}),onAuthStateChange(fn){callback=fn;return{data:{subscription:{unsubscribe(){callback=null}}}}}},rpc(name,args){const call={name,args,signal:null};calls.push(call);return{abortSignal(signal){call.signal=signal;if(hold)return new Promise(resolve=>pendingResolve=resolve);if(name==='support_create'&&createFails)return Promise.resolve({error:{message:'sensitive upstream detail'},data:null});const data=name==='support_list'?[thread]:name==='support_read'?{thread,messages:[{id:'message',owner_reply:true,body:'<script>secret()</script>',created_at:thread.updated_at}]}:null;return Promise.resolve({data,error:null})}}}};
-const click=(root,name,value)=>{const button={dataset:{},hasAttribute:key=>key===name};if(value)button.dataset.supportThread=value;root.onclick({target:{closest:()=>button}})};
+let user='user-one',callback,createFails=true,pendingResolve=null,hold=false,ownerUnread=false;
+const client={auth:{getSession:async()=>({data:{session:user?{user:{id:user}}:null},error:null}),onAuthStateChange(fn){callback=fn;return{data:{subscription:{unsubscribe(){callback=null}}}}}},rpc(name,args){const call={name,args,signal:null};calls.push(call);return{abortSignal(signal){call.signal=signal;if(hold)return new Promise(resolve=>pendingResolve=resolve);if(name==='support_create'&&createFails)return Promise.resolve({error:{message:'sensitive upstream detail'},data:null});if(name==='support_read'&&args.p_owner)ownerUnread=false;const data=name==='support_list'?[{...thread,owner_unread:Boolean(args.p_owner&&ownerUnread)}]:name==='support_read'?{thread,messages:[{id:'message',owner_reply:true,body:'<script>secret()</script>',created_at:thread.updated_at}]}:null;return Promise.resolve({data,error:null})}}}};
+const click=(root,name,value)=>{const button={dataset:{},hasAttribute:key=>key===name,setAttribute(){}};if(value)button.dataset.supportThread=value;root.onclick({target:{closest:()=>button}})};
 const form=(type,values)=>({hasAttribute:key=>key===type,checkValidity:()=>true,elements:Object.fromEntries(Object.entries(values).map(([key,value])=>[key,{value}]))});
 const root=new Root(),dispose=mountSupportPanel(root,{auth:client,app:'salah',version:154});await flush();assert.equal(calls[0].args.p_app,'salah');assert.equal(calls[0].args.p_owner,false);assert.ok(root.innerHTML.includes('&lt;img'));assert.ok(!root.innerHTML.includes('<img'));
 click(root,'data-support-new');const create=form('data-support-create',{subject:' Ошибка ',body:' Описание '}),submit=()=>root.onsubmit({target:create,preventDefault(){}});submit();await flush();assert.ok(root.note.textContent.includes('Не удалось'));const firstId=calls.find(c=>c.name==='support_create').args.p_id;createFails=false;submit();await flush();assert.equal(calls.filter(c=>c.name==='support_create')[1].args.p_id,firstId,'Retry reuses the idempotency key');assert.equal(calls.filter(c=>c.name==='support_create')[1].args.p_body,'Описание');assert.equal(calls.at(-1).args.p_app,'salah');assert.ok(root.innerHTML.includes('&lt;script&gt;'));assert.ok(!root.innerHTML.includes('<script>'));assert.ok(!root.innerHTML.includes('data-support-close'));
 const count=calls.length;callback('TOKEN_REFRESHED',{user:{id:user}});await flush();assert.equal(calls.length,count,'Token refresh must not wipe drafts or reload conversations');
 hold=true;click(root,'data-support-refresh');const pending=calls.at(-1);user=null;callback('SIGNED_OUT',null);await flush();assert.equal(pending.signal.aborted,true);assert.ok(root.innerHTML.includes('Войти или зарегистрироваться'));assert.ok(!root.innerHTML.includes('secret'));pendingResolve({data:[thread],error:null});await flush();assert.ok(!root.innerHTML.includes(thread.id),'Old private results cannot repaint after sign-out');dispose();assert.equal(root.innerHTML,'');assert.equal(callback,null);
-hold=false;user='owner';const ownerRoot=new Root(),stop=mountSupportPanel(ownerRoot,{auth:client,app:'sahaba',version:29,owner:true,signInHref:'#profile'});await flush();assert.equal(calls.at(-1).args.p_app,'sahaba');assert.equal(calls.at(-1).args.p_owner,true);assert.ok(!ownerRoot.innerHTML.includes('Все приложения'));stop();
+const nativeSetInterval=globalThis.setInterval,nativeClearInterval=globalThis.clearInterval,ownerIntervals=[];
+globalThis.setInterval=(fn,ms)=>{const timer={fn,ms,cleared:false};ownerIntervals.push(timer);return timer};globalThis.clearInterval=timer=>{if(timer)timer.cleared=true};
+hold=false;ownerUnread=false;user='owner';const ownerRoot=new Root(),stop=mountSupportPanel(ownerRoot,{auth:client,app:'sahaba',version:29,owner:true,signInHref:'#profile'});await flush();assert.equal(calls.at(-1).args.p_app,'sahaba');assert.equal(calls.at(-1).args.p_owner,true);assert.ok(!ownerRoot.innerHTML.includes('Все приложения'));
+const ownerTimer=ownerIntervals.at(-1);assert.equal(ownerTimer.ms,30000);ownerUnread=true;ownerTimer.fn();await flush();assert.ok(ownerRoot.innerHTML.includes('support-new-badge'));assert.match(ownerRoot.note.textContent,/Новое обращение/);
+click(ownerRoot,'data-support-thread',thread.id);await flush();click(ownerRoot,'data-support-back');await flush();assert.ok(!ownerRoot.innerHTML.includes('support-new-badge'),'Opening the conversation clears its unread marker');
+stop();assert.ok(ownerTimer.cleared);globalThis.setInterval=nativeSetInterval;globalThis.clearInterval=nativeClearInterval;
 assert.ok(!supportError({message:'password=private-key'}).includes('private-key'));
+const diagnosticRoot=new Root();let diagnosticDisposals=0;
+const diagnosticStop=mountSupportPanel(diagnosticRoot,{auth:client,app:'salah',version:206,createDiagnostics:()=>({snapshot:()=> 'Версия SALAH: 206\nРаздел: support\nОшибки JavaScript: 0',dispose(){diagnosticDisposals++}})});
+await flush();click(diagnosticRoot,'data-support-new');click(diagnosticRoot,'data-support-diagnostics');
+const diagnosticForm=form('data-support-create',{subject:'Сбой',body:'Не загружается страница'});submitForm(diagnosticRoot,diagnosticForm);await flush();
+const diagnosticMessage=calls.filter(call=>call.name==='support_create').at(-1).args.p_body;
+assert.ok(diagnosticMessage.includes('Технические данные SALAH\nВерсия SALAH: 206'));
+assert.ok(diagnosticMessage.startsWith('Не загружается страница'));assert.equal(diagnosticDisposals,1);diagnosticStop();
 
 // Use delayed transports that intentionally ignore abort, as a response can already
 // have arrived when the account changes. No real accounts or messages are used.
-function harness(owner=false){
+function harness(owner=false,recipientId=null){
  const root=new Root(),calls=[],failures=new Set(),delays=new Map();let uid='first-account',onAuth;
  const auth={auth:{getSession:async()=>({data:{session:uid?{user:{id:uid}}:null}}),onAuthStateChange(fn){onAuth=fn;return{data:{subscription:{unsubscribe(){onAuth=null}}}}}},rpc(name,args){return{abortSignal(signal){
   calls.push({name,args,signal});
   if(delays.has(name)){const resolve=delays.get(name);delays.delete(name);return new Promise(done=>resolve(done))}
   if(failures.delete(name))return Promise.resolve({error:{message:'temporary network error'}});
-  return Promise.resolve({data:name==='support_list'?[thread,{...thread,id:'second-thread',subject:'Другое обращение'}]:name==='support_read'?{thread:{...thread,id:args.p_id},messages:[]}:null,error:null});
+  return Promise.resolve({data:name==='support_owner_recipient'?{id:args.p_user,nickname:'Выбранный <пользователь>'}:name==='support_list'?[thread,{...thread,id:'second-thread',subject:'Другое обращение'}]:name==='support_read'?{thread:{...thread,id:args.p_id},messages:[]}:null,error:null});
  }}}};
- const stop=mountSupportPanel(root,{auth,app:'salah',version:182,owner});
+ const stop=mountSupportPanel(root,{auth,app:'salah',version:182,owner,recipientId});
  return{root,calls,failures,stop,hold(name){return new Promise(resolve=>delays.set(name,resolve))},switchTo(next){uid=next;onAuth(next?'SIGNED_IN':'SIGNED_OUT',next?{user:{id:next}}:null)}};
 }
 function inputReply(root,body){const replyForm=form('data-support-reply',{body});root.oninput({target:{closest:()=>replyForm}});return replyForm}
@@ -55,3 +67,28 @@ for(const mutation of ['support_create','support_close']){
  finish({data:null,error:null});await flush();assert.equal(ui.calls.length,callCount,mutation+' completion must not read the old thread in a new account');ui.stop();
 }
 console.log('PASS: support drafts and retry IDs survive refresh/back/network errors; separate threads/accounts, immediate logout clearing, cancelled mutations, escaped messages and app isolation.');
+
+const recipientId='44444444-4444-4444-8444-444444444444';
+const compose=harness(true,recipientId);await flush();
+assert.equal(compose.calls[0].name,'support_owner_recipient');assert.equal(compose.calls[0].args.p_user,recipientId);
+assert.match(compose.root.innerHTML,/Выбранный &lt;пользователь&gt;/);
+assert.match(compose.root.innerHTML,/data-support-create/);assert.doesNotMatch(compose.root.innerHTML,/data-support-photo|data-support-diagnostics/);
+const ownerMessage=form('data-support-create',{subject:'Сообщение',body:'Ассаляму алейкум'});
+compose.failures.add('support_owner_create');submitForm(compose.root,ownerMessage);await flush();
+assert.match(compose.root.note.textContent,/Не удалось/);
+const ownerFirst=compose.calls.find(call=>call.name==='support_owner_create');
+assert.equal(ownerFirst.args.p_user,recipientId);assert.equal(ownerFirst.args.p_app,'salah');assert.equal(ownerFirst.args.p_body,'Ассаляму алейкум');
+submitForm(compose.root,ownerMessage);await flush();
+const ownerRetry=compose.calls.filter(call=>call.name==='support_owner_create').at(-1);
+assert.equal(ownerRetry.args.p_id,ownerFirst.args.p_id,'Owner retries use the same message/thread id');
+assert.match(compose.root.innerHTML,/data-support-reply/);assert.match(compose.root.note.textContent,/Сообщение отправлено/);
+assert.ok(!compose.calls.some(call=>call.name==='support_create'),'Owner sends through the guarded owner endpoint');
+compose.stop();
+const ordinary=harness(false,recipientId);await flush();
+assert.equal(ordinary.calls[0].name,'support_list');assert.ok(!ordinary.calls.some(call=>call.name==='support_owner_recipient'));ordinary.stop();
+const staleRecipient=harness(true,recipientId);await flush();
+const recipientResult=staleRecipient.hold('support_owner_recipient');
+click(staleRecipient.root,'data-support-recipient-retry');const completeRecipient=await recipientResult;
+staleRecipient.switchTo(null);await flush();completeRecipient({data:{id:recipientId,nickname:'Не показывать старый профиль'},error:null});await flush();
+assert.doesNotMatch(staleRecipient.root.innerHTML,/Не показывать старый профиль/);assert.match(staleRecipient.root.innerHTML,/Войти или зарегистрироваться/);staleRecipient.stop();
+console.log('PASS: the owner composes to a server-resolved user, retries do not duplicate, user compose stays separate and stale recipient data is erased on sign-out.');

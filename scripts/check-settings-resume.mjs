@@ -17,7 +17,7 @@ const noop=()=>{};
 const settings={city:{name:'Медина',timezone:'Asia/Riyadh'},weather:false};
 const model=createContext({document,app,location,window,Date:fakeDate,navigator:{onLine:true},settings,
  days:{},currentDay:day,currentRoute:'',refreshId:0,error:'',loading:false,lastTick:now,lastWeatherCheck:now,weatherBusy:false,weather:null,quranRenderedHash:null,learningEntry:null,umrahModule:null,umrahImport:null,umrahRenderedHash:null,
- ownerReleaseCard:{mount(){}},topHeader:{append(){}},locationControl:{},settingsControl:{},storageAvailable:true,storageWarnings:[],
+ ownerReleaseCard:{mount(){}},ownerSupportStatus:{refresh:noop},userSupportStatus:{refresh:noop},topHeader:{append(){}},locationControl:{},settingsControl:{},storageAvailable:true,storageWarnings:[],
  setInterval:()=>1,clearInterval:noop,nav:noop,stopCompass:noop,stopLearning:noop,stopQuran:noop,stopAdhkar:noop,stopSupport:noop,showSupport:noop,home:noop,prayerPage:noop,showKnowledge:noop,more:noop,showQuran:noop,showAdhkar:noop,showLearning:noop,qibla:noop,historyPage:noop,calendarPage:noop,sourcesPage:noop,about:noop,showCounterAccount:noop,showAdmin:noop,
  settingsPage:()=>{rebuilt++;form={draft:'',opened:false,school:0};focus=null},
  dateKey:()=>day,addDays:()=>day,cachedDays:()=>({[day]:{timezone:'Asia/Riyadh',timings:{Fajr:'2026-10-02T05:00:00+03:00',Sunrise:'2026-10-02T06:00:00+03:00',Maghrib:'2026-10-02T18:00:00+03:00'}}}),loadMonth:async()=>{loads++;return{[day]:{timezone:'Asia/Riyadh',timings:{Fajr:'2026-10-02T05:00:00+03:00',Sunrise:'2026-10-02T06:00:00+03:00',Maghrib:'2026-10-02T18:00:00+03:00'}}}},ensureTahajjudDays:async()=>{},updateSettings:noop,refreshWeather:()=>weatherChecks++,

@@ -2,6 +2,8 @@ const GROUPS=new Set(['morning','evening','all','favorites']);
 const KEY='salah:adhkar-progress-v2';
 const cleanCount=value=>Number.isFinite(Number(value))?Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(Number(value)))):0;
 const add=(a,b)=>Math.min(Number.MAX_SAFE_INTEGER,a+b);
+const validDay=date=>typeof date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(date)&&Number.isFinite(Date.parse(date+'T00:00:00Z'))&&new Date(date+'T00:00:00Z').toISOString().slice(0,10)===date;
+function previousDay(date){if(!validDay(date))return null;const value=new Date(date+'T00:00:00Z');value.setUTCDate(value.getUTCDate()-1);return value.toISOString().slice(0,10)}
 
 // Daily progress and lifetime totals are committed together. Existing groups are
 // independent sessions; an item has one lifetime total across all those sessions.
@@ -54,9 +56,9 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
     return {_day:date,...normalizeProgress(doc.days[date]?.[group])};
   }
   function valid(group){return GROUPS.has(group)}
-  function mutate(group,id,delta){
-    const date=day(),loaded=load();
-    if(!loaded||!valid(group)||!targets.has(id))return {ok:false,changed:false};
+  function mutate(group,id,delta,date){
+    const loaded=load();
+    if(!loaded||!validDay(date)||!valid(group)||!targets.has(id))return {ok:false,changed:false};
     const {doc}=loaded,p=snapshot(doc,date,group),amount=p.counts[id]||0,target=targets.get(id);
     if(delta>0&&(amount>=target||(doc.totals[id]||0)>=Number.MAX_SAFE_INTEGER)||delta<0&&amount===0)
       return {ok:true,changed:false,progress:p,total:doc.totals[id]||0};
@@ -67,28 +69,35 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
     if(!commit(loaded))return {ok:false,changed:false};
     return {ok:true,changed:true,progress:p,total:doc.totals[id]};
   }
-  async function change(group,id,delta){
+  async function change(group,id,delta,date=day()){
     let manager;try{manager=locks()}catch{}
     if(manager?.request){
-      try{return await manager.request(KEY,()=>mutate(group,id,delta))}catch{return {ok:false,changed:false}}
+      try{return await manager.request(KEY,()=>mutate(group,id,delta,date))}catch{return {ok:false,changed:false}}
     }
-    return mutate(group,id,delta);
+    return mutate(group,id,delta,date);
   }
   return {
     configure(items){
       targets=new Map(items.filter(i=>typeof i.id==='string'&&/^[\w-]+$/.test(i.id)&&Number.isSafeInteger(i.target)&&i.target>0).map(i=>[i.id,i.target]));
       const loaded=load();return !!loaded&&(loaded.saved||commit(loaded));
     },
-    progress(group){const date=day(),loaded=load();return snapshot(loaded?.doc||empty(),date,group)},
+    progress(group,date=day()){const loaded=load();return snapshot(loaded?.doc||empty(),validDay(date)?date:day(),group)},
+    hasDay(group,date){return valid(group)&&validDay(date)&&Object.hasOwn(load()?.doc.days[date]||{},group)},
+    previous(group){
+      const date=previousDay(day()),loaded=load();
+      if(!date||!loaded||!valid(group))return null;
+      const value=snapshot(loaded.doc,date,group);
+      return Object.values(value.counts).some(n=>n>0)?value:null;
+    },
     total(id){return load()?.doc.totals[id]||0},
     totals(){return load()?.doc.totals||{}},
     save(group,progress){
       const date=progress._day||day(),loaded=load();
-      if(!loaded||!valid(group)||!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+      if(!loaded||!valid(group)||!validDay(date))return false;
       if(!loaded.doc.days[date])loaded.doc.days[date]={};
       loaded.doc.days[date][group]=normalizeProgress(progress);return commit(loaded);
     },
-    increment:(group,id)=>change(group,id,1),
-    undo:(group,id)=>change(group,id,-1)
+    increment:(group,id,date)=>change(group,id,1,date),
+    undo:(group,id,date)=>change(group,id,-1,date)
   };
 }

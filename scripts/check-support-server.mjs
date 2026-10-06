@@ -14,4 +14,22 @@ assert.equal((await createSupportHandler({...services,getUser:async()=>{throw Er
 for(const [error,status]of [[{code:'42501'},403],[{message:'support_rate_limit'},429],[{message:'secret=credential'},503]]){response=await createSupportHandler({...services,invoke:async()=>{throw error}})(request());assert.equal(response.status,status);assert.ok(!(await response.text()).includes('credential'));}
 response=await createSupportHandler(services)(request(body,{method:'OPTIONS'}));assert.equal(response.status,204);assert.equal(response.headers.get('Access-Control-Allow-Origin'),'https://skodytunez-maker.github.io');
 assert.equal((await createSupportHandler({...services,invoke:async()=>[]})(request({...body,args:{...args,p_app:'sahaba'}},{headers:{Origin:'https://sahaba-learning.skodytunez.chatgpt.site'}}))).status,200);
-console.log('PASS: signed identity, fresh Auth checks, bounded input, strict operations, per-app origins, safe errors and no caller-provided authority. Database integration separately verifies active sessions and owner MFA.');
+const inbox=await readFile(new URL('../supabase/migrations/20261006190000_support_owner_inbox.sql',import.meta.url),'utf8');
+assert.ok(inbox.includes('owner_seen_at timestamptz'));assert.ok(inbox.includes('AS owner_unread'));assert.ok(inbox.includes('public.support_actor(p_owner)'));
+assert.ok(inbox.includes("SECURITY DEFINER SET search_path=''"));assert.ok(inbox.includes('REVOKE ALL ON FUNCTION public.support_list'));
+assert.ok(inbox.includes('owner_seen_at=coalesce('),'Opening or answering an owner thread advances its seen marker');
+console.log('PASS: signed identity, fresh Auth checks, bounded input, strict operations, per-app origins, safe errors, owner unread migrations and no caller-provided authority. Database integration separately verifies active sessions and owner MFA.');
+
+const ownerArgs={p_id:sid,p_user:id,p_app:'salah',p_subject:'Сообщение от SALAH',p_body:'Текст',p_version:'219'};
+const recipientRequest={name:'support_owner_recipient',args:{p_user:id,p_app:'salah'}};
+const ownerCreate={name:'support_owner_create',args:ownerArgs};
+for(const invalid of [{...ownerCreate,args:{...ownerArgs,p_user:'invalid'}},{...ownerCreate,args:{...ownerArgs,p_owner:true}},{...ownerCreate,args:{...ownerArgs,p_app:'sahaba'}}]){
+ assert.equal((await createSupportHandler(services)(request(invalid))).status,invalid.args.p_app==='sahaba'?403:400);
+}
+let ownerCalls=[];
+const ownerServices={...services,invoke:async(name,params,signed)=>{ownerCalls.push({name,params,signed});return name==='support_owner_recipient'?{id:params.p_user,nickname:'Получатель'}:params.p_id}};
+response=await createSupportHandler(ownerServices)(request(recipientRequest));assert.equal(response.status,200);
+response=await createSupportHandler(ownerServices)(request(ownerCreate));assert.equal(response.status,200);assert.equal(ownerCalls[1].params.p_user,id);
+assert.equal((await createSupportHandler({...ownerServices,invoke:async()=>{throw{code:'42501'}}})(request(ownerCreate))).status,403,'Database owner/MFA denial propagates without creating a message');
+assert.equal((await createSupportHandler(ownerServices)(request(ownerCreate,{headers:{Authorization:''}}))).status,401);
+console.log('PASS: owner compose/read operations accept only exact recipient UUIDs, preserve origin/app isolation and propagate server owner-MFA denial.');

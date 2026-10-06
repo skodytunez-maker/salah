@@ -1,36 +1,46 @@
-import{loadLandmark,matchLandmark}from './landmarks.js';
-import{settings,updateSettings}from './storage.js';
+import{loadLandmark}from'./landmarks.js';
+import{settings,updateSettings}from'./storage.js';
+import{wallpapers}from'./wallpapers.js';
 
-// One compact selector belongs to the landmark tile, never to prayer location.
+const collator=new Intl.Collator('ru',{sensitivity:'base',numeric:true});
+
+// Built-in scenes and city wallpapers share one compact, collapsed selector.
 export function mountLandmarkSettings(root,onChange=()=>{}){
- const details=root?.querySelector('#landmark-cities'),label=root?.querySelector('#landmark-city-name'),select=root?.querySelector('#landmark-city');
+ const details=root?.querySelector('#wallpaper-picker'),label=root?.querySelector('#wallpaper-name'),select=root?.querySelector('#wallpaper-select'),status=root?.querySelector('#landmark-status');
  if(!details||!label||!select)return ()=>{};
- let entries=null,request=0;
- const currentName=()=>settings.landmarkCity==='auto'?(settings.city?.name||'Мой город'):entries?.find(c=>c.id===settings.landmarkCity)?.name||'Выбрать город';
+ const face=root.querySelector('#wallpaper-toggle');
+ if(face){face.onclick=()=>{details.open=!details.open};details.ontoggle=()=>face.setAttribute('aria-expanded',String(details.open));}
+ let entries=[],request=0;
+ const current=()=>settings.wallpaper==='landmark'?'landmark:'+settings.landmarkCity:'wallpaper:'+settings.wallpaper;
  function draw(){
-  details.hidden=settings.wallpaper!=='landmark';
-  label.textContent=currentName();
-  if(entries){
-   select.replaceChildren();
-   const option=(value,text)=>{const item=document.createElement('option');item.value=value;item.textContent=text;select.append(item)};
-   option('auto','Мой город'+(settings.city?.name?' · '+settings.city.name:''));
-   for(const city of entries)option(city.id,city.name);
-   if(!entries.some(c=>c.id===settings.landmarkCity)&&settings.landmarkCity!=='auto')option(settings.landmarkCity,'Недоступный город');
-   select.value=settings.landmarkCity;select.disabled=false;
-   if(settings.landmarkCity==='auto')label.textContent=matchLandmark(settings.city,entries)?.name||currentName();
-  }
+  const choices=[
+   {value:'landmark:auto',name:'Мой город'},
+   ...[
+    ...wallpapers.filter(item=>item.id!=='landmark').map(item=>({value:'wallpaper:'+item.id,name:item.name})),
+    ...entries.map(city=>({value:'landmark:'+city.id,name:city.name}))
+   ].sort((a,b)=>collator.compare(a.name,b.name)||a.value.localeCompare(b.value))
+  ];
+  const value=current();
+  if(!choices.some(item=>item.value===value))choices.push({value,name:'Выбранные обои'});
+  select.replaceChildren();
+  for(const item of choices){const option=document.createElement('option');option.value=item.value;option.textContent=item.name;select.append(option)}
+  select.value=value;
+  label.textContent=choices.find(item=>item.value===value)?.name||'Выбрать';
  }
  async function refresh(){
-  draw();if(details.hidden||entries)return;
-  const id=++request;
-  try{const value=await loadLandmark.catalogue();if(id!==request||!root.isConnected)return;entries=value.length?value:null;draw();if(!entries){select.disabled=true;select.options[0].textContent='Нужен интернет для списка городов'}}catch{if(root.isConnected)select.disabled=true}
+  const id=++request;draw();
+  try{const value=await loadLandmark.catalogue();if(id!==request||!root.isConnected)return;entries=value;draw();if(status)status.hidden=true}
+  catch{if(id!==request||!root.isConnected)return;if(status){status.textContent='Список городов недоступен без интернета.';status.hidden=false}}
  }
  select.onchange=()=>{
-  const previous=settings.landmarkCity;
-  if(select.value!=='auto'&&!entries?.some(c=>c.id===select.value))return;
-  if(!updateSettings({landmarkCity:select.value})){select.value=previous;return}
-  draw();onChange();
+  const value=select.value;
+  const city=value.startsWith('landmark:')?value.slice(9):null;
+  const wallpaper=value.startsWith('wallpaper:')?value.slice(10):null;
+  if(city!==null&&city!=='auto'&&!entries.some(item=>item.id===city)){draw();return}
+  if(wallpaper!==null&&!wallpapers.some(item=>item.id===wallpaper&&item.id!=='landmark')){draw();return}
+  if(city===null&&wallpaper===null){draw();return}
+  const saved=updateSettings(city!==null?{wallpaper:'landmark',landmarkCity:city}:{wallpaper});
+  draw();if(saved){onChange();if(status)status.hidden=true}else if(status){status.textContent='Не удалось сохранить выбор обоев.';status.hidden=false}
  };
- details.ontoggle=()=>{if(details.open&&!entries)refresh()};
- refresh();return refresh;
+ void refresh();return refresh;
 }

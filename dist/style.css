@@ -189,12 +189,12 @@ button.owner-user-row{width:100%;text-align:left;font:inherit;color:inherit;back
 
 #owner-user-card{touch-action:pan-y}
 
-.owner-card-notifications{display:flex;flex-wrap:wrap;gap:18px}.owner-notification-flag{display:inline-flex;align-items:center;gap:7px;border:0;padding:7px 0;background:transparent;color:var(--text);font:inherit;cursor:pointer}.owner-notification-flag svg{width:20px;height:20px;fill:none;stroke:#596273;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.owner-notification-flag.is-connected svg{stroke:#57c99a}.owner-notification-flag:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}.owner-notification-info{font-size:11px;color:var(--muted);margin:5px 0 0}
+.owner-card-notifications{display:flex;flex-wrap:wrap;gap:18px}.owner-notification-flag{display:inline-flex;align-items:center;gap:7px;border:0;padding:7px 0;background:transparent;color:var(--text);font:inherit;cursor:pointer}.owner-notification-flag svg{width:20px;height:20px;fill:none;stroke:#596273;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.owner-notification-flag.is-connected svg{stroke:#57c99a}.owner-notification-flag.is-unknown svg{stroke:#485572}.owner-notification-flag:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}.owner-notification-info{font-size:11px;color:var(--muted);margin:5px 0 0}
 
 .owner-notification-flag span{color:var(--text);font-size:12px}
 
 /* Smoothly mask the service-worker document swap with the app's deep-night base. */
-html.salah-update-leaving::after,html.salah-update-restoring::after{content:"";position:fixed;inset:0;z-index:2147483647;pointer-events:none;background:#0d1326;opacity:1;transition:opacity 320ms ease}
+html.salah-update-leaving::after,html.salah-update-restoring::after{content:"";position:fixed;inset:0;z-index:2147483647;pointer-events:none;background:rgba(13,19,38,.12);opacity:1;transition:opacity 320ms ease}
 html.salah-update-leaving::after{opacity:0}
 html.salah-update-leaving.salah-update-leaving-active::after{opacity:1}
 html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
@@ -206,3 +206,36 @@ html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
 .modal-head [data-close]{width:auto;min-width:72px;padding:9px 12px;font-size:13px}
 
 .account-delete-area{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}.account-delete-area h3{margin:0 0 8px}.account-delete-area .muted{margin-bottom:12px}.account-delete-button{color:#f0c3c3!important;background:rgba(112,34,48,.16)!important;border:1px solid rgba(220,125,139,.42)!important}.account-delete-button:disabled{opacity:.5}
+
+.list-button.account-entry.account-entry-compact{flex-direction:row;align-items:center;min-height:60px;gap:12px;padding:14px 18px}
+
+
+/* Align the account actions; give the owner dashboard a distinct, calm button. */
+.owner-login #account-form-area{display:grid;gap:8px;min-width:0}
+.owner-login #account-owner-panel{width:100%;min-width:0;margin:0}
+.owner-login #account-owner-panel .owner-account{margin:0}
+.owner-login #account-owner-panel>.owner-account>summary,.owner-login .account-details>summary,.owner-login #counter-account-out{box-sizing:border-box;display:flex;align-items:center;width:100%;min-height:60px;padding:12px 16px;text-align:left;line-height:1.4}
+.owner-login #account-owner-panel>.owner-account>summary,.owner-login .account-details>summary{list-style:none;cursor:pointer}
+.owner-login #account-owner-panel>.owner-account>summary::-webkit-details-marker,.owner-login .account-details>summary::-webkit-details-marker{display:none}
+.owner-login #account-owner-panel>.owner-account>summary{position:relative;gap:12px;margin:0;border:1px solid rgba(217,191,132,.42);border-radius:16px;background:linear-gradient(125deg,rgba(217,191,132,.16),rgba(34,48,77,.42));box-shadow:inset 0 1px rgba(255,255,255,.07),0 8px 22px rgba(0,0,0,.16);color:var(--gold,#e5c987);font-weight:650;letter-spacing:.01em;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease}
+.owner-login #account-owner-panel>.owner-account>summary::before{content:"✦";position:absolute;right:54px;top:50%;transform:translateY(-50%);color:var(--gold,#e5c987);font-size:14px;opacity:.82}
+.owner-login #account-owner-panel>.owner-account>summary::after,.owner-login .account-details>summary::after{content:"+";display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;margin-left:auto;border-radius:10px;color:var(--gold,#e5c987);background:rgba(217,191,132,.1);font-size:22px;font-weight:400;line-height:1;transition:background .18s ease,transform .18s ease}
+.owner-login #account-owner-panel>.owner-account[open]>summary::after,.owner-login .account-details[open]>summary::after{content:"−"}
+.owner-login #account-owner-panel>.owner-account>summary:hover{border-color:rgba(229,201,135,.72);background:linear-gradient(125deg,rgba(217,191,132,.21),rgba(34,48,77,.5));box-shadow:inset 0 1px rgba(255,255,255,.09),0 10px 25px rgba(0,0,0,.2)}
+.owner-login #account-owner-panel>.owner-account>summary:active{transform:scale(.99)}
+.owner-login #account-owner-panel>.owner-account>summary:focus-visible,.owner-login .account-details>summary:focus-visible,.owner-login #counter-account-out:focus-visible{outline:2px solid var(--gold,#e5c987);outline-offset:3px}
+.owner-login .account-details{margin:0!important;border-block:1px solid var(--line,rgba(180,190,210,.16));padding:0}
+.owner-login .account-details>summary{gap:12px;color:var(--ivory,#ebe7dc);font-weight:500}
+.owner-login .account-details>summary::after{background:transparent}
+.owner-login #counter-account-out{justify-content:flex-start;margin:0;padding-inline:16px;border:0;border-top:1px solid var(--line,rgba(180,190,210,.16));border-radius:0;background:transparent;color:var(--muted,#a9b2c0);font:inherit;cursor:pointer}
+.owner-login #counter-account-out:hover{color:var(--gold,#e5c987)}
+@media(prefers-reduced-motion:reduce){.owner-login #account-owner-panel>.owner-account>summary,.owner-login #account-owner-panel>.owner-account>summary::after,.owner-login .account-details>summary::after{transition:none}}
+
+/* Original landmark card, with all wallpapers in the same selector. */
+.wallpaper-picker-tile{min-width:0;border:1px solid #ead09b;border-radius:15px;overflow:hidden;background:rgba(6,12,24,.5);box-shadow:0 0 0 1px rgba(234,208,155,.35)}
+.wallpaper-picker-face{display:flex;align-items:center;width:100%;min-height:72px;padding:0;border:0;border-radius:0;background:transparent;color:#ead09b;text-align:left;font:inherit;cursor:pointer}
+.wallpaper-picker-face img{display:block;width:105px;height:72px;flex-shrink:0;object-fit:cover;object-position:center 64%}
+.wallpaper-picker-face span{display:block;padding:11px 13px;font-size:14px;line-height:1.3}
+.wallpaper-picker-face:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+#wallpaper-picker{padding:0 13px;border-top:1px solid var(--line)}
+#wallpaper-picker summary span{padding:0;font-size:14px;line-height:1.3}

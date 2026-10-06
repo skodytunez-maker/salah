@@ -8,6 +8,12 @@ assert.equal(validatedRelease({version:'140',date:'2026-10-03',changes:['x']}),n
 assert.equal(validatedRelease({version:140,date:'2026-10-03',changes:[{}]}),null);
 assert.equal(validatedRelease({version:140,date:'2026-10-03',changes:['x'.repeat(241)]}),null);
 assert.equal(releaseDate('2026-10-03'),'3 октября 2026');
+const transitionSource=await readFile(new URL('../dist/js/pwa-updates.js',import.meta.url),'utf8');
+const transitionStyles=await readFile(new URL('../dist/style.css',import.meta.url),'utf8');
+assert.match(transitionSource,/const RESTORE_FAILSAFE_MS=1800/,'Restoring screen must have a fail-safe');
+assert.match(transitionSource,/restoreTransitionTimer=setTimeout\(\(\)=>finishAppUpdateTransition\(\),RESTORE_FAILSAFE_MS\)/,'A failed app startup cannot leave the restoring overlay indefinitely');
+assert.match(transitionSource,/clearTimeout\(restoreTransitionTimer\)/,'Normal startup cancels the fail-safe');
+assert.match(transitionStyles,/salah-update-restoring::after\{[^}]*background:rgba\(13,19,38,\.12\)/,'Update overlay must remain translucent so the app stays visible');
 const values=new Map([['salah:settings','{"school":0,"weather":false}'],['salah:adhkar-progress-v2','{"totals":{"tasbih":17}}']]);
 const before=[...values];globalThis.localStorage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v)};
 const docEvents={},winEvents={},workerEvents={},elements=[];let reloads=0,updates=0,intervals=[],automaticMessages=0,toasts=0;
@@ -91,3 +97,23 @@ assert.equal(validatedRelease({version:158,date:'2026-10-04',changes:['Каби�
 assert.deepEqual(validatedRelease({version:158,date:'2026-10-04',changes:['Улучшена погода','Изменения админа','Owner release']}).changes,['Улучшена погода']);
 assert.ok(APP_CHANGES.every(x=>!/владел|админ|owner|admin/iu.test(x)));
 console.log('PASS: private owner notes excluded from installed and waiting public update dialogs.');
+
+// Exercise the actual app callback, not a mocked safe predicate.
+const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
+const gateStart=appSource.indexOf('registerAppWorker({toast');
+assert.ok(gateStart>=0);
+const gateCall=appSource.slice(gateStart,appSource.indexOf('});',gateStart)+3);
+let updateGate,reader=null,sync='saved',audio=false;
+const gateScope={settings:{onboarded:true},currentRoute:'adhkar',toast(){},registerAppWorker:options=>updateGate=options,
+ app:{querySelector:selector=>reader&&selector.split(',').includes(reader)?{}:null},
+ counterSyncStatus:()=>({status:sync}),foregroundAudioBusy:()=>audio};
+vm.runInNewContext(gateCall,gateScope);
+for(const selector of ['.adhkar-shell','.dhikr-list-shell','.lesson-complete','.dua-reader','.quran-reader','.lesson-content']){
+ reader=selector;assert.equal(updateGate.canAutoUpdate(),false,'A downloaded update must wait while reading '+selector);
+}
+reader=null;assert.equal(updateGate.canAutoUpdate(),true,'The collection menu still updates automatically');
+gateScope.currentRoute='support';assert.equal(updateGate.canAutoUpdate(),false);
+gateScope.currentRoute='home';sync='saving';assert.equal(updateGate.canAutoUpdate(),false);
+sync='saved';audio=true;assert.equal(updateGate.canAutoUpdate(),false);
+audio=false;assert.equal(updateGate.canAutoUpdate(),true);
+console.log('PASS: actual app gate protects reading daily counters, Quran, lessons and support without disabling resting-screen updates.');

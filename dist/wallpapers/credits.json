@@ -1,17 +1,5 @@
 [
   {
-    "id": "tyumen",
-    "city": "Тюмень",
-    "landmark": "Мост влюблённых",
-    "source": null,
-    "referenceAuthor": null,
-    "referenceLicense": null,
-    "referenceLicenseUrl": null,
-    "referenceNote": "Источник и правообладатель исходного фотоориентира в репозитории не зафиксированы.",
-    "creation": "Художественные обои созданы встроенным image_gen; права на входной ориентир и итоговый файл требуют отдельной проверки.",
-    "rightsReviewStatus": "needs-review"
-  },
-  {
     "id": "omsk",
     "city": "Омск",
     "landmark": "Иртыш и Ленинградский мост",
@@ -19,8 +7,7 @@
     "referenceAuthor": "Сергей Брун (Petzel / @tamuro_roof)",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "moscow",
@@ -30,8 +17,7 @@
     "referenceAuthor": "A. Savin",
     "referenceLicense": "Free Art License",
     "referenceLicenseUrl": "https://artlibre.org/licence/lal/en/",
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "khujand",
@@ -41,8 +27,7 @@
     "referenceAuthor": "ALIPH / Alliance Française",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "dushanbe",
@@ -52,8 +37,7 @@
     "referenceAuthor": "Rumsor",
     "referenceLicense": "CC0 1.0",
     "referenceLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "almaty",
@@ -63,8 +47,7 @@
     "referenceAuthor": "ДУМ Казахстана",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "astana",
@@ -74,8 +57,7 @@
     "referenceAuthor": "Astana Development Centre",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "tashkent",
@@ -85,8 +67,7 @@
     "referenceAuthor": "Uzbekistan Travel",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "grozny",
@@ -96,8 +77,7 @@
     "referenceAuthor": "Alexxx1979",
     "referenceLicense": "CC BY-SA 4.0",
     "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "makhachkala",
@@ -107,8 +87,7 @@
     "referenceAuthor": "Шамиль Магомедов; кадрирование Danloud",
     "referenceLicense": "CC BY-SA 4.0",
     "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения."
   },
   {
     "id": "derbent",
@@ -118,8 +97,7 @@
     "referenceAuthor": "Дербентский музей-заповедник",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного."
   },
   {
     "id": "pamir",
@@ -129,7 +107,26 @@
     "referenceAuthor": "OrexCA",
     "referenceLicense": "Фотографический ориентир",
     "referenceLicenseUrl": null,
-    "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного.",
-    "rightsReviewStatus": "needs-review"
+    "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного."
+  },
+  {
+    "id": "afghanistan",
+    "city": "Афганистан",
+    "landmark": "Голубая мечеть Мазари-Шарифа",
+    "source": "https://afg.gov.af/places/blue-mosque-mazar",
+    "referenceAuthor": "Портал правительства Афганистана (архитектурный ориентир)",
+    "referenceLicense": "Использовано как справочный источник",
+    "referenceLicenseUrl": null,
+    "creation": "Стилизованные художественные обои созданы встроенным image_gen; это не документальная фотография, детали изображения могут отличаться от реального комплекса."
+  },
+  {
+    "id": "badakhshan",
+    "city": "Бадахшан",
+    "landmark": "Горная долина и селение",
+    "source": null,
+    "referenceAuthor": "",
+    "referenceLicense": "",
+    "referenceLicenseUrl": null,
+    "creation": "Художественные обои созданы встроенным image_gen по пользовательскому выбору; это собирательный иллюстративный пейзаж, не документальная фотография."
   }
 ]

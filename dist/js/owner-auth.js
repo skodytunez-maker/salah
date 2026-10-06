@@ -8,7 +8,7 @@ let client=null,verified=false,verifiedAt=0,verifiedUserId=null,pending=null,rev
 const listeners=new Set();
 function publish(){for(const fn of listeners)fn();}
 function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;if(changed)publish();}
-const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin'].includes(location.hash.split('?')[0]);
+const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support'].includes(location.hash.split('?')[0]);
 function authClient(){
  if(!client){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
@@ -33,7 +33,7 @@ async function callOwner(session,query=''){
  let response;
  try{response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});}
  catch{revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
- if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403)throw Error('Этот аккаунт не имеет доступа к кабинету.');if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
+ if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403){const denied=Error('Этот аккаунт не имеет доступа к кабинету.');denied.status=403;throw denied;}if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
  return response.json();
 }
 export async function verifyOwner({verifySession=false}={}){
@@ -47,7 +47,7 @@ export async function verifyOwner({verifySession=false}={}){
    const checked=await checkAccountSession({force:verifySession&&attempt===0});
    if(started!==revision)continue;
    if(checked.state!=='valid'||!checked.session){revoke();return false;}
-   const result=await callOwner(checked.session);
+   let result;try{result=await callOwner(checked.session)}catch(error){if(error.status===403){revoke();return false}throw error}
    if(started!==revision)continue;
    if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
    const changed=!verified;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;if(changed)publish();return true;
@@ -99,6 +99,7 @@ export function initOwnerAccess(onChanged){
  const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive())verifyOwner({verifySession:true}).catch(()=>{});};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
  window.addEventListener('online',resume);
+ window.addEventListener('hashchange',resume);
  window.addEventListener('storage',event=>{if(event.key!==SESSION_KEY)return;
   // The SDK broadcasts routine renewals itself. Refreshing again on its storage
   // write makes all open tabs rotate and rebroadcast the session indefinitely.

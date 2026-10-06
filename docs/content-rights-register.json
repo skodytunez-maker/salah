@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-10-07",
+  "sourceCommit": "e46469ebe8542365adfbd332b0373094d61c63e6",
+  "scope": "SALAH project provenance and planned Instagram presentation; store/commercial tasks recorded separately.",
+  "project": {
+    "displayOwner": "Saadi Kobilov",
+    "repository": "skodytunez-maker/salah",
+    "ownerStatement": {
+      "date": "2026-10-07",
+      "development": "Only in these chats",
+      "externalDevelopersOrDesigners": false,
+      "source": "Direct user confirmation in this conversation"
+    },
+    "legalNameVerified": false,
+    "registeredCopyrightCertificate": "not-provided",
+    "registeredTrademark": "not-verified",
+    "notes": "No other human developers/designers reported. Output rights under applicable OpenAI terms and the originality/protectability of human contributions are distinct from third-party components.",
+    "pendingRegistration": {
+      "requestedByUser": true,
+      "country": "Russia",
+      "applicantType": "natural-person",
+      "certificateIssuer": "Rospatent",
+      "status": "private-draft-prepared; author-and-rights-basis-unconfirmed; not-submitted"
+    },
+    "legalNameRecordedPrivately": true
+  },
+  "components": [
+    {
+      "id": "amiri",
+      "name": "Amiri",
+      "license": "SIL-OFL-1.1",
+      "licenseFile": "dist/assets/amiri-OFL.txt",
+      "licenseGitBlobSha": "a6051797e5f1910347b586dc06d4c1130f00da28",
+      "paths": [
+        "dist/assets/amiri-quran.ttf"
+      ],
+      "status": "license-recorded",
+      "conditions": "Embedding permitted with font license retained; no standalone font sale."
+    },
+    {
+      "id": "bootstrap-icons",
+      "name": "Bootstrap Icons",
+      "license": "MIT",
+      "licenseFile": "dist/assets/bootstrap-icons-LICENSE.txt",
+      "licenseGitBlobSha": "f95243911022df8e34bb8c73c87ef491ee1696cf",
+      "paths": [],
+      "status": "license-recorded",
+      "conditions": "MIT notice retained; map each reused/modified icon to its upstream origin."
+    },
+    {
+      "id": "geomagnetism",
+      "name": "geomagnetism 0.2.0",
+      "license": "Apache-2.0",
+      "licenseFile": "dist/assets/geomagnetism-LICENSE.txt",
+      "licenseGitBlobSha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe",
+      "paths": [
+        "dist/js/geomagnetism.js",
+        "dist/data/qibla-magnetic-sources.json"
+      ],
+      "status": "license-recorded",
+      "conditions": "Keep Apache license, applicable notices and change records."
+    },
+    {
+      "id": "hls",
+      "name": "hls.js 1.7.3",
+      "license": "Apache-2.0",
+      "licenseFile": "dist/js/vendor/hls-LICENSE.txt",
+      "licenseGitBlobSha": "5123bda03fe34fd3859bdf6bbc7f6640eb14bf03",
+      "paths": [
+        "dist/js/vendor/hls-light.min.js",
+        "dist/js/vendor/hls-source.json"
+      ],
+      "status": "license-recorded",
+      "conditions": "Vendor notice contains Dailymotion/Brightcove attribution; full Apache text is also bundled in geomagnetism license."
+    },
+    {
+      "id": "suncalc",
+      "name": "SunCalc 2.1.0",
+      "license": "BSD-2-Clause",
+      "licenseFile": "dist/js/vendor/suncalc-LICENSE.txt",
+      "licenseGitBlobSha": "be7ac39d4a6afcc1094d68b467806406c2e78d6c",
+      "paths": [
+        "dist/js/vendor/suncalc.js",
+        "dist/js/vendor/suncalc-source.json"
+      ],
+      "status": "license-recorded",
+      "conditions": "Retain attribution, license conditions and disclaimer."
+    },
+    {
+      "id": "supabase-js",
+      "name": "Supabase JS 2.117.2",
+      "license": "MIT",
+      "licenseFile": "dist/js/vendor/supabase-LICENSE.txt",
+      "licenseGitBlobSha": "ddeba6a00ae5ec536d5429e040bc73ef2c6a07d6",
+      "paths": [
+        "dist/js/vendor/supabase.js",
+        "dist/js/vendor/supabase-source.json"
+      ],
+      "status": "license-recorded",
+      "conditions": "Retain MIT notice; other service contracts are a separate issue."
+    },
+    {
+      "id": "quran-transcript-notices",
+      "name": "Tanzil text + Quran Transcript notices",
+      "license": "Tanzil-CC-BY-3.0-with-verbatim-terms / MIT",
+      "licenseFile": "dist/data/quran-reading-LICENSE.txt",
+      "licenseGitBlobSha": "7549c2bee92ceb61038aa43c12960e298d59c1c2",
+      "paths": [
+        "dist/data/quran-index.json"
+      ],
+      "status": "license-recorded",
+      "conditions": "Retain Tanzil attribution/link and unchanged Quran text; algorithm-license permission is separate from dataset provenance."
+    }
+  ],
+  "content": [
+    {
+      "id": "quran-corpus",
+      "selectors": [
+        "dist/data/quran/*.json",
+        "dist/data/quran-search.json",
+        "dist/data/quran-index.json"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "dist/data/quran-index.json",
+        "https://alquran.cloud/terms-and-conditions",
+        "https://tanzil.net/docs/Text_License"
+      ],
+      "findings": "114 surah JSON files bundle Arabic, Kuliev translation, Islam.Global transcription, tajweed and metadata. Arabic/API permissions do not alone identify rights for every field.",
+      "nextAction": "Trace ru.kuliev and transcription editions; retain attribution and obtain/record scope including offline use and promotional display."
+    },
+    {
+      "id": "salah-transcription",
+      "selectors": [
+        "dist/data/quran-reading/*.json"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "dist/data/quran-reading-LICENSE.txt",
+        "dist/data/quran-index.json"
+      ],
+      "findings": "114 generated reading files; engine quran-transcript@0.6.4 and source/license fields recorded. Engine MIT does not by itself identify the provenance of all inputs/edits.",
+      "nextAction": "Record engine/source revision, generation steps and editorial changes; keep the bundled notices."
+    },
+    {
+      "id": "qf-metadata",
+      "selectors": [
+        "dist/data/quran-index.json"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "https://api-docs.quran.com/legal/developer-terms/"
+      ],
+      "findings": "The index references ordinary chapters API; determine fields derived from it. Current QF terms permit paid end-user apps with conditions but separately restrict caching and prepackaged data.",
+      "nextAction": "Identify the actual QF-derived fields and either establish permitted offline distribution or use independently licensed/created metadata."
+    },
+    {
+      "id": "adhkar-dua-learning",
+      "selectors": [
+        "dist/data/adhkar.json",
+        "dist/data/daily-dua.json",
+        "dist/data/learning-content.json",
+        "dist/data/learning-quran.json",
+        "dist/js/umrah-content.js",
+        "dist/js/umrah-illustrations.js"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "https://sunnah.com/about",
+        "https://islamqa.org/hanafi/qibla-hanafi/42476/qunut-in-witr-prayer-5/"
+      ],
+      "findings": "Individual primary hadith selections can be used for teaching/presentation under Sunnah.com's reproduction policy; copied modern Russian translations/transcriptions and source-site material need their own provenance.",
+      "nextAction": "Record which passages were newly translated/summarized in these chats and which reproduce a modern edition; avoid claiming ownership of the Quran/hadith."
+    },
+    {
+      "id": "audio",
+      "selectors": [
+        "dist/data/adhan-sources.json",
+        "dist/data/learning-adhkar-audio-sources.json",
+        "dist/data/broadcast-stream-sources.json",
+        "dist/js/quran-audio.js",
+        "dist/js/quran-reciters.js"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "https://community.islamic.network/d/232-request-to-use-your-adhan-audio-in-a-non-commercial-islamic-app",
+        "https://alquran.cloud/terms-and-conditions"
+      ],
+      "findings": "Three bundled adhan files, ten linked HisnMuslim recordings and external recitation/broadcast sources. Public playback URLs and the adhan forum reply do not confirm all promotional/commercial scope.",
+      "nextAction": "Use an audio-free initial app demo; prepare requests for recordings, promotional excerpts and later commercial use."
+    },
+    {
+      "id": "weather",
+      "selectors": [
+        "dist/js/weather-data.js"
+      ],
+      "status": "commercial-plan-needed",
+      "evidence": [
+        "https://open-meteo.com/en/terms",
+        "https://open-meteo.com/en/pricing"
+      ],
+      "findings": "Current code uses the free api.open-meteo.com endpoint. Free service is non-commercial; data licensing and API-service terms differ.",
+      "nextAction": "Before paid features/ads launch, select an authorized commercial API setup or alternative. No purchase or account signup is part of this audit."
+    },
+    {
+      "id": "native-packages",
+      "selectors": [
+        "mobile/package.json",
+        "mobile/scripts/sync-web.mjs"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "mobile/package.json",
+        "mobile/README.md"
+      ],
+      "findings": "Four direct Capacitor dependencies pinned to 8.5.2; core notice copied during packaging. No tracked mobile lockfile or final platform dependency inventory found.",
+      "nextAction": "Before store release capture the resolved dependency/license tree and notices from the signed artifacts; not required to claim project authorship."
+    }
+  ]
+}

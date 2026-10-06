@@ -12,7 +12,8 @@ async function exists(ref,context=base){
  assert.ok((await fs.stat(path.join(dist,relative))).isFile(),'Missing asset: '+ref);
 }
 const manifest=JSON.parse(await fs.readFile(path.join(dist,'manifest.json'),'utf8'));
-for(const key of ['id','start_url','scope'])assert.equal(new URL(manifest[key],base).href,base.href);
+for(const key of ['id','scope'])assert.equal(new URL(manifest[key],base).href,base.href);
+assert.equal(new URL(manifest.start_url,base).href,new URL('#home',base).href);
 for(const icon of manifest.icons)await exists(icon.src);
 assert.ok(Array.isArray(manifest.shortcuts)&&manifest.shortcuts.length>=3,'Install shortcuts missing');
 for(const shortcut of manifest.shortcuts){assert.ok(typeof shortcut.name==='string'&&shortcut.name.trim());const target=new URL(shortcut.url,base);assert.equal(target.origin,base.origin);assert.ok(target.pathname.startsWith(base.pathname),'Shortcut outside Pages project: '+shortcut.url);}
@@ -34,7 +35,7 @@ for(const style of styles(html))assert.ok(assets.includes(style),'Application st
 assert.match(html,/name="application-name" content="SALAH"/);
 assert.match(html,/name="description" content="SALAH — время намаза, Коран, азкары, Кибла и обучение в одном спокойном приложении\."/);
 for(const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g))await exists(match[1]);
-async function scan(dir){for(const entry of await fs.readdir(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);assert.ok(!entry.isSymbolicLink());if(entry.isDirectory())await scan(file);else if(/\.(js|css)$/.test(file)){const text=await fs.readFile(file,'utf8');const context=new URL(path.relative(dist,file).split(path.sep).join('/'),base);if(file.endsWith('.js')){for(const match of text.matchAll(/\bfrom\s*['"](\.[^'"]+)['"]/g))await exists(match[1],context);}if(file.endsWith('.css'))for(const match of text.matchAll(/url\(\s*['"]?([^)'"\s]+)['"]?\s*\)/g))await exists(match[1],context);}}}
+async function scan(dir){for(const entry of await fs.readdir(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);assert.ok(!entry.isSymbolicLink());if(entry.isDirectory())await scan(file);else if(/\.(js|css)$/.test(file)){const text=await fs.readFile(file,'utf8');const context=new URL(path.relative(dist,file).split(path.sep).join('/'),base);if(file.endsWith('.js')){for(const match of text.matchAll(/\bfrom\s*['"](\.[^'"]+)['"]/g)){await exists(match[1],context);const imported=new URL(match[1],context);if(imported.pathname.endsWith('.js'))assert.ok(assets.includes('./'+decodeURIComponent(imported.pathname.slice(base.pathname.length))),'Imported application module must be available offline: '+match[1]);}}if(file.endsWith('.css'))for(const match of text.matchAll(/url\(\s*['"]?([^)'"\s]+)['"]?\s*\)/g))await exists(match[1],context);}}}
 await scan(dist);
 const index=JSON.parse(await fs.readFile(path.join(dist,'data/quran-index.json'),'utf8'));
 assert.equal(index.surahs.length,114);

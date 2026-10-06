@@ -1,63 +1,86 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import{fileURLToPath}from 'node:url';
+import{createHash}from 'node:crypto';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dist = path.join(root, 'dist');
-const catalog = JSON.parse(await fs.readFile(path.join(dist, 'wallpapers/catalog.json'), 'utf8'));
-const credits = JSON.parse(await fs.readFile(path.join(dist, 'wallpapers/credits.json'), 'utf8'));
-const mediaRegister = JSON.parse(await fs.readFile(path.join(root, 'docs/media-rights-register.json'), 'utf8'));
-assert.ok(Array.isArray(catalog.cities) && catalog.cities.length, 'Wallpaper city catalog is empty');
-assert.ok(Array.isArray(credits), 'Wallpaper credits must be an array');
-
-const cities = new Map();
-for (const city of catalog.cities) {
-  assert.ok(city.id && !cities.has(city.id), `Missing or duplicate city id: ${city.id}`);
-  cities.set(city.id, city);
-  for (const asset of [city.day, city.night, city.mask]) {
-    assert.ok(asset && !path.isAbsolute(asset), `${city.id}: expected a relative wallpaper asset path`);
-    const resolved = path.resolve(dist, asset);
-    assert.ok(resolved.startsWith(dist + path.sep), `${city.id}: wallpaper asset escapes dist: ${asset}`);
-    assert.ok((await fs.stat(resolved)).isFile(), `${city.id}: missing wallpaper asset ${asset}`);
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const read=async file=>JSON.parse(await fs.readFile(path.join(root,file),'utf8'));
+const media=await read('docs/media-rights-register.json');
+const content=await read('docs/content-rights-register.json');
+const snapshot=process.argv.includes('--snapshot');
+const allowed=new Set(['needs-review','license-recorded','origin-supported','cleared-with-evidence']);
+const relative=value=>typeof value==='string'&&value.startsWith('dist/')&&!value.includes('\\')&&!value.split('/').some(p=>p==='..'||p==='.'||p==='')&&!path.isAbsolute(value);
+const sha=value=>typeof value==='string'&&/^[a-f0-9]{40}$/.test(value);
+function validate(records,inventory){
+ assert.equal(records.schemaVersion,2);assert.ok(sha(records.sourceCommit));assert.ok(Array.isArray(records.assets));
+ const entries=new Map();
+ for(const entry of records.assets){
+  assert.ok(relative(entry.path),'Unsafe media path: '+entry.path);
+  assert.ok(!entries.has(entry.path),'Duplicate media: '+entry.path);
+  assert.ok(inventory.has(entry.path),'Unregistered/missing build file: '+entry.path);
+  assert.ok(sha(entry.gitBlobSha),'Missing source fingerprint: '+entry.path);
+  assert.ok(allowed.has(entry.rightsReviewStatus),'Unknown status: '+entry.path);
+  assert.ok(typeof entry.note==='string'&&entry.note.trim(),'Missing evidence note: '+entry.path);
+  if(entry.rightsReviewStatus!=='needs-review')assert.ok(typeof entry.rightsEvidence==='string'&&entry.rightsEvidence.trim(),'Claimed evidence missing: '+entry.path);
+  if(entry.rightsReviewStatus==='cleared-with-evidence')assert.ok(entry.permissionScope?.trim(),'Cleared status requires explicit scope: '+entry.path);
+  entries.set(entry.path,entry);
+ }
+ for(const file of inventory.keys())assert.ok(entries.has(file),'Media file has no rights record: '+file);
+ const sets=new Set();
+ for(const set of records.wallpaperSets){
+  assert.ok(set.id&&!sets.has(set.id),'Duplicate wallpaper set');
+  sets.add(set.id);assert.ok(allowed.has(set.rightsReviewStatus));
+  assert.equal(set.paths.length,3);
+  for(const file of set.paths)assert.equal(entries.get(file)?.wallpaperSet,set.id,'Unmapped wallpaper file: '+file);
+ }
+ assert.equal(sets.size,14,'Update audit when the wallpaper catalogue changes');
+ return entries;
+}
+let inventory,sourceFiles;
+if(snapshot){
+ const manifest=await read('docs/rights-source-manifest.json');
+ assert.equal(manifest.sourceCommit,media.sourceCommit);assert.equal(content.sourceCommit,media.sourceCommit);
+ sourceFiles=new Map(manifest.entries.map(entry=>[entry.path,entry]));
+ inventory=new Map(manifest.entries.filter(entry=>/^dist\/.*\.(png|jpe?g|webp|svg|ttf|mp3)$/.test(entry.path)).map(entry=>[entry.path,entry]));
+}else{
+ inventory=new Map();
+ async function scan(directory){
+  for(const entry of await fs.readdir(directory,{withFileTypes:true})){
+   const file=path.join(directory,entry.name);if(entry.isDirectory())await scan(file);
+   else if(/\.(png|jpe?g|webp|svg|ttf|mp3)$/i.test(entry.name))inventory.set(path.relative(root,file).split(path.sep).join('/'),{});
   }
+ }
+ await scan(path.join(root,'dist'));
 }
-
-const creditIds = new Set();
-for (const credit of credits) {
-  assert.ok(credit.id && !creditIds.has(credit.id), `Missing or duplicate credit id: ${credit.id}`);
-  creditIds.add(credit.id);
-  assert.ok(cities.has(credit.id), `Credits entry has no catalog city: ${credit.id}`);
-  assert.ok(['needs-review', 'cleared-with-evidence'].includes(credit.rightsReviewStatus), `${credit.id}: unknown rights-review status`);
-  if (credit.rightsReviewStatus === 'cleared-with-evidence') {
-    assert.ok(credit.rightsEvidence?.trim(), `${credit.id}: cleared status requires a rights-evidence reference`);
-  }
-  assert.ok(credit.creation?.trim(), `${credit.id}: missing creation note`);
+validate(media,inventory);
+for(const entry of media.assets){
+ if(snapshot)assert.equal(sourceFiles.get(entry.path)?.gitBlobSha,entry.gitBlobSha,'Snapshot fingerprint mismatch');
+ else await fs.access(path.join(root,entry.path));
 }
-
-for (const id of cities.keys()) assert.ok(creditIds.has(id), `Wallpaper city is missing a credits entry: ${id}`);
-const pending = credits.filter(credit => credit.rightsReviewStatus === 'needs-review').length;
-const rasterAssets = new Set();
-async function scanAssets(directory) {
-  for (const entry of await fs.readdir(directory, {withFileTypes: true})) {
-    const file = path.join(directory, entry.name);
-    if (entry.isDirectory()) await scanAssets(file);
-    else if (/\.(png|jpe?g|webp)$/i.test(entry.name)) rasterAssets.add(path.relative(root, file).split(path.sep).join('/'));
-  }
+const components=new Set();
+for(const component of content.components){
+ assert.ok(component.id&&!components.has(component.id));components.add(component.id);
+ assert.equal(component.status,'license-recorded');assert.ok(component.license&&component.conditions&&sha(component.licenseGitBlobSha));
+ if(snapshot)assert.equal(sourceFiles.get(component.licenseFile)?.gitBlobSha,component.licenseGitBlobSha,'License fingerprint mismatch');
+ else{
+  const bytes=await fs.readFile(path.join(root,component.licenseFile));
+  const blob=createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
+  assert.equal(blob,component.licenseGitBlobSha,'License notice changed; recheck '+component.licenseFile);
+ }
 }
-await scanAssets(path.join(dist, 'assets'));
-assert.ok(Array.isArray(mediaRegister.assets), 'Supplemental media register must be an array');
-const registeredMedia = new Set();
-for (const asset of mediaRegister.assets) {
-  assert.ok(!registeredMedia.has(asset.path), `Duplicate supplemental media entry: ${asset.path}`);
-  registeredMedia.add(asset.path);
-  assert.ok(rasterAssets.has(asset.path), `Registered media file is missing: ${asset.path}`);
-  assert.ok(['needs-review', 'cleared-with-evidence'].includes(asset.rightsReviewStatus), `${asset.path}: unknown rights-review status`);
-  if (asset.rightsReviewStatus === 'cleared-with-evidence') assert.ok(asset.rightsEvidence?.trim(), `${asset.path}: cleared status requires evidence`);
-  assert.ok(asset.note?.trim(), `${asset.path}: missing review note`);
+assert.equal(content.project.ownerStatement.externalDevelopersOrDesigners,false);
+if(process.argv.includes('--self-test')){
+ for(const mutate of [
+  value=>value.assets.pop(),
+  value=>value.assets.push(value.assets[0]),
+  value=>value.assets[0].path='dist/../private.png',
+  value=>{value.assets[0].rightsReviewStatus='cleared-with-evidence';delete value.assets[0].rightsEvidence},
+  value=>{value.assets[0].rightsReviewStatus='cleared-with-evidence';value.assets[0].rightsEvidence='unscoped claim'}
+ ]){
+  const changed=structuredClone(media);mutate(changed);assert.throws(()=>validate(changed,inventory));
+ }
+ console.log('PASS: missing/duplicate media, unsafe paths and unsupported clearance claims are rejected.');
 }
-for (const file of rasterAssets) assert.ok(registeredMedia.has(file), `Unregistered raster asset in dist/assets: ${file}`);
-const pendingMedia = mediaRegister.assets.filter(asset => asset.rightsReviewStatus === 'needs-review').length;
-console.log(`PASS: ${cities.size} wallpaper entries map to existing day/night/mask files; ${rasterAssets.size} supplemental raster assets are registered.`);
-if (pending || pendingMedia) console.log(`REVIEW REQUIRED: ${pending} city wallpaper sets and ${pendingMedia} supplemental images need rights review. This check verifies records, not permission or ownership.`);
-
+console.log('PASS: '+media.assets.length+' media files, '+media.wallpaperSets.length+' wallpaper sets and '+components.size+' component notices ('+(snapshot?'Git source snapshot':'complete build')+').');
+console.log('Rights evidence remains a human/document review. This check does not grant permission or issue a certificate.');
