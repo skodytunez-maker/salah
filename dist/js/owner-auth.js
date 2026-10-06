@@ -99,6 +99,7 @@ export function initOwnerAccess(onChanged){
  const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive())verifyOwner({verifySession:true}).catch(()=>{});};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
  window.addEventListener('online',resume);
+ window.addEventListener('hashchange',resume);
  window.addEventListener('storage',event=>{if(event.key!==SESSION_KEY)return;
   // The SDK broadcasts routine renewals itself. Refreshing again on its storage
   // write makes all open tabs rotate and rebroadcast the session indefinitely.
