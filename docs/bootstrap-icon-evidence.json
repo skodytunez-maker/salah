@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "library": "Bootstrap Icons",
+  "matchedReferenceVersion": "v1.11.3",
+  "referenceCommit": "8d88686c03c3768a2d82ba4f20c3c4e1b100fa29",
+  "note": "Exact Git blob matches demonstrate licensed source correspondence; they do not assert the historically imported version.",
+  "license": "MIT",
+  "bundledLicense": "dist/assets/bootstrap-icons-LICENSE.txt",
+  "licenseGitBlobSha": "f95243911022df8e34bb8c73c87ef491ee1696cf",
+  "icons": [
+    {
+      "path": "dist/assets/arrow-left.svg",
+      "gitBlobSha": "587d4fec8efbe7796d4959b9599e2f43c8189bde",
+      "upstreamGitBlobSha": "587d4fec8efbe7796d4959b9599e2f43c8189bde",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/arrow-left.svg"
+    },
+    {
+      "path": "dist/assets/book.svg",
+      "gitBlobSha": "302acf09e08c0d432665d6dfc9c32ab94a39c7b7",
+      "upstreamGitBlobSha": "302acf09e08c0d432665d6dfc9c32ab94a39c7b7",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/book.svg"
+    },
+    {
+      "path": "dist/assets/circle.svg",
+      "gitBlobSha": "9bbabcae3394ba665ee9dad7cf69d022b1f709ea",
+      "upstreamGitBlobSha": "9bbabcae3394ba665ee9dad7cf69d022b1f709ea",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/circle.svg"
+    },
+    {
+      "path": "dist/assets/clock.svg",
+      "gitBlobSha": "31c3c64cd43b33292c14b593905323610153c012",
+      "upstreamGitBlobSha": "31c3c64cd43b33292c14b593905323610153c012",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/clock.svg"
+    },
+    {
+      "path": "dist/assets/gear.svg",
+      "gitBlobSha": "30cfaa386f63aa10eefaf7d32ee47570b1d0ebc3",
+      "upstreamGitBlobSha": "30cfaa386f63aa10eefaf7d32ee47570b1d0ebc3",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/gear.svg"
+    },
+    {
+      "path": "dist/assets/house.svg",
+      "gitBlobSha": "cb57f687a7eb44b9c9f0e9e9d4e54f7cc4df46a6",
+      "upstreamGitBlobSha": "cb57f687a7eb44b9c9f0e9e9d4e54f7cc4df46a6",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/house.svg"
+    },
+    {
+      "path": "dist/assets/info-circle.svg",
+      "gitBlobSha": "e2b50eb5fba604b1096afe8c759f661563860963",
+      "upstreamGitBlobSha": "e2b50eb5fba604b1096afe8c759f661563860963",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/info-circle.svg"
+    },
+    {
+      "path": "dist/assets/journal-bookmark.svg",
+      "gitBlobSha": "4a8f4bbd8f5861dda457e2b528916880ed40799f",
+      "upstreamGitBlobSha": "4a8f4bbd8f5861dda457e2b528916880ed40799f",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/journal-bookmark.svg"
+    },
+    {
+      "path": "dist/assets/list-ul.svg",
+      "gitBlobSha": "f1cc202cab3a10999df9e757f381f5b44c15c0ba",
+      "upstreamGitBlobSha": "f1cc202cab3a10999df9e757f381f5b44c15c0ba",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/list-ul.svg"
+    },
+    {
+      "path": "dist/assets/moon-stars.svg",
+      "gitBlobSha": "ae138c2df7a4a03fc0c93c2ec795081adaedc2da",
+      "upstreamGitBlobSha": "ae138c2df7a4a03fc0c93c2ec795081adaedc2da",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/moon-stars.svg"
+    },
+    {
+      "path": "dist/assets/person.svg",
+      "gitBlobSha": "98ea060fe2167ce724557e6537cf3c3fecb6f4b2",
+      "upstreamGitBlobSha": "98ea060fe2167ce724557e6537cf3c3fecb6f4b2",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/person.svg"
+    },
+    {
+      "path": "dist/assets/star-fill.svg",
+      "gitBlobSha": "de09c4aa5751e15382154dc37dc3a097bb663729",
+      "upstreamGitBlobSha": "de09c4aa5751e15382154dc37dc3a097bb663729",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/star-fill.svg"
+    },
+    {
+      "path": "dist/assets/star.svg",
+      "gitBlobSha": "fcdcb1cf38e0b1cab577663cd3bc26604045273f",
+      "upstreamGitBlobSha": "fcdcb1cf38e0b1cab577663cd3bc26604045273f",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/star.svg"
+    },
+    {
+      "path": "dist/assets/sun.svg",
+      "gitBlobSha": "3777f070f8cbb80bf04cad200803f9993b034472",
+      "upstreamGitBlobSha": "3777f070f8cbb80bf04cad200803f9993b034472",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/sun.svg"
+    },
+    {
+      "path": "dist/assets/three-dots.svg",
+      "gitBlobSha": "4706f52a94269248e41a91d196f67bc8b6810916",
+      "upstreamGitBlobSha": "4706f52a94269248e41a91d196f67bc8b6810916",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/three-dots.svg"
+    },
+    {
+      "path": "dist/assets/x-lg.svg",
+      "gitBlobSha": "b689cbb4d8d611342a3099e76dfc845ffd14d108",
+      "upstreamGitBlobSha": "b689cbb4d8d611342a3099e76dfc845ffd14d108",
+      "source": "https://github.com/twbs/icons/blob/8d88686c03c3768a2d82ba4f20c3c4e1b100fa29/icons/x-lg.svg"
+    }
+  ]
+}

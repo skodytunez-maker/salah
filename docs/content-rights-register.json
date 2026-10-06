@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "auditedAt": "2026-10-07",
-  "sourceCommit": "e46469ebe8542365adfbd332b0373094d61c63e6",
-  "scope": "SALAH project provenance and planned Instagram presentation; store/commercial tasks recorded separately.",
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "scope": "Content rights evidence for SALAH build 221; unchanged runtime. No blanket clearance, registration, external messaging or monetization activation.",
   "project": {
     "displayOwner": "Saadi Kobilov",
     "repository": "skodytunez-maker/salah",
@@ -44,9 +44,26 @@
       "license": "MIT",
       "licenseFile": "dist/assets/bootstrap-icons-LICENSE.txt",
       "licenseGitBlobSha": "f95243911022df8e34bb8c73c87ef491ee1696cf",
-      "paths": [],
+      "paths": [
+        "dist/assets/arrow-left.svg",
+        "dist/assets/book.svg",
+        "dist/assets/circle.svg",
+        "dist/assets/clock.svg",
+        "dist/assets/gear.svg",
+        "dist/assets/house.svg",
+        "dist/assets/info-circle.svg",
+        "dist/assets/journal-bookmark.svg",
+        "dist/assets/list-ul.svg",
+        "dist/assets/moon-stars.svg",
+        "dist/assets/person.svg",
+        "dist/assets/star-fill.svg",
+        "dist/assets/star.svg",
+        "dist/assets/sun.svg",
+        "dist/assets/three-dots.svg",
+        "dist/assets/x-lg.svg"
+      ],
       "status": "license-recorded",
-      "conditions": "MIT notice retained; map each reused/modified icon to its upstream origin."
+      "conditions": "16 exact icon Git blobs and the MIT notice matched to an immutable upstream reference; retain the notice."
     },
     {
       "id": "geomagnetism",
@@ -121,14 +138,15 @@
         "dist/data/quran-search.json",
         "dist/data/quran-index.json"
       ],
-      "status": "needs-review",
+      "status": "provider-terms-and-fields-recorded",
       "evidence": [
+        "docs/quran-field-evidence.json",
         "dist/data/quran-index.json",
         "https://alquran.cloud/terms-and-conditions",
         "https://tanzil.net/docs/Text_License"
       ],
-      "findings": "114 surah JSON files bundle Arabic, Kuliev translation, Islam.Global transcription, tajweed and metadata. Arabic/API permissions do not alone identify rights for every field.",
-      "nextAction": "Trace ru.kuliev and transcription editions; retain attribution and obtain/record scope including offline use and promotional display."
+      "findings": "All 114 source files match the audited Git commit. Arabic and Kuliev translation fields (6,236 each) exactly match the provider's quran-uthmani and ru.kuliev API responses. Existing UI credits the translator and links source notices. Other fields are outside this match.",
+      "nextAction": "Retain translator/edition/source notices. Check transcription, tajweed and metadata separately."
     },
     {
       "id": "salah-transcription",
@@ -138,10 +156,11 @@
       "status": "needs-review",
       "evidence": [
         "dist/data/quran-reading-LICENSE.txt",
-        "dist/data/quran-index.json"
+        "https://islam.global/conditions/",
+        "docs/rights-permission-requests.md"
       ],
-      "findings": "114 generated reading files; engine quran-transcript@0.6.4 and source/license fields recorded. Engine MIT does not by itself identify the provenance of all inputs/edits.",
-      "nextAction": "Record engine/source revision, generation steps and editorial changes; keep the bundled notices."
+      "findings": "114 generated readings; surahs 112–114 have engine=source-adapted and reference Islam.Global. Site text-reuse conditions require free anonymous access and a source link. Adaptation, offline distribution and future app-model scope require clarification.",
+      "nextAction": "Clarify adapted Cyrillic spelling, offline use and attribution outside cards; do not describe adapted passages as independently authored."
     },
     {
       "id": "qf-metadata",
@@ -171,7 +190,7 @@
         "https://islamqa.org/hanafi/qibla-hanafi/42476/qunut-in-witr-prayer-5/"
       ],
       "findings": "Individual primary hadith selections can be used for teaching/presentation under Sunnah.com's reproduction policy; copied modern Russian translations/transcriptions and source-site material need their own provenance.",
-      "nextAction": "Record which passages were newly translated/summarized in these chats and which reproduce a modern edition; avoid claiming ownership of the Quran/hadith."
+      "nextAction": "Separate primary ancient texts from modern Russian editions; references do not license an entire modern collection."
     },
     {
       "id": "audio",
@@ -185,10 +204,11 @@
       "status": "needs-review",
       "evidence": [
         "https://community.islamic.network/d/232-request-to-use-your-adhan-audio-in-a-non-commercial-islamic-app",
-        "https://alquran.cloud/terms-and-conditions"
+        "https://alquran.cloud/terms-and-conditions",
+        "docs/rights-permission-requests.md"
       ],
       "findings": "Three bundled adhan files, ten linked HisnMuslim recordings and external recitation/broadcast sources. Public playback URLs and the adhan forum reply do not confirm all promotional/commercial scope.",
-      "nextAction": "Use an audio-free initial app demo; prepare requests for recordings, promotional excerpts and later commercial use."
+      "nextAction": "Clarify exact SALAH tracks, offline/distribution, future paid features and promo excerpts. Another app's public forum reply is not a SALAH contract. Drafts prepared; nothing sent."
     },
     {
       "id": "weather",
@@ -209,13 +229,14 @@
         "mobile/package.json",
         "mobile/scripts/sync-web.mjs"
       ],
-      "status": "needs-review",
+      "status": "evidence-recorded",
       "evidence": [
-        "mobile/package.json",
+        "https://github.com/skodytunez-maker/salah/pull/70",
+        "https://github.com/skodytunez-maker/salah/pull/71",
         "mobile/README.md"
       ],
-      "findings": "Four direct Capacitor dependencies pinned to 8.5.2; core notice copied during packaging. No tracked mobile lockfile or final platform dependency inventory found.",
-      "nextAction": "Before store release capture the resolved dependency/license tree and notices from the signed artifacts; not required to claim project authorship."
+      "findings": "Resolved inventories and compiled notice checks passed: 99 npm packages, 46 Android runtime components, two iOS frameworks and seven non-default build gems.",
+      "nextAction": "Maintain evidence when dependencies change; device signing and SDK terms are separate."
     }
   ]
 }

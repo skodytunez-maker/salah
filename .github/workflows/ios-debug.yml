@@ -39,12 +39,20 @@ jobs:
           "$RUNNER_TEMP/salah-widget-tests" "$RUNNER_TEMP/salah-widget-fixture.json"
       - name: Install pinned Xcode project editor
         run: gem install xcodeproj -v 1.27.0 --user-install --no-document
+      - name: Record Xcode generator gem licenses
+        run: ruby mobile/scripts/collect-build-gems.rb
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Copy SALAH web bundle
         working-directory: mobile
         run: npm run sync:web
+      - name: Upload npm license evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-ios-npm-licenses
+          path: mobile/reports/
+          if-no-files-found: error
       - name: Create iOS project
         working-directory: mobile
         run: npx cap add ios
@@ -67,7 +75,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -d ios/App/App.xcworkspace ]; then
-            xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/salah-ios-build" CODE_SIGNING_ALLOWED=NO build
+            xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/salah-ios-build" CODE_SIGNING_ALLOWED=NO -onlyUsePackageVersionsFromResolvedFile build
           else
             xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/salah-ios-build" CODE_SIGNING_ALLOWED=NO build
           fi
@@ -81,3 +89,11 @@ jobs:
           WIDGET_GROUP=$(/usr/libexec/PlistBuddy -c 'Print :SALAHAppGroup' "$APP/PlugIns/SalahPrayerWidget.appex/Info.plist")
           test "$APP_GROUP" = "$WIDGET_GROUP"
           echo 'PASS: actual compiled WidgetKit extension embedded; matching App Group configuration.'
+      - name: Verify resolved binaries and packaged native notices
+        run: node mobile/scripts/ios-dependency-evidence.mjs --collect "$RUNNER_TEMP/salah-ios-build"
+      - name: Upload iOS native dependency evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-ios-native-evidence
+          path: mobile/reports/
+          if-no-files-found: error

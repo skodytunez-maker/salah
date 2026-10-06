@@ -28,6 +28,7 @@
 
 Проверенный кабинет владельца также показывает одно всплывающее окно «Что нового» для каждой версии. Его закрытие сохраняется отдельно по аккаунту; всплывающие публичные объявления по-прежнему появляются только для крупных новых функций.
 
-## Реестр прав
 
-Происхождение продукта, уведомления о лицензиях и материалы для подготовки регистрации описаны в [docs/rights-audit.md](docs/rights-audit.md). Проверка `node scripts/check-rights-register.mjs` выявляет пропущенные медиафайлы и неподтверждённые заявления о разрешениях; сама проверка не выдаёт права или свидетельство.
+## Rights evidence
+
+The content and media evidence inventory lives in `docs/rights-audit.md`. Run `node scripts/check-rights-register.mjs --self-test` against the complete build, or use `--snapshot` for the captured source manifest. Recorded evidence does not issue a certificate or grant missing permissions.

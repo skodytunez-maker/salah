@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "auditedAt": "2026-10-07",
   "repository": "skodytunez-maker/salah",
-  "sourceCommit": "e46469ebe8542365adfbd332b0373094d61c63e6",
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
   "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical.",
   "statuses": {
     "needs-review": "Missing final-file/input permission evidence.",
@@ -26,8 +26,10 @@
       "gitBlobSha": "587d4fec8efbe7796d4959b9599e2f43c8189bde",
       "bytes": 310,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/audio/adhan-mansour-fajr.mp3",
@@ -58,24 +60,30 @@
       "gitBlobSha": "302acf09e08c0d432665d6dfc9c32ab94a39c7b7",
       "bytes": 770,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/circle.svg",
       "gitBlobSha": "9bbabcae3394ba665ee9dad7cf69d022b1f709ea",
       "bytes": 213,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/clock.svg",
       "gitBlobSha": "31c3c64cd43b33292c14b593905323610153c012",
       "bytes": 305,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/day-mosque.webp",
@@ -90,32 +98,40 @@
       "gitBlobSha": "30cfaa386f63aa10eefaf7d32ee47570b1d0ebc3",
       "bytes": 1507,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/house.svg",
       "gitBlobSha": "cb57f687a7eb44b9c9f0e9e9d4e54f7cc4df46a6",
       "bytes": 415,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/info-circle.svg",
       "gitBlobSha": "e2b50eb5fba604b1096afe8c759f661563860963",
       "bytes": 460,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/journal-bookmark.svg",
       "gitBlobSha": "4a8f4bbd8f5861dda457e2b528916880ed40799f",
       "bytes": 649,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/landmark.svg",
@@ -130,16 +146,20 @@
       "gitBlobSha": "f1cc202cab3a10999df9e757f381f5b44c15c0ba",
       "bytes": 441,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/moon-stars.svg",
       "gitBlobSha": "ae138c2df7a4a03fc0c93c2ec795081adaedc2da",
       "bytes": 1154,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/night-mosque.webp",
@@ -154,8 +174,10 @@
       "gitBlobSha": "98ea060fe2167ce724557e6537cf3c3fecb6f4b2",
       "bytes": 375,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/prayer-poses.png",
@@ -196,32 +218,40 @@
       "gitBlobSha": "de09c4aa5751e15382154dc37dc3a097bb663729",
       "bytes": 399,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/star.svg",
       "gitBlobSha": "fcdcb1cf38e0b1cab577663cd3bc26604045273f",
       "bytes": 623,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/sun.svg",
       "gitBlobSha": "3777f070f8cbb80bf04cad200803f9993b034472",
       "bytes": 806,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/three-dots.svg",
       "gitBlobSha": "4706f52a94269248e41a91d196f67bc8b6810916",
       "bytes": 272,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/assets/tyumen-october-2026.png",
@@ -276,8 +306,10 @@
       "gitBlobSha": "b689cbb4d8d611342a3099e76dfc845ffd14d108",
       "bytes": 308,
       "kind": "vector",
-      "rightsReviewStatus": "needs-review",
-      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
       "path": "dist/favicon.svg",
@@ -792,8 +824,10 @@
         "claimedLicense": "Фотографический ориентир",
         "licenseUrl": null
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "moscow",
@@ -811,8 +845,10 @@
         "claimedLicense": "Free Art License",
         "licenseUrl": "https://artlibre.org/licence/lal/en/"
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "khujand",
@@ -830,8 +866,10 @@
         "claimedLicense": "Фотографический ориентир",
         "licenseUrl": null
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "dushanbe",
@@ -849,8 +887,10 @@
         "claimedLicense": "CC0 1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "almaty",
@@ -868,8 +908,10 @@
         "claimedLicense": "Фотографический ориентир",
         "licenseUrl": null
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "astana",
@@ -887,8 +929,10 @@
         "claimedLicense": "Фотографический ориентир",
         "licenseUrl": null
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "tashkent",
@@ -906,8 +950,10 @@
         "claimedLicense": "Фотографический ориентир",
         "licenseUrl": null
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "grozny",
@@ -925,8 +971,10 @@
         "claimedLicense": "CC BY-SA 4.0",
         "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "makhachkala",
@@ -944,8 +992,10 @@
         "claimedLicense": "CC BY-SA 4.0",
         "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
       },
-      "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
     },
     {
       "id": "derbent",

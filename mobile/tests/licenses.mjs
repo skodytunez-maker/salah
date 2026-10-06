@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {collectMobileLicenses,saveMobileLicenseReport} from '../scripts/collect-licenses.mjs';
+
+const fixture=await fs.mkdtemp(path.join(os.tmpdir(),'salah-license-fixture-'));
+const root=path.join(fixture,'mobile');
+const manifest={dependencies:{'@capacitor/core':'8.5.2'},devDependencies:{'@capacitor/android':'8.5.2','@capacitor/ios':'8.5.2'}};
+const lock={lockfileVersion:3,packages:{'':structuredClone(manifest)}};
+const fixtureMIT='MIT fixture notice\nPermission is hereby granted, free of charge, to test this collector.\n';
+async function put(name,value){const target=path.join(root,name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,value)}
+for(const name of ['@capacitor/core','@capacitor/android','@capacitor/ios','readme-license','unlicense-fixture']){
+ const location='node_modules/'+name;
+ lock.packages[location]={version:'8.5.2',resolved:'https://registry.npmjs.org/'+name+'/-/fixture.tgz',integrity:'sha512-Zml4dHVyZQ=='};
+ await put(location+'/package.json',JSON.stringify({name,version:'8.5.2',license:name==='unlicense-fixture'?'Unlicense':'MIT'}));
+ await put(location+'/'+(name==='readme-license'?'README.md':name==='unlicense-fixture'?'UNLICENSE':'LICENSE'),name==='readme-license'?'# Fixture\n\n## License\n'+fixtureMIT+'\n## Usage\nDo not copy unrelated prose.\n':fixtureMIT);
+}
+lock.packages['node_modules/optional-fixture']={version:'1.0.0',resolved:'https://registry.npmjs.org/optional-fixture/-/fixture.tgz',integrity:'sha512-Zml4dHVyZQ==',optional:true};
+const writeLock=()=>put('package-lock.json',JSON.stringify(lock));
+await put('package.json',JSON.stringify(manifest));await writeLock();
+const evidence=await collectMobileLicenses(root);
+assert.equal(evidence.report.packageCount,6);
+assert.equal(evidence.report.packages.find(p=>p.name==='optional-fixture').status,'not-installed-on-this-platform');
+assert.equal(evidence.report.packages.find(p=>p.name==='unlicense-fixture').status,'notice-recorded');
+assert.equal(evidence.report.packages.find(p=>p.name==='readme-license').licenseFiles[0].section,'License');
+assert.ok(!evidence.allNotices.includes('Do not copy unrelated prose'));
+assert.ok(evidence.nativeNotices.includes('@capacitor/android@8.5.2'));
+assert.ok(!evidence.nativeNotices.includes('readme-license'));
+await saveMobileLicenseReport(root,evidence);
+assert.equal(JSON.parse(await fs.readFile(path.join(root,'reports/npm-licenses.json'),'utf8')).packageCount,6);
+assert.deepEqual(await collectMobileLicenses(root),evidence,'The same lock and package files produce identical evidence.');
+
+await put('node_modules/@capacitor/core/package.json',JSON.stringify({name:'@capacitor/core',version:'8.5.1',license:'MIT'}));
+await assert.rejects(collectMobileLicenses(root),/does not match lockfile/);
+await put('node_modules/@capacitor/core/package.json',JSON.stringify({name:'@capacitor/core',version:'8.5.2',license:'MIT'}));
+await fs.rename(path.join(root,'node_modules/@capacitor/core/LICENSE'),path.join(root,'node_modules/@capacitor/core/missing-license-fixture'));
+await assert.rejects(collectMobileLicenses(root),/MIT license text is missing/);
+await put('scripts/collect-licenses.mjs',await fs.readFile(new URL('../scripts/collect-licenses.mjs',import.meta.url),'utf8'));
+await put('scripts/sync-web.mjs',await fs.readFile(new URL('../scripts/sync-web.mjs',import.meta.url),'utf8'));
+await put('node_modules/@capacitor/core/dist/index.js','export const Capacitor={};\n');
+await put('native/native-entry.js','// Native entry fixture\n');
+for(const name of ['Apache-2.0.txt','Cordova-NOTICE.txt'])await put('licenses/'+name,await fs.readFile(new URL('../licenses/'+name,import.meta.url),'utf8'));
+await put('www/previous-bundle.txt','Keep the previous generated bundle if validation fails.');
+await fs.mkdir(path.join(fixture,'dist'),{recursive:true});
+await fs.writeFile(path.join(fixture,'dist/index.html'),'<script type="module" src="./js/app.js"></script>');
+const sync=()=>spawnSync(process.execPath,[path.join(root,'scripts/sync-web.mjs')],{cwd:root,encoding:'utf8'});
+const failed=sync();assert.equal(failed.status,1);assert.match(failed.stderr,/MIT license text is missing/);
+assert.equal(await fs.readFile(path.join(root,'www/previous-bundle.txt'),'utf8'),'Keep the previous generated bundle if validation fails.');
+await fs.rename(path.join(root,'node_modules/@capacitor/core/missing-license-fixture'),path.join(root,'node_modules/@capacitor/core/LICENSE'));
+const success=sync();assert.equal(success.status,0,success.stderr);
+assert.match(await fs.readFile(path.join(root,'www/index.html'),'utf8'),/js\/native-entry.js/);
+assert.ok((await fs.readFile(path.join(root,'www/third-party/Capacitor-NOTICES.txt'),'utf8')).includes('@capacitor/ios@8.5.2'));
+assert.equal(await fs.readFile(path.join(root,'www/js/vendor/capacitor-LICENSE.txt'),'utf8'),fixtureMIT);
+lock.packages['node_modules/../../outside']={version:'1',integrity:'sha512-Zml4dHVyZQ==',resolved:'https://registry.npmjs.org/fixture/-/fixture.tgz'};await writeLock();
+await assert.rejects(collectMobileLicenses(root),/Unsafe dependency path/);delete lock.packages['node_modules/../../outside'];
+lock.packages[''].dependencies['@capacitor/core']='8.5.1';await writeLock();
+await assert.rejects(collectMobileLicenses(root),/manifest and lockfile disagree/);
+console.log('PASS: locked versions, complete notices and README/UNLICENSE, deterministic report, optional platform packages, missing licenses, unsafe paths and protected bundle replacement.');

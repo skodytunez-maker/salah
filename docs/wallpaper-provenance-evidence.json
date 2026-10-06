@@ -1,0 +1,276 @@
+{
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "scope": "Local creation records matched to exact shipped files. Reference licenses remain claimed until primary-source conditions are verified; provenance is not permission.",
+  "records": [
+    {
+      "id": "omsk",
+      "source": "https://pikabu.ru/story/vecherniy_omsk_7982361",
+      "referenceLicense": "Фотографический ориентир",
+      "referenceLicenseUrl": null,
+      "photoInputSha256": "a6b8038586670a6b0faf13bcf45278d8f931eb3f45f782f986a7b580f883ac74",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/omsk/day-v1.webp",
+          "packagedGitBlobSha": "c9c2da73091aacf8481f1bccff8bb637fae9eba0",
+          "shippedGitBlobSha": "c9c2da73091aacf8481f1bccff8bb637fae9eba0",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/omsk/night-v1.webp",
+          "packagedGitBlobSha": "7ec5051b5a12b90097a05fc549c2f817f6c8afc3",
+          "shippedGitBlobSha": "7ec5051b5a12b90097a05fc549c2f817f6c8afc3",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/omsk/sky-v1.svg",
+          "packagedGitBlobSha": "727880f59ae73a52454e856c5d814c401a8a18f7",
+          "shippedGitBlobSha": "727880f59ae73a52454e856c5d814c401a8a18f7",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "moscow",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow_Cathedral_Mosque_01-2016.jpg",
+      "referenceLicense": "Free Art License",
+      "referenceLicenseUrl": "https://artlibre.org/licence/lal/en/",
+      "photoInputSha256": "5fbc71ad00e6b6cc677650e71d0e49c675dbc5be56cb5a0702e1126c9da468cc",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/moscow/day-v1.webp",
+          "packagedGitBlobSha": "9186f944ce047e04b539d1dc30b0a9c1904989ec",
+          "shippedGitBlobSha": "9186f944ce047e04b539d1dc30b0a9c1904989ec",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/moscow/night-v1.webp",
+          "packagedGitBlobSha": "417047aebf0ba7f449f6011b5919bf0e1526f1e9",
+          "shippedGitBlobSha": "417047aebf0ba7f449f6011b5919bf0e1526f1e9",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/moscow/sky-v1.svg",
+          "packagedGitBlobSha": "19e2045e4f98407486b9c5d4d9239e14eb19c5da",
+          "shippedGitBlobSha": "19e2045e4f98407486b9c5d4d9239e14eb19c5da",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "khujand",
+      "source": "https://www.aliph-foundation.org/en/projects/revitalizing-traditional-decorative-arts-at-the-khujand-fortress-tajikistan",
+      "referenceLicense": "Фотографический ориентир",
+      "referenceLicenseUrl": null,
+      "photoInputSha256": "f1ea5866372afcf732dc7da2890cc97bddd35ddfcb29a3b0d9e3f27c9476415b",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/khujand/day-v1.webp",
+          "packagedGitBlobSha": "18dd82cd68de94ae3929a3786e1d4b2afa5fbc11",
+          "shippedGitBlobSha": "18dd82cd68de94ae3929a3786e1d4b2afa5fbc11",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/khujand/night-v1.webp",
+          "packagedGitBlobSha": "ce26532d9070e76b280bf123ef159587d5213cec",
+          "shippedGitBlobSha": "ce26532d9070e76b280bf123ef159587d5213cec",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/khujand/sky-v1.svg",
+          "packagedGitBlobSha": "2ebe86f8b0d43fd1a30295ed892593bbf0db6810",
+          "shippedGitBlobSha": "2ebe86f8b0d43fd1a30295ed892593bbf0db6810",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "dushanbe",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D1%81%D2%B7%D0%B8%D0%B4%D0%B8_%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D0%B7%D0%B8%D0%B8_%D2%B7%D0%BE%D0%BC%D0%B5%D0%B8_%D1%88%D0%B0%D2%B3%D1%80%D0%B8_%D0%94%D1%83%D1%88%D0%B0%D0%BD%D0%B1%D0%B5._%D0%90%D0%BA%D1%81%D2%B3%D0%BE_20.jpg",
+      "referenceLicense": "CC0 1.0",
+      "referenceLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "photoInputSha256": "96097d164fa01eb198713a58ddc4be6f380ce4599a62790f1f97010e80e30ec7",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/dushanbe/day-v1.webp",
+          "packagedGitBlobSha": "02c2118da5cbd74d4f604a1a58bfac3e36e62702",
+          "shippedGitBlobSha": "02c2118da5cbd74d4f604a1a58bfac3e36e62702",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/dushanbe/night-v1.webp",
+          "packagedGitBlobSha": "c0a94346f0fda752def8d7f2218c75f86a4186d1",
+          "shippedGitBlobSha": "c0a94346f0fda752def8d7f2218c75f86a4186d1",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/dushanbe/sky-v1.svg",
+          "packagedGitBlobSha": "76ad7ce120e558049436c5108f42207e31db1d6c",
+          "shippedGitBlobSha": "76ad7ce120e558049436c5108f42207e31db1d6c",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "almaty",
+      "source": "https://www.muftiyat.kz/ru/mosque/3308/",
+      "referenceLicense": "Фотографический ориентир",
+      "referenceLicenseUrl": null,
+      "photoInputSha256": "aace1e697d92f62500bd074b78c9267cd4333cca8d183a3a2ce699da95895a9d",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/almaty/day-v1.webp",
+          "packagedGitBlobSha": "1bc2da2a770e13ba983084cf1cec6ce22f7576c1",
+          "shippedGitBlobSha": "1bc2da2a770e13ba983084cf1cec6ce22f7576c1",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/almaty/night-v1.webp",
+          "packagedGitBlobSha": "571a36a211f988eaeeaba6a285e75a99b9fc159f",
+          "shippedGitBlobSha": "571a36a211f988eaeeaba6a285e75a99b9fc159f",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/almaty/sky-v1.svg",
+          "packagedGitBlobSha": "6104aacf32c5b98d0f59a638579abec176ce2ac7",
+          "shippedGitBlobSha": "6104aacf32c5b98d0f59a638579abec176ce2ac7",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "astana",
+      "source": "https://tmatic.travel/en/view/story/the-astana-grand-mosque_LPm9eSl/en",
+      "referenceLicense": "Фотографический ориентир",
+      "referenceLicenseUrl": null,
+      "photoInputSha256": "f6c7b9acd305e52d244c14604e37290bebbfa3c26e5db42bf551fef025e18146",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/astana/day-v1.webp",
+          "packagedGitBlobSha": "e0c0354b12469a757138f20bcf9dd72b7159ec2e",
+          "shippedGitBlobSha": "e0c0354b12469a757138f20bcf9dd72b7159ec2e",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/astana/night-v1.webp",
+          "packagedGitBlobSha": "41d0807f64b97bc013d7011d2cccdb42a519ff20",
+          "shippedGitBlobSha": "41d0807f64b97bc013d7011d2cccdb42a519ff20",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/astana/sky-v1.svg",
+          "packagedGitBlobSha": "49955c9a1ec0bfd6e81c928b250718f38290a2b6",
+          "shippedGitBlobSha": "49955c9a1ec0bfd6e81c928b250718f38290a2b6",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "tashkent",
+      "source": "https://uzbekistan.travel/ru/o/mechet-minor/",
+      "referenceLicense": "Фотографический ориентир",
+      "referenceLicenseUrl": null,
+      "photoInputSha256": "7da7edf9ad05a77d6a60d739e7e231748c0ae35968d7a7e373426873a35d89ab",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/tashkent/day-v1.webp",
+          "packagedGitBlobSha": "65202e5412b0ce4049b51e01805521847bf9ec23",
+          "shippedGitBlobSha": "65202e5412b0ce4049b51e01805521847bf9ec23",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/tashkent/night-v1.webp",
+          "packagedGitBlobSha": "a1c7fbe8bc096ba11a46cc67865c00f25fd79cc5",
+          "shippedGitBlobSha": "a1c7fbe8bc096ba11a46cc67865c00f25fd79cc5",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/tashkent/sky-v1.svg",
+          "packagedGitBlobSha": "f3870733c6f7738ef5742c9cb002f99b9981717b",
+          "shippedGitBlobSha": "f3870733c6f7738ef5742c9cb002f99b9981717b",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "grozny",
+      "source": "https://commons.wikimedia.org/wiki/File:Grozny._Grozny-City_Towers._Mosque_%22The_Heart_of_Chechnya%22_PB040177_2700.jpg",
+      "referenceLicense": "CC BY-SA 4.0",
+      "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "photoInputSha256": "4f1757016b3db97838e34c04d008a76bb6421996df4a00e291cc7347d257ebd3",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/grozny/day-v1.webp",
+          "packagedGitBlobSha": "7f0f8061530ea2ff1aa61fbb5c778b85856f493d",
+          "shippedGitBlobSha": "7f0f8061530ea2ff1aa61fbb5c778b85856f493d",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/grozny/night-v1.webp",
+          "packagedGitBlobSha": "7ca0aade30e53084f83414f5ff33d1a87fd70a3d",
+          "shippedGitBlobSha": "7ca0aade30e53084f83414f5ff33d1a87fd70a3d",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/grozny/sky-v1.svg",
+          "packagedGitBlobSha": "8ca0d9fa54d9c9ddc50178f99cc47ff6869894a4",
+          "shippedGitBlobSha": "8ca0d9fa54d9c9ddc50178f99cc47ff6869894a4",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    },
+    {
+      "id": "makhachkala",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%96%D1%83%D0%BC%D0%B3%D0%86%D0%B0_%D0%BC%D0%B0%D0%B6%D0%B3%D0%B8%D1%82%2C_%D0%9C%D0%B0%D1%85%D0%86%D0%B0%D1%87%D1%85%D1%8A%D0%B0%D0%BB%D0%B0_%28crop%29.jpg",
+      "referenceLicense": "CC BY-SA 4.0",
+      "referenceLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "photoInputSha256": "c90d0a13570f83a455acaae3824c70e19addc326c14afc0d1ca6d814ab7facd8",
+      "hasSavedInputPhoto": true,
+      "hasGenerationRecord": true,
+      "assets": [
+        {
+          "path": "dist/wallpapers/makhachkala/day-v1.webp",
+          "packagedGitBlobSha": "108b1efa85786594fce54feef4c630a5606d6b46",
+          "shippedGitBlobSha": "108b1efa85786594fce54feef4c630a5606d6b46",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/makhachkala/night-v1.webp",
+          "packagedGitBlobSha": "73db4e0206abd54c979bca32e794f9997eacc87c",
+          "shippedGitBlobSha": "73db4e0206abd54c979bca32e794f9997eacc87c",
+          "exactMatch": true
+        },
+        {
+          "path": "dist/wallpapers/makhachkala/sky-v1.svg",
+          "packagedGitBlobSha": "0cc7470fb4b9d9b03a03e5e7cad64671ef7e27de",
+          "shippedGitBlobSha": "0cc7470fb4b9d9b03a03e5e7cad64671ef7e27de",
+          "exactMatch": true
+        }
+      ],
+      "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
+    }
+  ]
+}

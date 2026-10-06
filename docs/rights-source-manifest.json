@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "repository": "skodytunez-maker/salah",
-  "sourceCommit": "e46469ebe8542365adfbd332b0373094d61c63e6",
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
   "capturedAt": "2026-10-07",
   "entries": [
     {
@@ -16,18 +16,18 @@
     },
     {
       "path": ".github/workflows/android-debug.yml",
-      "gitBlobSha": "b1d7cb89ad7d3da6dbd4a661e707f2bdc221ad12",
-      "bytes": 2345
+      "gitBlobSha": "de0d7655dc0aee89682fb879078b140b4769c476",
+      "bytes": 3627
     },
     {
       "path": ".github/workflows/ios-debug.yml",
-      "gitBlobSha": "929dae85f261cadcc7ef12ce74de23f3928c667d",
-      "bytes": 3980
+      "gitBlobSha": "45bf0d415fc724f2871424c94b4eaa18f14cd5d9",
+      "bytes": 4725
     },
     {
       "path": ".github/workflows/mobile-foundation.yml",
-      "gitBlobSha": "33589beb5e94240a00296b39d76787613aedfd42",
-      "bytes": 967
+      "gitBlobSha": "0f2218940de87ea1000ae6bcdab9b6e9e9afc570",
+      "bytes": 1064
     },
     {
       "path": ".github/workflows/pages.yml",
@@ -46,8 +46,8 @@
     },
     {
       "path": ".gitignore",
-      "gitBlobSha": "edb1bf042c5295f7921c839398ef8a61db679320",
-      "bytes": 113
+      "gitBlobSha": "df756e837fb21b12f9786f68c08a0227303777bf",
+      "bytes": 129
     },
     {
       "path": "ANALYTICS.md",
@@ -2351,13 +2351,28 @@
     },
     {
       "path": "mobile/README.md",
-      "gitBlobSha": "009e2596444059182ce2a35fb0751d2d49b6b789",
-      "bytes": 3545
+      "gitBlobSha": "1aaaacfb1f8c9628e4c6d895616c4b16849de947",
+      "bytes": 5811
     },
     {
       "path": "mobile/capacitor.config.json",
       "gitBlobSha": "ff4a05aee4c63a1389dd20e7f45e3da6a5e85adf",
       "bytes": 81
+    },
+    {
+      "path": "mobile/licenses/Apache-2.0.txt",
+      "gitBlobSha": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "bytes": 11358
+    },
+    {
+      "path": "mobile/licenses/Cordova-NOTICE.txt",
+      "gitBlobSha": "505645a3e1129a8579b3dced54ae422b9138618d",
+      "bytes": 332
+    },
+    {
+      "path": "mobile/licenses/native-sources.json",
+      "gitBlobSha": "b0f63467db7fb88de17345152fbd85254783a7b6",
+      "bytes": 1054
     },
     {
       "path": "mobile/native/android/MainActivity.java",
@@ -2425,14 +2440,34 @@
       "bytes": 300
     },
     {
+      "path": "mobile/package-lock.json",
+      "gitBlobSha": "3863dcbca1af0d3598f95f4c6cc89150b0ec99a7",
+      "bytes": 43336
+    },
+    {
       "path": "mobile/package.json",
-      "gitBlobSha": "63d43d7d8801ab82a4346db8f45ffd2493d2ca8f",
-      "bytes": 934
+      "gitBlobSha": "9adf05b9be354ec62215156ec820aeb406e46174",
+      "bytes": 1048
     },
     {
       "path": "mobile/scripts/android-release.mjs",
       "gitBlobSha": "75ca7f9ea603f29bf0c0a2d79a6b176f6920d238",
       "bytes": 2667
+    },
+    {
+      "path": "mobile/scripts/collect-android-licenses.gradle",
+      "gitBlobSha": "e9da8eac67654eed573d4970c498340201188900",
+      "bytes": 9569
+    },
+    {
+      "path": "mobile/scripts/collect-build-gems.rb",
+      "gitBlobSha": "16832e53d30e4a42bab1c9cacbefd6677ebdc84a",
+      "bytes": 1603
+    },
+    {
+      "path": "mobile/scripts/collect-licenses.mjs",
+      "gitBlobSha": "ac5addd4684ca258d9b50ce2bac28700db722269",
+      "bytes": 6661
     },
     {
       "path": "mobile/scripts/configure-android.mjs",
@@ -2450,9 +2485,14 @@
       "bytes": 2129
     },
     {
+      "path": "mobile/scripts/ios-dependency-evidence.mjs",
+      "gitBlobSha": "71b6b9e158473cf8d6a1fda6c2a97b3526454889",
+      "bytes": 5171
+    },
+    {
       "path": "mobile/scripts/sync-web.mjs",
-      "gitBlobSha": "73c3cc773cdc55e07670aafea7924aa6d39c5d45",
-      "bytes": 1496
+      "gitBlobSha": "837d89fc966ebbc1c851f2aed9b8cdf55a7af59e",
+      "bytes": 2313
     },
     {
       "path": "mobile/shared/README.md",
@@ -2468,6 +2508,16 @@
       "path": "mobile/tests/ios/main.swift",
       "gitBlobSha": "43d2655bf3712b0a25992b32bb6560ea741aaf6b",
       "bytes": 5115
+    },
+    {
+      "path": "mobile/tests/licenses.mjs",
+      "gitBlobSha": "b9d9b1aefc952efa04183d9fe5b2db3682f1716b",
+      "bytes": 5679
+    },
+    {
+      "path": "mobile/tests/platform-licenses.mjs",
+      "gitBlobSha": "7268f8c6352f498a6bfc39942f9997f658170cbf",
+      "bytes": 3364
     },
     {
       "path": "scripts/build-push-function.mjs",

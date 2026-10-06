@@ -84,3 +84,49 @@ if(process.argv.includes('--self-test')){
 }
 console.log('PASS: '+media.assets.length+' media files, '+media.wallpaperSets.length+' wallpaper sets and '+components.size+' component notices ('+(snapshot?'Git source snapshot':'complete build')+').');
 console.log('Rights evidence remains a human/document review. This check does not grant permission or issue a certificate.');
+
+const icons=await read('docs/bootstrap-icon-evidence.json');
+const quran=await read('docs/quran-field-evidence.json');
+assert.equal(icons.sourceCommit,media.sourceCommit);assert.equal(quran.sourceCommit,media.sourceCommit);
+function validateIcons(proof){
+ assert.equal(proof.icons.length,16);assert.ok(sha(proof.referenceCommit));
+ const seen=new Set();
+ for(const icon of proof.icons){
+  assert.ok(relative(icon.path)&&!seen.has(icon.path));seen.add(icon.path);
+  assert.ok(sha(icon.gitBlobSha));assert.equal(icon.gitBlobSha,icon.upstreamGitBlobSha,'Icon differs from the recorded upstream source');
+  assert.equal(media.assets.find(a=>a.path===icon.path)?.gitBlobSha,icon.gitBlobSha,'Icon source fingerprint changed');
+ }
+}
+function validateQuran(proof){
+ assert.equal(proof.surahs.length,114);assert.equal(proof.editions.length,2);
+ for(const edition of proof.editions){assert.equal(edition.total,6236);assert.equal(edition.matched,6236);assert.equal(edition.mismatches.length,0);assert.match(edition.sourceResponseSha256,/^[a-f0-9]{64}$/)}
+ const seen=new Set();let count=0;
+ for(const surah of proof.surahs){
+  assert.ok(relative(surah.path)&&sha(surah.gitBlobSha));assert.ok(surah.number>=1&&surah.number<=114&&!seen.has(surah.number));seen.add(surah.number);
+  assert.equal(surah.path,'dist/data/quran/'+surah.number+'.json');assert.ok(surah.ayahs>0);count+=surah.ayahs;
+  for(const key of ['arabicFieldSha256','translationFieldSha256'])assert.match(surah[key],/^[a-f0-9]{64}$/);
+ }
+ assert.equal(count,6236);
+}
+validateIcons(icons);validateQuran(quran);
+for(const icon of icons.icons){
+ if(snapshot)assert.equal(sourceFiles.get(icon.path)?.gitBlobSha,icon.gitBlobSha);
+ else{const bytes=await fs.readFile(path.join(root,icon.path));assert.equal(createHash('sha1').update(Buffer.from('blob '+bytes.length+'\\0')).update(bytes).digest('hex'),icon.gitBlobSha,'Icon changed; recheck its evidence')}
+}
+for(const surah of quran.surahs){
+ if(snapshot)assert.equal(sourceFiles.get(surah.path)?.gitBlobSha,surah.gitBlobSha);
+ else{
+  const actual=await read(surah.path);assert.equal(actual.number,surah.number);assert.equal(actual.verses.length,surah.ayahs);
+  for(const [field,key] of [['arabic','arabicFieldSha256'],['translation','translationFieldSha256']]){
+   const hash=createHash('sha256').update(JSON.stringify(actual.verses.map(v=>[v.ayah,v[field]]))).digest('hex');
+   assert.equal(hash,surah[key],'Quran field changed; compare with its source: '+surah.path+' '+field);
+  }
+ }
+}
+if(process.argv.includes('--self-test')){
+ const changedIcon=structuredClone(icons);changedIcon.icons[0].upstreamGitBlobSha='0'.repeat(40);assert.throws(()=>validateIcons(changedIcon));
+ const changedQuran=structuredClone(quran);changedQuran.editions[0].matched=6235;assert.throws(()=>validateQuran(changedQuran));
+ const duplicateQuran=structuredClone(quran);duplicateQuran.surahs[1]=duplicateQuran.surahs[0];assert.throws(()=>validateQuran(duplicateQuran));
+ console.log('PASS: falsely claimed source matches and duplicate Quran records are rejected.');
+}
+console.log('PASS: 16 exact icon sources and Arabic/translation evidence for all 6,236 ayat.');

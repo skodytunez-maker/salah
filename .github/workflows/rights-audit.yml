@@ -2,12 +2,15 @@ name: Verify rights register
 on:
   pull_request:
     paths:
-      - 'docs/*rights*'
+      - 'docs/**'
       - 'scripts/check-rights-register.mjs'
       - 'dist/assets/**'
       - 'dist/wallpapers/**'
       - 'dist/js/vendor/*LICENSE*'
       - 'dist/data/*LICENSE*'
+      - 'dist/data/quran/**'
+      - 'dist/data/quran-reading/**'
+      - 'dist/data/*sources.json'
       - '.github/workflows/rights-audit.yml'
   workflow_dispatch:
 permissions:
