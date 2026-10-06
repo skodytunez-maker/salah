@@ -12,7 +12,7 @@
     "ios:open": "npx cap open ios",
     "android:configure": "node ./scripts/configure-android.mjs",
     "android:sync": "npm run sync:web && npx cap sync android && npm run android:configure",
-    "ios:configure": "ruby ./scripts/configure-ios.rb",
+    "ios:configure": "node ./scripts/ios-dependency-evidence.mjs --pin && ruby ./scripts/configure-ios.rb",
     "ios:sync": "npm run sync:web && npx cap sync ios && npm run ios:configure",
     "licenses:report": "node ./scripts/collect-licenses.mjs"
   },

@@ -86,4 +86,10 @@ The generated project takes versionCode and versionName from the current SALAH w
 
 `sync:web` validates this evidence before replacing `www`, preserves the existing core notice, and packages complete Capacitor core/Android/iOS notices in `www/third-party/Capacitor-NOTICES.txt`. Missing required notices or versions that disagree with the lockfile stop the build.
 
-This evidence covers npm components only. Android Maven dependencies, resolved Swift packages, Ruby build tools and the application's images, text, audio and service permissions require separate review before a store release. The inventory does not grant a license to SALAH as a whole.
+The npm evidence is complemented by platform evidence:
+
+- Android CI resolves the actual `debugRuntimeClasspath`, saves each external Maven artifact fingerprint and POM license declaration, retains notices found in AAR/JAR files (including `classes.jar`), and packages `Android-NOTICES.txt` before APK compilation. Raw POMs and review statuses are uploaded as `salah-android-native-evidence`. This is an evidence inventory; a missing or incomplete license declaration remains `needs-review`.
+- iOS configuration pins Capacitor SwiftPM 8.5.2 to its reviewed commit and binary manifest, preserves the existing single-package resolved file, and refuses to overwrite unexpected pins. CI checks the real checkout, compiled simulator frameworks and Apache/Cordova notices inside the app. Xcode uses only versions from `Package.resolved`.
+- Non-default Ruby gems actually loaded by the Xcode project generator are inventoried as build tools; they are not packaged in SALAH. Their declarations and shipped notices are archived with `salah-ios-native-evidence`.
+
+Platform SDKs and the application's images, text, audio and service permissions remain separate scopes. A recorded notice or POM declaration is evidence, not a blanket rights clearance. The inventory does not license SALAH as a whole.

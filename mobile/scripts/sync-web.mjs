@@ -13,6 +13,7 @@ await fs.access(path.join(source,'index.html'));
 await fs.access(runtime);
 // Validate notices before replacing the previous generated web bundle.
 const licenseEvidence=await collectMobileLicenses(mobileRoot);
+const platformNotices=await Promise.all(['Apache-2.0.txt','Cordova-NOTICE.txt'].map(async name=>({name,bytes:await fs.readFile(path.join(mobileRoot,'licenses',name))})));
 await fs.rm(target,{recursive:true,force:true});
 await fs.mkdir(target,{recursive:true});
 await fs.cp(source,target,{recursive:true,force:true});
@@ -27,6 +28,8 @@ await fs.copyFile(
 
 await fs.mkdir(path.join(target,'third-party'),{recursive:true});
 await fs.writeFile(path.join(target,'third-party/Capacitor-NOTICES.txt'),licenseEvidence.nativeNotices);
+await fs.mkdir(path.join(target,'third-party/native'),{recursive:true});
+for(const notice of platformNotices)await fs.writeFile(path.join(target,'third-party/native',notice.name),notice.bytes);
 await saveMobileLicenseReport(mobileRoot,licenseEvidence);
 
 const entry='<script type="module" src="./js/app.js"></script>';

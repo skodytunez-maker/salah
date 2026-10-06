@@ -1,0 +1,105 @@
+import groovy.json.JsonOutput
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import javax.xml.parsers.DocumentBuilderFactory
+import java.security.MessageDigest
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+
+// Read the actual APK runtime graph. Does not alter dependencies or signing.
+gradle.projectsEvaluated {
+    def app = gradle.rootProject.findProject(':app')
+    if (app == null) throw new GradleException('SALAH app project is missing.')
+    app.tasks.register('salahNativeLicenseReport') {
+        doLast {
+            def mobile = gradle.rootProject.projectDir.parentFile
+            def reports = new File(mobile, 'reports/android')
+            def publicAssets = new File(app.projectDir, 'src/main/assets/public/third-party')
+            if (!new File(publicAssets.parentFile, 'index.html').isFile()) throw new GradleException('Sync the native web bundle first.')
+            def configuration = app.configurations.getByName('debugRuntimeClasspath')
+            def artifacts = configuration.resolvedConfiguration.resolvedArtifacts.findAll {
+                it.id.componentIdentifier instanceof ModuleComponentIdentifier
+            }.groupBy { it.moduleVersion.id.toString() }
+            if (artifacts.isEmpty()) throw new GradleException('No external Android runtime artifacts were resolved.')
+            def digest = { byte[] bytes -> MessageDigest.getInstance('SHA-256').digest(bytes).encodeHex().toString() }
+            def noticePattern = ~/(?i)(LICENSE|LICENCE|NOTICE|COPYING|UNLICENSE)([._-].*)?/
+            def readNotices = { File file ->
+                def notices = []
+                new ZipFile(file).withCloseable { archive ->
+                    archive.entries().each { entry ->
+                        def name = entry.name.tokenize('/').last()
+                        if (!entry.directory && name ==~ noticePattern) {
+                            if (entry.size < 0 || entry.size > 1024 * 1024) throw new GradleException('Oversized notice in ' + file.name)
+                            byte[] bytes = archive.getInputStream(entry).withCloseable { it.readAllBytes() }
+                            notices.add([path: entry.name, sha256: digest(bytes), text: new String(bytes, 'UTF-8')])
+                        } else if (!entry.directory && entry.name == 'classes.jar') {
+                            if (entry.size < 0 || entry.size > 32 * 1024 * 1024) throw new GradleException('Oversized nested jar.')
+                            new ZipInputStream(archive.getInputStream(entry)).withCloseable { nested ->
+                                def child
+                                while ((child = nested.nextEntry) != null) {
+                                    if (!child.directory && child.name.tokenize('/').last() ==~ noticePattern) {
+                                        byte[] bytes = nested.readNBytes(1024 * 1024 + 1)
+                                        if (bytes.length > 1024 * 1024) throw new GradleException('Oversized nested notice.')
+                                        notices.add([path: 'classes.jar!/' + child.name, sha256: digest(bytes), text: new String(bytes, 'UTF-8')])
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                notices
+            }
+            def factory = DocumentBuilderFactory.newInstance()
+            factory.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)
+            factory.setFeature('http://xml.org/sax/features/external-general-entities', false)
+            factory.setFeature('http://xml.org/sax/features/external-parameter-entities', false)
+            factory.setXIncludeAware(false)
+            factory.setExpandEntityReferences(false)
+            reports.mkdirs()
+            new File(reports, 'poms').mkdirs()
+            def packages = []
+            def text = ['SALAH Android runtime — third-party evidence\nLicense declarations and embedded notices; not a legal clearance.\n']
+            artifacts.keySet().sort().each { coordinate ->
+                def parts = coordinate.split(':')
+                if (parts.length != 3 || !parts.every { it ==~ /[A-Za-z0-9_.+-]+/ }) throw new GradleException('Unsafe Maven coordinate.')
+                def pomConfiguration = app.configurations.detachedConfiguration(app.dependencies.create(coordinate + '@pom'))
+                pomConfiguration.transitive = false
+                def pom = pomConfiguration.singleFile
+                def pomBytes = pom.bytes
+                def savedPom = parts.join('_') + '.pom'
+                new File(reports, 'poms/' + savedPom).bytes = pomBytes
+                def xml = factory.newDocumentBuilder().parse(new ByteArrayInputStream(pomBytes))
+                def licenses = []
+                def roots = xml.documentElement.childNodes
+                for (int i = 0; i < roots.length; i++) {
+                    def node = roots.item(i)
+                    if (node.nodeName != 'licenses') continue
+                    def items = node.childNodes
+                    for (int j = 0; j < items.length; j++) {
+                        def item = items.item(j)
+                        if (item.nodeName != 'license') continue
+                        def value = [:]
+                        for (int k = 0; k < item.childNodes.length; k++) {
+                            def child = item.childNodes.item(k)
+                            if (child.nodeName in ['name', 'url', 'distribution']) value[child.nodeName] = child.textContent.trim()
+                        }
+                        if (!value.isEmpty()) licenses.add(value)
+                    }
+                }
+                def files = artifacts[coordinate].sort { it.file.name }.collect { artifact ->
+                    def notices = readNotices(artifact.file)
+                    notices.each { text.add(coordinate + ' — ' + it.path + '\n' + it.text) }
+                    [file: artifact.file.name, sha256: digest(artifact.file.bytes), notices: notices.collect { notice -> notice.findAll { key, value -> key != 'text' } }]
+                }
+                packages.add([coordinate: coordinate, pom: [file: 'poms/' + savedPom, sha256: digest(pomBytes)], declaredLicenses: licenses, artifacts: files, status: licenses.isEmpty() ? 'needs-review' : 'declaration-and-artifact-recorded'])
+                text.add(coordinate + '\n' + licenses.collect { (it.name ?: 'Unspecified') + ' — ' + (it.url ?: '') }.join('\n'))
+            }
+            def report = [schemaVersion: 1, scope: 'External artifacts in actual debugRuntimeClasspath. Excludes project code, build tools, SDKs and content. POM declarations are not a clearance decision.', configuration: 'debugRuntimeClasspath', packageCount: packages.size(), packages: packages]
+            new File(reports, 'runtime-licenses.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(report)) + '\n'
+            def noticeText = text.join('\n\n' + '=' * 72 + '\n\n') + '\n'
+            new File(reports, 'Android-NOTICES.txt').setText(noticeText, 'UTF-8')
+            publicAssets.mkdirs()
+            new File(publicAssets, 'Android-NOTICES.txt').setText(noticeText, 'UTF-8')
+            println 'SALAH Android evidence: ' + packages.size() + ' runtime components; ' + packages.count { it.status == 'needs-review' } + ' declarations need manual review.'
+        }
+    }
+}

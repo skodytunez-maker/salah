@@ -53,6 +53,17 @@ jobs:
       - name: Re-apply Android native features
         working-directory: mobile
         run: npm run android:configure
+      - name: Record runtime dependencies and preserve native notices
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew -I ../scripts/collect-android-licenses.gradle :app:salahNativeLicenseReport --stacktrace
+      - name: Upload Android runtime dependency evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-android-native-evidence
+          path: mobile/reports/android/
+          if-no-files-found: error
       - name: Build debug APK
         working-directory: mobile/android
         run: |
