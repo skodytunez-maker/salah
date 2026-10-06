@@ -1,6 +1,7 @@
 
 import {markDhikrActivity} from '../dist/js/dhikr-reminder.js';
 import assert from 'node:assert/strict';
+import {resolveBackAction} from '../dist/js/edge-back.js';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
 import {createFreeCounterStore} from '../dist/js/free-counter.js';
@@ -35,6 +36,8 @@ class Element {
   get textContent(){return this.text+this.children.map(child=>child.textContent).join('')}
   setAttribute(name,value){this.attributes[name]=String(value)}
   get isConnected(){return true}
+  getClientRects(){return this.hidden?[]:[{}]}
+  closest(selector){for(let node=this;node;node=node.parent)if(node.matches(selector))return node;return null}
   addEventListener(type,callback){if(!this.listeners.has(type))this.listeners.set(type,[]);this.listeners.get(type).push(callback)}
   dispatch(type,event={}){const e={currentTarget:this,target:this,preventDefault(){},stopPropagation(){},...event};return Promise.all((this.listeners.get(type)||[]).map(fn=>fn(e)))}
   removeEventListener(type,callback){this.listeners.set(type,(this.listeners.get(type)||[]).filter(fn=>fn!==callback))}
@@ -87,7 +90,30 @@ assert.equal(playing.pauseCalls,0,'Resume must not stop active dhikr audio');ass
 // A new JS realm and DOM model an OS page recreation or a service worker reload.
 page=browser({hash:page.location.hash,storage:page.storage});await page.open();assert.equal(cardId(page),item);assert.match(page.select('#adhkar-count').textContent,/^1/);await assertUnchanged(page);
 page.setDay('2026-10-03');await assertUnchanged(page);assert.match(page.select('#adhkar-count').textContent,/^0/);assert.equal(page.select('#adhkar-total').textContent,'1','Next-day daily progress can refresh in place without losing lifetime total');
-await page.select('#adhkar-close').click();assertList(page);assert.equal(page.location.hash,'#adhkar?group=morning');await page.select('#dhikr-back').click();assertHub(page);assert.equal(page.location.hash,'#adhkar');
+await page.select('#adhkar-close').click();assertHub(page);assert.equal(page.location.hash,'#adhkar');await page.select('[data-group="morning"]').click();assertList(page);await page.select('#dhikr-back').click();assertHub(page);assert.equal(page.location.hash,'#adhkar');
+
+// Both the card button and edge-back action exit straight to the collection
+// choice. The reading progress and preferred group remain available on reopening.
+for(const group of ['morning','evening'])for(const exit of ['button','edge']){
+ const exitPage=browser({hash:'#adhkar?group='+group+'&view=card&item=surah112'});
+ await exitPage.open();await exitPage.select('#adhkar-count').click();
+ await exitPage.select('#dhikr-play').click();const audio=exitPage.audio.at(-1);
+ const saved=exitPage.storage.getItem('salah:adhkar-progress-v2');
+ if(exit==='button')await exitPage.select('#adhkar-close').click();
+ else{
+  const action=resolveBackAction(exitPage.container,{canBack:()=>true,back(){assert.fail('Card exit must not navigate out of Azkars')}});
+  assert.equal(typeof action,'function');await action();
+ }
+ assertHub(exitPage);assert.equal(exitPage.location.hash,'#adhkar');
+ assert.ok(exitPage.container.querySelector('[data-group="morning"]'));assert.ok(exitPage.container.querySelector('[data-group="evening"]'));
+ assert.equal(exitPage.container.querySelector('.adhkar-shell'),null);assert.equal(exitPage.container.querySelector('.dhikr-list-shell'),null);
+ assert.equal(audio.paused,true,'Leaving the card stops its recording');
+ assert.equal(exitPage.storage.getItem('salah:adhkar-progress-v2'),saved,'Closing never clears progress');
+ await assertUnchanged(exitPage);
+ await exitPage.select('[data-group="'+group+'"]').click();assertList(exitPage);
+ await exitPage.select('#dhikr-continue').click();assert.equal(cardId(exitPage),'surah112');assert.match(exitPage.select('#adhkar-count').textContent,/1 \/ 3/);
+}
+console.log('PASS: morning/evening card button and edge-back return to the collection choice, stop audio and retain progress.');
 
 // A chosen ID is stable even when a later catalogue changes item order.
 await page.select('#all-dhikr').click();assertList(page);await page.select('[data-index="3"]').click();const allId=cardId(page),allHash=page.location.hash;
