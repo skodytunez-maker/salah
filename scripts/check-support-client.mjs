@@ -28,15 +28,15 @@ assert.ok(diagnosticMessage.startsWith('Не загружается страни
 
 // Use delayed transports that intentionally ignore abort, as a response can already
 // have arrived when the account changes. No real accounts or messages are used.
-function harness(owner=false){
+function harness(owner=false,recipientId=null){
  const root=new Root(),calls=[],failures=new Set(),delays=new Map();let uid='first-account',onAuth;
  const auth={auth:{getSession:async()=>({data:{session:uid?{user:{id:uid}}:null}}),onAuthStateChange(fn){onAuth=fn;return{data:{subscription:{unsubscribe(){onAuth=null}}}}}},rpc(name,args){return{abortSignal(signal){
   calls.push({name,args,signal});
   if(delays.has(name)){const resolve=delays.get(name);delays.delete(name);return new Promise(done=>resolve(done))}
   if(failures.delete(name))return Promise.resolve({error:{message:'temporary network error'}});
-  return Promise.resolve({data:name==='support_list'?[thread,{...thread,id:'second-thread',subject:'Другое обращение'}]:name==='support_read'?{thread:{...thread,id:args.p_id},messages:[]}:null,error:null});
+  return Promise.resolve({data:name==='support_owner_recipient'?{id:args.p_user,nickname:'Выбранный <пользователь>'}:name==='support_list'?[thread,{...thread,id:'second-thread',subject:'Другое обращение'}]:name==='support_read'?{thread:{...thread,id:args.p_id},messages:[]}:null,error:null});
  }}}};
- const stop=mountSupportPanel(root,{auth,app:'salah',version:182,owner});
+ const stop=mountSupportPanel(root,{auth,app:'salah',version:182,owner,recipientId});
  return{root,calls,failures,stop,hold(name){return new Promise(resolve=>delays.set(name,resolve))},switchTo(next){uid=next;onAuth(next?'SIGNED_IN':'SIGNED_OUT',next?{user:{id:next}}:null)}};
 }
 function inputReply(root,body){const replyForm=form('data-support-reply',{body});root.oninput({target:{closest:()=>replyForm}});return replyForm}
@@ -67,3 +67,28 @@ for(const mutation of ['support_create','support_close']){
  finish({data:null,error:null});await flush();assert.equal(ui.calls.length,callCount,mutation+' completion must not read the old thread in a new account');ui.stop();
 }
 console.log('PASS: support drafts and retry IDs survive refresh/back/network errors; separate threads/accounts, immediate logout clearing, cancelled mutations, escaped messages and app isolation.');
+
+const recipientId='44444444-4444-4444-8444-444444444444';
+const compose=harness(true,recipientId);await flush();
+assert.equal(compose.calls[0].name,'support_owner_recipient');assert.equal(compose.calls[0].args.p_user,recipientId);
+assert.match(compose.root.innerHTML,/Выбранный &lt;пользователь&gt;/);
+assert.match(compose.root.innerHTML,/data-support-create/);assert.doesNotMatch(compose.root.innerHTML,/data-support-photo|data-support-diagnostics/);
+const ownerMessage=form('data-support-create',{subject:'Сообщение',body:'Ассаляму алейкум'});
+compose.failures.add('support_owner_create');submitForm(compose.root,ownerMessage);await flush();
+assert.match(compose.root.note.textContent,/Не удалось/);
+const ownerFirst=compose.calls.find(call=>call.name==='support_owner_create');
+assert.equal(ownerFirst.args.p_user,recipientId);assert.equal(ownerFirst.args.p_app,'salah');assert.equal(ownerFirst.args.p_body,'Ассаляму алейкум');
+submitForm(compose.root,ownerMessage);await flush();
+const ownerRetry=compose.calls.filter(call=>call.name==='support_owner_create').at(-1);
+assert.equal(ownerRetry.args.p_id,ownerFirst.args.p_id,'Owner retries use the same message/thread id');
+assert.match(compose.root.innerHTML,/data-support-reply/);assert.match(compose.root.note.textContent,/Сообщение отправлено/);
+assert.ok(!compose.calls.some(call=>call.name==='support_create'),'Owner sends through the guarded owner endpoint');
+compose.stop();
+const ordinary=harness(false,recipientId);await flush();
+assert.equal(ordinary.calls[0].name,'support_list');assert.ok(!ordinary.calls.some(call=>call.name==='support_owner_recipient'));ordinary.stop();
+const staleRecipient=harness(true,recipientId);await flush();
+const recipientResult=staleRecipient.hold('support_owner_recipient');
+click(staleRecipient.root,'data-support-recipient-retry');const completeRecipient=await recipientResult;
+staleRecipient.switchTo(null);await flush();completeRecipient({data:{id:recipientId,nickname:'Не показывать старый профиль'},error:null});await flush();
+assert.doesNotMatch(staleRecipient.root.innerHTML,/Не показывать старый профиль/);assert.match(staleRecipient.root.innerHTML,/Войти или зарегистрироваться/);staleRecipient.stop();
+console.log('PASS: the owner composes to a server-resolved user, retries do not duplicate, user compose stays separate and stale recipient data is erased on sign-out.');

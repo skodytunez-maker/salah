@@ -21,3 +21,7 @@
 .list-button>.support-state-dot{margin-left:auto;margin-right:4px;width:10px;height:10px}
 
 .support-new-badge.is-user-reply{color:#ed6262!important}.support-reply-preview{margin:0;color:var(--muted);font-size:.9rem;line-height:1.45}.support-message.is-answer{border-left:3px solid var(--gold);background:rgba(209,185,120,.06)}
+
+.owner-user-write{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:20px;min-height:52px;box-sizing:border-box;text-decoration:none}
+.owner-user-write svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.support-recipient{overflow-wrap:anywhere}

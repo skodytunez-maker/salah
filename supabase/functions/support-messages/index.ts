@@ -31,7 +31,7 @@ export async function uploadSupportPhoto(storage,args,claims,register){
   created=!error;await register(path,bytes.length);
  }catch(error){if(created){try{await storage.remove([path])}catch{}}throw error;}
 }
-const SHAPES={support_user_status:['p_app'],support_owner_status:['p_app'],support_list:['p_app','p_owner','p_before'],support_read:['p_id','p_app','p_owner'],support_create:['p_id','p_app','p_subject','p_body','p_version'],support_create_photo:['p_id','p_app','p_subject','p_body','p_version','p_photo'],support_reply:['p_thread','p_app','p_id','p_body','p_owner'],support_close:['p_id','p_app']};
+const SHAPES={support_owner_recipient:['p_user','p_app'],support_owner_create:['p_id','p_user','p_app','p_subject','p_body','p_version'],support_user_status:['p_app'],support_owner_status:['p_app'],support_list:['p_app','p_owner','p_before'],support_read:['p_id','p_app','p_owner'],support_create:['p_id','p_app','p_subject','p_body','p_version'],support_create_photo:['p_id','p_app','p_subject','p_body','p_version','p_photo'],support_reply:['p_thread','p_app','p_id','p_body','p_owner'],support_close:['p_id','p_app']};
 export function createSupportHandler({getUser,getClaims,invoke}){
  return async req=>{
   const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff'};
@@ -48,7 +48,7 @@ export function createSupportHandler({getUser,getClaims,invoke}){
   const {name,args}=body||{};if(!Object.hasOwn(SHAPES,name)||Object.keys(body).some(key=>!['name','args'].includes(key))||!args||typeof args!=='object'||Array.isArray(args)||SHAPES[name].some(key=>!Object.hasOwn(args,key))||Object.keys(args).some(key=>!SHAPES[name].includes(key))||!['salah','sahaba'].includes(args.p_app))return reply(400,{error:'22023'});
   if(origin&&ORIGINS.get(origin)!==args.p_app)return reply(403,{error:'42501'});
   if(Object.hasOwn(args,'p_owner')&&typeof args.p_owner!=='boolean')return reply(400,{error:'22023'});
-  for(const key of ['p_id','p_thread'])if(Object.hasOwn(args,key)&&!UUID.test(args[key]))return reply(400,{error:'22023'});
+  for(const key of ['p_id','p_thread','p_user'])if(Object.hasOwn(args,key)&&!UUID.test(args[key]))return reply(400,{error:'22023'});
   if(Object.hasOwn(args,'p_before')&&args.p_before!==null&&(typeof args.p_before!=='string'||!Number.isFinite(Date.parse(args.p_before))))return reply(400,{error:'22023'});
   if(Object.hasOwn(args,'p_body')&&(typeof args.p_body!=='string'||args.p_body.trim().length<1||args.p_body.length>3000)||Object.hasOwn(args,'p_subject')&&(typeof args.p_subject!=='string'||args.p_subject.trim().length<1||args.p_subject.length>120)||Object.hasOwn(args,'p_version')&&(typeof args.p_version!=='string'||args.p_version.length>40))return reply(400,{error:'22023'});
   if(name==='support_create_photo'){try{supportPhotoBytes(args.p_photo)}catch{return reply(400,{error:'22023'})}}
@@ -68,7 +68,9 @@ if(typeof Deno!=='undefined'){
  const invoke=async(name,a,claims)=>{
   return await sql.begin(async tx=>{
    await tx`select pg_catalog.set_config('request.jwt.claims',${JSON.stringify(claims)},true)`;let rows;
-   if(name==='support_user_status')rows=await tx`select public.support_user_status(${a.p_app}::text) as data`;
+   if(name==='support_owner_recipient')rows=await tx`select public.support_owner_recipient(${a.p_user}::uuid,${a.p_app}::text) as data`;
+   else if(name==='support_owner_create')rows=await tx`select public.support_owner_create(${a.p_id}::uuid,${a.p_user}::uuid,${a.p_app}::text,${a.p_subject}::text,${a.p_body}::text,${a.p_version}::text) as data`;
+   else if(name==='support_user_status')rows=await tx`select public.support_user_status(${a.p_app}::text) as data`;
    else if(name==='support_owner_status')rows=await tx`select public.support_owner_status(${a.p_app}::text) as data`;
    else if(name==='support_list')rows=await tx`select public.support_list(${a.p_app}::text,${a.p_owner}::boolean,${a.p_before}::timestamptz) as data`;
    else if(name==='support_read'){

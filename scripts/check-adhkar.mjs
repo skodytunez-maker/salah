@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createAdhkarProgressStore} from '../dist/js/adhkar-progress.js';
-import {adhkarPeriod} from '../dist/js/adhkar-period.js';
+import {adhkarPeriod,canResumePreviousEvening} from '../dist/js/adhkar-period.js';
 const data=JSON.parse(await readFile(new URL('../dist/data/adhkar.json',import.meta.url),'utf8'));
 const readerSource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 assert.ok(readerSource.includes("host.querySelector('#dhikr-exit').onclick=()=>{stopAdhkar();hub()}"),'Closing an azkar session returns to the morning/evening hub.');
@@ -24,3 +24,15 @@ assert.equal(adhkarPeriod(150,{Fajr:100,Asr:NaN}),null);
 assert.equal(adhkarPeriod(150,{Fajr:300,Asr:100}),null);
 assert.equal(adhkarPeriod(36000150,Object.fromEntries(Object.entries(times).map(([key,value])=>[key,value+36000000]))),'morning');
 console.log('PASS: 12 shared adhkar totals, independent sessions, next day, reopen/update, failed writes, catalogue changes, old-data migration and city schedule boundaries.');
+
+for(const [now,expected]of [[99,true],[100,true],[399,true],[400,false],[600,false]])assert.equal(canResumePreviousEvening(now,times),expected);
+assert.equal(canResumePreviousEvening(100,null),null);
+assert.equal(canResumePreviousEvening(100,{Fajr:300,Asr:100}),null);
+const previousSnapshot=store.previous('evening');assert.equal(previousSnapshot._day,'2026-10-01');
+assert.equal(store.progress('evening','2026-10-01').counts[shared[0]],1);
+assert.equal(store.hasDay('evening','2026-10-01'),true);
+const unchanged=storage.getItem('salah:adhkar-progress-v2');
+assert.equal((await store.increment('evening',shared[0],'2026-02-31')).ok,false);
+assert.equal(storage.getItem('salah:adhkar-progress-v2'),unchanged);
+day='2026-10-04';assert.equal(store.previous('evening'),null,'Older evenings are never silently carried into a new day');
+console.log('PASS: city Asr continuation boundary, read-only previous daily record and invalid/expired date safeguards.');

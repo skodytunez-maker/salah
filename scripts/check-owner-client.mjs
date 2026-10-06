@@ -189,3 +189,10 @@ clickHistory.flush();assert.equal(clickHistory.index,1);assert.equal(navigation.
 navigation.back();clickHistory.flush();clickHistory.forward();assert.equal(closedCards,2);assert.ok(!clickHistory.win.history.state.salahOwnerCard,'Forward does not restore a private card from browser state');
 navigation.open();activeCard=false;navigation.dispose();assert.equal(clickHistory.listeners.get('popstate').size,0);assert.ok(!clickHistory.win.history.state.salahOwnerCard);assert.equal(navigation.open(),false);
 console.log('PASS: native Back returns card → same list/page/scroll → previous route; button/swipe consume one entry, rapid actions cannot skip pages, disposal removes private navigation state.');
+
+const writeId='55555555-5555-4555-8555-555555555555';
+const writeMarkup=ownerUserCard({id:writeId,nickname:'Имя с <разметкой>'});
+assert.ok(writeMarkup.includes('href="#support?owner=1&amp;user='+writeId+'"'),'Compose targets the selected UUID, not its display name');
+assert.match(writeMarkup,/class="button owner-user-write"/);assert.match(writeMarkup,/<span>Написать<\/span>/);
+assert.ok(!ownerUserCard({id:'not-a-user',nickname:'Подделанный'}).includes('owner-user-write'),'An invalid user card has no send action');
+console.log('PASS: the selected owner user card exposes an accessible Write link by stable user ID; invalid identities cannot start compose.');
