@@ -33,6 +33,7 @@
 ### Авторство проекта и бренд
 
 - В приложении есть подпись `by Saadi Kobilov`, но репозиторий сам по себе не устанавливает правообладателя кода и материалов, созданных несколькими участниками или при помощи подрядчиков. Составить список авторов и соглашения о передаче исключительных прав/лицензии на вклад; хранить исходники и историю версий.
+- Роспатент разъясняет, что программы для ЭВМ охраняются авторским правом как литературные произведения; госрегистрация программы добровольна. Она может помочь с доказательствами, но не заменяет документы о правообладателе и правах на сторонние материалы.
 - Корневой публичной лицензии для приложения нет. Не добавлять открытую лицензию на весь проект, пока владелец этого явно не решил. Отдельный `LICENSE` для open-source компонентов не заменяет права на тексты, изображения и аудио.
 - Проверить доступность обозначения SALAH и логотипа в целевых странах и классах до подачи в App Store/регистрации знака. Этот аудит не подтверждал отсутствие конфликтующих товарных знаков.
 
@@ -46,7 +47,7 @@
 ## Официальные/первичные справки
 
 - Роспатент, рекомендации по регистрации программ для ЭВМ и баз данных: https://rospatent.gov.ru/ru/documents/ruc_evm_bd/download
-- Роспатент, государственная регистрация программы для ЭВМ: https://rospatent.gov.ru/ru/stateservices/gosudarstvennaya-registraciya-programmy-dlya-evm-ili-bazy-dannyh-i-vydacha-svidetelstv-o-gosudarstvennoy-registracii-programmy-dlya-evm-ili-bazy-dannyh-ih-dublikatov
+- Роспатент, государственная регистрация товарного знака: https://rospatent.gov.ru/ru/stateservices/gosudarstvennaya-registraciya-tovarnogo-znaka-znaka-obsluzhivaniya-kollektivnogo-znaka-i-vydacha-svidetelstv-na-tovarnyy-znak-znak-obsluzhivaniya-kollektivnyy-znak-ih-dublikatov
 - Роспатент, кто может подать заявку на товарный знак: https://rospatent.gov.ru/ru/faq/kto-mozhet-podat-zayavku-na-registraciyu-tovarnogo-znaka
 - Open-Meteo terms: https://open-meteo.com/en/terms
 
