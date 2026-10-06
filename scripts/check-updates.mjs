@@ -8,6 +8,12 @@ assert.equal(validatedRelease({version:'140',date:'2026-10-03',changes:['x']}),n
 assert.equal(validatedRelease({version:140,date:'2026-10-03',changes:[{}]}),null);
 assert.equal(validatedRelease({version:140,date:'2026-10-03',changes:['x'.repeat(241)]}),null);
 assert.equal(releaseDate('2026-10-03'),'3 октября 2026');
+const transitionSource=await readFile(new URL('../dist/js/pwa-updates.js',import.meta.url),'utf8');
+const transitionStyles=await readFile(new URL('../dist/style.css',import.meta.url),'utf8');
+assert.match(transitionSource,/const RESTORE_FAILSAFE_MS=1800/,'Restoring screen must have a fail-safe');
+assert.match(transitionSource,/restoreTransitionTimer=setTimeout\(\(\)=>finishAppUpdateTransition\(\),RESTORE_FAILSAFE_MS\)/,'A failed app startup cannot leave the restoring overlay indefinitely');
+assert.match(transitionSource,/clearTimeout\(restoreTransitionTimer\)/,'Normal startup cancels the fail-safe');
+assert.match(transitionStyles,/salah-update-restoring::after\{[^}]*background:rgba\(13,19,38,\.12\)/,'Update overlay must remain translucent so the app stays visible');
 const values=new Map([['salah:settings','{"school":0,"weather":false}'],['salah:adhkar-progress-v2','{"totals":{"tasbih":17}}']]);
 const before=[...values];globalThis.localStorage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v)};
 const docEvents={},winEvents={},workerEvents={},elements=[];let reloads=0,updates=0,intervals=[],automaticMessages=0,toasts=0;
