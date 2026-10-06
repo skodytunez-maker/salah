@@ -4,7 +4,7 @@ export function createOwnerSupportStatus({getOwnerId,getRpc,root=globalThis.docu
   const id=getOwnerId();
   for(const dot of root.querySelectorAll('[data-owner-support-status]')){
    const known=Boolean(id&&snapshot?.owner===id);dot.hidden=!known;
-   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');dot.setAttribute('aria-label',waiting?'Есть сообщения без ответа':'Нет ожидающих ответа');dot.setAttribute('title',waiting?'Есть сообщения без ответа':'Нет ожидающих ответа')}
+   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');dot.setAttribute('aria-label',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены');dot.setAttribute('title',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены')}
   }
  }
  async function refresh({force=false}={}){
