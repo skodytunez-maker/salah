@@ -19,3 +19,5 @@
 
 .support-state-dot{display:inline-block;width:9px;height:9px;margin-left:8px;flex:none;border-radius:50%;vertical-align:middle}.support-state-dot[data-state=waiting]{background:#ed6262;box-shadow:0 0 0 3px rgba(237,98,98,.1)}.support-state-dot[data-state=clear]{background:#52c78a;box-shadow:0 0 0 3px rgba(82,199,138,.1)}.support-state-dot[hidden]{display:none!important}
 .list-button>.support-state-dot{margin-left:auto;margin-right:4px;width:10px;height:10px}
+
+.support-new-badge.is-user-reply{color:#ed6262!important}.support-reply-preview{margin:0;color:var(--muted);font-size:.9rem;line-height:1.45}.support-message.is-answer{border-left:3px solid var(--gold);background:rgba(209,185,120,.06)}

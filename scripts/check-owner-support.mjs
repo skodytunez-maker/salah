@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {Script,createContext} from 'node:vm';
 import {readFile,readdir} from 'node:fs/promises';
 import {createOwnerSupportStatus} from '../dist/js/owner-support-status.js';
 const dots=[{hidden:true,attributes:{},setAttribute(k,v){this.attributes[k]=v}}],events={},doc={visibilityState:'visible',addEventListener(){},removeEventListener(){}};
@@ -19,7 +20,7 @@ globalThis.__supportFixture={prepareSupportPhoto(){},createSupportRpc(){return()
 const source="const {prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
 const {showSupport,stopSupport}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const app={dataset:{},isConnected:true,innerHTML:'',querySelector:()=>({})};
-await showSupport(app);assert.equal(mounts.at(-1).owner,false);assert.ok(app.innerHTML.includes('Написать в поддержку'));
+await showSupport(app);assert.equal(mounts.at(-1).owner,false);assert.ok(app.innerHTML.includes('Обращения в поддержку'));
 answer=true;await showSupport(app);assert.equal(mounts.at(-1).owner,true);assert.ok(app.innerHTML.includes('Обращения пользователей'),'A verified owner opens replies without a special URL flag');
 verified=false;answer=false;mfa=true;const previous=mounts.length;await showSupport(app);assert.equal(mounts.length,previous);assert.ok(app.innerHTML.includes('Войти в кабинет владельца'),'MFA is required before owner conversations are mounted');mfa=false;
 let finish;verifyPending=done=>finish=done;const abandoned=showSupport(app);await Promise.resolve();stopSupport();location.hash='#home';finish(true);await abandoned;assert.equal(mounts.length,previous,'Changing pages cancels late owner-mode detection');
@@ -27,5 +28,11 @@ delete globalThis.__supportFixture;
 const names=await readdir(new URL('../supabase/migrations/',import.meta.url)),migration=await readFile(new URL('../supabase/migrations/'+names.find(n=>n.endsWith('support_owner_status.sql')),import.meta.url),'utf8');
 assert.ok(migration.includes('public.support_actor(true)'));assert.ok(migration.includes("status='open'"));assert.ok(migration.includes('REVOKE ALL ON FUNCTION'));assert.ok(!migration.includes('GRANT'));
 const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
-assert.ok(appSource.includes("r==='support'&&owner?'<span"),'The owner dot sits directly on the Menu support row');
+const menuSource=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf("\nwindow.addEventListener('salah:counter-status'"));
+for(const owner of [true,false]){
+ const menuApp={innerHTML:''},context=createContext({app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',bindAppSharing(){}});
+ new Script(menuSource+';more();').runInContext(context);
+ const label=owner?'Обращения пользователей':'Обращения в поддержку',attribute=owner?'data-owner-support-status':'data-user-support-status';
+ assert.ok(menuApp.innerHTML.includes(label+'</span><span class="support-state-dot" '+attribute),'Each account sees its own dot directly on the Menu support row');
+}
 console.log('PASS: owner-only red/green menu status, no false green/offline leaks, owner reply mode, MFA and cancelled page transitions.');

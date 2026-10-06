@@ -33,7 +33,7 @@ async function callOwner(session,query=''){
  let response;
  try{response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});}
  catch{revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
- if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403)throw Error('Этот аккаунт не имеет доступа к кабинету.');if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
+ if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403){const denied=Error('Этот аккаунт не имеет доступа к кабинету.');denied.status=403;throw denied;}if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
  return response.json();
 }
 export async function verifyOwner({verifySession=false}={}){
@@ -47,7 +47,7 @@ export async function verifyOwner({verifySession=false}={}){
    const checked=await checkAccountSession({force:verifySession&&attempt===0});
    if(started!==revision)continue;
    if(checked.state!=='valid'||!checked.session){revoke();return false;}
-   const result=await callOwner(checked.session);
+   let result;try{result=await callOwner(checked.session)}catch(error){if(error.status===403){revoke();return false}throw error}
    if(started!==revision)continue;
    if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
    const changed=!verified;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;if(changed)publish();return true;

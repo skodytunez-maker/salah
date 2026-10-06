@@ -235,3 +235,5 @@ html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
 #wallpaper-picker summary{gap:12px}#wallpaper-picker summary strong{margin-left:auto;text-align:right;font-size:.9rem;font-weight:400;color:var(--muted);overflow-wrap:anywhere}
 
 .wallpaper-picker-label{display:flex;align-items:center;gap:10px}.wallpaper-picker-label img{width:24px;height:24px;flex:none}
+
+#wallpaper-picker{border-top:0;padding:0}#wallpaper-picker>summary{display:block;position:relative;min-height:0;padding:10px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035)}#wallpaper-picker .wallpaper-picker-label{display:block;min-width:0}#wallpaper-picker .wallpaper-picker-label img{display:block;width:100%;height:auto;aspect-ratio:180/105;object-fit:contain;border-radius:10px}#wallpaper-picker .wallpaper-picker-label>span{display:flex;align-items:center;min-height:38px;margin-top:8px;font-size:1.1rem}#wallpaper-picker summary strong{position:absolute;right:36px;bottom:20px;max-width:55%;margin:0}#wallpaper-picker>summary::after{position:absolute;right:13px;bottom:17px}#wallpaper-picker select{margin-top:12px}
