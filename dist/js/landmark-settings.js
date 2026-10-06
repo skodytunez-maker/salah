@@ -14,10 +14,12 @@ export function mountLandmarkSettings(root,onChange=()=>{}){
  const current=()=>settings.wallpaper==='landmark'?'landmark:'+settings.landmarkCity:'wallpaper:'+settings.wallpaper;
  function draw(){
   const choices=[
-   ...wallpapers.filter(item=>item.id!=='landmark').map(item=>({value:'wallpaper:'+item.id,name:item.name})),
    {value:'landmark:auto',name:'Мой город'},
-   ...entries.map(city=>({value:'landmark:'+city.id,name:city.name}))
-  ].sort((a,b)=>collator.compare(a.name,b.name)||a.value.localeCompare(b.value));
+   ...[
+    ...wallpapers.filter(item=>item.id!=='landmark').map(item=>({value:'wallpaper:'+item.id,name:item.name})),
+    ...entries.map(city=>({value:'landmark:'+city.id,name:city.name}))
+   ].sort((a,b)=>collator.compare(a.name,b.name)||a.value.localeCompare(b.value))
+  ];
   const value=current();
   if(!choices.some(item=>item.value===value))choices.push({value,name:'Выбранные обои'});
   select.replaceChildren();
