@@ -16,7 +16,10 @@ packages = Gem.loaded_specs.values.reject(&:default_gem?).sort_by(&:name).map do
     raise 'Oversized gem notice' if bytes.bytesize > 1024 * 1024
     {'file' => name, 'sha256' => Digest::SHA256.hexdigest(bytes), 'text' => bytes.force_encoding('UTF-8')}
   end
-  {'name' => spec.name, 'version' => spec.version.to_s, 'declaredLicenses' => spec.licenses,
+  {'name' => spec.name, 'version' => spec.version.to_s, 'homepage' => spec.homepage,
+   'gemspecSha256' => Digest::SHA256.file(spec.loaded_from).hexdigest,
+   'archiveSha256' => File.file?(spec.cache_file) ? Digest::SHA256.file(spec.cache_file).hexdigest : nil,
+   'declaredLicenses' => spec.licenses,
    'notices' => notices, 'status' => notices.empty? ? 'needs-review' : 'notice-recorded'}
 end
 FileUtils.mkdir_p(output)
