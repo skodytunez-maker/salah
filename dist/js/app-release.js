@@ -1,4 +1,4 @@
-export const APP_VERSION=201;
+export const APP_VERSION=202;
 export const APP_UPDATED_AT='2026-10-06';
 export const APP_CHANGES=["Исправлен запуск приложения с главного экрана."];
 // Public notes list new user-facing features or sections only. Internal settings,
