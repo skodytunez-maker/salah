@@ -111,7 +111,7 @@ function validateQuran(proof){
 validateIcons(icons);validateQuran(quran);
 for(const icon of icons.icons){
  if(snapshot)assert.equal(sourceFiles.get(icon.path)?.gitBlobSha,icon.gitBlobSha);
- else{const bytes=await fs.readFile(path.join(root,icon.path));assert.equal(createHash('sha1').update(Buffer.from('blob '+bytes.length+'\\0')).update(bytes).digest('hex'),icon.gitBlobSha,'Icon changed; recheck its evidence')}
+ else{const bytes=await fs.readFile(path.join(root,icon.path));assert.equal(createHash('sha1').update(Buffer.from('blob '+bytes.length)).update(Buffer.from([0])).update(bytes).digest('hex'),icon.gitBlobSha,'Icon changed; recheck its evidence')}
 }
 for(const surah of quran.surahs){
  if(snapshot)assert.equal(sourceFiles.get(surah.path)?.gitBlobSha,surah.gitBlobSha);
