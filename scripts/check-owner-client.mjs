@@ -20,13 +20,13 @@ const {verifyOwner,ownerVerified,onOwnerChange,signOutOwner,ownerStatistics,owne
 onOwnerChange(()=>changed++);
 assert.equal(await verifyOwner(),false);assert.equal(requests,0);assert.equal(ownerVerified(),false);
 session={access_token:'forged-token'};
-await assert.rejects(verifyOwner(),/не имеет доступа/);assert.equal(ownerVerified(),false);assert.equal(changed,0);
+assert.equal(await verifyOwner(),false,'A non-owner 403 is a normal role denial, not a support-page error');assert.equal(ownerVerified(),false);assert.equal(changed,0);
 // Only the successful server response authorizes menu visibility.
 session={access_token:'verified-user-session'};allowed=true;
 assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(changed,1);
 await assert.rejects(ownerStatistics(7),/ещё не подключена/);assert.equal(ownerVerified(),true);
 // A later server denial removes access immediately, even with a saved session.
-allowed=false;await assert.rejects(verifyOwner());assert.equal(ownerVerified(),false);assert.equal(changed,2);
+allowed=false;assert.equal(await verifyOwner(),false);assert.equal(ownerVerified(),false);assert.equal(changed,2);
 allowed=true;await verifyOwner();await signOutOwner();assert.equal(ownerVerified(),false);
 // Refresh arriving while the gate request is running must recheck the new
 // session; it cannot authorize the stale response or strand a valid owner.
