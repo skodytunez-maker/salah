@@ -16,9 +16,9 @@ gradle.projectsEvaluated {
             def publicAssets = new File(app.projectDir, 'src/main/assets/public/third-party')
             if (!new File(publicAssets.parentFile, 'index.html').isFile()) throw new GradleException('Sync the native web bundle first.')
             def configuration = app.configurations.getByName('debugRuntimeClasspath')
-            def artifacts = configuration.resolvedConfiguration.resolvedArtifacts.findAll {
-                it.id.componentIdentifier instanceof ModuleComponentIdentifier
-            }.groupBy { it.moduleVersion.id.toString() }
+            def artifacts = configuration.incoming.artifactView {
+                componentFilter { id -> id instanceof ModuleComponentIdentifier }
+            }.artifacts.artifacts.groupBy { it.id.componentIdentifier.displayName }
             if (artifacts.isEmpty()) throw new GradleException('No external Android runtime artifacts were resolved.')
             def digest = { byte[] bytes -> MessageDigest.getInstance('SHA-256').digest(bytes).encodeHex().toString() }
             def noticePattern = ~/(?i)(LICENSE|LICENCE|NOTICE|COPYING|UNLICENSE)([._-].*)?/
