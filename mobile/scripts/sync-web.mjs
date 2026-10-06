@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {collectMobileLicenses,saveMobileLicenseReport} from './collect-licenses.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const mobileRoot=path.resolve(here,'..');
@@ -10,6 +11,8 @@ const runtime=path.join(mobileRoot,'node_modules/@capacitor/core/dist/index.js')
 
 await fs.access(path.join(source,'index.html'));
 await fs.access(runtime);
+// Validate notices before replacing the previous generated web bundle.
+const licenseEvidence=await collectMobileLicenses(mobileRoot);
 await fs.rm(target,{recursive:true,force:true});
 await fs.mkdir(target,{recursive:true});
 await fs.cp(source,target,{recursive:true,force:true});
@@ -21,6 +24,10 @@ await fs.copyFile(
   path.join(mobileRoot,'node_modules/@capacitor/core/LICENSE'),
   path.join(target,'js/vendor/capacitor-LICENSE.txt')
 );
+
+await fs.mkdir(path.join(target,'third-party'),{recursive:true});
+await fs.writeFile(path.join(target,'third-party/Capacitor-NOTICES.txt'),licenseEvidence.nativeNotices);
+await saveMobileLicenseReport(mobileRoot,licenseEvidence);
 
 const entry='<script type="module" src="./js/app.js"></script>';
 const html=await fs.readFile(path.join(target,'index.html'),'utf8');
