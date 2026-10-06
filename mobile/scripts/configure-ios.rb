@@ -19,6 +19,20 @@ project = Xcodeproj::Project.open(project_path)
 app = project.targets.find { |target| target.name == 'App' && target.product_type == 'com.apple.product-type.application' }
 abort 'Expected Capacitor App target is missing; no project files changed.' unless app
 
+# Replace Capacitor's starter icon with SALAH's existing PWA brand icon.
+icon_set_path = File.join(project_dir, 'App', 'Assets.xcassets', 'AppIcon.appiconset')
+icon_source = File.expand_path('../dist/icon-512.png', root)
+icon_path = File.join(icon_set_path, 'AppIcon.png')
+abort 'Expected Capacitor AppIcon asset catalog is missing.' unless File.directory?(icon_set_path)
+abort 'SALAH source icon is missing.' unless File.file?(icon_source)
+unless system('/usr/bin/sips', '-z', '1024', '1024', icon_source, '--out', icon_path, out: File::NULL, err: File::NULL)
+  abort 'Could not create the required 1024px SALAH app icon.'
+end
+File.write(File.join(icon_set_path, 'Contents.json'), JSON.pretty_generate({
+  'images' => [{'filename' => 'AppIcon.png', 'idiom' => 'universal', 'platform' => 'ios', 'size' => '1024x1024'}],
+  'info' => {'author' => 'xcode', 'version' => 1}
+}) + "\n")
+
 widget = project.targets.find { |target| target.name == 'SalahPrayerWidget' }
 widget ||= project.new_target(:app_extension, 'SalahPrayerWidget', :ios, '16.0')
 
