@@ -5,6 +5,7 @@ import{validateDuaCatalogue,safeDuaSource,cleanDuaFavorites,filterDuas,duaRoute,
 let catalogue=null,host=null,generation=0,controller=null,timer=null,state=null,callbacks=null,readingIds=[];
 const sizes=[16,18,20,22,24,28];
 const prefKeys={arabic:'adhkar-arabic',transliteration:'adhkar-translit',translation:'adhkar-translation'};
+const duaParentKey='salahDuaParent';
 const icon=name=>'<img src="./assets/'+name+'.svg" alt="">';
 const favorites=()=>cleanDuaFavorites(read('daily-dua-favorites',[]),catalogue);
 const selected=()=>filterDuas(catalogue,state,favorites());
@@ -39,8 +40,24 @@ export async function showDailyDuas(container,options={}){
 function remember(){
  const params=new URLSearchParams({view:'duas'});
  if(state.category)params.set('category',state.category);if(state.query)params.set('q',state.query);if(state.favoritesOnly)params.set('favorites','1');if(state.item)params.set('item',state.item);if(state.item&&state.variant)params.set('variant',state.variant);
- try{window.history.replaceState(window.history.state,'','#adhkar?'+params)}catch{}
+ const hash='#adhkar?'+params;
+ try{
+  if(state.item&&!window.history.state?.[duaParentKey]){
+   // Keep the filtered library as a real parent for native iPhone Back.
+   // Paging and wording changes replace this reader entry only.
+   const parent={...window.history.state};delete parent[duaParentKey];
+   const listParams=new URLSearchParams(params);listParams.delete('item');listParams.delete('variant');
+   window.history.replaceState(parent,'','#adhkar?'+listParams);
+   const child={...parent,[duaParentKey]:true};delete child.salahRouteStep;
+   window.history.pushState(child,'',hash);
+   window.dispatchEvent(new Event('salah:route-history'));
+  }else window.history.replaceState(window.history.state,'',hash);
+ }catch{try{window.history.replaceState(window.history.state,'',hash)}catch{}}
  callbacks?.onRoute?.();
+}
+function backToLibrary(){
+ if(window.history.state?.[duaParentKey]){try{window.history.back();return}catch{}}
+ library();window.scrollTo(0,0);
 }
 function favoriteButton(item){const saved=favorites().includes(item.id);return '<button type="button" class="dua-favorite" data-dua-favorite="'+item.id+'" aria-pressed="'+saved+'" aria-label="'+(saved?'Убрать из избранного: ':'В избранное: ')+esc(item.title)+'">'+icon(saved?'star-fill':'star')+'</button>'}
 function toggleFavorite(id){
@@ -82,7 +99,7 @@ function reader(direction=0){
  const index=readingIds.indexOf(item.id),shown=texts(),passage=duaPassage(item,state.variant);state.variant=passage===item?null:passage.id;remember();
  document.body.classList.add('daily-dua-reading');document.body.classList.toggle('adhkar-focus',read('adhkar-focus',true));
  host.innerHTML='<section class="daily-dua-shell dua-reader" data-slide="'+(direction>0?'next':direction<0?'previous':'')+'" style="--dua-size:'+size()+'px"><div class="dua-top"><button type="button" class="text-button" id="dua-list">К сборнику</button><span>'+esc(categoryName(item.category))+'</span>'+favoriteButton(item)+'</div><div class="dua-heading"><h1>'+esc(item.title)+'</h1><p>'+esc(item.occasion)+'</p></div><details class="dua-reading-settings"><summary>Настройки чтения</summary><div class="dua-preferences"><label>Размер текста<select id="dua-size">'+sizes.map(n=>'<option value="'+n+'" '+(n===size()?'selected':'')+'>'+n+'</option>').join('')+'</select></label>'+[['arabic','Арабский'],['transliteration','Транскрипция'],['translation','Перевод']].map(([key,label])=>'<label><input type="checkbox" data-dua-text="'+key+'" '+(shown[key]?'checked':'')+'>'+label+'</label>').join('')+'<label><input type="checkbox" id="dua-focus" '+(read('adhkar-focus',true)?'checked':'')+'>Режим чтения</label></div></details>'+variantButtons(item,passage)+'<article class="dua-passage"><p class="dua-arabic" data-dua-passage="arabic" dir="rtl" lang="ar" '+(shown.arabic?'':'hidden')+'>'+esc(passage.arabic)+'</p><p class="dua-transcription" data-dua-passage="transliteration" '+(shown.transliteration?'':'hidden')+'>'+esc(passage.transliteration)+'</p><div class="dua-meaning" data-dua-passage="translation" '+(shown.translation?'':'hidden')+'><small>Перевод смысла</small><p>'+esc(passage.translation)+'</p></div></article><details class="dua-source"><summary>Источник</summary><a href="'+esc(safeDuaSource(passage.source.url))+'" target="_blank" rel="noopener noreferrer">'+esc(passage.source.label)+'</a><p>Транскрипция: ك — к, ق — қ; аа, ии, уу — долгие звуки. Кириллица не передаёт все особенности произношения.</p></details><nav class="dua-navigation" aria-label="Переход между дуа"><button type="button" class="button secondary" id="dua-prev" '+(index<=0?'disabled':'')+'>Предыдущее</button><button type="button" class="button secondary" id="dua-next" '+(index<0||index===readingIds.length-1?'disabled':'')+'>Следующее</button></nav></section>';
- host.querySelector('#dua-list').onclick=()=>{library();window.scrollTo(0,0)};bindFavorites();
+ host.querySelector('#dua-list').onclick=backToLibrary;bindFavorites();
  host.querySelectorAll('[data-dua-variant]').forEach(button=>button.onclick=()=>switchVariant(item,button.dataset.duaVariant));
  host.querySelector('#dua-prev').onclick=()=>navigate(index-1,-1);
  host.querySelector('#dua-next').onclick=()=>navigate(index+1,1);
