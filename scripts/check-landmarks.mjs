@@ -41,7 +41,10 @@ assert.match(weatherSource,/Swap only after both photographs are decoded/i,'Land
 const picker=await readFile(new URL('../dist/js/landmark-settings.js',import.meta.url),'utf8');
 assert.ok(picker.includes("new Intl.Collator('ru'"),'Wallpaper labels use Russian alphabetical order');
 assert.ok(picker.includes('wallpapers.filter'),'Built-in wallpapers share the city picker');
-assert.ok(picker.includes('data-landmark-city'),'City choices retain a separate saved city selection');
+assert.ok(picker.includes('landmarkCity:city'),'City choices retain a separate saved city selection');
+assert.ok(picker.includes("'#wallpaper-select'"),'All wallpapers use the compact selector');
+const appSource=await readFile(new URL('js/app.js',root),'utf8');
+assert.match(appSource,/<details class="landmark-cities" id="wallpaper-picker">/,'Wallpaper picker starts collapsed');
 console.log('PASS: lazy city catalogue, unified alphabetical choices, Afghanistan and Badakhshan coordinates, safe paths, bounded offline cache and preserved personal settings.');
 
 const otherCity={latitude:35.6762,longitude:139.6503},copy={...otherCity};
