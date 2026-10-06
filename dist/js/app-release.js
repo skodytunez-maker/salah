@@ -1,4 +1,4 @@
-export const APP_VERSION=198;
+export const APP_VERSION=199;
 export const APP_UPDATED_AT='2026-10-06';
 export const APP_CHANGES=["В меню появились значки киблы, календаря, поддержки и других разделов."];
 // Public notes list new user-facing features or sections only. Internal settings,

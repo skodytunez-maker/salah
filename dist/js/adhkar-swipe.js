@@ -1,11 +1,11 @@
-// Safari/Android own the drag, momentum and snap. App state follows the settled page.
+// Touch owns horizontal movement; browser keeps vertical reading scroll.
 export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},win=window}={}){
  const doc=passage.ownerDocument,parent=passage.parentNode,row=doc.createElement('div');
  row.className='adhkar-card-carousel';row.setAttribute('role','region');row.setAttribute('aria-label','Карточки азкаров');
  const previous=preview(1),next=preview(-1),activeIndex=previous?1:0;
  const pages=[previous,passage,next].filter(Boolean),previewIds=new Map();
  row.style.marginTop=win.getComputedStyle?.(passage).marginTop||'28px';
- row.style.scrollSnapType='none';row.style.scrollBehavior='auto';
+ row.style.scrollSnapType='none';row.style.scrollBehavior='auto';row.style.overflowX='hidden';row.style.touchAction='pan-y pinch-zoom';
  parent.insertBefore(row,passage);
  for(const page of pages){
   page.classList.add('adhkar-carousel-page');
@@ -13,7 +13,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
   else page.classList.add('adhkar-carousel-current');
   row.append(page);
  }
- let disposed=false,committed=false,touching=false,initializing=true,timer=0,width=0,suppressUntil=0;
+ let disposed=false,committed=false,touching=false,initializing=true,timer=0,width=0,suppressUntil=0,gesture=null,animation=0;
  const removers=[];
  const listen=(type,fn,options)=>{row.addEventListener(type,fn,options);removers.push(()=>row.removeEventListener(type,fn,options));};
  const suppress=()=>{suppressUntil=Date.now()+500;onSuppress();};
@@ -27,7 +27,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
  }
  function settle(){
   win.clearTimeout(timer);timer=0;
-  if(disposed||committed||initializing||touching||!width)return;
+  if(disposed||committed||initializing||touching||animation||!width)return;
   if(win.getSelection?.()?.toString()){row.scrollTo({left:activeIndex*width,behavior:'smooth'});return;}
   const index=Math.max(0,Math.min(pages.length-1,Math.round(row.scrollLeft/width)));
   if(Math.abs(row.scrollLeft-index*width)>2){row.scrollTo({left:index*width,behavior:'smooth'});return;}
@@ -39,16 +39,45 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
  const schedule=()=>{win.clearTimeout(timer);timer=win.setTimeout(settle,160);};
  listen('scroll',()=>{if(!initializing){size();suppress();schedule();}},{passive:true});
  listen('scrollend',settle,{passive:true});
- listen('touchstart',()=>{touching=true;win.clearTimeout(timer);},{passive:true});
- listen('touchend',e=>{touching=e.touches.length>0;if(!touching)schedule();},{passive:true});
- listen('touchcancel',()=>{touching=false;row.scrollTo({left:activeIndex*width,behavior:'smooth'});schedule();},{passive:true});
+ function finishAt(index){
+  const from=row.scrollLeft,to=index*width;let started=null;
+  const tick=time=>{
+   if(disposed)return;if(started===null)started=time;
+   const t=Math.min(1,(time-started)/160);row.scrollLeft=from+(to-from)*(1-Math.pow(1-t,3));size();
+   if(t<1)animation=win.requestAnimationFrame(tick);
+   else{animation=0;row.scrollLeft=to;settle();}
+  };
+  animation=win.requestAnimationFrame(tick);
+ }
+ listen('touchstart',e=>{
+  if(animation||e.touches.length!==1){gesture=null;return;}
+  touching=true;win.clearTimeout(timer);const p=e.touches[0];
+  gesture={id:p.identifier,x:p.clientX,y:p.clientY,left:row.scrollLeft,axis:null};
+ },{passive:true});
+ listen('touchmove',e=>{
+  if(!gesture)return;if(e.touches.length!==1){gesture=null;return;}
+  const p=e.touches[0];if(p.identifier!==gesture.id)return;
+  const dx=p.clientX-gesture.x,dy=p.clientY-gesture.y;
+  if(!gesture.axis&&Math.max(Math.abs(dx),Math.abs(dy))>8)gesture.axis=Math.abs(dx)>Math.abs(dy)*1.2?'x':'y';
+  if(gesture.axis!=='x')return;e.preventDefault();suppress();
+  row.scrollLeft=Math.max(0,Math.min((pages.length-1)*width,gesture.left-dx));size();
+ },{passive:false});
+ listen('touchend',e=>{
+  touching=e.touches.length>0;if(touching)return;win.clearTimeout(timer);
+  const horizontal=gesture?.axis==='x';gesture=null;
+  if(!horizontal){schedule();return;}
+  const offset=row.scrollLeft-activeIndex*width,threshold=Math.min(90,width*.22);
+  const index=Math.abs(offset)>=threshold?Math.max(0,Math.min(pages.length-1,activeIndex+Math.sign(offset))):activeIndex;
+  finishAt(index);
+ },{passive:true});
+ listen('touchcancel',()=>{touching=false;gesture=null;finishAt(activeIndex);},{passive:true});
  listen('click',e=>{if(e.isTrusted&&Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
  size();
- const frame=win.requestAnimationFrame(()=>{size();row.scrollLeft=activeIndex*width;row.style.scrollSnapType='';initializing=false;});
+ const frame=win.requestAnimationFrame(()=>{size();row.scrollLeft=activeIndex*width;initializing=false;});
  const observer=win.ResizeObserver?new win.ResizeObserver(size):null;
  observer?.observe(row);observer?.observe(passage);
  return()=>{
-  disposed=true;win.clearTimeout(timer);win.cancelAnimationFrame(frame);observer?.disconnect();removers.forEach(remove=>remove());
+  disposed=true;win.clearTimeout(timer);win.cancelAnimationFrame(frame);win.cancelAnimationFrame(animation);observer?.disconnect();removers.forEach(remove=>remove());
   if(row.parentNode){row.parentNode.insertBefore(passage,row);row.remove();}
   passage.classList.remove('adhkar-carousel-page','adhkar-carousel-current');
  };
