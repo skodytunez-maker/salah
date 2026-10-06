@@ -1,0 +1,26 @@
+name: Verify account checkmarks
+on:
+  pull_request:
+    paths:
+      - 'dist/js/counter-account.js'
+      - 'dist/js/owner-user-card.js'
+      - 'dist/css/support.css'
+      - 'dist/style.css'
+      - 'scripts/check-counter-account.mjs'
+      - 'scripts/check-owner-client.mjs'
+      - '.github/workflows/account-checkmarks.yml'
+permissions:
+  contents: read
+jobs:
+  account-checkmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify account and owner check states
+        run: |
+          node scripts/check-counter-account.mjs
+          node scripts/check-owner-client.mjs
+          node scripts/check-updates.mjs
