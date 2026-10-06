@@ -2,8 +2,8 @@
 const controls='button,a,input,select,textarea,summary,[contenteditable="true"],[data-no-swipe]';
 export function swipeDecision({dx,dy,width,velocity=0}){
  if(Math.abs(dx)<12||Math.abs(dx)<=Math.abs(dy)*1.5)return 0;
- const distance=Math.min(84,Math.max(48,width*.14));
- if(Math.abs(dx)>=distance||(Math.abs(dx)>=32&&Math.abs(velocity)>=.35&&Math.sign(velocity)===Math.sign(dx)))return Math.sign(dx);
+ const distance=Math.min(140,Math.max(64,width*.28));
+ if(Math.abs(dx)>=distance||(Math.abs(dx)>=32&&Math.abs(velocity)>=.5&&Math.sign(velocity)===Math.sign(dx)))return Math.sign(dx);
  return 0;
 }
 export function bindSwipeMotion(target,{surface=()=>target,canStart=()=>true,canMove=()=>true,commit,preview,onSuppress=()=>{},reduced=()=>false,win=window,now=()=>performance.now(),ignoreControls=true}={}){
@@ -68,9 +68,9 @@ export function bindSwipeMotion(target,{surface=()=>target,canStart=()=>true,can
   }
   return true;
  }
- listen(target,'pointermove',e=>{if(gesture?.touch||!update(e))return;e.preventDefault();if(!frame)frame=win.requestAnimationFrame(draw);},{passive:false});
+ listen(target,'pointermove',e=>{if(!update(e))return;e.preventDefault();if(!frame)frame=win.requestAnimationFrame(draw);},{passive:false});
  listen(target,'pointerup',e=>{
-  const g=gesture;if(!g||g.touch||g.id!==e.pointerId)return;
+  const g=gesture;if(!g||g.id!==e.pointerId)return;
   // A pause at the end cannot turn a small movement into a fast fling.
   if(e.clientX!==g.lastX||e.clientY!==g.y+g.dy)update(e);else if(now()-g.lastTime>100)g.velocity=0;
   if(!gesture)return;
@@ -79,35 +79,11 @@ export function bindSwipeMotion(target,{surface=()=>target,canStart=()=>true,can
   const direction=swipeDecision(g);
   finish(g.locked&&canMove(direction)?direction:0);
  });
- listen(target,'pointercancel',e=>{if(gesture&&!gesture.touch&&(e.pointerId===undefined||gesture.id===e.pointerId)){suppress();cancel();}});
- listen(target,'lostpointercapture',e=>{if(gesture&&!gesture.touch&&(e.pointerId===undefined||gesture.id===e.pointerId))cancel();});
- // iOS Safari may cancel Pointer Events while claiming a horizontal edge gesture.
- // A touch fallback on the card surface keeps the gesture local and commits on touchend.
- const touchPoint=touch=>({clientX:touch.clientX,clientY:touch.clientY,pointerId:1});
- listen(target,'touchstart',e=>{
-  if(settling||disposed||e.touches.length!==1||(ignoreControls&&e.target.closest?.(controls))||!canStart(e)||win.getSelection?.()?.toString())return;
-  const touch=e.touches[0],node=surface();if(!node)return;const rect=node.getBoundingClientRect();
-  gesture={id:1,node,rect,width:Math.max(1,rect.width),x:touch.clientX,y:touch.clientY,dx:0,dy:0,locked:false,lastX:touch.clientX,lastTime:now(),velocity:0,touch:true};
- },{passive:true});
- listen(target,'touchmove',e=>{
-  if(!gesture?.touch)return;
-  if(e.touches.length!==1){cancel();return;}
-  const touch=e.touches[0];if(!update(touchPoint(touch)))return;
-  e.preventDefault();if(!frame)frame=win.requestAnimationFrame(draw);
- },{passive:false});
- listen(target,'touchend',e=>{
-  if(!gesture?.touch)return;
-  const touch=e.changedTouches[0];if(touch&&(touch.clientX!==gesture.lastX||touch.clientY!==gesture.y+gesture.dy))update(touchPoint(touch));
-  if(!gesture)return;
-  if(win.getSelection?.()?.toString()){cancel();return;}
-  const direction=swipeDecision(gesture);
-  finish(gesture.locked&&canMove(direction)?direction:0);
- },{passive:true});
- listen(target,'touchcancel',()=>{if(gesture?.touch){suppress();cancel();}},{passive:true});
+ listen(target,'pointercancel',()=>{suppress();cancel();});
+ listen(target,'lostpointercapture',()=>{if(gesture)cancel();});
  listen(target,'click',e=>{if(e.isTrusted&&(now()<suppressUntil||settling)){e.preventDefault();e.stopImmediatePropagation();}},true);
  const abort=()=>{gesture=null;clear();};
  listen(win,'pagehide',abort);listen(win,'blur',abort);listen(win,'hashchange',abort);listen(win,'popstate',abort);listen(win,'resize',abort);
  const visibility=()=>{if(target.ownerDocument?.hidden)abort();};listen(target.ownerDocument||win,'visibilitychange',visibility);
  return()=>{disposed=true;gesture=null;clear();listeners.forEach(remove=>remove());};
 }
-
