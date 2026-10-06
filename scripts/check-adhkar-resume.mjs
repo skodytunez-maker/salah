@@ -1,4 +1,4 @@
-import{bindSwipeMotion}from '../dist/js/swipe-motion.js';
+
 import {markDhikrActivity} from '../dist/js/dhikr-reminder.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -54,7 +54,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
   const location={hash},body=new Element('body'),container=new Element(),events=new Map(),audio=[],notices=[];let scroll=0,fetches=0,currentDay=day,deferredLock=null;
   const window={history:{state:null,replaceState(_state,_title,url){location.hash=url}},addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},clearTimeout,scrollTo(_x,y){scroll=y}};
   const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
-    bindSwipeMotion:(surface,options)=>bindSwipeMotion(surface,{...options,win:window}),
+    bindNativeCardSwipe:()=>()=>{},
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},
     read:(key,fallback)=>{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)},write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},settings:{haptic:false},

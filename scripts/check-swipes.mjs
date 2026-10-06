@@ -1,4 +1,5 @@
 import{bindSwipeMotion}from '../dist/js/swipe-motion.js';
+import './check-adhkar-swipe.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
@@ -17,7 +18,7 @@ function horizontal(kind){
  return{listeners,moves,context,select:text=>selected=text};
 }
 const pointer=(x,y,extra={})=>({isPrimary:true,button:0,pointerType:'touch',pointerId:1,clientX:x,clientY:y,timeStamp:100,target:{closest:()=>null},preventDefault(){},...extra});
-for(const kind of ['adhkar','learning']){
+for(const kind of ['learning']){
  const h=horizontal(kind),emit=(type,event)=>h.listeners.get(type)?.(event);
  for(const [x,expected]of [[80,1],[300,-1]]){emit('pointerdown',pointer(190,200));emit('pointerup',pointer(x,205));assert.equal(h.moves.at(-1),expected,kind+' direction');}
  const before=h.moves.length;
@@ -32,20 +33,19 @@ for(const kind of ['adhkar','learning']){
  emit('keydown',{key:'ArrowLeft',target:{closest:()=>({})},preventDefault(){}});assert.equal(h.moves.length,before,'Keyboard controls retain their own actions');
  if(kind==='adhkar'){emit('pointerdown',pointer(190,200));emit('pointercancel',{});let blocked=false;emit('click',{isTrusted:true,preventDefault(){blocked=true},stopPropagation(){},stopImmediatePropagation(){}});assert.equal(blocked,true,'Cancelled scroll cannot open the explanation as a tap');}
 }
-// Completed gestures change the actual card index in both directions and open
-// the summary only after the final card, independently of navigation controls.
+// Settled native pages update the card, counter and route together.
 {
  const shell={tabIndex:0,dataset:{},isConnected:true,addEventListener(){},removeEventListener(){},setPointerCapture(){},getBoundingClientRect:()=>({width:360,left:0,top:0}),querySelector(){return shell}};
  let swipeOptions;const transitions=[];
- const host={querySelector:selector=>selector.endsWith('shell')?shell:{click(){transitions.push('hidden-button')}}};
+ const host={querySelector:selector=>selector.endsWith('shell')?shell:{click(){transitions.push('button')}}};
  const win={getSelection:()=>({toString:()=>''}),addEventListener(){},removeEventListener(){},clearTimeout(){},scrollTo(){transitions.push('scroll')}};
- const context=createContext({host,window:win,bindSwipeMotion:(node,options)=>{swipeOptions=options;return()=>{}},settings:{},Date,cursor:0,group:'morning',data:{groups:{morning:{ids:['one','two','three']}}},card:direction=>transitions.push('card:'+direction),summary:()=>transitions.push('summary'),suppressTapUntil:0,disposeSwipe:null});
+ const context=createContext({host,window:win,bindNativeCardSwipe:(node,options)=>{swipeOptions=options;return()=>{}},settings:{},Date,cursor:0,group:'morning',data:{groups:{morning:{ids:['one','two','three']}}},card:direction=>transitions.push('card:'+direction),summary:()=>transitions.push('summary'),suppressTapUntil:0,disposeSwipe:null});
  new Script(files.adhkar.split('\n').find(line=>line.startsWith('function bindSwipe('))+';bindSwipe()').runInContext(context);
- swipeOptions.commit(-1);assert.equal(context.cursor,1,'left swipe advances the adhkar card');assert.deepEqual(transitions,['card:1','scroll']);
- swipeOptions.commit(1);assert.equal(context.cursor,0,'right swipe returns to the previous adhkar card');assert.deepEqual(transitions,['card:1','scroll','card:-1','scroll']);
- swipeOptions.commit(1);assert.equal(context.cursor,0,'first adhkar card cannot move before the beginning');
- context.cursor=2;swipeOptions.commit(-1);assert.equal(transitions.at(-2),'summary','left swipe on the last adhkar card opens the summary');
- assert(!transitions.includes('hidden-button'),'adhkar swipe does not depend on a hidden button click');
+ swipeOptions.commit(-1);assert.equal(context.cursor,1,'left swipe advances the adhkar card directly');
+ swipeOptions.commit(1);assert.equal(context.cursor,0,'right swipe returns directly to the previous card');
+ swipeOptions.commit(1);assert.equal(context.cursor,0,'first card cannot move before the beginning');
+ context.cursor=2;swipeOptions.commit(-1);assert.equal(transitions.at(-2),'summary','the last card opens the summary');
+ assert(!transitions.includes('button'),'navigation does not depend on hidden button clicks');
 }
 const listeners=new Map();let opened=0,selection='';
 const surface={ownerDocument:{defaultView:{getSelection:()=>({toString:()=>selection})}},addEventListener:(type,fn)=>listeners.set(type,fn),setPointerCapture(){}};

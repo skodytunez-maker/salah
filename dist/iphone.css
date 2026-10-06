@@ -256,6 +256,10 @@ html.swipe-in-progress,html.swipe-in-progress body{overflow-x:clip}
 .swipe-moving{will-change:transform;animation:none!important;transition:none!important;user-select:none;-webkit-user-select:none}
 .swipe-preview{position:fixed!important;margin:0!important;z-index:8;pointer-events:none!important;will-change:transform;animation:none!important;transition:none!important}
 .adhkar-shell{touch-action:pan-y pinch-zoom}
+body.adhkar-reading .adhkar-shell{touch-action:auto}
+.adhkar-card-carousel{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;direction:ltr;touch-action:auto}
+.adhkar-card-carousel::-webkit-scrollbar{display:none}
+.adhkar-card-carousel>.adhkar-carousel-page{flex:0 0 100%;width:100%;min-width:0;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;align-self:flex-start;margin:0!important;animation:none!important}
 @media(hover:hover) and (pointer:fine){.app-navigation-edge{display:none}}
 
 .settings-label{display:flex;align-items:center;gap:12px;min-width:0;padding-right:12px}
