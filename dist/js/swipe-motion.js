@@ -1,12 +1,12 @@
 // Shared horizontal gesture: no work runs between gestures; one paint per animation frame.
 const controls='button,a,input,select,textarea,summary,[contenteditable="true"],[data-no-swipe]';
-export function swipeDecision({dx,dy,width,velocity=0}){
+export function swipeDecision({dx,dy,width,velocity=0,minDistance=64,maxDistance=140,distanceRatio=.28,flingDistance=32,flingVelocity=.5}){
  if(Math.abs(dx)<12||Math.abs(dx)<=Math.abs(dy)*1.5)return 0;
- const distance=Math.min(140,Math.max(64,width*.28));
- if(Math.abs(dx)>=distance||(Math.abs(dx)>=32&&Math.abs(velocity)>=.5&&Math.sign(velocity)===Math.sign(dx)))return Math.sign(dx);
+ const distance=Math.min(maxDistance,Math.max(minDistance,width*distanceRatio));
+ if(Math.abs(dx)>=distance||(Math.abs(dx)>=flingDistance&&Math.abs(velocity)>=flingVelocity&&Math.sign(velocity)===Math.sign(dx)))return Math.sign(dx);
  return 0;
 }
-export function bindSwipeMotion(target,{surface=()=>target,canStart=()=>true,canMove=()=>true,commit,preview,onSuppress=()=>{},reduced=()=>false,win=window,now=()=>performance.now(),ignoreControls=true}={}){
+export function bindSwipeMotion(target,{surface=()=>target,canStart=()=>true,canMove=()=>true,commit,preview,onSuppress=()=>{},reduced=()=>false,win=window,now=()=>performance.now(),ignoreControls=true,swipeThreshold={}}={}){
  let epoch=0,gesture=null,frame=0,settling=false,timer=0,animation=null,ghost=null,suppressUntil=0,disposed=false,painted=null;
  const listeners=[];
  const listen=(node,type,fn,options)=>{node.addEventListener(type,fn,options);listeners.push(()=>node.removeEventListener(type,fn,options));};
@@ -76,7 +76,7 @@ export function bindSwipeMotion(target,{surface=()=>target,canStart=()=>true,can
   if(!gesture)return;
   if(!g.locked&&Math.hypot(g.dx,g.dy)>10)suppress();
   if(win.getSelection?.()?.toString()){cancel();return;}
-  const direction=swipeDecision(g);
+  const direction=swipeDecision({...g,...swipeThreshold});
   finish(g.locked&&canMove(direction)?direction:0);
  });
  listen(target,'pointercancel',()=>{suppress();cancel();});
