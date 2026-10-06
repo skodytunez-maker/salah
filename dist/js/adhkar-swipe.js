@@ -5,6 +5,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
  const previous=preview(1),next=preview(-1),activeIndex=previous?1:0;
  const pages=[previous,passage,next].filter(Boolean),previewIds=new Map();
  row.style.marginTop=win.getComputedStyle?.(passage).marginTop||'28px';
+ row.style.scrollSnapType='none';row.style.scrollBehavior='auto';
  parent.insertBefore(row,passage);
  for(const page of pages){
   page.classList.add('adhkar-carousel-page');
@@ -32,7 +33,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
   if(Math.abs(row.scrollLeft-index*width)>2){row.scrollTo({left:index*width,behavior:'smooth'});return;}
   if(index===activeIndex)return;
   const incoming=pages[index];previewIds.get(incoming)?.forEach(([n,id])=>n.setAttribute('id',id));
-  incoming.inert=false;incoming.removeAttribute('aria-hidden');incoming.classList.remove('adhkar-carousel-preview','adhkar-carousel-page');incoming.classList.add('dhikr-passage');
+  incoming.inert=false;incoming.removeAttribute('aria-hidden');incoming.classList.remove('adhkar-carousel-preview');incoming.classList.add('dhikr-passage');
   committed=true;suppress();commit(index>activeIndex?-1:1,incoming);
  }
  const schedule=()=>{win.clearTimeout(timer);timer=win.setTimeout(settle,160);};
@@ -43,7 +44,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
  listen('touchcancel',()=>{touching=false;row.scrollTo({left:activeIndex*width,behavior:'smooth'});schedule();},{passive:true});
  listen('click',e=>{if(e.isTrusted&&Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
  size();
- const frame=win.requestAnimationFrame(()=>{size();initializing=false;});
+ const frame=win.requestAnimationFrame(()=>{size();row.scrollLeft=activeIndex*width;row.style.scrollSnapType='';initializing=false;});
  const observer=win.ResizeObserver?new win.ResizeObserver(size):null;
  observer?.observe(row);observer?.observe(passage);
  return()=>{
