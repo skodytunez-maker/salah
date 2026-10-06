@@ -54,6 +54,35 @@ gradle.projectsEvaluated {
             factory.setFeature('http://xml.org/sax/features/external-parameter-entities', false)
             factory.setXIncludeAware(false)
             factory.setExpandEntityReferences(false)
+            def child = { node, name ->
+                for (int i = 0; i < node.childNodes.length; i++) {
+                    def candidate = node.childNodes.item(i)
+                    if (candidate.nodeName == name) return candidate
+                }
+                null
+            }
+            def declaredLicenses = { document ->
+                def licenses = []
+                def root = child(document.documentElement, 'licenses')
+                if (root == null) return licenses
+                for (int i = 0; i < root.childNodes.length; i++) {
+                    def item = root.childNodes.item(i)
+                    if (item.nodeName != 'license') continue
+                    def value = [:]
+                    for (def key in ['name', 'url', 'distribution']) {
+                        def field = child(item, key)
+                        if (field != null) value[key] = field.textContent.trim()
+                    }
+                    if (!value.isEmpty()) licenses.add(value)
+                }
+                licenses
+            }
+            def parentCoordinate = { document ->
+                def parent = child(document.documentElement, 'parent')
+                if (parent == null) return null
+                def values = ['groupId', 'artifactId', 'version'].collect { name -> child(parent, name)?.textContent?.trim() }
+                values.every { it != null } ? values.join(':') : null
+            }
             reports.mkdirs()
             new File(reports, 'poms').mkdirs()
             def packages = []
@@ -68,29 +97,33 @@ gradle.projectsEvaluated {
                 def savedPom = parts.join('_') + '.pom'
                 new File(reports, 'poms/' + savedPom).bytes = pomBytes
                 def xml = factory.newDocumentBuilder().parse(new ByteArrayInputStream(pomBytes))
-                def licenses = []
-                def roots = xml.documentElement.childNodes
-                for (int i = 0; i < roots.length; i++) {
-                    def node = roots.item(i)
-                    if (node.nodeName != 'licenses') continue
-                    def items = node.childNodes
-                    for (int j = 0; j < items.length; j++) {
-                        def item = items.item(j)
-                        if (item.nodeName != 'license') continue
-                        def value = [:]
-                        for (int k = 0; k < item.childNodes.length; k++) {
-                            def child = item.childNodes.item(k)
-                            if (child.nodeName in ['name', 'url', 'distribution']) value[child.nodeName] = child.textContent.trim()
-                        }
-                        if (!value.isEmpty()) licenses.add(value)
-                    }
+                def licenses = declaredLicenses(xml)
+                def inheritedPoms = []
+                def licenseSource = coordinate
+                def visited = [coordinate] as Set
+                for (int depth = 0; licenses.isEmpty() && depth < 8; depth++) {
+                    def parent = parentCoordinate(xml)
+                    if (parent == null) break
+                    def parentParts = parent.split(':')
+                    // Unresolved Maven property expressions are evidence gaps, never guessed.
+                    if (parentParts.length != 3 || !parentParts.every { it ==~ /[A-Za-z0-9_.+-]+/ }) break
+                    if (!visited.add(parent)) throw new GradleException('Cyclic Maven parent chain: ' + coordinate)
+                    def parentConfiguration = app.configurations.detachedConfiguration(app.dependencies.create(parent + '@pom'))
+                    parentConfiguration.transitive = false
+                    byte[] parentBytes = parentConfiguration.singleFile.bytes
+                    def parentFile = parentParts.join('_') + '.pom'
+                    new File(reports, 'poms/' + parentFile).bytes = parentBytes
+                    inheritedPoms.add([coordinate: parent, file: 'poms/' + parentFile, sha256: digest(parentBytes)])
+                    xml = factory.newDocumentBuilder().parse(new ByteArrayInputStream(parentBytes))
+                    licenses = declaredLicenses(xml)
+                    licenseSource = parent
                 }
                 def files = artifacts[coordinate].sort { it.file.name }.collect { artifact ->
                     def notices = readNotices(artifact.file)
                     notices.each { text.add(coordinate + ' — ' + it.path + '\n' + it.text) }
                     [file: artifact.file.name, sha256: digest(artifact.file.bytes), notices: notices.collect { notice -> notice.findAll { key, value -> key != 'text' } }]
                 }
-                packages.add([coordinate: coordinate, pom: [file: 'poms/' + savedPom, sha256: digest(pomBytes)], declaredLicenses: licenses, artifacts: files, status: licenses.isEmpty() ? 'needs-review' : 'declaration-and-artifact-recorded'])
+                packages.add([coordinate: coordinate, pom: [file: 'poms/' + savedPom, sha256: digest(pomBytes)], declaredLicenses: licenses, licenseSourceCoordinate: licenses.isEmpty() ? null : licenseSource, parentPomEvidence: inheritedPoms, artifacts: files, status: licenses.isEmpty() ? 'needs-review' : 'declaration-and-artifact-recorded'])
                 text.add(coordinate + '\n' + licenses.collect { (it.name ?: 'Unspecified') + ' — ' + (it.url ?: '') }.join('\n'))
             }
             def report = [schemaVersion: 1, scope: 'External artifacts in actual debugRuntimeClasspath. Excludes project code, build tools, SDKs and content. POM declarations are not a clearance decision.', configuration: 'debugRuntimeClasspath', packageCount: packages.size(), packages: packages]

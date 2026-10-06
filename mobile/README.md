@@ -88,7 +88,7 @@ The generated project takes versionCode and versionName from the current SALAH w
 
 The npm evidence is complemented by platform evidence:
 
-- Android CI resolves the actual `debugRuntimeClasspath`, saves each external Maven artifact fingerprint and POM license declaration, retains notices found in AAR/JAR files (including `classes.jar`), and packages `Android-NOTICES.txt` before APK compilation. Raw POMs and review statuses are uploaded as `salah-android-native-evidence`. This is an evidence inventory; a missing or incomplete license declaration remains `needs-review`.
+- Android CI resolves the actual `debugRuntimeClasspath`, saves each external Maven artifact fingerprint and POM license declaration (including bounded parent-POM inheritance, with preserved source files), retains notices found in AAR/JAR files (including `classes.jar`), and packages `Android-NOTICES.txt` before APK compilation. Raw POMs and review statuses are uploaded as `salah-android-native-evidence`. This is an evidence inventory; a missing or incomplete license declaration remains `needs-review`.
 - iOS configuration pins Capacitor SwiftPM 8.5.2 to its reviewed commit and binary manifest, preserves the existing single-package resolved file, and refuses to overwrite unexpected pins. CI checks the real checkout, compiled simulator frameworks and Apache/Cordova notices inside the app. Xcode uses only versions from `Package.resolved`.
 - Non-default Ruby gems actually loaded by the Xcode project generator are inventoried as build tools; they are not packaged in SALAH. Their declarations and shipped notices are archived with `salah-ios-native-evidence`.
 
