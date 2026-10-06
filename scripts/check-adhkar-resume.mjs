@@ -54,8 +54,16 @@ class Element {
   checkValidity(){return true}reportValidity(){}
 }
 function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026-10-02'}={}){
-  const location={hash},body=new Element('body'),container=new Element(),events=new Map(),audio=[],notices=[];let scroll=0,fetches=0,currentDay=day,deferredLock=null;
-  const window={history:{state:null,replaceState(_state,_title,url){location.hash=url}},addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},clearTimeout,scrollTo(_x,y){scroll=y}};
+  const entries=[{hash,state:null}];let historyIndex=0;
+  const location={get hash(){return entries[historyIndex].hash},set hash(value){const next=value.startsWith('#')?value:'#'+value;if(next===this.hash)return;entries.splice(historyIndex+1);entries.push({hash:next,state:null});historyIndex++}};
+  const body=new Element('body'),container=new Element(),events=new Map(),audio=[],notices=[];let scroll=0,fetches=0,currentDay=day,deferredLock=null;
+  const window={history:{
+    get state(){return entries[historyIndex].state},
+    replaceState(state,_title,url){entries[historyIndex]={hash:url??location.hash,state}},
+    pushState(state,_title,url){entries.splice(historyIndex+1);entries.push({hash:url??location.hash,state});historyIndex++},
+    back(){if(historyIndex>0){historyIndex--;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}},
+    forward(){if(historyIndex<entries.length-1){historyIndex++;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}}
+   },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},clearTimeout,scrollTo(_x,y){scroll=y}};
   const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
     bindNativeCardSwipe:()=>()=>{},
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
@@ -67,7 +75,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     fetch:async()=>{fetches++;return {ok:true,json:async()=>structuredClone(items)}}
   });
   const module=new Script(executable,{filename:'adhkar.js'}).runInContext(context);
-  return {module,container,location,storage,audio,notices,open:()=>module.showAdhkar(container,'morning'),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
+  return {module,container,location,storage,audio,notices,window,get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning')},open:()=>module.showAdhkar(container,'morning'),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
 }
 const params=page=>new URLSearchParams(page.location.hash.split('?')[1]||'');
 const cardId=page=>page.select('#adhkar-count').dataset.dhikrId;
@@ -114,6 +122,31 @@ for(const group of ['morning','evening'])for(const exit of ['button','edge']){
  await exitPage.select('#dhikr-continue').click();assert.equal(cardId(exitPage),'surah112');assert.match(exitPage.select('#adhkar-count').textContent,/1 \/ 3/);
 }
 console.log('PASS: morning/evening card button and edge-back return to the collection choice, stop audio and retain progress.');
+
+// Reproduce the recorded route: Home -> Azkars -> morning/evening list -> OS Back.
+// Use the real browser history operation, bypassing the custom edge button.
+for(const group of ['morning','evening']){
+ const native=browser({hash:'#home'});native.location.hash='#adhkar';await native.open();
+ await native.select('[data-group="'+group+'"]').click();assertList(native);
+ assert.deepEqual(native.historyEntries,['#home','#adhkar','#adhkar?group='+group]);
+ await native.nativeBack();assertHub(native);assert.equal(native.location.hash,'#adhkar');assert.equal(native.historyIndex,1);
+ await native.select('[data-group="'+group+'"]').click();await native.select('[data-index="3"]').click();
+ await native.select('#adhkar-count').click();await native.select('#adhkar-next').click();
+ const saved=native.storage.getItem('salah:adhkar-progress-v2');
+ assert.equal(native.historyEntries.length,3,'Paging cards must replace the reading entry');
+ await native.nativeBack();assertHub(native);assert.equal(native.location.hash,'#adhkar');
+ assert.equal(native.storage.getItem('salah:adhkar-progress-v2'),saved,'Native Back retains repetition counts');
+ await native.select('[data-group="'+group+'"]').click();await native.select('#dhikr-back').click();
+ assertHub(native);assert.equal(native.historyIndex,1,'The visible Back button consumes the same child entry as OS Back');
+ native.window.history.back();assert.equal(native.location.hash,'#home','Another Back from the collection menu returns to Home once');
+}
+for(const hash of ['#adhkar?group=morning','#adhkar?group=evening&view=card&item=surah112','#adhkar?view=counter']){
+ const direct=browser({hash});await direct.open();
+ assert.deepEqual(direct.historyEntries,['#adhkar',hash],'A direct nested launch seeds one collection-menu parent');
+ const entries=direct.historyEntries.length;await assertUnchanged(direct);assert.equal(direct.historyEntries.length,entries);
+ await direct.nativeBack();assertHub(direct);assert.equal(direct.location.hash,'#adhkar');
+}
+console.log('PASS: native history Back from both lists and cards opens the Azkars menu, preserves counts, avoids duplicate parents and card history, and handles direct launches.');
 
 // A chosen ID is stable even when a later catalogue changes item order.
 await page.select('#all-dhikr').click();assertList(page);await page.select('[data-index="3"]').click();const allId=cardId(page),allHash=page.location.hash;

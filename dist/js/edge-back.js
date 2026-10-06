@@ -6,8 +6,8 @@ export function createRouteBackStack(win=window){
  // Opening a private owner card creates an unrepeatable, same-URL entry and
  // discards the browser's old forward branch. Never offer that old branch.
  function syncPrivateView(){if(win.history.state?.salahOwnerCard)steps.splice(index+1);}
- remember();win.addEventListener('hashchange',remember);win.addEventListener('popstate',remember);
- return{canBack:()=>{syncPrivateView();return index>0;},canForward:()=>{syncPrivateView();return index>=0&&index<steps.length-1;},back(){if(index>0)win.history.back();},forward(){syncPrivateView();if(index>=0&&index<steps.length-1)win.history.forward();},dispose(){win.removeEventListener('hashchange',remember);win.removeEventListener('popstate',remember);}};
+ remember();win.addEventListener('hashchange',remember);win.addEventListener('popstate',remember);win.addEventListener('salah:route-history',remember);
+ return{canBack:()=>{syncPrivateView();return index>0;},canForward:()=>{syncPrivateView();return index>=0&&index<steps.length-1;},back(){if(index>0)win.history.back();},forward(){syncPrivateView();if(index>=0&&index<steps.length-1)win.history.forward();},dispose(){win.removeEventListener('hashchange',remember);win.removeEventListener('popstate',remember);win.removeEventListener('salah:route-history',remember);}};
 }
 const visible=el=>el&&!el.disabled&&!el.closest('[hidden]')&&el.getClientRects().length>0;
 export function resolveBackAction(app,stack){
