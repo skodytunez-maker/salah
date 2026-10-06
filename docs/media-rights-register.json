@@ -1,0 +1,1077 @@
+{
+  "schemaVersion": 2,
+  "auditedAt": "2026-10-07",
+  "repository": "skodytunez-maker/salah",
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical.",
+  "statuses": {
+    "needs-review": "Missing final-file/input permission evidence.",
+    "license-recorded": "A license notice is present, with compliance conditions; not blanket ownership clearance.",
+    "origin-supported": "Project provenance has supporting evidence; not a declaration of exclusive copyright.",
+    "cleared-with-evidence": "For future confirmed cases only: requires final-file evidence and scope."
+  },
+  "assets": [
+    {
+      "path": "dist/assets/amiri-quran.ttf",
+      "gitBlobSha": "22f94bad26d4d537814011b1bec57a0ea4d8ba99",
+      "bytes": 130184,
+      "kind": "font",
+      "rightsReviewStatus": "license-recorded",
+      "license": "SIL-OFL-1.1",
+      "rightsEvidence": "dist/assets/amiri-OFL.txt",
+      "note": "Bundled font license permits use and embedding; exact upstream-font provenance remains an evidence task."
+    },
+    {
+      "path": "dist/assets/arrow-left.svg",
+      "gitBlobSha": "587d4fec8efbe7796d4959b9599e2f43c8189bde",
+      "bytes": 310,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/audio/adhan-mansour-fajr.mp3",
+      "gitBlobSha": "52ff06d6d0602ee644c058a379af19eb57b8a33f",
+      "bytes": 3905851,
+      "kind": "audio",
+      "rightsReviewStatus": "needs-review",
+      "note": "See adhan evidence: a public non-commercial-app reply is not a SALAH-specific commercial or social-video license."
+    },
+    {
+      "path": "dist/assets/audio/adhan-mansour.mp3",
+      "gitBlobSha": "e0ca1784f17815603452898e2310f48171c7dd37",
+      "bytes": 3358625,
+      "kind": "audio",
+      "rightsReviewStatus": "needs-review",
+      "note": "See adhan evidence: a public non-commercial-app reply is not a SALAH-specific commercial or social-video license."
+    },
+    {
+      "path": "dist/assets/audio/adhan-mishary.mp3",
+      "gitBlobSha": "4ed88ba424b9e634ad708eb9c681a68af5281e1c",
+      "bytes": 4114842,
+      "kind": "audio",
+      "rightsReviewStatus": "needs-review",
+      "note": "See adhan evidence: a public non-commercial-app reply is not a SALAH-specific commercial or social-video license."
+    },
+    {
+      "path": "dist/assets/book.svg",
+      "gitBlobSha": "302acf09e08c0d432665d6dfc9c32ab94a39c7b7",
+      "bytes": 770,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/circle.svg",
+      "gitBlobSha": "9bbabcae3394ba665ee9dad7cf69d022b1f709ea",
+      "bytes": 213,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/clock.svg",
+      "gitBlobSha": "31c3c64cd43b33292c14b593905323610153c012",
+      "bytes": 305,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/day-mosque.webp",
+      "gitBlobSha": "28807b005fdcbaaf8e907788a8fea3c4244099f5",
+      "bytes": 132316,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/gear.svg",
+      "gitBlobSha": "30cfaa386f63aa10eefaf7d32ee47570b1d0ebc3",
+      "bytes": 1507,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/house.svg",
+      "gitBlobSha": "cb57f687a7eb44b9c9f0e9e9d4e54f7cc4df46a6",
+      "bytes": 415,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/info-circle.svg",
+      "gitBlobSha": "e2b50eb5fba604b1096afe8c759f661563860963",
+      "bytes": 460,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/journal-bookmark.svg",
+      "gitBlobSha": "4a8f4bbd8f5861dda457e2b528916880ed40799f",
+      "bytes": 649,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/landmark.svg",
+      "gitBlobSha": "c5266b84d9dbd28a8ff934fed8854136e9d46d31",
+      "bytes": 480,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/list-ul.svg",
+      "gitBlobSha": "f1cc202cab3a10999df9e757f381f5b44c15c0ba",
+      "bytes": 441,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/moon-stars.svg",
+      "gitBlobSha": "ae138c2df7a4a03fc0c93c2ec795081adaedc2da",
+      "bytes": 1154,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/night-mosque.webp",
+      "gitBlobSha": "b19435d6bb94fdfb13979d7291168159442ffcf2",
+      "bytes": 71946,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/person.svg",
+      "gitBlobSha": "98ea060fe2167ce724557e6537cf3c3fecb6f4b2",
+      "bytes": 375,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/prayer-poses.png",
+      "gitBlobSha": "fe001196a7c58fc7aad7dcc19eb9ca2cb0e35e96",
+      "bytes": 1283672,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/salah-mark.svg",
+      "gitBlobSha": "d043cd4b7b8868bcb49c310246e18527275e485a",
+      "bytes": 1309,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/salah-qr.png",
+      "gitBlobSha": "bcb012948be3895f276ec071114ae7e7a1c2fc2c",
+      "bytes": 1782,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "https://github.com/skodytunez-maker/salah/commit/0a012f0dbbb609062e1f283c20c1d089d2413cb1",
+      "note": "Project history introduces the public-link QR export; record the generator if regenerated."
+    },
+    {
+      "path": "dist/assets/salah-qr.svg",
+      "gitBlobSha": "5407a80f960c7597118b72bb32d38f862aec4819",
+      "bytes": 6190,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "https://github.com/skodytunez-maker/salah/commit/0a012f0dbbb609062e1f283c20c1d089d2413cb1",
+      "note": "Project history introduces a QR encoding the public SALAH URL, with no third-party illustration. The encoder/source-generation record is not in the repository."
+    },
+    {
+      "path": "dist/assets/star-fill.svg",
+      "gitBlobSha": "de09c4aa5751e15382154dc37dc3a097bb663729",
+      "bytes": 399,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/star.svg",
+      "gitBlobSha": "fcdcb1cf38e0b1cab577663cd3bc26604045273f",
+      "bytes": 623,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/sun.svg",
+      "gitBlobSha": "3777f070f8cbb80bf04cad200803f9993b034472",
+      "bytes": 806,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/three-dots.svg",
+      "gitBlobSha": "4706f52a94269248e41a91d196f67bc8b6810916",
+      "bytes": 272,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/assets/tyumen-october-2026.png",
+      "gitBlobSha": "25f71321109d45fbc58f1ec3e7d0f627b55f55e6",
+      "bytes": 528360,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/window-moon.webp",
+      "gitBlobSha": "fe8b495a8c4ccf40d2b3425ce864b553446e9970",
+      "bytes": 7560,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/window-new-york-day.webp",
+      "gitBlobSha": "5f56f6099d9d7949d8fa81df4fbd56b03461c58a",
+      "bytes": 266932,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/window-new-york-night.webp",
+      "gitBlobSha": "ebeb3b4fff6c18a673d986d199804b06ff671b41",
+      "bytes": 173168,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/window-sky-mask.svg",
+      "gitBlobSha": "0dc22c407dee21d2fddaff99df046471e4da7f1b",
+      "bytes": 6890,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/window-weather-mask.svg",
+      "gitBlobSha": "462d836fcf11d61210d869ab3c6dc5ac49f2a99c",
+      "bytes": 149,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/assets/x-lg.svg",
+      "gitBlobSha": "b689cbb4d8d611342a3099e76dfc845ffd14d108",
+      "bytes": 308,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "note": "Exact Bootstrap Icons Git blob, with the matching MIT notice already bundled. Original import version is not asserted.",
+      "license": "MIT",
+      "rightsEvidence": "docs/bootstrap-icon-evidence.json"
+    },
+    {
+      "path": "dist/favicon.svg",
+      "gitBlobSha": "d043cd4b7b8868bcb49c310246e18527275e485a",
+      "bytes": 1309,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/icon-180.png",
+      "gitBlobSha": "b7a8ac2d092fcf18b39ee102409a61e545c025bf",
+      "bytes": 16298,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/icon-192.png",
+      "gitBlobSha": "7fd78852de5c4aa886230d7dc938d23eb672e70e",
+      "bytes": 17422,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/icon-512.png",
+      "gitBlobSha": "63f53e13a1a69f51e2450b308f187318eed74d7b",
+      "bytes": 56095,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/icon-maskable.png",
+      "gitBlobSha": "63f53e13a1a69f51e2450b308f187318eed74d7b",
+      "bytes": 56095,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Creator, original inputs and final-file evidence need documentation; this status is not a finding of infringement."
+    },
+    {
+      "path": "dist/wallpapers/afghanistan/afghanistan-day-final.webp",
+      "gitBlobSha": "a2f98a469b727bc76b36b801eb74497ff00b4bbf",
+      "bytes": 232144,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "afghanistan",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/afghanistan/afghanistan-night-final.webp",
+      "gitBlobSha": "47dafd00374e9441d8de83c75324f3c782b6a814",
+      "bytes": 184872,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "afghanistan",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/afghanistan/sky-v1.svg",
+      "gitBlobSha": "cc343e6561ab5853445387d0449d6fcb8a01d2da",
+      "bytes": 1173,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "afghanistan",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/almaty/day-v1.webp",
+      "gitBlobSha": "1bc2da2a770e13ba983084cf1cec6ce22f7576c1",
+      "bytes": 330454,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "almaty",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/almaty/night-v1.webp",
+      "gitBlobSha": "571a36a211f988eaeeaba6a285e75a99b9fc159f",
+      "bytes": 210142,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "almaty",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/almaty/sky-v1.svg",
+      "gitBlobSha": "6104aacf32c5b98d0f59a638579abec176ce2ac7",
+      "bytes": 746,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "almaty",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/astana/day-v1.webp",
+      "gitBlobSha": "e0c0354b12469a757138f20bcf9dd72b7159ec2e",
+      "bytes": 335702,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "astana",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/astana/night-v1.webp",
+      "gitBlobSha": "41d0807f64b97bc013d7011d2cccdb42a519ff20",
+      "bytes": 248648,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "astana",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/astana/sky-v1.svg",
+      "gitBlobSha": "49955c9a1ec0bfd6e81c928b250718f38290a2b6",
+      "bytes": 1005,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "astana",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/badakhshan/badakhshan-day.webp",
+      "gitBlobSha": "bc55b99e32a8dcc61f8f56c62932caa289c07a12",
+      "bytes": 230310,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "badakhshan",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/badakhshan/badakhshan-night-v1.webp",
+      "gitBlobSha": "553c45cff84622817f88a34ed51d19e95cafecdc",
+      "bytes": 150274,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "badakhshan",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/badakhshan/badakhshan-real-day.webp",
+      "gitBlobSha": "d9f4d9d47d2b9d769028a8bb5859f5957c437966",
+      "bytes": 202634,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Bundled alternative not selected by the active wallpaper catalogue; source and final-file rights still need evidence."
+    },
+    {
+      "path": "dist/wallpapers/badakhshan/badakhshan-real-night.webp",
+      "gitBlobSha": "abcc738936fa53068e1ed6eb2653f8ecf7190d9e",
+      "bytes": 173212,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "Bundled alternative not selected by the active wallpaper catalogue; source and final-file rights still need evidence."
+    },
+    {
+      "path": "dist/wallpapers/badakhshan/sky-v1.svg",
+      "gitBlobSha": "64553f2e5dc579e9e6025e5919423d83a7a05741",
+      "bytes": 600,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "badakhshan",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/derbent/day-v1.webp",
+      "gitBlobSha": "437f090ca5abe009ce5ccd55951afb79111d6f19",
+      "bytes": 338126,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "derbent",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/derbent/night-v1.webp",
+      "gitBlobSha": "3efaac1f77ae7858dc171d7fdca0d81f18deae82",
+      "bytes": 189974,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "derbent",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/derbent/sky-v1.svg",
+      "gitBlobSha": "8c50fb0887f05897a094f9d3c1beb8ee51780b44",
+      "bytes": 325,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "derbent",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/dushanbe/day-v1.webp",
+      "gitBlobSha": "02c2118da5cbd74d4f604a1a58bfac3e36e62702",
+      "bytes": 311790,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "dushanbe",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/dushanbe/night-v1.webp",
+      "gitBlobSha": "c0a94346f0fda752def8d7f2218c75f86a4186d1",
+      "bytes": 208826,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "dushanbe",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/dushanbe/sky-v1.svg",
+      "gitBlobSha": "76ad7ce120e558049436c5108f42207e31db1d6c",
+      "bytes": 693,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "dushanbe",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/grozny/day-v1.webp",
+      "gitBlobSha": "7f0f8061530ea2ff1aa61fbb5c778b85856f493d",
+      "bytes": 358658,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "grozny",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/grozny/night-v1.webp",
+      "gitBlobSha": "7ca0aade30e53084f83414f5ff33d1a87fd70a3d",
+      "bytes": 297714,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "grozny",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/grozny/sky-v1.svg",
+      "gitBlobSha": "8ca0d9fa54d9c9ddc50178f99cc47ff6869894a4",
+      "bytes": 1424,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "grozny",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/khujand/day-v1.webp",
+      "gitBlobSha": "18dd82cd68de94ae3929a3786e1d4b2afa5fbc11",
+      "bytes": 399180,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "khujand",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/khujand/night-v1.webp",
+      "gitBlobSha": "ce26532d9070e76b280bf123ef159587d5213cec",
+      "bytes": 318854,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "khujand",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/khujand/sky-v1.svg",
+      "gitBlobSha": "2ebe86f8b0d43fd1a30295ed892593bbf0db6810",
+      "bytes": 561,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "khujand",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/makhachkala/day-v1.webp",
+      "gitBlobSha": "108b1efa85786594fce54feef4c630a5606d6b46",
+      "bytes": 380528,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "makhachkala",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/makhachkala/night-v1.webp",
+      "gitBlobSha": "73db4e0206abd54c979bca32e794f9997eacc87c",
+      "bytes": 289376,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "makhachkala",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/makhachkala/sky-v1.svg",
+      "gitBlobSha": "0cc7470fb4b9d9b03a03e5e7cad64671ef7e27de",
+      "bytes": 860,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "makhachkala",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/moscow/day-v1.webp",
+      "gitBlobSha": "9186f944ce047e04b539d1dc30b0a9c1904989ec",
+      "bytes": 269658,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "moscow",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/moscow/night-v1.webp",
+      "gitBlobSha": "417047aebf0ba7f449f6011b5919bf0e1526f1e9",
+      "bytes": 214676,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "moscow",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/moscow/sky-v1.svg",
+      "gitBlobSha": "19e2045e4f98407486b9c5d4d9239e14eb19c5da",
+      "bytes": 1443,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "moscow",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/omsk/day-v1.webp",
+      "gitBlobSha": "c9c2da73091aacf8481f1bccff8bb637fae9eba0",
+      "bytes": 316776,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "omsk",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/omsk/night-v1.webp",
+      "gitBlobSha": "7ec5051b5a12b90097a05fc549c2f817f6c8afc3",
+      "bytes": 191320,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "omsk",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/omsk/sky-v1.svg",
+      "gitBlobSha": "727880f59ae73a52454e856c5d814c401a8a18f7",
+      "bytes": 855,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "omsk",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/pamir/day-v1.webp",
+      "gitBlobSha": "88feadb9cf0936a2b3f6e69639041b51579e0ec0",
+      "bytes": 325574,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "pamir",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/pamir/night-v1.webp",
+      "gitBlobSha": "1a65959973993b4203f6886a02beba4377d8f82e",
+      "bytes": 174576,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "pamir",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/pamir/sky-v1.svg",
+      "gitBlobSha": "cc3c5e51114d20065739a96d723e60f42b64f29b",
+      "bytes": 507,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "pamir",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/tashkent/day-v1.webp",
+      "gitBlobSha": "65202e5412b0ce4049b51e01805521847bf9ec23",
+      "bytes": 301708,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "tashkent",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/tashkent/night-v1.webp",
+      "gitBlobSha": "a1c7fbe8bc096ba11a46cc67865c00f25fd79cc5",
+      "bytes": 231338,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "tashkent",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/tashkent/sky-v1.svg",
+      "gitBlobSha": "f3870733c6f7738ef5742c9cb002f99b9981717b",
+      "bytes": 730,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "tashkent",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/day-v1.webp",
+      "gitBlobSha": "08ad31e3d57154c0a6ba4a6a96fc80873aa5c8dd",
+      "bytes": 201266,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "tyumen",
+      "role": "day",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-v1.webp",
+      "gitBlobSha": "f49c24dd4bda6019a90d81f698b0ddf870600a83",
+      "bytes": 149284,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "tyumen",
+      "role": "night",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/sky-v1.svg",
+      "gitBlobSha": "1281c1568a352f9415fa844c30f1b194f84c2bca",
+      "bytes": 626,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "wallpaperSet": "tyumen",
+      "role": "mask",
+      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    }
+  ],
+  "wallpaperSets": [
+    {
+      "id": "tyumen",
+      "name": "Тюмень",
+      "paths": [
+        "dist/wallpapers/tyumen/day-v1.webp",
+        "dist/wallpapers/tyumen/night-v1.webp",
+        "dist/wallpapers/tyumen/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "No creation record for this set in current credits.json.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [],
+      "nextAction": "Record generation session and original reference provenance; the active catalogue has no credits entry for Tyumen."
+    },
+    {
+      "id": "omsk",
+      "name": "Омск",
+      "paths": [
+        "dist/wallpapers/omsk/day-v1.webp",
+        "dist/wallpapers/omsk/night-v1.webp",
+        "dist/wallpapers/omsk/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://pikabu.ru/story/vecherniy_omsk_7982361",
+        "author": "Сергей Брун (Petzel / @tamuro_roof)",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "moscow",
+      "name": "Москва",
+      "paths": [
+        "dist/wallpapers/moscow/day-v1.webp",
+        "dist/wallpapers/moscow/night-v1.webp",
+        "dist/wallpapers/moscow/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://commons.wikimedia.org/wiki/File:Moscow_Cathedral_Mosque_01-2016.jpg",
+        "author": "A. Savin",
+        "claimedLicense": "Free Art License",
+        "licenseUrl": "https://artlibre.org/licence/lal/en/"
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "khujand",
+      "name": "Худжанд",
+      "paths": [
+        "dist/wallpapers/khujand/day-v1.webp",
+        "dist/wallpapers/khujand/night-v1.webp",
+        "dist/wallpapers/khujand/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://www.aliph-foundation.org/en/projects/revitalizing-traditional-decorative-arts-at-the-khujand-fortress-tajikistan",
+        "author": "ALIPH / Alliance Française",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "dushanbe",
+      "name": "Душанбе",
+      "paths": [
+        "dist/wallpapers/dushanbe/day-v1.webp",
+        "dist/wallpapers/dushanbe/night-v1.webp",
+        "dist/wallpapers/dushanbe/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D1%81%D2%B7%D0%B8%D0%B4%D0%B8_%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D0%B7%D0%B8%D0%B8_%D2%B7%D0%BE%D0%BC%D0%B5%D0%B8_%D1%88%D0%B0%D2%B3%D1%80%D0%B8_%D0%94%D1%83%D1%88%D0%B0%D0%BD%D0%B1%D0%B5._%D0%90%D0%BA%D1%81%D2%B3%D0%BE_20.jpg",
+        "author": "Rumsor",
+        "claimedLicense": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "almaty",
+      "name": "Алматы",
+      "paths": [
+        "dist/wallpapers/almaty/day-v1.webp",
+        "dist/wallpapers/almaty/night-v1.webp",
+        "dist/wallpapers/almaty/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://www.muftiyat.kz/ru/mosque/3308/",
+        "author": "ДУМ Казахстана",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "astana",
+      "name": "Астана",
+      "paths": [
+        "dist/wallpapers/astana/day-v1.webp",
+        "dist/wallpapers/astana/night-v1.webp",
+        "dist/wallpapers/astana/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://tmatic.travel/en/view/story/the-astana-grand-mosque_LPm9eSl/en",
+        "author": "Astana Development Centre",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "tashkent",
+      "name": "Ташкент",
+      "paths": [
+        "dist/wallpapers/tashkent/day-v1.webp",
+        "dist/wallpapers/tashkent/night-v1.webp",
+        "dist/wallpapers/tashkent/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://uzbekistan.travel/ru/o/mechet-minor/",
+        "author": "Uzbekistan Travel",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "grozny",
+      "name": "Грозный",
+      "paths": [
+        "dist/wallpapers/grozny/day-v1.webp",
+        "dist/wallpapers/grozny/night-v1.webp",
+        "dist/wallpapers/grozny/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://commons.wikimedia.org/wiki/File:Grozny._Grozny-City_Towers._Mosque_%22The_Heart_of_Chechnya%22_PB040177_2700.jpg",
+        "author": "Alexxx1979",
+        "claimedLicense": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "makhachkala",
+      "name": "Махачкала",
+      "paths": [
+        "dist/wallpapers/makhachkala/day-v1.webp",
+        "dist/wallpapers/makhachkala/night-v1.webp",
+        "dist/wallpapers/makhachkala/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по архитектурным фотоориентирам; день и ночь — отдельные изображения.",
+      "reference": {
+        "url": "https://commons.wikimedia.org/wiki/File:%D0%96%D1%83%D0%BC%D0%B3%D0%86%D0%B0_%D0%BC%D0%B0%D0%B6%D0%B3%D0%B8%D1%82%2C_%D0%9C%D0%B0%D1%85%D0%86%D0%B0%D1%87%D1%85%D1%8A%D0%B0%D0%BB%D0%B0_%28crop%29.jpg",
+        "author": "Шамиль Магомедов; кадрирование Danloud",
+        "claimedLicense": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-provenance-evidence.json"
+      ],
+      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+    },
+    {
+      "id": "derbent",
+      "name": "Дербент",
+      "paths": [
+        "dist/wallpapers/derbent/day-v1.webp",
+        "dist/wallpapers/derbent/night-v1.webp",
+        "dist/wallpapers/derbent/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного.",
+      "reference": {
+        "url": "https://derbentmuseum.ru/monuments/derbentskaya-czitadel-naryn-kala/",
+        "author": "Дербентский музей-заповедник",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [],
+      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+    },
+    {
+      "id": "pamir",
+      "name": "Памир",
+      "paths": [
+        "dist/wallpapers/pamir/day-v1.webp",
+        "dist/wallpapers/pamir/night-v1.webp",
+        "dist/wallpapers/pamir/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen; геометрия дневного кадра сохранена при создании ночного.",
+      "reference": {
+        "url": "https://www.orexca.com/rus/tajikistan/tours/ultimate-pamir-highway-tour.htm",
+        "author": "OrexCA",
+        "claimedLicense": "Фотографический ориентир",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [],
+      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+    },
+    {
+      "id": "afghanistan",
+      "name": "Афганистан",
+      "paths": [
+        "dist/wallpapers/afghanistan/afghanistan-day-final.webp",
+        "dist/wallpapers/afghanistan/afghanistan-night-final.webp",
+        "dist/wallpapers/afghanistan/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Стилизованные художественные обои созданы встроенным image_gen; это не документальная фотография, детали изображения могут отличаться от реального комплекса.",
+      "reference": {
+        "url": "https://afg.gov.af/places/blue-mosque-mazar",
+        "author": "Портал правительства Афганистана (архитектурный ориентир)",
+        "claimedLicense": "Использовано как справочный источник",
+        "licenseUrl": null
+      },
+      "rightsEvidence": [],
+      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+    },
+    {
+      "id": "badakhshan",
+      "name": "Бадахшан",
+      "paths": [
+        "dist/wallpapers/badakhshan/badakhshan-day.webp",
+        "dist/wallpapers/badakhshan/badakhshan-night-v1.webp",
+        "dist/wallpapers/badakhshan/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "creation": "Художественные обои созданы встроенным image_gen по пользовательскому выбору; это собирательный иллюстративный пейзаж, не документальная фотография.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [],
+      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+    }
+  ]
+}

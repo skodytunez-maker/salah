@@ -27,3 +27,8 @@
 Владелец видит на главной компактную карточку каждой установленной версии после серверной проверки доступа и MFA. Закрытие сохраняется отдельно от публичных объявлений и отдельно для аккаунта; обычные пользователи не получают дополнительные всплывающие уведомления.
 
 Проверенный кабинет владельца также показывает одно всплывающее окно «Что нового» для каждой версии. Его закрытие сохраняется отдельно по аккаунту; всплывающие публичные объявления по-прежнему появляются только для крупных новых функций.
+
+
+## Rights evidence
+
+The content and media evidence inventory lives in `docs/rights-audit.md`. Run `node scripts/check-rights-register.mjs --self-test` against the complete build, or use `--snapshot` for the captured source manifest. Recorded evidence does not issue a certificate or grant missing permissions.

@@ -1,0 +1,940 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "checkedAt": "2026-10-07",
+  "source": "https://api.alquran.cloud/v1/quran/",
+  "terms": "https://alquran.cloud/terms-and-conditions",
+  "localFiles": 114,
+  "editions": [
+    {
+      "edition": "quran-uthmani",
+      "field": "arabic",
+      "sourceResponseSha256": "0df03e1d6da4fc8138208fec1688f2b416f0dd4ebbd514179f3e5e0fbaf4195f",
+      "total": 6236,
+      "matched": 6236,
+      "mismatches": []
+    },
+    {
+      "edition": "ru.kuliev",
+      "field": "translation",
+      "sourceResponseSha256": "8a2bcd0f0db00aabe8057e6a72f70e666f2b59af8259a3ae2dc7b85274b9a74f",
+      "total": 6236,
+      "matched": 6236,
+      "mismatches": []
+    }
+  ],
+  "surahs": [
+    {
+      "path": "dist/data/quran/1.json",
+      "gitBlobSha": "a7d58d8697f8ccccf0826c2dc01dec58b9b9f502",
+      "number": 1,
+      "ayahs": 7,
+      "arabicFieldSha256": "9473e92e2e4f23f3fc72d9b71d7fdfc7d63d871023b65c2ade1a9f4a50943836",
+      "translationFieldSha256": "fd9196f3fb9be93d91c14e0a9232b073695990e8c064f692014a99f216b4e1fd"
+    },
+    {
+      "path": "dist/data/quran/10.json",
+      "gitBlobSha": "967b6af1e2f87096d65f5d489398c8bb7778c84f",
+      "number": 10,
+      "ayahs": 109,
+      "arabicFieldSha256": "a4aaaacb0054cc9798930c6ab0697bd4bb157151d95e8ed67bde345e8703a744",
+      "translationFieldSha256": "55d0db62917a5e45de5970aeb49bccdd567b67139269a43b0577635af0b7885b"
+    },
+    {
+      "path": "dist/data/quran/100.json",
+      "gitBlobSha": "ccf0d0bb85cb06af07cc8a8121632f58be390d51",
+      "number": 100,
+      "ayahs": 11,
+      "arabicFieldSha256": "da2b3808e811cf00b7f084fdef893abee78ffdd1a243acdf81b0647d6df1ecab",
+      "translationFieldSha256": "9f48834a5c82ecfbe46f9b25b0c60a181e7b9ab6beabb0ca7f9f9006fabf2a5a"
+    },
+    {
+      "path": "dist/data/quran/101.json",
+      "gitBlobSha": "bc1d64252f6954467510c24e4b9893344150f6ca",
+      "number": 101,
+      "ayahs": 11,
+      "arabicFieldSha256": "3475901ce4ed76392bb9542291102a1b2b96261b857990521b74458f4ac084fa",
+      "translationFieldSha256": "107907227a17fe90e6dffef5a0c19240b325048be39db6c19b01cdbc98316d69"
+    },
+    {
+      "path": "dist/data/quran/102.json",
+      "gitBlobSha": "6a35d2be76798d7cbdb246b354b08614d506142e",
+      "number": 102,
+      "ayahs": 8,
+      "arabicFieldSha256": "58e65529999f7e83bfb58f2586942122c3d40c7a3118280be3b32256831c930d",
+      "translationFieldSha256": "50d29d6a5ef4f8ad0c73bfa7380e4934a3d3385441ec1f11d92fe9cc392e166d"
+    },
+    {
+      "path": "dist/data/quran/103.json",
+      "gitBlobSha": "c716c5c06a3c546fe38fb9ca88aefc159ef7c797",
+      "number": 103,
+      "ayahs": 3,
+      "arabicFieldSha256": "3b4b1b98b187235235ff3ac050febd7b3d9e4000f2a631ef00f2ffebbfc09107",
+      "translationFieldSha256": "908d2d112a0b29dc72cc0a32f3ac42c0ebe23f18729488ae63aafe576a987ee4"
+    },
+    {
+      "path": "dist/data/quran/104.json",
+      "gitBlobSha": "a15b9fe6bef6268f7db9170d9024a886e8dabace",
+      "number": 104,
+      "ayahs": 9,
+      "arabicFieldSha256": "763eb100933df91a3154d4ee99ee8dc17e626135e89557fd36b9456fe3af7b69",
+      "translationFieldSha256": "688c91ae12d0f4b368f50f4ac23458ecedcced4c73df7d1b3dd766be681f45de"
+    },
+    {
+      "path": "dist/data/quran/105.json",
+      "gitBlobSha": "db7df38cd694ede665f53009f20279151ce8e846",
+      "number": 105,
+      "ayahs": 5,
+      "arabicFieldSha256": "24b0ece5468e944bfbbf8dd60fb80e51134da3a60c7db24056830d94581d664a",
+      "translationFieldSha256": "7f7dc11acd5d981a2f69004b7405de382978c051418bd73db15df8f9c8cd15b1"
+    },
+    {
+      "path": "dist/data/quran/106.json",
+      "gitBlobSha": "50604ad916e468fcc19fac2e986ef8f5f309e245",
+      "number": 106,
+      "ayahs": 4,
+      "arabicFieldSha256": "b63c0bb050fc03edc677bd69f2b1ce6bbd8f7b6140ac5e4bae1f345268d873c1",
+      "translationFieldSha256": "6ff3999a6135200235c096bbdc0c84d03337d91e144a174bb96cebe795d2c975"
+    },
+    {
+      "path": "dist/data/quran/107.json",
+      "gitBlobSha": "05bfcf18144a3d6796fbf9e3acf5d347e402e0f0",
+      "number": 107,
+      "ayahs": 7,
+      "arabicFieldSha256": "e1dc3a02e267ef858dfab9ef5f9c4a06491a1411baed512bb7795de4fd1ae577",
+      "translationFieldSha256": "ca1eab102369dddd20d557f4c52740f4ee17cc4132ced488cfff8f7e91f47bd7"
+    },
+    {
+      "path": "dist/data/quran/108.json",
+      "gitBlobSha": "5f65ca5f000af5d480b0dd097c70e1f9dfe9356a",
+      "number": 108,
+      "ayahs": 3,
+      "arabicFieldSha256": "ffc60a28e9108aad0a59ad88aee0899e24139c7b093300fcd63e686c2461302b",
+      "translationFieldSha256": "6a9b281a1fa8070eaacb6096d16a8cc7723b061cda2745dd53f50635d9846b17"
+    },
+    {
+      "path": "dist/data/quran/109.json",
+      "gitBlobSha": "acc026e2f153aafaf26bf51f0ecabe2da9a7d1bd",
+      "number": 109,
+      "ayahs": 6,
+      "arabicFieldSha256": "433e651a6812e57f3514dfc7cb0cbba2f398618d3767f814329651aa7c894bab",
+      "translationFieldSha256": "6b3e2ef4fb818dad393457fec8f0bc324581090de7195bcfb68969e5d43ba770"
+    },
+    {
+      "path": "dist/data/quran/11.json",
+      "gitBlobSha": "95122f527f7b39761cf317afd75c6b3b38471338",
+      "number": 11,
+      "ayahs": 123,
+      "arabicFieldSha256": "bc25f303e08e311ee7cbe3b8fc55af3ab7e92988836fb57e6249b8bcb3e0d61f",
+      "translationFieldSha256": "82a2c6727bcf93a693204c08ed6f1fdc77daf1ff94807d9859a59f803149ea77"
+    },
+    {
+      "path": "dist/data/quran/110.json",
+      "gitBlobSha": "7127d06925ec002848c9361767540984cd90cd1a",
+      "number": 110,
+      "ayahs": 3,
+      "arabicFieldSha256": "a77dbfddebfe744ba27b6aaf5af47a94d851dfb9c9eafe23fd37b64a01cba7d3",
+      "translationFieldSha256": "a9ee5c73c46c1f02566cf664140104930bbc9e8f13b8771b18aa2d6abb029902"
+    },
+    {
+      "path": "dist/data/quran/111.json",
+      "gitBlobSha": "a4670c26ff0a0b17a9000982b653b5f40915ae51",
+      "number": 111,
+      "ayahs": 5,
+      "arabicFieldSha256": "2392cfe7c72740035d4c649571bf9cea188616979aa12ce02b2acbedac59410f",
+      "translationFieldSha256": "1f9412519ebdd99f9ae85c476a1941a0899c550ac604d9be03104eea135e6ccf"
+    },
+    {
+      "path": "dist/data/quran/112.json",
+      "gitBlobSha": "373bd900badd5965d4de38eaf4e77a076fda8350",
+      "number": 112,
+      "ayahs": 4,
+      "arabicFieldSha256": "50473b0633b0874e407d6ebddfe167c7f8e1e68365d3ab911a9cce4c635cc021",
+      "translationFieldSha256": "04124a1b996fe7fa412f4ac83d1fb8c78c955cd363a557b13c4451ec39803a43"
+    },
+    {
+      "path": "dist/data/quran/113.json",
+      "gitBlobSha": "d99d990208d5affbf96961ffed967a2ee31b9248",
+      "number": 113,
+      "ayahs": 5,
+      "arabicFieldSha256": "ac137c9bb9f6701f24bcae32198edafcd7dd804a8772c2fb30a1ad1060a54169",
+      "translationFieldSha256": "3206e468937af7e87ba03a5eb3dcb2f4dbf251e12a651b5a0921d02a957dacad"
+    },
+    {
+      "path": "dist/data/quran/114.json",
+      "gitBlobSha": "4ecabacfcd87fbafb016ab031c11ff9d8c820979",
+      "number": 114,
+      "ayahs": 6,
+      "arabicFieldSha256": "0e50d18caade4ac3eef25a920513a1234f93f6014ec8b6dae0a8dbc34fed4cfc",
+      "translationFieldSha256": "c7cc3d00bfe6ab6bd34e3ef2ee3e8ede29332140de1019e3b50a560a115be6a6"
+    },
+    {
+      "path": "dist/data/quran/12.json",
+      "gitBlobSha": "fd0d1f65ebdc958111afc5dc792746baa17fbbe1",
+      "number": 12,
+      "ayahs": 111,
+      "arabicFieldSha256": "5531154f282b16e5cf3decdfbcbad2632acac22ffd60e39451c3fd90aef5381e",
+      "translationFieldSha256": "f3b2ad9c4b8cd626595e3a52e20d33410ff777babeac3eeb13dbb0fca35639b9"
+    },
+    {
+      "path": "dist/data/quran/13.json",
+      "gitBlobSha": "b4b85c5165eb23fea2112af3624f32796eb76457",
+      "number": 13,
+      "ayahs": 43,
+      "arabicFieldSha256": "c620a4eac0a59d4261e6f57e65c69e986a9cebd5dde72edb78b76e14f7283fb6",
+      "translationFieldSha256": "c48378ea9cf23a3154a53ee62bf468b73edae7d5481ad9e1d12b72fc2fe74eda"
+    },
+    {
+      "path": "dist/data/quran/14.json",
+      "gitBlobSha": "8c043bb89f2f71e8d5ae89670b593819b1eb2e56",
+      "number": 14,
+      "ayahs": 52,
+      "arabicFieldSha256": "3cf3d4944186095676ef549c4412c3091f0a0154fdfb9fe6a2662a71a4e8c371",
+      "translationFieldSha256": "49a570d483c195b7af77d85020aa574bd0d1be8e402adf35808b60123f528833"
+    },
+    {
+      "path": "dist/data/quran/15.json",
+      "gitBlobSha": "f673552ae55f44c2065fd822486688f62c7550d4",
+      "number": 15,
+      "ayahs": 99,
+      "arabicFieldSha256": "ee42856c16897931dc777a14348c927b9b6487e14332c69c75c96955bbed19fc",
+      "translationFieldSha256": "ec32afadee9f74bf2e5f62f819dfc8d1de191b5b565920cba16d637fbaf2c8f8"
+    },
+    {
+      "path": "dist/data/quran/16.json",
+      "gitBlobSha": "8d2bc16e70551d9344ce6fa486e50e1e95d181fa",
+      "number": 16,
+      "ayahs": 128,
+      "arabicFieldSha256": "46889eb36101e21e3d67cb1f18af92e552d50f8255544f711e40d52d1e87ec9c",
+      "translationFieldSha256": "83c82dcdf06539fe48580d267a20c032ff71f4e786debc32f594d67139c35d27"
+    },
+    {
+      "path": "dist/data/quran/17.json",
+      "gitBlobSha": "93092690ef54348d80be6214e6d50274f2960815",
+      "number": 17,
+      "ayahs": 111,
+      "arabicFieldSha256": "f705c34c5a6b85d942904315427d9a265f3f8295c2bb3a19f83c21fef8a076a6",
+      "translationFieldSha256": "dadef12a77cabe8eeb51daccca7e04cf25df5e842bb125454a8c961bdbfdacbe"
+    },
+    {
+      "path": "dist/data/quran/18.json",
+      "gitBlobSha": "2b08dd6efb7cbbfcd64d67820794e9016b765dc3",
+      "number": 18,
+      "ayahs": 110,
+      "arabicFieldSha256": "630abf0c17ed695f9fc9fa5d40ed610cd95012d9f76117c524ce52bd13092794",
+      "translationFieldSha256": "02904a0ea76c5afb4bda58a9a40132a802634e5ef4a92220010b277d9f77ed79"
+    },
+    {
+      "path": "dist/data/quran/19.json",
+      "gitBlobSha": "d9c5687946be82fbda407592900a99f9ff6efaa2",
+      "number": 19,
+      "ayahs": 98,
+      "arabicFieldSha256": "d8ce0c0b88e531d3c6a0b9b035537cf8f66af8854389f1e373d4bc70eda1ce65",
+      "translationFieldSha256": "1aa90602d4992fbcf85984d888b32a60dc692fc3c52cce49b18c002220dc3756"
+    },
+    {
+      "path": "dist/data/quran/2.json",
+      "gitBlobSha": "c437696d2f00d57f3a2780062ba32989e26a1cc0",
+      "number": 2,
+      "ayahs": 286,
+      "arabicFieldSha256": "0152e3db0a084d031ff8087975a32fc9b4437f66848ef3ecee405cc6067c40c7",
+      "translationFieldSha256": "c324d4ba28794f41ec87bd5a987053960b05fb32fee5cab91d818a3851c2d56b"
+    },
+    {
+      "path": "dist/data/quran/20.json",
+      "gitBlobSha": "bd69e0daf2e5d142d29287e4319e3b0f53594052",
+      "number": 20,
+      "ayahs": 135,
+      "arabicFieldSha256": "38c3a4ded51944a5963e5101dc57d43efa0857f75d31cd3d3df882bd44ac5791",
+      "translationFieldSha256": "665ef0258f6c0496094618848f5e6be3539bb3c42d1aa1fb3333e32ccc258928"
+    },
+    {
+      "path": "dist/data/quran/21.json",
+      "gitBlobSha": "a23c644661b91b56548cb275ff245873747c4d54",
+      "number": 21,
+      "ayahs": 112,
+      "arabicFieldSha256": "97dee01a4a2c1aacc97618fa5ef2fba9f8d4bd1ada07e5b9f9cde0c93a1604e1",
+      "translationFieldSha256": "be0caaa431f53013d0a15aef8cc12212082ad42b0d9827c648044085b18fdae4"
+    },
+    {
+      "path": "dist/data/quran/22.json",
+      "gitBlobSha": "14916bbf5af8b9fa1df89764134c06017ccb3557",
+      "number": 22,
+      "ayahs": 78,
+      "arabicFieldSha256": "9ba7bcbf703b6431f1e07015438d62aa117b99578ca0c552a2bb1ddbab6b6702",
+      "translationFieldSha256": "a311acc288c3d16f4aa05418694d7fb2a184b22b1b21c6ef57be8a7173c03027"
+    },
+    {
+      "path": "dist/data/quran/23.json",
+      "gitBlobSha": "86dd553b9923a9dd2eb89a7e07cd384a964493bb",
+      "number": 23,
+      "ayahs": 118,
+      "arabicFieldSha256": "440e6ad8ba03923c431cda91ff77ee0f6bdcfd194357745d0d62c3f7948f9415",
+      "translationFieldSha256": "f030cd94587fde8791048ce254d11b649ecbf47ba668e7f947604c77f11967f8"
+    },
+    {
+      "path": "dist/data/quran/24.json",
+      "gitBlobSha": "a4153bee365ab3487e7ddc8942d22a5b184c5b87",
+      "number": 24,
+      "ayahs": 64,
+      "arabicFieldSha256": "3693ce2557ae87b3b59f68c9450a49d163bd955f8b16eeb97852c9ad52686f46",
+      "translationFieldSha256": "73b45765dc2e9287a925a74248b029c776e4bf02367353764792252c73fe1c05"
+    },
+    {
+      "path": "dist/data/quran/25.json",
+      "gitBlobSha": "f685e7f9894ad1e6aa39183c81dfcb6d5420e9b8",
+      "number": 25,
+      "ayahs": 77,
+      "arabicFieldSha256": "5bfc10c2b9b31af11b64dbd809c6cb771cd620e27ac7be2967afc70b04eb92e8",
+      "translationFieldSha256": "a14d97cd7796035d427c685b23839385ba5ef2a4d8496bf7f2c060ce221e2dc9"
+    },
+    {
+      "path": "dist/data/quran/26.json",
+      "gitBlobSha": "70ace6087d5ece1f6e2df397a93eb86ac6678874",
+      "number": 26,
+      "ayahs": 227,
+      "arabicFieldSha256": "54da4619c34e72d7098b4f856a495c638e429b7654f76517982ecacc042bdcb3",
+      "translationFieldSha256": "00dd2a2683a45748779e5c38e4a0169117336553b56c072537d6df97df372df6"
+    },
+    {
+      "path": "dist/data/quran/27.json",
+      "gitBlobSha": "93920a30e025efaabca14818210891530cc81c96",
+      "number": 27,
+      "ayahs": 93,
+      "arabicFieldSha256": "d60ba7046eabea9193c0b511c68f084aafa0cf35fc0a9e56253eae61985728f2",
+      "translationFieldSha256": "8faf99e687f060acc1e4aa3f69eb4468ed0900d2e2f211ef9ee5b7300571e64b"
+    },
+    {
+      "path": "dist/data/quran/28.json",
+      "gitBlobSha": "5cf19afc86096efe14253751ed6f89494d96c6c5",
+      "number": 28,
+      "ayahs": 88,
+      "arabicFieldSha256": "7bee925c1ed72cc200b85b796431bbcbc420507215ffb79f4897dcc7e667b664",
+      "translationFieldSha256": "b6f0136ea7334270bdb058c969cfe018b455738cd813a10cea640c14cb830457"
+    },
+    {
+      "path": "dist/data/quran/29.json",
+      "gitBlobSha": "ce8c3d7a956edb1e57c669389e0b68a41ed19ee5",
+      "number": 29,
+      "ayahs": 69,
+      "arabicFieldSha256": "a93af2a4638b769912fc41e4f30e5dab4342f67a4b45bee50bfbc1332f519f12",
+      "translationFieldSha256": "d2a6d795531dcaaac70a7c04794ebe0c364f9f2b7a4376ea8a685a5827719f3c"
+    },
+    {
+      "path": "dist/data/quran/3.json",
+      "gitBlobSha": "be281974f79f231eae244b99c196e4bcff5d6c00",
+      "number": 3,
+      "ayahs": 200,
+      "arabicFieldSha256": "fbc9cd7d84611428ff9fbf1aa3e44794dcad1a5ad7695a5d3dc4b9a30ae07e38",
+      "translationFieldSha256": "c372494dd2d111b5fe214f9cce93be347157a75f3fddc0fb4e0548a14c607a4d"
+    },
+    {
+      "path": "dist/data/quran/30.json",
+      "gitBlobSha": "755828a1077349e67760a627e54acd65dee18987",
+      "number": 30,
+      "ayahs": 60,
+      "arabicFieldSha256": "c2a2330fa6cba997430f36b593661304b6804ef893f3793909fd27911239c47f",
+      "translationFieldSha256": "a7f1ce3130b7404295f48934ebcccec77aa256c8559405cb009fda3de403a34a"
+    },
+    {
+      "path": "dist/data/quran/31.json",
+      "gitBlobSha": "f04abb988a935940408b7d2221b71cf2cef73ed8",
+      "number": 31,
+      "ayahs": 34,
+      "arabicFieldSha256": "912d7d84997f6677f667c3325dbb06e010e9acb9a05f0fc532ed290490a460b8",
+      "translationFieldSha256": "b1404827a8061a7333bc6ec858606e16fc09127a6e207c2e1d26f1b100007575"
+    },
+    {
+      "path": "dist/data/quran/32.json",
+      "gitBlobSha": "f51eebabd96733d834ad2365772cecf4a77434e5",
+      "number": 32,
+      "ayahs": 30,
+      "arabicFieldSha256": "5c98bd9611264a8cc88376ecde1e63df2ab609e5d252daab9fcc9c701e18e7da",
+      "translationFieldSha256": "c5bbfa05bb6bdfcecd919420f627f63dc7e3c07b2331543a92c019cc056c681a"
+    },
+    {
+      "path": "dist/data/quran/33.json",
+      "gitBlobSha": "2f1601a0d952cb955516bde4aec122aecd04cf1c",
+      "number": 33,
+      "ayahs": 73,
+      "arabicFieldSha256": "f465ced26b86a662563db7ebbb3a5814565aef1ae7b89ae78e403846243430d9",
+      "translationFieldSha256": "5bfa9d4c40ee20370b610bd80ee93fd6a96214102733b56dec997fcc339bd3fe"
+    },
+    {
+      "path": "dist/data/quran/34.json",
+      "gitBlobSha": "ffe96705e9a4d0269f4b2eda1f56aed37858b30f",
+      "number": 34,
+      "ayahs": 54,
+      "arabicFieldSha256": "b862a87ea66644235a72b7cbfcc8b815bc30f4216c165a715db3c74a43d9469a",
+      "translationFieldSha256": "99f45799b635c0c99660ad7fdd89413d9d2176c4b6d33bc98657ae9efe4db73c"
+    },
+    {
+      "path": "dist/data/quran/35.json",
+      "gitBlobSha": "ea5bf3f0c0599583620c516292114097ebd47a12",
+      "number": 35,
+      "ayahs": 45,
+      "arabicFieldSha256": "6025b93d315d19c15614abe39980545deda8fa6f26dd1d29e429ae8f7a34f83c",
+      "translationFieldSha256": "7510f8c0de77601ba11d5d73a6b9bd093083d2cc8ca7ec13098aa25a04a5f3bf"
+    },
+    {
+      "path": "dist/data/quran/36.json",
+      "gitBlobSha": "9dade826641effdcf24d7c9a0282fe99c6cd857e",
+      "number": 36,
+      "ayahs": 83,
+      "arabicFieldSha256": "55da796ecbef319822064561b921cb13b10b77b77e0f0047437e075b9353f58e",
+      "translationFieldSha256": "0a192a9d7c634840a40c6792016bc56e559217eb946f05c7568cc449516011d2"
+    },
+    {
+      "path": "dist/data/quran/37.json",
+      "gitBlobSha": "1dba3e547a3d669f73d808f663f67d31934fb7bb",
+      "number": 37,
+      "ayahs": 182,
+      "arabicFieldSha256": "807985b961fe1c44e69ed6d5dd05cce344b48b339883a5da6f743655ca1dc118",
+      "translationFieldSha256": "84a898341229fb0677fe0ca44d2cfbb68b3a4a3da71d77ba8f7a9df19c2da535"
+    },
+    {
+      "path": "dist/data/quran/38.json",
+      "gitBlobSha": "330bc346dbc1230d035943621084a608cc09afbc",
+      "number": 38,
+      "ayahs": 88,
+      "arabicFieldSha256": "110dc458bf722c028aacfcf90fb938bd4578c2eea7088d9f5d48f99dc07248a0",
+      "translationFieldSha256": "1ec75f6f06f16bd2ce0ad6a8e9eb26ec04d773e56fab50701392a5ba82c5873a"
+    },
+    {
+      "path": "dist/data/quran/39.json",
+      "gitBlobSha": "3cd3ff91bc512a3ed12f15946a6663abe3b892f4",
+      "number": 39,
+      "ayahs": 75,
+      "arabicFieldSha256": "71c0a2520f2bdcf04a54953c17c0a6638f933c2fe74c462740941cdfe8ef8fd8",
+      "translationFieldSha256": "87957b57cb65eccaf41411d3c88c1ed3012b84666edc6cf53dbc8318f22e9401"
+    },
+    {
+      "path": "dist/data/quran/4.json",
+      "gitBlobSha": "978c8a1993eb01553a574cba58db18cf2afaf58e",
+      "number": 4,
+      "ayahs": 176,
+      "arabicFieldSha256": "27b7a8c87126fb8fa6da5c9061851a597c1ec889d7262f8c3d487f58cc4dfe84",
+      "translationFieldSha256": "3a8f5e212150f3d1ac5679e42e3e8ce1f4a176ddf9347cb2facc1a6fb38deea4"
+    },
+    {
+      "path": "dist/data/quran/40.json",
+      "gitBlobSha": "e9cfb1cea8a8159dce14558277f6b62b90f5fd42",
+      "number": 40,
+      "ayahs": 85,
+      "arabicFieldSha256": "46a463370c0df10d6ab00658871ef68dab90b7cd4620d9188160d8f675d99a81",
+      "translationFieldSha256": "75383a397ad4f26ea0b4d96c5b113293c70e11ade5a90d6210347f4bb1276bc1"
+    },
+    {
+      "path": "dist/data/quran/41.json",
+      "gitBlobSha": "fe9a81f83dbbab9073b05bb7d930b9da903a55a4",
+      "number": 41,
+      "ayahs": 54,
+      "arabicFieldSha256": "5ae9bcea895aea1b954799fbb881a9f91e61a95a25b619b55682f417282e7f0a",
+      "translationFieldSha256": "4206084a263f7fb17bc27ba7cdf597c25c956fc087c180b64973c2b406bb25e1"
+    },
+    {
+      "path": "dist/data/quran/42.json",
+      "gitBlobSha": "f11dbacc389d39f9a06313172a5823b8ab53ffca",
+      "number": 42,
+      "ayahs": 53,
+      "arabicFieldSha256": "382754a0e22ca7e574b9bc12af87c742d0c91f31df590d5a3114d2e4dd27a80e",
+      "translationFieldSha256": "8b042f0c44169575d3b8bc4f38e29c3710598630de89b62beccf92cf2650d5cc"
+    },
+    {
+      "path": "dist/data/quran/43.json",
+      "gitBlobSha": "a3e965aed154da518348c0f49570ea5129c855c4",
+      "number": 43,
+      "ayahs": 89,
+      "arabicFieldSha256": "bc5f40ad7d86f7a14a641aaf479149482a322cf4f9acd1c58cd9e7135163c085",
+      "translationFieldSha256": "6d85e0ac80f2e2c56f0cf41fc7c282c8fe12d983cbe22f3aa23f16fbe262348d"
+    },
+    {
+      "path": "dist/data/quran/44.json",
+      "gitBlobSha": "d6302444c41fe7f2a79f3f657e46ed5e48fba326",
+      "number": 44,
+      "ayahs": 59,
+      "arabicFieldSha256": "ce90b39c2904103faf2f2ae1d7e007bba0b9034af4d21ec3be544575cca6c131",
+      "translationFieldSha256": "c5d2e042a2fc4446fc7b1f716b0f8c59fdce4334d11cc5ad9a5157c7ab6b6926"
+    },
+    {
+      "path": "dist/data/quran/45.json",
+      "gitBlobSha": "df979fade86089f202665c35bf07d35067c86896",
+      "number": 45,
+      "ayahs": 37,
+      "arabicFieldSha256": "74935dd3b0720109356a90520a3e80ab5dc7e2a7fafe22dca978ad793ef8ccba",
+      "translationFieldSha256": "b230056b327cad29640bf1a919bd44261bb8c9e0170aadb33ed43145dd48c373"
+    },
+    {
+      "path": "dist/data/quran/46.json",
+      "gitBlobSha": "2a5f2a9d6556160fb9675d4c331bd91509f30498",
+      "number": 46,
+      "ayahs": 35,
+      "arabicFieldSha256": "58ee3768d4cb0be386be5aac53bb477b56398a236307cdb038152cc6ede0138b",
+      "translationFieldSha256": "0f9d7b86303038c9c2d7bb5d85e4afa5734bd214b354f647f322410521e6df96"
+    },
+    {
+      "path": "dist/data/quran/47.json",
+      "gitBlobSha": "6b566ab96bbcd8f5829fa63a625eca010982d123",
+      "number": 47,
+      "ayahs": 38,
+      "arabicFieldSha256": "2b8fee12f52b61f2eec483f20e386a677777221e3e6c80380cc7efb9149fed14",
+      "translationFieldSha256": "4d41c8f18b85dd2036001ba14cda06391f59285ab7e8dfbbfd3a003304f5d510"
+    },
+    {
+      "path": "dist/data/quran/48.json",
+      "gitBlobSha": "4c01ea871e955a9b8870fd9f56c3cbd349588ec4",
+      "number": 48,
+      "ayahs": 29,
+      "arabicFieldSha256": "35f9c4f8b16aa6e33c63d0c15f3455395027fc6d7241b58de4a4bf41848757dd",
+      "translationFieldSha256": "08df37c2413e219aad27a86342c6014650e493f2ce762bbc725b5575a6b530df"
+    },
+    {
+      "path": "dist/data/quran/49.json",
+      "gitBlobSha": "f3ad7825e3f898e0d245333d3279c7399f06649a",
+      "number": 49,
+      "ayahs": 18,
+      "arabicFieldSha256": "e1e3c2edd1ca71a7f152723e03c8539f66a213ef90b2e582bf078b9c246e0898",
+      "translationFieldSha256": "492257407b0caa1042bc67527b14242546f1d189c1e52e20005b3058e55d9faa"
+    },
+    {
+      "path": "dist/data/quran/5.json",
+      "gitBlobSha": "7cfddc48c44570cd1e65a63b48b2c87389422b21",
+      "number": 5,
+      "ayahs": 120,
+      "arabicFieldSha256": "ff7b82d3aeda8c9b2bb3919f13754fa6b946e3551bee360cb65c8231eb6d625e",
+      "translationFieldSha256": "7e450ea514140405bd0011a2458271bc8544e03e4721c1ba6eb15a6f1be858a3"
+    },
+    {
+      "path": "dist/data/quran/50.json",
+      "gitBlobSha": "877ec2b77a37d2f5f3c70015e7d3b5c4dcbf696b",
+      "number": 50,
+      "ayahs": 45,
+      "arabicFieldSha256": "379b4c2b0dc08f54d56cd69273899ea69ca694b98ee2e2e11e99a1e8f039625f",
+      "translationFieldSha256": "e9a875a17e56e14ce83951aedb1cab05687e9abdb81172bd6eb9ec4fcce38afc"
+    },
+    {
+      "path": "dist/data/quran/51.json",
+      "gitBlobSha": "40cf1ddf18d3adc63c6d508b816fa1e47496acd2",
+      "number": 51,
+      "ayahs": 60,
+      "arabicFieldSha256": "ac5a505d4bfd7fd03f4f09ea31b759c030e1fed4b7e6a41988f4583c194c756c",
+      "translationFieldSha256": "3d8cc7f1538cf8ccd11e5747c8109e1cc32ff1285b8dfd7a1fa627cbbba6883e"
+    },
+    {
+      "path": "dist/data/quran/52.json",
+      "gitBlobSha": "8b50174c815ecede68b337553c6ae4ea8e3a3eac",
+      "number": 52,
+      "ayahs": 49,
+      "arabicFieldSha256": "0aee72cb2846dda4b4543ee7998ba1a695675f5285f88522837e71c9d9d96fe9",
+      "translationFieldSha256": "4f4f5fe206397b854b49aee46266dab7c8e4a18c3b97f5389f462481f0a4fbb5"
+    },
+    {
+      "path": "dist/data/quran/53.json",
+      "gitBlobSha": "34c8b54d0f6b5e81b6b8027ef7e78726815c72a1",
+      "number": 53,
+      "ayahs": 62,
+      "arabicFieldSha256": "d457d6a91ded37031aa4cdd298fac3dac81cd59cd104d1beb0d0e6cc954b74ab",
+      "translationFieldSha256": "a0322f5b99e7be327d1a630ea034a7ac4408faaf6d3e18d34c44d4ff6ee5b4e3"
+    },
+    {
+      "path": "dist/data/quran/54.json",
+      "gitBlobSha": "c399de0fe6891effe4295fd6bf16be76fb0a36c4",
+      "number": 54,
+      "ayahs": 55,
+      "arabicFieldSha256": "1fa64b7291e4081865b5135a08575cbe7fa6dffe1de2b211857b7c0f3e5dc342",
+      "translationFieldSha256": "79153d0934a401029c144172c2d1aa15da640cb89cc2694870ebf48c3f58395d"
+    },
+    {
+      "path": "dist/data/quran/55.json",
+      "gitBlobSha": "ff1ab9ffca8fcbe5c189481a86ad16002b11cf5b",
+      "number": 55,
+      "ayahs": 78,
+      "arabicFieldSha256": "6b900472c3527990009a57d666aba1d7c6310d10bde4e658bf0e5072f44edddf",
+      "translationFieldSha256": "43d9900fc6e257eeb2097ec038c6315d584cc22885302f14cc6e1cec9b25ae79"
+    },
+    {
+      "path": "dist/data/quran/56.json",
+      "gitBlobSha": "5f4369d123b2b1abb82d18a1a53878672f31ae02",
+      "number": 56,
+      "ayahs": 96,
+      "arabicFieldSha256": "5353d23f2f143ab0fbad284e54be0743627b7b3df7bc43bf6534edc66502d179",
+      "translationFieldSha256": "f2f3dc03b272ef55430912b3d3f16923f55ec33014f2eed11e5e57b61f808e2c"
+    },
+    {
+      "path": "dist/data/quran/57.json",
+      "gitBlobSha": "8393fbcd124e831b33b8d4c8b96974b0e0261f0c",
+      "number": 57,
+      "ayahs": 29,
+      "arabicFieldSha256": "a6f7514b46343a7ac55162d225f2c844427660ccaefc07afcc924f8dfccecb85",
+      "translationFieldSha256": "250e5fbbc8f9071e0354b7be4a11ad6e973d3a5476fd0e239ba5d4a8c29e0730"
+    },
+    {
+      "path": "dist/data/quran/58.json",
+      "gitBlobSha": "2ed8521573f48581ed140e8f855fc7c5f10b4560",
+      "number": 58,
+      "ayahs": 22,
+      "arabicFieldSha256": "4911fe322d18e6097756b2ff48195863d7f6474d97bc9a8c3aa6ab5d2cc39a93",
+      "translationFieldSha256": "484fefa10fed0cd503f642f49214cdd541f9152a9106d3f751c946bd31cc59c4"
+    },
+    {
+      "path": "dist/data/quran/59.json",
+      "gitBlobSha": "5e9890e5a12db74615900582f65dc822b7adecfa",
+      "number": 59,
+      "ayahs": 24,
+      "arabicFieldSha256": "09f14f5687e1ce84fab69072e891b0d66f6158353cbecdf615f96c746d10158d",
+      "translationFieldSha256": "3321957cb4cc247fe487d3dd63f326943577ddc6ad0ee9d9fe9dea8eeb63364a"
+    },
+    {
+      "path": "dist/data/quran/6.json",
+      "gitBlobSha": "74821fed564824b5d49bf7d933d551bf95f37385",
+      "number": 6,
+      "ayahs": 165,
+      "arabicFieldSha256": "38db063dde5540a18cffe1a426a6f09754aac3959d4c99dcdb66682186960d64",
+      "translationFieldSha256": "2a3305e58b05882b2b6d0e30c7cc8991c7d2595f6efa4a6697731e8dceaacea4"
+    },
+    {
+      "path": "dist/data/quran/60.json",
+      "gitBlobSha": "ad202c38f9ff82f1f4d2b9c89c66455af0053594",
+      "number": 60,
+      "ayahs": 13,
+      "arabicFieldSha256": "67e6f3fbd2d857c18e6fe8667154c84486758003880bae6c6f21e1ff9855de1c",
+      "translationFieldSha256": "6d629b9dd597102dfa2d0931b9f75ad350292d925ee287dd92a54620072ad2fb"
+    },
+    {
+      "path": "dist/data/quran/61.json",
+      "gitBlobSha": "9024a91ec320afc217908a462bc77a43e491a7d9",
+      "number": 61,
+      "ayahs": 14,
+      "arabicFieldSha256": "4e7ef9f626e2f84346378b0a101113576fb415768e2ecafe1c29cd57aef2d1f5",
+      "translationFieldSha256": "0cfec17b599effbb0b93f710c847e19d12c5b6fdbc89450f8cb68c0fc212b79c"
+    },
+    {
+      "path": "dist/data/quran/62.json",
+      "gitBlobSha": "3f238b1d0b31228acad0af6b5c97a2f3b96ef01d",
+      "number": 62,
+      "ayahs": 11,
+      "arabicFieldSha256": "56bac0b0aac26e1f1937b8cf2b43538e7c05ac8f00fcbf8eeef04e62706e0469",
+      "translationFieldSha256": "c96a6979b1576aaa32c4167d7523e482ee3a3dcf22f5afd7bd3c76bca79511a8"
+    },
+    {
+      "path": "dist/data/quran/63.json",
+      "gitBlobSha": "8ce05fd1bf6d998fbfdff803578f23b3bcad2134",
+      "number": 63,
+      "ayahs": 11,
+      "arabicFieldSha256": "ea88adb3643ab72327837d72f0f747fb487851fe358cb068fce4dc97cbcc5051",
+      "translationFieldSha256": "c0204421ebaabfdfd582348fbe14c4a29c057fbf55558420bf5b63d658c56e7d"
+    },
+    {
+      "path": "dist/data/quran/64.json",
+      "gitBlobSha": "f4a10721a9a8a811d832b99ab6347c4ff526ccc4",
+      "number": 64,
+      "ayahs": 18,
+      "arabicFieldSha256": "56b657369634dc9e2d4479c00d1768587a8cfef93da8c101f2d275503eec2d91",
+      "translationFieldSha256": "68fc984fa38caa7aa7ae884fb5c3510c3a57f9ba008b3bfe83334074501516c4"
+    },
+    {
+      "path": "dist/data/quran/65.json",
+      "gitBlobSha": "b8ce1e287affa992aba8412ac49a2eb385305652",
+      "number": 65,
+      "ayahs": 12,
+      "arabicFieldSha256": "9c6268ddc0058e9044a5ca8517b1ddae1e26ed7290a388318c65211653329661",
+      "translationFieldSha256": "8bc9fa8848048b27872f4cdb18107fffa3dca5e73d19accfe15f16ded83b785a"
+    },
+    {
+      "path": "dist/data/quran/66.json",
+      "gitBlobSha": "71908754ad84dfc320e009eb460afea1e137112b",
+      "number": 66,
+      "ayahs": 12,
+      "arabicFieldSha256": "866fa8f8bd7b324f8d914371f998aad17b2254471d7875eb5b0b340b85a38342",
+      "translationFieldSha256": "75cf80c462e2d74fa2b448cf12b0ce8db109db2e883ca61e3b257ba9aeed831f"
+    },
+    {
+      "path": "dist/data/quran/67.json",
+      "gitBlobSha": "a5707eb1cb0f6afdf32407e9ff936729d082d01e",
+      "number": 67,
+      "ayahs": 30,
+      "arabicFieldSha256": "e45ee8e9c111124d65ca879edebbaa2b95ba894ac8d92afdeae3be5da48edab4",
+      "translationFieldSha256": "dfb957765dd489048c4eced16266d9f118da23b8de0cbcf2a6d533fd15301e07"
+    },
+    {
+      "path": "dist/data/quran/68.json",
+      "gitBlobSha": "c50646691dd02f66790c1a2d9fb60d1216b55a27",
+      "number": 68,
+      "ayahs": 52,
+      "arabicFieldSha256": "241d799f4cb471a823a2d146f3c1d3af99058ebae6031530704bc9cdeb01f0d5",
+      "translationFieldSha256": "ab36fd867c5ea5275b3c119896a8db0156b7662e94cfb43817a174e7cb78d788"
+    },
+    {
+      "path": "dist/data/quran/69.json",
+      "gitBlobSha": "31da1a86b4e7a0fd6e5bb5b072286c74e283cc37",
+      "number": 69,
+      "ayahs": 52,
+      "arabicFieldSha256": "582236e21e5731e7d19cbd9dc64a7a6b74cb9578eb5b9ad520971068e52e76b2",
+      "translationFieldSha256": "c0e5ba1d05fa1ad7373a3bfdcee66c8c1662fe56784f531a8b315b3085b6fa3f"
+    },
+    {
+      "path": "dist/data/quran/7.json",
+      "gitBlobSha": "c5f626d8186afc9a98d7020c1a6a08cf902deae6",
+      "number": 7,
+      "ayahs": 206,
+      "arabicFieldSha256": "0c62b0c101ed14803448c254745c6e7742aa13aa3c86286f56f3348e4e3a7d33",
+      "translationFieldSha256": "11172c7e90980c0186bd84d7b49ff4f1ee4d6b05e1c65c134e90c9b27d148d46"
+    },
+    {
+      "path": "dist/data/quran/70.json",
+      "gitBlobSha": "ca6a6f54902a39dce4e76675000438f22bd79548",
+      "number": 70,
+      "ayahs": 44,
+      "arabicFieldSha256": "3c0c94d22dbefc5cdcb4527d778eb3ca6058aa34b25b9617bd5d77bf9aa4594a",
+      "translationFieldSha256": "cea74a798aa9f67b20d0fbc4dbc18c8ca5d853d27cff886088131d8143062598"
+    },
+    {
+      "path": "dist/data/quran/71.json",
+      "gitBlobSha": "5f8c8809bad024815be703b5b3ac624ac7e37acc",
+      "number": 71,
+      "ayahs": 28,
+      "arabicFieldSha256": "4b8bbb8d702f5c80e9497d2efcc56acb602151ac648d5fbda56f3ed42197c4b8",
+      "translationFieldSha256": "c9eb6f010064caaaa4088f59a763c42b0fad36c1ba182fb40255a0dd024c475b"
+    },
+    {
+      "path": "dist/data/quran/72.json",
+      "gitBlobSha": "608715254a9cf006be28e5529b674aa420f70df1",
+      "number": 72,
+      "ayahs": 28,
+      "arabicFieldSha256": "fa517fa3c00e4e053b582cb548e6b8b0a6b394c1ecb609efb3eaee75fccdec70",
+      "translationFieldSha256": "bea28111a71fccf324db04ac18bebf0a2904cd2f2d56ab50f6696709b5cf719f"
+    },
+    {
+      "path": "dist/data/quran/73.json",
+      "gitBlobSha": "3cedf3b04b611d35ade40ee68d83867af5e0cda1",
+      "number": 73,
+      "ayahs": 20,
+      "arabicFieldSha256": "edef93af8a8f730ce8ed9fff586299bedd7c1375eded21db70b695970814a80e",
+      "translationFieldSha256": "dfedf7ce12d8b289feb0dd7183120848613074a1d854e77eecf836965c2cac9f"
+    },
+    {
+      "path": "dist/data/quran/74.json",
+      "gitBlobSha": "60c2f667999d4fb5042ee61da1593bef621b0984",
+      "number": 74,
+      "ayahs": 56,
+      "arabicFieldSha256": "2f799b2349ea26d2945441040c2ab06a4385f653772b64336184f288b862fc24",
+      "translationFieldSha256": "f3ffd948bd3ab2a1bcafb18c20fb91abe16d71de63ac33043e179aede9afbe54"
+    },
+    {
+      "path": "dist/data/quran/75.json",
+      "gitBlobSha": "7917f59ebaa7afe8af384ec8229c5f54c32c1b7f",
+      "number": 75,
+      "ayahs": 40,
+      "arabicFieldSha256": "c153f009857ffd323c626f523364936c85de041cf80a5b4546294ccedeb7c9fc",
+      "translationFieldSha256": "13cb4ffb6055afa7138ff499131cbb2bbdd2976e629531fe125d0b11ba81d1f0"
+    },
+    {
+      "path": "dist/data/quran/76.json",
+      "gitBlobSha": "2b998c3a8b9dcce2a1ba1f79c7a8fcf79f62c64f",
+      "number": 76,
+      "ayahs": 31,
+      "arabicFieldSha256": "c48b6600200a57a84e68c5a04b8a15a15881884f13d14664bc3edbfd48d0ef42",
+      "translationFieldSha256": "25b98e68faf2138668d3ee254a0da508b072fb82638e946803d6534999f85786"
+    },
+    {
+      "path": "dist/data/quran/77.json",
+      "gitBlobSha": "e02d8b2a48bf03ef2d1139372328d6af546e23e5",
+      "number": 77,
+      "ayahs": 50,
+      "arabicFieldSha256": "48fc45a0ee5275adec9c8f582ee97b5b125c5288edc3fd8d3127bdd0ba2fe6ac",
+      "translationFieldSha256": "933e24d363e569626d74c823be4f3ded43e224b2498c78b112eb2e062b1f301e"
+    },
+    {
+      "path": "dist/data/quran/78.json",
+      "gitBlobSha": "15dbe3f86ba989c1192e5d930fbfad7aa9948d98",
+      "number": 78,
+      "ayahs": 40,
+      "arabicFieldSha256": "05dc6df520b01141613f946e54f65da5efaea1167b55b5a6e0301675a2e1526c",
+      "translationFieldSha256": "1246e302e4ca769a33075eaae37dae6ce7cd64de0cc9925adb9e0de77b45ba8f"
+    },
+    {
+      "path": "dist/data/quran/79.json",
+      "gitBlobSha": "7cfc0cfdcd4730bb8aaeae9aa43fef35f0d4c026",
+      "number": 79,
+      "ayahs": 46,
+      "arabicFieldSha256": "9a3825543e20f1acb5b73dc457b2cc36763982f514fbeeca81b971796fe96728",
+      "translationFieldSha256": "4266517627f8e538c9978abf0654fe0b82e09d8ec8da84f6a3ca29d5a8a5b03f"
+    },
+    {
+      "path": "dist/data/quran/8.json",
+      "gitBlobSha": "818a87ee3dd5466dc78eb8d801cc44ca19617cf3",
+      "number": 8,
+      "ayahs": 75,
+      "arabicFieldSha256": "46fa89783f807de81d51e833e7d86a6b04efd11fcaa642b16683c218d04f7880",
+      "translationFieldSha256": "9a3922a9b0d676663779352e103a3cbf6fcdba664426830bc62ff8fe12ada56b"
+    },
+    {
+      "path": "dist/data/quran/80.json",
+      "gitBlobSha": "3daad39fe48dffddd4a93da30b597ec410546b75",
+      "number": 80,
+      "ayahs": 42,
+      "arabicFieldSha256": "fb0ec9912b061a5cb68be4ae24a5b0d95eca29dc6d2a7c2cc18f1d87df37c8c4",
+      "translationFieldSha256": "695fcfc0220a2d5bd3e49fc014402d0bb4cd3c88fbdd3668dbd62945b8454736"
+    },
+    {
+      "path": "dist/data/quran/81.json",
+      "gitBlobSha": "99bae5109550011888be2f501006b61e6df300c0",
+      "number": 81,
+      "ayahs": 29,
+      "arabicFieldSha256": "008911e983397cb1ada914f18c5c670069ed1540df8135303ae18124f1b66c46",
+      "translationFieldSha256": "0ea6de260d5dc0cac8b9a5bef38819e52e49984be4201ea833c6aeab0b1a2197"
+    },
+    {
+      "path": "dist/data/quran/82.json",
+      "gitBlobSha": "10bb80552c61e8716ba15cb153c33e7c9284c61c",
+      "number": 82,
+      "ayahs": 19,
+      "arabicFieldSha256": "3440bf0d79d0b33b43465becf2b978dcb2dec1a8470fa9df4c5651004e236f87",
+      "translationFieldSha256": "4bf29dd25ef441b55a2f8afd1d9933338d100962a6d37d66905b4ccb9339f929"
+    },
+    {
+      "path": "dist/data/quran/83.json",
+      "gitBlobSha": "b608228ba5e35287eeca524cf89299ade5a992ae",
+      "number": 83,
+      "ayahs": 36,
+      "arabicFieldSha256": "8b26a091849305257d7e7e658e0a9b3dad41da1d95b6d8abe5e442253bac9bb2",
+      "translationFieldSha256": "cd3c659dd9067231dafdf4ac04b3dd055088e94fb6ff325f1943b347016b4f8d"
+    },
+    {
+      "path": "dist/data/quran/84.json",
+      "gitBlobSha": "f851d95e4dc03a3088302565aa1ec07a63bb71ca",
+      "number": 84,
+      "ayahs": 25,
+      "arabicFieldSha256": "b26b4d900966e217d6ecff4c55d8c44af610b68bb0b61011a21fd57a69a80c90",
+      "translationFieldSha256": "66f1f1ee6e95294345099a6e47d67cf39176ff1d7cb90dfff9ba7a25183c1e37"
+    },
+    {
+      "path": "dist/data/quran/85.json",
+      "gitBlobSha": "f00f4b540359a1b2095484dad3fab9bfb8bdc99c",
+      "number": 85,
+      "ayahs": 22,
+      "arabicFieldSha256": "459c37b8a8770a2a6e212c6cd1b0f17b4c44eb34b62fbfc560fdf948403e25af",
+      "translationFieldSha256": "3325f0281bb7b40d25268ff246c0f6eba292e3933eed1a802724caf49f8de076"
+    },
+    {
+      "path": "dist/data/quran/86.json",
+      "gitBlobSha": "5c2d9bf48a57fcb5a503e3d11031f54fcd21eb4a",
+      "number": 86,
+      "ayahs": 17,
+      "arabicFieldSha256": "825191a708edb96575b4343fe6ffa4ba35a8c0076342f8b4a909dc425bdd61d2",
+      "translationFieldSha256": "a2564b44390bfdc9dea8f436b8940a80ca78dc555276eedb8bb13eedd6dc8fdf"
+    },
+    {
+      "path": "dist/data/quran/87.json",
+      "gitBlobSha": "aed75074f605781e534b19671dd23e16d9f25a7d",
+      "number": 87,
+      "ayahs": 19,
+      "arabicFieldSha256": "48e56977f47f420eee4f453b4a5733fb13e625c1aab1263fff5f28ecc1b97fa3",
+      "translationFieldSha256": "326f2337de228168e6ee4d505f291061c8318f3bd3903c3e76cb15aaeb7f746c"
+    },
+    {
+      "path": "dist/data/quran/88.json",
+      "gitBlobSha": "ec580e9e8dedbcc55b2e38730260cc393451beb9",
+      "number": 88,
+      "ayahs": 26,
+      "arabicFieldSha256": "7db1703ce83bde003e8a8fd46de582216b67f3a5ca2b1a6c97538d2910966e5f",
+      "translationFieldSha256": "0c2d4a5156b0a358fbc5ff029f4c795fee1c8ef4344c56e08dd76c98240f50cb"
+    },
+    {
+      "path": "dist/data/quran/89.json",
+      "gitBlobSha": "3855696afb99a5bc219756848a6c66ba20813c75",
+      "number": 89,
+      "ayahs": 30,
+      "arabicFieldSha256": "cef9f04fcb2ea90046af9971d2411260d6db6d0370ced2815180e58b093fc832",
+      "translationFieldSha256": "2ec4f091ac5e2b8d4df94cd4e40fd53f1ad5ce57315bbfb4a5ae8b3f922e4137"
+    },
+    {
+      "path": "dist/data/quran/9.json",
+      "gitBlobSha": "f1e61334df7b1aaae697ce87044856b16e467a0d",
+      "number": 9,
+      "ayahs": 129,
+      "arabicFieldSha256": "d3700442d78f849f5769b3f56f6800f21bc9e83fbdbcc738ff01b29e9249c4ab",
+      "translationFieldSha256": "19eba2fe166bc0228b0db2cda714943f13a6a5d974477ff8a8538f22e85ada71"
+    },
+    {
+      "path": "dist/data/quran/90.json",
+      "gitBlobSha": "2f6e872265627fad3ddd0c99934a40d1e841d387",
+      "number": 90,
+      "ayahs": 20,
+      "arabicFieldSha256": "a813c0804254d1f703b9509295ac6569f2be732cc919ec901e5effe4430cb27b",
+      "translationFieldSha256": "fc79afe0c09afda274cd4ce0cd48245fa4188348c42c8a7ca6d64ccad8ae06b2"
+    },
+    {
+      "path": "dist/data/quran/91.json",
+      "gitBlobSha": "951714b030d7053f6081b486be83e13f6d0696ce",
+      "number": 91,
+      "ayahs": 15,
+      "arabicFieldSha256": "78ad04d99520539413f4ef8fb8921c0fd748034143c86596f3d282f784e3153e",
+      "translationFieldSha256": "f85f2a234614f2f5df26d95f1679dee0ad45dc886fc62f4168e77e5ca5740c03"
+    },
+    {
+      "path": "dist/data/quran/92.json",
+      "gitBlobSha": "c7975e9da4a40f088ff00e8d0a99a74f7f8b358f",
+      "number": 92,
+      "ayahs": 21,
+      "arabicFieldSha256": "03007588a652db200202b1df617cf9e9357ad0005f721bfe3548390df1d947c1",
+      "translationFieldSha256": "085835ac249ca4aa5a7e19ff332e9e35d28b3ae60288e23e50dc3db975087c07"
+    },
+    {
+      "path": "dist/data/quran/93.json",
+      "gitBlobSha": "b82c71d8979f7c4c7fecc3e3e13493ff9bd8defb",
+      "number": 93,
+      "ayahs": 11,
+      "arabicFieldSha256": "e3027d9596323fb6fee94800483f3ffbadc3b0e04d2ac3567d5aa4bb186d5fe8",
+      "translationFieldSha256": "e2addf9cbcef2065ae23b60aada2309d8696c6b3c0457c6f28288cd9dce743c4"
+    },
+    {
+      "path": "dist/data/quran/94.json",
+      "gitBlobSha": "cb26dd4af4a75dc88f26c40f211289f22cdeff86",
+      "number": 94,
+      "ayahs": 8,
+      "arabicFieldSha256": "ee0a7aa33ac4cc98b0ddd4f5cd141f014b31e8f096662e5c7fdb16e7332bddb3",
+      "translationFieldSha256": "468c8b942640b530ed8f8cb9b009b17cad5b688d56ed1df66188435a40e35775"
+    },
+    {
+      "path": "dist/data/quran/95.json",
+      "gitBlobSha": "c76e7c5168c8d6c45ba19dec928ad8843737a982",
+      "number": 95,
+      "ayahs": 8,
+      "arabicFieldSha256": "061cd21723467cc84e8f61d52136d8a28958af68313da054879e6ed120b4f627",
+      "translationFieldSha256": "5ed9fc2f7086a5c21d061ec2b2c8ecdf725d07546b5a1c84a34727e8aecd6738"
+    },
+    {
+      "path": "dist/data/quran/96.json",
+      "gitBlobSha": "3b408190515467d47ed17c7592070c150f99c06a",
+      "number": 96,
+      "ayahs": 19,
+      "arabicFieldSha256": "f938692dbb553d7e061062c1aa0ab7e1819b1a56f5e2b342ac3490c3bf88cd3e",
+      "translationFieldSha256": "229e680062b628056af6c455df9cc0ddf1a06555ee1ea278381c5f364d029907"
+    },
+    {
+      "path": "dist/data/quran/97.json",
+      "gitBlobSha": "3035e2734861cbdfb92b664d43b8c2ec297ca11a",
+      "number": 97,
+      "ayahs": 5,
+      "arabicFieldSha256": "0f816b11e08a8f2d03c56a7320131b4785589bc09bea0f8ce91219cf0c5e1bda",
+      "translationFieldSha256": "6cfb81e2730f8081d4ab537633f6d1582e4e5ce900affe7557090543e1ac1c49"
+    },
+    {
+      "path": "dist/data/quran/98.json",
+      "gitBlobSha": "386a8afcfa804f697da0215ef9d607b0a416892d",
+      "number": 98,
+      "ayahs": 8,
+      "arabicFieldSha256": "aec7c64b3f38841da9d9e60e71bcea21b80d1d5ac109dd105a2456fa7580a74c",
+      "translationFieldSha256": "495f258365b15beced68051aebbe9cd64cdf917cfc0063ebe3bea5ac09e3bf57"
+    },
+    {
+      "path": "dist/data/quran/99.json",
+      "gitBlobSha": "5298dd3a73abd6aa75308de80cd99164a1d8f3b9",
+      "number": 99,
+      "ayahs": 8,
+      "arabicFieldSha256": "5bc5f168a74d4f305dc817bf1d70767a1513b0db6a33cbaeb44bd4c926eb236b",
+      "translationFieldSha256": "b3f703df4d99fb075660b3c6f804055070ea44fb632b18ebceeb2df14658c7f2"
+    }
+  ]
+}
