@@ -31,10 +31,16 @@ jobs:
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Copy SALAH web bundle
         working-directory: mobile
         run: npm run sync:web
+      - name: Upload npm license evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-android-npm-licenses
+          path: mobile/reports/
+          if-no-files-found: error
       - name: Create Android project
         working-directory: mobile
         run: npx cap add android

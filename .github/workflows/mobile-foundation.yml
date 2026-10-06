@@ -30,3 +30,4 @@ jobs:
       - run: node scripts/check-native-widget.mjs
       - run: node scripts/check-android-widget.mjs
       - run: node scripts/check-ios-widget.mjs
+      - run: node mobile/tests/licenses.mjs
