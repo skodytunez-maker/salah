@@ -290,3 +290,8 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 .menu-page .list-button:not(.account-entry)>small{max-width:48%;text-align:right;flex-shrink:0}
 
 .about-app h2{margin:16px 0 10px}.about-app .app-release-date{margin:24px 0 18px}.about-app .list-button{margin-top:16px}
+
+/* Clear, comfortable tap targets in the account screen. */
+#account-form-area>.account-details>summary,
+#account-form-area>.owner-account>summary{display:flex;align-items:center;justify-content:space-between;min-height:64px;padding:14px 12px;font-size:1.05rem;line-height:1.4;cursor:pointer;touch-action:manipulation}
+#account-form-area>#counter-account-out{display:flex;align-items:center;min-height:60px;min-width:120px;margin:8px 0 0;padding:12px 16px;font-size:1rem;text-align:left;touch-action:manipulation}
