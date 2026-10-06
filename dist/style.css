@@ -231,9 +231,11 @@ html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
 .owner-login #counter-account-out:hover{color:var(--gold,#e5c987)}
 @media(prefers-reduced-motion:reduce){.owner-login #account-owner-panel>.owner-account>summary,.owner-login #account-owner-panel>.owner-account>summary::after,.owner-login .account-details>summary::after{transition:none}}
 
-/* Compact, single alphabetical wallpaper picker for built-in and landmark scenes. */
-#wallpaper-picker summary{gap:12px}#wallpaper-picker summary strong{margin-left:auto;text-align:right;font-size:.9rem;font-weight:400;color:var(--muted);overflow-wrap:anywhere}
-
-.wallpaper-picker-label{display:flex;align-items:center;gap:10px}.wallpaper-picker-label img{width:24px;height:24px;flex:none}
-
-#wallpaper-picker{border-top:0;padding:0}#wallpaper-picker>summary{display:block;position:relative;min-height:0;padding:10px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035)}#wallpaper-picker .wallpaper-picker-label{display:block;min-width:0}#wallpaper-picker .wallpaper-picker-label img{display:block;width:50%;height:auto;aspect-ratio:180/105;object-fit:contain;border-radius:10px;margin-inline:auto}#wallpaper-picker .wallpaper-picker-label>span{display:flex;align-items:center;min-height:38px;margin-top:8px;font-size:1.1rem}#wallpaper-picker summary strong{position:absolute;right:36px;bottom:20px;max-width:55%;margin:0}#wallpaper-picker>summary::after{position:absolute;right:13px;bottom:17px}#wallpaper-picker select{margin-top:12px}
+/* Original landmark card, with all wallpapers in the same selector. */
+.wallpaper-picker-tile{min-width:0;border:1px solid #ead09b;border-radius:15px;overflow:hidden;background:rgba(6,12,24,.5);box-shadow:0 0 0 1px rgba(234,208,155,.35)}
+.wallpaper-picker-face{display:flex;align-items:center;width:100%;min-height:72px;padding:0;border:0;border-radius:0;background:transparent;color:#ead09b;text-align:left;font:inherit;cursor:pointer}
+.wallpaper-picker-face img{display:block;width:105px;height:72px;flex-shrink:0;object-fit:cover;object-position:center 64%}
+.wallpaper-picker-face span{display:block;padding:11px 13px;font-size:14px;line-height:1.3}
+.wallpaper-picker-face:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+#wallpaper-picker{padding:0 13px;border-top:1px solid var(--line)}
+#wallpaper-picker summary span{padding:0;font-size:14px;line-height:1.3}

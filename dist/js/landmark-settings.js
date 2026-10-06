@@ -8,6 +8,8 @@ const collator=new Intl.Collator('ru',{sensitivity:'base',numeric:true});
 export function mountLandmarkSettings(root,onChange=()=>{}){
  const details=root?.querySelector('#wallpaper-picker'),label=root?.querySelector('#wallpaper-name'),select=root?.querySelector('#wallpaper-select'),status=root?.querySelector('#landmark-status');
  if(!details||!label||!select)return ()=>{};
+ const face=root.querySelector('#wallpaper-toggle');
+ if(face){face.onclick=()=>{details.open=!details.open};details.ontoggle=()=>face.setAttribute('aria-expanded',String(details.open));}
  let entries=[],request=0;
  const current=()=>settings.wallpaper==='landmark'?'landmark:'+settings.landmarkCity:'wallpaper:'+settings.wallpaper;
  function draw(){
