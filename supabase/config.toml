@@ -11,3 +11,7 @@ verify_jwt = false
 [functions.account-presence]
 # Auth validates the modern signing-key JWT and its active session in the handler.
 verify_jwt = false
+
+[functions.account-delete]
+# Auth and active-session checks are performed in the handler for modern signing keys.
+verify_jwt = false
