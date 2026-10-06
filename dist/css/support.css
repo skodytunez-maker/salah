@@ -1,1 +1,21 @@
 .support-panel{font-size:1rem}.support-heading{display:flex;gap:12px;align-items:center;justify-content:space-between}.support-heading h2{margin:0}.support-heading select{width:auto;max-width:55%}.support-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}.support-panel label{display:block;margin:16px 0 8px}.support-panel input,.support-panel textarea{width:100%;font:inherit;color:inherit;background:rgba(0,0,0,.16);border:1px solid rgba(180,190,210,.24);border-radius:12px;padding:12px}.support-panel textarea{resize:vertical;line-height:1.6}.support-panel form>.button{margin-top:14px}.support-note{font-size:.875rem;line-height:1.5}.support-list{display:grid;gap:10px}.support-thread{display:grid;text-align:left;padding:16px;gap:6px;background:rgba(180,190,210,.05);color:inherit;border:1px solid rgba(180,190,210,.2);border-radius:14px;font:inherit;cursor:pointer}.support-thread strong{overflow-wrap:anywhere}.support-thread span,.support-thread small{font-size:.875rem;opacity:.7}.support-messages{display:grid;gap:12px;margin:20px 0}.support-message{padding:14px;border:1px solid rgba(180,190,210,.16);border-radius:14px;background:rgba(180,190,210,.04)}.support-message.is-answer{border-color:rgba(209,185,120,.3);background:rgba(209,185,120,.07)}.support-message>div{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.875rem;flex-wrap:wrap}.support-message time{opacity:.65}.support-message p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;margin:12px 0 0}.support-close{margin-top:16px}.support-panel [data-support-status]:empty{display:none}.support-panel [role=alert]{color:#f4b5ad}.ambient-settings{margin:20px 0;border-top:1px solid rgba(180,190,210,.2);padding-top:16px}.ambient-settings>summary{cursor:pointer;font-weight:600}.ambient-settings>label:not(.switch-row){display:block;margin:18px 0 8px}.ambient-volume{display:flex;justify-content:space-between;gap:12px;margin-top:20px}.ambient-volume output{color:var(--gold,#d6c387);font-variant-numeric:tabular-nums}.ambient-settings input[type=range]{width:100%;padding:0;height:44px;accent-color:var(--gold,#d6c387);cursor:pointer;background:transparent;box-shadow:none}.ambient-note,.ambient-status{font-size:.875rem;line-height:1.5}.ambient-settings .button{margin-top:8px}
+
+/* Account checks are decorative: existing authentication and save logic is unchanged.
+   This shared stylesheet is already loaded and cached by both installed entry pages. */
+#counter-account-authorized.account-authorized::before,
+#counter-profile button[type="submit"]::before {
+  content: "";
+  display: inline-block;
+  box-sizing: content-box;
+  width: 11px;
+  height: 6px;
+  margin-inline-end: 10px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  vertical-align: 3px;
+  pointer-events: none;
+}
+
+/* Keep the visible save label and keyboard-accessible submit button. */
+#counter-profile button[type="submit"] { min-height: 44px; }
