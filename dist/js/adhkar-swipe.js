@@ -3,12 +3,12 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
  const doc=passage.ownerDocument,parent=passage.parentNode,row=doc.createElement('div');
  row.className='adhkar-card-carousel';row.setAttribute('role','region');row.setAttribute('aria-label','Карточки азкаров');
  const previous=preview(1),next=preview(-1),activeIndex=previous?1:0;
- const pages=[previous,passage,next].filter(Boolean);
+ const pages=[previous,passage,next].filter(Boolean),previewIds=new Map();
  row.style.marginTop=win.getComputedStyle?.(passage).marginTop||'28px';
  parent.insertBefore(row,passage);
  for(const page of pages){
   page.classList.add('adhkar-carousel-page');
-  if(page!==passage){page.classList.remove('dhikr-passage');page.classList.add('adhkar-carousel-preview');page.setAttribute('aria-hidden','true');page.inert=true;page.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));}
+  if(page!==passage){page.classList.add('adhkar-carousel-preview');page.setAttribute('aria-hidden','true');page.inert=true;previewIds.set(page,Array.from(page.querySelectorAll('[id]'),n=>[n,n.getAttribute('id')]));previewIds.get(page).forEach(([n])=>n.removeAttribute('id'));}
   else page.classList.add('adhkar-carousel-current');
   row.append(page);
  }
@@ -20,7 +20,9 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
   if(disposed)return;
   const nextWidth=row.clientWidth;
   if(nextWidth&&nextWidth!==width){width=nextWidth;row.scrollLeft=activeIndex*width;}
-  row.style.height=passage.getBoundingClientRect().height+'px';
+  const offset=width?Math.max(0,Math.min(pages.length-1,row.scrollLeft/width)):activeIndex;
+  const left=Math.floor(offset),right=Math.ceil(offset),fraction=offset-left;
+  row.style.height=(pages[left].getBoundingClientRect().height*(1-fraction)+pages[right].getBoundingClientRect().height*fraction)+'px';
  }
  function settle(){
   win.clearTimeout(timer);timer=0;
@@ -29,10 +31,12 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
   const index=Math.max(0,Math.min(pages.length-1,Math.round(row.scrollLeft/width)));
   if(Math.abs(row.scrollLeft-index*width)>2){row.scrollTo({left:index*width,behavior:'smooth'});return;}
   if(index===activeIndex)return;
-  committed=true;suppress();commit(index>activeIndex?-1:1);
+  const incoming=pages[index];previewIds.get(incoming)?.forEach(([n,id])=>n.setAttribute('id',id));
+  incoming.inert=false;incoming.removeAttribute('aria-hidden');incoming.classList.remove('adhkar-carousel-preview','adhkar-carousel-page');incoming.classList.add('dhikr-passage');
+  committed=true;suppress();commit(index>activeIndex?-1:1,incoming);
  }
  const schedule=()=>{win.clearTimeout(timer);timer=win.setTimeout(settle,160);};
- listen('scroll',()=>{if(!initializing){suppress();schedule();}},{passive:true});
+ listen('scroll',()=>{if(!initializing){size();suppress();schedule();}},{passive:true});
  listen('scrollend',settle,{passive:true});
  listen('touchstart',()=>{touching=true;win.clearTimeout(timer);},{passive:true});
  listen('touchend',e=>{touching=e.touches.length>0;if(!touching)schedule();},{passive:true});

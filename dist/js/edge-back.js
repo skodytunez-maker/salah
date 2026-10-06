@@ -20,7 +20,7 @@ export function resolveBackAction(app,stack){
 export function initEdgeBack(app,{reduced=()=>false,win=window,doc=document}={}){
  const stack=createRouteBackStack(win),edges=[];
  const blocked=()=>!!doc.querySelector('dialog[open]')||!!doc.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]');
- const surface=()=>app.querySelector('#owner-user-detail:not([hidden]),.adhkar-shell .dhikr-passage,.lesson-content')||app;
+ const surface=()=>app.querySelector('#owner-user-detail:not([hidden]),.adhkar-shell .dhikr-passage:not(.adhkar-carousel-preview),.lesson-content')||app;
  for(const [name,direction,resolve]of [['back',1,()=>resolveBackAction(app,stack)],['forward',-1,()=>stack.canForward()?()=>stack.forward():null]]){
   const edge=doc.createElement('div');edge.className='app-navigation-edge app-'+name+'-edge';edge.setAttribute('aria-hidden','true');doc.body.append(edge);
   let action=null;
