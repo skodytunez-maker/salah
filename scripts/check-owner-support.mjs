@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {Script,createContext} from 'node:vm';
 import {readFile,readdir} from 'node:fs/promises';
+import {validOwnerUserId} from '../dist/js/owner-user-card.js';
 import {createOwnerSupportStatus} from '../dist/js/owner-support-status.js';
 const dots=[{hidden:true,attributes:{},setAttribute(k,v){this.attributes[k]=v}}],events={},doc={visibilityState:'visible',addEventListener(){},removeEventListener(){}};
 let owner=null,pending=1,calls=0,failure=false,resolve;
@@ -17,12 +18,16 @@ owner='owner-two';const before=calls;doc.visibilityState='hidden';await status.r
 const bind=await readFile(new URL('../dist/js/support.js',import.meta.url),'utf8');
 let verified=false,answer=false,mfa=false,verifyPending=null,mounts=[];
 globalThis.location={hash:'#support'};
-globalThis.__supportFixture={prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
-const source="const {prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
+globalThis.__supportFixture={validOwnerUserId,prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
+const source="const {prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title,validOwnerUserId}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
 const {showSupport,stopSupport}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const app={dataset:{},isConnected:true,innerHTML:'',querySelector:()=>({})};
 await showSupport(app);assert.equal(mounts.at(-1).owner,false);assert.ok(app.innerHTML.includes('Обращения в поддержку'));
 answer=true;await showSupport(app);assert.equal(mounts.at(-1).owner,true);assert.ok(app.innerHTML.includes('Обращения пользователей'),'A verified owner opens replies without a special URL flag');
+location.hash='#support?owner=1&user=55555555-5555-4555-8555-555555555555';
+await showSupport(app);assert.equal(mounts.at(-1).recipientId,'55555555-5555-4555-8555-555555555555','Owner compose receives the selected stable recipient');
+location.hash='#support?owner=1&user=invalid';await showSupport(app);assert.equal(mounts.at(-1).recipientId,null,'Invalid route IDs cannot request an owner recipient');
+location.hash='#support';
 verified=false;answer=false;mfa=true;const previous=mounts.length;await showSupport(app);assert.equal(mounts.length,previous);assert.ok(app.innerHTML.includes('Войти в кабинет владельца'),'MFA is required before owner conversations are mounted');mfa=false;
 let finish;verifyPending=done=>finish=done;const abandoned=showSupport(app);await Promise.resolve();stopSupport();location.hash='#home';finish(true);await abandoned;assert.equal(mounts.length,previous,'Changing pages cancels late owner-mode detection');
 delete globalThis.__supportFixture;
