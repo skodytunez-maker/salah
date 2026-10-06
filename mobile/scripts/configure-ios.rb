@@ -31,7 +31,7 @@ end
 File.write(File.join(icon_set_path, 'Contents.json'), JSON.pretty_generate({
   'images' => [{'filename' => 'AppIcon.png', 'idiom' => 'universal', 'platform' => 'ios', 'size' => '1024x1024'}],
   'info' => {'author' => 'xcode', 'version' => 1}
-}) + "\\n")
+}) + "\n")
 
 widget = project.targets.find { |target| target.name == 'SalahPrayerWidget' }
 widget ||= project.new_target(:app_extension, 'SalahPrayerWidget', :ios, '16.0')
