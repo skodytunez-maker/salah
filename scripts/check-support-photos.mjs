@@ -66,4 +66,8 @@ assert.ok(!migration.includes('GRANT'),'Photo metadata is never granted directly
 assert.match(source,/upsert:false/);assert.match(source,/createSignedUrl\(photo.path,300\)/);
 const deletion=await readFile(new URL('../supabase/functions/account-delete/index.ts',import.meta.url),'utf8');
 assert.ok(deletion.indexOf("admin.storage.from('support-photos').remove")<deletion.indexOf('admin.auth.admin.deleteUser'),'Private image files are purged before account deletion');
+for(const name of ['index.html','owner.html']){
+ const html=await readFile(new URL('../dist/'+name,import.meta.url),'utf8');
+ assert.ok(html.includes("img-src 'self' data: blob: https://kbltwszfvphgbxdbczsb.supabase.co/storage/v1/object/sign/support-photos/"),'Both app entrypoints allow only the private signed-image path');
+}
 console.log('PASS: gallery preview/removal, retry and logout isolation, authenticated image upload, JPEG bounds/metadata stripping, private links and account cleanup.');
