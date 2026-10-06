@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {pinIosPackages,verifyIosPins} from '../scripts/ios-dependency-evidence.mjs';
+
+const config=JSON.parse(await fs.readFile(new URL('../licenses/native-sources.json',import.meta.url),'utf8'));
+const root=await fs.mkdtemp(path.join(os.tmpdir(),'salah-platform-fixture-'));
+async function put(name,text){const target=path.join(root,name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,text)}
+const swift='ios/App/CapApp-SPM/Package.swift';
+const resolved='ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved';
+const original='let packages = [.package(url: "'+config.swift.url+'", from: "'+config.swift.version+'")]\n';
+await put('licenses/native-sources.json',JSON.stringify(config));
+await put('node_modules/@capacitor/ios/package.json',JSON.stringify({version:config.capacitorVersion}));
+await put(swift,original);
+await pinIosPackages(root);
+const pinned=await fs.readFile(path.join(root,swift),'utf8'),firstResolved=await fs.readFile(path.join(root,resolved),'utf8');
+assert.match(pinned,/exact: "8\.5\.2"/);
+verifyIosPins(JSON.parse(firstResolved),config.swift);
+await pinIosPackages(root);
+assert.equal(await fs.readFile(path.join(root,swift),'utf8'),pinned,'Repeated native configuration is stable.');
+assert.equal(await fs.readFile(path.join(root,resolved),'utf8'),firstResolved);
+const withExtra=JSON.parse(firstResolved);withExtra.pins.push({...withExtra.pins[0],identity:'unreviewed-extra'});
+await put(resolved,JSON.stringify(withExtra));
+await assert.rejects(pinIosPackages(root),/Unexpected Swift packages/);
+assert.equal(await fs.readFile(path.join(root,swift),'utf8'),pinned);
+assert.equal(await fs.readFile(path.join(root,resolved),'utf8'),JSON.stringify(withExtra),'Unexpected developer pins are not overwritten.');
+const moved=JSON.parse(firstResolved);moved.pins[0].state.revision='0'.repeat(40);
+assert.throws(()=>verifyIosPins(moved,config.swift),/differs/);
+await put(resolved,firstResolved);
+await put(swift,original.replace(config.swift.version,'8.5.3'));
+await assert.rejects(pinIosPackages(root),/Unknown generated Swift manifest/);
+assert.equal(await fs.readFile(path.join(root,swift),'utf8'),original.replace(config.swift.version,'8.5.3'));
+await put(swift,original);
+await put('node_modules/@capacitor/ios/package.json',JSON.stringify({version:'8.5.3'}));
+await assert.rejects(pinIosPackages(root),/Review native sources/);
+assert.equal(await fs.readFile(path.join(root,swift),'utf8'),original);
+assert.equal(await fs.readFile(path.join(root,resolved),'utf8'),firstResolved);
+
+const apache=await fs.readFile(new URL('../licenses/Apache-2.0.txt',import.meta.url),'utf8');
+assert.match(apache,/END OF TERMS AND CONDITIONS/);
+assert.match(apache,/4\. Redistribution/);
+assert.match(await fs.readFile(new URL('../licenses/Cordova-NOTICE.txt',import.meta.url),'utf8'),/Apache Software Foundation/);
+assert.match(config.swift.manifestSha256,/^[a-f0-9]{64}$/);
+for(const value of Object.values(config.swift.binaries))assert.match(value,/^[a-f0-9]{64}$/);
+console.log('PASS: exact iOS version/revision, repeatable pinning, preservation of unexpected developer pins, moved revision and changed manifest/package refusal, complete native notices.');

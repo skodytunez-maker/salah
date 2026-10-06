@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "capacitorVersion": "8.5.2",
+  "swift": {
+    "identity": "capacitor-swift-pm",
+    "url": "https://github.com/ionic-team/capacitor-swift-pm.git",
+    "version": "8.5.2",
+    "revision": "0b6882e9a3288342aacf36348e5a94e4f1dd7b13",
+    "manifest": "https://github.com/ionic-team/capacitor-swift-pm/blob/0b6882e9a3288342aacf36348e5a94e4f1dd7b13/Package.swift",
+    "binaries": {
+      "Capacitor": "134c65a8bd30bfaa8ccb158d78142fa7231bf3f472e4a5d808c5fbed90fd4c75",
+      "Cordova": "57ff2c8f1e5dcd8d4379ac3cccde1407d81ccd575347dc2aff4f72272b8794a1"
+    },
+    "manifestSha256": "d438f723a12d16a803aeb0b81d1160a04ead205f74614a2b97aa8965acf95a72"
+  },
+  "cordova": {
+    "source": "https://github.com/ionic-team/capacitor/tree/8.5.2/ios/CapacitorCordova",
+    "upstreamNotice": "https://github.com/apache/cordova-ios/blob/8.0.0/NOTICE",
+    "note": "Capacitor compatibility code retains Apache license headers. The upstream Cordova NOTICE is preserved; the original upstream iOS version of the adapted code is not asserted."
+  }
+}

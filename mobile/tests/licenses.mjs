@@ -41,6 +41,7 @@ await put('scripts/collect-licenses.mjs',await fs.readFile(new URL('../scripts/c
 await put('scripts/sync-web.mjs',await fs.readFile(new URL('../scripts/sync-web.mjs',import.meta.url),'utf8'));
 await put('node_modules/@capacitor/core/dist/index.js','export const Capacitor={};\n');
 await put('native/native-entry.js','// Native entry fixture\n');
+for(const name of ['Apache-2.0.txt','Cordova-NOTICE.txt'])await put('licenses/'+name,await fs.readFile(new URL('../licenses/'+name,import.meta.url),'utf8'));
 await put('www/previous-bundle.txt','Keep the previous generated bundle if validation fails.');
 await fs.mkdir(path.join(fixture,'dist'),{recursive:true});
 await fs.writeFile(path.join(fixture,'dist/index.html'),'<script type="module" src="./js/app.js"></script>');

@@ -53,6 +53,17 @@ jobs:
       - name: Re-apply Android native features
         working-directory: mobile
         run: npm run android:configure
+      - name: Record runtime dependencies and preserve native notices
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew -I ../scripts/collect-android-licenses.gradle :app:salahNativeLicenseReport --stacktrace
+      - name: Upload Android runtime dependency evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-android-native-evidence
+          path: mobile/reports/android/
+          if-no-files-found: error
       - name: Build debug APK
         working-directory: mobile/android
         run: |
@@ -60,6 +71,15 @@ jobs:
           ./gradlew assembleDebug --stacktrace
       - name: Verify APK signature and package metadata
         run: node mobile/scripts/inspect-android-apk.mjs mobile/android/app/build/outputs/apk/debug/app-debug.apk mobile/android/app/build/outputs/apk/debug/apk-report.json
+      - name: Verify native notices inside the APK
+        run: |
+          set -euo pipefail
+          APK=mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -p "$APK" assets/public/third-party/Android-NOTICES.txt | cmp - mobile/reports/android/Android-NOTICES.txt
+          for NOTICE in Apache-2.0.txt Cordova-NOTICE.txt; do
+            unzip -p "$APK" "assets/public/third-party/native/$NOTICE" | cmp - "mobile/licenses/$NOTICE"
+          done
+          echo 'PASS: runtime notices and complete Apache/Cordova documents are inside the APK.'
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
