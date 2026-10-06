@@ -12,7 +12,7 @@ import {createAdhkarProgressStore} from '../dist/js/adhkar-progress.js';
 // production handlers, not a second implementation of resume behavior.
 const source=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 const catalogue=JSON.parse(await readFile(new URL('../dist/data/adhkar.json',import.meta.url),'utf8'));
-const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdhkar,stopAdhkar});';
+const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showAdhkar,stopAdhkar,updateAdhkarPeriod});';
 const decode=value=>String(value).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 class Storage {
   data=new Map();get length(){return this.data.size}key(index){return [...this.data.keys()][index]??null}
@@ -53,7 +53,7 @@ class Element {
   querySelector(selector){return this.querySelectorAll(selector)[0]??null}
   checkValidity(){return true}reportValidity(){}
 }
-function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026-10-02'}={}){
+function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026-10-02',resumeEvening=null}={}){
   const entries=[{hash,state:null}];let historyIndex=0;
   const location={get hash(){return entries[historyIndex].hash},set hash(value){const next=value.startsWith('#')?value:'#'+value;if(next===this.hash)return;entries.splice(historyIndex+1);entries.push({hash:next,state:null});historyIndex++}};
   const body=new Element('body'),container=new Element(),events=new Map(),audio=[],notices=[];let scroll=0,fetches=0,currentDay=day,deferredLock=null;
@@ -75,7 +75,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     fetch:async()=>{fetches++;return {ok:true,json:async()=>structuredClone(items)}}
   });
   const module=new Script(executable,{filename:'adhkar.js'}).runInContext(context);
-  return {module,container,location,storage,audio,notices,window,get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning')},open:()=>module.showAdhkar(container,'morning'),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
+  return {module,container,location,storage,audio,notices,window,get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning',{resumeEvening})},open:()=>module.showAdhkar(container,'morning',{resumeEvening}),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,setEveningContext:value=>{resumeEvening=value;module.updateAdhkarPeriod('evening',{resumeEvening})},deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
 }
 const params=page=>new URLSearchParams(page.location.hash.split('?')[1]||'');
 const cardId=page=>page.select('#adhkar-count').dataset.dhikrId;
@@ -189,3 +189,66 @@ for(const group of ['morning','evening']){
 }
 assert.equal(JSON.stringify(catalogue),catalogueBefore,'Presentation never modifies the source catalogue');
 console.log('PASS: six morning/evening short-surah cards and list previews omit basmala, preserve other duas, original Arabic and counter identities.');
+
+// Nightly progress belongs to the saved evening, independently of lifetime totals.
+// Seed real repetitions, not guessed values derived from a lifetime total.
+function eveningFixture(){
+ const storage=new Storage(),store=createAdhkarProgressStore({storage:()=>storage,day:()=> '2026-10-06'});
+ assert.ok(store.configure(catalogue.items));
+ const ids=catalogue.groups.evening.ids;
+ assert.equal(ids[2],'tasbih');
+ return {storage,store,ids};
+}
+let night=eveningFixture();
+for(const id of night.ids.slice(0,2))for(let n=0;n<catalogue.items.find(i=>i.id===id).target;n++)await night.store.increment('evening',id);
+for(let n=0;n<50;n++)await night.store.increment('evening','tasbih');
+let snapshot=night.store.progress('evening');snapshot.cursor=2;night.store.save('evening',snapshot);
+const original=night.storage.getItem('salah:adhkar-progress-v2');
+let resumed=browser({hash:'#adhkar?group=evening',day:'2026-10-07',storage:night.storage,resumeEvening:true});
+await resumed.open();assertList(resumed);
+assert.equal(night.storage.getItem('salah:adhkar-progress-v2'),original,'Restoring the saved evening never changes repetitions or totals');
+assert.equal(params(resumed).get('day'),'2026-10-06');
+await resumed.select('#dhikr-continue').click();
+assert.equal(cardId(resumed),'tasbih');assert.match(resumed.select('#adhkar-count').textContent,/50 \/ 100/);
+assert.equal(resumed.select('#adhkar-total').textContent,'50');
+await assertUnchanged(resumed);assert.match(resumed.select('#adhkar-count').textContent,/50 \/ 100/);
+const beforeTap=night.storage.getItem('salah:adhkar-progress-v2');
+const gate=resumed.deferTap(),pending=resumed.select('#adhkar-count').click();
+resumed.setDay('2026-10-08');gate();await pending;
+const afterTap=JSON.parse(night.storage.getItem('salah:adhkar-progress-v2'));
+assert.equal(afterTap.days['2026-10-06'].evening.counts.tasbih,51,'A pending tap commits to the displayed saved date');
+assert.equal(afterTap.days['2026-10-07'],undefined);
+assert.equal(afterTap.days['2026-10-08'],undefined);
+assert.equal(afterTap.totals.tasbih,51,'Only one actual repetition is added to the lifetime total');
+// Reload on the same following calendar date restores the exact card and record.
+resumed=browser({hash:resumed.location.hash,day:'2026-10-07',storage:night.storage,resumeEvening:false});
+await resumed.open();assert.equal(cardId(resumed),'tasbih');assert.match(resumed.select('#adhkar-count').textContent,/51 \/ 100/);
+await resumed.select('#adhkar-undo').click();assert.equal(night.store.total('tasbih'),50);
+assert.equal(night.store.progress('evening').counts.tasbih,50);
+const lifetime=night.store.totals();
+const fresh=browser({hash:'#adhkar?group=evening',day:'2026-10-07',storage:night.storage,resumeEvening:false});
+await fresh.open();assert.equal(params(fresh).get('day'),null);await fresh.select('[data-index="2"]').click();
+assert.match(fresh.select('#adhkar-count').textContent,/0 \/ 100/,'The next evening starts its own daily stage');
+assert.deepEqual(night.store.totals(),lifetime,'Starting the next evening never rewrites lifetime totals');
+// Current-day repetitions always take priority over an automatic previous-day resume.
+await fresh.select('#adhkar-count').click();
+const current=browser({hash:'#adhkar?group=evening&view=card&item=tasbih',day:'2026-10-07',storage:night.storage,resumeEvening:true});
+await current.open();assert.match(current.select('#adhkar-count').textContent,/1 \/ 100/);assert.equal(params(current).get('day'),null);
+// A still-open evening survives midnight even before the new schedule is loaded.
+const active=browser({hash:'#adhkar?group=evening&view=card&item=tasbih',day:'2026-10-06',storage:night.storage,resumeEvening:false});
+await active.open();active.setDay('2026-10-07');active.setEveningContext(null);
+assert.match(active.select('#adhkar-count').textContent,/50 \/ 100/);assert.equal(params(active).get('day'),'2026-10-06');
+// Late prayer data can recover yesterday in the card and list without fetching texts again.
+const lateStorage=new Storage();lateStorage.setItem('salah:adhkar-progress-v2',beforeTap);
+for(const view of ['','&view=card&item=tasbih']){
+ const late=browser({hash:'#adhkar?group=evening'+view,day:'2026-10-07',storage:lateStorage});
+ await late.open();late.setEveningContext(true);assert.equal(params(late).get('day'),'2026-10-06');
+ if(!view)await late.select('#dhikr-continue').click();
+ assert.match(late.select('#adhkar-count').textContent,/50 \/ 100/);
+}
+// Expired or forged URLs cannot resume unrelated old or nonexistent records.
+for(const date of ['2026-10-05','2026-10-09','garbage']){
+ const invalid=browser({hash:'#adhkar?group=evening&view=card&item=tasbih&day='+date,day:'2026-10-07',storage:new Storage(),resumeEvening:false});
+ await invalid.open();assert.equal(params(invalid).get('day'),null);assert.match(invalid.select('#adhkar-count').textContent,/0 \/ 100/);
+}
+console.log('PASS: saved evening 50/100 resumes after midnight/reload, pending taps and undo target its own day, totals are not guessed, current-day work wins and the next evening starts separately.');

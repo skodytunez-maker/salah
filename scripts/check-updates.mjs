@@ -97,3 +97,23 @@ assert.equal(validatedRelease({version:158,date:'2026-10-04',changes:['Каби�
 assert.deepEqual(validatedRelease({version:158,date:'2026-10-04',changes:['Улучшена погода','Изменения админа','Owner release']}).changes,['Улучшена погода']);
 assert.ok(APP_CHANGES.every(x=>!/владел|админ|owner|admin/iu.test(x)));
 console.log('PASS: private owner notes excluded from installed and waiting public update dialogs.');
+
+// Exercise the actual app callback, not a mocked safe predicate.
+const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
+const gateStart=appSource.indexOf('registerAppWorker({toast');
+assert.ok(gateStart>=0);
+const gateCall=appSource.slice(gateStart,appSource.indexOf('});',gateStart)+3);
+let updateGate,reader=null,sync='saved',audio=false;
+const gateScope={settings:{onboarded:true},currentRoute:'adhkar',toast(){},registerAppWorker:options=>updateGate=options,
+ app:{querySelector:selector=>reader&&selector.split(',').includes(reader)?{}:null},
+ counterSyncStatus:()=>({status:sync}),foregroundAudioBusy:()=>audio};
+vm.runInNewContext(gateCall,gateScope);
+for(const selector of ['.adhkar-shell','.dhikr-list-shell','.lesson-complete','.dua-reader','.quran-reader','.lesson-content']){
+ reader=selector;assert.equal(updateGate.canAutoUpdate(),false,'A downloaded update must wait while reading '+selector);
+}
+reader=null;assert.equal(updateGate.canAutoUpdate(),true,'The collection menu still updates automatically');
+gateScope.currentRoute='support';assert.equal(updateGate.canAutoUpdate(),false);
+gateScope.currentRoute='home';sync='saving';assert.equal(updateGate.canAutoUpdate(),false);
+sync='saved';audio=true;assert.equal(updateGate.canAutoUpdate(),false);
+audio=false;assert.equal(updateGate.canAutoUpdate(),true);
+console.log('PASS: actual app gate protects reading daily counters, Quran, lessons and support without disabling resting-screen updates.');
