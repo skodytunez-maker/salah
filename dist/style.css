@@ -194,7 +194,7 @@ button.owner-user-row{width:100%;text-align:left;font:inherit;color:inherit;back
 .owner-notification-flag span{color:var(--text);font-size:12px}
 
 /* Smoothly mask the service-worker document swap with the app's deep-night base. */
-html.salah-update-leaving::after,html.salah-update-restoring::after{content:"";position:fixed;inset:0;z-index:2147483647;pointer-events:none;background:#0d1326;opacity:1;transition:opacity 320ms ease}
+html.salah-update-leaving::after,html.salah-update-restoring::after{content:"";position:fixed;inset:0;z-index:2147483647;pointer-events:none;background:rgba(13,19,38,.12);opacity:1;transition:opacity 320ms ease}
 html.salah-update-leaving::after{opacity:0}
 html.salah-update-leaving.salah-update-leaving-active::after{opacity:1}
 html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
