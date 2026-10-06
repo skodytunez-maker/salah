@@ -71,7 +71,7 @@ let prayerDisplay='timetable',learningEntry=null,quranRenderedHash=null,umrahRen
 const app=document.getElementById('app');
 const userSupportStatus=createUserSupportStatus({getUserId:()=>counterSyncStatus().signedIn&&!ownerVerified()?counterSyncStatus().userId:null,getRpc:()=>createSupportRpc(accountAuthClient())});
 const ownerSupportStatus=createOwnerSupportStatus({getOwnerId:verifiedOwnerId,getRpc:()=>createSupportRpc(accountAuthClient())});
-normalizeStandaloneLaunch({locationObject:location,historyObject:history,isStandalone:navigator.standalone===true||window.matchMedia?.('(display-mode: standalone)').matches===true});
+normalizeStandaloneLaunch({locationObject:location,historyObject:window.history,isStandalone:navigator.standalone===true||window.matchMedia?.('(display-mode: standalone)').matches===true});
 initEdgeBack(app,{reduced:()=>settings.motion||settings.transitions===false});
 const topHeader=document.querySelector('.workspace>header'),locationControl=document.getElementById('location-button'),settingsControl=document.getElementById('settings-button');
 const reminders=createReminders({getSettings:()=>settings,updateSettings,onChange:()=>ensureTahajjudDays(),getContext:()=>({today:dateKey(),days,cityKey:JSON.stringify([settings.city?.latitude,settings.city?.longitude,settings.city?.timezone,settings.method,settings.school,settings.highLatitude,settings.tyumenTimeSource,settings.offsets,settings.tableOffsets,settings.mosque,settings.mosqueTimes]),timingsFor:day=>timingsFor(day,days)}),toast});
