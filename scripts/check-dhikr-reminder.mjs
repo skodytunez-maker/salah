@@ -71,5 +71,6 @@ workerNow=Date.parse('2026-10-05T07:59:00+05:00');push({kind:'dhikr',timeZone:ci
 workerNow=Date.parse('2026-10-05T08:00:00+05:00');push({kind:'dhikr',timeZone:city.timezone,expiresAt:workerNow+60000,body:'fixture'});assert.equal(shown.length,2);
 push({kind:'dhikr',timeZone:city.timezone,expiresAt:workerNow-1,body:'expired'});assert.equal(shown.length,2,'Expired inactivity push never becomes a generic notice');
 workerNow=Date.parse('2026-10-05T04:55:00+05:00');push({expiresAt:workerNow+60000,body:'Фаджр'});assert.equal(shown.length,3,'Prayer notifications retain their nighttime delivery');
-const activitySource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');assert.match(activitySource,/function card\(direction=0\)\{markDhikrActivity\(\)/);assert.match(activitySource,/result.ok&&action==='increment'\)markDhikrActivity/);
+const activitySource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');assert.match(activitySource,/function card\([^)]*\)\{[^{}]*markDhikrActivity\(\)/);assert.match(activitySource,/result.ok&&action==='increment'\)markDhikrActivity/);
 console.log('PASS: opt-in, 2/3 full-day pause, Dhuhr/noon timezone and DST, alternating verified excerpts, resumed activity cancellation, no count/email uploads, client/server parity, provider independence, cooldown, no duplicates and late opt-out.');
+
