@@ -148,8 +148,9 @@ assert.match(ownerUserCard({nickname:'Health',appVersion:180,versionCheckedAt:'2
 assert.match(ownerUserCard({nickname:'Legacy',appVersion:180}),/Версия SALAH<\/dt><dd>Нет данных/);
 console.log('PASS: card tap, left swipe, vertical scrolling, text selection, controls, stable focus return and diagnostic unknown states.');
 
-for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Версия проверена|Последнее сохранение|Проверено/.test(cardMarkup));}
+for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Версия проверена|Последнее сохранение|Проверено/.test(cardMarkup));if(notifications===null)assert.equal((cardMarkup.match(/is-unknown/g)||[]).length,2,'Unknown prayer and delivery states use the dark check');}
 assert.equal((ownerUserCard({notifications:{enabled:true,background:false,permissionDenied:true,checkedAt:'2026-10-06T12:00:00Z'}}).match(/is-connected/g)||[]).length,1,'Namaz preference and delivery are separate');
+assert.match((await readFile(new URL('../dist/style.css',import.meta.url),'utf8')),/\.owner-notification-flag\.is-unknown svg\{stroke:#485572\}/,'Unknown notification checks use dark slate');
 console.log('PASS: compact green/dark checks keep enabled, disabled and unknown meanings accessible; technical times removed.');
 
 // Model asynchronous browser Back (including an iOS edge swipe), rather than
