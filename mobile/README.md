@@ -49,7 +49,7 @@ First iOS setup on macOS:
 5. `npm run ios:sync`
 6. `npm run ios:open`
 
-The iOS generator now creates and embeds the real WidgetKit target. Simulator compilation is checked in GitHub Actions from a Windows-led workflow; device signing and TestFlight still require an Apple Developer team.
+The iOS generator creates and embeds the real WidgetKit target. App and widget build numbers use the current SALAH web release; the existing marketing version is preserved. GitHub Actions checks both the simulator and an unsigned Release archive for iPhone. The archive inspector verifies arm64 app/widget/native framework binaries, matching app/widget/web versions, Info.plist App Group configuration and the exact packaged notices. Signed entitlements are a separate check. Its report explicitly remains unsigned and not ready for TestFlight upload. Device signing and TestFlight still require an Apple Developer team; neither CI compilation proves physical device behavior.
 
 ## Widget plan
 
