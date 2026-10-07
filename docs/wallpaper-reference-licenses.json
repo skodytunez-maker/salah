@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-07",
+  "sourceCommit": "5d8c67397d7423c28e787792b752e72b16b624d6",
+  "scope": "Primary source-page license evidence for four photo references, not blanket clearance or a declaration that a generated wallpaper is an adaptation. No outreach.",
+  "records": [
+    {
+      "id": "moscow",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Moscow_Cathedral_Mosque_01-2016.jpg",
+      "sourcePageRevision": "1182743503",
+      "permalink": "https://commons.wikimedia.org/w/index.php?title=File%3AMoscow_Cathedral_Mosque_01-2016.jpg&oldid=1182743503",
+      "author": "A.Savin, Wikipedia",
+      "license": "Free-Art-1.3",
+      "licenseUrl": "https://artlibre.org/licence/lal/en/",
+      "licenseStatus": "verified-on-primary-file-page",
+      "savedReferenceSha256": "5fbc71ad00e6b6cc677650e71d0e49c675dbc5be56cb5a0702e1126c9da468cc",
+      "inputIdentityScope": "Hash identifies the saved local reference; no byte-equality claim against the full-resolution Commons original.",
+      "individualContactRequiredByThisLicense": false,
+      "conditions": "FAL permits distribution and modification, including with a charge. Retain authors, original access and license; mark modifications and use the same or compatible license for subsequent works within its scope. The source page explicitly states approval requests are unnecessary.",
+      "outputScopeStatus": "not-determined",
+      "nextAction": "Preserve this evidence. Determine applicable notice/license duties for the actual reference use and generated result; do not clear every wallpaper or label all references as copied photos."
+    },
+    {
+      "id": "dushanbe",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D1%81%D2%B7%D0%B8%D0%B4%D0%B8_%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D0%B7%D0%B8%D0%B8_%D2%B7%D0%BE%D0%BC%D0%B5%D0%B8_%D1%88%D0%B0%D2%B3%D1%80%D0%B8_%D0%94%D1%83%D1%88%D0%B0%D0%BD%D0%B1%D0%B5._%D0%90%D0%BA%D1%81%D2%B3%D0%BE_20.jpg",
+      "sourcePageRevision": "1279205286",
+      "permalink": "https://commons.wikimedia.org/w/index.php?title=File%3A%D0%9C%D0%B0%D1%81%D2%B7%D0%B8%D0%B4%D0%B8_%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D0%B7%D0%B8%D0%B8_%D2%B7%D0%BE%D0%BC%D0%B5%D0%B8_%D1%88%D0%B0%D2%B3%D1%80%D0%B8_%D0%94%D1%83%D1%88%D0%B0%D0%BD%D0%B1%D0%B5._%D0%90%D0%BA%D1%81%D2%B3%D0%BE_20.jpg&oldid=1279205286",
+      "author": "Rumsor",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "licenseStatus": "verified-on-primary-file-page",
+      "savedReferenceSha256": "96097d164fa01eb198713a58ddc4be6f380ce4599a62790f1f97010e80e30ec7",
+      "inputIdentityScope": "Hash identifies the saved local reference; no byte-equality claim against the full-resolution Commons original.",
+      "individualContactRequiredByThisLicense": false,
+      "conditions": "CC0 permits copyright reuse and modification, including commercial use, without an individual request.",
+      "outputScopeStatus": "not-determined",
+      "nextAction": "Preserve this evidence. Determine applicable notice/license duties for the actual reference use and generated result; do not clear every wallpaper or label all references as copied photos."
+    },
+    {
+      "id": "grozny",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Grozny._Grozny-City_Towers._Mosque_%22The_Heart_of_Chechnya%22_PB040177_2700.jpg",
+      "sourcePageRevision": "1118295219",
+      "permalink": "https://commons.wikimedia.org/w/index.php?title=File%3AGrozny._Grozny-City_Towers._Mosque_%22The_Heart_of_Chechnya%22_PB040177_2700.jpg&oldid=1118295219",
+      "author": "Alexxx1979",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "licenseStatus": "verified-on-primary-file-page",
+      "savedReferenceSha256": "4f1757016b3db97838e34c04d008a76bb6421996df4a00e291cc7347d257ebd3",
+      "inputIdentityScope": "Hash identifies the saved local reference; no byte-equality claim against the full-resolution Commons original.",
+      "individualContactRequiredByThisLicense": false,
+      "conditions": "CC BY-SA 4.0 permits reuse and adaptation, including commercial use. Keep attribution, source and license links, identify changes; share adaptations under the same or a compatible license and avoid additional restrictions.",
+      "outputScopeStatus": "not-determined",
+      "nextAction": "Preserve this evidence. Determine applicable notice/license duties for the actual reference use and generated result; do not clear every wallpaper or label all references as copied photos."
+    },
+    {
+      "id": "makhachkala",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:%D0%96%D1%83%D0%BC%D0%B3%D0%86%D0%B0_%D0%BC%D0%B0%D0%B6%D0%B3%D0%B8%D1%82%2C_%D0%9C%D0%B0%D1%85%D0%86%D0%B0%D1%87%D1%85%D1%8A%D0%B0%D0%BB%D0%B0_%28crop%29.jpg",
+      "sourcePageRevision": "1235877875",
+      "permalink": "https://commons.wikimedia.org/w/index.php?title=File%3A%D0%96%D1%83%D0%BC%D0%B3%D0%86%D0%B0_%D0%BC%D0%B0%D0%B6%D0%B3%D0%B8%D1%82%2C_%D0%9C%D0%B0%D1%85%D0%86%D0%B0%D1%87%D1%85%D1%8A%D0%B0%D0%BB%D0%B0_(crop).jpg&oldid=1235877875",
+      "author": "Шамиль Магомедов; кадрирование Danloud",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "licenseStatus": "verified-on-primary-file-page",
+      "savedReferenceSha256": "c90d0a13570f83a455acaae3824c70e19addc326c14afc0d1ca6d814ab7facd8",
+      "inputIdentityScope": "Hash identifies the saved local reference; no byte-equality claim against the full-resolution Commons original.",
+      "individualContactRequiredByThisLicense": false,
+      "conditions": "CC BY-SA 4.0 permits reuse and adaptation, including commercial use. Keep attribution, source and license links, identify changes; share adaptations under the same or a compatible license and avoid additional restrictions.",
+      "outputScopeStatus": "not-determined",
+      "nextAction": "Preserve this evidence. Determine applicable notice/license duties for the actual reference use and generated result; do not clear every wallpaper or label all references as copied photos."
+    }
+  ]
+}

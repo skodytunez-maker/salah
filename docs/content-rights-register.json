@@ -23,7 +23,24 @@
       "certificateIssuer": "Rospatent",
       "status": "private-draft-prepared; author-and-rights-basis-unconfirmed; not-submitted"
     },
-    "legalNameRecordedPrivately": true
+    "legalNameRecordedPrivately": true,
+    "externalOutreach": {
+      "decidedAt": "2026-10-07",
+      "status": "no-outreach",
+      "source": "Direct owner instruction in this conversation",
+      "instruction": "Do not contact photo authors, source sites or other rights-holders. Continue using published licenses, existing terms and recorded creation evidence. Preserve the current wallpapers.",
+      "requestsSent": false,
+      "notPermissionEvidence": true,
+      "ownerFollowUp": "Do not seek permission from any provider. If an actual material-specific claim arrives, identify the affected material and prepare a replacement while preserving unrelated app features and user data."
+    },
+    "wallpaperCreationStatement": {
+      "date": "2026-10-07",
+      "source": "Direct owner confirmation in this conversation",
+      "scope": "The 14 active landmark wallpaper sets in the catalogue",
+      "statement": "The wallpapers were generated for SALAH using photo references.",
+      "evidenceLevel": "owner-confirmation",
+      "doesNotVerify": "Individual generation inputs, source permissions, exclusive copyright or unused bundled images."
+    }
   },
   "components": [
     {
@@ -159,8 +176,8 @@
         "https://islam.global/conditions/",
         "docs/rights-permission-requests.md"
       ],
-      "findings": "114 generated readings; surahs 112–114 have engine=source-adapted and reference Islam.Global. Site text-reuse conditions require free anonymous access and a source link. Adaptation, offline distribution and future app-model scope require clarification.",
-      "nextAction": "Clarify adapted Cyrillic spelling, offline use and attribution outside cards; do not describe adapted passages as independently authored."
+      "findings": "114 generated readings; surahs 112–114 are source-adapted and reference Islam.Global. Published text-reuse conditions require free anonymous access and a source link. The spelling adaptation and offline scope are not treated as independently cleared.",
+      "nextAction": "Review exact source/attribution and distribution conditions without contacting the publisher. If scope cannot be established, prepare independently produced Arabic-based transcription for review before replacing any user-approved text."
     },
     {
       "id": "qf-metadata",
@@ -169,10 +186,11 @@
       ],
       "status": "needs-review",
       "evidence": [
-        "https://api-docs.quran.com/legal/developer-terms/"
+        "https://api-docs.quran.com/legal/developer-terms/",
+        "docs/quran-metadata-review.json"
       ],
-      "findings": "The index references ordinary chapters API; determine fields derived from it. Current QF terms permit paid end-user apps with conditions but separately restrict caching and prepackaged data.",
-      "nextAction": "Identify the actual QF-derived fields and either establish permitted offline distribution or use independently licensed/created metadata."
+      "findings": "The index references ordinary chapters API; determine fields derived from it. Current QF terms permit paid end-user apps with conditions but separately restrict caching and prepackaged data. An independent read-only comparison matched all four factual fields for 114 chapters and all 30 juz boundaries to the saved AlQuranCloud primary response. This is preparation for rebuilding, not retrospective relicensing.",
+      "nextAction": "Identify actual QF-derived fields. Prepare an independently sourced factual metadata rebuild when needed; do not relabel existing data merely to remove its source or contact QF."
     },
     {
       "id": "adhkar-dua-learning",
@@ -207,8 +225,8 @@
         "https://alquran.cloud/terms-and-conditions",
         "docs/rights-permission-requests.md"
       ],
-      "findings": "Three bundled adhan files, ten linked HisnMuslim recordings and external recitation/broadcast sources. Public playback URLs and the adhan forum reply do not confirm all promotional/commercial scope.",
-      "nextAction": "Clarify exact SALAH tracks, offline/distribution, future paid features and promo excerpts. Another app's public forum reply is not a SALAH contract. Drafts prepared; nothing sent."
+      "findings": "Three bundled AlAdhan tracks; the provider publicly accepts offline bundling/store distribution for a free app with voluntary donations, but that discussion is not private SALAH correspondence. Ten HisnMuslim recordings are linked rather than bundled. Recitation and broadcast terms must be assessed per provider; accessible URLs alone do not determine scope.",
+      "nextAction": "Record published permissions for current free use separately from optional paid features and promotional audio. Review exact recording/provider terms without outreach; unresolved scope stays visible. Do not assert every provider requires a letter."
     },
     {
       "id": "weather",

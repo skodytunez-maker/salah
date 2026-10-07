@@ -1,6 +1,6 @@
 {
   "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
-  "scope": "Local creation records matched to exact shipped files. Reference licenses remain claimed until primary-source conditions are verified; provenance is not permission.",
+  "scope": "Saved creation records for nine generated wallpaper sets matched to exact shipped files. Owner confirmation additionally covers all 14 active landmark sets; it does not replace missing original tool arguments or prove third-party permissions. Review reference conditions without external outreach.",
   "records": [
     {
       "id": "omsk",
@@ -272,5 +272,13 @@
       ],
       "referenceInputNote": "Saved profiles list a photo and generation prompts describe references; full original tool-call input arguments are not independently archived."
     }
-  ]
+  ],
+  "ownerConfirmation": {
+    "date": "2026-10-07",
+    "source": "Direct owner confirmation in this conversation",
+    "scope": "The 14 active landmark wallpaper sets in the catalogue",
+    "statement": "The wallpapers were generated for SALAH using photo references.",
+    "evidenceLevel": "owner-confirmation",
+    "doesNotVerify": "Individual generation inputs, source permissions, exclusive copyright or unused bundled images."
+  }
 }
