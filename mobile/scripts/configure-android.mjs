@@ -26,6 +26,7 @@ await copy('MainActivity.java',path.join(javaRoot,'MainActivity.java'));
 await copy('SalahWidgetPlugin.java',path.join(javaRoot,'SalahWidgetPlugin.java'));
 await copy('SalahPrayerWidgetProvider.java',path.join(javaRoot,'SalahPrayerWidgetProvider.java'));
 await copy('SalahWidgetSizing.java',path.join(javaRoot,'SalahWidgetSizing.java'));
+await copy('SalahWidgetDay.java',path.join(javaRoot,'SalahWidgetDay.java'));
 await copy('SalahWidgetSizingTest.java',path.join(androidRoot,'..','test','java',packagePath,'SalahWidgetSizingTest.java'));
 await copy('salah_widget.xml',path.join(resRoot,'layout','salah_widget.xml'));
 await copy('salah_widget_bg.xml',path.join(resRoot,'drawable','salah_widget_bg.xml'));

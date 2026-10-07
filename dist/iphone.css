@@ -323,3 +323,8 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
  body.adhkar-reading.adhkar-focus.has-quran-audio .quran-global-player{bottom:calc(146px + env(safe-area-inset-bottom,0px))}
 }
 
+
+/* Keep the reading surface and its dock on the same workspace centre. */
+.adhkar-signature #app{margin-left:auto;margin-right:auto}
+@media(min-width:851px){body.adhkar-reading:not(.adhkar-focus) .dhikr-counter-dock{left:min(calc(50% + 118px),1011px);bottom:calc(12px + env(safe-area-inset-bottom,0px))}body.adhkar-reading:not(.adhkar-focus).has-quran-audio .quran-global-player{left:min(calc(50% + 118px),1011px);bottom:calc(146px + env(safe-area-inset-bottom,0px))}}
+@media(min-width:851px) and (max-width:1200px){body.adhkar-reading:not(.adhkar-focus) .dhikr-counter-dock,body.adhkar-reading:not(.adhkar-focus).has-quran-audio .quran-global-player{left:calc(50% + 102.5px)}}

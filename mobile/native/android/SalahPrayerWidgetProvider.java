@@ -145,13 +145,10 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
 
     private static JSONObject currentSchedule(JSONArray days, ZoneId zone, long now) throws Exception {
         String today = DateTimeFormatter.ISO_LOCAL_DATE.withZone(zone).format(Instant.ofEpochMilli(now));
-        JSONObject first = null;
-        for (int d = 0; d < days.length(); d++) {
-            JSONObject item = days.getJSONObject(d);
-            if (first == null) first = item;
-            if (today.equals(item.optString("date"))) return item.getJSONObject("prayers");
-        }
-        return first == null ? null : first.getJSONObject("prayers");
+        String[] dates = new String[days.length()];
+        for (int d = 0; d < days.length(); d++) dates[d] = days.getJSONObject(d).optString("date");
+        int index = SalahWidgetDay.currentIndex(today, dates);
+        return index < 0 ? null : days.getJSONObject(index).getJSONObject("prayers");
     }
 
     private static void bindSchedule(RemoteViews views, JSONObject prayers, ZoneId zone) {
