@@ -14,13 +14,13 @@ class Node{
  getBoundingClientRect(){return{height:this.height}}
  scrollTo({left}){this.scrollLeft=left;this.snapped=left}
 }
-function harness({previous=true,next=true}={}){
+function harness({previous=true,next=true,surface=false}={}){
  const parent=new Node(),passage=new Node(),moves=[],incoming=[],frames=[],timers=new Map();let sequence=0,resize,selection='';
  parent.append(passage);passage.ownerDocument={createElement:()=>new Node()};
  const win={getComputedStyle:()=>({marginTop:'28px'}),getSelection:()=>({toString:()=>selection}),requestAnimationFrame:f=>(frames.push(f),frames.length),cancelAnimationFrame(){},setTimeout:f=>(timers.set(++sequence,f),sequence),clearTimeout:id=>timers.delete(id),ResizeObserver:class{constructor(f){resize=f}observe(){}disconnect(){}}};
- const dispose=bindNativeCardSwipe(passage,{win,preview:d=>(d===1?previous:next)?new Node():null,commit:(d,page)=>{moves.push(d);incoming.push(page)}});
+ const back=[],dispose=bindNativeCardSwipe(passage,{win,gestureSurface:surface?parent:null,onBoundaryBack:()=>back.push(true),preview:d=>(d===1?previous:next)?new Node():null,commit:(d,page)=>{moves.push(d);incoming.push(page)}});
  frames.splice(0).forEach(f=>f(0));const row=parent.children[0];
- return{parent,passage,row,moves,incoming,dispose,resize,select:t=>selection=t,flush:()=>{for(let t=16;t<=320;t+=16)frames.splice(0).forEach(f=>f(t));const pending=[...timers.values()];timers.clear();pending.forEach(f=>f())}};
+ return{parent,passage,row,moves,incoming,back,dispose,resize,select:t=>selection=t,flush:()=>{for(let t=16;t<=320;t+=16)frames.splice(0).forEach(f=>f(t));const pending=[...timers.values()];timers.clear();pending.forEach(f=>f())}};
 }
 let h=harness();assert.equal(h.row.scrollLeft,360);assert.equal(h.row.style.height,'500px');
 for(const preview of [h.row.children[0],h.row.children[2]]){assert.equal(preview.inert,true);assert.equal(preview.idsRemoved,true);assert(preview.classes.has('dhikr-passage'),'preview uses identical typography')}
@@ -39,3 +39,8 @@ h=harness();h.row.emit('touchstart',touch(30));h.row.emit('touchmove',touch(250)
 h=harness();h.row.emit('touchstart',touch(250));h.row.emit('touchmove',touch(220));h.row.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.moves,[]);assert.equal(h.row.scrollLeft,360);h.dispose();
 h=harness();h.row.emit('touchstart',touch(250));const vertical=touch(245,210);h.row.emit('touchmove',vertical);assert.equal(vertical.prevented,undefined);assert.equal(h.row.scrollLeft,360);h.row.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.moves,[]);h.dispose();
 console.log('PASS: controlled touch transitions in both directions, short and vertical gestures, cancellation, rotation, retained nodes and counters.');
+
+h=harness({surface:true});h.parent.emit('touchstart',touch(250));h.parent.emit('touchmove',touch(30));h.parent.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.moves,[-1],'blank-area gesture uses the same carousel');h.dispose();assert([...h.parent.listeners.values()].every(s=>s.size===0));
+h=harness({surface:true});const control=touch(250);control.target={closest:()=>true};h.parent.emit('touchstart',control);h.parent.emit('touchmove',touch(30));h.parent.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.moves,[],'counter and buttons retain taps');h.dispose();
+h=harness({previous:false,surface:true});h.parent.emit('touchstart',touch(30));h.parent.emit('touchmove',touch(250));h.parent.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.back,[true]);assert.deepEqual(h.moves,[]);h.dispose();
+console.log('PASS: blank-area card gestures, first-card return, unaffected controls and cleanup.');

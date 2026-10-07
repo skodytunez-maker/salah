@@ -60,3 +60,13 @@ for(let round=0;round<8;round++)for(const tab of sparseTabs){await tab.activate(
 assert.equal(progressWrites,0,'An absent cloud zero cannot repeatedly rewrite the progress document');
 assert.deepEqual(JSON.parse(sparse.getItem(KEY)).totals,{sayyid:5,'free-dhikr':0});
 console.log('PASS: an old cloud record without the zero free counter causes no progress writes across three tabs; existing totals stay intact.');
+
+actor=A;aal='aal1';valid=true;confirmed=true;anonymous=false;sessionAlive=true;rate=true;issuer='https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1';
+for(const origin of ['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']){
+ const pre=await h(request(null,{method:'OPTIONS',headers:{Origin:origin}}));assert.equal(pre.status,204);assert.equal(pre.headers.get('Access-Control-Allow-Origin'),origin);
+ const get=await h(request(null,{headers:{Origin:origin}}));assert.equal(get.status,200);assert.equal(get.headers.get('Access-Control-Allow-Origin'),origin);
+ valid=false;assert.equal((await h(request(null,{headers:{Origin:origin}}))).status,401);valid=true;
+ actor=OWNER;aal='aal1';assert.equal((await h(request(null,{headers:{Origin:origin}}))).status,403);actor=A;
+}
+for(const origin of ['https://evil.test','http://localhost:9999','https://localhost.evil.test','null']){const r=await h(request(null,{method:'OPTIONS',headers:{Origin:origin}}));assert.equal(r.status,403);assert.equal(r.headers.get('Access-Control-Allow-Origin'),null);}
+console.log('PASS: native APK origins restore cloud reads without bypassing account, live-session or owner MFA checks.');

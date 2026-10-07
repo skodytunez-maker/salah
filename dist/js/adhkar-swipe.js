@@ -1,5 +1,5 @@
 // Touch owns horizontal movement; browser keeps vertical reading scroll.
-export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},win=window}={}){
+export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},gestureSurface=null,onBoundaryBack=null,win=window}={}){
  const doc=passage.ownerDocument,parent=passage.parentNode,row=doc.createElement('div');
  row.className='adhkar-card-carousel';row.setAttribute('role','region');row.setAttribute('aria-label','Карточки азкаров');
  const previous=preview(1),next=preview(-1),activeIndex=previous?1:0;
@@ -15,7 +15,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
  }
  let disposed=false,committed=false,touching=false,initializing=true,timer=0,width=0,suppressUntil=0,gesture=null,animation=0;
  const removers=[];
- const listen=(type,fn,options)=>{row.addEventListener(type,fn,options);removers.push(()=>row.removeEventListener(type,fn,options));};
+ const listen=(type,fn,options)=>{const target=gestureSurface&&(type.startsWith('touch')||type==='click')?gestureSurface:row;target.addEventListener(type,fn,options);removers.push(()=>target.removeEventListener(type,fn,options));};
  const suppress=()=>{suppressUntil=Date.now()+500;onSuppress();};
  function size(){
   if(disposed)return;
@@ -50,7 +50,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
   animation=win.requestAnimationFrame(tick);
  }
  listen('touchstart',e=>{
-  if(animation||e.touches.length!==1){gesture=null;return;}
+  if(animation||e.touches.length!==1||e.target?.closest?.('button,a,input,select,textarea,summary,[contenteditable="true"],.dhikr-counter-dock')){gesture=null;return;}
   touching=true;win.clearTimeout(timer);const p=e.touches[0];
   gesture={id:p.identifier,x:p.clientX,y:p.clientY,left:row.scrollLeft,axis:null};
  },{passive:true});
@@ -59,12 +59,13 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},wi
   const p=e.touches[0];if(p.identifier!==gesture.id)return;
   const dx=p.clientX-gesture.x,dy=p.clientY-gesture.y;
   if(!gesture.axis&&Math.max(Math.abs(dx),Math.abs(dy))>8)gesture.axis=Math.abs(dx)>Math.abs(dy)*1.2?'x':'y';
-  if(gesture.axis!=='x')return;e.preventDefault();suppress();
+  if(gesture.axis!=='x')return;gesture.dx=dx;e.preventDefault();suppress();
   row.scrollLeft=Math.max(0,Math.min((pages.length-1)*width,gesture.left-dx));size();
  },{passive:false});
  listen('touchend',e=>{
   touching=e.touches.length>0;if(touching)return;win.clearTimeout(timer);
-  const horizontal=gesture?.axis==='x';gesture=null;
+  const horizontal=gesture?.axis==='x',boundaryBack=horizontal&&!previous&&gesture.dx>=Math.min(90,width*.22)&&onBoundaryBack;gesture=null;
+  if(boundaryBack){committed=true;suppress();onBoundaryBack();return;}
   if(!horizontal){schedule();return;}
   const offset=row.scrollLeft-activeIndex*width,threshold=Math.min(90,width*.22);
   const index=Math.abs(offset)>=threshold?Math.max(0,Math.min(pages.length-1,activeIndex+Math.sign(offset))):activeIndex;
