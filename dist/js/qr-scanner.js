@@ -11,10 +11,10 @@ export function mountQrScanner(area,{isActive=()=>true,onScan,onStop}={}){
  const entry=document.createElement('button');entry.type='button';entry.className='button secondary qr-login-entry';entry.textContent='Сканировать QR';area.append(entry);
  let close=null;
  entry.onclick=async()=>{
-  if(!isActive())return;close?.();onStop?.();let alive=true,stream=null,timer=null;const previous=[...area.children];previous.forEach(el=>{el.dataset.qrWasHidden=String(el.hidden);el.hidden=true;});
+  if(!isActive())return;close?.();onStop?.();document.documentElement.dataset.qrLogin='active';let alive=true,stream=null,timer=null;const previous=[...area.children];previous.forEach(el=>{el.dataset.qrWasHidden=String(el.hidden);el.hidden=true;});
   const panel=document.createElement('section');panel.className='qr-login-panel qr-scanner-panel';panel.innerHTML='<h2>Сканировать QR</h2><video autoplay muted playsinline aria-label="Камера для сканирования QR"></video><p role="status">Наведите камеру на QR входа SALAH.</p><button type="button" class="button secondary">Отмена</button>';area.append(panel);
   const video=panel.querySelector('video'),status=panel.querySelector('[role=status]'),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
-  const cleanup=()=>{if(!alive)return;alive=false;clearTimeout(timer);stream?.getTracks().forEach(t=>t.stop());video.srcObject=null;panel.remove();previous.forEach(el=>{el.hidden=el.dataset.qrWasHidden==='true';delete el.dataset.qrWasHidden;});document.removeEventListener('visibilitychange',hidden);window.removeEventListener('hashchange',cleanup);window.removeEventListener('pagehide',cleanup);};
+  const cleanup=()=>{if(!alive)return;alive=false;delete document.documentElement.dataset.qrLogin;clearTimeout(timer);stream?.getTracks().forEach(t=>t.stop());video.srcObject=null;panel.remove();previous.forEach(el=>{el.hidden=el.dataset.qrWasHidden==='true';delete el.dataset.qrWasHidden;});document.removeEventListener('visibilitychange',hidden);window.removeEventListener('hashchange',cleanup);window.removeEventListener('pagehide',cleanup);};
   const hidden=()=>{if(document.hidden)cleanup();};close=cleanup;panel.querySelector('button').onclick=cleanup;document.addEventListener('visibilitychange',hidden);window.addEventListener('hashchange',cleanup);window.addEventListener('pagehide',cleanup);
   try{
    if(!navigator.mediaDevices?.getUserMedia)throw Error('unsupported');

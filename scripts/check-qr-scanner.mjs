@@ -28,13 +28,13 @@ class Element{
  async play(){}
  getContext(){return {drawImage(){},getImageData(){return {data:new Uint8ClampedArray(1600),width:20,height:20};}};}
 }
-globalThis.document={createElement:t=>new Element(t),hidden:false,head:new Element('head'),addEventListener:(n,f)=>listeners.set(n,f),removeEventListener:(n,f)=>{if(listeners.get(n)===f)listeners.delete(n);}};
+globalThis.document={documentElement:{dataset:{}},createElement:t=>new Element(t),hidden:false,head:new Element('head'),addEventListener:(n,f)=>listeners.set(n,f),removeEventListener:(n,f)=>{if(listeners.get(n)===f)listeners.delete(n);}};
 globalThis.window={addEventListener:(n,f)=>listeners.set(n,f),removeEventListener:(n,f)=>{if(listeners.get(n)===f)listeners.delete(n);}};
 let grant,stops=0,cameraRequests=0,scanned=0;
 Object.defineProperty(globalThis,'navigator',{configurable:true,value:{mediaDevices:{getUserMedia:opts=>{assert.equal(opts.audio,false);cameraRequests++;return new Promise(resolve=>grant=resolve);}}}});
 globalThis.jsQR=()=>({data:url});
 const area=new Element('section'),existing=new Element('p');area.append(existing);mountQrScanner(area,{onScan:request=>{assert.deepEqual(request,{id,secret});scanned++;}});
 assert.equal(cameraRequests,0,'camera must not open on account entry');
-const first=area.children.at(-1).onclick();area.children.at(-1).querySelector('button').onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await first;assert.equal(stops,1);assert.equal(scanned,0);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
+const first=area.children.at(-1).onclick();assert.equal(document.documentElement.dataset.qrLogin,'active');area.children.at(-1).querySelector('button').onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await first;assert.equal(stops,1);assert.equal(document.documentElement.dataset.qrLogin,undefined);assert.equal(scanned,0);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
 const second=area.children.at(-1).onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await second;assert.equal(scanned,1);assert.equal(stops,2);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
 console.log('PASS: no automatic camera prompt; cancellation stops late camera grant; successful scan stops stream and preserves account view.');
