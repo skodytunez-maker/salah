@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "auditedAt": "2026-10-07",
   "repository": "skodytunez-maker/salah",
-  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "sourceCommit": "4d23a54bc3b676b7c3584e1b28b936ec65792d3b",
   "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical.",
   "statuses": {
     "needs-review": "Missing final-file/input permission evidence.",

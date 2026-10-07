@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "repository": "skodytunez-maker/salah",
-  "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
+  "sourceCommit": "4d23a54bc3b676b7c3584e1b28b936ec65792d3b",
   "capturedAt": "2026-10-07",
   "entries": [
     {
@@ -20,6 +20,11 @@
       "bytes": 3627
     },
     {
+      "path": ".github/workflows/app-qa.yml",
+      "gitBlobSha": "cd3150ab768c4700ad5c496c91c5c5aadfb03379",
+      "bytes": 909
+    },
+    {
       "path": ".github/workflows/ios-debug.yml",
       "gitBlobSha": "45bf0d415fc724f2871424c94b4eaa18f14cd5d9",
       "bytes": 4725
@@ -33,6 +38,11 @@
       "path": ".github/workflows/pages.yml",
       "gitBlobSha": "289e9bc694d788b8a84414e085c638ea219d301e",
       "bytes": 3589
+    },
+    {
+      "path": ".github/workflows/rights-audit.yml",
+      "gitBlobSha": "1f54a4ada25d04bf28b919b406f1a84779f56d84",
+      "bytes": 732
     },
     {
       "path": ".github/workflows/tablet-wallpapers.yml",
@@ -56,8 +66,8 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "89ca867290549a38df8d6b48a42243fbc0ce5f7f",
-      "bytes": 4501
+      "gitBlobSha": "9591ca669d3cc5be20227b3fa58eb544d80ff65d",
+      "bytes": 4813
     },
     {
       "path": "SECURITY.md",
@@ -261,8 +271,8 @@
     },
     {
       "path": "dist/daily-dua.css",
-      "gitBlobSha": "b50aee920487169e0c0a3fe33ccc1878dddd197b",
-      "bytes": 5502
+      "gitBlobSha": "9b1bcb6077897e96e9f3cea6220817ea1ff71d0a",
+      "bytes": 5751
     },
     {
       "path": "dist/data/adhan-sources.json",
@@ -286,8 +296,8 @@
     },
     {
       "path": "dist/data/daily-dua.json",
-      "gitBlobSha": "3123034827f1a265dfca6366edd85bed39e17b7e",
-      "bytes": 28012
+      "gitBlobSha": "bceb1eec483a1746a1a2ed5d8a2e0a98ed44a6ac",
+      "bytes": 38794
     },
     {
       "path": "dist/data/haramain-schedule.json",
@@ -1481,8 +1491,8 @@
     },
     {
       "path": "dist/day-night.css",
-      "gitBlobSha": "6c9ea77854dccb5621b93eea350183f4e731d0a0",
-      "bytes": 14281
+      "gitBlobSha": "806f8d6dcce03463f17a5e92d9c45d0022910db8",
+      "bytes": 16477
     },
     {
       "path": "dist/favicon.svg",
@@ -1546,8 +1556,8 @@
     },
     {
       "path": "dist/js/adhkar.js",
-      "gitBlobSha": "b31fa939dd3e347b7c6a1622a5c6d91ea4daf2d2",
-      "bytes": 36064
+      "gitBlobSha": "2c1e1baefceb7f80bda13b7c5293638317606665",
+      "bytes": 36406
     },
     {
       "path": "dist/js/admin.js",
@@ -1571,8 +1581,8 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "gitBlobSha": "0c5ff51425ce95965dc33ddeab5dadabdb696579",
-      "bytes": 1069
+      "gitBlobSha": "51e37fa91e454be078aed2e5195ca2751b84f963",
+      "bytes": 1349
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -1651,13 +1661,13 @@
     },
     {
       "path": "dist/js/daily-dua-core.js",
-      "gitBlobSha": "4cb0dd216b5c46aa7849753c004637e4e74966c4",
-      "bytes": 3505
+      "gitBlobSha": "3eddb0da8153de2b8f488bd371375f7b0d40bcb7",
+      "bytes": 3766
     },
     {
       "path": "dist/js/daily-dua.js",
-      "gitBlobSha": "2d005e62af07ad6e9cf25cc4c0d50c48a8ceb523",
-      "bytes": 13426
+      "gitBlobSha": "e3fd948170d2e03eb59445504a3dd6302c68896f",
+      "bytes": 13982
     },
     {
       "path": "dist/js/day-night.js",
@@ -1668,6 +1678,11 @@
       "path": "dist/js/dhikr-reminder.js",
       "gitBlobSha": "37dfba876c3c395bcfa69c5e40da02a4fd26488f",
       "bytes": 3077
+    },
+    {
+      "path": "dist/js/dua-search.js",
+      "gitBlobSha": "e835e1214f5dcf32b52505bce71bd487a1c08d97",
+      "bytes": 1844
     },
     {
       "path": "dist/js/edge-back.js",
@@ -1801,8 +1816,8 @@
     },
     {
       "path": "dist/js/pwa-updates.js",
-      "gitBlobSha": "4b07dbb08090fc876257818ca5ac1a5e6cfe6f76",
-      "bytes": 11083
+      "gitBlobSha": "ca20114071db2f3d43d2ab07d581f9ae4a2512fd",
+      "bytes": 11144
     },
     {
       "path": "dist/js/qibla-access.js",
@@ -1826,8 +1841,8 @@
     },
     {
       "path": "dist/js/quran-audio.js",
-      "gitBlobSha": "c37bfa40248da29b4a90942230c024c5d050e6d6",
-      "bytes": 3694
+      "gitBlobSha": "9249bfef828ca8c6ffc5a6b8b04453bc120dc0ae",
+      "bytes": 3824
     },
     {
       "path": "dist/js/quran-broadcast.js",
@@ -1836,13 +1851,28 @@
     },
     {
       "path": "dist/js/quran-data.js",
-      "gitBlobSha": "a2ec761fa2729145ccd6117f6aeac798e5775ce6",
-      "bytes": 9159
+      "gitBlobSha": "4dab5e89bb1c2d42e5bb907fa291dfc74dfb22dc",
+      "bytes": 9464
+    },
+    {
+      "path": "dist/js/quran-downloads.js",
+      "gitBlobSha": "691dbdcbaa7d650303cb9305d4ce5aa768bee9d5",
+      "bytes": 7445
+    },
+    {
+      "path": "dist/js/quran-offline-core.js",
+      "gitBlobSha": "38873936775db66dfabfd866f871417a5a5e1c87",
+      "bytes": 3856
+    },
+    {
+      "path": "dist/js/quran-offline-store.js",
+      "gitBlobSha": "153823af13262ead54add96b21cad8c6ba98c450",
+      "bytes": 5782
     },
     {
       "path": "dist/js/quran-player-bar.js",
-      "gitBlobSha": "bb89e1ea256e6a4db07685127e99d82edeadbf70",
-      "bytes": 4371
+      "gitBlobSha": "dda65f1237a6a1b2d4dfdbfecccfa379bb3ea84c",
+      "bytes": 4453
     },
     {
       "path": "dist/js/quran-reciters.js",
@@ -1851,8 +1881,8 @@
     },
     {
       "path": "dist/js/quran-session.js",
-      "gitBlobSha": "387abecaed55c25e3ae533dc03002fc90384cd90",
-      "bytes": 4381
+      "gitBlobSha": "92525124289c87afe8737292a2ed9936057cc232",
+      "bytes": 5253
     },
     {
       "path": "dist/js/quran-timing.js",
@@ -1866,8 +1896,13 @@
     },
     {
       "path": "dist/js/quran.js",
-      "gitBlobSha": "bbbce3d47806a9bc8a7913e9719d330d36bf0615",
-      "bytes": 30262
+      "gitBlobSha": "01bd111c93d5e25acd9f9c8881075fbc3cb7cc9d",
+      "bytes": 30772
+    },
+    {
+      "path": "dist/js/reminder-before.js",
+      "gitBlobSha": "95219aff4d03ee7db0a8b3914ca3565f151e5527",
+      "bytes": 509
     },
     {
       "path": "dist/js/reminder-events.js",
@@ -1876,8 +1911,8 @@
     },
     {
       "path": "dist/js/reminders.js",
-      "gitBlobSha": "c72ab6403c6e91f1f63a5243b84a32368c3ef8c6",
-      "bytes": 23056
+      "gitBlobSha": "0bdc1711157881724d3bc34ed8e99515833001bb",
+      "bytes": 23776
     },
     {
       "path": "dist/js/sourced-audio.js",
@@ -2006,8 +2041,8 @@
     },
     {
       "path": "dist/js/wallpaper-layout.js",
-      "gitBlobSha": "feaf9b755fca8f5a6de264bef3efbe1ec06ebc2b",
-      "bytes": 2572
+      "gitBlobSha": "20164bbf48892bcf1aa8fee07cc1c963477f5814",
+      "bytes": 2784
     },
     {
       "path": "dist/js/wallpapers.js",
@@ -2021,8 +2056,8 @@
     },
     {
       "path": "dist/js/weather.js",
-      "gitBlobSha": "9ff7064dc314d040f1df72a183ed1af318b0f44c",
-      "bytes": 16002
+      "gitBlobSha": "8fdc2af9ef7b942273808ede93de86b434ae565f",
+      "bytes": 16548
     },
     {
       "path": "dist/knowledge.css",
@@ -2056,8 +2091,8 @@
     },
     {
       "path": "dist/quran.css",
-      "gitBlobSha": "17d3a1851ea7ac062e09c8ee77653e0832f49299",
-      "bytes": 13453
+      "gitBlobSha": "4b5645c8b626b190f368087f7a88b0c856f495d2",
+      "bytes": 14106
     },
     {
       "path": "dist/reminders.css",
@@ -2071,8 +2106,8 @@
     },
     {
       "path": "dist/sw.js",
-      "gitBlobSha": "947fa124734f3e6652801240c32222596d508600",
-      "bytes": 12686
+      "gitBlobSha": "447f6eede94d1ad6e184b4399bc08cf98eda342f",
+      "bytes": 13334
     },
     {
       "path": "dist/umrah.css",
@@ -2160,9 +2195,24 @@
       "bytes": 600
     },
     {
+      "path": "dist/wallpapers/cairo/day-v1.webp",
+      "gitBlobSha": "4d0a741b3661d06c7c2a33e301bf2cfe42bd231d",
+      "bytes": 238218
+    },
+    {
+      "path": "dist/wallpapers/cairo/night-v1.webp",
+      "gitBlobSha": "671ac11cc55b4ed26cd1b726d12148bcf9000775",
+      "bytes": 168966
+    },
+    {
+      "path": "dist/wallpapers/cairo/sky-v1.svg",
+      "gitBlobSha": "50ce2346155ab505aa315050ecb2de69c4b7de94",
+      "bytes": 607
+    },
+    {
       "path": "dist/wallpapers/catalog.json",
-      "gitBlobSha": "d1e2ef1bda1bceecac8313197fb25ce4de5dd607",
-      "bytes": 5161
+      "gitBlobSha": "421e434db39fb9e8323ab8fd39487c83df96d2e0",
+      "bytes": 6283
     },
     {
       "path": "dist/wallpapers/credits.json",
@@ -2215,6 +2265,21 @@
       "bytes": 1424
     },
     {
+      "path": "dist/wallpapers/istanbul/day-v1.webp",
+      "gitBlobSha": "22abd2b3f70467ef64fa189d748de897e08c2af6",
+      "bytes": 276146
+    },
+    {
+      "path": "dist/wallpapers/istanbul/night-v1.webp",
+      "gitBlobSha": "1f8c42dbab308fc8ebe57ef609799dbe9167dd22",
+      "bytes": 228272
+    },
+    {
+      "path": "dist/wallpapers/istanbul/sky-v1.svg",
+      "gitBlobSha": "00ffaee65824f4b4881bf481cf3acbda2be52cb1",
+      "bytes": 666
+    },
+    {
       "path": "dist/wallpapers/khujand/day-v1.webp",
       "gitBlobSha": "18dd82cd68de94ae3929a3786e1d4b2afa5fbc11",
       "bytes": 399180
@@ -2228,6 +2293,21 @@
       "path": "dist/wallpapers/khujand/sky-v1.svg",
       "gitBlobSha": "2ebe86f8b0d43fd1a30295ed892593bbf0db6810",
       "bytes": 561
+    },
+    {
+      "path": "dist/wallpapers/kuala-lumpur/day-v1.webp",
+      "gitBlobSha": "73a12a002555ce4643ac197e328dbe0809e6c31f",
+      "bytes": 335582
+    },
+    {
+      "path": "dist/wallpapers/kuala-lumpur/night-v1.webp",
+      "gitBlobSha": "984fe955215b6f8bc3ddeecaec3e81f7c47030a5",
+      "bytes": 278108
+    },
+    {
+      "path": "dist/wallpapers/kuala-lumpur/sky-v1.svg",
+      "gitBlobSha": "77a9ea87ffc7b342b57af116b1c521afc3094f9c",
+      "bytes": 725
     },
     {
       "path": "dist/wallpapers/makhachkala/day-v1.webp",
@@ -2330,6 +2410,21 @@
       "bytes": 6018
     },
     {
+      "path": "docs/bootstrap-icon-evidence.json",
+      "gitBlobSha": "cfd2278da79ad3fbd91bba83ab07c05cde9d5c81",
+      "bytes": 5361
+    },
+    {
+      "path": "docs/content-rights-register.json",
+      "gitBlobSha": "6486a69ecae6eacf78348e2a61163301e13250e3",
+      "bytes": 10369
+    },
+    {
+      "path": "docs/dua-expansion-20261007.json",
+      "gitBlobSha": "843e784b7a2d0dfcd3fbfe22cd1498528ee78f98",
+      "bytes": 1808
+    },
+    {
       "path": "docs/images/tablet-landscape.jpg",
       "gitBlobSha": "a811f62bf2ddb50d726dcd377c00f0c6253b3728",
       "bytes": 87552
@@ -2340,6 +2435,36 @@
       "bytes": 126095
     },
     {
+      "path": "docs/media-rights-register.json",
+      "gitBlobSha": "b8e5868efd189bd5137577a527843f24a65b41a2",
+      "bytes": 52591
+    },
+    {
+      "path": "docs/quran-field-evidence.json",
+      "gitBlobSha": "d2185d0847f729f4290c594777f6a14956eac2b0",
+      "bytes": 40783
+    },
+    {
+      "path": "docs/rights-audit.md",
+      "gitBlobSha": "fcd785baac68b1dc136bc8e0dedbb874093ffbcc",
+      "bytes": 8516
+    },
+    {
+      "path": "docs/rights-permission-requests.md",
+      "gitBlobSha": "d958dec19435b0dd3182da8a16e404360db3cc12",
+      "bytes": 8325
+    },
+    {
+      "path": "docs/rights-source-manifest.json",
+      "gitBlobSha": "8a203e8ed23cff44f0499089f6fcbbdbbbecae07",
+      "bytes": 86561
+    },
+    {
+      "path": "docs/salah-registration-draft.md",
+      "gitBlobSha": "9d4378b3d79ff0685825db103dd653d12d23b0c7",
+      "bytes": 4272
+    },
+    {
       "path": "docs/tablet-wallpapers.md",
       "gitBlobSha": "8aff82c4f356d50bf5a634fbad5380470b31340a",
       "bytes": 2814
@@ -2348,6 +2473,16 @@
       "path": "docs/tyumen-sources.md",
       "gitBlobSha": "478876be59ddb29665e084b3d52b6f2d4a9cdda3",
       "bytes": 1962
+    },
+    {
+      "path": "docs/wallpaper-expansion-20261007.json",
+      "gitBlobSha": "15372656bff25b2a728134a1e3a490c5f1b7cafa",
+      "bytes": 4911
+    },
+    {
+      "path": "docs/wallpaper-provenance-evidence.json",
+      "gitBlobSha": "5168d017482804c9fcea0776aa2683a02ca47932",
+      "bytes": 13031
     },
     {
       "path": "mobile/README.md",
@@ -2580,9 +2715,14 @@
       "bytes": 3952
     },
     {
+      "path": "scripts/check-app.mjs",
+      "gitBlobSha": "85f92e10a55975c4292486c33f4aaa33a9fe2a9a",
+      "bytes": 1700
+    },
+    {
       "path": "scripts/check-auth-load.mjs",
-      "gitBlobSha": "346f05b6489bf33a826ab4cfd42634081349da6e",
-      "bytes": 4472
+      "gitBlobSha": "1940692c59438c54c321d7c55f2b4d277b88a22c",
+      "bytes": 4541
     },
     {
       "path": "scripts/check-broadcast-audio.mjs",
@@ -2616,8 +2756,8 @@
     },
     {
       "path": "scripts/check-daily-dua.mjs",
-      "gitBlobSha": "9ab4ae1424632a6782bbd0a99e406ddd5c8c97f5",
-      "bytes": 15603
+      "gitBlobSha": "0e631f305593d44a29562a074f2d3b15fb5d218c",
+      "bytes": 15764
     },
     {
       "path": "scripts/check-dhikr-reminder.mjs",
@@ -2636,8 +2776,8 @@
     },
     {
       "path": "scripts/check-landmarks.mjs",
-      "gitBlobSha": "63281afd2fedf3b429c73163c81de14d471d6203",
-      "bytes": 7985
+      "gitBlobSha": "848a896b678b19d7bdbe7a8b96fec16b59ed557f",
+      "bytes": 8027
     },
     {
       "path": "scripts/check-learning-navigation.mjs",
@@ -2725,9 +2865,14 @@
       "bytes": 6387
     },
     {
+      "path": "scripts/check-quran-downloads.mjs",
+      "gitBlobSha": "55326e4fd12e5548d233d9b90bf6288ffb83d5c0",
+      "bytes": 7031
+    },
+    {
       "path": "scripts/check-quran-session.mjs",
-      "gitBlobSha": "a3cb6440e1f17e1886386bef77c49f6664b9c292",
-      "bytes": 7663
+      "gitBlobSha": "5824612521a151cc9fc6930d7fd3e7c2d37b99a1",
+      "bytes": 8639
     },
     {
       "path": "scripts/check-quran-timing.mjs",
@@ -2740,9 +2885,14 @@
       "bytes": 7329
     },
     {
+      "path": "scripts/check-rights-register.mjs",
+      "gitBlobSha": "09d61260ab76920e71ffeeecc36d1dab6c05f073",
+      "bytes": 8695
+    },
+    {
       "path": "scripts/check-scene-load.mjs",
-      "gitBlobSha": "6bb8886f8c613df6988c485ee61dec6d2a5328ea",
-      "bytes": 3904
+      "gitBlobSha": "47b95869cdd05f5a2c97edaae5598b46fe7586eb",
+      "bytes": 4254
     },
     {
       "path": "scripts/check-security.mjs",
@@ -2806,8 +2956,8 @@
     },
     {
       "path": "scripts/check-tablet-wallpapers.mjs",
-      "gitBlobSha": "81c3529098ba5daf0635c9854a8fc0de8140969b",
-      "bytes": 5049
+      "gitBlobSha": "11e6f52e5bfac2bd8974e4ae240ae5fc3e24936b",
+      "bytes": 5993
     },
     {
       "path": "scripts/check-tahajjud.mjs",
