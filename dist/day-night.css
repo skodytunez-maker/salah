@@ -129,5 +129,7 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout^="tablet"]{-web
 body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-artwork"]{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-position:0 0;mask-position:0 0}
 
 /* A quiet place label stays above the navigation and follows the displayed artwork. */
-.wallpaper-caption{position:absolute;right:max(20px,env(safe-area-inset-right));bottom:calc(112px + env(safe-area-inset-bottom));max-width:60%;font-size:12px;line-height:1.4;font-weight:400;letter-spacing:.02em;color:rgba(235,239,247,.7);text-shadow:0 1px 4px rgba(0,0,0,.8);text-align:right;pointer-events:none}
+.wallpaper-caption{position:absolute;right:max(20px,env(safe-area-inset-right));bottom:calc(112px + env(safe-area-inset-bottom));max-width:60%;font-size:13px;line-height:1.4;font-weight:500;letter-spacing:.02em;color:rgba(245,247,252,.92);text-shadow:0 1px 3px #030812,0 2px 8px rgba(0,0,0,.85);text-align:right;pointer-events:none}
 .wallpaper-caption[hidden]{display:none}
+
+@media(min-width:600px) and (min-height:600px){.wallpaper-caption{font-size:16px}}
