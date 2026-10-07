@@ -1,0 +1,13 @@
+.account-devices{margin-top:14px}
+.account-device-body{padding:0 16px 16px}
+.account-device{padding:18px 0;border-bottom:1px solid rgba(170,184,210,.2)}
+.account-device:last-child{border-bottom:0}
+.account-device strong{font-size:19px;font-weight:500;display:block;overflow-wrap:anywhere}
+.account-device small{display:block;margin-top:8px;color:var(--muted,#a6afc1)}
+.account-device-current{display:inline-block;margin-top:8px;font-size:14px;color:#9ad6b3}
+.account-device .text-button{padding:14px 0;min-height:48px}
+.account-device-body>.button,.device-confirm .button{width:100%;min-height:50px;margin-top:10px}
+.device-confirm[hidden],.account-device-body>[hidden]{display:none!important}
+.device-confirm p{margin:8px 0}
+
+.account-devices>summary{font-size:20px;font-weight:500;min-height:56px}

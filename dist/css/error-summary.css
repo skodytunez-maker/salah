@@ -1,0 +1,14 @@
+.owner-error-summary{margin-top:18px}
+.owner-error-body,.diagnostic-setting-body{padding:0 16px 16px}
+.owner-error-periods{display:flex;gap:8px;flex-wrap:wrap}
+.owner-error-periods button{min-height:48px;padding:8px 12px}
+.owner-error-periods [aria-pressed=true]{color:var(--gold,#cdbf99);text-decoration:underline;text-underline-offset:6px}
+.owner-error-row{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid rgba(170,184,210,.2)}
+.owner-error-row strong{display:block;font-size:19px}
+.owner-error-row small{display:block;color:var(--muted,#a6afc1);margin-top:6px;overflow-wrap:anywhere}
+.owner-error-row b{color:var(--gold,#cdbf99);font-size:26px;font-weight:500}
+.owner-error-body>.button{width:100%;min-height:50px;margin-top:16px}
+.diagnostic-setting{margin-top:18px}
+.diagnostic-setting-body p{margin:8px 0;font-size:15px}
+
+.owner-error-summary>summary{font-size:20px;font-weight:500;min-height:56px}
