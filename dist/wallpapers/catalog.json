@@ -160,6 +160,42 @@
       "day": "wallpapers/badakhshan/badakhshan-day.webp",
       "night": "wallpapers/badakhshan/badakhshan-night-v1.webp",
       "mask": "wallpapers/badakhshan/sky-v1.svg"
+    },
+    {
+      "id": "istanbul",
+      "name": "Стамбул",
+      "landmark": "Мечеть Султанахмет",
+      "latitude": 41.0053,
+      "longitude": 28.9768,
+      "radius": 35,
+      "day": "wallpapers/istanbul/day-v1.webp",
+      "night": "wallpapers/istanbul/night-v1.webp",
+      "mask": "wallpapers/istanbul/sky-v1.svg",
+      "fitSubject": true
+    },
+    {
+      "id": "cairo",
+      "name": "Каир",
+      "landmark": "Мечеть Мухаммада Али",
+      "latitude": 30.0287,
+      "longitude": 31.2599,
+      "radius": 35,
+      "day": "wallpapers/cairo/day-v1.webp",
+      "night": "wallpapers/cairo/night-v1.webp",
+      "mask": "wallpapers/cairo/sky-v1.svg",
+      "fitSubject": true
+    },
+    {
+      "id": "kuala-lumpur",
+      "name": "Куала-Лумпур",
+      "landmark": "Мечеть Джамек",
+      "latitude": 3.1493,
+      "longitude": 101.6958,
+      "radius": 45,
+      "day": "wallpapers/kuala-lumpur/day-v1.webp",
+      "night": "wallpapers/kuala-lumpur/night-v1.webp",
+      "mask": "wallpapers/kuala-lumpur/sky-v1.svg",
+      "fitSubject": true
     }
   ]
 }

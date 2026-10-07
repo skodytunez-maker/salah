@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-07",
+  "method": "Built-in image_gen",
+  "scope": "New generated city artwork. Existing SALAH mosque image used only as a style reference; night versions are lighting edits of the new daytime scenes. Generated provenance is not a certificate of exclusive copyright.",
+  "styleReference": "dist/assets/night-mosque.webp",
+  "records": [
+    {
+      "id": "istanbul",
+      "mode": "day",
+      "path": "dist/wallpapers/istanbul/day-v1.webp",
+      "bytes": 276146,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "3afe3c992d775ffd388b16d7802550e709a21e3d3e5eef73cf91d351e9ce5bba",
+      "sha256": "030d5fa83c75e6554d30b165beff3bfe3f4ae8d15c65cfb4192a74e619d3b777",
+      "gitBlobSha": "22abd2b3f70467ef64fa189d748de897e08c2af6",
+      "generationId": "exec-5007cfd6-3534-405a-bd10-23844818d23e",
+      "processing": "WebP format encoding only; no resize, crop or compositing"
+    },
+    {
+      "id": "istanbul",
+      "mode": "night",
+      "path": "dist/wallpapers/istanbul/night-v1.webp",
+      "bytes": 228272,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "d5e07957362933ea6a38046821816b0cef794806102d498d85d1f1be134f48df",
+      "sha256": "773cb665d4bccce09c8b74768b03eaf1adb27f809938c6cbb3d72a79ae06ecc7",
+      "gitBlobSha": "1f8c42dbab308fc8ebe57ef609799dbe9167dd22",
+      "generationId": "exec-179648f6-e695-470c-9909-ab589bed68df",
+      "processing": "WebP format encoding only; no resize, crop or compositing"
+    },
+    {
+      "id": "istanbul",
+      "mode": "mask",
+      "path": "dist/wallpapers/istanbul/sky-v1.svg",
+      "bytes": 666,
+      "sha256": "f4531f05d7daf4660c9fa970288756a0fb3a82ffa182e98f52e34d686ed8b3d7",
+      "gitBlobSha": "00ffaee65824f4b4881bf481cf3acbda2be52cb1",
+      "processing": "Project-native SVG sky mask; same source rectangle as day/night photos"
+    },
+    {
+      "id": "cairo",
+      "mode": "day",
+      "path": "dist/wallpapers/cairo/day-v1.webp",
+      "bytes": 238218,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "5078a8c859a100862555cd766fcc27ddc3732257f86aad0b2126c6a092064496",
+      "sha256": "db53c63a4554e7bbc797115cda9d036d1ce93981225461dc8f81517965e356c5",
+      "gitBlobSha": "4d0a741b3661d06c7c2a33e301bf2cfe42bd231d",
+      "generationId": "exec-ef214528-7199-491f-a179-9ae5cc67cd39",
+      "processing": "WebP format encoding only; no resize, crop or compositing"
+    },
+    {
+      "id": "cairo",
+      "mode": "night",
+      "path": "dist/wallpapers/cairo/night-v1.webp",
+      "bytes": 168966,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "0ff80a620972c28f5424ae85670805f8fe0270b315ab87084c2eefe1dd740c20",
+      "sha256": "c0a69ef05aaf17cc9f438e69c9095a322dcbb3211849975fa726c40ba1422e9e",
+      "gitBlobSha": "671ac11cc55b4ed26cd1b726d12148bcf9000775",
+      "generationId": "exec-66195c69-b7bc-4cf1-9127-19e3b6bb1d6f",
+      "processing": "WebP format encoding only; no resize, crop or compositing"
+    },
+    {
+      "id": "cairo",
+      "mode": "mask",
+      "path": "dist/wallpapers/cairo/sky-v1.svg",
+      "bytes": 607,
+      "sha256": "5468844112dff2f8b6ef5233436c734996a7978e15f15525cbab33260db86919",
+      "gitBlobSha": "50ce2346155ab505aa315050ecb2de69c4b7de94",
+      "processing": "Project-native SVG sky mask; same source rectangle as day/night photos"
+    },
+    {
+      "id": "kuala-lumpur",
+      "mode": "day",
+      "path": "dist/wallpapers/kuala-lumpur/day-v1.webp",
+      "bytes": 335582,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "37ff7ddc50ea971c3531679ac5dc9535696268c98d31267cc6242d38722ab725",
+      "sha256": "266d15ce9f97db4609ba76c6c5313b1845d4af46d0aef9efde22d600ea0e58c7",
+      "gitBlobSha": "73a12a002555ce4643ac197e328dbe0809e6c31f",
+      "generationId": "exec-f3789551-d17e-48af-967b-81439b797e5f",
+      "processing": "WebP format encoding only; no resize, crop or compositing"
+    },
+    {
+      "id": "kuala-lumpur",
+      "mode": "night",
+      "path": "dist/wallpapers/kuala-lumpur/night-v1.webp",
+      "bytes": 278108,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "e3ec95e7082f6231a9a31e4c64d8613e2cc86afe2e81ba141325f4bc0e55e2a0",
+      "sha256": "a5b75023098163bd4bb58c44f7f705d19e398a23086bb1932730a3c2b34affda",
+      "gitBlobSha": "984fe955215b6f8bc3ddeecaec3e81f7c47030a5",
+      "generationId": "exec-e74311ca-1cbc-46e1-8747-bce32358b681",
+      "processing": "WebP format encoding only; no resize, crop or compositing"
+    },
+    {
+      "id": "kuala-lumpur",
+      "mode": "mask",
+      "path": "dist/wallpapers/kuala-lumpur/sky-v1.svg",
+      "bytes": 725,
+      "sha256": "e60e4a9c969d547384b7debabb1e0a514dc7608624aee5fbe27a6715c51ad2f4",
+      "gitBlobSha": "77a9ea87ffc7b342b57af116b1c521afc3094f9c",
+      "processing": "Project-native SVG sky mask; same source rectangle as day/night photos"
+    }
+  ]
+}

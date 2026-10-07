@@ -1,4 +1,6 @@
 import{loadAyahTimings}from './quran-timing.js';
+import{offlineAudioStore}from './quran-offline-store.js';
+import{downloadAudioFiles}from './quran-offline-core.js';
 import{arabicReadingKey}from './quran-transcription.js';
 import{reciterInfo,reciterHasSurah}from './quran-reciters.js';
 export const TEXT_CACHE='salah-quran-text-v1';
@@ -41,7 +43,7 @@ function verifyReading(data,meta,surah){if(data?.edition!=='salah-reading-v2'||d
 async function loadReading(surah,meta,{requireStored=false}={}){if(!meta.readingSha256)return surah;const data=await verifiedFile('./data/quran-reading/'+meta.number+'.json',meta.readingSha256,{validate:data=>verifyReading(data,meta,surah),cachedFirst:true,requireStored,timeoutMs:3000});return {...surah,salahReading:data}}
 export async function loadSurah(number){
  const index=await loadIndex();const meta=index.surahs[number-1];if(!meta||meta.number!==number)throw Error('Неизвестная сура');
- if(!surahPromises.has(number))surahPromises.set(number,verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta)}).then(async data=>{try{return await loadReading(data,meta)}catch{return data}}).catch(e=>{surahPromises.delete(number);throw e}));
+ if(!surahPromises.has(number))surahPromises.set(number,verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta),cachedFirst:true}).then(async data=>{try{return await loadReading(data,meta)}catch{return data}}).catch(e=>{surahPromises.delete(number);throw e}));
  return surahPromises.get(number)
 }
 export async function loadSearch(){
@@ -61,11 +63,22 @@ export async function saveAllTexts(index,onProgress){
  await verifiedFile('./data/quran-search.json',index.searchSha256,{validate:rows=>verifySearch(rows,index),cachedFirst:true,requireStored:true});
 }
 export function audioUrl(number,reciter,surahNumber){if(!Number.isInteger(number)||number<1||number>6236)throw Error('Неизвестная аудиозапись');const r=reciterInfo(reciter);if(r.format==='surah'){if(!Number.isInteger(surahNumber)||surahNumber<1||surahNumber>114||!reciterHasSurah(reciter,surahNumber))throw Error('Неизвестная сура');return r.server+String(surahNumber).padStart(3,'0')+'.mp3'}if(r.folder){const s=numberToPosition(number);return 'https://everyayah.com/data/'+r.folder+'/'+String(s.surah).padStart(3,'0')+String(s.ayah).padStart(3,'0')+'.mp3'}return 'https://cdn.islamic.network/quran/audio/128/'+reciter+'/'+number+'.mp3'}
+export function downloadAudioUrl(number,reciter,surahNumber){
+ const folders={'ar.alafasy':'Alafasy_128kbps','ar.husary':'Husary_128kbps','ar.minshawi':'Minshawy_Murattal_128kbps'};
+ const original=audioUrl(number,reciter,surahNumber);if(!folders[reciter])return original;
+ const position=numberToPosition(number);return 'https://everyayah.com/data/'+folders[reciter]+'/'+String(position.surah).padStart(3,'0')+String(position.ayah).padStart(3,'0')+'.mp3';
+}
 function numberToPosition(number){if(!audioPositions)throw Error('Библиотека не загружена');return audioPositions[number]}
 let audioPositions=null;
 
 export function estimatedAudioBytes(surah){return Math.round(surah.verses.reduce((sum,v)=>sum+[...v.arabic].length,0)/15*16000)}
 export async function saveSurahAudio(surah,reciter,onProgress,signal){
- if(!('caches'in window))throw Error('Офлайн-хранилище недоступно');const cache=await caches.open(AUDIO_CACHE);let next=0,done=0,bytes=0;const verses=reciterInfo(reciter).format==='surah'?[surah.verses[0]]:surah.verses;
- await Promise.all(Array.from({length:2},async()=>{while(next<verses.length){if(signal.aborted)throw new DOMException('Загрузка отменена','AbortError');const v=verses[next++],url=audioUrl(v.number,reciter,surah.number);let r=await cache.match(url);if(!r){r=await fetch(url,{signal});if(!r.ok||r.type==='opaque'||!r.headers.get('Content-Type')?.startsWith('audio/'))throw Error('Аудио не удалось загрузить');const blob=await r.blob();bytes+=blob.size;await cache.put(url,new Response(blob,{headers:{'Content-Type':'audio/mpeg'}}))}else bytes+=(await r.blob()).size;onProgress(++done,bytes)}}));await loadAyahTimings(surah,reciter,{signal});if(signal.aborted)throw new DOMException('Загрузка отменена','AbortError');return bytes
+ const verses=reciterInfo(reciter).format==='surah'?[surah.verses[0]]:surah.verses;
+ const urls=verses.map(v=>audioUrl(v.number,reciter,surah.number));
+ const sources=new Map(verses.map(v=>[audioUrl(v.number,reciter,surah.number),downloadAudioUrl(v.number,reciter,surah.number)]));
+ const bytes=await downloadAudioFiles({urls,store:offlineAudioStore,signal,onProgress,fetcher:(url,options)=>fetch(sources.get(url)||url,options)});
+ if(signal?.aborted)throw new DOMException('Загрузка приостановлена','AbortError');
+ await offlineAudioStore.saveRecording({id:reciter+':'+surah.number,reciter,surah:surah.number,urls,bytes,savedAt:Date.now()});
+ try{await loadAyahTimings(surah,reciter,{signal});}catch{}
+ return bytes;
 }

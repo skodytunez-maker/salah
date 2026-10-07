@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-07",
+  "scope": "Nine additional daily duas; pre-existing 23 items are preserved. Arabic passages use ancient source texts; Russian meaning and Cyrillic reading are editorial renderings.",
+  "items": [
+    {
+      "id": "starting-journey",
+      "source": {
+        "label": "Муслим, 1342",
+        "url": "https://sunnah.com/muslim:1342"
+      }
+    },
+    {
+      "id": "returning-journey",
+      "source": {
+        "label": "Муслим, 1342 — слова при возвращении",
+        "url": "https://sunnah.com/muslim:1342"
+      }
+    },
+    {
+      "id": "stopping-on-journey",
+      "source": {
+        "label": "Муслим, 2708a",
+        "url": "https://sunnah.com/muslim:2708a"
+      }
+    },
+    {
+      "id": "anxiety-and-grief",
+      "source": {
+        "label": "Аль-Бухари, 6369",
+        "url": "https://sunnah.com/bukhari:6369"
+      }
+    },
+    {
+      "id": "for-healing",
+      "source": {
+        "label": "Аль-Бухари, 5743",
+        "url": "https://sunnah.com/bukhari:5743"
+      }
+    },
+    {
+      "id": "asking-for-forgiveness",
+      "source": {
+        "label": "Коран, аль-А‘раф, 7:23",
+        "url": "https://quran.com/7/23"
+      }
+    },
+    {
+      "id": "asking-for-knowledge",
+      "source": {
+        "label": "Коран, Та Ха, 20:114 — часть аята",
+        "url": "https://quran.com/20/114"
+      }
+    },
+    {
+      "id": "asking-for-mercy",
+      "source": {
+        "label": "Коран, аль-Му’минун, 23:118",
+        "url": "https://quran.com/23/118"
+      }
+    },
+    {
+      "id": "help-in-worship",
+      "source": {
+        "label": "Абу Дауд, 1522",
+        "url": "https://sunnah.com/abudawud:1522"
+      }
+    }
+  ]
+}

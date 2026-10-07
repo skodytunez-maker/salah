@@ -4,14 +4,14 @@ import {Script,createContext} from 'node:vm';
 import {validateDuaCatalogue,safeDuaSource,cleanDuaFavorites,filterDuas,duaRoute,duaPassage} from '../dist/js/daily-dua-core.js';
 
 const catalogue=validateDuaCatalogue(JSON.parse(await readFile(new URL('../dist/data/daily-dua.json',import.meta.url),'utf8')));
-assert.equal(catalogue.items.length,23);
-assert.equal(catalogue.categories.length,8);
+assert.equal(catalogue.items.length,32);
+assert.equal(catalogue.categories.length,11);
 assert.deepEqual(filterDuas(catalogue,{query:'перед близостью'}).map(i=>i.id),['before-intimacy']);
 assert.deepEqual(filterDuas(catalogue,{query:'перед едой'}).map(i=>i.id),['before-meal','forgot-before-meal']);
 assert.equal(filterDuas(catalogue,{category:'food'}).length,3);
 assert.deepEqual(filterDuas(catalogue,{query:'кунут'}).map(i=>i.id),['dua-qunut']);
 assert.deepEqual(filterDuas(catalogue,{query:'истихара'}).map(i=>i.id),['dua-istikhara']);
-assert.equal(filterDuas(catalogue,{category:'prayer'}).length,2);
+assert.equal(filterDuas(catalogue,{category:'prayer'}).length,4);
 const qunut=catalogue.items.find(item=>item.id==='dua-qunut');
 assert.deepEqual(qunut.variants.map(value=>value.id),['hasan','hanafi']);
 assert.equal(duaPassage(qunut).transliteration,qunut.transliteration,'The existing wording remains the default');
@@ -56,7 +56,7 @@ function browser(hash='#adhkar?view=duas',storage=new Storage(),fetchImpl=async(
  win.addEventListener('hashchange',()=>{if(location.hash.includes('view=duas'))open();else{module.stopDailyDuas();host.innerHTML='<h1>Азкары</h1>'}});
  return {host,location,storage,notices,module,window:win,open,nativeBack:()=>win.history.back(),nativeForward:()=>win.history.forward(),get entries(){return entries.map(e=>e.hash)},get at(){return at},select:selector=>{const el=host.querySelector(selector);assert.ok(el,selector);return el}};
 }
-let page=browser();await page.open();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,23);
+let page=browser();await page.open();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.length);
 const search=page.select('#dua-search');search.value='близостью';search.oninput({target:search});assert.equal(page.host.querySelectorAll('[data-dua-open]').length,1);
 await page.select('[data-dua-favorite="before-intimacy"]').click();assert.deepEqual(JSON.parse(page.storage.getItem('salah:daily-dua-favorites')),['before-intimacy']);
 await page.select('[data-dua-open="before-intimacy"]').click();assert.match(page.location.hash,/item=before-intimacy/);assert.match(page.host.textContent,/разақтанаа/);assert.equal(page.host.querySelector('#adhkar-count'),null);
@@ -73,7 +73,7 @@ let release;const gate=new Promise(resolve=>release=resolve);
 page=browser('#adhkar?view=duas',new Storage(),async()=>{await gate;return {ok:true,json:async()=>structuredClone(catalogue)}});
 const pending=page.open();page.module.stopDailyDuas();page.host.innerHTML='<p>Другой раздел</p>';release();await pending;assert.equal(page.host.textContent,'Другой раздел','A late load cannot overwrite a newer screen');
 page=browser('#adhkar?view=duas',new Storage(),async()=>{throw Error('offline')});await page.open();assert.ok(page.host.querySelector('#dua-retry'));assert.ok(page.host.querySelector('#dua-back'));
-console.log('PASS: 23 sourced duas, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
+console.log('PASS: 32 sourced duas, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
 
 const savedProgress=JSON.stringify({version:2,totals:{tasbih:300},days:{'2026-10-06':{evening:{tasbih:50}}}});
 const qunutStorage=new Storage();qunutStorage.setItem('salah:adhkar-progress-v2',savedProgress);
@@ -97,7 +97,7 @@ page=browser(page.location.hash,qunutStorage);await page.open();assert.equal(pag
 await page.select('[data-dua-favorite="dua-qunut"]').click();assert.deepEqual(JSON.parse(qunutStorage.getItem('salah:daily-dua-favorites')),['dua-qunut'],'Both wordings share one favorite');
 await page.select('#dua-next').click();assert.match(page.location.hash,/item=dua-istikhara/);assert.doesNotMatch(page.location.hash,/variant=/);assert.equal(page.host.querySelector('.dua-variants'),null);
 await page.select('#dua-prev').click();assert.equal(page.select('[data-dua-passage="transliteration"]').textContent,qunut.transliteration);
-await page.select('#dua-list').click();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,2);assert.doesNotMatch(page.location.hash,/variant=/);
+await page.select('#dua-list').click();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.filter(item=>item.category==='prayer').length);assert.doesNotMatch(page.location.hash,/variant=/);
 assert.equal(qunutStorage.getItem('salah:adhkar-progress-v2'),savedProgress,'Changing Qunut never touches unfinished daily progress');
 page=browser('#adhkar?view=duas&item=dua-qunut&variant=missing');await page.open();assert.equal(page.select('[data-dua-passage="transliteration"]').textContent,qunut.transliteration);
 console.log('PASS: both Qunut wordings in one reader, live text/source updates, reload, preferences, favorites, navigation and preserved daily progress.');
@@ -109,7 +109,7 @@ for(const item of ['dua-istikhara','dua-qunut','before-intimacy']){
  assert.equal(page.window.history.state.salahDuaParent,true);const depth=page.entries.length;
  await page.open();assert.equal(page.entries.length,depth,'Refreshing a reader does not duplicate history');
  if(item==='dua-qunut'){await page.select('[data-dua-variant="hanafi"]').click();assert.equal(page.entries.length,depth,'Wording changes stay in one reader entry')}
- page.nativeBack();assert.equal(page.location.hash,'#adhkar?view=duas');assert.equal(page.host.querySelectorAll('[data-dua-open]').length,23,'Native swipe returns to the dua library');
+ page.nativeBack();assert.equal(page.location.hash,'#adhkar?view=duas');assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.length,'Native swipe returns to the dua library');
  page.nativeForward();assert.match(page.location.hash,new RegExp('item='+item));assert.ok(page.host.querySelector('.dua-reader'));
  await page.select('#dua-list').click();assert.equal(page.location.hash,'#adhkar?view=duas','The edge-swipe button action uses the same library parent');
  page.nativeBack();assert.equal(page.location.hash,'#adhkar','Only the next Back returns to morning/evening collections');
@@ -119,5 +119,5 @@ page=browser('#adhkar?view=duas&category=prayer&q=кунут',new Storage(),unde
 await page.select('[data-dua-open="dua-qunut"]').click();page.nativeBack();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,1);assert.match(page.location.hash,/category=prayer/);assert.equal(page.select('#dua-search').value,'кунут','Native Back preserves the filtered library');
 await page.select('[data-dua-open="dua-qunut"]').click();assert.equal(page.entries.length,3,'Opening another reader replaces the old forward branch');
 page=browser('#adhkar?view=duas&category=prayer',new Storage(),undefined,{adhkarHistory:true});await page.open();await page.select('[data-dua-open="dua-qunut"]').click();const depth=page.entries.length;
-await page.select('#dua-next').click();assert.match(page.location.hash,/item=dua-istikhara/);assert.equal(page.entries.length,depth,'Paging never inserts intermediate reader history');page.nativeBack();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,2);
+await page.select('#dua-next').click();assert.match(page.location.hash,/item=dua-istikhara/);assert.equal(page.entries.length,depth,'Paging never inserts intermediate reader history');page.nativeBack();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.filter(item=>item.category==='prayer').length);
 console.log('PASS: native Back and Forward, direct reader/reload, Istikhara/Qunut/other duas, filtered library and stable history depth.');

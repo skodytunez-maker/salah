@@ -6,7 +6,8 @@ const validSize = size => Number.isFinite(size?.width) && size.width > 0 &&
   Number.isFinite(size?.height) && size.height > 0;
 
 export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
-  if (!validSize({width,height}) || Math.min(width,height) < 600) return null;
+  const protectedSubject = geometry?.fitSubject === true && validSize(geometry);
+  if (!validSize({width,height}) || Math.min(width,height) < 600 && !protectedSubject) return null;
   const source = validSize(geometry) ? geometry : wallpaper === 'mosque'
     ? {width:1536,height:1024} : panorama;
   const wide = width > height;
@@ -15,9 +16,9 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
   // At most 12% of a narrow composition can be cropped in either direction.
   // Full-bleed landscape needs a separate, aligned day/night/sky asset set.
   const narrow = source.width/source.height < .85;
-  const scale = narrow ? Math.min(cover,contain/.88) : cover;
+  const scale = Math.min(width,height)<600 ? cover : narrow ? Math.min(cover,contain/.88) : cover;
   const photoWidth = source.width*scale, photoHeight = source.height*scale;
-  let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : .86);
+  let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : wallpaper === 'mosque' ? .86 : .5);
   let top = (height-photoHeight)*.5;
   if (wallpaper === 'mosque') {
     // Keep the minarets and main dome (right-hand third) in portrait as well.
@@ -25,7 +26,7 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
     if (min <= max) left = clamp(left,min,max);
   }
   return {width:photoWidth,height:photoHeight,left,top,scale,
-    mode:wide?'tablet-wide':'tablet-portrait',
+    mode:Math.min(width,height)<600?'phone-artwork':wide?'tablet-wide':'tablet-portrait',
     needsLandscape:wide && narrow};
 }
 

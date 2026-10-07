@@ -9,6 +9,7 @@ const read=async file=>JSON.parse(await fs.readFile(path.join(root,file),'utf8')
 const media=await read('docs/media-rights-register.json');
 const content=await read('docs/content-rights-register.json');
 const snapshot=process.argv.includes('--snapshot');
+const awaitCatalogue=await fs.readFile(path.join(root,'dist/wallpapers/catalog.json'),'utf8');
 const allowed=new Set(['needs-review','license-recorded','origin-supported','cleared-with-evidence']);
 const relative=value=>typeof value==='string'&&value.startsWith('dist/')&&!value.includes('\\')&&!value.split('/').some(p=>p==='..'||p==='.'||p==='')&&!path.isAbsolute(value);
 const sha=value=>typeof value==='string'&&/^[a-f0-9]{40}$/.test(value);
@@ -34,7 +35,8 @@ function validate(records,inventory){
   assert.equal(set.paths.length,3);
   for(const file of set.paths)assert.equal(entries.get(file)?.wallpaperSet,set.id,'Unmapped wallpaper file: '+file);
  }
- assert.equal(sets.size,14,'Update audit when the wallpaper catalogue changes');
+ const expectedSets=JSON.parse(awaitCatalogue).cities.map(city=>city.id).sort();
+ assert.deepEqual([...sets].sort(),expectedSets,'Audit must cover the exact active wallpaper catalogue');
  return entries;
 }
 let inventory,sourceFiles;

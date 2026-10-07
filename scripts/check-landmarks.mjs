@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {createLandmarkLoader,validateLandmarkCatalog,matchLandmark,landmarkDistance,LANDMARK_CACHE} from '../dist/js/landmarks.js';
 const root=new URL('../dist/',import.meta.url),catalog=JSON.parse(await readFile(new URL('wallpapers/catalog.json',root),'utf8')),entries=validateLandmarkCatalog(catalog),city={latitude:57.15222,longitude:65.52722};
-assert.equal(entries.length,14);
+assert.equal(entries.length,17);
 assert.equal(new Set(entries.map(x=>x.id)).size,entries.length);
 assert.ok(!entries.some(x=>x.id==='yekaterinburg'),'Excluded city must not appear in the collection');
 for(const entry of entries)assert.equal(matchLandmark({latitude:entry.latitude,longitude:entry.longitude},entries)?.id,entry.id,'Each city must select its own pair');assert.equal(matchLandmark(city,entries).id,'tyumen');assert.ok(landmarkDistance(city,entries[0])<1);
@@ -32,7 +32,7 @@ const moscow=await load({latitude:55.7558,longitude:37.6173});assert.equal(mosco
 const offline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage});assert.equal((await offline(city)).status,'ready','Previously chosen city works offline');assert.equal(privateSettings.get('school'),0);assert.equal(privateSettings.get('adhkar-total'),170);
 const controller=new AbortController();controller.abort();await assert.rejects(load(city,{signal:controller.signal}),error=>error.name==='AbortError');
 for(const item of entries)for(const key of ['day','night','mask'])assert.ok((await stat(new URL(item[key],root))).size<3145728);
-for(const item of entries){const mask=await readFile(new URL(item.mask,root),'utf8');assert.match(mask,/viewBox="0 0 853 1844"/);assert.ok(!/<script|<image|(?:href|src)\s*=|url\(['"]?(?:https?:|data:)/i.test(mask),'Sky masks have no scripts or external resources');assert.ok((await stat(new URL(item.mask,root))).size<32768);}
+for(const item of entries){const mask=await readFile(new URL(item.mask,root),'utf8');assert.match(mask,item.fitSubject?/viewBox="0 0 1536 1024"/:/viewBox="0 0 853 1844"/);assert.ok(!/<script|<image|(?:href|src)\s*=|url\(['"]?(?:https?:|data:)/i.test(mask),'Sky masks have no scripts or external resources');assert.ok((await stat(new URL(item.mask,root))).size<32768);}
 const sw=await readFile(new URL('sw.js',root),'utf8');for(const item of entries)for(const key of ['day','night','mask'])assert.ok(!sw.includes('"./'+item[key]+'"'),'City assets are not precached for all users');
 const weatherSource=await readFile(new URL('js/weather.js',root),'utf8');
 assert.ok(!weatherSource.includes("landmarkState!=='ready'?'mosque'"),'Landmark loading must never fall back to the bundled mosque');
@@ -49,7 +49,7 @@ console.log('PASS: lazy city catalogue, unified alphabetical choices, Afghanista
 
 const otherCity={latitude:35.6762,longitude:139.6503},copy={...otherCity};
 assert.equal(matchLandmark(otherCity,entries,'derbent').id,'derbent');assert.equal(matchLandmark(null,entries,'pamir').id,'pamir');
-const count=requests.length;assert.equal((await load.catalogue()).length,14);assert.equal(requests.length,count,'Opening city choices never downloads photos');
+const count=requests.length;assert.equal((await load.catalogue()).length,17);assert.equal(requests.length,count,'Opening city choices never downloads photos');
 assert.equal((await load(otherCity,{chosen:'pamir'})).entry.id,'pamir');assert.deepEqual(otherCity,copy,'Choosing a wallpaper must not rewrite location');
 const invalidCount=requests.length;assert.equal((await load(otherCity,{chosen:'https://evil.test/image'})).status,'unavailable');assert.equal(requests.length,invalidCount);
 const chosenOffline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage});assert.equal((await chosenOffline(null,{chosen:'pamir'})).status,'ready');

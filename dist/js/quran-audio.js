@@ -1,7 +1,8 @@
 import{reciterInfo}from './quran-reciters.js';
-import{audioUrl,AUDIO_CACHE}from './quran-data.js';
+import{audioUrl}from './quran-data.js';
+import{offlineAudioStore}from './quran-offline-store.js';
 import{loadAyahTimings,ayahAtTime,timingUrl}from './quran-timing.js';
-export function createQuranPlayer({surah,reciter,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings}){
+export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings}){
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
  function emit(){if(!disposed)onState({index:current,status,ayah,timingStatus,canPrevious:!whole&&current>0,canNext:!whole&&current<surah.verses.length-1})}
@@ -17,17 +18,18 @@ export function createQuranPlayer({surah,reciter,onState,onVerse,onError,createA
   if(whole)index=0;
   const id=++token;release();current=index;continuous=all;status='loading';ayah=whole?null:surah.verses[index].ayah;timingStatus=whole?(timed?'loading':'unavailable'):'ready';emit();if(!whole)onVerse(ayah);
   try{
-   let url=audioUrl(surah.verses[index].number,reciter,surah.number),cached=null;
-   if('caches'in window)try{cached=await(await caches.open(AUDIO_CACHE)).match(url)}catch{}
-   if(cached){const blob=await cached.blob();if(disposed||id!==token)return;objectUrl=URL.createObjectURL(blob);url=objectUrl}
+   let url=audioUrl(surah.verses[index].number,reciter,surah.number),blob=null;
+   try{blob=await offlineAudioStore.getAudio(url);}catch{}
+   if(blob){if(disposed||id!==token)return;objectUrl=URL.createObjectURL(blob);url=objectUrl}
    if(disposed||id!==token)return;
+   if(offlineOnly&&!blob)throw Error('Сура не скачана');
    audio=createAudio(url);
    audio.onerror=()=>fail(id);
    audio.ontimeupdate=audio.onseeked=audio.onloadedmetadata=()=>sync(id);
    audio.onended=()=>{if(disposed||id!==token)return;if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);else{status='ended';emit()}};
    if(whole&&timed){
     const controller=new AbortController();timingController=controller;
-    Promise.resolve().then(()=>loadTimings(surah,reciter,{signal:controller.signal})).then(table=>{if(disposed||id!==token||!audio)return;timings=table;timingStatus=table?'ready':'unavailable';sync(id,true)}).catch(()=>{if(disposed||id!==token||!audio)return;timingStatus='unavailable';sync(id,true)});
+    Promise.resolve().then(()=>loadTimings(surah,reciter,{signal:controller.signal,...(offlineOnly?{fetcher:async()=>{throw Error('Offline')}}:{})})).then(table=>{if(disposed||id!==token||!audio)return;timings=table;timingStatus=table?'ready':'unavailable';sync(id,true)}).catch(()=>{if(disposed||id!==token||!audio)return;timingStatus='unavailable';sync(id,true)});
    }
    await audio.play();if(disposed||id!==token)return;status='playing';sync(id);emit();
   }catch{fail(id)}

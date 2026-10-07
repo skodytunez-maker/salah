@@ -1,3 +1,4 @@
+import{matchesDuaSituation}from './dua-search.js';
 const slug=/^[a-z][a-z0-9-]{0,63}$/;
 const text=value=>typeof value==='string'&&value.trim().length>0;
 export function validateDuaCatalogue(value){
@@ -29,7 +30,11 @@ export function cleanDuaFavorites(value,catalogue){const valid=new Set(catalogue
 const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').normalize('NFKC');
 export function filterDuas(catalogue,{category='',query='',favoritesOnly=false}={},favorites=[]){
  const words=normalize(query).trim().split(/\s+/).filter(Boolean),saved=new Set(favorites);
- return catalogue.items.filter(item=>(!category||item.category===category)&&(!favoritesOnly||saved.has(item.id))&&words.every(word=>normalize([item.title,item.occasion,item.keywords,item.translation,item.transliteration,...(item.variants||[]).flatMap(value=>[value.label,value.translation,value.transliteration]),catalogue.categories.find(c=>c.id===item.category)?.name].join(' ')).includes(word)));
+ const eligible=catalogue.items.filter(item=>(!category||item.category===category)&&(!favoritesOnly||saved.has(item.id)));
+ const content=item=>[item.title,item.occasion,item.keywords,item.translation,item.transliteration,...(item.variants||[]).flatMap(value=>[value.label,value.translation,value.transliteration]),catalogue.categories.find(c=>c.id===item.category)?.name].join(' ');
+ const exact=eligible.filter(item=>words.every(word=>normalize(content(item)).includes(word)));
+ return exact.length?exact:eligible.filter(item=>matchesDuaSituation(query,[item.title,item.occasion,item.keywords].join(' ')));
+
 }
 export function duaRoute(hash,catalogue){
  const params=new URLSearchParams(String(hash).split('?')[1]||'');

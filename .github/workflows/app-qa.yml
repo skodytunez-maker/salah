@@ -1,0 +1,30 @@
+name: Verify complete SALAH app
+on:
+  pull_request:
+    paths: ['dist/**', 'scripts/**', 'docs/**', '.github/workflows/app-qa.yml']
+  push:
+    paths: ['dist/**', 'scripts/**', 'docs/**', '.github/workflows/app-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: app-qa-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check all application contracts and regressions
+        run: node scripts/check-app.mjs "$RUNNER_TEMP/salah-app-qa.json"
+      - name: Save QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-app-qa
+          path: ${{ runner.temp }}/salah-app-qa.json
+          if-no-files-found: error

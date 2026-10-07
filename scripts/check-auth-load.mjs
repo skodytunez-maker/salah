@@ -38,7 +38,7 @@ else{
  session={...session,access_token:'fixture-home'};const beforeHome=gates;for(const fn of callbacks)fn('TOKEN_REFRESHED',session);
  assert.equal(queue.length,0);assert.equal(gates,beforeHome,'Home does not request owner-only data');
  // A cached owner grant does not defeat a subsequent server refusal.
- allow=false;await assert.rejects(tabs[0].verifyOwner());assert.equal(tabs[0].ownerVerified(),false);
+ allow=false;assert.equal(await tabs[0].verifyOwner(),false,'A server refusal returns false and revokes the cached UI grant');assert.equal(tabs[0].ownerVerified(),false);
  session=null;for(const listener of storageListeners)listener({key:'salah-owner-session-v1',newValue:null});assert.ok(tabs.every(tab=>!tab.ownerVerified()),'Removal immediately hides owner-only UI');while(queue.length){for(const fn of queue.splice(0))fn();for(let i=0;i<25;i++)await Promise.resolve();}assert.ok(tabs.every(tab=>!tab.ownerVerified()));
  console.log('PASS: SDK and storage refresh events settle across three tabs; owner checks stay bounded; server refusal and session removal revoke access.');
 }

@@ -56,3 +56,13 @@ phone.innerWidth=900;phone.innerHeight=1344;await phone.events.get('resize')();
 assert.equal(phone.calls.at(-1),'unlock','Only release a lock held by this app');
 const browser=environment(390,844,false);initPortraitMode(browser);await Promise.resolve();assert.deepEqual(browser.calls,[]);
 console.log('PASS: installed tablets rotate; phone portrait preference, ordinary browser and app-owned unlock remain safe.');
+
+// Wide city scenes fill the viewport, retain proportions and keep the central subject.
+for(const viewport of [{width:390,height:844},{width:844,height:390},{width:900,height:1344},{width:1344,height:900}]){
+ const geometry={width:1536,height:1024,fitSubject:true};const layout=wallpaperLayout({...viewport,wallpaper:'landmark',geometry});
+ assert.ok(layout);near(layout.width/layout.height,1.5);assert.equal(layout.needsLandscape,false);
+ assert.ok(layout.left<=0&&layout.top<=0,'Full-screen artwork has no empty top or side bands');
+ assert.ok(layout.left+layout.width>=viewport.width&&layout.top+layout.height>=viewport.height,'Artwork covers both viewport dimensions');
+ const x=layout.left+layout.width*.5,y=layout.top+layout.height*.5;assert.ok(x>=0&&x<=viewport.width&&y>=0&&y<=viewport.height,'Central subject stays on screen');
+}
+console.log('PASS: new wide city artwork fills phones and tablets without stretching or empty bands.');
