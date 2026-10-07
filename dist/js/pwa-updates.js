@@ -73,7 +73,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    makeBanner({release:(!force?release.announcement:release)||{version:APP_VERSION+1,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']},available:true});
   }
   function applyAutomatically(){
-   if(document.documentElement?.dataset?.quranDownload==='active'||requested||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open]')||!canAutoUpdate())return false;
+   if(document.documentElement?.dataset?.qrLogin==='active'||document.documentElement?.dataset?.quranDownload==='active'||requested||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open]')||!canAutoUpdate())return false;
    try{requested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});return true;}catch{requested=false;return false;}
   }
   function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&!applyAutomatically())void offer();});if(worker.state==='installed'&&!applyAutomatically())void offer();}
