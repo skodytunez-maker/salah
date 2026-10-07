@@ -57,6 +57,14 @@ export async function showCounterAccount(container,message='',force=false,mode='
  const report=text=>{if(active()){const notice=container.querySelector('#account-sync-status');const inline=area.querySelector('#counter-password-status'),passwordMode=inline&&!area.querySelector('#counter-account-login').hidden;notice.textContent=passwordMode?'':text;if(passwordMode)inline.textContent=text;else if(text)notice.scrollIntoView?.({block:'nearest'});}};
  const secureEntry=container.querySelector('#account-mfa');
  secureEntry.onclick=event=>{event.preventDefault();if(!active())return;location.hash='#account?owner=1';void showCounterAccount(container,'',true);};
+ // QR approval checks the current SDK session and the QR server directly.
+ // Counter synchronisation is unrelated and must not delay the phone prompt.
+ if(hasQrApproval()&&new URLSearchParams(location.hash.split('?')[1]||'').get('owner')!=='1'){
+  area.innerHTML='<p class="muted" role="status">Открываем подтверждение QR…</p>';
+  try{const current=await accountAuthClient().auth.getSession();if(!active())return;const qrSession=current.data?.session;
+   if(!current.error&&qrSession?.user?.email_confirmed_at&&!qrSession.user.is_anonymous){await mountQrApproval(area,qrSession,()=>showCounterAccount(container,'',true));return;}
+  }catch{}
+ }
  await synchronizeCounters();if(!active())return;
  if(counterSyncStatus().signedIn&&hasQrApproval()&&new URLSearchParams(location.hash.split('?')[1]||'').get('owner')!=='1'){await mountQrApproval(area,session,()=>showCounterAccount(container,'',true));return;}
  if(counterSyncStatus().signedIn){

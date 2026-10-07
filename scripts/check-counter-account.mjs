@@ -179,3 +179,8 @@ qrAfterProtected.fixture.scannerOptions.onScan(scannedRequest);
 assert.equal(qrAfterProtected.location.hash,'#account');assert.equal(qrAfterProtected.fixture.qrUrl,'/salah/#account');assert.ok(!qrAfterProtected.fixture.qrUrl.includes(scannedRequest.secret));
 await qrAfterProtected.fixture.qrGate.promise;assert.equal(qrAfterProtected.fixture.qrMounted,true);
 console.log('PASS: scanning after protected entry clears owner-only route and mounts explicit QR confirmation in the signed-in account.');
+
+const promptFirst=browser();await open(promptFirst);await requestCode(promptFirst);await confirm(promptFirst);
+const requestsBeforePrompt=promptFirst.fixture.syncRequests;promptFirst.fixture.qrApproval={id:'33333333-3333-4333-8333-333333333333',secret:'a'.repeat(64)};
+await promptFirst.showCounterAccount(promptFirst.app,'',true);assert.equal(promptFirst.fixture.qrMounted,true);assert.equal(promptFirst.fixture.syncRequests,requestsBeforePrompt,'QR approval must not wait for or mutate cloud counters');
+console.log('PASS: confirmed QR phone session opens the server-checked approval prompt without a counter-cloud round trip.');
