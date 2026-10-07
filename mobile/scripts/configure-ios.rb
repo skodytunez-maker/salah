@@ -11,6 +11,10 @@ config = JSON.parse(File.read(File.join(root, 'capacitor.config.json')))
 app_id = config.fetch('appId')
 abort 'Invalid app identifier' unless app_id.match?(/\A[a-zA-Z][\w]*(\.[a-zA-Z][\w]*)+\z/)
 app_group = "group.#{app_id}"
+release_path = File.expand_path('../dist/js/app-release.js', root)
+release_match = File.read(release_path).match(/export\s+const\s+APP_VERSION\s*=\s*(\d+)\s*;/)
+abort 'Missing or invalid SALAH build version; no iOS project files changed.' unless release_match && release_match[1].to_i.positive?
+build_version = release_match[1]
 project_dir = File.join(root, 'ios', 'App')
 project_path = File.join(project_dir, 'App.xcodeproj')
 abort 'Run npm run ios:add on macOS first.' unless File.directory?(project_path)
@@ -129,6 +133,7 @@ Xcodeproj::Plist.write_to_path(
 app.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['CODE_SIGN_ENTITLEMENTS'] = 'SalahNative/SalahApp.entitlements'
+  settings['CURRENT_PROJECT_VERSION'] = build_version
   settings['IPHONEOS_DEPLOYMENT_TARGET'] =
     [settings.fetch('IPHONEOS_DEPLOYMENT_TARGET', '16.0').to_f, 16.0].max.to_s
 end
