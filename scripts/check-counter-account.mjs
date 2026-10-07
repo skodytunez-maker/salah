@@ -27,7 +27,7 @@ class Element {
 class Storage {data=new Map();getItem(key){return this.data.get(key)??null;}setItem(key,value){this.data.set(key,String(value));}removeItem(key){this.data.delete(key);}}
 function deferred(){let resolve;const promise=new Promise(done=>resolve=done);return{promise,resolve};}
 function browser(){
- const app=new Element(),location={hash:'#account'},storage=new Storage();
+ const app=new Element(),location={hash:'#account',pathname:'/salah/',search:''},storage=new Storage();
  const listeners=new Map(),window={addEventListener(type,callback){if(!listeners.has(type))listeners.set(type,[]);listeners.get(type).push(callback);},dispatchEvent(event){for(const callback of listeners.get(event.type)||[])callback(event);}};
  const fixture={now:0,session:null,otpError:null,verifyError:null,passwordError:null,verifySession:true,otpGate:null,verifyGate:null,passwordGate:null,sessionGate:null,mail:[],codes:[],passwords:[],updates:[],updateError:null,updateGate:null,factors:[],factorError:null,levelError:null,level:{currentLevel:"aal1",nextLevel:"aal1"},syncRequests:0,refreshes:0,refreshError:null,refreshGate:null,signOuts:[]};
  const confirmed=(email,nickname='Fixture')=>({access_token:'fixture-token',user:{id:'11111111-1111-4111-8111-111111111111',email,email_confirmed_at:'2026-10-02T01:00:00Z',user_metadata:{nickname}}});
@@ -42,7 +42,7 @@ function browser(){
   signOut:async options=>{fixture.signOuts.push(options);fixture.session=null;return{error:null};}
  };
  const navigator={onLine:true};class FixtureDate extends Date{static now(){return fixture.now;}}
- const context=createContext({mountQrScanner:()=>{},setQrApproval:()=>{},mountAccountDevices:()=>{},captureQrApproval:()=>false,hasQrApproval:()=>false,mountQrApproval:async()=>false,mountQrLogin:()=>{},stopQrLogin:()=>{},Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
+ const context=createContext({mountQrScanner:(area,options)=>{fixture.scannerOptions=options;},setQrApproval:request=>{fixture.qrApproval=request;},history:{state:{},replaceState(state,title,url){fixture.qrUrl=url;location.hash=url.slice(url.indexOf('#'));}},mountAccountDevices:()=>{},captureQrApproval:()=>false,hasQrApproval:()=>!!fixture.qrApproval,mountQrApproval:async(area,session)=>{fixture.qrMounted=!!session;fixture.qrGate?.resolve();return true;},mountQrLogin:()=>{},stopQrLogin:()=>{},Date:FixtureDate,location,document:{getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
   fetch:async(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/adhkar-sync');assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');fixture.syncRequests++;return Response.json({totals:{}});},
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
  return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
@@ -165,3 +165,17 @@ console.log('PASS: switching methods transfers email, shows only the chosen form
 for(const error of [{status:429,message:'Private rate limit'},{status:503,message:'Private unavailable'},{name:'AuthRetryableFetchError',message:'Private network'}]){
  const b=browser();await open(b);b.fixture.passwordError=error;const form=b.select('#counter-account-login');form.querySelector('input[type=email]').value='fixture@example.test';form.querySelector('input[type=password]').value='fixture-password';await form.submit();assert.doesNotMatch(b.select('#account-sync-status').textContent,/Проверьте почту и пароль|Private/);assert.equal(form.querySelector('button').disabled,false);assert.equal(form.querySelector('input[type=password]').value,'');assert.equal(b.fixture.syncRequests,0);
 }
+
+const protectedRetry=browser();await open(protectedRetry);await requestCode(protectedRetry);await confirm(protectedRetry);
+protectedRetry.location.hash='#account?owner=1';const previousArea=protectedRetry.select('#account-form-area');let prevented=false;
+protectedRetry.select('#account-mfa').onclick({preventDefault(){prevented=true;}});
+assert.equal(prevented,true);assert.notEqual(protectedRetry.select('#account-form-area'),previousArea,'secure entry must refresh even when the owner hash is already selected');assert.equal(protectedRetry.location.hash,'#account?owner=1');await protectedRetry.synchronizeCounters();
+console.log('PASS: repeated protected-entry tap opens a fresh account screen instead of a same-hash no-op.');
+
+const qrAfterProtected=browser();await open(qrAfterProtected);await requestCode(qrAfterProtected);await confirm(qrAfterProtected);
+qrAfterProtected.location.hash='#account?owner=1';qrAfterProtected.fixture.qrGate=deferred();
+const scannedRequest={id:'33333333-3333-4333-8333-333333333333',secret:'a'.repeat(64)};
+qrAfterProtected.fixture.scannerOptions.onScan(scannedRequest);
+assert.equal(qrAfterProtected.location.hash,'#account');assert.equal(qrAfterProtected.fixture.qrUrl,'/salah/#account');assert.ok(!qrAfterProtected.fixture.qrUrl.includes(scannedRequest.secret));
+await qrAfterProtected.fixture.qrGate.promise;assert.equal(qrAfterProtected.fixture.qrMounted,true);
+console.log('PASS: scanning after protected entry clears owner-only route and mounts explicit QR confirmation in the signed-in account.');

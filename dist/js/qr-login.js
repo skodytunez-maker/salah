@@ -47,7 +47,7 @@ export function mountQrLogin(area,finished){
  button.onclick=async()=>{
   stopQrLogin();document.documentElement.dataset.qrLogin='active';let alive=true,request=null,polling=false,redeeming=false,timer=null;
   const previous=[...area.children];previous.forEach(el=>{el.dataset.qrWasHidden=String(el.hidden);el.hidden=true;});
-  const panel=document.createElement('section');panel.className='qr-login-panel';panel.innerHTML='<h2>Вход по QR</h2><div class="qr-login-code" aria-label="QR-код для входа"></div><strong class="qr-pairing-code"></strong><p class="muted">Отсканируйте камерой телефона, где вы уже вошли в SALAH.</p><p role="status">Готовим QR…</p><button class="button secondary" type="button">Отмена</button>';area.append(panel);
+  const panel=document.createElement('section');panel.className='qr-login-panel';panel.innerHTML='<h2>Вход по QR</h2><div class="qr-login-code" aria-label="QR-код для входа"></div><strong class="qr-pairing-code"></strong><p class="muted">В SALAH на телефоне нажмите «Сканировать QR», затем подтвердите вход.</p><p role="status">Готовим QR…</p><button class="button secondary" type="button">Отмена</button>';area.append(panel);
   const status=panel.querySelector('[role=status]');
   const cleanup=()=>{if(!alive)return;alive=false;delete document.documentElement.dataset.qrLogin;clearTimeout(timer);document.removeEventListener('visibilitychange',resume);if(request&&!redeeming)call('cancel',{id:request.id,secret:request.pollSecret}).catch(()=>{});panel.remove();previous.forEach(el=>{el.hidden=el.dataset.qrWasHidden==='true';delete el.dataset.qrWasHidden;});};
   dispose=cleanup;panel.querySelector('button').onclick=stopQrLogin;
@@ -66,7 +66,7 @@ export function mountQrLogin(area,finished){
      if(alive){cleanup();dispose=null;finished();}return;
     }
     if(value.state==='denied'||value.state==='consumed'){status.textContent=value.state==='denied'?'Вход отклонён.':'Код уже использован.';panel.querySelector('.qr-login-code').replaceChildren();return;}
-    status.textContent='Ждём подтверждения на телефоне.';
+    status.textContent='Подтвердите вход на телефоне.';
    }catch(e){if(!alive)return;status.textContent=errorText(e);if(redeeming||['expired','invalid_session'].includes(e?.code)){panel.querySelector('.qr-login-code').replaceChildren();return;}}
    finally{polling=false;}
    if(alive)timer=setTimeout(tick,2500);
