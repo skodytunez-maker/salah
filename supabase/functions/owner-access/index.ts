@@ -1,7 +1,7 @@
 // Deploy only to the separate SALAH project. No service-role key is required.
 // A valid session is checked against Auth on EVERY request before owner access.
 const OWNER_ID='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
-const APP_ORIGIN='https://skodytunez-maker.github.io';
+const APP_ORIGINS=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);
 const PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 // Returned only after fresh identity, active session and MFA verification.
@@ -12,10 +12,10 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
-  if(origin===APP_ORIGIN)Object.assign(headers,{'Access-Control-Allow-Origin':APP_ORIGIN,'Access-Control-Allow-Headers':'authorization, apikey, content-type, x-client-info','Access-Control-Allow-Methods':'GET, OPTIONS','Access-Control-Max-Age':'600'});
+  if(APP_ORIGINS.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, apikey, content-type, x-client-info','Access-Control-Allow-Methods':'GET, OPTIONS','Access-Control-Max-Age':'600'});
   const reply=(status,data)=>new Response(JSON.stringify(data),{status,headers});
   // CORS is supplementary. Requests without Origin still require a verified user.
-  if(origin&&origin!==APP_ORIGIN)return reply(403,{error:'forbidden'});
+  if(origin&&!APP_ORIGINS.has(origin))return reply(403,{error:'forbidden'});
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
   if(req.method!=='GET')return reply(405,{error:'method_not_allowed'});
   const auth=req.headers.get('Authorization')||'';

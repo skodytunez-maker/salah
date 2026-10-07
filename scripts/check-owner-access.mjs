@@ -81,3 +81,13 @@ console.log('PASS: private release history is available only to the active MFA o
 const diagnosticOwner=createOwnerHandler({getUser:async()=>({data:{user}}),getClaims,readUsers:async()=>({total:3,users:[{nickname:'Reported',appVersion:180,versionCheckedAt:'2026-10-06T10:00:00Z',lastSavedAt:'2026-10-06T09:30:00Z',seed:{private:123},delta:{private:456}},{nickname:'Legacy',appVersion:179,versionCheckedAt:null,lastSavedAt:null},{nickname:'Invalid',appVersion:'180',versionCheckedAt:'bad',lastSavedAt:'bad'}]})});
 const diagnosticResponse=await(await diagnosticOwner(request('valid-owner-token','?mode=users'))).json();assert.equal(diagnosticResponse.users[0].appVersion,180);assert.equal(diagnosticResponse.users[0].lastSavedAt,'2026-10-06T09:30:00.000Z');assert.equal(diagnosticResponse.users[1].appVersion,null);assert.equal(diagnosticResponse.users[1].lastSavedAt,null);assert.equal(diagnosticResponse.users[2].versionCheckedAt,null);assert.ok(!JSON.stringify(diagnosticResponse).includes('private'));assert.match(source,/order by version_checked_at desc,tab_id limit 1/,'Choose latest report, not numerically largest version');
 console.log('PASS: version and server-save diagnostics stay owner-only, old/invalid reports stay unknown, counter values are excluded.');
+
+for(const origin of ['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']){
+ const pre=await handler(new Request('https://project.supabase.co/functions/v1/owner-access',{method:'OPTIONS',headers:{Origin:origin}}));assert.equal(pre.status,204);assert.equal(pre.headers.get('Access-Control-Allow-Origin'),origin);
+ const allowed=await handler(request('valid-owner-token','',{Origin:origin}));assert.equal(allowed.status,200);assert.equal(allowed.headers.get('Access-Control-Allow-Origin'),origin);
+ assert.equal((await handler(request('other-user-token','',{Origin:origin}))).status,403);
+ assert.equal((await handler(request(null,'',{Origin:origin}))).status,401);
+ assert.equal((await firstFactor(request('valid-owner-token','?mode=users',{Origin:origin}))).status,403);
+}
+for(const origin of ['https://evil.example','https://localhost.evil.example','http://localhost:9999','null'])assert.equal((await handler(request('valid-owner-token','',{Origin:origin}))).status,403);
+console.log('PASS: native APK can reach owner MFA gate; other accounts, unknown origins and first-factor private-data access remain denied.');

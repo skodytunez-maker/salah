@@ -55,6 +55,16 @@ export async function showCounterAccount(container,message='',force=false,mode='
  const area=container.querySelector('#account-form-area');accountArea=area;
  const active=()=>host===container&&screen===accountScreen&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===area;
  const report=text=>{if(active()){const notice=container.querySelector('#account-sync-status');const inline=area.querySelector('#counter-password-status'),passwordMode=inline&&!area.querySelector('#counter-account-login').hidden;notice.textContent=passwordMode?'':text;if(passwordMode)inline.textContent=text;else if(text)notice.scrollIntoView?.({block:'nearest'});}};
+ const secureEntry=container.querySelector('#account-mfa');
+ secureEntry.onclick=event=>{event.preventDefault();if(!active())return;location.hash='#account?owner=1';void showCounterAccount(container,'',true);};
+ // QR approval checks the current SDK session and the QR server directly.
+ // Counter synchronisation is unrelated and must not delay the phone prompt.
+ if(hasQrApproval()&&new URLSearchParams(location.hash.split('?')[1]||'').get('owner')!=='1'){
+  area.innerHTML='<p class="muted" role="status">Открываем подтверждение QR…</p>';
+  try{const current=await accountAuthClient().auth.getSession();if(!active())return;const qrSession=current.data?.session;
+   if(!current.error&&qrSession?.user?.email_confirmed_at&&!qrSession.user.is_anonymous){await mountQrApproval(area,qrSession,()=>showCounterAccount(container,'',true));return;}
+  }catch{}
+ }
  await synchronizeCounters();if(!active())return;
  if(counterSyncStatus().signedIn&&hasQrApproval()&&new URLSearchParams(location.hash.split('?')[1]||'').get('owner')!=='1'){await mountQrApproval(area,session,()=>showCounterAccount(container,'',true));return;}
  if(counterSyncStatus().signedIn){
@@ -62,7 +72,7 @@ export async function showCounterAccount(container,message='',force=false,mode='
   container.querySelector('#counter-account-verified').hidden=false;
   area.innerHTML='<div id="account-owner-panel" hidden></div><details class="settings-extra account-details"'+(mode==='password'?' open':'')+'><summary>Данные аккаунта</summary><div class="account-details-content"><form id="counter-profile"><label for="counter-profile-nick">Ник</label><div class="account-nickname-row"><input id="counter-profile-nick" type="text" autocomplete="nickname" minlength="2" maxlength="40" required value="'+esc(session.user.user_metadata?.nickname||'')+'"><button class="account-nickname-save" type="submit" aria-label="Сохранить ник" title="Сохранить ник" data-saved="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></div></form><p>'+esc(session.user.email||'Ваш аккаунт')+'</p><button class="button" id="counter-sync-now">Сохранить счёт</button><div class="account-delete-area"><h3>Удаление аккаунта</h3><p class="muted">Аккаунт, облачный счёт азкаров и обращения в поддержку будут удалены без возможности восстановления.</p><button class="button account-delete-button" id="counter-account-delete">Удалить аккаунт</button></div><details class="settings-extra" id="counter-password-settings"'+(mode==='password'?' open':'')+'><summary>Изменить пароль</summary><form id="counter-password-update"><label for="counter-new-password">Новый пароль</label><input id="counter-new-password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><label for="counter-repeat-password">Повторите пароль</label><input id="counter-repeat-password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required><p class="muted owner-note">Не менее 12 символов.</p><button class="button" type="submit">Сохранить новый пароль</button><a class="text-button" id="counter-password-mfa" href="#account?owner=1" hidden>Подтвердить через Google Authenticator</a></form></details></div></details><button class="text-button" id="counter-account-out">Выйти</button>';
   mountAccountDevices(area,{isActive:active,userId:session.user.id});
-  mountQrScanner(area,{isActive:active,onStop:stopQrLogin,onScan:request=>{if(active()){setQrApproval(request);void showCounterAccount(container,'',true);}}});
+  mountQrScanner(area,{isActive:active,onStop:stopQrLogin,onScan:request=>{if(active()){setQrApproval(request);history.replaceState(history.state,'',location.pathname+location.search+'#account');void showCounterAccount(container,'',true);}}});
   void mountOwnerAccount(area.querySelector('#account-owner-panel'),{isActive:active});
   const profile=area.querySelector('#counter-profile'),profileInput=profile.querySelector('input'),profileSave=profile.querySelector('button');let savedNickname=profileInput.value.trim(),savingNickname=false;
   const updateNicknameSaveState=()=>{const changed=profileInput.value.trim()!==savedNickname;profileSave.setAttribute('data-dirty',String(changed));profileSave.setAttribute('aria-label',changed?'Сохранить ник':'Ник сохранён');profileSave.setAttribute('title',changed?'Сохранить ник':'Ник сохранён');if(!savingNickname)profileSave.disabled=!changed;};
