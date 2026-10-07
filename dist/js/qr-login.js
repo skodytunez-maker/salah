@@ -1,3 +1,4 @@
+import{stopQrScanner}from './qr-scanner.js';
 import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{esc}from './ui.js';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,SECRET=/^[a-f0-9]{64}$/;
@@ -11,7 +12,7 @@ export function captureQrApproval(){
 }
 export function setQrApproval(request){approval=request;}
 export const hasQrApproval=()=>!!approval;
-export function stopQrLogin(){dispose?.();dispose=null;}
+export function stopQrLogin(){stopQrScanner();dispose?.();dispose=null;}
 async function call(action,data={},bearer){
  const r=await fetch(OWNER_PROJECT_URL+'/functions/v1/qr-login',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,'Content-Type':'application/json',...(bearer?{Authorization:'Bearer '+bearer}:{})},body:JSON.stringify({action,...data}),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
  const value=await r.json();if(!r.ok)throw Object.assign(Error(value.error||'unavailable'),{code:value.error});return value;

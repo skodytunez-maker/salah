@@ -17,7 +17,7 @@ const source=await fs.readFile(new URL('dist/js/qr-scanner.js',root),'utf8');ass
 const android=await fs.readFile(new URL('mobile/scripts/configure-android.mjs',root),'utf8'),ios=await fs.readFile(new URL('mobile/scripts/configure-ios.rb',root),'utf8');assert.match(android,/android.permission.CAMERA/);assert.match(ios,/NSCameraUsageDescription/);
 console.log('PASS: real QR pixels decoded locally, strict SALAH-only URL, camera lifecycle and native permissions.');
 
-const {mountQrScanner}=await import(new URL('dist/js/qr-scanner.js',root));
+const {mountQrScanner,stopQrScanner}=await import(new URL('dist/js/qr-scanner.js',root));
 const listeners=new Map();
 class Element{
  constructor(tag){this.tag=tag;this.children=[];this.dataset={};this.hidden=false;this.readyState=2;this.videoWidth=20;this.videoHeight=20;}
@@ -38,3 +38,4 @@ assert.equal(cameraRequests,0,'camera must not open on account entry');
 const first=area.children.at(-1).onclick();assert.equal(document.documentElement.dataset.qrLogin,'active');area.children.at(-1).querySelector('button').onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await first;assert.equal(stops,1);assert.equal(document.documentElement.dataset.qrLogin,undefined);assert.equal(scanned,0);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
 const second=area.children.at(-1).onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await second;assert.equal(scanned,1);assert.equal(stops,2);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
 console.log('PASS: no automatic camera prompt; cancellation stops late camera grant; successful scan stops stream and preserves account view.');
+const third=area.children.at(-1).onclick();stopQrScanner();grant({getTracks:()=>[{stop:()=>stops++}]});await third;assert.equal(stops,3);assert.equal(scanned,1);assert.equal(listeners.size,0);console.log('PASS: account rerender cancels pending scanner without navigation.');
