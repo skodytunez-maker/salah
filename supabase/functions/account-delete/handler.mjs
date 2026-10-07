@@ -1,7 +1,7 @@
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function allowedOrigin(value){
- if(value==='https://skodytunez-maker.github.io')return true;
+ if(['https://skodytunez-maker.github.io','capacitor://localhost','https://localhost'].includes(value))return true;
  try{const url=new URL(value);return url.protocol==='http:'&&['localhost','127.0.0.1'].includes(url.hostname);}catch{return false;}
 }
 export function createAccountDeletionHandler({getUser,getClaims,isSessionActive,deleteUser}){

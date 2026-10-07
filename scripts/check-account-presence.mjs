@@ -57,3 +57,10 @@ assert.equal((await handler(request({...input,p_active:false,p_version:180}))).s
 assert.equal((await handler(request({...input,p_version:180}))).status,200);assert.equal(writes.at(-1).data.p_version,180);assert.equal(writes.at(-1).uid,id);
 assert.match(source,/version_checked_at=coalesce\(excluded.version_checked_at,app_presence.version_checked_at\)/,'Legacy clients do not pretend to refresh version evidence');
 console.log('PASS: bounded optional client version; authenticated identity and server report time preserved.');
+
+for(const origin of ['capacitor://localhost','http://localhost','https://localhost']){
+ const p=await handler(request(input,{method:'OPTIONS',headers:{Origin:origin}}));assert.equal(p.status,204);assert.equal(p.headers.get('Access-Control-Allow-Origin'),origin);
+ assert.equal((await handler(request(input,{headers:{Origin:origin}}))).status,200);
+ assert.equal((await handler(request(input,{headers:{Origin:origin,Authorization:''}}))).status,401);
+}
+console.log('PASS: APK presence accepts exact native origins while unsigned requests remain denied.');

@@ -19,7 +19,14 @@ const [provider,plugin,activity,layout,info,config,workflow,pkg,bridge,entry]=aw
 
 assert.match(provider,/class SalahPrayerWidgetProvider extends AppWidgetProvider/);
 assert.match(provider,/OPTION_APPWIDGET_MIN_WIDTH/);
-assert.match(provider,/>= 250/);
+const sizing=await read('mobile/native/android/SalahWidgetSizing.java');
+assert.match(sizing,/width >= 250 && height >= 124/);
+assert.match(provider,/OPTION_APPWIDGET_SIZES/);
+assert.match(provider,/SalahWidgetSizing.thin/);
+assert.match(info,/targetCellHeight="1"/);
+assert.match(info,/minResizeHeight="48dp"/);
+assert.match(info,/previewLayout=/);
+assert.match(workflow,/testDebugUnitTest/);
 assert.match(provider,/Fajr.*Dhuhr.*Asr.*Maghrib.*Isha/s);
 assert.match(provider,/System\.currentTimeMillis\(\)/);
 assert.match(plugin,/@CapacitorPlugin\(name = "SalahWidget"\)/);

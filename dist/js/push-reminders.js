@@ -4,6 +4,8 @@ import {esc} from './ui.js';
 const API='https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/background-reminders';
 const KEY='salah:push-install-v1';
 const IOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const nativeRuntime=()=>globalThis.Capacitor?.isNativePlatform?.()===true;
+const NATIVE_GUIDE='Фоновые уведомления ещё не подключены.';
 const installed=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 export function pushPreferences(s){
  const p={city:s.city&&{name:s.city.name,latitude:s.city.latitude,longitude:s.city.longitude,timezone:s.city.timezone},method:s.method,school:s.school,highLatitude:s.highLatitude,tyumenTimeSource:s.tyumenTimeSource||'auto',offsets:Object.fromEntries(PRAYER_KEYS.map(k=>[k,Number(s.offsets?.[k]||0)])),tableOffsets:Object.fromEntries(PRAYER_KEYS.map(k=>[k,Number(s.tableOffsets?.[k]||0)])),mosque:s.mosque===true,mosqueTimes:s.mosque===true?{...s.mosqueTimes}:{},reminders:normalizeReminders(s.reminders)};
@@ -33,7 +35,7 @@ export function pushConnectionReport({supported=false,enabled=false,city=false,p
 export function createPushReminders({getSettings,toast=()=>{}}){
  let lastActivitySync=0,activityTimer=null;
  let mounted=null,busy=false,status='',config=null,onlineReady=false,needsSync=false,timer,state=read(),lastSignature=state?.signature||'',configLoading=null,lastConfigAttempt=0,diagnostic=null;
- const supported=()=>globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
+ const supported=()=>!nativeRuntime()&&globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
  async function call(action,body){
   const response=await fetch(API+'/'+action,{method:body?'POST':'GET',mode:'cors',cache:'no-store',credentials:'omit',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(20000)});
   const result=await response.json().catch(()=>({}));if(!response.ok)throw Error(result.error||'Доставка временно недоступна');return result;
@@ -117,7 +119,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  function draw(){
   if(!mounted?.isConnected)return;
   const p=normalizeReminders(getSettings().reminders),active=!!state?.saved&&!state.pendingRemoval&&typeof Notification!=='undefined'&&Notification.permission==='granted';
-  let guide='';if(IOS()&&!installed())guide='На iPhone откройте SALAH в Safari → «Поделиться» → «На экран Домой». Затем включите уведомления из установленного приложения (iOS 16.4 или новее).';
+  let guide='';if(nativeRuntime())guide=NATIVE_GUIDE;else if(IOS()&&!installed())guide='На iPhone откройте SALAH в Safari → «Поделиться» → «На экран Домой». Затем включите уведомления из установленного приложения (iOS 16.4 или новее).';
   else if(!supported())guide='Этот браузер не поддерживает фоновые уведомления. На телефоне попробуйте установленное SALAH в Safari или Chrome.';
   else if(Notification.permission==='denied')guide='Уведомления запрещены. Разрешите их в системных настройках SALAH.';
   mounted.innerHTML='<h3>Когда SALAH свёрнуто</h3><p class="reminder-voice-note">Уведомления о намазах, Тахаджуде, азкарах и Джума по настройкам выше. Звук — системный; полный Азан прослушивается в открытом приложении.</p>'+(!active?'<p class="reminder-voice-note">При включении Supabase сохранит подписку, координаты выбранного города и параметры напоминаний. История молитв и счётчики не передаются сервису уведомлений. Для включённого напоминания о паузе сохраняется время последнего использования азкаров.</p>':'')+(guide?'<p class="reminder-notice">'+esc(guide)+'</p>':'')+(!p.enabled?'<p class="reminder-voice-note">Сначала включите напоминания переключателем выше.</p>':'')+'<div class="reminder-preview"><button type="button" data-push-enable '+(!supported()||!p.enabled||!getSettings().city||!config||busy||!!guide?'disabled':'')+'>'+(active?'Обновить подключение':'Включить фоновые уведомления')+'</button>'+(state?'<button type="button" data-push-disable '+(busy?'disabled':'')+'>Отключить</button>':'')+'</div>'+(active?'<button class="button secondary" type="button" data-push-test '+(busy||!onlineReady?'disabled':'')+'>Тестовое уведомление</button>':'')+'<p class="reminder-status" role="status">'+esc(status||(config?'Доставка готова к подключению.':'Проверяем доступность доставки…'))+'</p>';
@@ -136,6 +138,6 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  window.addEventListener('online',()=>{loadConfig(true);sync(true);});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();if(!config)loadConfig();sync();}});
  loadConfig();sync(true);
- return {enable,invitationState:()=>({supported:supported(),permission:typeof Notification==='undefined'?'unsupported':Notification.permission,hasDevice:!!state&&(state.saved===true||state.pendingRemoval===true),guide:IOS()&&!installed()?'На iPhone добавьте SALAH на экран «Домой» и откройте его оттуда.':!supported()?'Этот режим не поддерживает фоновые веб-уведомления. Откройте установленное веб-приложение SALAH в Safari или Chrome.':''}),mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&supported()&&Notification.permission==='granted',sync};
+ return {enable,invitationState:()=>({supported:supported(),permission:typeof Notification==='undefined'?'unsupported':Notification.permission,hasDevice:!!state&&(state.saved===true||state.pendingRemoval===true),guide:nativeRuntime()?NATIVE_GUIDE:IOS()&&!installed()?'На iPhone добавьте SALAH на экран «Домой» и откройте его оттуда.':!supported()?'Этот режим не поддерживает фоновые веб-уведомления. Откройте установленное веб-приложение SALAH в Safari или Chrome.':''}),mount(container){mounted=container;draw();},active:()=>!!state?.saved&&!state.pendingRemoval&&onlineReady&&lastSignature===JSON.stringify(pushPreferences(getSettings()))&&supported()&&Notification.permission==='granted',sync};
 }
 function sameKey(a,b){return a.length===b.length&&a.every((n,i)=>n===b[i]);}

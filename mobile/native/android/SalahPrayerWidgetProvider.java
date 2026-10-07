@@ -7,6 +7,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Build;
+import android.content.res.Configuration;
+import android.util.SizeF;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import android.view.View;
 import android.widget.RemoteViews;
 import java.time.Instant;
@@ -45,6 +50,25 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
     }
 
     private static void update(Context context, AppWidgetManager manager, int id) {
+        Bundle options = manager.getAppWidgetOptions(id);
+        String raw = context.getSharedPreferences(SalahWidgetPlugin.PREFS, Context.MODE_PRIVATE).getString(SalahWidgetPlugin.SNAPSHOT, null);
+        long now = System.currentTimeMillis();
+        if (Build.VERSION.SDK_INT >= 31) {
+            ArrayList<SizeF> sizes = options.getParcelableArrayList(AppWidgetManager.OPTION_APPWIDGET_SIZES);
+            if (sizes != null && sizes.size() <= 16) {
+                LinkedHashMap<SizeF, RemoteViews> variants = new LinkedHashMap<>();
+                for (SizeF size : sizes) if (size != null && SalahWidgetSizing.valid(size.getWidth(), size.getHeight()))
+                    variants.put(size, createViews(context, id, size.getWidth(), size.getHeight(), now, raw));
+                if (!variants.isEmpty()) { manager.updateAppWidget(id, new RemoteViews(variants)); return; }
+            }
+        }
+        boolean landscape = context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        int width = SalahWidgetSizing.fallback(landscape, options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0), options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0), 160);
+        int height = SalahWidgetSizing.fallback(landscape, options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0), options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0), 84);
+        manager.updateAppWidget(id, createViews(context, id, width, height, now, raw));
+    }
+
+    private static RemoteViews createViews(Context context, int id, float width, float height, long now, String raw) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.salah_widget);
         Intent launch = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
         if (launch != null) {
@@ -55,16 +79,19 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.widget_root, pending);
         }
 
-        Bundle options = manager.getAppWidgetOptions(id);
-        boolean medium = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0) >= 250;
+        boolean medium = SalahWidgetSizing.schedule(width, height);
+        boolean thin = SalahWidgetSizing.thin(height);
+        views.setViewVisibility(R.id.widget_header, thin ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.widget_countdown, thin ? View.GONE : View.VISIBLE);
         views.setViewVisibility(R.id.widget_schedule, medium ? View.VISIBLE : View.GONE);
+        float density = context.getResources().getDisplayMetrics().density;
+        int horizontalPadding = Math.round((thin ? 8 : 12) * density);
+        int verticalPadding = Math.round((thin ? 6 : 8) * density);
+        views.setViewPadding(R.id.widget_root, horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
 
-        String raw = context.getSharedPreferences(SalahWidgetPlugin.PREFS, Context.MODE_PRIVATE)
-            .getString(SalahWidgetPlugin.SNAPSHOT, null);
         if (raw == null) {
             empty(views);
-            manager.updateAppWidget(id, views);
-            return;
+            return views;
         }
 
         try {
@@ -73,7 +100,6 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
             String city = snapshot.optString("cityName", "SALAH");
             ZoneId zone = ZoneId.of(snapshot.getString("timezone"));
             JSONArray days = snapshot.getJSONArray("days");
-            long now = System.currentTimeMillis();
 
             NextPrayer next = findNext(days, now);
             JSONObject schedule = currentSchedule(days, zone, now);
@@ -91,7 +117,7 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
         } catch (Exception error) {
             empty(views);
         }
-        manager.updateAppWidget(id, views);
+        return views;
     }
 
     private static void empty(RemoteViews views) {

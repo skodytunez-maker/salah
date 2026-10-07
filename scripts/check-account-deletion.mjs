@@ -36,3 +36,10 @@ const failedHandler=createAccountDeletionHandler({getUser:async()=>({data:{user:
 assert.equal((await failedHandler(request())).status,503);
 
 console.log('PASS: deletion requires an explicit confirmation, allowed app origin, verified confirmed account and active session; only the authenticated UID is deleted; authorization, expiry and admin failures are denied safely.');
+
+for(const origin of ['capacitor://localhost','http://localhost','https://localhost']){
+ const pre=await call({origin,method:'OPTIONS'});assert.equal(pre.status,204);assert.equal(pre.headers.get('Access-Control-Allow-Origin'),origin);
+ assert.equal((await call({origin,body:{}})).status,400);
+ assert.equal((await call({origin,authorization:''})).status,401);
+}
+console.log('PASS: APK deletion entry retains explicit confirmation and authenticated identity checks. No real accounts deleted.');

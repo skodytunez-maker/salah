@@ -296,8 +296,8 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 #account-form-area>.owner-account>summary{display:flex;align-items:center;justify-content:space-between;min-height:64px;padding:14px 12px;font-size:1.05rem;line-height:1.4;cursor:pointer;touch-action:manipulation}
 #account-form-area>#counter-account-out{display:flex;align-items:center;min-height:60px;min-width:120px;margin:8px 0 0;padding:12px 16px;font-size:1rem;text-align:left;touch-action:manipulation}
 
-/* Portrait tablets must retain navigation when the desktop sidebar is hidden. */
-@media (min-width:600px) and (max-width:850px){
+/* Retain navigation whenever the desktop sidebar is hidden. */
+@media (max-width:850px){
  body.settings-page #mobile-nav,body.menu-page #mobile-nav{display:flex!important}
  body.settings-page .workspace,body.menu-page .workspace{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 }

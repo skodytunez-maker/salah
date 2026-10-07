@@ -33,3 +33,11 @@ response=await createSupportHandler(ownerServices)(request(ownerCreate));assert.
 assert.equal((await createSupportHandler({...ownerServices,invoke:async()=>{throw{code:'42501'}}})(request(ownerCreate))).status,403,'Database owner/MFA denial propagates without creating a message');
 assert.equal((await createSupportHandler(ownerServices)(request(ownerCreate,{headers:{Authorization:''}}))).status,401);
 console.log('PASS: owner compose/read operations accept only exact recipient UUIDs, preserve origin/app isolation and propagate server owner-MFA denial.');
+
+for(const origin of ['capacitor://localhost','http://localhost','https://localhost']){
+ const native=createSupportHandler(services),pre=await native(request(body,{method:'OPTIONS',headers:{Origin:origin}}));assert.equal(pre.status,204);assert.equal(pre.headers.get('Access-Control-Allow-Origin'),origin);
+ assert.equal((await native(request(body,{headers:{Origin:origin}}))).status,200);
+ assert.equal((await native(request({...body,args:{...args,p_app:'sahaba'}},{headers:{Origin:origin}}))).status,403);
+ assert.equal((await native(request(body,{headers:{Origin:origin,Authorization:''}}))).status,401);
+}
+console.log('PASS: native support is scoped to SALAH; SAHABA remains separate and unsigned requests denied.');
