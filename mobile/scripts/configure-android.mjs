@@ -31,6 +31,7 @@ await copy('widget_strings.xml',path.join(resRoot,'values','widget_strings.xml')
 
 const manifestPath=path.join(androidRoot,'AndroidManifest.xml');
 let manifest=await fs.readFile(manifestPath,'utf8');
+if(!manifest.includes('android.permission.CAMERA'))manifest=manifest.replace('<application','<uses-permission android:name="android.permission.CAMERA" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n    <application');
 const receiver=`        <receiver
             android:name=".SalahPrayerWidgetProvider"
             android:exported="false">
@@ -45,8 +46,8 @@ const receiver=`        <receiver
 if(!manifest.includes('android:name=".SalahPrayerWidgetProvider"')){
   if(!manifest.includes('</application>'))throw new Error('AndroidManifest.xml has no application element.');
   manifest=manifest.replace('</application>',receiver+'    </application>');
-  await fs.writeFile(manifestPath,manifest);
 }
+await fs.writeFile(manifestPath,manifest);
 
 await syncAndroidVersion(mobileRoot);
 console.log('SALAH Android native widget configured.');
