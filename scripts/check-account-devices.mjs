@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const root=new URL('../',import.meta.url);
+const text=await fs.readFile(new URL('supabase/functions/account-devices/index.ts',root),'utf8');
+const {createDevicesHandler,deviceLabel}=await import('data:text/javascript;base64,'+Buffer.from(text).toString('base64'));
+const uid='11111111-1111-4111-8111-111111111111',current='22222222-2222-4222-8222-222222222222',other='33333333-3333-4333-8333-333333333333',foreign='44444444-4444-4444-8444-444444444444';
+let active=true,mfa=false,level='aal1',mutations=0,lists=0,changedList=false;
+const rows=new Map([[current,{id:current,user_id:uid,user_agent:'Mozilla iPhone Safari',created_at:'2026-10-07T10:00:00Z',ip:'DO-NOT-RETURN',refresh_token:'DO-NOT-RETURN'}],[other,{id:other,user_id:uid,user_agent:'Mozilla Windows Chrome',created_at:'2026-10-06T10:00:00Z'}],[foreign,{id:foreign,user_id:'other-user',created_at:'2026-10-05T10:00:00Z'}]]);
+const handler=createDevicesHandler({identity:async token=>active&&token==='fixture-valid-token'?{id:uid,sessionId:current,requiresMfa:mfa,aal:level}:null,list:async caller=>{if(changedList)throw {code:"list_changed"};lists++;return [...rows.values()].filter(r=>r.user_id===caller.id);},revoke:async(caller,id)=>{mutations++;const row=rows.get(id);if(!active||row?.user_id!==caller.id||id===caller.sessionId)return false;rows.delete(id);return true;}});
+async function call(input,token='fixture-valid-token',origin='https://skodytunez-maker.github.io'){const r=await handler(new Request('https://example.test/account-devices',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin,...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(input)}));return{status:r.status,data:await r.json()};}
+assert.equal((await call({action:'list'},null)).status,401);
+assert.equal((await call({action:'list'},'fixture-invalid-token')).status,401);
+assert.equal((await call({action:'list'},undefined,'https://evil.example')).status,403);
+assert.equal((await call({action:'list',user_id:'other-user'})).status,400);
+assert.equal((await call({action:'revoke',id:'invalid'})).status,400);
+assert.equal((await call({action:'revoke',id:current})).status,400);assert.equal(mutations,0);
+const listed=await call({action:'list'});assert.equal(listed.status,200);assert.equal(listed.data.devices.length,2);assert.ok(listed.data.devices.find(r=>r.id===current).current);assert.ok(!JSON.stringify(listed).includes('DO-NOT-RETURN'));assert.ok(!listed.data.devices.some(r=>r.id===foreign));
+assert.equal((await call({action:'revoke',id:foreign})).status,404);assert.ok(rows.has(foreign));
+mfa=true;assert.equal((await call({action:'list'})).status,403);assert.equal((await call({action:'revoke',id:other})).status,403);level='aal2';assert.equal((await call({action:'list'})).status,200);
+const deleted=await call({action:'revoke',id:other});assert.equal(deleted.status,200);assert.equal(deleted.data.ok,true);assert.ok(rows.has(current));assert.ok(rows.has(foreign));assert.ok(!rows.has(other));assert.equal((await call({action:'revoke',id:other})).status,404);
+changedList=true;assert.equal((await call({action:'list'})).status,409);changedList=false;
+active=false;const before=lists;assert.equal((await call({action:'list'})).status,401);assert.equal(lists,before);
+assert.equal(deviceLabel('<script>alert(1)</script>'),'Устройство');assert.equal(deviceLabel('iPhone Safari'),'iPhone · Safari');assert.equal(deviceLabel('Windows Chrome Edg/1'),'Windows · Edge');
+assert.match(text,/delete from auth\.sessions where id=\$\{target\}::uuid and user_id=\$\{caller\.id\}::uuid and id<>\$\{caller\.sessionId\}::uuid/);
+assert.match(text,/exists\(select 1 from auth\.sessions current_session/);
+assert.ok(!/select \*|select.*(?:refresh_token_hmac_key|\bip\b)/i.test(text));
+const client=await fs.readFile(new URL('dist/js/account-devices.js',root),'utf8');assert.match(client,/data-device-yes/);assert.match(client,/row\.current\)return/);assert.match(client,/Это устройство/);
+console.log('PASS: device list ownership, token/IP exclusion, protected current device, enrolled MFA, revoked caller, cross-account and repeated revocation fail closed.');

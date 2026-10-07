@@ -19,3 +19,11 @@ verify_jwt = false
 [functions.qr-login]
 # Approval authenticates JWT + active session; creation/status use separate 256-bit secrets.
 verify_jwt = false
+
+[functions.account-devices]
+# Verifies JWT, live session, ownership and enrolled MFA in the handler.
+verify_jwt = false
+
+[functions.error-summary]
+# Public bounded deidentified reports; owner summary requires existing live-session + MFA gate.
+verify_jwt = false
