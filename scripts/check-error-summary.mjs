@@ -27,4 +27,5 @@ for(let i=0;i<100;i++)listeners.error({target:win});await reporter.flush();asser
 reporter.setEnabled(false);listeners.error({target:win});await reporter.flush();assert.equal(sent.length,2);reporter.dispose();assert.equal(listeners.error,undefined);
 const sql=await fs.readFile(new URL('supabase/error-summary-schema.sql',root),'utf8');assert.match(sql,/enable row level security/);assert.match(sql,/revoke all on all tables/);assert.ok(!/user_id|email|session_id|message|stack/.test(sql));
 assert.match(source,/on conflict do nothing returning id/);assert.match(source,/owner-access/);assert.match(source,/rate\.total\+units>100/);
+assert.equal((source.match(/current_date-\$\{days-1\}::integer/g)||[]).length,2,'Both Postgres window queries require an explicit integer bind; an untyped bind is inferred as date');
 console.log('PASS: owner-only aggregate read, strict deidentified batch allowlist, opt-in/DNT/foreground gates, launch cap, no exception text/URLs/tokens, quiet reporting failures.');
