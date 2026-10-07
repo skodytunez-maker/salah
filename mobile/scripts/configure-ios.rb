@@ -104,6 +104,7 @@ Xcodeproj::Plist.write_to_path(
 app_plist_path = File.join(project_dir, 'App', 'Info.plist')
 app_plist = Xcodeproj::Plist.read_from_path(app_plist_path)
 app_plist['SALAHAppGroup'] = app_group
+app_plist['NSCameraUsageDescription'] = 'Камера нужна для сканирования QR входа в SALAH.'
 Xcodeproj::Plist.write_to_path(app_plist, app_plist_path)
 
 widget_plist = {

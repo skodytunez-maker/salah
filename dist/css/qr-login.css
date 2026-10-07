@@ -7,3 +7,6 @@
 .qr-login-code:empty{display:none}
 .qr-login-code svg{display:block;width:100%;height:auto}
 .qr-pairing-code{display:block;font-size:30px;letter-spacing:5px;color:var(--gold,#cdbf99);font-variant-numeric:tabular-nums}
+
+.qr-scanner-panel video{display:block;width:100%;max-height:55vh;object-fit:contain;background:#000;border-radius:16px}
+.qr-scanner-panel video[hidden]{display:none}

@@ -128,6 +128,18 @@
       ],
       "status": "license-recorded",
       "conditions": "Retain Tanzil attribution/link and unchanged Quran text; algorithm-license permission is separate from dataset provenance."
+    },
+    {
+      "id": "jsqr",
+      "status": "license-recorded",
+      "license": "Apache-2.0",
+      "licenseFile": "dist/js/vendor/jsQR-LICENSE.txt",
+      "licenseGitBlobSha": "8f71f43fee3f78649d238238cbde51e6d7055c82",
+      "conditions": "Preserve Apache-2.0 license and upstream copyright notices. Unmodified decoder pinned by source commit and SHA-256 in jsQR-source.json.",
+      "name": "jsQR QR-code decoder",
+      "paths": [
+        "dist/js/vendor/jsQR.js"
+      ]
     }
   ],
   "content": [

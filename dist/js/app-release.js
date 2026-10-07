@@ -1,5 +1,5 @@
-export const APP_VERSION=226;
-export const APP_UPDATED_AT='2026-10-07';
+export const APP_VERSION=227;
+export const APP_UPDATED_AT='2026-10-08';
 export const APP_CHANGES=["В аккаунте появились «Мои устройства» и завершение входа на другом устройстве."];
 // Public notes list new user-facing features or sections only. Internal settings,
 // maintenance fixes and owner-only changes stay in Git history, not these lists.

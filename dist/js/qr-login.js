@@ -9,6 +9,7 @@ export function captureQrApproval(){
  // Never leave approval credentials in browser history or copied account links.
  history.replaceState(history.state,'',location.pathname+location.search+'#account');return true;
 }
+export function setQrApproval(request){approval=request;}
 export const hasQrApproval=()=>!!approval;
 export function stopQrLogin(){dispose?.();dispose=null;}
 async function call(action,data={},bearer){
