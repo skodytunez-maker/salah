@@ -13,14 +13,14 @@ export function aggregateCounters(components){
  const totals={};for(const id of new Set([...Object.keys(seed),...Object.keys(delta)]))totals[id]=Math.max(0,Math.min(1000000000000,(seed[id]||0)+(delta[id]||0)));return totals;
 }
 export function initialSeed(current,seed){const result={};for(const [id,n]of Object.entries(seed))result[id]=Math.max(0,n-(current[id]||0));return result;}
-const ORIGIN='https://skodytunez-maker.github.io';
+const ORIGINS=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 const OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 export function createCounterHandler({getUser,getClaims,db,isSessionActive=null}){return async req=>{
  const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Vary':'Origin','X-Content-Type-Options':'nosniff'};
- if(origin===ORIGIN)Object.assign(headers,{'Access-Control-Allow-Origin':ORIGIN,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'GET, POST, OPTIONS'});
+ if(ORIGINS.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'GET, POST, OPTIONS'});
  const reply=(status,value)=>new Response(JSON.stringify(value),{status,headers});
- if(origin&&origin!==ORIGIN)return reply(403,{error:'forbidden'});if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
+ if(origin&&!ORIGINS.has(origin))return reply(403,{error:'forbidden'});if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(!['GET','POST'].includes(req.method))return reply(405,{error:'method_not_allowed'});
  if(new URL(req.url).search)return reply(400,{error:'invalid_parameters'});
  const auth=req.headers.get('Authorization')||'';if(!/^Bearer [A-Za-z0-9._-]{16,8192}$/.test(auth))return reply(401,{error:'sign_in_required'});

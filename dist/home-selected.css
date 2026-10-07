@@ -106,3 +106,10 @@ body.reduce-motion .dhikr-passage{animation:none!important}
 .owner-home-update-close{flex:0 0 44px;min-width:44px;min-height:44px;color:var(--muted);font-size:24px;line-height:1}
 .home-page .app-home-shell:has(#home-owner-update:not([hidden])){height:auto;min-height:100svh}
 .home-page .app-home-shell:has(#home-owner-update:not([hidden])) .app-home-top{margin-top:0;margin-bottom:0}
+
+/* Tablet content grows and scrolls instead of shrinking the invitation below the viewport. */
+@media (min-width:600px){
+ .home-page .app-home-shell{height:auto;min-height:100svh}
+ .home-page .home-prayer-center{flex:0 0 auto;min-height:auto;justify-content:flex-start}
+ #home-notification-invite{flex:none;min-width:0}
+}
