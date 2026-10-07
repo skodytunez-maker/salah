@@ -128,7 +128,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":226,"date":"2026-10-07","changes":["В аккаунте появились «Мои устройства» и завершение входа на другом устройстве."],"announcement":{"version":226,"date":"2026-10-07","changes":["В аккаунте появились «Мои устройства» и завершение входа на другом устройстве."]}};
+const RELEASE={"version":227,"date":"2026-10-08","changes":["В аккаунте появились «Мои устройства» и завершение входа на другом устройстве."],"announcement":{"version":226,"date":"2026-10-07","changes":["В аккаунте появились «Мои устройства» и завершение входа на другом устройстве."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
