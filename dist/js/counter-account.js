@@ -1,3 +1,4 @@
+import{captureQrApproval,hasQrApproval,mountQrApproval,mountQrLogin,stopQrLogin}from './qr-login.js';
 import{mountOwnerAccount}from './admin.js';
 import{accountAuthClient,checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{createCounterSync}from './counter-sync-core.js';
@@ -45,13 +46,15 @@ function updateStatus(){const el=document.getElementById('account-sync-status');
 export async function showCounterAccount(container,message='',force=false,mode=''){
  // Returning from the mail app repaints this route. Keep the current form and
  // code step; explicit account actions below request a fresh screen.
+ if(captureQrApproval())force=true;
  if(!force&&host===container&&accountArea&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===accountArea){if(new URLSearchParams(location.hash.split('?')[1]||'').get('owner')==='1'){const panel=container.querySelector('.owner-account');if(panel)panel.open=true;}return;}
- const screen=++accountScreen;host=container;
+ stopQrLogin();const screen=++accountScreen;host=container;
  container.innerHTML='<section class="panel section owner-login"><div class="account-title-row"><h1 id="counter-account-heading">Вход и регистрация</h1><span class="account-verified-badge" id="counter-account-verified" role="img" aria-label="Вход выполнен" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7 12.3 3.2 3.1 6.8-7.1" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><p id="account-sync-status" class="muted" role="status">Проверяем вход…</p><div id="account-form-area"></div><a class="button" id="account-mfa" href="#account?owner=1" hidden>Подтвердить защищённый вход</a></section>';
  const area=container.querySelector('#account-form-area');accountArea=area;
  const active=()=>host===container&&screen===accountScreen&&location.hash.split('?')[0]==='#account'&&container.querySelector('#account-form-area')===area;
  const report=text=>{if(active()){const notice=container.querySelector('#account-sync-status');const inline=area.querySelector('#counter-password-status'),passwordMode=inline&&!area.querySelector('#counter-account-login').hidden;notice.textContent=passwordMode?'':text;if(passwordMode)inline.textContent=text;else if(text)notice.scrollIntoView?.({block:'nearest'});}};
  await synchronizeCounters();if(!active())return;
+ if(counterSyncStatus().signedIn&&hasQrApproval()&&new URLSearchParams(location.hash.split('?')[1]||'').get('owner')!=='1'){await mountQrApproval(area,session,()=>showCounterAccount(container,'',true));return;}
  if(counterSyncStatus().signedIn){
   container.querySelector('#counter-account-heading').textContent='Мой аккаунт';
   container.querySelector('#counter-account-verified').hidden=false;
@@ -123,6 +126,7 @@ export async function showCounterAccount(container,message='',force=false,mode='
  }else{
   const recovery=mode==='recover';if(recovery)container.querySelector('#counter-account-heading').textContent='Восстановить пароль';
   area.innerHTML=recovery?'<form id="counter-account-email-form" novalidate><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">Получить код</button><p class="muted owner-note">Введите почту вашего аккаунта. После подтверждения можно задать новый пароль.</p></form><button class="text-button" id="counter-recovery-back">Вернуться ко входу</button>':'<form id="counter-account-email-form" novalidate><label for="counter-account-nickname">Ник</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required><label for="counter-account-email">Электронная почта</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">Получить код для входа или регистрации</button><p class="muted owner-note">При первом входе создаётся личный аккаунт. Подтвердите почту кодом из письма.</p></form><button class="text-button" type="button" id="counter-login-method" aria-controls="counter-account-email-form counter-account-login" aria-expanded="false">Войти с паролем</button><form id="counter-account-login" novalidate hidden><label for="counter-password-email">Электронная почта</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">Пароль</label><input id="counter-account-password" type="password" autocomplete="current-password" required><p class="muted" id="counter-password-status" role="status"></p><button class="button" type="submit">Войти</button><button class="text-button" type="button" id="counter-password-forgot">Забыли пароль?</button></form>';
+  if(!recovery){mountQrLogin(area,()=>showCounterAccount(container,'',true));if(hasQrApproval())await mountQrApproval(area,null,()=>showCounterAccount(container,'',true));}
   const forgot=area.querySelector('#counter-password-forgot');if(forgot)forgot.onclick=()=>{if(active())return showCounterAccount(container,'',true,'recover');};
   if(recovery)area.querySelector('#counter-recovery-back').onclick=()=>{if(active())return showCounterAccount(container,'',true);};
   const mailForm=area.querySelector('#counter-account-email-form'),mailActive=()=>active()&&area.querySelector('#counter-account-email-form')===mailForm;

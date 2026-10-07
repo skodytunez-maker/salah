@@ -15,3 +15,7 @@ verify_jwt = false
 [functions.account-delete]
 # Auth and active-session checks are performed in the handler for modern signing keys.
 verify_jwt = false
+
+[functions.qr-login]
+# Approval authenticates JWT + active session; creation/status use separate 256-bit secrets.
+verify_jwt = false

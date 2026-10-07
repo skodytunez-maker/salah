@@ -1,0 +1,9 @@
+.owner-login [data-qr-was-hidden][hidden]{display:none!important}
+.qr-login-entry{width:100%;margin-top:18px;min-height:52px}
+.qr-login-panel{display:grid;gap:16px;text-align:center;padding:8px 0}
+.qr-login-panel h2,.qr-login-panel p{margin:0}
+.qr-login-panel .button{width:100%;min-height:52px}
+.qr-login-code{width:min(100%,280px);margin:auto;background:#fff;border-radius:16px;padding:12px;color:#000}
+.qr-login-code:empty{display:none}
+.qr-login-code svg{display:block;width:100%;height:auto}
+.qr-pairing-code{display:block;font-size:30px;letter-spacing:5px;color:var(--gold,#cdbf99);font-variant-numeric:tabular-nums}

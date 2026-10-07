@@ -81,6 +81,7 @@ safe=true;document.visibilityState='hidden';intervals.at(-1).fn();assert.equal(a
 docEvents.pointerdown();fakeNow+=1000;intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'Recent touch delays activation');
 fakeNow+=5000;document.activeElement={matches:()=>true};intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'Focused inputs are protected');document.activeElement=null;
 document.querySelector=()=>({open:true});intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'An open dialog is protected');document.querySelector=()=>null;
+document.documentElement={dataset:{qrLogin:'active'}};intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore,'An active QR login must not be interrupted by an update');delete document.documentElement.dataset.qrLogin;
 intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore+1,'A late download applies without the Update button');intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore+1);
 const reloadBefore=reloads;workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(reloads,reloadBefore+1);
 assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);Date.now=realNow;
