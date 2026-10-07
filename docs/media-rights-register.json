@@ -3,9 +3,9 @@
   "auditedAt": "2026-10-07",
   "repository": "skodytunez-maker/salah",
   "sourceCommit": "a73a9362c7592c8b1d2cdf0ff6d8fc3be0522edf",
-  "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical.",
+  "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical. Active wallpapers are generated illustrations. A source/reference licence applies to the identified source; whether it applies to a generated result depends on the actual use of protected expression. Creation provenance and legal scope are recorded separately.",
   "statuses": {
-    "needs-review": "Missing final-file/input permission evidence.",
+    "needs-review": "Published terms, creation details or final-file scope remain to be checked; this is not a finding of infringement or an automatic requirement to contact anyone.",
     "license-recorded": "A license notice is present, with compliance conditions; not blanket ownership clearance.",
     "origin-supported": "Project provenance has supporting evidence; not a declaration of exclusive copyright.",
     "cleared-with-evidence": "For future confirmed cases only: requires final-file evidence and scope."
@@ -359,7 +359,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "afghanistan",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/afghanistan/afghanistan-night-final.webp",
@@ -369,7 +369,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "afghanistan",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/afghanistan/sky-v1.svg",
@@ -379,7 +379,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "afghanistan",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/almaty/day-v1.webp",
@@ -389,7 +389,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "almaty",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/almaty/night-v1.webp",
@@ -399,7 +399,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "almaty",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/almaty/sky-v1.svg",
@@ -409,7 +409,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "almaty",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/astana/day-v1.webp",
@@ -419,7 +419,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "astana",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/astana/night-v1.webp",
@@ -429,7 +429,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "astana",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/astana/sky-v1.svg",
@@ -439,7 +439,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "astana",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/badakhshan/badakhshan-day.webp",
@@ -449,7 +449,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "badakhshan",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/badakhshan/badakhshan-night-v1.webp",
@@ -459,7 +459,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "badakhshan",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/badakhshan/badakhshan-real-day.webp",
@@ -485,7 +485,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "badakhshan",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/derbent/day-v1.webp",
@@ -495,7 +495,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "derbent",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/derbent/night-v1.webp",
@@ -505,7 +505,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "derbent",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/derbent/sky-v1.svg",
@@ -515,7 +515,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "derbent",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/dushanbe/day-v1.webp",
@@ -525,7 +525,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "dushanbe",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/dushanbe/night-v1.webp",
@@ -535,7 +535,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "dushanbe",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/dushanbe/sky-v1.svg",
@@ -545,7 +545,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "dushanbe",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/grozny/day-v1.webp",
@@ -555,7 +555,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "grozny",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/grozny/night-v1.webp",
@@ -565,7 +565,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "grozny",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/grozny/sky-v1.svg",
@@ -575,7 +575,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "grozny",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/khujand/day-v1.webp",
@@ -585,7 +585,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "khujand",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/khujand/night-v1.webp",
@@ -595,7 +595,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "khujand",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/khujand/sky-v1.svg",
@@ -605,7 +605,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "khujand",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/makhachkala/day-v1.webp",
@@ -615,7 +615,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "makhachkala",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/makhachkala/night-v1.webp",
@@ -625,7 +625,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "makhachkala",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/makhachkala/sky-v1.svg",
@@ -635,7 +635,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "makhachkala",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/moscow/day-v1.webp",
@@ -645,7 +645,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "moscow",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/moscow/night-v1.webp",
@@ -655,7 +655,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "moscow",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/moscow/sky-v1.svg",
@@ -665,7 +665,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "moscow",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/omsk/day-v1.webp",
@@ -675,7 +675,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "omsk",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/omsk/night-v1.webp",
@@ -685,7 +685,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "omsk",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/omsk/sky-v1.svg",
@@ -695,7 +695,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "omsk",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/pamir/day-v1.webp",
@@ -705,7 +705,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "pamir",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/pamir/night-v1.webp",
@@ -715,7 +715,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "pamir",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/pamir/sky-v1.svg",
@@ -725,7 +725,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "pamir",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/tashkent/day-v1.webp",
@@ -735,7 +735,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "tashkent",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/tashkent/night-v1.webp",
@@ -745,7 +745,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "tashkent",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/tashkent/sky-v1.svg",
@@ -755,7 +755,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "tashkent",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set: saved creation/package records match the exact shipped file. Reference conditions are a separate scoped review; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/tyumen/day-v1.webp",
@@ -765,7 +765,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "tyumen",
       "role": "day",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/tyumen/night-v1.webp",
@@ -775,7 +775,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "tyumen",
       "role": "night",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     },
     {
       "path": "dist/wallpapers/tyumen/sky-v1.svg",
@@ -785,7 +785,7 @@
       "rightsReviewStatus": "needs-review",
       "wallpaperSet": "tyumen",
       "role": "mask",
-      "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+      "note": "Generated wallpaper set according to owner confirmation and catalogue records. Original session/file evidence is incomplete; see wallpaper set."
     }
   ],
   "wallpaperSets": [
@@ -798,7 +798,7 @@
         "dist/wallpapers/tyumen/sky-v1.svg"
       ],
       "rightsReviewStatus": "needs-review",
-      "creation": "No creation record for this set in current credits.json.",
+      "creation": "Владелец подтвердил генерацию обоев для SALAH по фотоориентирам. В текущем credits.json и проверенном журнале девяти комплектов нет отдельной записи Тюмени.",
       "reference": {
         "url": null,
         "author": null,
@@ -806,7 +806,12 @@
         "licenseUrl": null
       },
       "rightsEvidence": [],
-      "nextAction": "Record generation session and original reference provenance; the active catalogue has no credits entry for Tyumen."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "owner-confirmation-and-existing-catalogue",
+        "source": "docs/media-rights-register.json#ownerWallpaperStatement",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "omsk",
@@ -827,7 +832,12 @@
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "moscow",
@@ -843,12 +853,18 @@
         "url": "https://commons.wikimedia.org/wiki/File:Moscow_Cathedral_Mosque_01-2016.jpg",
         "author": "A. Savin",
         "claimedLicense": "Free Art License",
-        "licenseUrl": "https://artlibre.org/licence/lal/en/"
+        "licenseUrl": "https://artlibre.org/licence/lal/en/",
+        "licenseEvidence": "docs/wallpaper-reference-licenses.json#moscow"
       },
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "khujand",
@@ -869,7 +885,12 @@
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "dushanbe",
@@ -885,12 +906,18 @@
         "url": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D1%81%D2%B7%D0%B8%D0%B4%D0%B8_%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D0%B7%D0%B8%D0%B8_%D2%B7%D0%BE%D0%BC%D0%B5%D0%B8_%D1%88%D0%B0%D2%B3%D1%80%D0%B8_%D0%94%D1%83%D1%88%D0%B0%D0%BD%D0%B1%D0%B5._%D0%90%D0%BA%D1%81%D2%B3%D0%BE_20.jpg",
         "author": "Rumsor",
         "claimedLicense": "CC0 1.0",
-        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "licenseEvidence": "docs/wallpaper-reference-licenses.json#dushanbe"
       },
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "almaty",
@@ -911,7 +938,12 @@
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "astana",
@@ -932,7 +964,12 @@
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "tashkent",
@@ -953,7 +990,12 @@
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "grozny",
@@ -969,12 +1011,18 @@
         "url": "https://commons.wikimedia.org/wiki/File:Grozny._Grozny-City_Towers._Mosque_%22The_Heart_of_Chechnya%22_PB040177_2700.jpg",
         "author": "Alexxx1979",
         "claimedLicense": "CC BY-SA 4.0",
-        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "licenseEvidence": "docs/wallpaper-reference-licenses.json#grozny"
       },
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "makhachkala",
@@ -990,12 +1038,18 @@
         "url": "https://commons.wikimedia.org/wiki/File:%D0%96%D1%83%D0%BC%D0%B3%D0%86%D0%B0_%D0%BC%D0%B0%D0%B6%D0%B3%D0%B8%D1%82%2C_%D0%9C%D0%B0%D1%85%D0%86%D0%B0%D1%87%D1%85%D1%8A%D0%B0%D0%BB%D0%B0_%28crop%29.jpg",
         "author": "Шамиль Магомедов; кадрирование Danloud",
         "claimedLicense": "CC BY-SA 4.0",
-        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "licenseEvidence": "docs/wallpaper-reference-licenses.json#makhachkala"
       },
       "rightsEvidence": [
         "docs/wallpaper-provenance-evidence.json"
       ],
-      "nextAction": "Creation files matched. Verify photo-reference permission and attribution/derivative conditions before clearing artwork."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "saved-records-and-exact-shipped-files",
+        "source": "docs/wallpaper-provenance-evidence.json",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "derbent",
@@ -1014,7 +1068,12 @@
         "licenseUrl": null
       },
       "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "owner-confirmation-and-existing-catalogue",
+        "source": "docs/media-rights-register.json#ownerWallpaperStatement",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "pamir",
@@ -1033,7 +1092,12 @@
         "licenseUrl": null
       },
       "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "owner-confirmation-and-existing-catalogue",
+        "source": "docs/media-rights-register.json#ownerWallpaperStatement",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "afghanistan",
@@ -1052,7 +1116,12 @@
         "licenseUrl": null
       },
       "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "owner-confirmation-and-existing-catalogue",
+        "source": "docs/media-rights-register.json#ownerWallpaperStatement",
+        "completeOriginalToolArgumentsArchived": false
+      }
     },
     {
       "id": "badakhshan",
@@ -1071,7 +1140,29 @@
         "licenseUrl": null
       },
       "rightsEvidence": [],
-      "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+      "nextAction": "Preserve the generated artwork and available creation records. Review published conditions of the exact reference and any use of its protected expression; reference use alone does not establish an adaptation. Do not contact authors/sites or treat missing evidence as infringement.",
+      "creationEvidence": {
+        "kind": "owner-confirmation-and-existing-catalogue",
+        "source": "docs/media-rights-register.json#ownerWallpaperStatement",
+        "completeOriginalToolArgumentsArchived": false
+      }
     }
-  ]
+  ],
+  "externalOutreach": {
+    "decidedAt": "2026-10-07",
+    "status": "no-outreach",
+    "source": "Direct owner instruction in this conversation",
+    "instruction": "Do not contact photo authors, source sites or other rights-holders. Continue using published licenses, existing terms and recorded creation evidence. Preserve the current wallpapers.",
+    "requestsSent": false,
+    "notPermissionEvidence": true,
+    "ownerFollowUp": "Do not seek permission from any provider. If an actual material-specific claim arrives, identify the affected material and prepare a replacement while preserving unrelated app features and user data."
+  },
+  "ownerWallpaperStatement": {
+    "date": "2026-10-07",
+    "source": "Direct owner confirmation in this conversation",
+    "scope": "The 14 active landmark wallpaper sets in the catalogue",
+    "statement": "The wallpapers were generated for SALAH using photo references.",
+    "evidenceLevel": "owner-confirmation",
+    "doesNotVerify": "Individual generation inputs, source permissions, exclusive copyright or unused bundled images."
+  }
 }

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-07",
+  "sourceCommit": "5d8c67397d7423c28e787792b752e72b16b624d6",
+  "indexGitBlobSha": "3f68e7e875d2515d25d3e80ced615094965a7af5",
+  "sourceApi": "https://api.alquran.cloud/v1/quran/quran-uthmani",
+  "sourceResponseSha256": "0df03e1d6da4fc8138208fec1688f2b416f0dd4ebbd514179f3e5e0fbaf4195f",
+  "terms": "https://alquran.cloud/terms-and-conditions",
+  "scope": "Read-only correspondence for a future independently sourced factual metadata rebuild. Does not relicense the historically imported index or replace its source label.",
+  "surahs": 114,
+  "comparedFields": [
+    {
+      "localField": "arabicName",
+      "sourceField": "name",
+      "total": 114,
+      "matched": 114,
+      "mismatches": []
+    },
+    {
+      "localField": "englishName",
+      "sourceField": "englishName",
+      "total": 114,
+      "matched": 114,
+      "mismatches": []
+    },
+    {
+      "localField": "revelation",
+      "sourceField": "revelationType",
+      "total": 114,
+      "matched": 114,
+      "mismatches": []
+    },
+    {
+      "localField": "ayahs",
+      "sourceField": "ayahs.length",
+      "total": 114,
+      "matched": 114,
+      "mismatches": []
+    }
+  ],
+  "juz": {
+    "total": 30,
+    "matched": 30,
+    "mismatches": []
+  },
+  "excluded": [
+    "Russian chapter names and meaning labels (index records umma.ru)",
+    "Cyrillic transcription and editorial reading variants",
+    "Tajweed annotations",
+    "Audio reciter catalogues and recordings",
+    "Whether any particular historical field was originally imported from QF"
+  ],
+  "nextAction": "Rebuild these matched factual fields from this independently permitted response in a separate reviewed app change, preserving user-facing values. Keep provenance for other fields; do not merely erase QF attribution."
+}
