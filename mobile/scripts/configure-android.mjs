@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {configureAndroidIcons} from './android-icons.mjs';
 import {syncAndroidVersion} from './android-release.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
@@ -47,6 +48,7 @@ if(!manifest.includes('android:name=".SalahPrayerWidgetProvider"')){
   if(!manifest.includes('</application>'))throw new Error('AndroidManifest.xml has no application element.');
   manifest=manifest.replace('</application>',receiver+'    </application>');
 }
+manifest=await configureAndroidIcons(mobileRoot,resRoot,manifest);
 await fs.writeFile(manifestPath,manifest);
 
 await syncAndroidVersion(mobileRoot);

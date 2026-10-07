@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import{configureAndroidIcons}from '../mobile/scripts/android-icons.mjs';
+const root=new URL('../',import.meta.url),fixture=await fs.mkdtemp(path.join(os.tmpdir(),'salah-icon-'));
+await fs.mkdir(path.join(fixture,'dist'));await fs.mkdir(path.join(fixture,'mobile'));
+const original=await fs.readFile(new URL('dist/icon-512.png',root));await fs.writeFile(path.join(fixture,'dist','icon-512.png'),original);
+const res=path.join(fixture,'mobile','res'),manifest='<manifest><application android:label="SALAH" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round"><activity android:name=".MainActivity" /></application></manifest>';
+const output=await configureAndroidIcons(path.join(fixture,'mobile'),res,manifest);
+assert.match(output,/android:icon="@mipmap\/salah_launcher"/);assert.match(output,/android:roundIcon="@mipmap\/salah_launcher"/);assert.match(output,/android:label="SALAH"/);assert.ok(!output.includes('@mipmap/ic_launcher'));
+assert.equal(await configureAndroidIcons(path.join(fixture,'mobile'),res,output),output);
+assert.deepEqual(await fs.readFile(path.join(res,'mipmap-nodpi/salah_launcher.png')),original);
+assert.deepEqual(await fs.readFile(path.join(res,'drawable-nodpi/salah_icon_bitmap.png')),original);
+const adaptive=await fs.readFile(path.join(res,'mipmap-anydpi-v26/salah_launcher.xml'),'utf8');assert.match(adaptive,/<adaptive-icon/);assert.match(adaptive,/@drawable\/salah_icon_foreground/);assert.ok(!adaptive.includes('\\n'));
+const bitmap=await fs.readFile(path.join(res,'drawable/salah_icon_foreground.xml'),'utf8');assert.match(bitmap,/android:gravity="fill"/);
+await assert.rejects(()=>configureAndroidIcons(path.join(fixture,'mobile'),res,'<manifest/>'),/application element/);
+console.log('PASS: Android manifest uses SALAH branding for regular and round icons; identical original PNG, adaptive resources and repeat configuration verified.');
