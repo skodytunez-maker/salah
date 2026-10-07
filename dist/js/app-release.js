@@ -1,4 +1,4 @@
-export const APP_VERSION=223;
+export const APP_VERSION=224;
 export const APP_UPDATED_AT='2026-10-07';
 export const APP_CHANGES=["Коран можно скачать для прослушивания без интернета.","Поиск дуа по ситуации и быстрый доступ к избранным.","Добавлены дуа для дороги, тревоги и других случаев.","Новые обои: Стамбул, Каир и Куала-Лумпур."];
 // Public notes list new user-facing features or sections only. Internal settings,
