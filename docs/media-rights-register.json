@@ -488,6 +488,39 @@
       "note": "See wallpaper set: generation method and reference rights must be assessed separately."
     },
     {
+      "path": "dist/wallpapers/cairo/day-v1.webp",
+      "gitBlobSha": "4d0a741b3661d06c7c2a33e301bf2cfe42bd231d",
+      "bytes": 238218,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "cairo",
+      "role": "day",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Generated using the built-in image tool; generation IDs and original/packaged hashes are recorded."
+    },
+    {
+      "path": "dist/wallpapers/cairo/night-v1.webp",
+      "gitBlobSha": "671ac11cc55b4ed26cd1b726d12148bcf9000775",
+      "bytes": 168966,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "cairo",
+      "role": "night",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Generated using the built-in image tool; generation IDs and original/packaged hashes are recorded."
+    },
+    {
+      "path": "dist/wallpapers/cairo/sky-v1.svg",
+      "gitBlobSha": "50ce2346155ab505aa315050ecb2de69c4b7de94",
+      "bytes": 607,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "cairo",
+      "role": "mask",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Project-authored SVG sky mask."
+    },
+    {
       "path": "dist/wallpapers/derbent/day-v1.webp",
       "gitBlobSha": "437f090ca5abe009ce5ccd55951afb79111d6f19",
       "bytes": 338126,
@@ -578,6 +611,39 @@
       "note": "See wallpaper set: generation method and reference rights must be assessed separately."
     },
     {
+      "path": "dist/wallpapers/istanbul/day-v1.webp",
+      "gitBlobSha": "22abd2b3f70467ef64fa189d748de897e08c2af6",
+      "bytes": 276146,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "istanbul",
+      "role": "day",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Generated using the built-in image tool; generation IDs and original/packaged hashes are recorded."
+    },
+    {
+      "path": "dist/wallpapers/istanbul/night-v1.webp",
+      "gitBlobSha": "1f8c42dbab308fc8ebe57ef609799dbe9167dd22",
+      "bytes": 228272,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "istanbul",
+      "role": "night",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Generated using the built-in image tool; generation IDs and original/packaged hashes are recorded."
+    },
+    {
+      "path": "dist/wallpapers/istanbul/sky-v1.svg",
+      "gitBlobSha": "00ffaee65824f4b4881bf481cf3acbda2be52cb1",
+      "bytes": 666,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "istanbul",
+      "role": "mask",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Project-authored SVG sky mask."
+    },
+    {
       "path": "dist/wallpapers/khujand/day-v1.webp",
       "gitBlobSha": "18dd82cd68de94ae3929a3786e1d4b2afa5fbc11",
       "bytes": 399180,
@@ -606,6 +672,39 @@
       "wallpaperSet": "khujand",
       "role": "mask",
       "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/kuala-lumpur/day-v1.webp",
+      "gitBlobSha": "73a12a002555ce4643ac197e328dbe0809e6c31f",
+      "bytes": 335582,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "kuala-lumpur",
+      "role": "day",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Generated using the built-in image tool; generation IDs and original/packaged hashes are recorded."
+    },
+    {
+      "path": "dist/wallpapers/kuala-lumpur/night-v1.webp",
+      "gitBlobSha": "984fe955215b6f8bc3ddeecaec3e81f7c47030a5",
+      "bytes": 278108,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "kuala-lumpur",
+      "role": "night",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Generated using the built-in image tool; generation IDs and original/packaged hashes are recorded."
+    },
+    {
+      "path": "dist/wallpapers/kuala-lumpur/sky-v1.svg",
+      "gitBlobSha": "77a9ea87ffc7b342b57af116b1c521afc3094f9c",
+      "bytes": 725,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "kuala-lumpur",
+      "role": "mask",
+      "rightsEvidence": "docs/wallpaper-expansion-20261007.json",
+      "note": "Project-authored SVG sky mask."
     },
     {
       "path": "dist/wallpapers/makhachkala/day-v1.webp",
@@ -1072,6 +1171,69 @@
       },
       "rightsEvidence": [],
       "nextAction": "Preserve the original generation/session record and confirm rights in any image supplied as Input; a reference caption alone does not license the final files."
+    },
+    {
+      "id": "istanbul",
+      "name": "Стамбул",
+      "paths": [
+        "dist/wallpapers/istanbul/day-v1.webp",
+        "dist/wallpapers/istanbul/night-v1.webp",
+        "dist/wallpapers/istanbul/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in image generation and night lighting edit; project-authored sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-expansion-20261007.json"
+      ],
+      "nextAction": "Retain the generated originals and creation evidence."
+    },
+    {
+      "id": "cairo",
+      "name": "Каир",
+      "paths": [
+        "dist/wallpapers/cairo/day-v1.webp",
+        "dist/wallpapers/cairo/night-v1.webp",
+        "dist/wallpapers/cairo/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in image generation and night lighting edit; project-authored sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-expansion-20261007.json"
+      ],
+      "nextAction": "Retain the generated originals and creation evidence."
+    },
+    {
+      "id": "kuala-lumpur",
+      "name": "Куала-Лумпур",
+      "paths": [
+        "dist/wallpapers/kuala-lumpur/day-v1.webp",
+        "dist/wallpapers/kuala-lumpur/night-v1.webp",
+        "dist/wallpapers/kuala-lumpur/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in image generation and night lighting edit; project-authored sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/wallpaper-expansion-20261007.json"
+      ],
+      "nextAction": "Retain the generated originals and creation evidence."
     }
   ]
 }

@@ -19,7 +19,7 @@ export function mountQuranPlayer(){
  const draw=state=>{
   const route=location.hash.slice(1).split('?')[0]||'home';
   const visible=!!state.surah&&['home','quran'].includes(route);panel.hidden=!visible;document.body.classList.toggle('has-quran-audio',visible);if(!visible)return;
-  link.href='#quran?surah='+state.surah.number+'&ayah='+(state.ayah||1);
+  link.href='#quran?surah='+state.surah.number+'&ayah='+(state.ayah||1)+(state.offlineOnly?'&reciter='+encodeURIComponent(state.reciter)+'&offline=1':'');
   link.querySelector('strong').textContent=state.meta.name;
   const catalogKey=state.surah.number+'|'+state.reciter;if(reciterSelect.dataset.catalog!==catalogKey){reciterSelect.dataset.catalog=catalogKey;reciterSelect.replaceChildren(...groupedReciters().map(group=>{const optgroup=document.createElement('optgroup');optgroup.label=group.name;for(const r of group.reciters){const option=document.createElement('option');option.value=r.id;option.disabled=!reciterHasSurah(r.id,state.surah.number);option.textContent=r.name+(option.disabled?' · нет записи':'');option.selected=r.id===state.reciter;optgroup.append(option);}return optgroup;}))}
   const status={loading:'Загрузка…',paused:'На паузе',ended:'Сура завершена',error:'Аудио недоступно — повторить'}[state.status];

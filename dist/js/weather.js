@@ -9,7 +9,15 @@ export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REF
 let skyAnimation=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null;
+function wallpaperCaption(scene){
+ let caption=scene.querySelector('.wallpaper-caption');
+ if(!caption){caption=document.createElement('span');caption.className='wallpaper-caption';scene.append(caption)}
+ const name=scene.dataset.wallpaper==='landmark'&&landmarkEntry?landmarkEntry.name:scene.dataset.wallpaper==='new-york'?'Нью-Йорк':'';
+ if(caption.textContent!==name)caption.textContent=name;
+ if(caption.hidden!==!name)caption.hidden=!name;
+}
 function layoutScene(scene,effect=document.getElementById('weather-layer')){
+ wallpaperCaption(scene);
  const layout=applyWallpaperLayout(scene,effect,{width:document.documentElement?.clientWidth,height:window.innerHeight,wallpaper:scene.dataset.wallpaper,geometry:scene.dataset.wallpaper==='landmark'?landmarkGeometry:null});
  if(layout){if(document.body.dataset.sceneLayout!==layout.mode)document.body.dataset.sceneLayout=layout.mode;}else if(document.body.dataset.sceneLayout)delete document.body.dataset.sceneLayout;
 }
@@ -21,7 +29,7 @@ window.addEventListener('resize',()=>{
 function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';note.textContent=landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':'Для первой загрузки фона нужен интернет.'}
 function stopLandmarkRequest(){landmarkRequest?.abort();landmarkRequest=null}
 function releaseLandmarkUrls(urls){for(const url of urls)URL.revokeObjectURL(url)}
-function neutralLandmark(scene){landmarkEntry=null;landmarkGeometry=null;delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
+function neutralLandmark(scene){landmarkEntry=null;landmarkGeometry=null;wallpaperCaption(scene);delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
 function clearLandmark(scene){stopLandmarkRequest();releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];neutralLandmark(scene)}
 function keepLandmarkSurface(scene){
  scene.dataset.wallpaper='landmark';document.body.dataset.wallpaper='landmark';
@@ -54,7 +62,7 @@ function prepareLandmark(scene,home){
    const previous=landmarkUrls;
    // Swap only after both photographs are decoded, then release the old city.
    for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');
-   landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight};landmarkRequest=null;landmarkState='ready';
+   landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight,fitSubject:result.entry.fitSubject===true};landmarkRequest=null;landmarkState='ready';
    scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
    layoutScene(scene);releaseLandmarkUrls(previous);landmarkNote();
   }
