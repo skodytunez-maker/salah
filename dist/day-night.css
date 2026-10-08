@@ -133,3 +133,11 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-artwork"
 .wallpaper-caption[hidden]{display:none}
 
 @media(min-width:600px) and (min-height:600px){.wallpaper-caption{font-size:16px}}
+
+/* The paired landscape window is only selected on tablets; phones retain their artwork. */
+@media(min-width:600px) and (min-height:600px){
+ #home-scene[data-wallpaper="new-york"] .scene-day{background-image:url('./assets/window-new-york-day-tablet-v1.webp'),url('./assets/window-new-york-day.webp')}
+ #home-scene[data-wallpaper="new-york"] .scene-night{background-image:url('./assets/window-new-york-night-tablet-v1.webp'),url('./assets/window-new-york-night.webp')}
+ #home-scene[data-wallpaper="new-york"] .scene-sky{-webkit-mask-image:url('./assets/window-sky-mask-tablet-v1.svg');mask-image:url('./assets/window-sky-mask-tablet-v1.svg')}
+ body[data-wallpaper="new-york"] #weather-layer{-webkit-mask-image:url('./assets/window-weather-mask-tablet-v1.svg');mask-image:url('./assets/window-weather-mask-tablet-v1.svg')}
+}

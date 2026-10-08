@@ -66,3 +66,36 @@ for(const viewport of [{width:390,height:844},{width:844,height:390},{width:900,
  const x=layout.left+layout.width*.5,y=layout.top+layout.height*.5;assert.ok(x>=0&&x<=viewport.width&&y>=0&&y<=viewport.height,'Central subject stays on screen');
 }
 console.log('PASS: new wide city artwork fills phones and tablets without stretching or empty bands.');
+
+for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:1344,height:900}]){
+ const p=wallpaperLayout({...viewport,wallpaper:'landmark',geometry:{width:1536,height:1024,fitSubject:true,focalX:.75}});
+ const pylon=p.left+p.width*.75;
+ assert.ok(pylon>=0&&pylon<=viewport.width,'Tyumen bridge pylon stays visible in both orientations');
+ assert.ok(p.left<=0&&p.left+p.width>=viewport.width,'Focal composition covers the viewport');
+}
+
+for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:1344,height:900},{width:1600,height:900}]){
+ const p=wallpaperLayout({...viewport,wallpaper:'new-york'});
+ near(p.width/p.height,1.5);assert.equal(p.needsLandscape,false);
+ assert.ok(p.left<=0&&p.top<=0&&p.left+p.width>=viewport.width&&p.top+p.height>=viewport.height,'Wide New York fills tablet without bands');
+ const landmark=p.left+p.width*.655;
+ assert.ok(landmark>0&&landmark<viewport.width,'One World Trade Center remains in portrait crop');
+}
+assert.equal(wallpaperLayout({width:599,height:900,wallpaper:'new-york'}),null,'New York phone retains old geometry');
+
+// Existing narrow city artwork now fills tablets with a shared focal crop.
+const {landmarkAssetSet,validateLandmarkCatalog}=await import('../dist/js/landmarks.js');
+const catalog=validateLandmarkCatalog(JSON.parse(await readFile(new URL('../dist/wallpapers/catalog.json',import.meta.url),'utf8')));
+for(const entry of catalog.filter(e=>!e.tablet&&!e.fitSubject)){
+ const selected=landmarkAssetSet(entry,true);
+ assert.equal(landmarkAssetSet(entry,false),entry,'Original phone artwork/metadata is untouched');
+ assert.equal(selected.day,entry.day,'Existing artwork is reused');
+ for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:1344,height:900},{width:1600,height:900}]){
+  const size=['afghanistan','badakhshan'].includes(entry.id)?{width:941,height:1672}:{width:853,height:1844};
+  const p=wallpaperLayout({...viewport,wallpaper:'landmark',geometry:{...size,fillViewport:selected.fillViewport,focalX:selected.focalX,focalY:selected.focalY}});
+  near(p.width/p.height,size.width/size.height);
+  assert.ok(p.left<=1e-8&&p.top<=1e-8&&p.left+p.width>=viewport.width-1e-8&&p.top+p.height>=viewport.height-1e-8,'Every remaining city covers tablet edges');
+  const y=p.top+p.height*selected.focalY;assert.ok(y>=0&&y<=viewport.height,'Selected city detail stays visible');
+  assert.equal(p.needsLandscape,false);
+ }
+}
