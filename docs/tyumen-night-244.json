@@ -1,0 +1,9 @@
+{
+  "version": 244,
+  "source": "dist/wallpapers/tyumen/night-tablet-v1.webp",
+  "output": "dist/wallpapers/tyumen/night-tablet-v2.webp",
+  "tool": "built-in image_gen",
+  "prompt": "Remove only small churches on the far bank; preserve bridge, river, promenade, sky, framing and night lighting.",
+  "portrait": "Same panorama with CSS cover and 75% horizontal focus; no image stretching",
+  "originalPreserved": true
+}
