@@ -1,4 +1,5 @@
 import{loadSurah,saveSurahAudio,loadIndex}from './quran-data.js';
+import{RECITER_FAVORITES_KEY}from './quran-reciter-favorites.js';
 import{RECITERS,reciterHasSurah,reciterOptions,reciterInfo}from './quran-reciters.js';
 import{offlineAudioStore}from './quran-offline-store.js';
 import{createQuranDownloadQueue}from './quran-offline-core.js';
@@ -10,9 +11,9 @@ quranDownloadQueue.subscribe(state=>{if(typeof document!=='undefined'&&document.
 export function quranDownloadsMarkup(){return '<details class="quran-offline quran-downloads"><summary>Скачать Коран</summary><div class="quran-download-controls"><label class="field">Чтец<select id="quran-offline-reciter"></select></label><label class="field">Что скачать<select id="quran-offline-selection"></select></label><div class="button-row"><button type="button" class="button" id="quran-offline-start">Скачать</button><button type="button" class="button secondary" id="quran-offline-pause" hidden>Пауза</button></div><p id="quran-offline-audio-status" role="status" aria-live="polite"></p><p id="quran-offline-space" class="muted"></p><details class="quran-saved-audio"><summary>Скачанные суры <span id="quran-saved-count">0</span></summary><div id="quran-saved-recordings"></div></details><button type="button" class="text-button" id="quran-offline-remove">Удалить скачанные записи</button></div></details>';}
 export function mountQuranDownloads(host,index){
  let active=true,version=0,lastPaint=0,listVersion=0,lastStatus='',lastDone=-1;
- const preferred=read('quran-offline-reciter',read('quran-preferences',{}).reciter),selected=RECITERS.some(r=>r.id===preferred)?preferred:'ar.alafasy';
+ const preferred=read('quran-offline-reciter',read('quran-preferences',{}).reciter),selected=RECITERS.some(r=>r.id===preferred&&r.offline!==false)?preferred:'ar.alafasy';
  const reciter=host.querySelector('#quran-offline-reciter'),selection=host.querySelector('#quran-offline-selection'),start=host.querySelector('#quran-offline-start'),pause=host.querySelector('#quran-offline-pause'),status=host.querySelector('#quran-offline-audio-status'),remove=host.querySelector('#quran-offline-remove');
- reciter.innerHTML=reciterOptions(quranDownloadQueue.busy?quranDownloadQueue.state.reciter:selected);
+ reciter.innerHTML=reciterOptions(quranDownloadQueue.busy?quranDownloadQueue.state.reciter:selected,read(RECITER_FAVORITES_KEY,[]),{offline:true});
  function choices(){
   const available=index.surahs.filter(s=>reciterHasSurah(reciter.value,s.number));
   selection.innerHTML='<option value="all">'+(available.length===114?'Весь Коран · 114 сур':'Все доступные · '+available.length+' сур')+'</option>'+available.map(s=>'<option value="'+s.number+'">'+s.number+'. '+esc(s.name)+'</option>').join('');

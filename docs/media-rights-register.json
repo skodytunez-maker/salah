@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "auditedAt": "2026-10-07",
+  "auditedAt": "2026-10-09",
   "repository": "skodytunez-maker/salah",
   "sourceCommit": "4d23a54bc3b676b7c3584e1b28b936ec65792d3b",
   "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical.",
@@ -985,6 +985,258 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/new-york-tablet-provenance.json",
       "note": "Generated tablet companion of existing SALAH artwork, with original phone images preserved. Provenance is not exclusive copyright or clearance of reference rights."
+    },
+    {
+      "path": "dist/assets/reciters/alafasy.webp",
+      "gitBlobSha": "c2b19aa3c0847d7c5e71fb331cc79cf4ff3d5e7c",
+      "bytes": 25774,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/tariqmuhammad.jpg",
+      "gitBlobSha": "ad40d0b6d80429762486ee380b165d9256110aaa",
+      "bytes": 33824,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/abdurrahmanalsudais.jpg",
+      "gitBlobSha": "f4811c7e6723da5d613077d18d073d25875a6ef1",
+      "bytes": 59504,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/abdullahaljuhany.jpg",
+      "gitBlobSha": "cecf7fa98cad4411aca7ba64bf8701249447269d",
+      "bytes": 186682,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/salahalbudair.jpg",
+      "gitBlobSha": "ec14159a76befae2dfb852e6bb1f341da5655e3a",
+      "bytes": 127275,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/abdulbarialthubaity.jpg",
+      "gitBlobSha": "fb3a1fcaae8ff7201cf8237898820ce66b5d0883",
+      "bytes": 4699,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/abdulmuhsinalqasim.jpg",
+      "gitBlobSha": "8f1324742589ef3d2f59cb61879592c87e75b863",
+      "bytes": 68825,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/abdullahalbuayjan.jpg",
+      "gitBlobSha": "84de922c5104cd1b495c3c42dca5d81dabd85345",
+      "bytes": 39532,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/ahmadalhuthaifi.jpg",
+      "gitBlobSha": "0c9817685eed9459f8afc1b6767415f2bca434fd",
+      "bytes": 15920,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/khalidalmuhanna.jpg",
+      "gitBlobSha": "e9afab22bdafec2c23d7296e5d2bcc1a1456ac45",
+      "bytes": 56202,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/alialhuthaifi.jpg",
+      "gitBlobSha": "7290efe0efb7d00e4be30cff22650c16192282d1",
+      "bytes": 42585,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/badralturki.jpg",
+      "gitBlobSha": "24838de14471549ed180bc499500a8a925fa159b",
+      "bytes": 20530,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/husary-original.png",
+      "gitBlobSha": "d5ce04aad0fbf45285994b04ac811628722567f7",
+      "bytes": 57170,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Verified named historical archive photograph copied unchanged; final usage permission remains documented for review."
+    },
+    {
+      "path": "dist/assets/reciters/yasseraldossari.jpg",
+      "gitBlobSha": "d70783c5856ff256d8ce9fbf7982afb987687dd7",
+      "bytes": 17160,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/muhammadalluhaidan.jpg",
+      "gitBlobSha": "7f9453281d35e19aac67e9e387e92922cfe116d8",
+      "bytes": 90214,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/minshawi-original.jpg",
+      "gitBlobSha": "5245252c2ec698d40101ce013c09ee3e7c047cb9",
+      "bytes": 34092,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Verified named historical archive photograph copied unchanged; final usage permission remains documented for review."
+    },
+    {
+      "path": "dist/assets/reciters/bandarbalilah.png",
+      "gitBlobSha": "5d8c3fda45eafb2e46e4bec58bbf8921a7c221e0",
+      "bytes": 194753,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/saudalshuraim.jpg",
+      "gitBlobSha": "418a68da9d1995c2ab444b0e084c9940fa222bac",
+      "bytes": 49471,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/mahermuaiqly.png",
+      "gitBlobSha": "88e65ba5d86f063cb11ccb9336f22c67639e0efe",
+      "bytes": 416018,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/abdelazizsheim.jpg",
+      "gitBlobSha": "8044000338846b8991a869b8f480234e418d37c0",
+      "bytes": 26324,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/hazzaalbalushi.jpg",
+      "gitBlobSha": "ccbc88794534ec1c0cb80e6c0b963c05d77271ed",
+      "bytes": 13693,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/haithamaljadani.jpg",
+      "gitBlobSha": "67d512d5930e4d79cd900c0d95bf2eab8c562068",
+      "bytes": 80825,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/raadalkurdi-approved.jpg",
+      "gitBlobSha": "58337879a3076ca2d2b2dbb803d574cbf5c63565",
+      "bytes": 72298,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "User supplied and selected photograph, copied unchanged; user confirmation is identity evidence, not proof of third-party licensing."
+    },
+    {
+      "path": "dist/assets/reciters/abdulrahmanmossad.jpg",
+      "gitBlobSha": "371a149121e8ecc1cd40e7f56ebe56e29f19b05d",
+      "bytes": 29918,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/haithamaldukhain.jpg",
+      "gitBlobSha": "c6e1de44b238e5aaa126b276ad4b5a4cb578abd3",
+      "bytes": 81875,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/ahmedkaseb.jpg",
+      "gitBlobSha": "2d12d22636f6c0603ec935284c73d393977d8b60",
+      "bytes": 37523,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/obaidamuafaq.jpg",
+      "gitBlobSha": "5de3677bdf185170f31e12d78f6b63657892235b",
+      "bytes": 107553,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
+    },
+    {
+      "path": "dist/assets/reciters/siratulloraupov.jpg",
+      "gitBlobSha": "ca4d0db0c01fd7557c54e7f9a57365ac818510c1",
+      "bytes": 31081,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-20261009.json",
+      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review."
     }
   ],
   "wallpaperSets": [
