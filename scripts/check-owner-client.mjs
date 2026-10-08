@@ -196,3 +196,11 @@ assert.ok(writeMarkup.includes('href="#support?owner=1&amp;user='+writeId+'"'),'
 assert.match(writeMarkup,/class="button owner-user-write"/);assert.match(writeMarkup,/<span>Написать<\/span>/);
 assert.ok(!ownerUserCard({id:'not-a-user',nickname:'Подделанный'}).includes('owner-user-write'),'An invalid user card has no send action');
 console.log('PASS: the selected owner user card exposes an accessible Write link by stable user ID; invalid identities cannot start compose.');
+
+const closedCabinet=dashboard();closedCabinet.location.hash='#account?owner=1';await closedCabinet.mountOwnerAccount(closedCabinet.app);
+const selectedCabinet=closedCabinet.app.querySelector('.owner-account');selectedCabinet.open=false;selectedCabinet.ontoggle();closedCabinet.setAllowed(false);assert.equal(closedCabinet.app.hidden,true);closedCabinet.setAllowed(true);
+assert.equal(closedCabinet.app.querySelector('.owner-account').open,false,'Renewed verification must not override the user collapsing the cabinet');
+await signOutOwner();await verifyOwner();globalThis.fetch=originalFetch;session={access_token:'renewal-fixture-token',user:{id:'11111111-1111-4111-8111-111111111111'}};allowed=true;needsMfa=false;await verifyOwner();
+const savedClock=Date.now,changesBeforeRenewal=changed;Date.now=()=>savedClock()+61000;
+try{assert.equal(ownerVerified(),false);authCallback('TOKEN_REFRESHED',session);assert.equal(changed,changesBeforeRenewal,'Same-account renewal does not collapse the disclosure');assert.equal(ownerVerified(),false,'A renewed token alone cannot extend owner authority');await verifyOwner();assert.equal(ownerVerified(),true);allowed=false;await verifyOwner();assert.equal(ownerVerified(),false,'A fresh server denial still revokes access');}finally{Date.now=savedClock;}
+console.log('PASS: closed owner disclosure stays closed; expired grants require server recheck without token-renewal flicker.');

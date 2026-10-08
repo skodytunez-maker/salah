@@ -25,6 +25,9 @@ try{await fs.access(androidRoot)}catch{
 await copy('MainActivity.java',path.join(javaRoot,'MainActivity.java'));
 await copy('SalahWidgetPlugin.java',path.join(javaRoot,'SalahWidgetPlugin.java'));
 await copy('SalahPrayerWidgetProvider.java',path.join(javaRoot,'SalahPrayerWidgetProvider.java'));
+await copy('SalahWidgetSizing.java',path.join(javaRoot,'SalahWidgetSizing.java'));
+await copy('SalahWidgetDay.java',path.join(javaRoot,'SalahWidgetDay.java'));
+await copy('SalahWidgetSizingTest.java',path.join(androidRoot,'..','test','java',packagePath,'SalahWidgetSizingTest.java'));
 await copy('salah_widget.xml',path.join(resRoot,'layout','salah_widget.xml'));
 await copy('salah_widget_bg.xml',path.join(resRoot,'drawable','salah_widget_bg.xml'));
 await copy('salah_widget_info.xml',path.join(resRoot,'xml','salah_widget_info.xml'));
@@ -35,6 +38,7 @@ let manifest=await fs.readFile(manifestPath,'utf8');
 if(!manifest.includes('android.permission.CAMERA'))manifest=manifest.replace('<application','<uses-permission android:name="android.permission.CAMERA" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n    <application');
 const receiver=`        <receiver
             android:name=".SalahPrayerWidgetProvider"
+            android:icon="@mipmap/salah_launcher"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

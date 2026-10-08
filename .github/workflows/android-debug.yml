@@ -68,7 +68,7 @@ jobs:
         working-directory: mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew testDebugUnitTest assembleDebug --stacktrace
       - name: Verify APK signature and package metadata
         run: node mobile/scripts/inspect-android-apk.mjs mobile/android/app/build/outputs/apk/debug/app-debug.apk mobile/android/app/build/outputs/apk/debug/apk-report.json
       - name: Verify native notices inside the APK

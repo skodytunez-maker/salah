@@ -95,3 +95,9 @@ try{
  assert.doesNotMatch(panel.innerHTML.match(/<button[^>]*data-push-diagnose[^>]*>/)[0],/disabled/,'A stalled platform API must release the checking button');
 }finally{navigator.serviceWorker.getRegistration=originalRegistration;globalThis.setTimeout=originalTimer;}
 console.log('PASS: diagnosis detects missing prerequisites, exposes no secrets, only reads configuration, never claims actual delivery, and recovers from a stalled platform API.');
+
+globalThis.Capacitor={isNativePlatform:()=>true};
+const nativeBackground=createPushReminders({getSettings:()=>prefs});
+assert.equal(nativeBackground.invitationState().supported,false);assert.match(nativeBackground.invitationState().guide,/ещё не подключены/);assert.doesNotMatch(nativeBackground.invitationState().guide,/Safari|Chrome/);assert.equal(nativeBackground.active(),false);
+const nativeRequestsBefore=requests.length;await nativeBackground.enable();assert.equal(requests.length,nativeRequestsBefore);assert.equal(permissionRequests,0);
+console.log('PASS: native shell does not pretend web-push works, has a short correct guide and never prompts or registers an unsupported subscription.');

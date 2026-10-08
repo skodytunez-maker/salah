@@ -1,6 +1,6 @@
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 const KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
-const ORIGINS=new Map([['https://skodytunez-maker.github.io','salah'],['https://sahaba-learning.skodytunez.chatgpt.site','sahaba']]);
+const ORIGINS=new Map([['https://skodytunez-maker.github.io','salah'],['https://sahaba-learning.skodytunez.chatgpt.site','sahaba'],['capacitor://localhost','salah'],['http://localhost','salah'],['https://localhost','salah']]);
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function supportPhotoBytes(data){
  if(typeof data!=='string'||data.length>819200||!data.length||data.length%4||!/^[A-Za-z0-9+/]+={0,2}$/.test(data))throw Error('invalid_photo');

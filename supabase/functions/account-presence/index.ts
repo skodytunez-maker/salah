@@ -4,15 +4,15 @@ function validNotification(value){
  const device=value.device;
  return device===null||!!device&&typeof device==='object'&&!Array.isArray(device)&&Object.keys(device).length===2&&UUID.test(device.id||'')&&/^[a-f0-9]{64}$/.test(device.token||'');
 }
-const ORIGIN='https://skodytunez-maker.github.io';
+const ORIGINS=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co';
 // This endpoint only records the verified caller's foreground presence.
 // It never reads a user list, changes an account, or accepts a user ID.
 export function createPresenceHandler({getUser,getClaims,isSessionActive,record}){return async req=>{
  const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Vary':'Origin','X-Content-Type-Options':'nosniff'};
- if(origin===ORIGIN)Object.assign(headers,{'Access-Control-Allow-Origin':ORIGIN,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS'});
+ if(ORIGINS.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS'});
  const reply=(status,value)=>new Response(JSON.stringify(value),{status,headers});
- if(origin&&origin!==ORIGIN)return reply(403,{error:'forbidden'});
+ if(origin&&!ORIGINS.has(origin))return reply(403,{error:'forbidden'});
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(req.method!=='POST')return reply(405,{error:'method_not_allowed'});
  if(new URL(req.url).search)return reply(400,{error:'invalid_parameters'});

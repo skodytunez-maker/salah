@@ -5,3 +5,5 @@
 .dua-variants{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.dua-variants button{flex:1 1 150px;min-width:0;min-height:48px;border:1px solid #4b587a;border-radius:12px;padding:12px 10px;background:#121d35;color:#c9cfdf;font-size:15px;line-height:1.4;overflow-wrap:anywhere}.dua-variants button[aria-pressed=true]{border-color:#d2c29b;background:#30384c;color:#f3e4be}
 
 .dua-quick-search{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.dua-quick-search button{min-height:42px;border:1px solid var(--line,#303a52);border-radius:18px;padding:8px 14px;background:transparent;color:inherit;font:inherit;font-size:14px}
+
+[data-dua-passage="transliteration"]{white-space:pre-line}
