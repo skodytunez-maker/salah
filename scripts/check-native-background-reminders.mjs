@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {createNativeBackgroundReminders,nativeReminderPlugin} from '../dist/js/native-background-reminders.js';
+import {localTimestamp} from '../dist/js/reminder-events.js';
+assert.equal(nativeReminderPlugin({isNativePlatform:()=>false}),null);
+assert.equal(nativeReminderPlugin({isNativePlatform:()=>true,getPlatform:()=> 'ios',Plugins:{SalahReminders:{}}}),null);
+const zone='Asia/Yekaterinburg',today='2026-10-08';let stamp=localTimestamp(today,'04:00',zone),pending=0,statusCalls=0,schedules=[],clears=0;
+let settings={city:{timezone:zone},reminders:{enabled:true,voice:'mishary',prayers:{Fajr:{atTime:true,adhan:true}}}},days={};
+const saved=JSON.stringify(settings);
+const plugin={getStatus:async()=>{statusCalls++;return {notifications:true,exactAlarms:true,adhan:false,pending}},replaceSchedule:async({events})=>{schedules.push(events);pending=events.length;return {scheduled:pending}},clearSchedule:async()=>{clears++;pending=0}};
+assert.equal(nativeReminderPlugin({isNativePlatform:()=>true,getPlatform:()=> 'android',Plugins:{SalahReminders:plugin}}),plugin);
+const getContext=()=>({today,cityKey:'local-city',timeZone:zone,days,timingsFor:day=>({Fajr:localTimestamp(day,'05:00',zone)})});
+const background=createNativeBackgroundReminders({plugin,getSettings:()=>settings,getContext,clock:()=>stamp});
+await new Promise(resolve=>setTimeout(resolve,0));
+assert.equal(background.active(),true);assert.equal(pending,7);
+assert.ok(schedules[0].every(e=>e.adhan===false),'Notification-only native delivery does not claim full azan');
+assert.equal(JSON.stringify(settings),saved,'Saved foreground-azan choice and settings stay unchanged');
+const checks=statusCalls;stamp+=1000;await background.nativeSync();assert.equal(statusCalls,checks,'No bridge round trip on every clock tick');
+days={fresh:true};await background.nativeSync();assert.equal(statusCalls,checks+1,'New timetable state refreshes delivery');
+settings={...settings,reminders:{...settings.reminders,enabled:false}};await background.nativeSync();assert.equal(background.active(),false);assert.equal(pending,0);assert.ok(clears>0);
+background.destroy();const ended=statusCalls;await background.nativeSync(true);assert.equal(statusCalls,ended);
+// A settings change during a slow bridge call must also be applied after the
+// user leaves the screen; it cannot depend on another visible clock tick.
+const oldWindow=globalThis.window,listeners={};
+globalThis.window={addEventListener:(name,fn)=>listeners[name]=fn,removeEventListener:name=>delete listeners[name]};
+settings={city:{timezone:zone},reminders:{enabled:true}};let unlock,gate=true;const racePlans=[];
+const slowPlugin={...plugin,replaceSchedule:async({events})=>{racePlans.push(events);if(gate){gate=false;await new Promise(resolve=>unlock=resolve);}pending=events.length;return {scheduled:pending}}};
+const race=createNativeBackgroundReminders({plugin:slowPlugin,getSettings:()=>settings,getContext,clock:()=>stamp});
+await new Promise(resolve=>setTimeout(resolve,0));
+settings={...settings,reminders:{enabled:true,prayers:{Fajr:{atTime:true,beforeMinutes:5}}}};listeners['salah:settings-changed']();unlock();
+await new Promise(resolve=>setTimeout(resolve,0));await new Promise(resolve=>setTimeout(resolve,0));
+assert.equal(racePlans.length,2);assert.ok(racePlans.at(-1).some(event=>event.message.includes('5 минут')));
+race.destroy();globalThis.window=oldWindow;
+console.log('PASS: Android-only selection, unchanged web/iOS fallback, notification-only capability, saved azan choice preserved, no per-second bridge traffic, timetable refresh, disable and disposal. Native APIs mocked.');

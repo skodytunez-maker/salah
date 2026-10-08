@@ -15,7 +15,7 @@ export function createNativeReminderConnection({plugin,getPreferences,getContext
    try{
     const status=await plugin.getStatus();
     if(own!==sequence)return latest;
-    const preferences=getPreferences(),context=getContext();
+    const preferences=getPreferences(status),context=getContext();
     if(preferences?.enabled!==true){await clear();return latest={status:'disabled',scheduled:0};}
     const plan=buildNativeReminderPlan(preferences,context,{now:now(),limit:256});
     if(!status.notifications||!status.exactAlarms){await clear();return latest={status:!status.notifications?'notification_permission':'alarm_permission',scheduled:0};}
