@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import{dispatchNativeSupportPush}from '../supabase/functions/background-reminders/native-support-dispatch.mjs';
+const now=Date.now(),row={id:'device',message_id:'message',thread_id:'thread',at:now-1000};
+let queried=0,active=true,sent=0,expired=0;const delivered=new Set();
+const db={nativeSupportEvents:async()=>{queried++;return[row]},nativeSupportActive:async()=>active,nativeSupportClaim:async(id,message)=>{if(delivered.has(message))return false;delivered.add(message);return true},nativeSupportComplete:async()=>{},nativeSupportExpire:async()=>expired++};
+assert.equal(await dispatchNativeSupportPush({db,sender:null}),0);assert.equal(queried,0,'unconfigured sender does not touch undeployed native tables');
+const dispatch=sender=>dispatchNativeSupportPush({db,sender,clock:()=>now});
+assert.equal(await dispatch(async()=>{sent++;return 'sent'}),1);assert.equal(await dispatch(async()=>{sent++;return 'sent'}),0);assert.equal(sent,1);
+delivered.clear();active=false;assert.equal(await dispatch(async()=>{throw Error('must not send')}),0);
+active=true;assert.equal(await dispatch(async()=> 'expired'),0);assert.equal(expired,1);
+console.log('PASS disabled sender, revoked/read recipient, dedupe and expired native registration handling');

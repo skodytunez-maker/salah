@@ -261,6 +261,58 @@ async function dispatchSupportPush({db,send,clock}){
  }}));return sent;
 }
 
+const PROJECT='salah-8b73f';
+const TOKEN_URL='https://oauth2.googleapis.com/token';
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const base64url=value=>btoa(String.fromCharCode(...new Uint8Array(value))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+const json64=value=>base64url(new TextEncoder().encode(JSON.stringify(value)));
+function firebaseSupportPayload(device,event,now){
+ const at=Number(event?.at);
+ if(!UUID.test(device?.user_id||'')||typeof device.token!=='string'||device.token.length<100||device.token.length>4096||!/^[-\w:.]+$/.test(device.token)||!UUID.test(event?.messageId||'')||!UUID.test(event.thread||'')||!Number.isFinite(at)||at>now||now-at>=86400000)throw Error('invalid_firebase_support_event');
+ const expires=Math.floor(at+86400000);
+ return {message:{token:device.token,data:{kind:'support',thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
+}
+function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now}){
+ if(credential?.type!=='service_account'||credential.project_id!==PROJECT||!new RegExp('^[\\w-]+@'+PROJECT+'\\.iam\\.gserviceaccount\\.com$').test(credential.client_email||'')||credential.token_uri!==TOKEN_URL||typeof credential.private_key!=='string'||credential.private_key.length>12000||!credential.private_key.startsWith('-----BEGIN PRIVATE KEY-----'))throw Error('invalid_firebase_sender_configuration');
+ let cached=null,pending=null;
+ async function access(){
+  if(cached&&cached.until>clock())return cached.token;
+  if(pending)return pending;
+  pending=(async()=>{
+   const raw=atob(credential.private_key.replace(/-----[^-]+-----/g,'').replace(/\s/g,''));
+   const key=await crypto.subtle.importKey('pkcs8',Uint8Array.from(raw,c=>c.charCodeAt(0)),{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['sign']);
+   const now=Math.floor(clock()/1000),head=json64({alg:'RS256',typ:'JWT'}),claims=json64({iss:credential.client_email,scope:'https://www.googleapis.com/auth/firebase.messaging',aud:TOKEN_URL,iat:now,exp:now+3600});
+   const unsigned=head+'.'+claims,signature=await crypto.subtle.sign('RSASSA-PKCS1-v1_5',key,new TextEncoder().encode(unsigned));
+   const response=await fetcher(TOKEN_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'urn:ietf:params:oauth:grant-type:jwt-bearer',assertion:unsigned+'.'+base64url(signature)}),redirect:'error',signal:AbortSignal.timeout(8000)});
+   if(!response.ok)throw Error('firebase_sender_auth_unavailable');
+   const value=await response.json();if(typeof value.access_token!=='string'||value.access_token.length>8192||!Number.isFinite(value.expires_in)||value.expires_in<120)throw Error('firebase_sender_auth_unavailable');
+   cached={token:value.access_token,until:clock()+(Math.min(value.expires_in,3600)-60)*1000};return cached.token;
+  })();try{return await pending}finally{pending=null}
+ }
+ return async(device,event)=>{
+  try{
+   const payload=firebaseSupportPayload(device,event,clock()),token=await access();
+   const response=await fetcher('https://fcm.googleapis.com/v1/projects/'+PROJECT+'/messages:send',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(payload),redirect:'error',signal:AbortSignal.timeout(8000)});
+   if(response.ok)return 'sent';if(response.status===401)cached=null;
+   const value=await response.json().catch(()=>null);
+   if(value?.error?.details?.some(detail=>detail.errorCode==='UNREGISTERED'))return 'expired';
+   return 'retry';
+  }catch{return 'retry';}
+ };
+}
+
+async function dispatchNativeSupportPush({db,sender,clock=Date.now}){
+ if(!sender||!db.nativeSupportEvents||!db.nativeSupportActive)return 0;
+ const started=clock(),rows=await db.nativeSupportEvents(started);let cursor=0,sent=0;
+ await Promise.all(Array.from({length:Math.min(8,rows.length)},async()=>{while(cursor<rows.length&&clock()-started<20000){
+  const row=rows[cursor++];
+  if(!await db.nativeSupportActive(row.id,row.message_id)||!await db.nativeSupportClaim(row.id,row.message_id,clock()))continue;
+  const result=await sender(row,{thread:row.thread_id,messageId:row.message_id,at:Number(row.at)});
+  await db.nativeSupportComplete(row.id,row.message_id,result);
+  if(result==='sent')sent++;if(result==='expired')await db.nativeSupportExpire(row.id);
+ }}));return sent;
+}
+
 
 
 const PUSH_ORIGIN='https://skodytunez-maker.github.io';
@@ -355,7 +407,7 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
 }
 function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
-function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
+function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
  async function send(device,event){
   try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
@@ -390,6 +442,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
     let delivered=0;
     try{
      delivered+=await dispatchSupportPush({db,send,clock});
+     delivered+=await dispatchNativeSupportPush({db,sender:firebaseSender,clock});
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
@@ -461,6 +514,12 @@ const db={
  async expire(id){await sql`update salah_push_private.devices set enabled=false,subscription=null,preferences=null where id=${id}::uuid`;},
  async supportEvents(now){return sql`select distinct on(e.message_id,d.id) d.id,d.subscription,e.message_id,e.thread_id,extract(epoch from e.created_at)*1000 as at from salah_support_private.notification_events e join public.support_threads t on t.id=e.thread_id join public.support_messages m on m.id=e.message_id join public.app_notification_status n on n.user_id=e.recipient_id join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id where e.created_at>to_timestamp(${now}/1000.0)-interval '24 hours' and n.permission='granted' and d.subscription is not null and d.updated_at>to_timestamp(${now}/1000.0)-interval '90 days' and m.created_at>case when m.owner_reply then t.user_seen_at else t.owner_seen_at end and not exists(select 1 from salah_push_private.deliveries x where x.device_id=d.id and x.event_hash='support-'||e.message_id::text and x.state in('sent','expired')) order by e.message_id,d.id limit 100`;},
  async supportActive(device,message){const [row]=await sql`select exists(select 1 from salah_support_private.notification_events e join public.support_threads t on t.id=e.thread_id join public.support_messages m on m.id=e.message_id join public.app_notification_status n on n.user_id=e.recipient_id join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id where e.message_id=${message}::uuid and d.id=${device}::uuid and n.permission='granted' and d.subscription is not null and e.created_at>now()-interval '24 hours' and m.created_at>case when m.owner_reply then t.user_seen_at else t.owner_seen_at end) as active`;return row.active===true;},
+
+ async nativeSupportEvents(now){return sql`select distinct on(e.message_id,d.id) d.id,d.user_id,d.token,e.message_id,e.thread_id,extract(epoch from e.created_at)*1000 as at from salah_support_private.notification_events e join public.support_threads t on t.id=e.thread_id join public.support_messages m on m.id=e.message_id join salah_support_private.native_devices d on d.user_id=e.recipient_id join auth.sessions s on s.id=d.session_id and s.user_id=d.user_id where e.created_at>to_timestamp(${now}/1000.0)-interval '24 hours' and d.enabled and d.token is not null and d.updated_at>to_timestamp(${now}/1000.0)-interval '90 days' and m.created_at>case when m.owner_reply then t.user_seen_at else t.owner_seen_at end and not exists(select 1 from salah_support_private.native_deliveries x where x.device_id=d.id and x.message_id=e.message_id and x.state in('sent','expired')) order by e.message_id,d.id limit 100`;},
+ async nativeSupportActive(device,message){const[row]=await sql`select exists(select 1 from salah_support_private.notification_events e join public.support_threads t on t.id=e.thread_id join public.support_messages m on m.id=e.message_id join salah_support_private.native_devices d on d.user_id=e.recipient_id join auth.sessions s on s.id=d.session_id and s.user_id=d.user_id where e.message_id=${message}::uuid and d.id=${device}::uuid and d.enabled and d.token is not null and e.created_at>now()-interval '24 hours' and m.created_at>case when m.owner_reply then t.user_seen_at else t.owner_seen_at end) as active`;return row.active===true;},
+ async nativeSupportClaim(id,message,now){const rows=await sql`insert into salah_support_private.native_deliveries(device_id,message_id,state,claimed_at) values(${id}::uuid,${message}::uuid,'sending',to_timestamp(${now}/1000.0)) on conflict(device_id,message_id) do update set state='sending',claimed_at=excluded.claimed_at where salah_support_private.native_deliveries.state='retry' or (salah_support_private.native_deliveries.state='sending' and salah_support_private.native_deliveries.claimed_at<to_timestamp(${now}/1000.0)-interval '30 seconds') returning message_id`;return rows.length===1;},
+ async nativeSupportComplete(id,message,state){await sql`update salah_support_private.native_deliveries set state=${state} where device_id=${id}::uuid and message_id=${message}::uuid`;},
+ async nativeSupportExpire(id){await sql`update salah_support_private.native_devices set enabled=false,token=null,token_hash=null where id=${id}::uuid`;},
  async active(now){return sql`select id,subscription,preferences from salah_push_private.devices where enabled=true and subscription is not null and preferences is not null and updated_at>to_timestamp(${now}/1000.0)-interval '90 days'`;},
  async lastDhikrSent(id){const [row]=await sql`select extract(epoch from max(event_at))*1000 as at from salah_push_private.deliveries where device_id=${id}::uuid and event_hash like 'dhikr-%' and state='sent'`;return Number(row?.at)||0;},
  async rate(key,limit,now){const minute=Math.floor(now/60000);const rows=await sql`insert into salah_push_private.limits(key,minute,n) values(${key},${minute},1) on conflict(key,minute) do update set n=salah_push_private.limits.n+1 returning n`;return rows[0].n<=limit;},
@@ -475,4 +534,6 @@ const db={
   async put(key,rows,expires){await sql`insert into salah_push_private.cache(key,rows,expires_at) values(${key},${sql.json(rows)},to_timestamp(${expires}/1000.0)) on conflict(key) do update set rows=excluded.rows,expires_at=excluded.expires_at`;}
  }
 };
-Deno.serve(createPushHandler({db,webpush}));
+let firebaseSender=null;
+try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw)firebaseSender=createFirebaseSupportSender({credential:JSON.parse(raw)});}catch{}
+Deno.serve(createPushHandler({db,webpush,firebaseSender}));

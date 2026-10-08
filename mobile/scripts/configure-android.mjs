@@ -1,3 +1,4 @@
+import{configureFirebaseAndroid}from './firebase-android.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -56,5 +57,6 @@ if(!manifest.includes('android:name=".SalahPrayerWidgetProvider"')){
 manifest=await configureAndroidIcons(mobileRoot,resRoot,manifest);
 await fs.writeFile(manifestPath,manifest);
 
+await configureFirebaseAndroid(mobileRoot,config.appId);
 await syncAndroidVersion(mobileRoot);
 console.log('SALAH Android native widget configured.');
