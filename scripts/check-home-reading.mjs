@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readingLinks} from '../dist/js/home-reading-core.js';
+const catalog={groups:{morning:{ids:['a','b']},evening:{ids:['a','b']}},items:[{id:'a',target:1},{id:'b',target:100}]};
+const progress={version:2,days:{'2026-10-08':{morning:{cursor:1,counts:{a:1,b:50}}},'2026-10-07':{evening:{cursor:1,counts:{a:1,b:20}}}}};
+const before=JSON.stringify(progress),base={catalog,progress,day:'2026-10-08',previousDay:'2026-10-07'};
+const partial=readingLinks(base);assert.equal(partial.length,1);assert.match(partial[0].detail,/50 из 100/);assert.match(partial[0].href,/item=b/);
+assert.equal(JSON.stringify(progress),before);
+assert.equal(readingLinks({...base,resumeEvening:true}).length,2);assert.match(readingLinks({...base,resumeEvening:true})[1].href,/day=2026-10-07/);
+assert.equal(readingLinks({...base,day:'2026-10-09',previousDay:'2026-10-08'}).length,0);
+assert.equal(readingLinks({...base,progress:{days:{'2026-10-08':{morning:{cursor:1,counts:{a:1,b:100}}}}}}).length,0);
+const index={surahs:[{name:'Аль-Фатиха',ayahs:7}]};
+assert.equal(readingLinks({index,position:{surah:1,ayah:4}})[0].href,'#quran?surah=1&ayah=4');
+assert.equal(readingLinks({index,position:{surah:1,ayah:8}}).length,0);
+assert.equal(readingLinks({index,position:{surah:'1',ayah:4}}).length,0);
+assert.equal(readingLinks({...base,progress:{days:{}}}).length,0);
+console.log('PASS home reading: partial counts preserved, completed/expired hidden, valid ayat and evening date retained');
