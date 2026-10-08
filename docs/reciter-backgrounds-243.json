@@ -1,0 +1,42 @@
+{
+  "version": 243,
+  "date": "2026-10-09",
+  "backgroundReference": "dist/assets/reciters/muhammadalluhaidan.jpg",
+  "faceSynthesis": false,
+  "bandarCrop": [
+    0.08,
+    0.03,
+    0.92,
+    0.92
+  ],
+  "portraits": [
+    "dist/assets/reciters/alafasy.webp",
+    "dist/assets/reciters/tariqmuhammad.jpg",
+    "dist/assets/reciters/abdurrahmanalsudais.jpg",
+    "dist/assets/reciters/abdullahaljuhany.jpg",
+    "dist/assets/reciters/salahalbudair.jpg",
+    "dist/assets/reciters/abdulbarialthubaity.jpg",
+    "dist/assets/reciters/abdulmuhsinalqasim.jpg",
+    "dist/assets/reciters/abdullahalbuayjan.jpg",
+    "dist/assets/reciters/ahmadalhuthaifi.jpg",
+    "dist/assets/reciters/khalidalmuhanna.jpg",
+    "dist/assets/reciters/alialhuthaifi.jpg",
+    "dist/assets/reciters/badralturki.jpg",
+    "dist/assets/reciters/husary-original.png",
+    "dist/assets/reciters/yasseraldossari.jpg",
+    "dist/assets/reciters/muhammadalluhaidan.jpg",
+    "dist/assets/reciters/minshawi-original.jpg",
+    "dist/assets/reciters/bandarbalilah.png",
+    "dist/assets/reciters/saudalshuraim.jpg",
+    "dist/assets/reciters/mahermuaiqly.png",
+    "dist/assets/reciters/abdelazizsheim.jpg",
+    "dist/assets/reciters/hazzaalbalushi.jpg",
+    "dist/assets/reciters/haithamaljadani.jpg",
+    "dist/assets/reciters/raadalkurdi-approved.jpg",
+    "dist/assets/reciters/abdulrahmanmossad.jpg",
+    "dist/assets/reciters/haithamaldukhain.jpg",
+    "dist/assets/reciters/ahmedkaseb.jpg",
+    "dist/assets/reciters/obaidamuafaq.jpg",
+    "dist/assets/reciters/siratulloraupov.jpg"
+  ]
+}
