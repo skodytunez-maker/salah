@@ -41,7 +41,8 @@ function discardDisplayedLandmark(scene){
 }
 function prepareLandmark(scene,home){
  const selected=settings.wallpaper==='landmark';
- const tablet=Math.min(document.documentElement?.clientWidth||window.innerWidth||0,window.innerHeight||0)>=600;
+ const viewportWidth=document.documentElement?.clientWidth||window.innerWidth||0,viewportHeight=window.innerHeight||0;
+ const tablet=Math.min(viewportWidth,viewportHeight)>=600 || viewportWidth>viewportHeight;
  const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude,tablet?'tablet':'phone'].join(':'):null;
  if(key!==landmarkKey){
   stopLandmarkRequest();landmarkKey=key;landmarkState='idle';

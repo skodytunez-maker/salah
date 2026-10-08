@@ -21,7 +21,7 @@ for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:134
  assert.ok(mosque.left+mosque.width*.95<=viewport.width+1e-8);
  assert.equal(mosque.needsLandscape,false);
 }
-for(const size of [{width:390,height:844},{width:844,height:390},{width:599,height:900},{width:NaN,height:800},{width:800,height:0}])assert.equal(wallpaperLayout(size),null,'Phone/invalid viewport keeps existing CSS');
+for(const size of [{width:390,height:844},{width:599,height:900},{width:NaN,height:800},{width:800,height:0}])assert.equal(wallpaperLayout(size),null,'Phone/invalid viewport keeps existing CSS');
 const elements=()=>({dataset:{},values:new Map(),writes:0,style:{setProperty(k,v){this.owner.writes++;this.owner.values.set(k,v)},removeProperty(k){this.owner.values.delete(k)}}});
 const scene=elements(),weather=elements();scene.style.owner=scene;weather.style.owner=weather;
 const portrait={width:900,height:1344,wallpaper:'landmark'},wide={width:1344,height:900,wallpaper:'landmark'};
@@ -99,3 +99,16 @@ for(const entry of catalog.filter(e=>!e.tablet&&!e.fitSubject)){
   assert.equal(p.needsLandscape,false);
  }
 }
+
+// Rotation must never magnify a portrait image to the landscape viewport width.
+for(const viewport of [{width:844,height:390},{width:932,height:430},{width:740,height:360}])for(const geometry of [{width:853,height:1844},{width:1536,height:1024,fitSubject:true,focalX:.75},{width:851,height:1847,fillViewport:true,focalY:.7}]){
+ const p=wallpaperLayout({...viewport,wallpaper:'landmark',geometry});
+ assert.equal(p.mode,'phone-landscape');near(p.width/p.height,geometry.width/geometry.height);
+ assert.ok(p.left>=-1e-8&&p.top>=-1e-8&&p.left+p.width<=viewport.width+1e-8&&p.top+p.height<=viewport.height+1e-8,'Whole source rectangle remains visible');
+ near(p.scale,Math.min(viewport.width/geometry.width,viewport.height/geometry.height));
+ const s=elements(),w=elements();applyWallpaperLayout(s,w,{...viewport,wallpaper:'landmark',geometry});assert.deepEqual(s.values,w.values,'Sky/weather share the uncut photograph');
+ applyWallpaperLayout(s,w,{width:390,height:844});assert.equal(s.values.size,0,'Portrait restores existing composition');
+}
+const weatherSource=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');assert.ok(weatherSource.includes('viewportWidth>viewportHeight'),'Landscape phone requests available wide assets');
+assert.match(css,/data-scene-layout="phone-landscape"/);
+console.log('PASS: landscape phones preserve every source edge, avoid portrait enlargement, use wide assets and restore portrait.');
