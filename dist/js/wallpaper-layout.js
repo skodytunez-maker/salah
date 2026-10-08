@@ -6,8 +6,9 @@ const validSize = size => Number.isFinite(size?.width) && size.width > 0 &&
   Number.isFinite(size?.height) && size.height > 0;
 
 export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
+  const phoneLandscape = validSize({width,height}) && width > height && Math.min(width,height) < 600;
   const protectedSubject = geometry?.fitSubject === true && validSize(geometry);
-  if (!validSize({width,height}) || Math.min(width,height) < 600 && !protectedSubject) return null;
+  if (!validSize({width,height}) || Math.min(width,height) < 600 && !protectedSubject && !phoneLandscape) return null;
   const source = validSize(geometry) ? geometry : wallpaper === 'mosque'
     ? {width:1536,height:1024} : wallpaper === 'new-york' ? {width:1536,height:1024,focalX:.6} : panorama;
   const wide = width > height;
@@ -17,7 +18,7 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
   // Full-bleed landscape needs a separate, aligned day/night/sky asset set.
   const narrow = source.width/source.height < .85;
   const fillViewport=geometry?.fillViewport===true;
-  const scale = Math.min(width,height)<600 || fillViewport ? cover : narrow ? Math.min(cover,contain/.88) : cover;
+  const scale = phoneLandscape ? contain : Math.min(width,height)<600 || fillViewport ? cover : narrow ? Math.min(cover,contain/.88) : cover;
   const photoWidth = source.width*scale, photoHeight = source.height*scale;
   let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : wallpaper === 'mosque' ? .86 : .5);
   if((protectedSubject || fillViewport) && Number.isFinite(geometry.focalX) && geometry.focalX>=0 && geometry.focalX<=1) left=clamp(width*.5-photoWidth*geometry.focalX,width-photoWidth,0);
@@ -29,8 +30,10 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
     const min = -photoWidth*.65, max = width-photoWidth*.95;
     if (min <= max) left = clamp(left,min,max);
   }
+  // Landscape phones display the whole photograph instead of enlarging a portrait crop.
+  if(phoneLandscape){left=(width-photoWidth)*.5;top=(height-photoHeight)*.5;}
   return {width:photoWidth,height:photoHeight,left,top,scale,
-    mode:Math.min(width,height)<600?'phone-artwork':wide?'tablet-wide':'tablet-portrait',
+    mode:phoneLandscape?'phone-landscape':Math.min(width,height)<600?'phone-artwork':wide?'tablet-wide':'tablet-portrait',
     needsLandscape:wide && narrow && !fillViewport};
 }
 
