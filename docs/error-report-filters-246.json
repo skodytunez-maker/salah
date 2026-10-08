@@ -1,0 +1,24 @@
+{
+  "version": 246,
+  "transportUnchanged": true,
+  "optInRequired": true,
+  "transmittedFields": [
+    "route",
+    "kind",
+    "module",
+    "screen",
+    "count"
+  ],
+  "filters": [
+    "AbortError and NotAllowedError ignored",
+    "Single transient network failures ignored; 3 while online in 60 seconds recorded as resource warning",
+    "Foreign resource failures ignored",
+    "Local resource failures while offline ignored",
+    "Single long task ignored; at least 2 tasks of 2000ms or more in 30 seconds recorded as slow warning"
+  ],
+  "genuineOfflineScriptFaults": "Retained until online delivery",
+  "noMessagesOrStacks": true,
+  "limits": "Existing launch20 and daily100 IP-HMAC limits unchanged",
+  "automaticDeviceInspection": false,
+  "monitor": "Read-only aggregate check; separate schedule approval required"
+}

@@ -16,7 +16,7 @@ const get=token=>handler(new Request('https://example.test/error-summary?days=7'
 assert.equal((await get()).status,401);assert.equal((await get(true)).status,403);assert.equal(reads,0);owner=true;assert.equal((await get(true)).status,200);assert.equal(reads,1);
 // Actual browser reporter: opt-in, redaction, rate cap and silence after opt-out.
 const ui=await fs.readFile(new URL('dist/js/error-reporting.js',root),'utf8');
-const executable=ui.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({createErrorReporter,errorContext,errorModule});';
+const executable=ui.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({createErrorReporter,errorContext,errorModule,expectedDiagnosticFailure,ownDiagnosticSource});';
 const listeners={},queue=[],storage=new Map(),sent=[],win={location:{hash:'#account?qr=SECRET&approve=SECRET'},innerWidth:390,addEventListener:(name,fn)=>listeners[name]=fn,removeEventListener:name=>delete listeners[name]},doc={hidden:false,addEventListener(){},removeEventListener(){}},nav={onLine:true,doNotTrack:'0'};
 const scope=vm.createContext({URL,Map,setTimeout,clearTimeout,fetch:()=>{throw Error('No real network allowed')},AbortSignal,crypto,OWNER_PROJECT_URL:'fixture',OWNER_PUBLIC_KEY:'fixture',window:win,document:doc,navigator:nav,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)}});
 const api=vm.runInContext(executable,scope),reporter=api.createErrorReporter({version:226,win,doc,nav,storage:scope.localStorage,Observer:null,send:async(events,version)=>sent.push({events:JSON.parse(JSON.stringify(events)),version}),setTimer:fn=>{queue.push(fn);return queue.length},clearTimer(){}});
@@ -28,4 +28,27 @@ reporter.setEnabled(false);listeners.error({target:win});await reporter.flush();
 const sql=await fs.readFile(new URL('supabase/error-summary-schema.sql',root),'utf8');assert.match(sql,/enable row level security/);assert.match(sql,/revoke all on all tables/);assert.ok(!/user_id|email|session_id|message|stack/.test(sql));
 assert.match(source,/on conflict do nothing returning id/);assert.match(source,/owner-access/);assert.match(source,/rate\.total\+units>100/);
 assert.equal((source.match(/current_date-\$\{days-1\}::integer/g)||[]).length,2,'Both Postgres window queries require an explicit integer bind; an untyped bind is inferred as date');
+
+// Expected cancellations and transient network failures must not become script errors.
+assert.equal(api.expectedDiagnosticFailure({name:'AbortError',message:'SECRET'}),true);
+assert.equal(api.expectedDiagnosticFailure({name:'NotAllowedError'}),true);
+assert.equal(api.expectedDiagnosticFailure({name:'TypeError',message:'Failed to fetch'}),true);
+assert.equal(api.expectedDiagnosticFailure({name:'TypeError',message:'Cannot read properties of undefined'}),false);
+assert.equal(api.errorModule('https://example.test/js/quran-reciter-library.js?private=SECRET'),'quran');
+win.location.href='https://example.test/salah/';
+assert.equal(api.ownDiagnosticSource('https://foreign.test/tracker.js',win),false);
+assert.equal(api.ownDiagnosticSource('https://example.test/salah/js/quran.js',win),true);
+const filtered=[],observed=[];let slowCallback;
+class FakeObserver{static supportedEntryTypes=['longtask'];constructor(fn){slowCallback=fn}observe(){}disconnect(){}}
+const filteredReporter=api.createErrorReporter({version:246,win,doc,nav,storage:scope.localStorage,send:async events=>filtered.push(JSON.parse(JSON.stringify(events))),Observer:FakeObserver,setTimer:()=>1,clearTimer(){}});
+filteredReporter.setEnabled(true);
+listeners.unhandledrejection({reason:{name:'AbortError'}});listeners.unhandledrejection({reason:{name:'NotAllowedError'}});listeners.unhandledrejection({reason:{name:'TypeError',message:'Failed to fetch'}});
+listeners.error({target:win,filename:'https://foreign.test/tracker.js'});
+nav.onLine=false;listeners.error({target:{tagName:'IMG',src:'https://example.test/salah/assets/missing.png'}});listeners.unhandledrejection({reason:{name:'TypeError',message:'Failed to fetch'}});nav.onLine=true;
+slowCallback({getEntries:()=>[{duration:2500,startTime:1000}]});await filteredReporter.flush();assert.equal(filtered.length,0);
+listeners.error({target:win,filename:'https://example.test/salah/js/quran-reciter-library.js?SECRET',error:{name:'TypeError',message:'Cannot read properties of undefined'}});
+slowCallback({getEntries:()=>[{duration:2200,startTime:5000}]});await filteredReporter.flush();assert.equal(filtered.length,1);assert.ok(filtered[0].some(e=>e.kind==='script'&&e.module==='quran'));assert.ok(filtered[0].some(e=>e.kind==='slow'));assert.ok(!JSON.stringify(filtered).includes('SECRET'));
+listeners.unhandledrejection({reason:{name:'TypeError',message:'Failed to fetch'}});listeners.unhandledrejection({reason:{name:'TypeError',message:'Failed to fetch'}});await filteredReporter.flush();assert.ok(filtered[1].some(e=>e.kind==='resource'),'Repeated online network failures remain visible');
+filteredReporter.setEnabled(false);filteredReporter.dispose();
+
 console.log('PASS: owner-only aggregate read, strict deidentified batch allowlist, opt-in/DNT/foreground gates, launch cap, no exception text/URLs/tokens, quiet reporting failures.');
