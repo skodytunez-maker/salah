@@ -82,3 +82,20 @@ for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:134
  assert.ok(landmark>0&&landmark<viewport.width,'One World Trade Center remains in portrait crop');
 }
 assert.equal(wallpaperLayout({width:599,height:900,wallpaper:'new-york'}),null,'New York phone retains old geometry');
+
+// Existing narrow city artwork now fills tablets with a shared focal crop.
+const {landmarkAssetSet,validateLandmarkCatalog}=await import('../dist/js/landmarks.js');
+const catalog=validateLandmarkCatalog(JSON.parse(await readFile(new URL('../dist/wallpapers/catalog.json',import.meta.url),'utf8')));
+for(const entry of catalog.filter(e=>!e.tablet&&!e.fitSubject)){
+ const selected=landmarkAssetSet(entry,true);
+ assert.equal(landmarkAssetSet(entry,false),entry,'Original phone artwork/metadata is untouched');
+ assert.equal(selected.day,entry.day,'Existing artwork is reused');
+ for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:1344,height:900},{width:1600,height:900}]){
+  const size=['afghanistan','badakhshan'].includes(entry.id)?{width:941,height:1672}:{width:853,height:1844};
+  const p=wallpaperLayout({...viewport,wallpaper:'landmark',geometry:{...size,fillViewport:selected.fillViewport,focalX:selected.focalX,focalY:selected.focalY}});
+  near(p.width/p.height,size.width/size.height);
+  assert.ok(p.left<=1e-8&&p.top<=1e-8&&p.left+p.width>=viewport.width-1e-8&&p.top+p.height>=viewport.height-1e-8,'Every remaining city covers tablet edges');
+  const y=p.top+p.height*selected.focalY;assert.ok(y>=0&&y<=viewport.height,'Selected city detail stays visible');
+  assert.equal(p.needsLandscape,false);
+ }
+}

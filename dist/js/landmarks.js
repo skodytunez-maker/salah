@@ -10,7 +10,12 @@ export function landmarkDistance(a,b){
 }
 const validRegion=r=>r&&['south','north','west','east'].every(k=>Number.isFinite(r[k]))&&r.south>=-90&&r.north<=90&&r.west>=-180&&r.east<=180&&r.south<r.north&&r.west<r.east&&r.north-r.south<=6&&r.east-r.west<=6;
 const validAssets=(assets,id)=>['day','night','mask'].every(key=>typeof assets?.[key]==='string'&&new RegExp('^wallpapers/'+id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(assets[key]));
-export function landmarkAssetSet(entry,tablet=false){return tablet&&validAssets(entry?.tablet,entry.id)?{...entry,day:entry.tablet.day,night:entry.tablet.night,mask:entry.tablet.mask,fitSubject:true,focalX:Number.isFinite(entry.tablet.focalX)&&entry.tablet.focalX>=0&&entry.tablet.focalX<=1?entry.tablet.focalX:.5}:entry;}
+const focus=value=>Number.isFinite(value)&&value>=0&&value<=1?value:null;
+export function landmarkAssetSet(entry,tablet=false){
+ if(!tablet)return entry;
+ if(validAssets(entry?.tablet,entry.id))return {...entry,day:entry.tablet.day,night:entry.tablet.night,mask:entry.tablet.mask,fitSubject:true,focalX:focus(entry.tablet.focalX)??.5};
+ return {...entry,fillViewport:true,focalX:focus(entry.tabletFocus?.x)??.5,focalY:focus(entry.tabletFocus?.y)??.63};
+}
 export function validateLandmarkCatalog(value){
  if(value?.version!==1||!Array.isArray(value.cities)||value.cities.length>500)return [];
  return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&(!c.region||validRegion(c.region))&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&['day','night','mask'].every(key=>typeof c[key]==='string'&&new RegExp('^wallpapers/'+c.id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(c[key])));
@@ -50,7 +55,7 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   let selected=landmarkAssetSet(entry,tablet);
   const files=asset=>Promise.all(['day','night','mask'].map(key=>publicFile(new URL(asset[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/webp/,limit:key==='mask'?32768:3145728})));
   let responses;
-  try{responses=await files(selected)}catch(error){abort(signal);if(selected===entry)throw error;selected=entry;responses=await files(entry)}
+  try{responses=await files(selected)}catch(error){abort(signal);if(selected.day===entry.day&&selected.night===entry.night)throw error;selected=landmarkAssetSet({...entry,tablet:undefined},tablet);responses=await files(selected)}
   abort(signal);
   const blobs=await Promise.all(responses.map(r=>r.blob()));abort(signal);
   // Keep just the selected pair and mask. User counters/settings use other stores.

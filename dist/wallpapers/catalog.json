@@ -27,7 +27,11 @@
       "radius": 30,
       "day": "wallpapers/omsk/day-v1.webp",
       "night": "wallpapers/omsk/night-v1.webp",
-      "mask": "wallpapers/omsk/sky-v1.svg"
+      "mask": "wallpapers/omsk/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.6
+      }
     },
     {
       "id": "moscow",
@@ -38,7 +42,11 @@
       "radius": 30,
       "day": "wallpapers/moscow/day-v1.webp",
       "night": "wallpapers/moscow/night-v1.webp",
-      "mask": "wallpapers/moscow/sky-v1.svg"
+      "mask": "wallpapers/moscow/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     },
     {
       "id": "khujand",
@@ -65,7 +73,11 @@
       "radius": 30,
       "day": "wallpapers/dushanbe/day-v1.webp",
       "night": "wallpapers/dushanbe/night-v1.webp",
-      "mask": "wallpapers/dushanbe/sky-v1.svg"
+      "mask": "wallpapers/dushanbe/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.67
+      }
     },
     {
       "id": "almaty",
@@ -76,7 +88,11 @@
       "radius": 30,
       "day": "wallpapers/almaty/day-v1.webp",
       "night": "wallpapers/almaty/night-v1.webp",
-      "mask": "wallpapers/almaty/sky-v1.svg"
+      "mask": "wallpapers/almaty/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     },
     {
       "id": "astana",
@@ -87,7 +103,11 @@
       "radius": 30,
       "day": "wallpapers/astana/day-v1.webp",
       "night": "wallpapers/astana/night-v1.webp",
-      "mask": "wallpapers/astana/sky-v1.svg"
+      "mask": "wallpapers/astana/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     },
     {
       "id": "tashkent",
@@ -98,7 +118,11 @@
       "radius": 30,
       "day": "wallpapers/tashkent/day-v1.webp",
       "night": "wallpapers/tashkent/night-v1.webp",
-      "mask": "wallpapers/tashkent/sky-v1.svg"
+      "mask": "wallpapers/tashkent/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     },
     {
       "id": "grozny",
@@ -109,7 +133,11 @@
       "radius": 30,
       "day": "wallpapers/grozny/day-v1.webp",
       "night": "wallpapers/grozny/night-v1.webp",
-      "mask": "wallpapers/grozny/sky-v1.svg"
+      "mask": "wallpapers/grozny/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     },
     {
       "id": "makhachkala",
@@ -120,7 +148,11 @@
       "radius": 30,
       "day": "wallpapers/makhachkala/day-v1.webp",
       "night": "wallpapers/makhachkala/night-v1.webp",
-      "mask": "wallpapers/makhachkala/sky-v1.svg"
+      "mask": "wallpapers/makhachkala/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     },
     {
       "id": "derbent",
@@ -131,7 +163,11 @@
       "landmark": "Нарын-Кала и Каспийское море",
       "day": "wallpapers/derbent/day-v1.webp",
       "night": "wallpapers/derbent/night-v1.webp",
-      "mask": "wallpapers/derbent/sky-v1.svg"
+      "mask": "wallpapers/derbent/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.62
+      }
     },
     {
       "id": "pamir",
@@ -148,7 +184,11 @@
       "landmark": "Озеро Каракуль и горы Памира",
       "day": "wallpapers/pamir/day-v1.webp",
       "night": "wallpapers/pamir/night-v1.webp",
-      "mask": "wallpapers/pamir/sky-v1.svg"
+      "mask": "wallpapers/pamir/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.6
+      }
     },
     {
       "id": "afghanistan",
@@ -159,7 +199,11 @@
       "radius": 25,
       "day": "wallpapers/afghanistan/afghanistan-day-final.webp",
       "night": "wallpapers/afghanistan/afghanistan-night-final.webp",
-      "mask": "wallpapers/afghanistan/sky-v1.svg"
+      "mask": "wallpapers/afghanistan/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.78
+      }
     },
     {
       "id": "badakhshan",
@@ -170,7 +214,11 @@
       "radius": 15,
       "day": "wallpapers/badakhshan/badakhshan-day.webp",
       "night": "wallpapers/badakhshan/badakhshan-night-v1.webp",
-      "mask": "wallpapers/badakhshan/sky-v1.svg"
+      "mask": "wallpapers/badakhshan/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.68
+      }
     },
     {
       "id": "istanbul",

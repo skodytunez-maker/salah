@@ -16,12 +16,14 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
   // At most 12% of a narrow composition can be cropped in either direction.
   // Full-bleed landscape needs a separate, aligned day/night/sky asset set.
   const narrow = source.width/source.height < .85;
-  const scale = Math.min(width,height)<600 ? cover : narrow ? Math.min(cover,contain/.88) : cover;
+  const fillViewport=geometry?.fillViewport===true;
+  const scale = Math.min(width,height)<600 || fillViewport ? cover : narrow ? Math.min(cover,contain/.88) : cover;
   const photoWidth = source.width*scale, photoHeight = source.height*scale;
   let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : wallpaper === 'mosque' ? .86 : .5);
-  if(protectedSubject && Number.isFinite(geometry.focalX) && geometry.focalX>=0 && geometry.focalX<=1) left=clamp(width*.5-photoWidth*geometry.focalX,width-photoWidth,0);
+  if((protectedSubject || fillViewport) && Number.isFinite(geometry.focalX) && geometry.focalX>=0 && geometry.focalX<=1) left=clamp(width*.5-photoWidth*geometry.focalX,width-photoWidth,0);
   if(wallpaper === 'new-york' && !geometry) left=clamp(width*.5-photoWidth*.6,width-photoWidth,0);
   let top = (height-photoHeight)*.5;
+  if(fillViewport && Number.isFinite(geometry.focalY) && geometry.focalY>=0 && geometry.focalY<=1) top=clamp(height*.5-photoHeight*geometry.focalY,height-photoHeight,0);
   if (wallpaper === 'mosque') {
     // Keep the minarets and main dome (right-hand third) in portrait as well.
     const min = -photoWidth*.65, max = width-photoWidth*.95;
@@ -29,7 +31,7 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
   }
   return {width:photoWidth,height:photoHeight,left,top,scale,
     mode:Math.min(width,height)<600?'phone-artwork':wide?'tablet-wide':'tablet-portrait',
-    needsLandscape:wide && narrow};
+    needsLandscape:wide && narrow && !fillViewport};
 }
 
 const layouts = new WeakMap();
