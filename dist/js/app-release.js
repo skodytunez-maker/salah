@@ -1,4 +1,4 @@
-export const APP_VERSION=243;
+export const APP_VERSION=244;
 export const APP_UPDATED_AT='2026-10-09';
 export const APP_CHANGES=["В разделе «Коран» появились карточки чтецов, избранные и удобный выбор сур для прослушивания.","Добавлены девять чтецов, включая Ахмеда Касеба, Мухаммада аль-Курди и Сиратулло Раупова."];
 // Public notes list new user-facing features or sections only. Internal settings,

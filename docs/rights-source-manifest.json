@@ -3343,6 +3343,11 @@
       "path": "dist/assets/reciters/siratulloraupov.jpg",
       "gitBlobSha": "d4ba51f9eb49b0bb6f48a816f2f7271b25f8714c",
       "bytes": 50424
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v2.webp",
+      "gitBlobSha": "d22cb87bf1a89a9635196d0708082a7cc92ce0ff",
+      "bytes": 365470
     }
   ]
 }

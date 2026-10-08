@@ -1237,6 +1237,16 @@
       "rightsReviewStatus": "needs-review",
       "rightsEvidence": "docs/reciter-expansion-20261009.json",
       "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review. Release 243: background replaced with a sample from Luhaidan; no face synthesis; Bandar slightly cropped. Original files retained in local release backup."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v2.webp",
+      "gitBlobSha": "d22cb87bf1a89a9635196d0708082a7cc92ce0ff",
+      "bytes": 365470,
+      "kind": "wallpaper",
+      "wallpaperSet": "tyumen",
+      "role": "night",
+      "rightsReviewStatus": "needs-review",
+      "note": "Release 244: built-in image edit of night-tablet-v1.webp removed the small churches from the far bank; bridge and panorama retained. Original reference provenance remains in docs/tyumen-tablet-provenance.json."
     }
   ],
   "wallpaperSets": [
@@ -1245,7 +1255,7 @@
       "name": "Тюмень",
       "paths": [
         "dist/wallpapers/tyumen/day-v1.webp",
-        "dist/wallpapers/tyumen/night-v1.webp",
+        "dist/wallpapers/tyumen/night-tablet-v2.webp",
         "dist/wallpapers/tyumen/sky-v1.svg"
       ],
       "rightsReviewStatus": "needs-review",
