@@ -41,8 +41,8 @@ if(typeof Deno!=='undefined'){
   for(const e of input.events)await tx`insert into salah_errors_private.counts(day,version,route,kind,module,screen,count) values(current_date,${input.version},${e.route},${e.kind},${e.module},${e.screen},${e.count}) on conflict(day,version,route,kind,module,screen) do update set count=counts.count+excluded.count`;
   return true;
  }),read:async days=>{
-  const rows=await sql`select version,route,kind,module,screen,sum(count)::bigint::text as count from salah_errors_private.counts where day>=current_date-${days-1} group by version,route,kind,module,screen order by sum(count) desc,version desc,route,kind,module,screen limit 101`;
-  const [total]=await sql`select coalesce(sum(count),0)::bigint::text as count from salah_errors_private.counts where day>=current_date-${days-1}`;
+  const rows=await sql`select version,route,kind,module,screen,sum(count)::bigint::text as count from salah_errors_private.counts where day>=current_date-${days-1}::integer group by version,route,kind,module,screen order by sum(count) desc,version desc,route,kind,module,screen limit 101`;
+  const [total]=await sql`select coalesce(sum(count),0)::bigint::text as count from salah_errors_private.counts where day>=current_date-${days-1}::integer`;
   return{days,total:Number(total.count),rows:rows.slice(0,100).map(r=>({...r,count:Number(r.count)})),more:rows.length>100};
  }}));
 }
