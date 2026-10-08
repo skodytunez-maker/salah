@@ -24,3 +24,8 @@ assert.match(notificationLabels({checkedAt,enabled:true,permissionDenied:true}).
 assert.match(notificationLabels({checkedAt,enabled:true,permissionGranted:true}).secondary,/не подключена/);
 assert.ok(!JSON.stringify(notificationLabels({checkedAt,enabled:true,token:'private',email:'private'})).includes('private'));
 console.log('PASS: prayer selection, permission and actual browser subscription required; unknown is distinct from disabled; metadata excludes worship history and secrets.');
+
+const stamp=Date.now(),native={notifications:true,exactAlarms:true,prayerUntil:stamp+3600000};
+assert.equal(notificationSnapshot(enabled,{native,now:stamp,device,subscription:true}).nativeUntil,stamp+3600000);
+assert.equal(notificationSnapshot(enabled,{native,now:stamp,device,subscription:true}).device,null);
+for(const altered of [{...native,notifications:false},{...native,exactAlarms:false},{...native,prayerUntil:stamp},{...native,prayerUntil:stamp+15*86400000}])assert.equal(notificationSnapshot(enabled,{native:altered,now:stamp}).nativeUntil,null);

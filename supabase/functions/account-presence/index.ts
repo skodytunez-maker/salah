@@ -1,6 +1,8 @@
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function validNotification(value){
- if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['enabled','permission','browser','device'].includes(k))||typeof value.enabled!=='boolean'||typeof value.browser!=='boolean'||!['granted','denied','default','unsupported'].includes(value.permission))return false;
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['enabled','permission','browser','device','nativeUntil','nativeUntil'].includes(k))||typeof value.enabled!=='boolean'||typeof value.browser!=='boolean'||!['granted','denied','default','unsupported'].includes(value.permission))return false;
+ if(Object.hasOwn(value,'nativeUntil')&&value.nativeUntil!==null&&(!Number.isSafeInteger(value.nativeUntil)||value.nativeUntil<=Date.now()||value.nativeUntil-Date.now()>14*86400000||value.permission!=='granted'||!value.enabled||value.device!==null))return false;
+ if(Object.hasOwn(value,'nativeUntil')&&value.nativeUntil!==null&&(!Number.isSafeInteger(value.nativeUntil)||value.nativeUntil<=Date.now()||value.nativeUntil-Date.now()>14*86400000||value.permission!=='granted'||!value.enabled||value.device!==null))return false;
  const device=value.device;
  return device===null||!!device&&typeof device==='object'&&!Array.isArray(device)&&Object.keys(device).length===2&&UUID.test(device.id||'')&&/^[a-f0-9]{64}$/.test(device.token||'');
 }
@@ -48,7 +50,7 @@ if(typeof Deno!=='undefined'){
      const tokenHash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(n.device.token))),b=>b.toString(16).padStart(2,'0')).join('');
      const [device]=await tx`select id from salah_push_private.devices where id=${n.device.id}::uuid and token_hash=${tokenHash}`;pushId=device?.id||null;
     }
-    await tx`insert into public.app_notification_status(user_id,tab_id,session_id,enabled,permission,browser_notifications,push_device_id,checked_at) values(${uid}::uuid,${input.p_tab}::uuid,${sid}::uuid,${n.enabled},${n.permission},${n.browser},${pushId}::uuid,clock_timestamp()) on conflict(user_id,tab_id) do update set session_id=excluded.session_id,enabled=excluded.enabled,permission=excluded.permission,browser_notifications=excluded.browser_notifications,push_device_id=excluded.push_device_id,checked_at=excluded.checked_at`;
+    await tx`insert into public.app_notification_status(user_id,tab_id,session_id,enabled,permission,browser_notifications,push_device_id,native_until,checked_at) values(${uid}::uuid,${input.p_tab}::uuid,${sid}::uuid,${n.enabled},${n.permission},${n.browser},${pushId}::uuid,${n.nativeUntil?new Date(n.nativeUntil).toISOString():null}::timestamptz,clock_timestamp()) on conflict(user_id,tab_id) do update set session_id=excluded.session_id,enabled=excluded.enabled,permission=excluded.permission,browser_notifications=excluded.browser_notifications,push_device_id=excluded.push_device_id,native_until=excluded.native_until,checked_at=excluded.checked_at`;
    });
   }
  }));

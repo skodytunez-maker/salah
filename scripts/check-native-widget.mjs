@@ -45,3 +45,26 @@ result=await syncNativePrayerWidget({city:null,startDay:'2026-10-04',days,timing
 assert.equal(result.status,'cleared');assert.equal(calls.at(-1)[0],'clear');
 
 console.log('PASS: widget snapshot is bounded, privacy-safe, versioned and bridge delivery deduplicates.');
+
+// Metadata timestamps do not change the displayed schedule.
+await syncNativePrayerWidget({city,method:3,school:1,startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap});
+const count=calls.length;
+assert.equal((await syncNativePrayerWidget({city,method:3,school:1,startDay:'2026-10-04',days,timingsFor,generatedAt:base+10000},{cap})).status,'unchanged');assert.equal(calls.length,count);
+let unblock,shown=null;
+const slowCap={Plugins:{SalahWidget:{updateSnapshot:async({snapshot})=>{if(!unblock)await new Promise(resolve=>unblock=resolve);shown=snapshot.cityName;},clearSnapshot:async()=>{shown=null;}}}};
+const old=syncNativePrayerWidget({city:{...city,name:'Old city'},startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap:slowCap});
+await new Promise(resolve=>setTimeout(resolve,0));
+const latest=syncNativePrayerWidget({city:{...city,name:'Latest city'},startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap:slowCap});
+unblock();await old;await latest;assert.equal(shown,'Latest city','A slow old-city update cannot win over the new one');
+let finish;
+const clearingCap={Plugins:{SalahWidget:{updateSnapshot:async({snapshot})=>{await new Promise(resolve=>finish=resolve);shown=snapshot.cityName;},clearSnapshot:async()=>{shown=null;}}}};
+const writing=syncNativePrayerWidget({city,startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap:clearingCap});await new Promise(resolve=>setTimeout(resolve,0));
+const clearing=syncNativePrayerWidget({city:null,startDay:'2026-10-04',days,timingsFor},{cap:clearingCap});finish();await writing;await clearing;assert.equal(shown,null,'Clearing after a slow update leaves the widget empty');
+let isolated=0;const separate={Plugins:{SalahWidget:{updateSnapshot:async()=>isolated++}}};
+assert.equal((await syncNativePrayerWidget({city,method:3,school:1,startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap:separate})).status,'updated');assert.equal(isolated,1,'Delivery state is isolated per native bridge');
+console.log('PASS: timestamp-only changes deduplicate, city updates serialize, late writes cannot undo clearing and independent bridges do not share receipts. Native delivery mocked.');
+
+assert.equal((await syncNativePrayerWidget({city:null,startDay:'2026-10-04',days,timingsFor},{cap:separate})).status,'unavailable','Missing clear method must not claim deletion');
+let attempts=0;const failing={Plugins:{SalahWidget:{updateSnapshot:async()=>{attempts++;if(attempts===1)throw Error('bridge failure');}}}};
+await assert.rejects(syncNativePrayerWidget({city,startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap:failing}));
+assert.equal((await syncNativePrayerWidget({city,startDay:'2026-10-04',days,timingsFor,generatedAt:base},{cap:failing})).status,'updated');assert.equal(attempts,2,'Failed bridge calls do not poison the retry queue');

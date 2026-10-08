@@ -84,6 +84,16 @@
         android:textColor="#D9C28E"
         android:textSize="12sp" />
 
+    <Chronometer
+        android:id="@+id/widget_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:visibility="gone"
+        android:textColor="#D9C28E"
+        android:textSize="12sp" />
+
     <LinearLayout
         android:id="@+id/widget_schedule"
         android:layout_width="match_parent"

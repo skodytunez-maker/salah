@@ -1,6 +1,8 @@
 package com.saadikobilov.salah;
 
 import android.app.PendingIntent;
+import android.app.AlarmManager;
+import android.os.SystemClock;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -21,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SalahPrayerWidgetProvider extends AppWidgetProvider {
+    private static final String REFRESH = "com.saadikobilov.salah.WIDGET_REFRESH";
     private static final String[] KEYS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static final String[] NAMES = {"Фаджр", "Зухр", "Аср", "Магриб", "Иша"};
     private static final int[] NAME_IDS = {
@@ -37,16 +40,54 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
         ComponentName component = new ComponentName(context, SalahPrayerWidgetProvider.class);
         int[] ids = manager.getAppWidgetIds(component);
         for (int id : ids) update(context, manager, id);
+        scheduleRefresh(context, ids.length > 0);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
-        for (int id : ids) update(context, manager, id);
+        refresh(context);
     }
 
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager manager, int appWidgetId, Bundle newOptions) {
         update(context, manager, appWidgetId);
+        scheduleRefresh(context, true);
+    }
+
+    @Override public void onEnabled(Context context) { refresh(context); }
+    @Override public void onDisabled(Context context) { scheduleRefresh(context, false); }
+    @Override public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        if (REFRESH.equals(action) || Intent.ACTION_BOOT_COMPLETED.equals(action) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action) || Intent.ACTION_TIME_CHANGED.equals(action) || Intent.ACTION_TIMEZONE_CHANGED.equals(action) || AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED.equals(action)) { refresh(context); return; }
+        super.onReceive(context, intent);
+    }
+    private static boolean exact(Context context) {
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        return alarm != null && (Build.VERSION.SDK_INT < 31 || alarm.canScheduleExactAlarms());
+    }
+    private static void scheduleRefresh(Context context, boolean hasWidgets) {
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarm == null) return;
+        PendingIntent pending = PendingIntent.getBroadcast(context, 0, new Intent(context, SalahPrayerWidgetProvider.class).setAction(REFRESH), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        alarm.cancel(pending);
+        if (!hasWidgets) { pending.cancel(); return; }
+        try {
+            String raw = context.getSharedPreferences(SalahWidgetPlugin.PREFS, Context.MODE_PRIVATE).getString(SalahWidgetPlugin.SNAPSHOT, null);
+            if (raw == null) return;
+            JSONObject snapshot = new JSONObject(raw);
+            if (snapshot.optInt("schemaVersion", -1) != 1) return;
+            long now = System.currentTimeMillis();
+            ZoneId zone = ZoneId.of(snapshot.getString("timezone"));
+            NextPrayer next = findNext(snapshot.getJSONArray("days"), now);
+            if (next == null) return;
+            long midnight = Instant.ofEpochMilli(now).atZone(zone).toLocalDate().plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli();
+            long at = SalahWidgetTiming.refreshAt(now, next.time, midnight);
+            if (at <= now) return;
+            // Refresh visible widgets at prayer/day boundaries without waking the device.
+            if (exact(context)) alarm.setExact(AlarmManager.RTC, at, pending);
+            else alarm.setWindow(AlarmManager.RTC, at, 10 * 60 * 1000L, pending);
+        } catch (SecurityException revoked) { /* Periodic launcher updates remain available. */ }
+        catch (Exception invalid) { /* Invalid/expired snapshots never create alarms. */ }
     }
 
     private static void update(Context context, AppWidgetManager manager, int id) {
@@ -83,6 +124,8 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
         boolean thin = SalahWidgetSizing.thin(height);
         views.setViewVisibility(R.id.widget_header, thin ? View.GONE : View.VISIBLE);
         views.setViewVisibility(R.id.widget_countdown, thin ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.widget_timer, View.GONE);
+        views.setChronometer(R.id.widget_timer, 0, null, false);
         views.setViewVisibility(R.id.widget_schedule, medium ? View.VISIBLE : View.GONE);
         float density = context.getResources().getDisplayMetrics().density;
         int horizontalPadding = Math.round((thin ? 8 : 12) * density);
@@ -111,7 +154,13 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
             } else {
                 views.setTextViewText(R.id.widget_prayer, next.name);
                 views.setTextViewText(R.id.widget_time, format(next.time, zone));
-                views.setTextViewText(R.id.widget_countdown, remaining(next.time - now));
+                views.setViewVisibility(R.id.widget_countdown, View.GONE);
+                long base = SalahWidgetTiming.chronometerBase(now, next.time, SystemClock.elapsedRealtime());
+                if (!thin && Build.VERSION.SDK_INT >= 24 && exact(context) && base >= 0) {
+                    views.setViewVisibility(R.id.widget_timer, View.VISIBLE);
+                    views.setChronometerCountDown(R.id.widget_timer, true);
+                    views.setChronometer(R.id.widget_timer, base, "через %s", true);
+                }
             }
             bindSchedule(views, schedule, zone);
         } catch (Exception error) {
@@ -161,14 +210,6 @@ public class SalahPrayerWidgetProvider extends AppWidgetProvider {
 
     private static String format(long value, ZoneId zone) {
         return DateTimeFormatter.ofPattern("HH:mm").withZone(zone).format(Instant.ofEpochMilli(value));
-    }
-
-    private static String remaining(long millis) {
-        long minutes = Math.max(0, (millis + 59999) / 60000);
-        if (minutes < 60) return "через " + minutes + " мин";
-        long hours = minutes / 60;
-        long rest = minutes % 60;
-        return rest == 0 ? "через " + hours + " ч" : "через " + hours + " ч " + rest + " мин";
     }
 
     private static final class NextPrayer {
