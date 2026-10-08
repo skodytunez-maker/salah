@@ -2,12 +2,14 @@ import {createNativeReminderConnection} from './native-reminders.js';
 import {normalizeReminders} from './reminder-events.js';
 import {readDhikrActivity} from './dhikr-reminder.js';
 import {esc} from './ui.js';
+import {connectNativeAdhanAudio} from './native-adhan.js';
 
 export function nativeReminderPlugin(cap=globalThis.Capacitor){
  return cap?.isNativePlatform?.()===true&&cap.getPlatform?.()==='android'&&cap.Plugins?.SalahReminders||null;
 }
 export function createNativeBackgroundReminders({getSettings,getContext,toast=()=>{},plugin=nativeReminderPlugin(),clock=()=>Date.now()}={}){
  if(!plugin)return null;
+ const audioConnection=connectNativeAdhanAudio(plugin);
  let mounted=null,busy=false,needsSync=false,destroyed=false,configured=false,lastAt=0,lastSettings='',lastDays,lastDay='',lastActivity=0,permission='default',adhanSupported=false;
  const context=()=>{const s=getSettings(),c=getContext()||{};return {...c,cityKey:s.city?c.cityKey:null,timeZone:c.timeZone||s.city?.timezone,dhikrLastAt:readDhikrActivity()};};
  const connection=createNativeReminderConnection({plugin,getContext:context,now:clock,getPreferences:nativeStatus=>{
@@ -46,5 +48,5 @@ export function createNativeBackgroundReminders({getSettings,getContext,toast=()
  globalThis.window?.addEventListener('salah:settings-changed',settingsChanged);
  globalThis.document?.addEventListener('visibilitychange',resumed);
  void sync(true);
- return {mount(container){mounted=container;draw();},nativeSync:sync,enable,active:()=>connection.status().status==='connected',invitationState:()=>({supported:true,permission,hasDevice:configured||connection.status().status==='connected',guide:''}),destroy(){destroyed=true;mounted=null;globalThis.window?.removeEventListener('salah:settings-changed',settingsChanged);globalThis.document?.removeEventListener('visibilitychange',resumed);}};
+ return {mount(container){mounted=container;draw();},nativeSync:sync,nativeAudioActive:()=>adhanSupported&&connection.status().status==='connected',enable,active:()=>connection.status().status==='connected',invitationState:()=>({supported:true,permission,hasDevice:configured||connection.status().status==='connected',guide:''}),destroy(){destroyed=true;audioConnection.destroy();mounted=null;globalThis.window?.removeEventListener('salah:settings-changed',settingsChanged);globalThis.document?.removeEventListener('visibilitychange',resumed);}};
 }

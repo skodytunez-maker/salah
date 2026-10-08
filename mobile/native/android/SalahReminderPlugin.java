@@ -19,23 +19,40 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
 import org.json.JSONArray;
+import java.lang.ref.WeakReference;
 
 @CapacitorPlugin(name = "SalahReminders", permissions = {
         @Permission(alias = "notifications", strings = {Manifest.permission.POST_NOTIFICATIONS})
 })
 public class SalahReminderPlugin extends Plugin {
+    private static WeakReference<SalahReminderPlugin> current = new WeakReference<>(null);
+    static volatile boolean webAudioBusy = false;
+    static void audioState(boolean playing) { SalahReminderPlugin plugin = current.get(); if (plugin != null) { JSObject state = new JSObject(); state.put("playing", playing); plugin.notifyListeners("nativeAdhanState", state, true); } }
+    private boolean audioAvailable() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationManager manager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            android.app.NotificationChannel channel = manager == null ? null : manager.getNotificationChannel(SalahAdhanService.CHANNEL);
+            if (channel != null && channel.getImportance() == NotificationManager.IMPORTANCE_NONE) return false;
+        }
+        try { for (String name : new String[]{"adhan-mansour.mp3", "adhan-mishary.mp3", "adhan-mansour-fajr.mp3"}) { try (android.content.res.AssetFileDescriptor ignored = getContext().getAssets().openFd("public/assets/audio/" + name)) {} } return true; }
+        catch (Exception missing) { return false; }
+    }
     private JSObject status() {
         JSObject result = new JSObject();
         result.put("notifications", SalahReminderStore.notificationsAllowed(getContext()));
         result.put("permission", SalahReminderStore.notificationsAllowed(getContext()) ? "granted" :
                 Build.VERSION.SDK_INT < 33 || getPermissionState("notifications") == PermissionState.GRANTED || getPermissionState("notifications") == PermissionState.DENIED || getPermissionState("notifications") == PermissionState.PROMPT_WITH_RATIONALE ? "denied" : "default");
         result.put("exactAlarms", SalahReminderStore.exactAllowed(getContext()));
-        result.put("adhan", false);
+        result.put("adhan", audioAvailable());
+        result.put("playing", SalahAdhanService.active);
         result.put("pending", SalahReminderStore.read(getContext()).length());
         result.put("configured", SalahReminderStore.prefs(getContext()).getBoolean("configured", false));
         return result;
     }
-    @Override public void load() { SalahReminderStore.reschedule(getContext()); }
+    @Override public void load() { current = new WeakReference<>(this); webAudioBusy = false; SalahReminderStore.reschedule(getContext()); audioState(SalahAdhanService.active); }
+    @Override protected void handleOnDestroy() { if (current.get() == this) { current.clear(); webAudioBusy = false; } }
+    @PluginMethod public void setWebAudioBusy(PluginCall call) { webAudioBusy = call.getBoolean("busy", false); if (webAudioBusy) getContext().stopService(new Intent(getContext(), SalahAdhanService.class)); call.resolve(); }
+    @PluginMethod public void stopAdhan(PluginCall call) { getContext().stopService(new Intent(getContext(), SalahAdhanService.class)); call.resolve(); }
     @PluginMethod public void getStatus(PluginCall call) { call.resolve(status()); }
     @PluginMethod public void requestNotificationPermission(PluginCall call) {
         if (SalahReminderStore.notificationsAllowed(getContext())) { call.resolve(status()); return; }
@@ -78,6 +95,7 @@ public class SalahReminderPlugin extends Plugin {
     @PluginMethod public void clearSchedule(PluginCall call) {
         try {
             SalahReminderStore.replace(getContext(), new JSONArray());
+            getContext().stopService(new Intent(getContext(), SalahAdhanService.class));
             NotificationManager manager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null && Build.VERSION.SDK_INT >= 23) {
                 for (android.service.notification.StatusBarNotification notification : manager.getActiveNotifications()) {

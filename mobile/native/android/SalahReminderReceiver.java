@@ -20,6 +20,17 @@ public class SalahReminderReceiver extends BroadcastReceiver {
         if (!SalahReminderStore.ACTION.equals(action)) return;
         JSONObject event = SalahReminderStore.take(context, intent.getStringExtra("id"), intent.getStringExtra("generation"));
         if (event == null || !SalahReminderPolicy.fresh(System.currentTimeMillis(), event.optLong("at")) || !SalahReminderStore.notificationsAllowed(context)) return;
+        if (event.optBoolean("adhan") && SalahAdhanPolicy.timely(System.currentTimeMillis(), event.optLong("at")) && !SalahReminderPlugin.webAudioBusy) {
+            try {
+                Intent service = new Intent(context, SalahAdhanService.class).putExtra("event", event.toString());
+                if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(service); else context.startService(service);
+                return;
+            } catch (RuntimeException unavailable) { /* Keep the prayer notification when Android refuses playback. */ }
+        }
+        post(context, event);
+    }
+    static void post(Context context, JSONObject event) {
+        if (!SalahReminderPolicy.fresh(System.currentTimeMillis(), event.optLong("at")) || !SalahReminderStore.notificationsAllowed(context)) return;
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) return;
         if (Build.VERSION.SDK_INT >= 26) manager.createNotificationChannel(new NotificationChannel(CHANNEL, "Напоминания SALAH", NotificationManager.IMPORTANCE_HIGH));
@@ -29,6 +40,7 @@ public class SalahReminderReceiver extends BroadcastReceiver {
         builder.setSmallIcon(R.drawable.salah_notification).setContentTitle("SALAH").setContentText(event.optString("message"))
                 .setStyle(new Notification.BigTextStyle().bigText(event.optString("message"))).setContentIntent(content).setAutoCancel(true);
         if (Build.VERSION.SDK_INT < 26) builder.setPriority(Notification.PRIORITY_HIGH).setDefaults(Notification.DEFAULT_SOUND);
-        try { manager.notify("salah-reminder:" + event.optString("id"), 0, builder.build()); } catch (SecurityException ignored) { }
+        String slot = event.optString("kind") + ":" + event.optString("key");
+        try { manager.notify("salah-reminder:" + slot, 0, builder.build()); } catch (SecurityException ignored) { }
     }
 }

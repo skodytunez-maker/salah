@@ -49,8 +49,11 @@ final class SalahReminderStore {
             JSONObject event = input.getJSONObject(i);
             String id = event.getString("id"), message = event.getString("message"); long at = event.getLong("at");
             if (!SalahReminderPolicy.valid(now, at, id, message) || !ids.add(id)) throw new IllegalArgumentException("Invalid reminder event");
-            if (event.optBoolean("adhan", false)) throw new IllegalArgumentException("Азан в фоне ещё не подключён.");
-            JSONObject saved = new JSONObject(); saved.put("id", id); saved.put("at", at); saved.put("message", message); next.put(saved);
+            boolean adhan = event.optBoolean("adhan", false);
+            String key = event.optString("key"), voice = event.optString("voice");
+            if (adhan && (!"prayer".equals(event.optString("kind")) || SalahAdhanPolicy.asset(key, voice) == null)) throw new IllegalArgumentException("Invalid azan event");
+            JSONObject saved = new JSONObject(); saved.put("id", id); saved.put("at", at); saved.put("message", message);
+            saved.put("adhan", adhan); saved.put("key", key); saved.put("voice", voice); saved.put("kind", event.optString("kind")); next.put(saved);
         }
         JSONArray previous = read(context); String generation = UUID.randomUUID().toString();
         // Rotate the generation before changing alarms: an old receiver cannot deliver a stale city/settings event.
