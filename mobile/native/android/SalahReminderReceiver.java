@@ -26,7 +26,7 @@ public class SalahReminderReceiver extends BroadcastReceiver {
         Intent open = new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent content = PendingIntent.getActivity(context, 0, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder builder = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(context, CHANNEL) : new Notification.Builder(context);
-        builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle("SALAH").setContentText(event.optString("message"))
+        builder.setSmallIcon(R.drawable.salah_notification).setContentTitle("SALAH").setContentText(event.optString("message"))
                 .setStyle(new Notification.BigTextStyle().bigText(event.optString("message"))).setContentIntent(content).setAutoCancel(true);
         if (Build.VERSION.SDK_INT < 26) builder.setPriority(Notification.PRIORITY_HIGH).setDefaults(Notification.DEFAULT_SOUND);
         try { manager.notify("salah-reminder:" + event.optString("id"), 0, builder.build()); } catch (SecurityException ignored) { }

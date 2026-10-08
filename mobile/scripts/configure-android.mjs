@@ -32,6 +32,7 @@ await copy('SalahReminderPolicyTest.java',path.join(androidRoot,'..','test','jav
 await copy('SalahWidgetSizingTest.java',path.join(androidRoot,'..','test','java',packagePath,'SalahWidgetSizingTest.java'));
 await copy('salah_widget.xml',path.join(resRoot,'layout','salah_widget.xml'));
 await copy('salah_widget_bg.xml',path.join(resRoot,'drawable','salah_widget_bg.xml'));
+await copy('salah_notification.xml',path.join(resRoot,'drawable','salah_notification.xml'));
 await copy('salah_widget_info.xml',path.join(resRoot,'xml','salah_widget_info.xml'));
 await copy('widget_strings.xml',path.join(resRoot,'values','widget_strings.xml'));
 
