@@ -1,4 +1,4 @@
-import{dispatchSupportPush}from './support-push.mjs';
+import {dispatchSupportPush}from './support-push.mjs';
 import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
 import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
 
