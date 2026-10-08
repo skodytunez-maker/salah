@@ -141,3 +141,15 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-artwork"
  #home-scene[data-wallpaper="new-york"] .scene-sky{-webkit-mask-image:url('./assets/window-sky-mask-tablet-v1.svg');mask-image:url('./assets/window-sky-mask-tablet-v1.svg')}
  body[data-wallpaper="new-york"] #weather-layer{-webkit-mask-image:url('./assets/window-weather-mask-tablet-v1.svg');mask-image:url('./assets/window-weather-mask-tablet-v1.svg')}
 }
+
+/* Keep the complete photograph on short landscape phones. The surrounding
+   surface stays calm instead of repeating or stretching low-resolution pixels. */
+#home-scene[data-scene-layout="phone-landscape"]::before{content:"";position:absolute;inset:0;background:linear-gradient(150deg,#304c66,#172b42 65%,#0b192a);opacity:var(--scene-day);pointer-events:none}
+#home-scene[data-scene-layout="phone-landscape"]>div{inset:auto;left:var(--scene-photo-left);top:var(--scene-photo-top);width:var(--scene-photo-width);height:var(--scene-photo-height)}
+#home-scene[data-scene-layout="phone-landscape"] .scene-night,#home-scene[data-scene-layout="phone-landscape"] .scene-day{background-size:100% 100%;background-position:center center}
+#home-scene[data-scene-layout="phone-landscape"] .scene-night::after,#home-scene[data-scene-layout="phone-landscape"] .scene-day::after{display:none}
+#home-scene[data-scene-layout="phone-landscape"] .scene-sky{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-position:0 0;mask-position:0 0}
+#home-scene[data-scene-layout="phone-landscape"] .scene-sky-plane{inset:0;left:0;top:0;width:100%;height:100%;aspect-ratio:auto;transform:none}
+#home-scene[data-scene-layout="phone-landscape"] .scene-shade{inset:0;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(5,10,20,.1),rgba(5,10,20,.16) 48%,rgba(5,10,20,.27))}
+#weather-layer[data-scene-layout="phone-landscape"]{inset:auto;left:var(--scene-photo-left);top:var(--scene-photo-top);width:var(--scene-photo-width);height:var(--scene-photo-height)}
+body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscape"]{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-position:0 0;mask-position:0 0}
