@@ -60,19 +60,27 @@ export function buildPrayerWidgetSnapshot({city,method,school,startDay,days,timi
   };
 }
 
-let lastSerialized='';
+const deliveries=new WeakMap();
 export async function syncNativePrayerWidget(input,{cap=globalThis.Capacitor}={}){
   const snapshot=buildPrayerWidgetSnapshot(input);
   const plugin=cap?.Plugins?.SalahWidget;
   if(!plugin||typeof plugin.updateSnapshot!=='function')return {status:'unavailable',snapshot};
-  if(!snapshot){
-    if(typeof plugin.clearSnapshot==='function')await plugin.clearSnapshot();
-    lastSerialized='';
-    return {status:'cleared',snapshot:null};
-  }
-  const serialized=JSON.stringify(snapshot);
-  if(serialized===lastSerialized)return {status:'unchanged',snapshot};
-  await plugin.updateSnapshot({snapshot});
-  lastSerialized=serialized;
-  return {status:'updated',snapshot};
+  let state=deliveries.get(plugin);
+  if(!state){state={sequence:0,tail:Promise.resolve(),signature:''};deliveries.set(plugin,state);}
+  const own=++state.sequence;
+  // Generated time is metadata; identical prayer times must not rewrite the widget.
+  const signature=snapshot?JSON.stringify({...snapshot,generatedAt:undefined}):'';
+  const task=state.tail.then(async()=>{
+    if(own!==state.sequence)return {status:'superseded',snapshot};
+    if(!snapshot){
+      if(typeof plugin.clearSnapshot!=='function')return {status:'unavailable',snapshot:null};
+      await plugin.clearSnapshot();
+      state.signature='';return {status:'cleared',snapshot:null};
+    }
+    if(signature===state.signature)return {status:'unchanged',snapshot};
+    await plugin.updateSnapshot({snapshot});state.signature=signature;
+    return {status:'updated',snapshot};
+  }).catch(error=>{state.signature='';throw error;});
+  state.tail=task.catch(()=>{});
+  return task;
 }
