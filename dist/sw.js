@@ -144,7 +144,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":234,"date":"2026-10-08","changes":["Главный экран стал удобнее при горизонтальном положении телефона.","Обои адаптированы для вертикального и горизонтального экрана планшета."]};
+const RELEASE={"version":234,"date":"2026-10-08","changes":["Главный экран стал удобнее при горизонтальном положении телефона.","Обои адаптированы для вертикального и горизонтального экрана планшета."],"announcement":{"version":234,"date":"2026-10-08","changes":["Главный экран стал удобнее при горизонтальном положении телефона.","Обои адаптированы для вертикального и горизонтального экрана планшета."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
