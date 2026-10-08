@@ -17,6 +17,7 @@ assert.equal(JSON.stringify(settings),saved,'Saved foreground-azan choice and se
 const checks=statusCalls;stamp+=1000;await background.nativeSync();assert.equal(statusCalls,checks,'No bridge round trip on every clock tick');
 days={fresh:true};await background.nativeSync();assert.equal(statusCalls,checks+1,'New timetable state refreshes delivery');
 settings={...settings,reminders:{...settings.reminders,enabled:false}};await background.nativeSync();assert.equal(background.active(),false);assert.equal(pending,0);assert.ok(clears>0);
+assert.equal(background.invitationState().hasDevice,true,'Deliberately disabling reminders does not turn the device into a first-time setup');
 const originalStatus=plugin.getStatus;
 plugin.getStatus=async()=>({notifications:false,permission:'denied',exactAlarms:true,adhan:false,pending});
 settings={...settings,reminders:{...settings.reminders,enabled:true}};await background.nativeSync(true);

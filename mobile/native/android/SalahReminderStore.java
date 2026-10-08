@@ -74,6 +74,7 @@ final class SalahReminderStore {
             for (int i = 0; i < next.length(); i++) { PendingIntent pending = intent(context, next.getJSONObject(i), "", false); if (pending != null) { manager.cancel(pending); pending.cancel(); } }
             return 0;
         }
+        if (scheduled > 0) prefs(context).edit().putBoolean("configured", true).commit();
         return scheduled;
     }
     static synchronized void reschedule(Context context) {

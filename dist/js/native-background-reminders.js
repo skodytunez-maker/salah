@@ -8,10 +8,11 @@ export function nativeReminderPlugin(cap=globalThis.Capacitor){
 }
 export function createNativeBackgroundReminders({getSettings,getContext,toast=()=>{},plugin=nativeReminderPlugin(),clock=()=>Date.now()}={}){
  if(!plugin)return null;
- let mounted=null,busy=false,needsSync=false,destroyed=false,lastAt=0,lastSettings='',lastDays,lastDay='',lastActivity=0,permission='default',adhanSupported=false;
+ let mounted=null,busy=false,needsSync=false,destroyed=false,configured=false,lastAt=0,lastSettings='',lastDays,lastDay='',lastActivity=0,permission='default',adhanSupported=false;
  const context=()=>{const s=getSettings(),c=getContext()||{};return {...c,cityKey:s.city?c.cityKey:null,timeZone:c.timeZone||s.city?.timezone,dhikrLastAt:readDhikrActivity()};};
  const connection=createNativeReminderConnection({plugin,getContext:context,now:clock,getPreferences:nativeStatus=>{
   permission=nativeStatus.notifications?'granted':nativeStatus.permission==='denied'?'denied':'default';adhanSupported=nativeStatus.adhan===true;
+  configured=configured||nativeStatus.configured===true||nativeStatus.pending>0;
   const value=normalizeReminders(getSettings().reminders);
   // Keep the saved foreground-azan preference. Until native audio is supported,
   // only the copied delivery plan is notification-only; never rewrite settings.
@@ -45,5 +46,5 @@ export function createNativeBackgroundReminders({getSettings,getContext,toast=()
  globalThis.window?.addEventListener('salah:settings-changed',settingsChanged);
  globalThis.document?.addEventListener('visibilitychange',resumed);
  void sync(true);
- return {mount(container){mounted=container;draw();},nativeSync:sync,enable,active:()=>connection.status().status==='connected',invitationState:()=>({supported:true,permission,hasDevice:connection.status().status==='connected',guide:''}),destroy(){destroyed=true;mounted=null;globalThis.window?.removeEventListener('salah:settings-changed',settingsChanged);globalThis.document?.removeEventListener('visibilitychange',resumed);}};
+ return {mount(container){mounted=container;draw();},nativeSync:sync,enable,active:()=>connection.status().status==='connected',invitationState:()=>({supported:true,permission,hasDevice:configured||connection.status().status==='connected',guide:''}),destroy(){destroyed=true;mounted=null;globalThis.window?.removeEventListener('salah:settings-changed',settingsChanged);globalThis.document?.removeEventListener('visibilitychange',resumed);}};
 }

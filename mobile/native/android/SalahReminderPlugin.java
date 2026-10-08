@@ -28,10 +28,11 @@ public class SalahReminderPlugin extends Plugin {
         JSObject result = new JSObject();
         result.put("notifications", SalahReminderStore.notificationsAllowed(getContext()));
         result.put("permission", SalahReminderStore.notificationsAllowed(getContext()) ? "granted" :
-                Build.VERSION.SDK_INT < 33 || getPermissionState("notifications") == PermissionState.GRANTED || getPermissionState("notifications") == PermissionState.DENIED ? "denied" : "default");
+                Build.VERSION.SDK_INT < 33 || getPermissionState("notifications") == PermissionState.GRANTED || getPermissionState("notifications") == PermissionState.DENIED || getPermissionState("notifications") == PermissionState.PROMPT_WITH_RATIONALE ? "denied" : "default");
         result.put("exactAlarms", SalahReminderStore.exactAllowed(getContext()));
         result.put("adhan", false);
         result.put("pending", SalahReminderStore.read(getContext()).length());
+        result.put("configured", SalahReminderStore.prefs(getContext()).getBoolean("configured", false));
         return result;
     }
     @Override public void load() { SalahReminderStore.reschedule(getContext()); }
