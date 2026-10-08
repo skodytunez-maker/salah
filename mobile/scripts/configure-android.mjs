@@ -24,6 +24,7 @@ try{await fs.access(androidRoot)}catch{
 
 await copy('MainActivity.java',path.join(javaRoot,'MainActivity.java'));
 await copy('SalahWidgetPlugin.java',path.join(javaRoot,'SalahWidgetPlugin.java'));
+await copy('SalahSupportPhotoPlugin.java',path.join(javaRoot,'SalahSupportPhotoPlugin.java'));
 await copy('SalahPrayerWidgetProvider.java',path.join(javaRoot,'SalahPrayerWidgetProvider.java'));
 await copy('SalahWidgetSizing.java',path.join(javaRoot,'SalahWidgetSizing.java'));
 await copy('SalahWidgetDay.java',path.join(javaRoot,'SalahWidgetDay.java'));

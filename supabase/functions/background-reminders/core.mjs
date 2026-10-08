@@ -1,3 +1,4 @@
+import {dispatchSupportPush}from './support-push.mjs';
 import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
 import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
 
@@ -94,7 +95,7 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
@@ -130,6 +131,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
     if(!await db.lease(clock()))return reply({busy:true});
     let delivered=0;
     try{
+     delivered+=await dispatchSupportPush({db,send,clock});
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
