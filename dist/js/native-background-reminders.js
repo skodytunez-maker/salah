@@ -29,7 +29,7 @@ export function createNativeBackgroundReminders({getSettings,getContext,toast=()
  async function sync(force=false){
   if(destroyed)return;
   if(busy){if(force)needsSync=true;return;}
-  const s=getSettings(),c=getContext()||{},signature=JSON.stringify([s.reminders,c.cityKey]),activity=readDhikrActivity(),at=clock();
+  const s=getSettings(),c=getContext()||{},signature=JSON.stringify([s.reminders,c.cityKey]),activity=s.reminders?.dhikr?.enabled===true?readDhikrActivity():0,at=clock();
   if(!force&&signature===lastSettings&&c.days===lastDays&&c.today===lastDay&&activity===lastActivity&&at-lastAt>=0&&at-lastAt<60000)return;
   lastSettings=signature;lastDays=c.days;lastDay=c.today;lastActivity=activity;lastAt=at;busy=true;
   try{await connection.refresh()}finally{busy=false;draw();if(needsSync){needsSync=false;void sync(true);}}

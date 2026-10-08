@@ -15,6 +15,8 @@ assert.equal(background.active(),true);assert.equal(pending,7);
 assert.ok(schedules[0].every(e=>e.adhan===false),'Notification-only native delivery does not claim full azan');
 assert.equal(JSON.stringify(settings),saved,'Saved foreground-azan choice and settings stay unchanged');
 const checks=statusCalls;stamp+=1000;await background.nativeSync();assert.equal(statusCalls,checks,'No bridge round trip on every clock tick');
+const oldStorage=globalThis.localStorage;globalThis.localStorage={getItem:key=>key==='salah:dhikr-last-use-v1'?String(stamp):null};
+stamp+=1000;await background.nativeSync();assert.equal(statusCalls,checks,'Counting does not poll Android when inactivity reminders are disabled');globalThis.localStorage=oldStorage;
 days={fresh:true};await background.nativeSync();assert.equal(statusCalls,checks+1,'New timetable state refreshes delivery');
 settings={...settings,reminders:{...settings.reminders,enabled:false}};await background.nativeSync();assert.equal(background.active(),false);assert.equal(pending,0);assert.ok(clears>0);
 assert.equal(background.invitationState().hasDevice,true,'Deliberately disabling reminders does not turn the device into a first-time setup');
