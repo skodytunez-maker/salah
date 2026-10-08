@@ -25,8 +25,9 @@ export function createNativeReminderConnection({plugin,getPreferences,getContext
     if(signature===next&&status.pending===plan.events.length)return latest={status:plan.events.length?'connected':'no_future_events',scheduled:plan.events.length};
     replacing=true;const result=await plugin.replaceSchedule({events:plan.events});
     if(own!==sequence)return latest;
-    if(result.scheduled!==plan.events.length){signature='';return latest={status:'not_scheduled',scheduled:Number(result.scheduled)||0};}
-    signature=next;return latest={status:plan.events.length?'connected':'no_future_events',scheduled:plan.events.length};
+    const skipped=result.skippedExpired??0;
+    if(!Number.isInteger(result.scheduled)||result.scheduled<0||!Number.isInteger(skipped)||skipped<0||result.scheduled+skipped!==plan.events.length||result.notifications===false||result.exactAlarms===false){signature='';return latest={status:'not_scheduled',scheduled:Number(result.scheduled)||0};}
+    signature=skipped?'':next;return latest={status:result.scheduled?'connected':'no_future_events',scheduled:result.scheduled};
    }catch(error){
     signature='';let uncertain=false;
     if(replacing)try{await clear()}catch{uncertain=true;}

@@ -12,6 +12,11 @@ public class SalahReminderPolicyTest {
         assertFalse(SalahReminderPolicy.valid(Long.MIN_VALUE,1000,"id","text"));
         assertTrue(SalahReminderPolicy.valid(1000,2000,"id","text"));
     }
+    @Test public void expiredQueueEntriesRemainValidated() {
+        assertTrue(SalahReminderPolicy.acceptable(1000,999,"id","text"));
+        assertFalse(SalahReminderPolicy.acceptable(1000,-1,"id","text"));
+        assertFalse(SalahReminderPolicy.acceptable(1000,999,"","text"));
+    }
     @Test public void lateDeliveryNeverBecomesACatchUpAlarm() {
         assertTrue(SalahReminderPolicy.fresh(1000,1000));
         assertTrue(SalahReminderPolicy.fresh(301000,1000));

@@ -91,7 +91,7 @@ public class SalahReminderPlugin extends Plugin {
     }
     @PluginMethod public void replaceSchedule(PluginCall call) {
         JSArray events = call.getArray("events");
-        try { int scheduled = SalahReminderStore.replace(getContext(), events); JSObject result = status(); result.put("scheduled", scheduled); call.resolve(result); }
+        try { SalahReminderStore.Replacement replaced = SalahReminderStore.replace(getContext(), events); JSObject result = status(); result.put("scheduled", replaced.scheduled); result.put("skippedExpired", replaced.skippedExpired); call.resolve(result); }
         catch (Exception error) { call.reject(error.getMessage(), error); }
     }
     @PluginMethod public void clearSchedule(PluginCall call) {

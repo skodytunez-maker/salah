@@ -25,3 +25,9 @@ const enableSecond=connection.enable();assert.equal(calls.length,permissionCalls
 finishPermission();assert.equal((await enableFirst).status,'connected');assert.equal((await enableSecond).status,'connected');
 assert.equal(calls.length,permissionCalls+1,'Repeated enable shares the pending permission operation');
 console.log('PASS: no startup prompts, explicit permissions, unchanged queue, cleared-state recovery, disable, unsupported audio, serial city replacement and revoked permission. Native delivery is mocked here.');
+
+const boundary=createNativeReminderConnection({plugin:{...plugin,getStatus:async()=>({notifications:true,exactAlarms:true,pending:0}),replaceSchedule:async({events})=>({scheduled:events.length-1,skippedExpired:1})},getPreferences:()=>({enabled:true}),getContext:context,now:()=>now});
+assert.equal((await boundary.refresh()).scheduled,6,'An expired bridge event does not discard later reminders');
+assert.equal((await boundary.refresh()).status,'connected');
+const invalidReceipt=createNativeReminderConnection({plugin:{...plugin,getStatus:async()=>({notifications:true,exactAlarms:true}),replaceSchedule:async()=>({scheduled:6,skippedExpired:-1})},getPreferences:()=>({enabled:true}),getContext:context,now:()=>now});
+assert.equal((await invalidReceipt.refresh()).status,'not_scheduled');

@@ -42,16 +42,21 @@ final class SalahReminderStore {
         intent.putExtra("id", event.optString("id")); intent.putExtra("generation", generation);
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | (create ? PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_NO_CREATE));
     }
-    static synchronized int replace(Context context, JSONArray input) throws Exception {
+    static final class Replacement {
+        final int scheduled, skippedExpired;
+        Replacement(int scheduled, int skippedExpired) { this.scheduled = scheduled; this.skippedExpired = skippedExpired; }
+    }
+    static synchronized Replacement replace(Context context, JSONArray input) throws Exception {
         if (input == null || input.length() > 512) throw new IllegalArgumentException("Invalid reminder queue");
-        long now = System.currentTimeMillis(); HashSet<String> ids = new HashSet<>(); JSONArray next = new JSONArray();
+        int skippedExpired = 0; long now = System.currentTimeMillis(); HashSet<String> ids = new HashSet<>(); JSONArray next = new JSONArray();
         for (int i = 0; i < input.length(); i++) {
             JSONObject event = input.getJSONObject(i);
             String id = event.getString("id"), message = event.getString("message"); long at = event.getLong("at");
-            if (!SalahReminderPolicy.valid(now, at, id, message) || !ids.add(id)) throw new IllegalArgumentException("Invalid reminder event");
+            if (!SalahReminderPolicy.acceptable(now, at, id, message) || !ids.add(id)) throw new IllegalArgumentException("Invalid reminder event");
             boolean adhan = event.optBoolean("adhan", false);
             String key = event.optString("key"), voice = event.optString("voice");
             if (adhan && (!"prayer".equals(event.optString("kind")) || SalahAdhanPolicy.asset(key, voice) == null)) throw new IllegalArgumentException("Invalid azan event");
+            if (at <= now) { skippedExpired++; continue; }
             JSONObject saved = new JSONObject(); saved.put("id", id); saved.put("at", at); saved.put("message", message);
             saved.put("adhan", adhan); saved.put("key", key); saved.put("voice", voice); saved.put("kind", event.optString("kind")); next.put(saved);
         }
@@ -59,12 +64,12 @@ final class SalahReminderStore {
         // Rotate the generation before changing alarms: an old receiver cannot deliver a stale city/settings event.
         if (!prefs(context).edit().putString("events", next.toString()).putString("generation", generation).commit()) throw new IllegalStateException("Cannot save reminder queue");
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (manager == null) return 0;
+        if (manager == null) return new Replacement(0, skippedExpired);
         for (int i = 0; i < previous.length(); i++) {
             PendingIntent pending = intent(context, previous.getJSONObject(i), "", false);
             if (pending != null) { manager.cancel(pending); pending.cancel(); }
         }
-        if (!notificationsAllowed(context) || !exactAllowed(context)) return 0;
+        if (!notificationsAllowed(context) || !exactAllowed(context)) return new Replacement(0, skippedExpired);
         int scheduled = 0;
         try {
             for (int i = 0; i < next.length(); i++) {
@@ -75,10 +80,10 @@ final class SalahReminderStore {
         } catch (SecurityException revoked) {
             // Permission can be revoked between the check and scheduling. Keep saved intent, report no connected delivery.
             for (int i = 0; i < next.length(); i++) { PendingIntent pending = intent(context, next.getJSONObject(i), "", false); if (pending != null) { manager.cancel(pending); pending.cancel(); } }
-            return 0;
+            return new Replacement(0, skippedExpired);
         }
         if (scheduled > 0) prefs(context).edit().putBoolean("configured", true).commit();
-        return scheduled;
+        return new Replacement(scheduled, skippedExpired);
     }
     static synchronized void reschedule(Context context) {
         JSONArray stored = read(context), future = new JSONArray(); long now = System.currentTimeMillis();
