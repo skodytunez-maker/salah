@@ -39,3 +39,7 @@ const first=area.children.at(-1).onclick();assert.equal(document.documentElement
 const second=area.children.at(-1).onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await second;assert.equal(scanned,1);assert.equal(stops,2);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
 console.log('PASS: no automatic camera prompt; cancellation stops late camera grant; successful scan stops stream and preserves account view.');
 const third=area.children.at(-1).onclick();stopQrScanner();grant({getTracks:()=>[{stop:()=>stops++}]});await third;assert.equal(stops,3);assert.equal(scanned,1);assert.equal(listeners.size,0);console.log('PASS: account rerender cancels pending scanner without navigation.');
+
+const {qrCameraCrop}=await import(new URL('dist/js/qr-scanner.js',root));
+assert.deepEqual(qrCameraCrop(1280,720),{x:280,y:0,side:720,size:640});assert.deepEqual(qrCameraCrop(720,1280),{x:0,y:280,side:720,size:640});assert.deepEqual(qrCameraCrop(320,320),{x:0,y:0,side:320,size:320});assert.equal(qrCameraCrop(0,720),null);assert.equal(qrCameraCrop(720,NaN),null);
+console.log('PASS: scanner decodes precisely the square visible in portrait and landscape; decorative overlay never reaches the decoder.');

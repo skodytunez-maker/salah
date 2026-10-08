@@ -125,17 +125,17 @@ export async function mountOwnerAccount(container,{isActive}={}){
  if(container.dataset.ownerAccountMount)return;
  container.dataset.ownerAccountMount='1';
  const active=()=>container.isConnected&&location.hash.split('?')[0]==='#account'&&(!isActive||isActive());
- let unsubscribe=()=>{};
+ let unsubscribe=()=>{};let disclosureOpen=new URLSearchParams(location.hash.split('?')[1]||'').get('owner')==='1';
  const cleanup=()=>{if(!active()){unsubscribe();delete container.dataset.ownerAccountMount;window.removeEventListener('hashchange',cleanup);}};
  const update=()=>{
   if(!active()){cleanup();return;}
-  if(!ownerVerified()&&!ownerNeedsMfa()){container.querySelector('.owner-account-body')?.ownerDispose?.();container.hidden=true;container.innerHTML='';return;}
+  if(!ownerVerified()&&!ownerNeedsMfa()){const previous=container.querySelector('.owner-account');if(previous)disclosureOpen=previous.open;container.querySelector('.owner-account-body')?.ownerDispose?.();container.hidden=true;container.innerHTML='';return;}
   container.hidden=false;
   if(container.querySelector('.owner-account'))return;
   container.innerHTML='<details class="settings-extra owner-account"><summary>Кабинет владельца</summary><div class="owner-account-body"></div></details>';
   const panel=container.querySelector('.owner-account'),body=container.querySelector('.owner-account-body');
-  panel.ontoggle=()=>{if(panel.open&&active())void showAdmin(body,{embedded:true,isActive:()=>active()&&panel.open&&container.querySelector('.owner-account-body')===body});else{body.ownerDispose?.();body.dataset.ownerScreen='';}};
-  if(new URLSearchParams(location.hash.split('?')[1]||'').get('owner')==='1')panel.open=true;
+  panel.ontoggle=()=>{disclosureOpen=panel.open;if(panel.open&&active())void showAdmin(body,{embedded:true,isActive:()=>active()&&panel.open&&container.querySelector('.owner-account-body')===body});else{body.ownerDispose?.();body.dataset.ownerScreen='';}};
+  if(disclosureOpen)panel.open=true;
  };
  unsubscribe=onOwnerChange(update);window.addEventListener('hashchange',cleanup);
  try{await verifyOwner();}catch{}

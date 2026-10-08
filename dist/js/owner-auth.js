@@ -14,7 +14,7 @@ function authClient(){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});
   client.auth.onAuthStateChange((event,session)=>{
-   const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&ownerVerified();
+   const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&verified;
    if(event==='TOKEN_REFRESHED')checkAccountSession.acceptRefresh(session);
    revision++;if(!sameOwner)revoke();
    // A routine renewal must not collapse the already verified cabinet. Its
