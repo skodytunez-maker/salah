@@ -7,13 +7,14 @@ const optionalWallpaperPaths=new Set(OPTIONAL_WALLPAPERS.map(path=>new URL(path,
 const OPTIONAL_WALLPAPER_CACHE='salah-builtin-wallpapers-v1';
 const isOptionalWallpaper=(url,request)=>!url.search&&!request.headers.has('Range')&&optionalWallpaperPaths.has(url.pathname);
 async function serveOptionalWallpaper(event){
- const request=new Request(event.request,{credentials:'omit'}),cache=await caches.open(OPTIONAL_WALLPAPER_CACHE);
- const cached=await cache.match(request);if(cached)return cached;
+ const request=new Request(event.request,{credentials:'omit'});
+ let cache;try{cache=await caches.open(OPTIONAL_WALLPAPER_CACHE)}catch{}
+ const cached=await cache?.match(request).catch(()=>null);if(cached)return cached;
  try{
   const response=await network(request);
   if(response.status!==200||response.type!=='basic'||response.redirected||!/^image\/(webp|svg\+xml)(?:;|$)/i.test(response.headers.get('Content-Type')||''))return Response.error();
   const bytes=await response.clone().arrayBuffer();if(bytes.byteLength>3145728)return Response.error();
-  await cache.put(request,response.clone());return response;
+  if(cache)await cache.put(request,response.clone()).catch(()=>{});return response;
  }catch{return Response.error();}
 }
 const shellPaths=new Set(ASSETS.map(path=>new URL(path,self.registration.scope).pathname));
