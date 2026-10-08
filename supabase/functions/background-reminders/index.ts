@@ -262,11 +262,6 @@ async function dispatchSupportPush({db,send,clock}){
 }
 
 
-import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
-import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
-
-import {TYUMEN_SOURCES,normalizeTyumenSource,tyumenSourceFiles,matchesTyumenSource} from '../../../dist/js/tyumen-source.js';
-import {mergeFirstAsr,firstAsrValid} from '../../../dist/js/asr-first.js';
 
 const PUSH_ORIGIN='https://skodytunez-maker.github.io';
 const PUBLIC_APP=PUSH_ORIGIN+'/salah/';
