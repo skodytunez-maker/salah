@@ -46,6 +46,14 @@ public class SalahReminderPlugin extends Plugin {
         result.put("adhan", audioAvailable());
         result.put("playing", SalahAdhanService.active);
         result.put("pending", SalahReminderStore.read(getContext()).length());
+        long prayerUntil = 0, now = System.currentTimeMillis();
+        JSONArray events = SalahReminderStore.read(getContext());
+        for (int i = 0; i < events.length(); i++) {
+            org.json.JSONObject event = events.optJSONObject(i);
+            if (event != null && "prayer".equals(event.optString("kind")) && SalahReminderPolicy.valid(now, event.optLong("at"), event.optString("id"), event.optString("message"))) prayerUntil = Math.max(prayerUntil, event.optLong("at"));
+        }
+        boolean scheduled = !SalahReminderStore.prefs(getContext()).getString("scheduled_generation", "").isEmpty() && SalahReminderStore.prefs(getContext()).getString("scheduled_generation", "").equals(SalahReminderStore.prefs(getContext()).getString("generation", ""));
+        result.put("prayerUntil", scheduled ? prayerUntil : 0);
         result.put("configured", SalahReminderStore.prefs(getContext()).getBoolean("configured", false));
         return result;
     }

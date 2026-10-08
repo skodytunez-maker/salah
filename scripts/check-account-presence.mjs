@@ -64,3 +64,7 @@ for(const origin of ['capacitor://localhost','http://localhost','https://localho
  assert.equal((await handler(request(input,{headers:{Origin:origin,Authorization:''}}))).status,401);
 }
 console.log('PASS: APK presence accepts exact native origins while unsigned requests remain denied.');
+
+const nativeNotice={enabled:true,permission:'granted',browser:false,device:null,nativeUntil:Date.now()+3600000};
+assert.equal((await handler(request({...input,p_notifications:nativeNotice}))).status,200);
+for(const changed of [{nativeUntil:Date.now()-1000},{nativeUntil:Date.now()+15*86400000},{permission:'denied'},{device:notification.device},{enabled:false},{nativeUntil:'tomorrow'}])assert.equal((await handler(request({...input,p_notifications:{...nativeNotice,...changed}}))).status,400);

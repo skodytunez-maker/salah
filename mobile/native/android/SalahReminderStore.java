@@ -62,7 +62,7 @@ final class SalahReminderStore {
         }
         JSONArray previous = read(context); String generation = UUID.randomUUID().toString();
         // Rotate the generation before changing alarms: an old receiver cannot deliver a stale city/settings event.
-        if (!prefs(context).edit().putString("events", next.toString()).putString("generation", generation).commit()) throw new IllegalStateException("Cannot save reminder queue");
+        if (!prefs(context).edit().putString("events", next.toString()).putString("generation", generation).putString("scheduled_generation", "").commit()) throw new IllegalStateException("Cannot save reminder queue");
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (manager == null) return new Replacement(0, skippedExpired);
         for (int i = 0; i < previous.length(); i++) {
@@ -82,7 +82,7 @@ final class SalahReminderStore {
             for (int i = 0; i < next.length(); i++) { PendingIntent pending = intent(context, next.getJSONObject(i), "", false); if (pending != null) { manager.cancel(pending); pending.cancel(); } }
             return new Replacement(0, skippedExpired);
         }
-        if (scheduled > 0) prefs(context).edit().putBoolean("configured", true).commit();
+        if (scheduled > 0) prefs(context).edit().putBoolean("configured", true).putString("scheduled_generation", generation).commit();
         return new Replacement(scheduled, skippedExpired);
     }
     static synchronized void reschedule(Context context) {
