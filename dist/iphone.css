@@ -364,3 +364,10 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 .owner-login:has(#counter-account-out) .qr-login-entry:active{background:rgba(214,196,158,.2)}
 @media(max-width:360px){.owner-login:has(#counter-account-out){padding:18px}.owner-login:has(#counter-account-out) .account-title-row h1{font-size:26px}.owner-login:has(#counter-account-out) #account-owner-panel>.owner-account>summary,.owner-login:has(#counter-account-out) .account-details>summary,.owner-login:has(#counter-account-out) .account-devices>summary{font-size:15px;padding-left:54px}}
 @media(prefers-reduced-motion:reduce){.owner-login:has(#counter-account-out) summary::after{transition:none!important}}
+
+/* Keep the viewport tab bar out of transformed/blurred centering layers on iOS.
+   Section scrolling and the optional card depth must never move this bar. */
+@media(max-width:850px){
+ body #mobile-nav{position:fixed;top:auto;left:0;right:0;margin-left:auto;margin-right:auto;width:calc(100% - 32px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));max-width:350px;transform:none;translate:none;rotate:none;scale:none;transition:none}
+ #mobile-nav .nav-item{min-width:0;flex:1 1 0}
+}
