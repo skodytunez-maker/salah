@@ -1,0 +1,46 @@
+import{quranDownloadQueue}from './quran-downloads.js';
+import{offlineAudioStore}from './quran-offline-store.js';
+import{RECITERS,reciterInfo,reciterHasSurah}from './quran-reciters.js';
+import{RECITER_FAVORITES_KEY,normalizeReciterFavorites,toggleReciterFavorite}from './quran-reciter-favorites.js';
+import{read,write}from './storage.js';
+import{esc,toast}from './ui.js';
+import{reciterRecording}from './quran-reciter-recording.js';
+import{quranPlayback}from './quran-session.js';
+const favorites=()=>normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS);
+export const reciterPortrait=r=>'<img class="reciter-portrait" src="./'+esc(r.portrait||'assets/person.svg')+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
+const favoriteButton=(r,saved)=>'<button type="button" class="reciter-favorite" data-reciter-favorite="'+r.id+'" aria-pressed="'+saved.includes(r.id)+'" aria-label="'+(saved.includes(r.id)?'Убрать из избранных: ':'Добавить в избранные: ')+esc(r.name)+'"><img src="./assets/'+(saved.includes(r.id)?'star-fill':'star')+'.svg" alt="" aria-hidden="true"></button>';
+export function saveReciterFavorite(id){
+ const next=toggleReciterFavorite(read(RECITER_FAVORITES_KEY,[]),id,RECITERS);if(!next)return false;
+ if(!write(RECITER_FAVORITES_KEY,next)){toast('Не удалось сохранить избранного чтеца');return false;}
+ window.dispatchEvent(new Event('salah:reciter-favorites'));return true;
+}
+const card=(r,saved)=>'<article class="reciter-card"><a href="#quran?view=reciters&reciter='+encodeURIComponent(r.id)+'">'+reciterPortrait(r)+'<strong>'+esc(r.name)+'</strong><small>'+(r.availableSurahs?r.availableSurahs.length+' записей':'114 сур')+'</small></a>'+favoriteButton(r,saved)+'</article>';
+export function quranSectionTabs(active='read'){const reading=active==='read';return '<header class="quran-section-title"><nav class="quran-section-heading" aria-label="Раздел Корана"><a href="#quran" aria-current="'+(reading?'page':'false')+'">'+(reading?'<h1>Коран</h1>':'Коран')+'</a><a href="#quran?view=reciters" aria-current="'+(!reading?'page':'false')+'">'+(!reading?'<h1>Чтецы</h1>':'Чтецы')+'</a></nav><p class="muted">'+(reading?'114 сур':'Выберите голос, который вам близок')+'</p></header>';}
+export function mountReciterLibrary(host,index,chosen,filter){
+ let closed=false,request=0,currentQuery='',savedSurahs=new Set();const r=RECITERS.find(r=>r.id===chosen)||null;
+ const draw=()=>{
+  const saved=favorites(),selected=saved.map(id=>reciterInfo(id)),others=RECITERS.filter(r=>!saved.includes(r.id)),favoriteView=filter==='favorites';
+  host.innerHTML='<section class="quran-library quran-reciters-library">'+quranSectionTabs('reciters')+(r?'<div class="reciter-topnav"><a class="reciter-back-catalog" href="#quran?view=reciters">← Все чтецы</a></div>':'')+(r?
+   '<div class="reciter-profile">'+reciterPortrait(r)+'<div><span class="eyebrow">ЧТЕЦ КОРАНА</span><h1>'+esc(r.name)+'</h1><p class="muted">'+(r.availableSurahs?r.availableSurahs.length+' доступных записей':'114 сур')+(r.riwaya?' · '+esc(r.riwaya):'')+'</p>'+favoriteButton(r,saved)+'</div></div><p class="quran-option-note">'+(r.offline===false?'Этот чтец доступен для прослушивания онлайн. Скачивание пока недоступно.':'Выберите суру для прослушивания. Запись звучит целиком; подсветка аятов доступна только при проверенной разметке.')+'</p><div class="reciter-surahs">'+index.surahs.filter(s=>reciterHasSurah(r.id,s.number)).map(s=>'<article class="reciter-surah-row"><button type="button" data-reciter-play="'+s.number+'"><span class="quran-surah-number">'+s.number+'</span><span><strong>'+esc(s.name)+'</strong><small>'+s.ayahs+' аятов</small></span><span class="reciter-play-label">Слушать</span></button><button type="button" class="reciter-download" data-reciter-download="'+s.number+'" aria-label="Скачать '+esc(s.name)+' · '+esc(r.name)+'" '+(r.offline===false?'disabled':'')+'>'+(r.offline===false?'Онлайн':'Скачать')+'</button></article>').join('')+'</div><p id="reciter-download-status" class="quran-option-note" role="status" aria-live="polite"></p><button type="button" class="text-button" id="reciter-download-pause" hidden>Пауза скачивания</button>':
+   '<label class="field">Найти чтеца<input type="search" id="reciter-search" placeholder="Имя чтеца" autocomplete="off"></label><nav class="reciter-filter-tabs" aria-label="Каталог чтецов"><a href="#quran?view=reciters" aria-current="'+(!favoriteView?'page':'false')+'">Все '+RECITERS.length+'</a><a href="#quran?view=reciters&filter=favorites" aria-current="'+(favoriteView?'page':'false')+'">Избранные '+saved.length+'</a></nav>'+(favoriteView&&!selected.length?'<p class="reciter-empty">Отметьте чтеца звёздочкой — он появится в избранных.</p>':'')+'<div class="reciter-grid">'+(favoriteView?selected:[...selected,...others]).map(item=>card(item,saved)).join('')+'</div><p id="reciter-search-empty" class="muted" hidden>Чтец не найден</p>')+'<p id="reciter-listen-status" class="quran-option-note" role="status" aria-live="polite"></p></section>';
+  host.querySelectorAll('[data-reciter-favorite]').forEach(button=>button.onclick=e=>{const id=button.dataset.reciterFavorite;if(!saveReciterFavorite(id))return;draw();sync(quranPlayback.state);syncDownload(quranDownloadQueue.state);if(e.detail===0)host.querySelector('[data-reciter-favorite="'+id+'"]')?.focus();});
+  const search=host.querySelector('#reciter-search');if(search)search.oninput=()=>{currentQuery=search.value;const q=search.value.toLocaleLowerCase('ru').replace(/ё/g,'е').trim();let count=0;host.querySelectorAll('.reciter-card').forEach(card=>{card.hidden=!card.textContent.toLocaleLowerCase('ru').replace(/ё/g,'е').includes(q);if(!card.hidden)count++;});host.querySelector('#reciter-search-empty').hidden=count>0;};
+  if(search){search.value=currentQuery;search.oninput();}
+  host.querySelectorAll('[data-reciter-play]').forEach(button=>button.onclick=async()=>{
+   const token=++request,number=Number(button.dataset.reciterPlay),status=host.querySelector('#reciter-listen-status');const active=quranPlayback.state;if(active.reciter===r.id&&active.surah?.number===number&&['playing','paused','loading'].includes(active.status)){quranPlayback.toggle();return;}status.textContent='Загружаем '+index.surahs[number-1].name+'…';
+   try{const surah=reciterRecording(index,number);if(closed||token!==request)return;write('quran-preferences',{...read('quran-preferences',{}),reciter:r.id});await quranPlayback.start(surah,r.id,0,true);if(!closed&&token===request)status.textContent='';}catch{if(!closed&&token===request)status.textContent='Не удалось загрузить суру. Проверьте соединение.'}
+  });
+
+  host.querySelectorAll('[data-reciter-download]').forEach(button=>button.onclick=()=>{if(!r||r.offline===false)return;if(quranDownloadQueue.busy){toast('Дождитесь завершения текущего скачивания');return;}void quranDownloadQueue.start(r.id,[Number(button.dataset.reciterDownload)]);});
+  const pauseDownload=host.querySelector('#reciter-download-pause');if(pauseDownload)pauseDownload.onclick=()=>quranDownloadQueue.pause();
+ };
+function syncDownload(state){
+ if(closed||!r)return;const matches=state.reciter===r.id,busy=quranDownloadQueue.busy;
+ if(matches&&state.status==='complete'&&state.done===1&&state.total===1)savedSurahs.add(state.surah);
+ host.querySelectorAll('[data-reciter-download]').forEach(button=>{const number=Number(button.dataset.reciterDownload),working=matches&&state.surah===number&&busy;const label=r.offline===false?'Онлайн':working?'Скачиваем…':savedSurahs.has(number)?'Скачать снова':'Скачать';if(button.textContent!==label)button.textContent=label;const disabled=busy||r.offline===false;if(button.disabled!==disabled)button.disabled=disabled;});
+ const status=host.querySelector('#reciter-download-status');if(status){const text=matches?(busy?'Скачиваем '+index.surahs[state.surah-1].name+' · '+Math.round((state.bytes+(state.currentBytes||0))/1024)+' КБ':state.status==='complete'?'Сура сохранена для прослушивания без интернета.':state.status==='paused'?'Скачивание приостановлено.':state.status==='error'?state.error:''):busy?'Идёт скачивание другого чтеца.':'';if(status.textContent!==text)status.textContent=text;}
+ const pause=host.querySelector('#reciter-download-pause');if(pause)pause.hidden=!matches||!busy;
+}
+ const sync=state=>{if(closed)return;host.querySelectorAll('[data-reciter-play]').forEach(b=>{const match=state.reciter===r?.id&&state.surah?.number===Number(b.dataset.reciterPlay),playing=match&&['playing','loading'].includes(state.status);b.setAttribute('aria-pressed',String(playing));b.querySelector('.reciter-play-label').textContent=playing?'Пауза':match&&state.status==='paused'?'Продолжить':'Слушать';});};draw();const unsubscribe=quranPlayback.subscribe(sync);const unsubscribeDownload=quranDownloadQueue.subscribe(syncDownload);if(r)void offlineAudioStore.listRecordings(r.id).then(records=>{if(closed)return;for(const record of records)savedSurahs.add(record.surah);syncDownload(quranDownloadQueue.state);}).catch(()=>{});
+ return()=>{closed=true;request++;unsubscribe();unsubscribeDownload();};
+}
