@@ -27,6 +27,8 @@ await copy('SalahWidgetPlugin.java',path.join(javaRoot,'SalahWidgetPlugin.java')
 await copy('SalahPrayerWidgetProvider.java',path.join(javaRoot,'SalahPrayerWidgetProvider.java'));
 await copy('SalahWidgetSizing.java',path.join(javaRoot,'SalahWidgetSizing.java'));
 await copy('SalahWidgetDay.java',path.join(javaRoot,'SalahWidgetDay.java'));
+await copy('SalahWidgetTiming.java',path.join(javaRoot,'SalahWidgetTiming.java'));
+await copy('SalahWidgetTimingTest.java',path.join(androidRoot,'..','test','java',packagePath,'SalahWidgetTimingTest.java'));
 for(const name of ['SalahReminderPlugin','SalahReminderStore','SalahReminderReceiver','SalahReminderPolicy','SalahAdhanService','SalahAdhanPolicy'])await copy(name+'.java',path.join(javaRoot,name+'.java'));
 await copy('SalahAdhanPolicyTest.java',path.join(androidRoot,'..','test','java',packagePath,'SalahAdhanPolicyTest.java'));
 await copy('SalahReminderPolicyTest.java',path.join(androidRoot,'..','test','java',packagePath,'SalahReminderPolicyTest.java'));
@@ -59,6 +61,11 @@ const receiver=`        <receiver
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
@@ -69,6 +76,7 @@ if(!manifest.includes('android:name=".SalahPrayerWidgetProvider"')){
   if(!manifest.includes('</application>'))throw new Error('AndroidManifest.xml has no application element.');
   manifest=manifest.replace('</application>',receiver+'    </application>');
 }
+manifest=manifest.replace(/<receiver\b[^>]*android:name="\.SalahPrayerWidgetProvider"[\s\S]*?<\/receiver>/,receiver.trim());
 manifest=await configureAndroidIcons(mobileRoot,resRoot,manifest);
 await fs.writeFile(manifestPath,manifest);
 
