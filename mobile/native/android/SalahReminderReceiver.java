@@ -8,10 +8,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.net.Uri;
 import org.json.JSONObject;
 
 public class SalahReminderReceiver extends BroadcastReceiver {
     static final String CHANNEL = "salah_reminders_v1";
+    static final String OPEN = "com.saadikobilov.salah.OPEN_REMINDER";
+    static PendingIntent content(Context context, JSONObject event) {
+        Intent open = new Intent(context, MainActivity.class).setAction(OPEN).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        open.setData(new Uri.Builder().scheme("salah-reminder").authority("open").appendPath(event.optString("id")).build());
+        open.putExtra("kind", event.optString("kind")); open.putExtra("key", event.optString("key"));
+        return PendingIntent.getActivity(context, 0, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    }
     @Override public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)
@@ -34,8 +42,7 @@ public class SalahReminderReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) return;
         if (Build.VERSION.SDK_INT >= 26) manager.createNotificationChannel(new NotificationChannel(CHANNEL, "Напоминания SALAH", NotificationManager.IMPORTANCE_HIGH));
-        Intent open = new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent content = PendingIntent.getActivity(context, 0, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent content = content(context, event);
         Notification.Builder builder = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(context, CHANNEL) : new Notification.Builder(context);
         builder.setSmallIcon(R.drawable.salah_notification).setContentTitle("SALAH").setContentText(event.optString("message"))
                 .setStyle(new Notification.BigTextStyle().bigText(event.optString("message"))).setContentIntent(content).setAutoCancel(true);

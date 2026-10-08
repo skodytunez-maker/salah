@@ -49,7 +49,9 @@ public class SalahReminderPlugin extends Plugin {
         result.put("configured", SalahReminderStore.prefs(getContext()).getBoolean("configured", false));
         return result;
     }
-    @Override public void load() { current = new WeakReference<>(this); webAudioBusy = false; SalahReminderStore.reschedule(getContext()); audioState(SalahAdhanService.active); }
+    private void opened(Intent intent) { if (intent != null && SalahReminderReceiver.OPEN.equals(intent.getAction())) { JSObject value = new JSObject(); value.put("kind", intent.getStringExtra("kind")); value.put("key", intent.getStringExtra("key")); intent.setAction(Intent.ACTION_MAIN); intent.removeExtra("kind"); intent.removeExtra("key"); notifyListeners("openReminder", value, true); } }
+    @Override public void load() { current = new WeakReference<>(this); webAudioBusy = false; SalahReminderStore.reschedule(getContext()); audioState(SalahAdhanService.active); opened(getActivity().getIntent()); }
+    @Override protected void handleOnNewIntent(Intent intent) { opened(intent); }
     @Override protected void handleOnDestroy() { if (current.get() == this) { current.clear(); webAudioBusy = false; } }
     @PluginMethod public void setWebAudioBusy(PluginCall call) { webAudioBusy = call.getBoolean("busy", false); if (webAudioBusy) getContext().stopService(new Intent(getContext(), SalahAdhanService.class)); call.resolve(); }
     @PluginMethod public void stopAdhan(PluginCall call) { getContext().stopService(new Intent(getContext(), SalahAdhanService.class)); call.resolve(); }

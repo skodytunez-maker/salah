@@ -46,8 +46,7 @@ public class SalahAdhanService extends Service {
                 channel.setSound(null, null); manager.createNotificationChannel(channel);
                 if (manager.getNotificationChannel(CHANNEL).getImportance() == NotificationManager.IMPORTANCE_NONE) { fail(); return START_NOT_STICKY; }
             }
-            Intent open = new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent content = PendingIntent.getActivity(this, 6107, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent content = SalahReminderReceiver.content(this, event);
             PendingIntent stop = PendingIntent.getService(this, 6107, new Intent(this, SalahAdhanService.class).setAction(STOP), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             Notification.Builder notice = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(this, CHANNEL) : new Notification.Builder(this);
             notice.setSmallIcon(R.drawable.salah_notification).setContentTitle("Азан · SALAH").setContentText(event.optString("message"))

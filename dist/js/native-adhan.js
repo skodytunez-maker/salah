@@ -21,7 +21,7 @@ export function connectNativeAdhanAudio(plugin){
   if(bar)bar.hidden=!playing;
  };
  const state=value=>{version++;apply(value)};
- if(typeof plugin.addListener==='function')Promise.resolve(plugin.addListener('nativeAdhanState',state)).then(value=>{if(destroyed)value?.remove?.();else handle=value;}).catch(()=>{});
+ if(typeof plugin.addListener==='function')Promise.resolve(plugin.addListener('nativeAdhanState',state)).then(async value=>{if(destroyed)await value?.remove?.();else handle=value;}).catch(()=>{});
  const initial=version;Promise.resolve(plugin.getStatus()).then(value=>{if(version===initial)apply(value)}).catch(()=>{});
  return {destroy(){destroyed=true;unsubscribe();setForegroundAudio(owner,false);bar?.remove();bar=null;Promise.resolve(handle?.remove?.()).catch(()=>{});}};
 }
