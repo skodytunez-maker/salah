@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-08",
+  "generator": "Built-in image_gen",
+  "reference": "Existing SALAH dist/wallpapers/tyumen/day-v1.webp",
+  "notes": "Separate landscape companion; existing phone assets preserved. AI-generated interpretation, no new external reference. Day and night aligned by lighting-only edit. Mask drawn in project source coordinates. Final browser verification pending.",
+  "dayGeneratedFile": "exec-a1a4acaf-9249-4bb3-8d96-578f3ef28f76.png",
+  "nightGeneratedFile": "exec-720f2ebf-d3b3-423d-8817-77c7cd664174.png",
+  "assets": [
+    {
+      "path": "dist/wallpapers/tyumen/day-tablet-v1.webp",
+      "bytes": 292874,
+      "sha256": "c1f421347ed46367bd2e05406d6ea6fdc76bd89a82ed8bb7785e2f3237a3b1f1",
+      "gitBlobSha": "76664f7e506c7e13b73621e675f7952b8391f12d"
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v1.webp",
+      "bytes": 251518,
+      "sha256": "1780a32dbee37d7888a003ebc0ea93553b944ee31dd570f01fb73e453901f8da",
+      "gitBlobSha": "5bf75ff106e1ab54c471f0d613b1ec8f9e3c0b4c"
+    },
+    {
+      "path": "dist/wallpapers/tyumen/sky-tablet-v1.svg",
+      "bytes": 556,
+      "sha256": "64a1e3e03bf90d0e6126eaac89b776b55b4df82723f11a76d6f9909e57ecf0be",
+      "gitBlobSha": "5c8038aba0f0e74afa36dad80b12c9f063740343"
+    }
+  ]
+}

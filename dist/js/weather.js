@@ -63,7 +63,7 @@ function prepareLandmark(scene,home){
    const previous=landmarkUrls;
    // Swap only after both photographs are decoded, then release the old city.
    for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');
-   landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight,fitSubject:result.entry.fitSubject===true};landmarkRequest=null;landmarkState='ready';
+   landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight,fitSubject:result.entry.fitSubject===true,focalX:result.entry.focalX,focalY:result.entry.focalY,fillViewport:result.entry.fillViewport===true};landmarkRequest=null;landmarkState='ready';
    scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
    layoutScene(scene);releaseLandmarkUrls(previous);landmarkNote();
   }

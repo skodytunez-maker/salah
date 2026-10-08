@@ -333,3 +333,10 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 .adhkar-desktop-navigation{display:flex;gap:8px;margin:8px 0 0;justify-content:space-between}.adhkar-desktop-navigation .button{flex:1;min-width:0;min-height:40px;padding:8px 10px;font-size:13px}
 @media(hover:hover) and (pointer:fine){body.adhkar-reading .adhkar-shell{padding-bottom:calc(293px + env(safe-area-inset-bottom,0px))}body.adhkar-reading.adhkar-focus .adhkar-shell{padding-bottom:calc(193px + env(safe-area-inset-bottom,0px))}body.adhkar-reading.has-quran-audio .adhkar-shell{padding-bottom:calc(413px + env(safe-area-inset-bottom,0px))}body.adhkar-reading.adhkar-focus.has-quran-audio .adhkar-shell{padding-bottom:calc(313px + env(safe-area-inset-bottom,0px))}body.adhkar-reading.has-quran-audio .quran-global-player{bottom:calc(282px + env(safe-area-inset-bottom,0px))}body.adhkar-reading.adhkar-focus.has-quran-audio .quran-global-player{bottom:calc(194px + env(safe-area-inset-bottom,0px))}}
 @media(min-width:851px) and (hover:hover) and (pointer:fine){body.adhkar-reading.has-quran-audio .quran-global-player{bottom:calc(194px + env(safe-area-inset-bottom,0px))}}
+
+/* Landscape home has a shorter dock and its own safe-area content budget. */
+@media(orientation:landscape) and (max-height:600px){
+ .home-page .app-home-shell{padding-top:calc(8px + var(--salah-safe-top,0px));padding-bottom:calc(84px + var(--salah-safe-bottom,0px))}
+ .home-page #mobile-nav{height:60px;min-height:60px;max-height:60px;bottom:max(8px,env(safe-area-inset-bottom,0px));padding:5px 4px}
+ .home-page #mobile-nav .nav-item{height:44px;min-height:44px;padding:4px 2px;gap:3px}
+}

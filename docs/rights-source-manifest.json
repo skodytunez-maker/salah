@@ -3168,6 +3168,41 @@
       "path": "dist/js/vendor/jsQR-LICENSE.txt",
       "gitBlobSha": "8f71f43fee3f78649d238238cbde51e6d7055c82",
       "bytes": 11358
+    },
+    {
+      "path": "dist/wallpapers/tyumen/day-tablet-v1.webp",
+      "gitBlobSha": "76664f7e506c7e13b73621e675f7952b8391f12d",
+      "bytes": 292874
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v1.webp",
+      "gitBlobSha": "5bf75ff106e1ab54c471f0d613b1ec8f9e3c0b4c",
+      "bytes": 251518
+    },
+    {
+      "path": "dist/wallpapers/tyumen/sky-tablet-v1.svg",
+      "gitBlobSha": "5c8038aba0f0e74afa36dad80b12c9f063740343",
+      "bytes": 556
+    },
+    {
+      "path": "dist/assets/window-new-york-day-tablet-v1.webp",
+      "gitBlobSha": "3197a9f212bbdfe2c10bfaada561ff7944329d50",
+      "bytes": 262828
+    },
+    {
+      "path": "dist/assets/window-new-york-night-tablet-v1.webp",
+      "gitBlobSha": "7df7bcf8e68f07798c490f6e50c687f335eb2392",
+      "bytes": 231266
+    },
+    {
+      "path": "dist/assets/window-sky-mask-tablet-v1.svg",
+      "gitBlobSha": "1fa8bc861ad12de5c616e125d7cf2ac15bdc28e5",
+      "bytes": 1092
+    },
+    {
+      "path": "dist/assets/window-weather-mask-tablet-v1.svg",
+      "gitBlobSha": "3066cc4deb62d152e6c2225454edbb49fa1a6d1f",
+      "bytes": 123
     }
   ]
 }
