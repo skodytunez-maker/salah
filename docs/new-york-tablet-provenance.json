@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-08",
+  "generator": "Built-in image_gen",
+  "reference": "Existing SALAH dist/assets/window-new-york-day.webp",
+  "notes": "Landscape sibling of existing artwork. Original phone images preserved. First night draft rejected for vertical shift; second night edit retained sill and rug framing. Approximate shared conservative skyline/window masks; browser transition review pending.",
+  "dayGeneratedFile": "exec-0d9b7b59-102c-4a45-9a58-fe57c5711a06.png",
+  "nightGeneratedFile": "exec-4335ae37-5ecf-46ed-b373-0a48ebd3bf64.png",
+  "rejectedNight": "exec-07fe33e6-3df7-425e-a2b9-5e61c2bbc614.png",
+  "assets": [
+    {
+      "path": "dist/assets/window-new-york-day-tablet-v1.webp",
+      "bytes": 262828,
+      "sha256": "4e2d757e3643a950464552ff7db88b2d3493a4da39db8ac3d945998d838003f0",
+      "gitBlobSha": "3197a9f212bbdfe2c10bfaada561ff7944329d50"
+    },
+    {
+      "path": "dist/assets/window-new-york-night-tablet-v1.webp",
+      "bytes": 231266,
+      "sha256": "70fdd7d0656699b34177042f509e5d2d8942c0fdb6884b1a7817efcd68704805",
+      "gitBlobSha": "7df7bcf8e68f07798c490f6e50c687f335eb2392"
+    },
+    {
+      "path": "dist/assets/window-sky-mask-tablet-v1.svg",
+      "bytes": 1092,
+      "sha256": "7dcd7fb2b84fec372d9c35de3abaa4444a0044d972997b9787a1ee956b1b19f9",
+      "gitBlobSha": "1fa8bc861ad12de5c616e125d7cf2ac15bdc28e5"
+    },
+    {
+      "path": "dist/assets/window-weather-mask-tablet-v1.svg",
+      "bytes": 123,
+      "sha256": "4efc434f0332f99743aff5e3d9ae1647beda80995984e9b43f1bdd6ef9628fa7",
+      "gitBlobSha": "3066cc4deb62d152e6c2225454edbb49fa1a6d1f"
+    }
+  ]
+}

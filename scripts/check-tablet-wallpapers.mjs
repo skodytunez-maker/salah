@@ -73,3 +73,12 @@ for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:134
  assert.ok(pylon>=0&&pylon<=viewport.width,'Tyumen bridge pylon stays visible in both orientations');
  assert.ok(p.left<=0&&p.left+p.width>=viewport.width,'Focal composition covers the viewport');
 }
+
+for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:1344,height:900},{width:1600,height:900}]){
+ const p=wallpaperLayout({...viewport,wallpaper:'new-york'});
+ near(p.width/p.height,1.5);assert.equal(p.needsLandscape,false);
+ assert.ok(p.left<=0&&p.top<=0&&p.left+p.width>=viewport.width&&p.top+p.height>=viewport.height,'Wide New York fills tablet without bands');
+ const landmark=p.left+p.width*.655;
+ assert.ok(landmark>0&&landmark<viewport.width,'One World Trade Center remains in portrait crop');
+}
+assert.equal(wallpaperLayout({width:599,height:900,wallpaper:'new-york'}),null,'New York phone retains old geometry');
