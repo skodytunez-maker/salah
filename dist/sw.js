@@ -144,7 +144,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":238,"date":"2026-10-08","changes":["В обращениях можно прикрепить до 5 фото и сохранить полученные снимки.","Появились уведомления о новых сообщениях поддержки."],"announcement":{"version":236,"date":"2026-10-08","changes":["В обращениях можно прикрепить до 5 фото и сохранить полученные снимки.","Появились уведомления о новых сообщениях поддержки."]}};
+const RELEASE={"version":239,"date":"2026-10-09","changes":["В обращениях можно прикрепить до 5 фото и сохранить полученные снимки.","Появились уведомления о новых сообщениях поддержки."],"announcement":{"version":236,"date":"2026-10-08","changes":["В обращениях можно прикрепить до 5 фото и сохранить полученные снимки.","Появились уведомления о новых сообщениях поддержки."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
