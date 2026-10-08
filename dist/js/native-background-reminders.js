@@ -23,7 +23,7 @@ export function createNativeBackgroundReminders({getSettings,getContext,toast=()
   if(!adhanSupported)for(const prayer of Object.values(value.prayers))prayer.adhan=false;
   return value;
  }});
- const messages={connected:'Подключено.',disabled:'Напоминания выключены.',notification_permission:'Разрешите уведомления.',alarm_permission:'Разрешите точное время.',no_future_events:'Расписание ещё загружается.',not_scheduled:'Подключение не готово.',error:'Не удалось подключить. Повторите.',unavailable:'Недоступно на этом устройстве.'};
+ const messages={connected:'Подключено.',disabled:'Напоминания выключены.',notification_permission:'Разрешите уведомления.',alarm_permission:'Разрешите точное время.',no_future_events:'Нет будущих напоминаний.',not_scheduled:'Подключение не готово.',error:'Не удалось подключить. Повторите.',unavailable:'Недоступно на этом устройстве.'};
  function draw(){
   if(!mounted?.isConnected||destroyed)return;
   const status=connection.status(),enabled=getSettings().reminders?.enabled===true;
