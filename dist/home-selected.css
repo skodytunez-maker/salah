@@ -135,3 +135,5 @@ body.reduce-motion .dhikr-passage{animation:none!important}
  .home-page #mobile-nav .nav-symbol,.home-page #mobile-nav .nav-symbol img{width:20px;height:20px}
  .wallpaper-caption{bottom:calc(76px + env(safe-area-inset-bottom))}
 }
+
+.home-reading{width:100%;max-width:350px;margin:8px auto;text-align:left;border:1px solid rgba(213,193,145,.25);border-radius:18px;background:rgba(8,16,30,.86);padding:12px 14px;box-sizing:border-box}.home-reading h2{font-size:14px;margin:0 0 6px;color:#d5c191}.home-reading-link{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;color:#f3f0e7;text-decoration:none;padding:6px 0}.home-reading-link+.home-reading-link{border-top:1px solid rgba(213,193,145,.18)}.home-reading-link strong,.home-reading-link small{display:block}.home-reading-link strong{font-size:15px}.home-reading-link small{font-size:12px;color:#bcc5d4;margin-top:3px}.home-reading-link:focus-visible{outline:2px solid #d5c191;outline-offset:3px;border-radius:6px}
