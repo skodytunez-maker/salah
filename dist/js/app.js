@@ -1,3 +1,5 @@
+import{initMobileNavDock}from './mobile-nav-dock.js';
+initMobileNavDock();
 import{initSoftDepth,mountSoftDepthSetting}from './soft-depth.js';
 initSoftDepth();
 import{initNativeSupportNotifications}from './native-support-push.js';

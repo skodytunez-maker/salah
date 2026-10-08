@@ -371,3 +371,8 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
  body #mobile-nav{position:fixed;top:auto;left:0;right:0;margin-left:auto;margin-right:auto;width:calc(100% - 32px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));max-width:350px;transform:none;translate:none;rotate:none;scale:none;transition:none}
  #mobile-nav .nav-item{min-width:0;flex:1 1 0}
 }
+
+@media(max-width:850px){
+ body #mobile-nav[data-viewport-dock]{top:var(--nav-viewport-top);bottom:auto}
+ body #mobile-nav[data-nav-keyboard]{visibility:hidden;pointer-events:none}
+}

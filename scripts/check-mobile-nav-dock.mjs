@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {mobileNavDockState as dock} from '../dist/js/mobile-nav-dock.js';
+const phone={cssHeight:844,layoutHeight:844,visualHeight:844,navHeight:74,gap:34};
+assert.deepEqual(dock(phone),{top:736,keyboard:false});
+assert.deepEqual(dock({...phone,visualHeight:500,editing:true}),{top:392,keyboard:true});
+assert.deepEqual(dock({...phone,visualHeight:500,visualTop:60,editing:false}),{top:736,keyboard:false},'Dismissed keyboard must not leave the bar at the old height');
+assert.deepEqual(dock({...phone,layoutHeight:500,visualHeight:500,editing:false}),{top:736,keyboard:false},'CSS viewport recovers a stale layout viewport');
+assert.deepEqual(dock({...phone,cssHeight:390,layoutHeight:390,visualHeight:390,navHeight:60,gap:12}),{top:318,keyboard:false});
+assert.equal(dock({...phone,scale:1.5}),null,'Do not reposition while pinch zooming');
+assert.equal(dock({...phone,navHeight:0}),null,'Focus modes keep their navigation hidden');
+assert.equal(dock({...phone,cssHeight:NaN,layoutHeight:NaN}),null);
+assert.deepEqual(dock({...phone,cssHeight:780,visualHeight:780}),{top:672,keyboard:false},'Browser toolbar changes follow the dynamic viewport');
+console.log('PASS: stable viewport dock, keyboard dismissal, stale viewport recovery, orientation, focus modes and pinch zoom.');

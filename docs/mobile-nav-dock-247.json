@@ -1,0 +1,16 @@
+{
+  "version": 247,
+  "reason": "User still observed floating navigation on an iPhone after CSS-only release245",
+  "approach": "Explicit top calculated from dynamic CSS viewport, safe area and tab bar height. Hide while virtual keyboard is open; recover after dismissal including stale visual/layout viewport height.",
+  "tested": [
+    "portrait scroll",
+    "reciter scroll",
+    "keyboard dismissal model",
+    "stale viewport model",
+    "orientation model",
+    "pinch zoom",
+    "hidden focus mode"
+  ],
+  "physicalIphoneVerified": false,
+  "settingDataUnchanged": true
+}
