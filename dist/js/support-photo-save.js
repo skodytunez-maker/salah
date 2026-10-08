@@ -17,7 +17,7 @@ export async function saveSupportPhoto(value,{fetcher=fetch,navigatorRef=globalT
  const file=new File([blob],'SALAH-photo.jpg',{type:'image/jpeg'});
  if(navigatorRef?.canShare?.({files:[file]})){
   try{await navigatorRef.share({files:[file],title:'Фото из обращения SALAH'});return 'shared';}
-  catch(error){if(error?.name==='AbortError')return 'cancelled';throw Error('Не удалось сохранить фото. Попробуйте открыть его отдельно.');}
+  catch(error){if(error?.name==='AbortError')return 'cancelled';if(!['NotAllowedError','TypeError'].includes(error?.name))throw Error('Не удалось сохранить фото. Попробуйте открыть его отдельно.');}
  }
  const objectUrl=urlRef.createObjectURL(blob),link=documentRef.createElement('a');
  link.href=objectUrl;link.download=file.name;documentRef.body.append(link);link.click();link.remove();
