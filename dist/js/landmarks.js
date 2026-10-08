@@ -10,7 +10,7 @@ export function landmarkDistance(a,b){
 }
 const validRegion=r=>r&&['south','north','west','east'].every(k=>Number.isFinite(r[k]))&&r.south>=-90&&r.north<=90&&r.west>=-180&&r.east<=180&&r.south<r.north&&r.west<r.east&&r.north-r.south<=6&&r.east-r.west<=6;
 const validAssets=(assets,id)=>['day','night','mask'].every(key=>typeof assets?.[key]==='string'&&new RegExp('^wallpapers/'+id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(assets[key]));
-export function landmarkAssetSet(entry,tablet=false){return tablet&&validAssets(entry?.tablet,entry.id)?{...entry,day:entry.tablet.day,night:entry.tablet.night,mask:entry.tablet.mask,fitSubject:true}:entry;}
+export function landmarkAssetSet(entry,tablet=false){return tablet&&validAssets(entry?.tablet,entry.id)?{...entry,day:entry.tablet.day,night:entry.tablet.night,mask:entry.tablet.mask,fitSubject:true,focalX:Number.isFinite(entry.tablet.focalX)&&entry.tablet.focalX>=0&&entry.tablet.focalX<=1?entry.tablet.focalX:.5}:entry;}
 export function validateLandmarkCatalog(value){
  if(value?.version!==1||!Array.isArray(value.cities)||value.cities.length>500)return [];
  return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&(!c.region||validRegion(c.region))&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&['day','night','mask'].every(key=>typeof c[key]==='string'&&new RegExp('^wallpapers/'+c.id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(c[key])));

@@ -66,3 +66,10 @@ for(const viewport of [{width:390,height:844},{width:844,height:390},{width:900,
  const x=layout.left+layout.width*.5,y=layout.top+layout.height*.5;assert.ok(x>=0&&x<=viewport.width&&y>=0&&y<=viewport.height,'Central subject stays on screen');
 }
 console.log('PASS: new wide city artwork fills phones and tablets without stretching or empty bands.');
+
+for(const viewport of [{width:600,height:960},{width:900,height:1344},{width:1344,height:900}]){
+ const p=wallpaperLayout({...viewport,wallpaper:'landmark',geometry:{width:1536,height:1024,fitSubject:true,focalX:.75}});
+ const pylon=p.left+p.width*.75;
+ assert.ok(pylon>=0&&pylon<=viewport.width,'Tyumen bridge pylon stays visible in both orientations');
+ assert.ok(p.left<=0&&p.left+p.width>=viewport.width,'Focal composition covers the viewport');
+}

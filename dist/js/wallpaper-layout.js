@@ -19,6 +19,7 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
   const scale = Math.min(width,height)<600 ? cover : narrow ? Math.min(cover,contain/.88) : cover;
   const photoWidth = source.width*scale, photoHeight = source.height*scale;
   let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : wallpaper === 'mosque' ? .86 : .5);
+  if(protectedSubject && Number.isFinite(geometry.focalX) && geometry.focalX>=0 && geometry.focalX<=1) left=clamp(width*.5-photoWidth*geometry.focalX,width-photoWidth,0);
   let top = (height-photoHeight)*.5;
   if (wallpaper === 'mosque') {
     // Keep the minarets and main dome (right-hand third) in portrait as well.

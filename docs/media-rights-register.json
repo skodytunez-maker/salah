@@ -915,6 +915,36 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/khujand-tablet-provenance.json",
       "note": "Generated tablet companion of the existing SALAH artwork; documented generation and exact final fingerprint. Provenance does not establish exclusive copyright or clear pre-existing reference rights."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/day-tablet-v1.webp",
+      "gitBlobSha": "76664f7e506c7e13b73621e675f7952b8391f12d",
+      "bytes": 292874,
+      "kind": "wallpaper",
+      "wallpaperSet": "tyumen",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/tyumen-tablet-provenance.json",
+      "note": "Generated landscape companion of existing SALAH artwork; original phone art preserved. Provenance is not exclusive copyright or clearance of pre-existing reference rights."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v1.webp",
+      "gitBlobSha": "5bf75ff106e1ab54c471f0d613b1ec8f9e3c0b4c",
+      "bytes": 251518,
+      "kind": "wallpaper",
+      "wallpaperSet": "tyumen",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/tyumen-tablet-provenance.json",
+      "note": "Generated landscape companion of existing SALAH artwork; original phone art preserved. Provenance is not exclusive copyright or clearance of pre-existing reference rights."
+    },
+    {
+      "path": "dist/wallpapers/tyumen/sky-tablet-v1.svg",
+      "gitBlobSha": "5c8038aba0f0e74afa36dad80b12c9f063740343",
+      "bytes": 556,
+      "kind": "vector",
+      "wallpaperSet": "tyumen",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/tyumen-tablet-provenance.json",
+      "note": "Generated landscape companion of existing SALAH artwork; original phone art preserved. Provenance is not exclusive copyright or clearance of pre-existing reference rights."
     }
   ],
   "wallpaperSets": [

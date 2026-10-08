@@ -10,7 +10,13 @@
       "radius": 35,
       "day": "wallpapers/tyumen/day-v1.webp",
       "night": "wallpapers/tyumen/night-v1.webp",
-      "mask": "wallpapers/tyumen/sky-v1.svg"
+      "mask": "wallpapers/tyumen/sky-v1.svg",
+      "tablet": {
+        "day": "wallpapers/tyumen/day-tablet-v1.webp",
+        "night": "wallpapers/tyumen/night-tablet-v1.webp",
+        "mask": "wallpapers/tyumen/sky-tablet-v1.svg",
+        "focalX": 0.75
+      }
     },
     {
       "id": "omsk",
