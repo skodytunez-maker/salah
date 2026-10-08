@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import{readFile}from 'node:fs/promises';
+const source=await readFile(new URL('../supabase/functions/native-support-devices/index.ts',import.meta.url),'utf8');
+const{createNativeSupportDevicesHandler}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const uid='11111111-1111-4111-8111-111111111111',sid='22222222-2222-4222-8222-222222222222',id='33333333-3333-4333-8333-333333333333';let saves=0;
+const deps={getUser:async()=>({data:{user:{id:uid,email_confirmed_at:'2026-10-08'}}}),getClaims:async()=>({data:{claims:{sub:uid,session_id:sid,iss:'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1'}}}),isSessionActive:async()=>true,register:async(user,session,device,token)=>{assert.equal(user,uid);assert.equal(session,sid);assert.equal(device,id);saves++;return true},remove:async()=>true};
+const request=(patch={},auth='Bearer verified-test-token')=>new Request('https://test/native-support-devices',{method:'POST',headers:{Origin:'http://localhost',Authorization:auth,'Content-Type':'application/json'},body:JSON.stringify({action:'register',device:id,token:'a'.repeat(160),...patch})});
+assert.equal((await createNativeSupportDevicesHandler(deps)(request())).status,200);
+assert.equal((await createNativeSupportDevicesHandler(deps)(request({user_id:uid}))).status,400);
+assert.equal((await createNativeSupportDevicesHandler(deps)(request({token:'short'}))).status,400);
+assert.equal((await createNativeSupportDevicesHandler(deps)(request({},''))).status,401);
+assert.equal((await createNativeSupportDevicesHandler({...deps,isSessionActive:async()=>false})(request())).status,401);
+assert.equal(saves,1,'spoofed authority or revoked sessions cannot register a device');
+assert.equal((await createNativeSupportDevicesHandler({...deps,senderReady:()=>false})(request())).status,503);assert.equal(saves,1,'unconfigured sender must never claim a connected native device');
+console.log('PASS native device registration derives identity from verified active session; strict shape, bounded token and forged authority rejection');

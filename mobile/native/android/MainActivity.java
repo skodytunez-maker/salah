@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
         // Register before BridgeActivity creates the WebView and native plugin headers.
         registerPlugin(SalahWidgetPlugin.class);
         registerPlugin(SalahSupportPhotoPlugin.class);
+        registerPlugin(SalahSupportPushPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

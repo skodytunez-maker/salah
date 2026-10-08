@@ -1,3 +1,4 @@
+import{enableNativeSupportNotifications}from './native-support-push.js';
 import{prepareSupportPhoto}from './support-photo.js';
 import{createSupportRpc}from './support-transport.js';
 import{mountSupportPanel}from './support-client.js';
@@ -7,7 +8,7 @@ import{APP_VERSION}from './app-release.js';
 import{title}from './ui.js';
 import{validOwnerUserId}from './owner-user-card.js';
 async function enableSupportNotifications(){
- if(globalThis.Capacitor?.isNativePlatform?.()===true)return {ready:false,message:'Фоновые уведомления об ответах пока недоступны в этой версии.'};
+ if(globalThis.Capacitor?.isNativePlatform?.()===true)return enableNativeSupportNotifications();
  return new Promise(resolve=>{let completed=false;const timer=setTimeout(()=>{if(!completed){completed=true;resolve({ready:false,message:'Не удалось подключить уведомления. Откройте настройки приложения и повторите подключение.'});}},60000);window.dispatchEvent(new CustomEvent('salah:enable-support-notifications',{detail:{reply:result=>{if(completed)return;completed=true;clearTimeout(timer);resolve(result)}}}));});
 }
 let cleanup=null,screen=0;

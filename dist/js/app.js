@@ -1,3 +1,4 @@
+import{initNativeSupportNotifications}from './native-support-push.js';
 import{mountHomeReading}from './home-reading.js';
 import{createErrorReporter,mountDiagnosticSetting}from './error-reporting.js';
 import{createUserSupportStatus}from './user-support-status.js';
@@ -226,3 +227,5 @@ async function downloadCalendarMonth(format='pdf'){
  }catch(error){toast(error.message||'Не удалось подготовить расписание.')}
  finally{calendarPdfBusy=false;buttons.forEach((b,i)=>{if(b){b.disabled=false;b.textContent=i===0?'PDF А4':'Картинка'}})}
 }
+
+initNativeSupportNotifications();

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "305914198771",
+    "project_id": "salah-8b73f",
+    "storage_bucket": "salah-8b73f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305914198771:android:fd81d98ec02057836a1586",
+        "android_client_info": {
+          "package_name": "com.saadikobilov.salah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_2q5FNZUd3N8YxzaA3Z9lfuY93SR-s8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
