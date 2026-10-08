@@ -61,8 +61,8 @@ console.log('PASS: installed tablets rotate; phone portrait preference, ordinary
 for(const viewport of [{width:390,height:844},{width:844,height:390},{width:900,height:1344},{width:1344,height:900}]){
  const geometry={width:1536,height:1024,fitSubject:true};const layout=wallpaperLayout({...viewport,wallpaper:'landmark',geometry});
  assert.ok(layout);near(layout.width/layout.height,1.5);assert.equal(layout.needsLandscape,false);
- assert.ok(layout.left<=0&&layout.top<=0,'Full-screen artwork has no empty top or side bands');
- assert.ok(layout.left+layout.width>=viewport.width&&layout.top+layout.height>=viewport.height,'Artwork covers both viewport dimensions');
+ if(layout.mode!=='phone-landscape')assert.ok(layout.left<=0&&layout.top<=0,'Full-screen artwork has no empty top or side bands');
+ if(layout.mode!=='phone-landscape')assert.ok(layout.left+layout.width>=viewport.width&&layout.top+layout.height>=viewport.height,'Artwork covers both viewport dimensions');
  const x=layout.left+layout.width*.5,y=layout.top+layout.height*.5;assert.ok(x>=0&&x<=viewport.width&&y>=0&&y<=viewport.height,'Central subject stays on screen');
 }
 console.log('PASS: new wide city artwork fills phones and tablets without stretching or empty bands.');
@@ -106,7 +106,7 @@ for(const viewport of [{width:844,height:390},{width:932,height:430},{width:740,
  assert.equal(p.mode,'phone-landscape');near(p.width/p.height,geometry.width/geometry.height);
  assert.ok(p.left>=-1e-8&&p.top>=-1e-8&&p.left+p.width<=viewport.width+1e-8&&p.top+p.height<=viewport.height+1e-8,'Whole source rectangle remains visible');
  near(p.scale,Math.min(viewport.width/geometry.width,viewport.height/geometry.height));
- const s=elements(),w=elements();applyWallpaperLayout(s,w,{...viewport,wallpaper:'landmark',geometry});assert.deepEqual(s.values,w.values,'Sky/weather share the uncut photograph');
+ const s=elements(),w=elements();s.style.owner=s;w.style.owner=w;applyWallpaperLayout(s,w,{...viewport,wallpaper:'landmark',geometry});assert.deepEqual(s.values,w.values,'Sky/weather share the uncut photograph');
  applyWallpaperLayout(s,w,{width:390,height:844});assert.equal(s.values.size,0,'Portrait restores existing composition');
 }
 const weatherSource=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');assert.ok(weatherSource.includes('viewportWidth>viewportHeight'),'Landscape phone requests available wide assets');
