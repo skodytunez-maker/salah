@@ -121,3 +121,10 @@ await page.select('[data-dua-open="dua-qunut"]').click();assert.equal(page.entri
 page=browser('#adhkar?view=duas&category=prayer',new Storage(),undefined,{adhkarHistory:true});await page.open();await page.select('[data-dua-open="dua-qunut"]').click();const depth=page.entries.length;
 await page.select('#dua-next').click();assert.match(page.location.hash,/item=dua-istikhara/);assert.equal(page.entries.length,depth,'Paging never inserts intermediate reader history');page.nativeBack();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.filter(item=>item.category==='prayer').length);
 console.log('PASS: native Back and Forward, direct reader/reload, Istikhara/Qunut/other duas, filtered library and stable history depth.');
+
+const referenceData=JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../dist/data/daily-dua.json',import.meta.url),'utf8'));
+const qunutReference=referenceData.items.find(item=>item.id==='dua-qunut'),hanafiReference=qunutReference.variants.find(item=>item.id==='hanafi'),hasanReference=qunutReference.variants.find(item=>item.id==='hasan');
+assert.match(hanafiReference.transliteration,/натаваккалю ‘аляйк/);assert.ok(hanafiReference.transliteration.indexOf('нарджуу рахматака')<hanafiReference.transliteration.indexOf('нахшаа ‘азаабак'));
+assert.match(hanafiReference.arabic,/وَنَتَوَكَّلُ عَلَيْكَ/);assert.ok(!hanafiReference.arabic.includes('الْجِدَّ'));assert.equal(hanafiReference.transliteration.split('\n\n').length,2);
+assert.equal(qunutReference.arabic,hasanReference.arabic);assert.equal(qunutReference.transliteration,hasanReference.transliteration);
+console.log('PASS: supplied Hanafi reference has trust clause, matching Arabic/order and two parts; original Hasan variant retained.');
