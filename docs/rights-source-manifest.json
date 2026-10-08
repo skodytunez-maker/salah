@@ -3163,6 +3163,11 @@
       "path": "dist/wallpapers/khujand/sky-tablet-v1.svg",
       "gitBlobSha": "67517e4f3b505528f0beee7f8eea3f5bca655b0d",
       "bytes": 423
+    },
+    {
+      "path": "dist/js/vendor/jsQR-LICENSE.txt",
+      "gitBlobSha": "8f71f43fee3f78649d238238cbde51e6d7055c82",
+      "bytes": 11358
     }
   ]
 }
