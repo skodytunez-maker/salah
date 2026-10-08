@@ -245,7 +245,28 @@ function createReminderTracker({read=()=>({}),write=()=>{},maxGap=65000,freshnes
   return {tick,reset};
 }
 
+const SUPPORT_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+function supportPushEvent(row,now){
+ const at=Number(row?.at);
+ if(!SUPPORT_UUID.test(row?.message_id||'')||!SUPPORT_UUID.test(row?.thread_id||'')||!Number.isFinite(at)||at>now||now-at>=86400000)return null;
+ return {kind:'support',hash:'support-'+row.message_id,at,message:'Новое сообщение поддержки',thread:row.thread_id,messageId:row.message_id};
+}
+async function dispatchSupportPush({db,send,clock}){
+ if(!db.supportEvents||!db.supportActive)return 0;
+ const started=clock(),rows=await db.supportEvents(started);let cursor=0,sent=0;
+ await Promise.all(Array.from({length:Math.min(8,rows.length)},async()=>{while(cursor<rows.length&&clock()-started<20000){
+  const row=rows[cursor++],event=supportPushEvent(row,clock());if(!event||!SUPPORT_UUID.test(row.id||''))continue;
+  if(!await db.supportActive(row.id,event.messageId)||!await db.claim(row.id,event.hash,event.at,clock()))continue;
+  const result=await send(row,event);await db.complete(row.id,event.hash,result);if(result==='sent')sent++;
+ }}));return sent;
+}
 
+import{dispatchSupportPush}from './support-push.mjs';
+import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
+import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
+
+import {TYUMEN_SOURCES,normalizeTyumenSource,tyumenSourceFiles,matchesTyumenSource} from '../../../dist/js/tyumen-source.js';
+import {mergeFirstAsr,firstAsrValid} from '../../../dist/js/asr-first.js';
 
 const PUSH_ORIGIN='https://skodytunez-maker.github.io';
 const PUBLIC_APP=PUSH_ORIGIN+'/salah/';
@@ -337,7 +358,7 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',at:event.at,expiresAt:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
  async function send(device,event){
@@ -373,6 +394,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now}){
     if(!await db.lease(clock()))return reply({busy:true});
     let delivered=0;
     try{
+     delivered+=await dispatchSupportPush({db,send,clock});
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
@@ -442,6 +464,8 @@ const db={
  async upsert(d){await sql`insert into salah_push_private.devices(id,token_hash,endpoint_hash,subscription,preferences,updated_at,enabled) values(${d.id}::uuid,${d.token_hash},${d.endpoint_hash},${sql.json(d.subscription)},${sql.json(d.preferences)},to_timestamp(${d.now}/1000.0),${d.preferences.reminders.enabled}) on conflict(id) do update set endpoint_hash=excluded.endpoint_hash,subscription=excluded.subscription,preferences=excluded.preferences,updated_at=excluded.updated_at,enabled=excluded.enabled where salah_push_private.devices.token_hash=excluded.token_hash`;},
  async remove(id){await sql`delete from salah_push_private.devices where id=${id}::uuid`;},
  async expire(id){await sql`update salah_push_private.devices set enabled=false,subscription=null,preferences=null where id=${id}::uuid`;},
+ async supportEvents(now){return sql`select distinct on(e.message_id,d.id) d.id,d.subscription,e.message_id,e.thread_id,extract(epoch from e.created_at)*1000 as at from salah_support_private.notification_events e join public.support_threads t on t.id=e.thread_id join public.support_messages m on m.id=e.message_id join public.app_notification_status n on n.user_id=e.recipient_id join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id where e.created_at>to_timestamp(${now}/1000.0)-interval '24 hours' and n.permission='granted' and d.subscription is not null and d.updated_at>to_timestamp(${now}/1000.0)-interval '90 days' and m.created_at>case when m.owner_reply then t.user_seen_at else t.owner_seen_at end and not exists(select 1 from salah_push_private.deliveries x where x.device_id=d.id and x.event_hash='support-'||e.message_id::text and x.state in('sent','expired')) order by e.message_id,d.id limit 100`;},
+ async supportActive(device,message){const [row]=await sql`select exists(select 1 from salah_support_private.notification_events e join public.support_threads t on t.id=e.thread_id join public.support_messages m on m.id=e.message_id join public.app_notification_status n on n.user_id=e.recipient_id join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id where e.message_id=${message}::uuid and d.id=${device}::uuid and n.permission='granted' and d.subscription is not null and e.created_at>now()-interval '24 hours' and m.created_at>case when m.owner_reply then t.user_seen_at else t.owner_seen_at end) as active`;return row.active===true;},
  async active(now){return sql`select id,subscription,preferences from salah_push_private.devices where enabled=true and subscription is not null and preferences is not null and updated_at>to_timestamp(${now}/1000.0)-interval '90 days'`;},
  async lastDhikrSent(id){const [row]=await sql`select extract(epoch from max(event_at))*1000 as at from salah_push_private.deliveries where device_id=${id}::uuid and event_hash like 'dhikr-%' and state='sent'`;return Number(row?.at)||0;},
  async rate(key,limit,now){const minute=Math.floor(now/60000);const rows=await sql`insert into salah_push_private.limits(key,minute,n) values(${key},${minute},1) on conflict(key,minute) do update set n=salah_push_private.limits.n+1 returning n`;return rows[0].n<=limit;},

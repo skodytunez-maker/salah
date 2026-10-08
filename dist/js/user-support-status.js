@@ -1,3 +1,4 @@
+import{supportNotice}from './support-notice.js';
 export function createUserSupportStatus({getUserId,getRpc,root=globalThis.document,windowRef=globalThis.window,documentRef=globalThis.document}){
  let snapshot=null,controller=null,revision=0,lastCheck=0,again=false;
  function paint(){
@@ -19,7 +20,7 @@ export function createUserSupportStatus({getUserId,getRpc,root=globalThis.docume
    const result=await getRpc()('support_user_status',{p_app:'salah'}).abortSignal(request.signal);
    if(request.signal.aborted||id!==revision||getUserId()!==user)return;
    if(result.error||!Number.isSafeInteger(result.data?.pending)||result.data.pending<0)throw Error('unavailable');
-   snapshot={user,pending:result.data.pending};lastCheck=Date.now();paint();
+   snapshot={user,pending:result.data.pending};lastCheck=Date.now();paint();supportNotice({actor:user,owner:false,pending:result.data.pending,latest:result.data.latest,documentRef,windowRef});
   }catch{if(id===revision){snapshot=null;paint()}}
   finally{clearTimeout(timeout);if(controller===request){controller=null;if(again){again=false;void refresh({force:true})}}}
  }

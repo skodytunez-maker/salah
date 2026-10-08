@@ -71,8 +71,8 @@ export function createPushReminders({getSettings,toast=()=>{}}){
   }catch(error){onlineReady=false;status='Не удалось сохранить доставку: '+error.message+'. Попробуем при следующем подключении.';}
   finally{busy=false;draw();if(needsSync){needsSync=false;queue();}}
  }
- async function enable(){
-  if(busy||!supported()||!getSettings().city||!normalizeReminders(getSettings().reminders).enabled||Notification.permission==='denied')return {ready:false,message:'Проверьте разрешение телефона и настройки напоминаний.'};
+ async function enable({supportOnly=false}={}){
+  if(busy||!supported()||!getSettings().city||(!supportOnly&&!normalizeReminders(getSettings().reminders).enabled)||Notification.permission==='denied')return {ready:false,message:'Проверьте разрешение телефона и настройки напоминаний.'};
   // Permission is requested directly by this button, never on app startup.
   let connected=false;busy=true;status='Подключаем…';draw();
   try{
@@ -135,6 +135,7 @@ export function createPushReminders({getSettings,toast=()=>{}}){
  });
  window.addEventListener('salah:settings-changed',()=>{diagnostic=null;queue();draw();});
  window.addEventListener('storage',event=>{if(event.key==='salah:settings'||event.key==='salah:dhikr-last-use-v1'){queue();}else if(event.key===KEY){state=read();onlineReady=false;queue();draw();}});
+ window.addEventListener('salah:enable-support-notifications',event=>{if(typeof event.detail?.reply==='function')void enable({supportOnly:true}).then(event.detail.reply);});
  window.addEventListener('online',()=>{loadConfig(true);sync(true);});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){state=read();if(!config)loadConfig();sync();}});
  loadConfig();sync(true);

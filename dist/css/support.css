@@ -25,3 +25,5 @@
 .owner-user-write{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:20px;min-height:52px;box-sizing:border-box;text-decoration:none}
 .owner-user-write svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .support-recipient{overflow-wrap:anywhere}
+
+.support-message-notice{position:fixed;z-index:145;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(360px,calc(100% - 24px));display:flex;align-items:center;gap:8px;background:#121e31;color:#f4f0e5;border:1px solid #64728f;border-radius:16px;padding:8px 12px;box-shadow:0 8px 24px #0005}.support-message-notice a{flex:1;min-height:44px;display:flex;align-items:center;font-size:14px}.support-message-notice button{min-width:44px;min-height:44px;font-size:24px}.support-photo-item{margin-bottom:16px}
