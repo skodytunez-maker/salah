@@ -9,6 +9,8 @@ export function landmarkDistance(a,b){
  return 6371*2*Math.asin(Math.sqrt(Math.min(1,h)));
 }
 const validRegion=r=>r&&['south','north','west','east'].every(k=>Number.isFinite(r[k]))&&r.south>=-90&&r.north<=90&&r.west>=-180&&r.east<=180&&r.south<r.north&&r.west<r.east&&r.north-r.south<=6&&r.east-r.west<=6;
+const validAssets=(assets,id)=>['day','night','mask'].every(key=>typeof assets?.[key]==='string'&&new RegExp('^wallpapers/'+id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(assets[key]));
+export function landmarkAssetSet(entry,tablet=false){return tablet&&validAssets(entry?.tablet,entry.id)?{...entry,day:entry.tablet.day,night:entry.tablet.night,mask:entry.tablet.mask,fitSubject:true}:entry;}
 export function validateLandmarkCatalog(value){
  if(value?.version!==1||!Array.isArray(value.cities)||value.cities.length>500)return [];
  return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&(!c.region||validRegion(c.region))&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&['day','night','mask'].every(key=>typeof c[key]==='string'&&new RegExp('^wallpapers/'+c.id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(c[key])));
@@ -42,16 +44,20 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   finally{clearTimeout(timer)}
  }
  const entries=()=>catalogTask??=catalogue().then(entries=>{if(!entries.length)catalogTask=null;return entries});
- const load=async function load(city,{signal,chosen='auto'}={}){
+ const load=async function load(city,{signal,chosen='auto',tablet=false}={}){
   abort(signal);const entry=matchLandmark(city,await entries(),chosen);abort(signal);
   if(!entry)return {status:(await entries()).length?'unavailable':'offline',entry:null};
-  const responses=await Promise.all(['day','night','mask'].map(key=>publicFile(new URL(entry[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/webp/,limit:key==='mask'?32768:3145728})));
+  let selected=landmarkAssetSet(entry,tablet);
+  const files=asset=>Promise.all(['day','night','mask'].map(key=>publicFile(new URL(asset[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/webp/,limit:key==='mask'?32768:3145728})));
+  let responses;
+  try{responses=await files(selected)}catch(error){abort(signal);if(selected===entry)throw error;selected=entry;responses=await files(entry)}
   abort(signal);
   const blobs=await Promise.all(responses.map(r=>r.blob()));abort(signal);
   // Keep just the selected pair and mask. User counters/settings use other stores.
-  const store=await cache(),keep=new Set([catalogUrl,...['day','night','mask'].map(k=>new URL(entry[k],base).href)]);
+  // Retain both sizes of the chosen city so rotation also works offline.
+  const store=await cache(),keep=new Set([catalogUrl,...[entry,landmarkAssetSet(entry,true)].flatMap(asset=>['day','night','mask'].map(k=>new URL(asset[k],base).href))]);
   if(store)for(const request of await store.keys())if(!keep.has(request.url))await store.delete(request).catch(()=>{});
-  return {status:'ready',entry,blobs};
+  return {status:'ready',entry:selected,blobs};
  };
  load.catalogue=entries;
  return load;

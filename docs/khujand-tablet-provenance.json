@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-08",
+  "generator": "Built-in image_gen",
+  "reference": "Existing SALAH dist/wallpapers/khujand/day-v1.webp",
+  "notes": "Companion tablet artwork. Original phone artwork remains unchanged. AI-generated interpretation, not an authenticated documentary photograph. No new external photographic reference was used.",
+  "dayPrompt": "Expand the existing Khujand scene to a 3:2 landscape; retain fortress, turquoise domes, river, mountains and daytime palette without stretching, text or borders.",
+  "nightPrompt": "Change only lighting and sky to midnight blue with warm city illumination; retain camera framing and architectural positions.",
+  "assets": [
+    {
+      "path": "dist/wallpapers/khujand/day-tablet-v1.webp",
+      "gitBlobSha": "03f0295e1c1a2edca097e041a47b9a67a24159bd",
+      "bytes": 458850,
+      "sha256": "48807137a48412dd1b598f61ff24c2d9bc337301b4d47e14a4a78d80bf7cb792"
+    },
+    {
+      "path": "dist/wallpapers/khujand/night-tablet-v1.webp",
+      "gitBlobSha": "b9c0fe2dadcef40662292bb5b1ace090f79676cb",
+      "bytes": 374024,
+      "sha256": "db072dd5e02531d22088170a36a43a73d50e9c9fe7f59fafe630e24d3e9aa092"
+    },
+    {
+      "path": "dist/wallpapers/khujand/sky-tablet-v1.svg",
+      "gitBlobSha": "67517e4f3b505528f0beee7f8eea3f5bca655b0d",
+      "bytes": 423,
+      "sha256": "4a0d13f715d0e5c4cca75ae186dede71be29d15d01588eb04c716c740d5d6114"
+    }
+  ]
+}
