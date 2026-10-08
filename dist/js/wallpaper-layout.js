@@ -18,7 +18,7 @@ export function wallpaperLayout({width,height,wallpaper='mosque',geometry}={}) {
   // Full-bleed landscape needs a separate, aligned day/night/sky asset set.
   const narrow = source.width/source.height < .85;
   const fillViewport=geometry?.fillViewport===true;
-  const scale = phoneLandscape ? contain : Math.min(width,height)<600 || fillViewport ? cover : narrow ? Math.min(cover,contain/.88) : cover;
+  const scale = phoneLandscape ? cover : Math.min(width,height)<600 || fillViewport ? cover : narrow ? Math.min(cover,contain/.88) : cover;
   const photoWidth = source.width*scale, photoHeight = source.height*scale;
   let left = (width-photoWidth)*(narrow && wide ? .96 : narrow ? .5 : wallpaper === 'mosque' ? .86 : .5);
   if((protectedSubject || fillViewport) && Number.isFinite(geometry.focalX) && geometry.focalX>=0 && geometry.focalX<=1) left=clamp(width*.5-photoWidth*geometry.focalX,width-photoWidth,0);
