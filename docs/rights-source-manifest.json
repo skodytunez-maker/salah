@@ -3148,6 +3148,26 @@
       "path": "supabase/tests/support_owner_messages.sql",
       "gitBlobSha": "a62bf3e9076a41fd585aa9e7abda7892f69c7b61",
       "bytes": 2332
+    },
+    {
+      "path": "dist/wallpapers/khujand/day-tablet-v1.webp",
+      "gitBlobSha": "03f0295e1c1a2edca097e041a47b9a67a24159bd",
+      "bytes": 458850
+    },
+    {
+      "path": "dist/wallpapers/khujand/night-tablet-v1.webp",
+      "gitBlobSha": "b9c0fe2dadcef40662292bb5b1ace090f79676cb",
+      "bytes": 374024
+    },
+    {
+      "path": "dist/wallpapers/khujand/sky-tablet-v1.svg",
+      "gitBlobSha": "67517e4f3b505528f0beee7f8eea3f5bca655b0d",
+      "bytes": 423
+    },
+    {
+      "path": "dist/js/vendor/jsQR-LICENSE.txt",
+      "gitBlobSha": "8f71f43fee3f78649d238238cbde51e6d7055c82",
+      "bytes": 11358
     }
   ]
 }

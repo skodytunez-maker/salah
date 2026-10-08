@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
-import {createLandmarkLoader,validateLandmarkCatalog,matchLandmark,landmarkDistance,LANDMARK_CACHE} from '../dist/js/landmarks.js';
+import {createLandmarkLoader,validateLandmarkCatalog,matchLandmark,landmarkDistance,LANDMARK_CACHE,landmarkAssetSet} from '../dist/js/landmarks.js';
 const root=new URL('../dist/',import.meta.url),catalog=JSON.parse(await readFile(new URL('wallpapers/catalog.json',root),'utf8')),entries=validateLandmarkCatalog(catalog),city={latitude:57.15222,longitude:65.52722};
 assert.equal(entries.length,17);
 assert.equal(new Set(entries.map(x=>x.id)).size,entries.length);
@@ -32,6 +32,12 @@ const moscow=await load({latitude:55.7558,longitude:37.6173});assert.equal(mosco
 const offline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage});assert.equal((await offline(city)).status,'ready','Previously chosen city works offline');assert.equal(privateSettings.get('school'),0);assert.equal(privateSettings.get('adhkar-total'),170);
 const controller=new AbortController();controller.abort();await assert.rejects(load(city,{signal:controller.signal}),error=>error.name==='AbortError');
 for(const item of entries)for(const key of ['day','night','mask'])assert.ok((await stat(new URL(item[key],root))).size<3145728);
+for(const item of entries.filter(c=>c.tablet)){
+ const tablet=landmarkAssetSet(item,true);assert.notEqual(tablet.day,item.day);
+ for(const key of ['day','night','mask'])assert.ok((await stat(new URL(tablet[key],root))).size<3145728);
+ const mask=await readFile(new URL(tablet.mask,root),'utf8');assert.match(mask,/viewBox="0 0 1536 1024"/);
+ assert.ok(!/<script|<image|(?:href|src)\s*=|url\(['"]?(?:https?:|data:)/i.test(mask));
+}
 for(const item of entries){const mask=await readFile(new URL(item.mask,root),'utf8');assert.match(mask,item.fitSubject?/viewBox="0 0 1536 1024"/:/viewBox="0 0 853 1844"/);assert.ok(!/<script|<image|(?:href|src)\s*=|url\(['"]?(?:https?:|data:)/i.test(mask),'Sky masks have no scripts or external resources');assert.ok((await stat(new URL(item.mask,root))).size<32768);}
 const sw=await readFile(new URL('sw.js',root),'utf8');for(const item of entries)for(const key of ['day','night','mask'])assert.ok(!sw.includes('"./'+item[key]+'"'),'City assets are not precached for all users');
 const weatherSource=await readFile(new URL('js/weather.js',root),'utf8');
@@ -54,3 +60,27 @@ assert.equal((await load(otherCity,{chosen:'pamir'})).entry.id,'pamir');assert.d
 const invalidCount=requests.length;assert.equal((await load(otherCity,{chosen:'https://evil.test/image'})).status,'unavailable');assert.equal(requests.length,invalidCount);
 const chosenOffline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage});assert.equal((await chosenOffline(null,{chosen:'pamir'})).status,'ready');
 console.log('PASS: collapsed catalogue without photo downloads, independent explicit selection, invalid IDs, saved chosen city offline.');
+
+// A paired tablet set is optional, same-city only, and never changes phone art.
+const original={...entries.find(x=>x.id==='khujand')};
+const tablet={day:'wallpapers/khujand/day-tablet-v1.webp',night:'wallpapers/khujand/night-tablet-v1.webp',mask:'wallpapers/khujand/sky-tablet-v1.svg',id:'other-city',name:'Wrong name'};
+const dual={...original,tablet};
+assert.equal(landmarkAssetSet(dual,false),dual);
+assert.equal(landmarkAssetSet(dual,true).day,tablet.day);
+assert.equal(landmarkAssetSet(dual,true).id,original.id);
+assert.equal(landmarkAssetSet(dual,true).name,original.name);
+for(const day of ['https://evil.test/day.webp','wallpapers/khujand/../day.webp','wallpapers/other/day.webp','wallpapers/khujand/dayXwebp'])assert.equal(landmarkAssetSet({...dual,tablet:{...tablet,day}},true).day,original.day);
+const dualData=new Map(),dualRequests=[];
+const dualStore={match:async url=>dualData.get(typeof url==='string'?url:url.url)?.clone(),put:async(url,response)=>dualData.set(url,response.clone()),keys:async()=>[...dualData.keys()].map(url=>({url})),delete:async request=>dualData.delete(request.url)};
+const dualCache={open:async()=>dualStore};
+const dualFetch=async url=>{dualRequests.push(url);return url.endsWith('catalog.json')?new Response(JSON.stringify({version:1,cities:[dual]}),{headers:{'Content-Type':'application/json'}}):new Response('art',{headers:{'Content-Type':url.endsWith('.svg')?'image/svg+xml':'image/webp'}})};
+const dualLoad=createLandmarkLoader({fetcher:dualFetch,cacheStorage:dualCache});
+assert.equal((await dualLoad(null,{chosen:'khujand',tablet:true})).entry.day,tablet.day);
+assert.equal((await dualLoad(null,{chosen:'khujand'})).entry.day,original.day);
+assert.equal(dualData.size,7,'Both day/night/mask sets and one catalogue only');
+const dualOffline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage:dualCache});
+assert.equal((await dualOffline(null,{chosen:'khujand',tablet:true})).entry.day,tablet.day);
+assert.equal((await dualOffline(null,{chosen:'khujand'})).entry.day,original.day);
+const fallback=createLandmarkLoader({fetcher:async url=>url.includes('-tablet-')?new Response('',{status:404}):dualFetch(url),cacheStorage:{open:async()=>null}});
+assert.equal((await fallback(null,{chosen:'khujand',tablet:true})).entry.day,original.day,'Unavailable tablet set falls back to same city');
+console.log('PASS: original phone art, validated tablet paths, immutable city identity, offline rotation, bounded paired cache and same-city fallback.');

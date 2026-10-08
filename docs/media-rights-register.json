@@ -885,6 +885,36 @@
       "wallpaperSet": "tyumen",
       "role": "mask",
       "note": "See wallpaper set: generation method and reference rights must be assessed separately."
+    },
+    {
+      "path": "dist/wallpapers/khujand/day-tablet-v1.webp",
+      "gitBlobSha": "03f0295e1c1a2edca097e041a47b9a67a24159bd",
+      "bytes": 458850,
+      "kind": "wallpaper",
+      "wallpaperSet": "khujand",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/khujand-tablet-provenance.json",
+      "note": "Generated tablet companion of the existing SALAH artwork; documented generation and exact final fingerprint. Provenance does not establish exclusive copyright or clear pre-existing reference rights."
+    },
+    {
+      "path": "dist/wallpapers/khujand/night-tablet-v1.webp",
+      "gitBlobSha": "b9c0fe2dadcef40662292bb5b1ace090f79676cb",
+      "bytes": 374024,
+      "kind": "wallpaper",
+      "wallpaperSet": "khujand",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/khujand-tablet-provenance.json",
+      "note": "Generated tablet companion of the existing SALAH artwork; documented generation and exact final fingerprint. Provenance does not establish exclusive copyright or clear pre-existing reference rights."
+    },
+    {
+      "path": "dist/wallpapers/khujand/sky-tablet-v1.svg",
+      "gitBlobSha": "67517e4f3b505528f0beee7f8eea3f5bca655b0d",
+      "bytes": 423,
+      "kind": "vector",
+      "wallpaperSet": "khujand",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/khujand-tablet-provenance.json",
+      "note": "Generated tablet companion of the existing SALAH artwork; documented generation and exact final fingerprint. Provenance does not establish exclusive copyright or clear pre-existing reference rights."
     }
   ],
   "wallpaperSets": [

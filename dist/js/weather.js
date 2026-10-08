@@ -24,7 +24,7 @@ function layoutScene(scene,effect=document.getElementById('weather-layer')){
 let layoutResize=null;
 window.addEventListener('resize',()=>{
  if(layoutResize!==null)return;
- layoutResize=requestAnimationFrame(()=>{layoutResize=null;const scene=document.getElementById('home-scene');if(scene)layoutScene(scene)});
+ layoutResize=requestAnimationFrame(()=>{layoutResize=null;const scene=document.getElementById('home-scene');if(scene){prepareLandmark(scene,document.body.classList.contains('home-page'));layoutScene(scene)}});
 });
 function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';note.textContent=landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':'Для первой загрузки фона нужен интернет.'}
 function stopLandmarkRequest(){landmarkRequest?.abort();landmarkRequest=null}
@@ -41,7 +41,8 @@ function discardDisplayedLandmark(scene){
 }
 function prepareLandmark(scene,home){
  const selected=settings.wallpaper==='landmark';
- const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude].join(':'):null;
+ const tablet=Math.min(document.documentElement?.clientWidth||window.innerWidth||0,window.innerHeight||0)>=600;
+ const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude,tablet?'tablet':'phone'].join(':'):null;
  if(key!==landmarkKey){
   stopLandmarkRequest();landmarkKey=key;landmarkState='idle';
   // While another landmark is loading, keep the currently decoded city visible.
@@ -52,7 +53,7 @@ function prepareLandmark(scene,home){
  else{scene.dataset.wallpaper=settings.wallpaper;document.body.dataset.wallpaper=scene.dataset.wallpaper}
  landmarkNote();if(key===null||!home||landmarkState!=='idle')return;
  const controller=new AbortController();landmarkRequest=controller;landmarkState='loading';landmarkNote();
- loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity}).then(async result=>{
+ loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity,tablet}).then(async result=>{
   if(controller.signal.aborted)return;
   if(result.status!=='ready'){landmarkRequest=null;landmarkState=result.status;discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote();return}
   const urls=result.blobs.map(blob=>URL.createObjectURL(blob));

@@ -43,7 +43,12 @@
       "radius": 30,
       "day": "wallpapers/khujand/day-v1.webp",
       "night": "wallpapers/khujand/night-v1.webp",
-      "mask": "wallpapers/khujand/sky-v1.svg"
+      "mask": "wallpapers/khujand/sky-v1.svg",
+      "tablet": {
+        "day": "wallpapers/khujand/day-tablet-v1.webp",
+        "night": "wallpapers/khujand/night-tablet-v1.webp",
+        "mask": "wallpapers/khujand/sky-tablet-v1.svg"
+      }
     },
     {
       "id": "dushanbe",
