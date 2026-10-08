@@ -17,6 +17,11 @@ assert.equal(JSON.stringify(settings),saved,'Saved foreground-azan choice and se
 const checks=statusCalls;stamp+=1000;await background.nativeSync();assert.equal(statusCalls,checks,'No bridge round trip on every clock tick');
 days={fresh:true};await background.nativeSync();assert.equal(statusCalls,checks+1,'New timetable state refreshes delivery');
 settings={...settings,reminders:{...settings.reminders,enabled:false}};await background.nativeSync();assert.equal(background.active(),false);assert.equal(pending,0);assert.ok(clears>0);
+const originalStatus=plugin.getStatus;
+plugin.getStatus=async()=>({notifications:false,permission:'denied',exactAlarms:true,adhan:false,pending});
+settings={...settings,reminders:{...settings.reminders,enabled:true}};await background.nativeSync(true);
+assert.equal(background.invitationState().permission,'denied','A blocked channel must not trigger another automatic invitation');
+assert.equal(background.active(),false);plugin.getStatus=originalStatus;
 background.destroy();const ended=statusCalls;await background.nativeSync(true);assert.equal(statusCalls,ended);
 // A settings change during a slow bridge call must also be applied after the
 // user leaves the screen; it cannot depend on another visible clock tick.

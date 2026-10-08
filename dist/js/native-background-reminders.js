@@ -11,7 +11,7 @@ export function createNativeBackgroundReminders({getSettings,getContext,toast=()
  let mounted=null,busy=false,needsSync=false,destroyed=false,lastAt=0,lastSettings='',lastDays,lastDay='',lastActivity=0,permission='default',adhanSupported=false;
  const context=()=>{const s=getSettings(),c=getContext()||{};return {...c,cityKey:s.city?c.cityKey:null,timeZone:c.timeZone||s.city?.timezone,dhikrLastAt:readDhikrActivity()};};
  const connection=createNativeReminderConnection({plugin,getContext:context,now:clock,getPreferences:nativeStatus=>{
-  permission=nativeStatus.notifications?'granted':'default';adhanSupported=nativeStatus.adhan===true;
+  permission=nativeStatus.notifications?'granted':nativeStatus.permission==='denied'?'denied':'default';adhanSupported=nativeStatus.adhan===true;
   const value=normalizeReminders(getSettings().reminders);
   // Keep the saved foreground-azan preference. Until native audio is supported,
   // only the copied delivery plan is notification-only; never rewrite settings.

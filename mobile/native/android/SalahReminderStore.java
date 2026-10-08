@@ -22,7 +22,12 @@ final class SalahReminderStore {
     static boolean notificationsAllowed(Context context) {
         if (Build.VERSION.SDK_INT >= 33 && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return false;
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        return manager != null && (Build.VERSION.SDK_INT < 24 || manager.areNotificationsEnabled());
+        if (manager == null || Build.VERSION.SDK_INT >= 24 && !manager.areNotificationsEnabled()) return false;
+        if (Build.VERSION.SDK_INT >= 26) {
+            android.app.NotificationChannel channel = manager.getNotificationChannel(SalahReminderReceiver.CHANNEL);
+            if (channel != null && channel.getImportance() == NotificationManager.IMPORTANCE_NONE) return false;
+        }
+        return true;
     }
     static boolean exactAllowed(Context context) {
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

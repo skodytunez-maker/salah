@@ -11,7 +11,7 @@ import android.os.Build;
 import org.json.JSONObject;
 
 public class SalahReminderReceiver extends BroadcastReceiver {
-    private static final String CHANNEL = "salah_reminders_v1";
+    static final String CHANNEL = "salah_reminders_v1";
     @Override public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)

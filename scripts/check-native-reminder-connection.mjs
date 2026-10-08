@@ -18,4 +18,10 @@ granted=true;const replace=plugin.replaceSchedule;plugin.replaceSchedule=async()
 assert.equal((await connection.refresh()).status,'error');assert.equal(pending,0,'A failed replacement clears the old city schedule');plugin.replaceSchedule=replace;
 const empty=createNativeReminderConnection({plugin,getPreferences:()=>({enabled:true}),getContext:()=>({...context(),timingsFor:()=>({})}),now:()=>now});
 assert.equal((await empty.refresh()).status,'no_future_events');assert.equal((await empty.refresh()).status,'no_future_events');
+exact=false;let finishPermission;const permissionCalls=calls.length;
+plugin.requestExactAlarmPermission=()=>new Promise(resolve=>{finishPermission=()=>{exact=true;resolve({notifications:true,exactAlarms:true});}});
+const enableFirst=connection.enable();await new Promise(resolve=>setTimeout(resolve,0));
+const enableSecond=connection.enable();assert.equal(calls.length,permissionCalls,'No schedule before the permission screen returns');
+finishPermission();assert.equal((await enableFirst).status,'connected');assert.equal((await enableSecond).status,'connected');
+assert.equal(calls.length,permissionCalls+1,'Repeated enable shares the pending permission operation');
 console.log('PASS: no startup prompts, explicit permissions, unchanged queue, cleared-state recovery, disable, unsupported audio, serial city replacement and revoked permission. Native delivery is mocked here.');
