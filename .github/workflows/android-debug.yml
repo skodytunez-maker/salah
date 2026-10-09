@@ -92,3 +92,23 @@ jobs:
           name: salah-android-debug-metadata
           path: mobile/android/app/build/outputs/apk/debug/apk-report.json
           if-no-files-found: error
+
+      - name: Build isolated reminder test APK
+        working-directory: mobile
+        run: |
+          node scripts/isolated-reminder-test.mjs
+          cd android
+          ./gradlew assembleDebug --stacktrace
+      - name: Verify isolated reminder test APK
+        run: |
+          node mobile/scripts/inspect-android-apk.mjs mobile/android/app/build/outputs/apk/debug/app-debug.apk mobile/android/app/build/outputs/apk/debug/reminder-test-report.json
+          node -e "const r=require('./mobile/android/app/build/outputs/apk/debug/reminder-test-report.json');if(r.applicationId!=='com.saadikobilov.salah.remindertest')throw Error('Test APK cannot replace SALAH');"
+          cp mobile/android/app/build/outputs/apk/debug/app-debug.apk mobile/android/app/build/outputs/apk/debug/SALAH-reminder-test.apk
+      - name: Upload isolated reminder test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-android-reminder-test
+          path: |
+            mobile/android/app/build/outputs/apk/debug/SALAH-reminder-test.apk
+            mobile/android/app/build/outputs/apk/debug/reminder-test-report.json
+          if-no-files-found: error

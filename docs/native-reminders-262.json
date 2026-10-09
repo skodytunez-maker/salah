@@ -1,0 +1,17 @@
+{
+  "version": 262,
+  "base": "d457a56929223169a93222e04bbdba2aae09b7ed",
+  "scope": "Connect existing Android native reminder implementation without merging unrelated stale PR86 widget/server changes",
+  "validation": "96/96 application checks; Android build/unit tests required before delivery",
+  "data": "Reminder plan stays in app-private SharedPreferences; no new telemetry/server changes; web and iOS retain their existing delivery",
+  "installation": "Additional com.saadikobilov.salah.remindertest package named SALAH Проверка avoids replacing APK261 signed by unavailable ephemeral CI key",
+  "physicalTablet": "Pending user installation and system permissions",
+  "limitations": [
+    "Plan covers 7 days and refreshes when app opens",
+    "OS force-stop and manufacturer restrictions remain device-dependent",
+    "Firebase support delivery disabled in isolated test package"
+  ],
+  "sources": [
+    "https://developer.android.com/develop/background-work/services/alarms"
+  ]
+}

@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {nativeReminderTarget,connectNativeReminderNavigation} from '../dist/js/native-reminder-navigation.js';
+assert.equal(nativeReminderTarget({kind:'adhkar',key:'evening'}),'#adhkar?group=evening');
+assert.equal(nativeReminderTarget({kind:'adhkar',key:'morning'}),'#adhkar?group=morning');
+assert.equal(nativeReminderTarget({kind:'dhikr'}),'#adhkar');
+for(const value of [null,{kind:'owner'},{kind:'support'},{kind:'prayer',key:'Fajr'},{url:'https://evil.test/'}])assert.equal(nativeReminderTarget(value),'#home');
+assert.equal(nativeReminderTarget({kind:'adhkar',key:'morning&owner=1'}),'#adhkar');
+let callback,removed=false;const targets=[];
+const listener=connectNativeReminderNavigation({addListener:async(name,fn)=>{assert.equal(name,'openReminder');callback=fn;return{remove:async()=>removed=true}}},{navigate:target=>targets.push(target)});
+await Promise.resolve();callback({kind:'adhkar',key:'evening'});assert.deepEqual(targets,['#adhkar?group=evening']);listener.destroy();await Promise.resolve();callback({kind:'dhikr'});assert.equal(targets.length,1);assert.equal(removed,true);
+console.log('PASS: public reminder destinations, exact morning/evening group, no private/external routes, native tap dispatch and cleanup. No device tap simulated.');
