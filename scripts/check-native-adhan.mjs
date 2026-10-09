@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {connectNativeAdhanAudio} from '../dist/js/native-adhan.js';
+import {foregroundAudioBusy,setForegroundAudio} from '../dist/js/audio-focus.js';
+let listener,resolveStatus,removed=false;const busy=[];
+const plugin={setWebAudioBusy:async value=>busy.push(value.busy),stopAdhan:async()=>{},getStatus:()=>new Promise(resolve=>resolveStatus=resolve),addListener:async(name,fn)=>{assert.equal(name,'nativeAdhanState');listener=fn;return {remove:async()=>removed=true}}};
+const audio=connectNativeAdhanAudio(plugin);await Promise.resolve();
+assert.deepEqual(busy,[false]);listener({playing:true});assert.equal(foregroundAudioBusy(),true);assert.deepEqual(busy,[false],'Native playback does not mark itself as another web player');
+resolveStatus({playing:false});await Promise.resolve();assert.equal(foregroundAudioBusy(),true,'A stale initial status cannot undo a newer playback event');
+const quran={};setForegroundAudio(quran,true);assert.equal(busy.at(-1),true,'Another player is seen even when native audio already owns focus');
+listener({playing:false});assert.equal(foregroundAudioBusy(),true,'Stopping native audio leaves the other owner intact');
+setForegroundAudio(quran,false);assert.equal(foregroundAudioBusy(),false);assert.equal(busy.at(-1),false);
+audio.destroy();await Promise.resolve();assert.equal(removed,true);listener({playing:true});assert.equal(foregroundAudioBusy(),false,'Disposed listeners cannot revive playback state');
+console.log('PASS: native audio ownership, no self-stop, stale status fence, concurrent owner changes, completion and listener disposal. No audio played.');

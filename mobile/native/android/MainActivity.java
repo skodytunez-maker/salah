@@ -8,6 +8,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         // Register before BridgeActivity creates the WebView and native plugin headers.
         registerPlugin(SalahWidgetPlugin.class);
+        registerPlugin(SalahReminderPlugin.class);
         registerPlugin(SalahSupportPhotoPlugin.class);
         registerPlugin(SalahSupportPushPlugin.class);
         super.onCreate(savedInstanceState);
