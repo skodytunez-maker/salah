@@ -79,3 +79,7 @@ body.quran-focus .sidebar,body.quran-focus header,body.quran-focus footer,body.q
 header.quran-section-title{display:block;position:static;inset:auto;width:auto;min-width:0;padding:0;border:0;background:none;box-shadow:none;z-index:auto;margin:22px 0 26px}.quran-section-title .quran-section-heading{width:100%;min-width:0}.quran-section-title .quran-section-heading a{flex:0 1 auto;min-width:0;white-space:nowrap}
 
 .reciter-surah-row{display:flex;align-items:center;gap:6px;min-width:0;padding:4px;border:1px solid var(--line);border-radius:16px;background:rgba(19,30,48,.75)}.reciter-surahs .reciter-surah-row [data-reciter-play]{flex:1;min-width:0;padding:10px;border:0;background:none}.reciter-surahs .reciter-download{flex:0 0 auto;min-height:44px;max-width:95px;padding:8px 10px;border:1px solid rgba(234,208,155,.3);border-radius:12px;background:rgba(234,208,155,.07);font-size:12px;color:#ead09b}.reciter-download:disabled{opacity:.5}.reciter-surah-row:has([data-reciter-play][aria-pressed=true]){border-color:#ead09b}
+
+/* Leave a little breathing room above Bandar Balilah in the portrait frame. */
+.reciter-card .reciter-portrait[src$="/bandarbalilah.png"]{box-sizing:border-box;padding-top:10px;object-position:center top;background:#202020}
+.reciter-profile .reciter-portrait[src$="/bandarbalilah.png"]{box-sizing:border-box;padding-top:6px;object-position:center top;background:#202020}
