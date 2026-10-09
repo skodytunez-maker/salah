@@ -6,7 +6,7 @@ const source=await fs.readFile(new URL('dist/js/quran-ayah-card.js',root),'utf8'
 const index=JSON.parse(await fs.readFile(new URL('dist/data/quran-index.json',root),'utf8'));
 const surah=JSON.parse(await fs.readFile(new URL('dist/data/quran/2.json',root),'utf8'));
 const draws=[];
-const document={fonts:{ready:Promise.resolve()},createElement:()=>({setAttribute(){},getContext(){return {font:'',measureText(text){return {width:[...text].length*Number.parseInt(this.font)*.55};},createLinearGradient(){return {addColorStop(){}};},fillRect(){},strokeRect(){},drawImage(){},fillText(text,x,y){draws.push({text,x,y,font:this.font,direction:this.direction});}};}})};
+const document={fonts:{ready:Promise.resolve()},createElement:()=>({setAttribute(){},getContext(){return {font:'',measureText(text){return {width:[...text].length*Number(this.font.match(/(\d+)px/)[1])*.55};},createLinearGradient(){return {addColorStop(){}};},createRadialGradient(){return {addColorStop(){}};},beginPath(){},moveTo(){},lineTo(){},bezierCurveTo(){},stroke(){},fillRect(){},strokeRect(){},drawImage(){},fillText(text,x,y){draws.push({text,x,y,font:this.font,direction:this.direction});}};}})};
 const context=vm.createContext({document,Date,Image:class {complete=false;async decode(){}},console});
 vm.runInContext(source.replace(/^import .*;\n/gm,'').replace(/export /g,''),context);
 for(let day=0;day<6236;day++){
@@ -21,7 +21,7 @@ for(const format of ['square','story'])for(const arabic of [true,false])for(cons
  assert.ok(pages.length>0);
  const normalized=text=>text.replace(/\s+/g,' ').trim();
  const printedArabic=normalized(draws.filter(row=>row.direction==='rtl').map(row=>row.text).join(' '));
- const printedTranslation=normalized(draws.filter(row=>['38px sans-serif','44px sans-serif'].includes(row.font)).map(row=>row.text).join(' '));
+ const printedTranslation=normalized(draws.filter(row=>['600 42px sans-serif','600 54px sans-serif'].includes(row.font)).map(row=>row.text).join(' '));
  if(arabic)assert.ok(printedArabic.includes(normalized(longVerse.arabic)),'Arabic text must be complete across pages');
  if(translation)assert.ok(printedTranslation.includes(normalized(longVerse.translation)),'Translation must be complete across pages');
  assert.ok(draws.every(row=>row.x>=0&&row.x<=1080&&row.y>0&&row.y<(format==='story'?1920:1080)));
