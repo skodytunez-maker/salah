@@ -13,8 +13,8 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
  const snapshot=()=>({...view,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
  const emit=()=>{setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
  function stop(){offlineOnly=false;savedSurahs=new Set();request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};emit()}
- async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0){
-  reciterInfo(reciter);if(!reciterHasSurah(reciter,surah?.number))return;
+ async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0,preferContinuous=true){
+  reciterInfo(reciter);if(preferContinuous&&!offline&&autoplay&&index===0&&seconds===0&&reciterInfo(reciter).continuousReciter)reciter=reciterInfo(reciter).continuousReciter;if(!reciterHasSurah(reciter,surah?.number))return;
   if(!surah?.verses?.length||!Number.isInteger(index)||index<0||index>=surah.verses.length)return;
   if(player&&view.surah.number===surah.number&&view.reciter===reciter&&offlineOnly===offline){player.play(index,true,seconds);return}
   const id=++request;player?.destroy();player=null;offlineOnly=offline;savedSurahs=new Set();
@@ -43,7 +43,7 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
   const index=reciterInfo(view.reciter).format==='verse'&&reciterInfo(reciter).format==='verse'?view.index:0;
   const id=++request;player?.destroy();player=null;
   view={...view,reciter,index,ayah:null,timingStatus:'loading',status:autoplay?'loading':'paused'};emit();
-  try{const data=surah.verses?surah:await load(number);if(id!==request)return false;await start(data,reciter,index,autoplay,offlineOnly);return true}catch{if(id===request){view.status='error';emit()}return false}
+  try{const data=surah.verses?surah:await load(number);if(id!==request)return false;await start(data,reciter,index,autoplay,offlineOnly,0,false);return true}catch{if(id===request){view.status='error';emit()}return false}
  }
  function pause(){if(player)player.pause();else if(view.surah){request++;view.status='paused';emit()}}
  function toggle(){

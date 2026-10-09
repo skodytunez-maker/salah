@@ -1271,6 +1271,14 @@
       "kind": "image",
       "rightsReviewStatus": "needs-review",
       "note": "Identified public portrait source and unchanged face evidence: docs/quran-continuation-reciters-253.json. Background composited from existing Luhaidan reference; no face synthesis. Public availability does not establish redistribution rights."
+    },
+    {
+      "path": "dist/assets/reciters/abdulbasitabdussamad.png",
+      "gitBlobSha": "c974b97f026d8c882449b18f9217d543e46f9435",
+      "bytes": 180494,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "note": "Identified archive portrait source and unchanged face proof: docs/quran-continuous-254.json. No face synthesis; public availability is not redistribution permission."
     }
   ],
   "wallpaperSets": [

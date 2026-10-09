@@ -8,3 +8,5 @@ const limited=createReaderFollow(2);limited(state(2,'playing','ar.tariqmuhammad'
 const offline=createReaderFollow(112);offline(state(112,'playing','ar.alafasy',true));assert.equal(offline(state(114,'loading','ar.alafasy',true)),'#quran?surah=114&ayah=1&reciter=ar.alafasy&offline=1');
 const final=createReaderFollow(114);final(state(114));assert.equal(final(state(1)),null,'No wrapping');
 console.log('PASS: active reader follows next chapter once, preserves reciter/offline, ignores unrelated/stopped sessions and final-surah wrap');
+
+const promoted=createReaderFollow(1);promoted(state(1,'playing','ar.yasseraldossari'));assert.equal(promoted(state(2,'loading','ar.yasseraldossaricontinuous')),'#quran?surah=2&ayah=1&reciter=ar.yasseraldossaricontinuous');
