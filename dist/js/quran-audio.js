@@ -7,7 +7,8 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  let startOffset=0,next=null;
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
  function emit(){if(!disposed)onState({index:current,status,ayah,timingStatus,canPrevious:!whole&&current>0,canNext:!whole&&current<surah.verses.length-1})}
- function clearNext(){const pending=next;next=null;if(pending?.resource){const r=pending.resource;r.audio.onended=r.audio.onerror=r.audio.onloadedmetadata=null;r.audio.pause();r.audio.src='';if(r.objectUrl)URL.revokeObjectURL(r.objectUrl);pending.resource=null;}}
+ function discardPrepared(r){r.audio.onended=r.audio.onerror=r.audio.onloadedmetadata=null;r.audio.pause();r.audio.src='';if(r.objectUrl)URL.revokeObjectURL(r.objectUrl);}
+ function clearNext(){const pending=next;next=null;if(pending?.resource){discardPrepared(pending.resource);pending.resource=null;}}
  function prepareNext(){
   if(disposed||whole||!continuous||current>=surah.verses.length-1)return;
   clearNext();const pending={index:current+1,resource:null};next=pending;
@@ -31,6 +32,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   if(whole)index=0;
   const prepared=!whole&&all&&next?.index===index?next.resource:null;if(prepared)next.resource=null;clearNext();
   const id=++token;release();startOffset=Number.isFinite(seconds)&&seconds>=0&&seconds<=86400?seconds:0;current=index;continuous=all;status='loading';ayah=whole?null:surah.verses[index].ayah;timingStatus=whole?(timed?'loading':'unavailable'):'ready';emit();if(!whole)onVerse(ayah);
+  if(disposed||id!==token){if(prepared)discardPrepared(prepared);return;}
   try{
    if(prepared){audio=prepared.audio;objectUrl=prepared.objectUrl;}else{
     let url=audioUrl(surah.verses[index].number,reciter,surah.number),blob=null;
