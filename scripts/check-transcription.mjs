@@ -1,3 +1,4 @@
+// Release251 updates only reviewed source fields; original text/targets separately pinned by check-adhkar-sources.
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
@@ -5,7 +6,7 @@ import {hasOwnTranscription,readingTranscription} from '../dist/js/quran-transcr
 const load=async path=>JSON.parse(await readFile(new URL(path,import.meta.url),'utf8'));
 const data=await load('../dist/data/adhkar.json');
 const strip=x=>JSON.parse(JSON.stringify(x,(k,v)=>['title','transliteration','transliterationNote','transcription'].includes(k)?undefined:v));
-assert.equal(createHash('sha256').update(JSON.stringify(strip(data))).digest('hex'),'c466b878abf98b06b55550f24208e0723e8ef223529444baf0cf6dcf7ffbc9f1','Arabic, translations, sources, IDs and repetition targets must remain unchanged');
+assert.equal(createHash('sha256').update(JSON.stringify(strip(data))).digest('hex'),'fcfa14f59902d1648b88d374f436b12e261fd8e46e33655fee49f6fa51d85796','Arabic, translations, sources, IDs and repetition targets must remain unchanged');
 for(const item of data.items){
  const arabic=item.arabic||item.verses.map(v=>v.arabic).join(' '),reading=item.transliteration||item.verses.map(v=>v.transliteration).join(' ');
  if(item.id!=='surah114')assert.equal(/[вВ]/.test(reading),false,item.id+': waw is read with у'); // 114:5 retains the requested source spelling Йувасвису, checked below.

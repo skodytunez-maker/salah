@@ -199,9 +199,10 @@
       "status": "needs-review",
       "evidence": [
         "https://sunnah.com/about",
-        "https://islamqa.org/hanafi/qibla-hanafi/42476/qunut-in-witr-prayer-5/"
+        "https://islamqa.org/hanafi/qibla-hanafi/42476/qunut-in-witr-prayer-5/",
+        "docs/dua-primary-sources-251.json"
       ],
-      "findings": "Individual primary hadith selections can be used for teaching/presentation under Sunnah.com's reproduction policy; copied modern Russian translations/transcriptions and source-site material need their own provenance.",
+      "findings": "Individual primary hadith selections can be used for teaching/presentation under Sunnah.com's reproduction policy; copied modern Russian translations/transcriptions and source-site material need their own provenance. Release251: six secondary-collection links replaced by reviewed primary hadith references. Existing text/transcription/target hashes preserved; this is not a rights or legal certification.",
       "nextAction": "Separate primary ancient texts from modern Russian editions; references do not license an entire modern collection."
     },
     {

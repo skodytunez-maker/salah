@@ -281,8 +281,8 @@
     },
     {
       "path": "dist/data/adhkar.json",
-      "gitBlobSha": "fe1cc98fae9e36ed9ec1c2cd6e92d8c2e797d9f2",
-      "bytes": 28833
+      "gitBlobSha": "f2122ddcc547cab257ba5252e0da683202ac5648",
+      "bytes": 29595
     },
     {
       "path": "dist/data/al-hakk-tyumen.json",
@@ -306,8 +306,8 @@
     },
     {
       "path": "dist/data/learning-adhkar-audio-sources.json",
-      "gitBlobSha": "ecae099f8f08986447af0a8c2b4c54009ac47c6d",
-      "bytes": 8005
+      "gitBlobSha": "c4ed49fd1c0d744c4efdd5b06f3d1904e9fbfaca",
+      "bytes": 7950
     },
     {
       "path": "dist/data/learning-content.json",
