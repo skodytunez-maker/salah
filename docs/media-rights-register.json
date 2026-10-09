@@ -1287,6 +1287,114 @@
       "kind": "image",
       "rightsReviewStatus": "needs-review",
       "note": "Identified portrait on Way2Quran reciter page; unchanged protected face and existing Luhaidan background. Sources and limitations: docs/quran-ruqyah-256.json. Public availability is not a permission grant."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/moon-mosque.webp",
+      "gitBlobSha": "fb19de936fded4ba9d197d5b476634a620e82d83",
+      "bytes": 100988,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/desert-dawn.webp",
+      "gitBlobSha": "4ee8e10e2c1d62a8f6897f90b0296a39fbbf493b",
+      "bytes": 168032,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/misty-lake.webp",
+      "gitBlobSha": "66ce977825859da1ffee324fa8ee8c8559473038",
+      "bytes": 211096,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/rain-window.webp",
+      "gitBlobSha": "3cd44d77c07c7649e5940bc011cb1726d9c7376d",
+      "bytes": 232244,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/ocean-dusk.webp",
+      "gitBlobSha": "b42d6e5034e7fb5fb9f9e287afdf9fc692404200",
+      "bytes": 196698,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/mosque-arches.webp",
+      "gitBlobSha": "6ea5b403968ae3dbddbeb3ee10bc63f152ca738e",
+      "bytes": 204278,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/olive-grove.webp",
+      "gitBlobSha": "29ef7500b4635d16144405dfa23d081c9bf7a09f",
+      "bytes": 276358,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/mountain-night.webp",
+      "gitBlobSha": "3772453d48f3d20db777db7ea8d655711b38282b",
+      "bytes": 247940,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/lantern-courtyard.webp",
+      "gitBlobSha": "334d704f7e9ea4209749871e0f0dbef2455addcd",
+      "bytes": 147828,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/garden-stream.webp",
+      "gitBlobSha": "fd641a07818ba52cfd75164d190893ef70e13864",
+      "bytes": 349722,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/snow-forest.webp",
+      "gitBlobSha": "19eb2f5bd80f3c3bc2584c3bde23836df16038de",
+      "bytes": 259234,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/coastal-mosque.webp",
+      "gitBlobSha": "e850c9f6a4c1ecd2ac8c2d085ce5402bed338354",
+      "bytes": 198720,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/ayah-background-generation.json",
+      "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
     }
   ],
   "wallpaperSets": [

@@ -1,0 +1,79 @@
+{
+  "createdAt": "2026-10-10",
+  "tool": "built-in image_gen",
+  "sharedPrompt": "Premium photorealistic vertical 9:16 background for SALAH ayah social cards; calm central area and upper breathing room; cinematic natural light; no people, text, logos, watermark or scripture.",
+  "assets": [
+    {
+      "id": "moon-mosque",
+      "title": "Лунная мечеть",
+      "scenePrompt": "A serene white marble mosque beside still water at blue hour, a slender crescent moon naturally small in the sky, two minarets toward outer edges, warm lights and reflection low in frame.",
+      "path": "dist/assets/ayah-backgrounds/moon-mosque.webp"
+    },
+    {
+      "id": "desert-dawn",
+      "title": "Рассвет в пустыне",
+      "scenePrompt": "Pristine sweeping sand dunes at dawn, soft rose and muted amber horizon, gentle wind textures in lower foreground, spacious blue gray sky.",
+      "path": "dist/assets/ayah-backgrounds/desert-dawn.webp"
+    },
+    {
+      "id": "misty-lake",
+      "title": "Тихое озеро",
+      "scenePrompt": "A still alpine lake with mist and layered distant mountains at early morning, muted teal water, a few dark pines along lower corners, dreamy but realistic.",
+      "path": "dist/assets/ayah-backgrounds/misty-lake.webp"
+    },
+    {
+      "id": "rain-window",
+      "title": "После дождя",
+      "scenePrompt": "Macro cinematic rain droplets on a dark window, beyond it softly blurred warm lights of a distant mosque courtyard in twilight, no identifiable writing.",
+      "path": "dist/assets/ayah-backgrounds/rain-window.webp"
+    },
+    {
+      "id": "ocean-dusk",
+      "title": "Море на закате",
+      "scenePrompt": "A tranquil open sea at dusk, indigo ocean and softly glowing peach horizon, fine waves in lower foreground, broad spacious dusk sky.",
+      "path": "dist/assets/ayah-backgrounds/ocean-dusk.webp"
+    },
+    {
+      "id": "mosque-arches",
+      "title": "Свет сквозь арки",
+      "scenePrompt": "An elegant empty mosque courtyard with pale stone horseshoe arches framing the outer edges, warm sunset beams and shadow, central open space, clean Islamic geometric architecture without inscriptions.",
+      "path": "dist/assets/ayah-backgrounds/mosque-arches.webp"
+    },
+    {
+      "id": "olive-grove",
+      "title": "Оливковая роща",
+      "scenePrompt": "An ancient olive grove on rolling hills at dusk, olive trees in lower third, soft golden side light, dusky blue sky and gently hazy distance.",
+      "path": "dist/assets/ayah-backgrounds/olive-grove.webp"
+    },
+    {
+      "id": "mountain-night",
+      "title": "Ночь в горах",
+      "scenePrompt": "Majestic layered rocky mountains under a natural dark starry sky, faint Milky Way, muted navy and charcoal tones, snowy peaks in lower third, no surreal huge celestial bodies.",
+      "path": "dist/assets/ayah-backgrounds/mountain-night.webp"
+    },
+    {
+      "id": "lantern-courtyard",
+      "title": "Тёплый свет",
+      "scenePrompt": "A finely crafted brass lantern glowing at lower right corner of an empty stone courtyard at night, a distant softly blurred arch and very subtle geometric floor pattern, navy shadows and gold light.",
+      "path": "dist/assets/ayah-backgrounds/lantern-courtyard.webp"
+    },
+    {
+      "id": "garden-stream",
+      "title": "Сад и ручей",
+      "scenePrompt": "A serene lush garden with a small flowing stream, green foliage framing outer sides, distant misty sunlight, dark emerald and muted warm highlights, clean uncluttered center.",
+      "path": "dist/assets/ayah-backgrounds/garden-stream.webp"
+    },
+    {
+      "id": "snow-forest",
+      "title": "Зимняя тишина",
+      "scenePrompt": "Quiet snow covered pine forest beside a frozen lake at blue hour, gentle falling snow, trees at outer edges and lower half, soft slate blue sky.",
+      "path": "dist/assets/ayah-backgrounds/snow-forest.webp"
+    },
+    {
+      "id": "coastal-mosque",
+      "title": "Мечеть у моря",
+      "scenePrompt": "A serene elegant coastal mosque on a distant shoreline at twilight, modest dome and two slim minarets, glowing windows, sea reflections, subject in bottom third and generous dusky sky.",
+      "path": "dist/assets/ayah-backgrounds/coastal-mosque.webp"
+    }
+  ]
+}
