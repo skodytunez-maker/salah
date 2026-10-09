@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import{createReaderFollow}from '../dist/js/quran-reader-follow.js';
+const state=(number,status='playing',reciter='ar.alafasy',offlineOnly=false)=>({surah:{number},status,reciter,offlineOnly});
+const follow=createReaderFollow(1);assert.equal(follow(state(2)),null,'Unrelated audio must not replace a reader');assert.equal(follow(state(1)),null);assert.equal(follow(state(1,'ended')),null);assert.equal(follow(state(2,'loading')),'#quran?surah=2&ayah=1&reciter=ar.alafasy');assert.equal(follow(state(2)),null,'Navigate once');
+const cancelled=createReaderFollow(1);cancelled(state(1));cancelled(state(1,'stopped'));assert.equal(cancelled(state(2)),null);
+const different=createReaderFollow(1);different(state(1));assert.equal(different(state(2,'playing','ar.husary')),null);assert.equal(different(state(3)),null);
+const limited=createReaderFollow(2);limited(state(2,'playing','ar.tariqmuhammad'));assert.equal(limited(state(12,'loading','ar.tariqmuhammad')),'#quran?surah=12&ayah=1&reciter=ar.tariqmuhammad');
+const offline=createReaderFollow(112);offline(state(112,'playing','ar.alafasy',true));assert.equal(offline(state(114,'loading','ar.alafasy',true)),'#quran?surah=114&ayah=1&reciter=ar.alafasy&offline=1');
+const final=createReaderFollow(114);final(state(114));assert.equal(final(state(1)),null,'No wrapping');
+console.log('PASS: active reader follows next chapter once, preserves reciter/offline, ignores unrelated/stopped sessions and final-surah wrap');

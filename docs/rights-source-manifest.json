@@ -3348,6 +3348,21 @@
       "path": "dist/wallpapers/tyumen/night-tablet-v2.webp",
       "gitBlobSha": "d22cb87bf1a89a9635196d0708082a7cc92ce0ff",
       "bytes": 365470
+    },
+    {
+      "path": "dist/assets/reciters/idrisabkar.png",
+      "gitBlobSha": "5dd49b92f68b8324aacc7667424d9197cc31e3e8",
+      "bytes": 4085444
+    },
+    {
+      "path": "dist/assets/reciters/abubakrshatri.png",
+      "gitBlobSha": "2cc6292f9f487eff149333648e381c28b4ba0eca",
+      "bytes": 319888
+    },
+    {
+      "path": "dist/assets/reciters/nasseralqatami.png",
+      "gitBlobSha": "615685adb03a1563a8ffe194446fe4cf516b33f2",
+      "bytes": 252299
     }
   ]
 }

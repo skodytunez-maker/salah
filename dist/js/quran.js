@@ -1,3 +1,4 @@
+import{createReaderFollow}from './quran-reader-follow.js';
 import{mountListeningShare,showListeningScanner}from './quran-listen-share.js';
 import{mountReciterLibrary,saveReciterFavorite,quranSectionTabs}from './quran-reciter-library.js';
 import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-favorites.js';
@@ -92,8 +93,10 @@ function reader(surah,ayah,token,offlineOnly=false){
  applyPreferences(p);bindQuranBroadcast(host);
  const showRule=e=>{const mark=e.target.closest('[data-tajweed-rule]');if(!mark||!p.hints)return;if(e.type==='keydown'&&!['Enter',' '].includes(e.key))return;if(e.type==='keydown')e.preventDefault();const rule=TAJWEED_RULES[mark.dataset.tajweedRule];if(!rule)return;modal('<div class="modal-heading"><h2>'+esc(rule[1])+'</h2><button class="text-button" data-close aria-label="Закрыть">×</button></div><p>'+esc(rule[2])+'</p><a class="text-button" href="https://alquran.cloud/tajweed-guide" target="_blank" rel="noopener">Источник разметки</a>')};const shell=host.querySelector('.quran-reader');shell.addEventListener('click',showRule);shell.addEventListener('keydown',showRule);
  let highlightedAyah=null,highlightedStatus=null;
+ const followPlayback=createReaderFollow(surah.number);
  const updatePlayback=state=>{
   if(token!==generation)return;
+  const following=followPlayback(state);if(following){location.hash=following;return;}
   if(state.reciter&&state.reciter!==p.reciter&&preferences().reciter===state.reciter){Object.assign(p,preferences());host.querySelector('[data-quran-option=reciter]').value=p.reciter;applyPreferences(p)}
   const matches=state.surah?.number===surah.number,active=matches&&['loading','playing','paused'].includes(state.status),n=active&&Number.isInteger(state.ayah)?state.ayah:null;
   const currentLabel=host.querySelector('#quran-current-verse');currentLabel.hidden=!active;
@@ -103,7 +106,7 @@ function reader(surah,ayah,token,offlineOnly=false){
   if(n===highlightedAyah&&state.status===highlightedStatus)return;
   if(highlightedAyah){const old=host.querySelector('#quran-ayah-'+highlightedAyah);old?.classList.remove('is-playing');old?.removeAttribute('aria-current');if(old)old.querySelector('.quran-verse-playing').hidden=true}
   if(n){const verse=host.querySelector('#quran-ayah-'+n);if(verse){verse.classList.add('is-playing');verse.setAttribute('aria-current','true');verse.dataset.playback=state.status;const label=verse.querySelector('.quran-verse-playing');label.hidden=false;label.textContent=state.status==='playing'?'Читается аят '+n:state.status==='paused'?'На паузе':'Загрузка…';}
-   if(n!==highlightedAyah&&state.status==='playing'){verse?.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});lastPosition={surah:surah.number,ayah:n};clearTimeout(saveTimer);saveTimer=setTimeout(savePosition,350)}
+   if((n!==highlightedAyah||highlightedStatus!=='playing')&&state.status==='playing'){verse?.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});lastPosition={surah:surah.number,ayah:n};clearTimeout(saveTimer);saveTimer=setTimeout(savePosition,350)}
   }
   highlightedAyah=n;highlightedStatus=state.status;
  };

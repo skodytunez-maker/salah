@@ -1,0 +1,125 @@
+{
+  "version": 253,
+  "date": "2026-10-09",
+  "reader": "Follow only an active reader session across next chapter; preserve selected reciter and offline route; keep audio session independent of reader lifecycle. Scroll once current ayah enters playing after loading.",
+  "audio": [
+    {
+      "id": "ar.idrisabkar",
+      "name": "Идрис Абкар",
+      "format": "surah",
+      "server": "https://server6.mp3quran.net/abkr/",
+      "timingRead": 12,
+      "timingServer": "https://server6.mp3quran.net/abkr/",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=12",
+      "verifiedOn": "2026-10-09",
+      "portrait": "assets/reciters/idrisabkar.png"
+    },
+    {
+      "id": "ar.abubakrshatri",
+      "name": "Абу Бакр аш-Шатри",
+      "format": "verse",
+      "folder": "Abu_Bakr_Ash-Shaatree_128kbps",
+      "source": "https://everyayah.com/data/Abu_Bakr_Ash-Shaatree_128kbps/",
+      "verifiedOn": "2026-10-09",
+      "portrait": "assets/reciters/abubakrshatri.png"
+    },
+    {
+      "id": "ar.nasseralqatami",
+      "name": "Насер аль-Катами",
+      "format": "verse",
+      "folder": "Nasser_Alqatami_128kbps",
+      "source": "https://everyayah.com/data/Nasser_Alqatami_128kbps/",
+      "verifiedOn": "2026-10-09",
+      "portrait": "assets/reciters/nasseralqatami.png"
+    }
+  ],
+  "portraitSources": [
+    {
+      "id": "idrisabkar",
+      "url": "https://media.way2quran.com/imgs/idris-abkar.jpg",
+      "page": "https://www.way2quran.com/en/reciters/idris-abkar"
+    },
+    {
+      "id": "abubakrshatri",
+      "url": "https://althkr.com/public/reciter/abu-bakr-al-shatri.jpg",
+      "page": "https://althkr.com/quran/surah/al-baqarah/download-684"
+    },
+    {
+      "id": "nasseralqatami",
+      "url": "https://www.assajda.com/media/person/square/nasser-al-qatami.jpg",
+      "page": "https://www.assajda.com/en/nasser-al-qatami-61.html"
+    }
+  ],
+  "portraitProof": [
+    {
+      "id": "idrisabkar",
+      "faceRedrawn": false,
+      "facePixelsUnchanged": true,
+      "size": [
+        2048,
+        2048
+      ],
+      "faceRegion": [
+        512,
+        532,
+        1495,
+        1393
+      ]
+    },
+    {
+      "id": "abubakrshatri",
+      "faceRedrawn": false,
+      "facePixelsUnchanged": true,
+      "size": [
+        600,
+        600
+      ],
+      "faceRegion": [
+        168,
+        168,
+        432,
+        462
+      ]
+    },
+    {
+      "id": "nasseralqatami",
+      "faceRedrawn": false,
+      "facePixelsUnchanged": true,
+      "size": [
+        550,
+        550
+      ],
+      "faceRegion": [
+        154,
+        138,
+        429,
+        396
+      ]
+    }
+  ],
+  "rightsStatus": "needs-review",
+  "idrisTimingRecording": [
+    {
+      "url": "https://server6.mp3quran.net/abkr/001.mp3",
+      "status": 200,
+      "bytes": 659676,
+      "sha256": "9d3621717fee2bbf5f6de0894ab43344f2ccd5473b94fe948f064002c4797fd3"
+    },
+    {
+      "url": "https://cdn.mp3quran.net/audio/idrees-abkar/r1/001.mp3",
+      "status": 200,
+      "bytes": 659676,
+      "sha256": "9d3621717fee2bbf5f6de0894ab43344f2ccd5473b94fe948f064002c4797fd3"
+    }
+  ],
+  "everyAyahCatalogues": {
+    "Abu_Bakr_Ash-Shaatree_128kbps": {
+      "count": 6350,
+      "allExpectedAyahsPresent": true
+    },
+    "Nasser_Alqatami_128kbps": {
+      "count": 6350,
+      "allExpectedAyahsPresent": true
+    }
+  }
+}

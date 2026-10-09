@@ -3,6 +3,7 @@ import {createQuranSession} from '../dist/js/quran-session.js';
 import {createQuranPlayer} from '../dist/js/quran-audio.js';
 
 globalThis.window={};
+const {readFile}=await import('node:fs/promises');const {loadIndex}=await import('../dist/js/quran-data.js');const realCatalog=JSON.parse(await readFile(new URL('../dist/data/quran-index.json',import.meta.url),'utf8'));const savedFetch=globalThis.fetch;globalThis.fetch=async()=>({ok:true,json:async()=>realCatalog});await loadIndex();globalThis.fetch=savedFetch;
 const catalog={surahs:Array.from({length:114},(_,i)=>({number:i+1,name:'Сура '+(i+1)}))};
 const surah=number=>({number,verses:[{number:1,ayah:1},{number:2,ayah:2}]});
 const flush=async()=>{for(let i=0;i<4;i++)await new Promise(resolve=>setImmediate(resolve))};
@@ -53,9 +54,9 @@ assert.equal(racing.state.surah.number,3,'A late load must not replace the lates
 const closing=racing.changeSurah(1);racing.stop();deferred.get(4)(surah(4));await closing;await flush();assert.equal(racing.state.status,'stopped','Closing while loading must not restart audio');
 await racing.start(surah(1),'ar.alafasy');await flush();const pending=racing.changeSurah(1);racing.pause();deferred.get(2)(surah(2));await pending;await flush();assert.equal(racing.state.status,'paused','Pause must cancel an in-flight surah start');
 let resumed=racing.toggle();deferred.get(2)(surah(2));await flush();assert.equal(racing.state.status,'playing');racing.stop();
-for(const reciter of ["ar.alafasy","ar.badralturki","ar.muhammadalluhaidan","ar.tariqmuhammad","ar.abdurrahmanalsudais","ar.saudalshuraim","ar.abdullahaljuhany","ar.bandarbalilah","ar.salahalbudair","ar.abdulmuhsinalqasim","ar.alialhuthaifi","ar.abdulbarialthubaity","ar.abdullahalbuayjan","ar.khalidalmuhanna","ar.ahmadalhuthaifi"]){
+for(const reciter of ["ar.alafasy","ar.idrisabkar","ar.abubakrshatri","ar.nasseralqatami","ar.badralturki","ar.muhammadalluhaidan","ar.tariqmuhammad","ar.abdurrahmanalsudais","ar.saudalshuraim","ar.abdullahaljuhany","ar.bandarbalilah","ar.salahalbudair","ar.abdulmuhsinalqasim","ar.alialhuthaifi","ar.abdulbarialthubaity","ar.abdullahalbuayjan","ar.khalidalmuhanna","ar.ahmadalhuthaifi"]){
  const automatic=createQuranSession(options);await automatic.start(surah(1),reciter);await flush();
- activeTrack().onended();await flush();if(reciter==='ar.alafasy'){assert.equal(automatic.state.index,1);activeTrack().onended();await flush()}
+ activeTrack().onended();await flush();if(['ar.alafasy','ar.abubakrshatri','ar.nasseralqatami'].includes(reciter)){assert.equal(automatic.state.index,1);activeTrack().onended();await flush()}
  assert.equal(automatic.state.surah.number,2,'Al-Fatiha must continue automatically to Al-Baqara');
  assert.equal(automatic.state.reciter,reciter);assert.equal(automatic.state.status,'playing');assert.equal(automatic.state.index,0);automatic.stop();
 }
