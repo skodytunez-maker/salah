@@ -32,3 +32,5 @@ assert.ok(quran.includes('mountDailyAyah(host'));
 assert.ok(quran.includes('showAyahCard(surah,surah.verses'));
 assert.ok(source.includes('navigator.canShare?.({files:images})'));
 console.log('PASS: daily dates, full long-verse Arabic/translation pagination, bounds and reader integration.');
+
+const backgrounds=vm.runInContext("AYAH_PHOTO_BACKGROUNDS",context);assert.equal(backgrounds.length,12);assert.equal(new Set(backgrounds.map(x=>x.id)).size,12);for(const bg of backgrounds){const data=await fs.readFile(new URL("dist/"+bg.path.slice(2),root));assert.equal(data.subarray(0,4).toString(),"RIFF");assert.equal(data.subarray(8,12).toString(),"WEBP");assert.ok(source.includes('value="'+bg.id+'"'));}console.log("PASS: all 12 selectable photographic assets exist and are WebP.");
