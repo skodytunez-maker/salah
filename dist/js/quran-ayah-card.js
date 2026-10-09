@@ -48,7 +48,7 @@ async function renderCards(surah,verse,meta,options){
   ctx.direction='ltr';ctx.textAlign='left';ctx.font='28px sans-serif';ctx.fillStyle=colors[3];ctx.fillText(meta.name+(pages.length>1?' · '+(i+1)+'/'+pages.length:''),pad,height-210);
   if(options.translation){ctx.font='20px sans-serif';ctx.fillText('Перевод Эльмира Кулиева',pad,height-170);}
   if(logo.complete&&logo.naturalWidth)ctx.drawImage(logo,pad,height-130,64,64);
-  ctx.font='26px serif';ctx.fillText('SALAH',pad+84,height-91);ctx.textAlign='right';ctx.font='18px sans-serif';ctx.fillText('skodytunez-maker.github.io/salah',width-pad,height-91);
+  ctx.font='26px serif';ctx.fillText('SALAH',pad+84,height-91);ctx.textAlign='right';ctx.font='18px sans-serif';ctx.fillText('Saadi Kobilov',width-pad,height-91);
   return canvas;
  });
 }
