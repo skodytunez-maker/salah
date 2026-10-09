@@ -3368,6 +3368,11 @@
       "path": "dist/assets/reciters/abdulbasitabdussamad.png",
       "gitBlobSha": "c974b97f026d8c882449b18f9217d543e46f9435",
       "bytes": 180494
+    },
+    {
+      "path": "dist/assets/reciters/mansouralsalimi.png",
+      "gitBlobSha": "94497df6bcc938747db05d6dadcd1d7c19f66f07",
+      "bytes": 461352
     }
   ]
 }

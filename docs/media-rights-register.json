@@ -1279,6 +1279,14 @@
       "kind": "image",
       "rightsReviewStatus": "needs-review",
       "note": "Identified archive portrait source and unchanged face proof: docs/quran-continuous-254.json. No face synthesis; public availability is not redistribution permission."
+    },
+    {
+      "path": "dist/assets/reciters/mansouralsalimi.png",
+      "gitBlobSha": "94497df6bcc938747db05d6dadcd1d7c19f66f07",
+      "bytes": 461352,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "note": "Identified portrait on Way2Quran reciter page; unchanged protected face and existing Luhaidan background. Sources and limitations: docs/quran-ruqyah-256.json. Public availability is not a permission grant."
     }
   ],
   "wallpaperSets": [

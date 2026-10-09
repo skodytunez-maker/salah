@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {RECITERS,reciterOptions,groupedReciters,reciterHasSurah,adjacentReciterSurah} from '../dist/js/quran-reciters.js';
 import {normalizeReciterFavorites,toggleReciterFavorite} from '../dist/js/quran-reciter-favorites.js';
 import {readFile} from 'node:fs/promises';
-const ids=RECITERS.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);assert.equal(RECITERS.length,33);
+const ids=RECITERS.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);assert.equal(RECITERS.length,34);
 const damaged=['ar.ahmedkaseb','unknown','ar.ahmedkaseb',null,{id:'ar.husary'}];assert.deepEqual(normalizeReciterFavorites(damaged,RECITERS),['ar.ahmedkaseb']);assert.deepEqual(normalizeReciterFavorites({},RECITERS),[]);assert.equal(toggleReciterFavorite([], 'unknown',RECITERS),null);
 const saved=toggleReciterFavorite(damaged,'ar.siratulloraupov',RECITERS);assert.deepEqual(saved,['ar.ahmedkaseb','ar.siratulloraupov']);assert.deepEqual(damaged,['ar.ahmedkaseb','unknown','ar.ahmedkaseb',null,{id:'ar.husary'}]);assert.deepEqual(toggleReciterFavorite(saved,'ar.ahmedkaseb',RECITERS),['ar.siratulloraupov']);
 const groups=groupedReciters(saved),ordered=groups.flatMap(g=>g.reciters.map(r=>r.id));assert.deepEqual(ordered.slice(0,2),saved);assert.equal(new Set(ordered).size,RECITERS.length);

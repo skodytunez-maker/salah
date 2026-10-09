@@ -1,0 +1,143 @@
+{
+  "version": 256,
+  "date": "2026-10-09",
+  "recordings": [
+    {
+      "id": "luhaidan-hour",
+      "reciter": "ar.muhammadalluhaidan",
+      "title": "Рукъя · длинная запись",
+      "type": "youtube",
+      "videoId": "mf1z4iFnHXo",
+      "url": "https://www.youtube.com/watch?v=mf1z4iFnHXo",
+      "source": "https://www.youtube.com/watch?v=mf1z4iFnHXo",
+      "publisher": "Solih",
+      "duration": 3685
+    },
+    {
+      "id": "idris-short",
+      "reciter": "ar.idrisabkar",
+      "title": "Рукъя · короткая запись",
+      "url": "https://download.tvquran.com/download/selections/9/590e58957bc22.mp3",
+      "source": "https://www.tvquran.com/ar/selection/940",
+      "duration": 1632.616878
+    },
+    {
+      "id": "alafasy-ruqyah",
+      "reciter": "ar.alafasy",
+      "title": "Рукъя",
+      "url": "https://download.tvquran.com/download/TvQuran.com__Rouqia/TvQuran.com__r07.mp3",
+      "source": "https://www.tvquran.com/ar/selection/85",
+      "duration": 4418.983756
+    },
+    {
+      "id": "mansour-ruqyah",
+      "reciter": "ar.mansouralsalimi",
+      "title": "Рукъя",
+      "type": "youtube",
+      "videoId": "mB2fZygBS0E",
+      "url": "https://www.youtube.com/watch?v=mB2fZygBS0E",
+      "source": "https://www.youtube.com/watch?v=mB2fZygBS0E",
+      "publisher": "Studio ISTIQAMA",
+      "duration": 3462
+    }
+  ],
+  "sourceVerification": [
+    {
+      "name": "idris",
+      "url": "https://download.tvquran.com/download/selections/9/590e58957bc22.mp3",
+      "status": 206,
+      "type": "audio/mpeg",
+      "cors": null,
+      "range": "bytes 0-8191/13246768",
+      "bytes": 8192
+    },
+    {
+      "name": "luhaidan",
+      "type": "youtube",
+      "url": "https://www.youtube.com/watch?v=mf1z4iFnHXo",
+      "title": "Рукия - Мухаммад аль-Люхайдан",
+      "publisher": "Solih",
+      "visibleDuration": "1:01:25"
+    },
+    {
+      "reciter": "ar.alafasy",
+      "status": 206,
+      "type": "audio/mpeg",
+      "range": "bytes 0-8191/17692319",
+      "url": "https://download.tvquran.com/download/TvQuran.com__Rouqia/TvQuran.com__r07.mp3"
+    }
+  ],
+  "rightsReviewStatus": "needs-review",
+  "notes": [
+    "Separate recordings, not chapter115 or invented ayah timings.",
+    "Idris short recording explicitly labelled ruqyah and attributed toIdris on TVQuran author9/selection940.",
+    "No health/cure claims copied from source portal titles. No background telemetry.",
+    "Luhaidan: YouTube result and verified channel Solih, video mf1z4iFnHXo, visible duration1:01:25. Embedded player only, no MP3 ripping or fake download button.",
+    "Idris: provider-file save link, no offline-cache claim.",
+    "Mishary recording explicitly attributed on TVQuran category6, scholar85/selection85.",
+    "Mansour ruqyah video mB2fZygBS0E by Studio ISTIQAMA; visible player duration57:42. Separate MP3 endpoint rejected403 and is not used."
+  ],
+  "bundledAudio": false,
+  "actualBrowserIdris": {
+    "readyState": 4,
+    "positionSeconds": 28.853246,
+    "durationSeconds": 1632.616878,
+    "pausedAfterTest": true
+  },
+  "actualBrowserLuhaidan": {
+    "type": "youtube",
+    "videoId": "mf1z4iFnHXo",
+    "embedOpened": true,
+    "playerControlsVisible": true,
+    "sourceDurationSeconds": 3685,
+    "downloadAvailable": false
+  },
+  "mansourReciter": {
+    "catalog": {
+      "id": "ar.mansouralsalimi",
+      "name": "Мансур ас-Салими",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/mansour-salimi/r1/",
+      "timingRead": 245,
+      "timingServer": "https://cdn.mp3quran.net/audio/mansour-salimi/r1/",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=245",
+      "portrait": "assets/reciters/mansouralsalimi.png",
+      "verifiedOn": "2026-10-09"
+    },
+    "portraitSource": "https://media.way2quran.com/imgs/mansour-al-salmi.jpg",
+    "portraitPage": "https://www.way2quran.com/en/reciters/mansour-al-salmi",
+    "portraitProof": {
+      "faceRedrawn": false,
+      "protectedFacePixelsUnchanged": true,
+      "size": [
+        951,
+        951
+      ]
+    },
+    "rightsReviewStatus": "needs-review",
+    "boundaryAudioChecks": [
+      {
+        "surah": 1,
+        "status": 206,
+        "type": "audio/mpeg"
+      },
+      {
+        "surah": 114,
+        "status": 206,
+        "type": "audio/mpeg"
+      }
+    ]
+  },
+  "actualBrowserMishary": {
+    "readyState": 4,
+    "durationSeconds": 4418.983756,
+    "positionSeconds": 62.735845,
+    "pausedAfterTest": true
+  },
+  "actualBrowserMansour": {
+    "type": "youtube",
+    "videoId": "mB2fZygBS0E",
+    "sourceDurationSeconds": 3462,
+    "embedOpened": true
+  }
+}
