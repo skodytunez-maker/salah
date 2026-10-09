@@ -1,0 +1,12 @@
+{
+  "version": 250,
+  "problem": "iPhone initially displays native portrait stream before cover sizing settles",
+  "fix": "Absolutely positioned cover video in fixed square; reveal after first video frame and two layout paints",
+  "cameraScopeUnchanged": true,
+  "frameTransmission": false,
+  "tests": [
+    "first-frame reveal",
+    "cancellation before reveal",
+    "strict local decoder/account/listening parsers"
+  ]
+}

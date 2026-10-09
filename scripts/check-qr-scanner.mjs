@@ -19,6 +19,8 @@ console.log('PASS: real QR pixels decoded locally, strict SALAH-only URL, camera
 
 const {mountQrScanner,stopQrScanner}=await import(new URL('dist/js/qr-scanner.js',root));
 const listeners=new Map();
+const paints=new Map();let paintId=0;globalThis.requestAnimationFrame=fn=>{paints.set(++paintId,fn);return paintId;};globalThis.cancelAnimationFrame=id=>paints.delete(id);
+const paint=()=>{const batch=[...paints.values()];paints.clear();batch.forEach(fn=>fn());};
 class Element{
  constructor(tag){this.tag=tag;this.children=[];this.dataset={};this.hidden=false;this.readyState=2;this.videoWidth=20;this.videoHeight=20;}
  append(el){el.parent=this;this.children.push(el);}
@@ -26,6 +28,8 @@ class Element{
  set innerHTML(v){this.nodes={video:new Element('video'),'[role=status]':new Element('p'),button:new Element('button')};}
  querySelector(s){return this.nodes[s];}
  async play(){}
+ requestVideoFrameCallback(fn){this.frameReady=fn;return 1;}
+ cancelVideoFrameCallback(){this.frameReady=null;}
  getContext(){return {drawImage(){},getImageData(){return {data:new Uint8ClampedArray(1600),width:20,height:20};}};}
 }
 globalThis.document={documentElement:{dataset:{}},createElement:t=>new Element(t),hidden:false,head:new Element('head'),addEventListener:(n,f)=>listeners.set(n,f),removeEventListener:(n,f)=>{if(listeners.get(n)===f)listeners.delete(n);}};
@@ -53,3 +57,12 @@ const receiverDispose=mountQrScanner(receiverArea,{parse:parseListeningQr,entryL
 const receive=receiverDispose.open();grant({getTracks:()=>[{stop:()=>stops++}]});await receive;assert.equal(listeningScanned,1);assert.equal(receiverExisting.hidden,false);assert.equal(listeners.size,0);receiverDispose();
 assert.equal(parseSalahQr(sharedListening),null,'Account scanner still rejects listening links');
 console.log('PASS: dedicated in-app listening scan, no account-link approval, local callback and stream cleanup.');
+
+// A portrait camera must not be exposed until its first frame and layout paints are ready.
+frameData=null;const previewArea=new Element("section");const previewDispose=mountQrScanner(previewArea,{});
+const previewStart=previewDispose.open();const previewPanel=previewArea.children.at(-1);grant({getTracks:()=>[{stop:()=>stops++}]});await previewStart;
+const previewVideo=previewPanel.querySelector("video");assert.equal(previewPanel.dataset.cameraReady,undefined);previewVideo.frameReady();assert.equal(previewPanel.dataset.cameraReady,undefined);paint();assert.equal(previewPanel.dataset.cameraReady,undefined);paint();assert.equal(previewPanel.dataset.cameraReady,"true");previewDispose();assert.equal(listeners.size,0);
+const cancelArea=new Element("section");const cancelDispose=mountQrScanner(cancelArea,{});const cancelStart=cancelDispose.open();const cancelPanel=cancelArea.children.at(-1);grant({getTracks:()=>[{stop:()=>stops++}]});await cancelStart;const cancelVideo=cancelPanel.querySelector("video");cancelVideo.frameReady();cancelDispose();paint();paint();assert.equal(cancelPanel.dataset.cameraReady,undefined);assert.equal(paints.size,0);assert.equal(listeners.size,0);
+console.log("PASS: first camera frame stays hidden until square preview settles; cancellation prevents delayed reveal.");
+
+const stillArea=new Element("section"),stillDispose=mountQrScanner(stillArea,{});const stillStart=stillDispose.open(),stillPanel=stillArea.children.at(-1);grant({getTracks:()=>[{stop:()=>stops++}]});await stillStart;await new Promise(resolve=>setTimeout(resolve,350));paint();paint();assert.equal(stillPanel.dataset.cameraReady,"true","Already-presented still frame must not leave a permanent loading screen");stillDispose();assert.equal(listeners.size,0);console.log("PASS: still camera stream reveals ready frame without waiting forever for another video callback.");
