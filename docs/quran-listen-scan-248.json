@@ -1,0 +1,13 @@
+{
+  "version": 248,
+  "feature": "In-app listening QR scanner",
+  "shareDialog": "Copy-link action replaced by Scan",
+  "receiverEntry": "Quran library scan action",
+  "camera": "Square viewport, semi-transparent existing QR icon, rear-facing preference, audio:false",
+  "parser": "Exact SALAH public origin/path with strict listening-link validation; account QR rejected",
+  "navigation": "Only changes current application hash; no window.open or external navigation",
+  "lifecycle": "Stops tracks on success, cancel, dialog close, route change, hidden page and late grant",
+  "browserTest": "Synthetic local canvas stream decoded real bundled QR and opened Baqarah255 at2.5sec in same page; no physical camera accessed",
+  "physicalPhoneCameraTest": false,
+  "fixtureFilesExcluded": true
+}

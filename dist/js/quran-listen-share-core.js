@@ -9,3 +9,5 @@ export function parseListeningShare(hash){
  const position={surah:Number(p.get('surah')),reciter:p.get('reciter'),ayah:Number(p.get('ayah')),seconds:Number(p.get('t'))};return validListeningPosition(position)?position:null;
 }
 export function listeningTime(seconds){const n=Math.floor(Math.max(0,seconds)),h=Math.floor(n/3600),m=Math.floor(n/60)%60,s=n%60;return(h?h+':'+String(m).padStart(2,'0'):String(m))+':'+String(s).padStart(2,'0');}
+
+export function parseListeningQr(value){try{const u=new URL(value);if(u.origin!=='https://skodytunez-maker.github.io'||u.pathname!=='/salah/'||u.search||u.username||u.password)return null;const position=parseListeningShare(u.hash);return position?{position,hash:u.hash}:null}catch{return null}}

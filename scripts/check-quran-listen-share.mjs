@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import {listeningShareUrl,parseListeningShare,listeningTime} from '../dist/js/quran-listen-share-core.js';
+import {listeningShareUrl,parseListeningShare,parseListeningQr,listeningTime} from '../dist/js/quran-listen-share-core.js';
 import {createQuranPlayer} from '../dist/js/quran-audio.js';
 import {createQuranSession} from '../dist/js/quran-session.js';
 const position={surah:2,reciter:'ar.badralturki',ayah:1,seconds:132.45};
 const link=listeningShareUrl(position),hash=new URL(link).hash;
+assert.deepEqual(parseListeningQr(link),{position:{...position,seconds:132.4},hash});
+for(const badQr of [link.replace('https:','http:'),link.replace('skodytunez-maker.github.io','evil.test'),link.replace('/salah/','/another/'),link.replace('https://','https://user:pass@'),'https://skodytunez-maker.github.io/salah/#account?qr=11111111-1111-4111-8111-111111111111&approve='+ 'a'.repeat(64),link+'&owner=1'])assert.equal(parseListeningQr(badQr),null);
 assert.equal(new URL(link).origin,'https://skodytunez-maker.github.io');
 assert.deepEqual(parseListeningShare(hash),{...position,seconds:132.4});
 assert.equal(listeningTime(3661),'1:01:01');
