@@ -1,0 +1,25 @@
+{
+  "version": 247,
+  "feature": "Share current Quran playback position through a public link and QR",
+  "fields": [
+    "surah",
+    "reciter",
+    "ayah",
+    "seconds"
+  ],
+  "positionResolutionSeconds": 0.1,
+  "explicitRecipientPlayRequired": true,
+  "noAccountsOrDeviceDiscovery": true,
+  "qrLibrary": "existing bundled qrcode-generator",
+  "testEvidence": {
+    "wholeSurahStart": "Ahmad Kaseb AlFatiha started at8.2seconds in isolated browser",
+    "pausedCapture": "Generated link recorded actual31.3seconds",
+    "qr": "OpenCV decoded full visible QR to exact same public link",
+    "unit": "Strict parser, unavailable recordings, whole-surah seek, verse seek, session propagation"
+  },
+  "sourceFiles": [
+    "dist/js/quran-listen-share.js",
+    "dist/js/quran-listen-share-core.js"
+  ],
+  "backendChanges": false
+}

@@ -10,29 +10,29 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
  let offlineOnly=false,savedSurahs=new Set();
  const listeners=new Set(),audioOwner={};
  const adjacent=delta=>{let number=view.surah?adjacentReciterSurah(view.reciter,view.surah.number,delta):null;while(offlineOnly&&number!==null&&!savedSurahs.has(number))number=adjacentReciterSurah(view.reciter,number,delta);return number;};
- const snapshot=()=>({...view,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
+ const snapshot=()=>({...view,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
  const emit=()=>{setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
  function stop(){offlineOnly=false;savedSurahs=new Set();request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};emit()}
- async function start(surah,reciter,index=0,autoplay=true,offline=false){
+ async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0){
   reciterInfo(reciter);if(!reciterHasSurah(reciter,surah?.number))return;
   if(!surah?.verses?.length||!Number.isInteger(index)||index<0||index>=surah.verses.length)return;
-  if(player&&view.surah.number===surah.number&&view.reciter===reciter&&offlineOnly===offline){player.play(index,true);return}
+  if(player&&view.surah.number===surah.number&&view.reciter===reciter&&offlineOnly===offline){player.play(index,true,seconds);return}
   const id=++request;player?.destroy();player=null;offlineOnly=offline;savedSurahs=new Set();
-  view={surah,meta:{number:surah.number,name:'Сура '+surah.number},reciter,index,ayah:reciterInfo(reciter).format==='verse'?surah.verses[index].ayah:null,timingStatus:reciterInfo(reciter).format==='verse'?'ready':'idle',status:'loading'};emit();
+  view={surah,meta:{number:surah.number,name:'Сура '+surah.number},reciter,index,positionSeconds:seconds,ayah:reciterInfo(reciter).format==='verse'?surah.verses[index].ayah:null,timingStatus:reciterInfo(reciter).format==='verse'?'ready':'idle',status:'loading'};emit();
   try{
    const catalog=await loadCatalog();if(id!==request)return;
    view.meta=catalog.surahs[surah.number-1];
    if(offlineOnly){const saved=await loadSaved(reciter);if(id!==request)return;savedSurahs=new Set(saved.map(record=>record.surah));if(!savedSurahs.has(surah.number))throw Error('Сура не скачана');}
    if(!autoplay){view.status='paused';emit();return}
    player=createPlayer({surah,reciter,offlineOnly,onState:state=>{if(id!==request)return;view={...view,index:state.index,status:state.status,ayah:state.ayah,timingStatus:state.timingStatus};emit();if(state.status==='ended'&&id===request&&adjacent(1)!==null)void changeSurah(1)},onVerse:()=>{},onError:()=>{}});
-   player.play(index,true);
+   player.play(index,true,seconds);
   }catch{if(id===request){view.status='error';emit()}}
  }
  async function changeSurah(delta){
   if(![-1,1].includes(delta)||!view.surah)return;
   const number=adjacent(delta);if(number===null)return;
   const reciter=view.reciter,id=++request;player?.destroy();player=null;
-  view={...view,surah:{number},meta:{number,name:'Сура '+number},index:0,ayah:null,timingStatus:'loading',status:'loading'};emit();
+  view={...view,surah:{number},meta:{number,name:'Сура '+number},index:0,positionSeconds:0,ayah:null,timingStatus:'loading',status:'loading'};emit();
   try{const surah=await load(number);if(id!==request)return;await start(surah,reciter,0,true,offlineOnly)}catch{if(id===request){view.status='error';emit()}}
  }
  async function changeReciter(reciter){
