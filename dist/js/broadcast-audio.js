@@ -10,7 +10,7 @@ export function createBroadcastAudio({doc=document,win=window,onState=()=>{},loa
  function release(){token++;wantPlay=false;hls?.destroy();hls=null;if(media){for(const key of ['onplaying','onpause','onerror','onwaiting'])media[key]=null;media.pause();media.removeAttribute('src');media.load();media.remove();media=null}}
  function metadata(info){
   if(!session)return;
-  try{ownedMetadata=new win.MediaMetadata({title:'Прямой эфир · '+info.name,artist:info.place,album:'SALAH',artwork:[{src:new URL('../icon-512.png',import.meta.url).href,sizes:'512x512',type:'image/png'}]});session.metadata=ownedMetadata;session.setActionHandler('play',resume);session.setActionHandler('pause',pause);session.setActionHandler('stop',stop)}catch{}
+  try{ownedMetadata=new win.MediaMetadata({title:'Прямой эфир · '+info.name,artist:info.place,album:'SALAH',artwork:[{src:new URL('../icon-512.png',import.meta.url).href,sizes:'512x512',type:'image/png'}]});session.metadata=ownedMetadata;for(const action of ['seekto','seekbackward','seekforward','previoustrack','nexttrack'])try{session.setActionHandler(action,null)}catch{}session.setPositionState?.();session.setActionHandler('play',resume);session.setActionHandler('pause',pause);session.setActionHandler('stop',stop)}catch{}
  }
  function fail(id){if(id!==token)return;release();emit('error')}
  function play(id){if(id!==token||!media||!wantPlay)return;Promise.resolve(media.play()).catch(error=>{if(id===token&&wantPlay&&error.name!=='AbortError')fail(id)})}

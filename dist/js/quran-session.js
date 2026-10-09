@@ -1,3 +1,5 @@
+import{createMediaSession}from './media-session.js';
+import{claimPlayback,registerPlayback}from './media-playback-focus.js';
 import{offlineAudioStore}from './quran-offline-store.js';
 import{setForegroundAudio}from './audio-focus.js';
 import{createQuranPlayer}from './quran-audio.js';
@@ -5,13 +7,13 @@ import{loadIndex,loadSurah}from './quran-data.js';
 import{reciterInfo,reciterHasSurah,adjacentReciterSurah}from './quran-reciters.js';
 
 // Playback belongs to the app session, independent of mounted reader screens.
-export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createPlayer=createQuranPlayer,loadSaved=reciter=>offlineAudioStore.listRecordings(reciter)}={}){
+export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createPlayer=createQuranPlayer,loadSaved=reciter=>offlineAudioStore.listRecordings(reciter),media=createMediaSession(),claim=()=>{}}={}){
  let player=null,request=0,view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};
  let offlineOnly=false,savedSurahs=new Set();
  const listeners=new Set(),audioOwner={};
  const adjacent=delta=>{let number=view.surah?adjacentReciterSurah(view.reciter,view.surah.number,delta):null;while(offlineOnly&&number!==null&&!savedSurahs.has(number))number=adjacentReciterSurah(view.reciter,number,delta);return number;};
- const snapshot=()=>({...view,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
- const emit=()=>{setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
+ const snapshot=()=>({...view,durationSeconds:player?.state?.durationSeconds||0,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
+ const emit=()=>{if(['loading','playing'].includes(view.status))claim();const s=snapshot(),r=view.reciter?reciterInfo(view.reciter):null;media.update(view.surah?{status:view.status,title:view.meta?.name||'Коран',artist:r?.name||'SALAH',artwork:r?.portrait?new URL(r.portrait,globalThis.location?.href||'https://skodytunez-maker.github.io/salah/').href:null,duration:s.durationSeconds,position:s.positionSeconds}:null,{play:()=>{if(!['playing','loading'].includes(view.status))toggle();},pause,stop,seekto:e=>player?.seek?.(e.seekTime),seekbackward:e=>player?.seek?.(snapshot().positionSeconds-(e.seekOffset||10)),seekforward:e=>player?.seek?.(snapshot().positionSeconds+(e.seekOffset||10)),previoustrack:()=>changeSurah(-1),nexttrack:()=>changeSurah(1)});setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
  function stop(){offlineOnly=false;savedSurahs=new Set();request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};emit()}
  async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0,preferContinuous=true){
   reciterInfo(reciter);if(preferContinuous&&!offline&&autoplay&&index===0&&seconds===0&&reciterInfo(reciter).continuousReciter)reciter=reciterInfo(reciter).continuousReciter;if(!reciterHasSurah(reciter,surah?.number))return;
@@ -56,6 +58,6 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
    load(number).then(surah=>{if(id===request)start(surah,reciter,0,true,offlineOnly)}).catch(()=>{if(id===request){view.status='error';emit()}});
   }
  }
- return{start,changeSurah,changeReciter,toggle,pause,stop,requestOutput:()=>player?.requestOutput?.()||Promise.resolve({status:'no-media'}),get state(){return snapshot()},subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener)}};
+ return{seek:seconds=>player?.seek?.(seconds),start,changeSurah,changeReciter,toggle,pause,stop,requestOutput:()=>player?.requestOutput?.()||Promise.resolve({status:'no-media'}),get state(){return snapshot()},subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener)}};
 }
-export const quranPlayback=createQuranSession();
+const quranOwner={};export const quranPlayback=createQuranSession({claim:()=>claimPlayback(quranOwner)});registerPlayback(quranOwner,()=>quranPlayback.pause());

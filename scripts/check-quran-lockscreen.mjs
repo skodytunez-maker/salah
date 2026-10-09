@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import{createQuranSession}from '../dist/js/quran-session.js';
+import{createQuranPlayer}from '../dist/js/quran-audio.js';
+import{createMediaSession}from '../dist/js/media-session.js';
+const handlers={},native={setActionHandler(n,f){handlers[n]=f;},setPositionState(v){this.position=v;}};class Metadata{constructor(info){Object.assign(this,info);}}
+const tracks=[],surah=n=>({number:n,verses:[{number:1,ayah:1}]}),catalog={surahs:Array.from({length:114},(_,i)=>({number:i+1,name:'Сура '+(i+1)}))};
+class Audio{constructor(src){this.src=src;this.paused=true;this.currentTime=0;this.duration=100;this.readyState=1;tracks.push(this);}async play(){this.paused=false;this.onplay?.();}pause(){this.paused=true;this.onpause?.();}}
+const media=createMediaSession({nav:{mediaSession:native},Metadata});const session=createQuranSession({media,load:async n=>surah(n),loadCatalog:async()=>catalog,createPlayer:opts=>createQuranPlayer({...opts,getAudio:async()=>null,loadTimings:async()=>null,createAudio:src=>new Audio(src)})});
+const flush=async()=>{for(let i=0;i<4;i++)await new Promise(r=>setImmediate(r));};
+await session.start(surah(1),'ar.badralturki');await flush();const first=tracks.at(-1);assert.equal(native.metadata.title,'Сура 1');assert.equal(native.playbackState,'playing');first.currentTime=20;first.ontimeupdate();assert.equal(native.position.position,20);assert.equal(native.position.duration,100);
+handlers.pause();assert.equal(first.paused,true);handlers.seekto({seekTime:30});assert.equal(first.currentTime,30);assert.equal(first.paused,true,'Seeking paused media cannot auto-play');handlers.play();await flush();assert.equal(first.paused,false);assert.equal(tracks.at(-1),first);handlers.seekforward({seekOffset:10});assert.equal(first.currentTime,40);handlers.nexttrack();await flush();assert.equal(session.state.surah.number,2);assert.equal(first.src,'');assert.equal(native.metadata.title,'Сура 2');handlers.previoustrack();await flush();assert.equal(session.state.surah.number,1);
+const current=tracks.at(-1);current.paused=true;current.onpause();assert.equal(session.state.status,'paused');current.paused=false;current.onplay();assert.equal(session.state.status,'playing');handlers.stop();assert.equal(session.state.status,'stopped');assert.equal(native.metadata,null);assert.ok(Object.values(handlers).every(v=>v===null));console.log('PASS: Quran lock-screen pause/resume, same audio, elapsed time, paused seek, previous/next surah, native interruptions and owner cleanup');
