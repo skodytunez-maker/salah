@@ -74,7 +74,7 @@ body.home-page .quran-broadcast-overlay.is-mini,body.learning-focus .quran-broad
 .quran-handoff-button:disabled{opacity:.4}
 .quran-listen-qr{display:grid;place-items:center;margin:18px auto;background:#fff;width:min(260px,100%);border-radius:14px;overflow:hidden}
 .quran-listen-qr svg{display:block;width:100%;height:auto}
-#quran-listen-link{width:100%;min-height:44px;font-size:12px}
+#quran-listen-link{width:100%;min-height:44px;font-size:16px}
 .quran-listen-share-actions{display:grid;gap:10px;margin-top:14px}
 .quran-share-title{font-size:20px;margin-bottom:8px}
 .quran-received-listening{text-align:center;max-width:520px;margin:28px auto}
