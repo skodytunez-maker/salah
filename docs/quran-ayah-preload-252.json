@@ -1,0 +1,22 @@
+{
+  "version": 252,
+  "problem": "Verse recordings were opened and fetched only after the previous ayah ended",
+  "fix": "Prepare one next-ayah Audio with preload=auto while current ayah plays; reuse immediately on ended",
+  "userExample": "ar.yasseraldossari",
+  "lookahead": 1,
+  "noOverlap": true,
+  "offlineOnlyPreserved": true,
+  "storedPreferencesUnchanged": true,
+  "streamTimingTest": {
+    "reciter": "ar.yasseraldossari",
+    "surah": 1,
+    "firstThreeAyahs": true,
+    "browserEndToPlayingMs": [
+      4,
+      3
+    ],
+    "physicalIphone": false
+  },
+  "limits": "Does not trim breath or silence inside the source recording; browser network/preload policies may vary",
+  "checks": "86/86 application checks and dedicated lookahead/cancel/error tests"
+}
