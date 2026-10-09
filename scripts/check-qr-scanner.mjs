@@ -32,7 +32,7 @@ globalThis.document={documentElement:{dataset:{}},createElement:t=>new Element(t
 globalThis.window={addEventListener:(n,f)=>listeners.set(n,f),removeEventListener:(n,f)=>{if(listeners.get(n)===f)listeners.delete(n);}};
 let grant,stops=0,cameraRequests=0,scanned=0;
 Object.defineProperty(globalThis,'navigator',{configurable:true,value:{mediaDevices:{getUserMedia:opts=>{assert.equal(opts.audio,false);cameraRequests++;return new Promise(resolve=>grant=resolve);}}}});
-globalThis.jsQR=()=>({data:url});
+let frameData=url;globalThis.jsQR=()=>({data:frameData});
 const area=new Element('section'),existing=new Element('p');area.append(existing);mountQrScanner(area,{onScan:request=>{assert.deepEqual(request,{id,secret});scanned++;}});
 assert.equal(cameraRequests,0,'camera must not open on account entry');
 const first=area.children.at(-1).onclick();assert.equal(document.documentElement.dataset.qrLogin,'active');area.children.at(-1).querySelector('button').onclick();grant({getTracks:()=>[{stop:()=>stops++}]});await first;assert.equal(stops,1);assert.equal(document.documentElement.dataset.qrLogin,undefined);assert.equal(scanned,0);assert.equal(existing.hidden,false);assert.equal(listeners.size,0);
@@ -43,3 +43,13 @@ const third=area.children.at(-1).onclick();stopQrScanner();grant({getTracks:()=>
 const {qrCameraCrop}=await import(new URL('dist/js/qr-scanner.js',root));
 assert.deepEqual(qrCameraCrop(1280,720),{x:280,y:0,side:720,size:640});assert.deepEqual(qrCameraCrop(720,1280),{x:0,y:280,side:720,size:640});assert.deepEqual(qrCameraCrop(320,320),{x:0,y:0,side:320,size:320});assert.equal(qrCameraCrop(0,720),null);assert.equal(qrCameraCrop(720,NaN),null);
 console.log('PASS: scanner decodes precisely the square visible in portrait and landscape; decorative overlay never reaches the decoder.');
+
+// A caller may select the listening parser without widening account QR approval.
+const {parseListeningQr,listeningShareUrl}=await import(new URL('dist/js/quran-listen-share-core.js',root));
+const sharedListening=listeningShareUrl({surah:2,reciter:'ar.alafasy',ayah:255,seconds:2.5});
+const receiverArea=new Element('section'),receiverExisting=new Element('p');receiverArea.append(receiverExisting);let listeningScanned=0;
+frameData=sharedListening;
+const receiverDispose=mountQrScanner(receiverArea,{parse:parseListeningQr,entryLabel:'Сканировать',onScan:value=>{assert.equal(value.hash,new URL(sharedListening).hash);listeningScanned++;}});
+const receive=receiverDispose.open();grant({getTracks:()=>[{stop:()=>stops++}]});await receive;assert.equal(listeningScanned,1);assert.equal(receiverExisting.hidden,false);assert.equal(listeners.size,0);receiverDispose();
+assert.equal(parseSalahQr(sharedListening),null,'Account scanner still rejects listening links');
+console.log('PASS: dedicated in-app listening scan, no account-link approval, local callback and stream cleanup.');

@@ -81,3 +81,5 @@ body.home-page .quran-broadcast-overlay.is-mini,body.learning-focus .quran-broad
 .quran-received-portrait{display:block;width:110px;aspect-ratio:4/5;object-fit:cover;object-position:center 28%;border-radius:16px;margin:0 auto 20px}
 .quran-received-listening .button{width:100%;margin:14px 0}
 .quran-received-listening .text-button{display:inline-flex;align-items:center;min-height:44px}
+
+.quran-scan-entry{width:100%;margin:8px 0 18px;min-height:44px}
