@@ -1,3 +1,4 @@
+import{tvEntryMarkup}from '../dist/js/tv-output.js';
 import assert from 'node:assert/strict';
 import {Script,createContext} from 'node:vm';
 import {readFile,readdir} from 'node:fs/promises';
@@ -36,7 +37,7 @@ assert.ok(migration.includes('public.support_actor(true)'));assert.ok(migration.
 const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 const menuSource=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf("\nwindow.addEventListener('salah:counter-status'"));
 for(const owner of [true,false]){
- const menuApp={innerHTML:''},context=createContext({app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',bindAppSharing(){}});
+ const menuApp={innerHTML:''},context=createContext({tvEntryMarkup,app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',bindAppSharing(){}});
  new Script(menuSource+';more();').runInContext(context);
  const label=owner?'Обращения пользователей':'Обращения в поддержку',attribute=owner?'data-owner-support-status':'data-user-support-status';
  assert.ok(menuApp.innerHTML.includes(label+'</span><span class="support-state-dot" '+attribute),'Each account sees its own dot directly on the Menu support row');

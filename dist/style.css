@@ -242,3 +242,5 @@ html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
 
 /* Shared SALAH action glyphs and hidden reference panels. */
 .action-icon{width:1.15em;height:1.15em;vertical-align:-.2em;display:inline-block;flex-shrink:0}.ruqyah-actions .button,.reciter-play-label,.reciter-download{display:inline-flex;align-items:center;justify-content:center;gap:8px}.source-reference,.lesson-sources,.hadith-source,.dua-source,.quran-sources,.quran-search-source,.umrah-sources,a[href="#sources"]{display:none!important}
+
+.tv-output h3{font-size:18px;margin:22px 0 10px}.tv-output p,.tv-output li{font-size:14px;line-height:1.6}.tv-output li{margin:10px 0}.tv-output-tabs{display:flex;gap:6px;flex-wrap:wrap}.tv-output-tabs button{min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px}.tv-output-tabs button[aria-pressed=true]{color:var(--gold);border-color:var(--gold)}.tv-output [data-tv-audio]{display:inline-flex;align-items:center;gap:9px}.tv-output [data-tv-status]:empty{display:none}.tv-public-url{width:100%;font-size:13px}.tv-browser-option{margin-top:22px}.tv-output .muted{font-size:12px}

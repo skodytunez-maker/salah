@@ -1,3 +1,5 @@
+import{showTvOutput}from './tv-output.js';
+import{actionIcon}from './action-icons.js';
 import{showListeningShare}from './quran-listen-share.js';
 import{RECITER_FAVORITES_KEY}from './quran-reciter-favorites.js';
 import{quranPlayback}from './quran-session.js';
@@ -9,10 +11,11 @@ const previous=icon('<path d="M6 5v14M18 5l-9 7 9 7z"/>'),next=icon('<path d="M1
 const play=icon('<path d="M8 5l11 7-11 7z"/>'),pause=icon('<path d="M8 5v14M16 5v14"/>');
 export function mountQuranPlayer(){
  const panel=document.createElement('section');panel.id='quran-global-player';panel.className='quran-global-player';panel.hidden=true;panel.setAttribute('aria-label','Плеер Корана');
- panel.innerHTML='<a class="quran-now-playing" aria-label="Открыть звучащую суру"><img class="quran-playing-portrait" alt=""><strong></strong><small></small></a><label class="quran-player-reciter"><span>Чтец</span><select aria-label="Чтец в плеере"></select></label><button type="button" class="quran-handoff-button" data-share aria-label="Передать место прослушивания">Передать</button><div class="quran-global-controls"><button type="button" data-previous aria-label="Предыдущая сура">'+previous+'</button><button type="button" data-toggle aria-label="Воспроизвести Коран">'+play+'</button><button type="button" data-next aria-label="Следующая сура">'+next+'</button><button type="button" data-close aria-label="Остановить и закрыть плеер">'+icon('<path d="M6 6l12 12M18 6L6 18"/>')+'</button></div>';
+ panel.innerHTML='<a class="quran-now-playing" aria-label="Открыть звучащую суру"><img class="quran-playing-portrait" alt=""><strong></strong><small></small></a><label class="quran-player-reciter"><span>Чтец</span><select aria-label="Чтец в плеере"></select></label><div class="quran-output-actions"><button type="button" class="quran-handoff-button" data-tv aria-label="На телевизор">'+actionIcon('tv')+'</button><button type="button" class="quran-handoff-button" data-share aria-label="Передать место прослушивания">Передать</button></div><div class="quran-global-controls"><button type="button" data-previous aria-label="Предыдущая сура">'+previous+'</button><button type="button" data-toggle aria-label="Воспроизвести Коран">'+play+'</button><button type="button" data-next aria-label="Следующая сура">'+next+'</button><button type="button" data-close aria-label="Остановить и закрыть плеер">'+icon('<path d="M6 6l12 12M18 6L6 18"/>')+'</button></div>';
  document.body.append(panel);
  const link=panel.querySelector('a'),toggle=panel.querySelector('[data-toggle]');
  panel.querySelector('[data-share]').onclick=showListeningShare;
+ panel.querySelector('[data-tv]').onclick=()=>showTvOutput({requestAudio:()=>quranPlayback.requestOutput()});
  panel.querySelector('[data-previous]').onclick=()=>quranPlayback.changeSurah(-1);
  panel.querySelector('[data-next]').onclick=()=>quranPlayback.changeSurah(1);
  panel.querySelector('[data-close]').onclick=()=>quranPlayback.stop();

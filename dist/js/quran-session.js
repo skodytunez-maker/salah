@@ -56,6 +56,6 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
    load(number).then(surah=>{if(id===request)start(surah,reciter,0,true,offlineOnly)}).catch(()=>{if(id===request){view.status='error';emit()}});
   }
  }
- return{start,changeSurah,changeReciter,toggle,pause,stop,get state(){return snapshot()},subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener)}};
+ return{start,changeSurah,changeReciter,toggle,pause,stop,requestOutput:()=>player?.requestOutput?.()||Promise.resolve({status:'no-media'}),get state(){return snapshot()},subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener)}};
 }
 export const quranPlayback=createQuranSession();
