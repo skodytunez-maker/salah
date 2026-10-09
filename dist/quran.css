@@ -83,3 +83,7 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 /* Leave a little breathing room above Bandar Balilah in the portrait frame. */
 .reciter-card .reciter-portrait[src$="/bandarbalilah.png"]{box-sizing:border-box;padding-top:10px;object-position:center top;background:#202020}
 .reciter-profile .reciter-portrait[src$="/bandarbalilah.png"]{box-sizing:border-box;padding-top:6px;object-position:center top;background:#202020}
+
+.reciter-ruqyah{padding:20px;margin:24px 0;border:1px solid rgba(234,208,155,.42);border-radius:20px;background:linear-gradient(135deg,rgba(234,208,155,.055),rgba(14,23,39,.9))}.ruqyah-heading h2{margin:6px 0 18px;font-family:Georgia,serif;font-size:27px}.ruqyah-recording>p{margin:0 0 14px}.ruqyah-actions{display:flex;gap:10px;flex-wrap:wrap}.ruqyah-actions .button{flex:1;min-width:125px;font-size:14px;padding:12px}.ruqyah-recording audio{width:100%;margin:16px 0 4px}.ruqyah-recording audio[hidden]{display:none}.ruqyah-status{color:var(--muted);font-size:13px;margin:12px 0!important}.ruqyah-status:empty{display:none}.ruqyah-source{display:inline-block;color:var(--muted);font-size:12px;margin-top:12px}.reciter-filter-tabs{flex-wrap:wrap}
+
+.ruqyah-duration{color:var(--muted);font-size:13px;white-space:nowrap;margin-left:5px}.ruqyah-save-note{display:block;color:var(--muted);font-size:12px;margin-top:10px}

@@ -1,0 +1,57 @@
+{
+  "version": 256,
+  "date": "2026-10-09",
+  "recordings": [
+    {
+      "id": "luhaidan-short",
+      "reciter": "ar.muhammadalluhaidan",
+      "title": "Рукъя · короткая запись",
+      "url": "https://archive.org/download/Roqia4u/%D8%B3%D9%88%D8%B1%D8%AA%D8%A7%D9%86%20%D8%AA%D9%86%D9%81%D8%B9%D8%A7%D9%86%20%D9%84%D9%85%D9%86%20%D9%8A%D8%B9%D8%A7%D9%86%D9%8A%20%D9%85%D9%86%20%D8%B3%D8%AD%D8%B1%20%D8%A3%D9%88%20%D8%B9%D9%8A%D9%86%20%D8%A3%D9%88%20%D8%A3%D9%84%D9%85%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B8%D9%87%D8%B1%20%D8%A3%D9%88%20%D8%AB%D9%82%D9%84%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A3%D9%83%D8%AA%D8%A7%D9%81%20%D8%A8%D8%B5%D9%88%D8%AA%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%A7%D9%84%D9%84%D8%AD%D9%8A%D8%AF%D8%A7%D9%86.mp3",
+      "source": "https://www.roqyatv.com/audio/8042/%D8%B3%D9%88%D8%B1%D8%AA%D8%A7%D9%86-%D8%AA%D9%86%D9%81%D8%B9%D8%A7%D9%86-%D9%84%D9%85%D9%86-%D9%8A%D8%B9%D8%A7%D9%86%D9%8A-%D9%85%D9%86-%D8%B3%D8%AD%D8%B1-%D8%A3%D9%88-%D8%B9%D9%8A%D9%86-%D8%A3%D9%88-%D8%A3%D9%84%D9%85-%D9%81%D9%8A-%D8%A7%D9%84%D8%B8%D9%87%D8%B1-%D8%A3%D9%88-%D8%AB%D9%82%D9%84-%D8%B9%D9%84%D9%89-%D8%A7%D9%84%D8%A3%D9%83%D8%AA%D8%A7%D9%81-%D8%A8%D8%B5%D9%88%D8%AA-%D9%85%D8%AD%D9%85%D8%AF-%D8%A7%D9%84%D9%84%D8%AD%D9%8A%D8%AF%D8%A7%D9%86-%D8%A7%D9%84%D8%B1%D9%82%D9%8A%D8%A9-%D8%A7%D9%84%D8%B4%D8%B1%D8%B9%D9%8A%D8%A9",
+      "duration": 390.71
+    },
+    {
+      "id": "idris-short",
+      "reciter": "ar.idrisabkar",
+      "title": "Рукъя · короткая запись",
+      "url": "https://download.tvquran.com/download/selections/9/590e58957bc22.mp3",
+      "source": "https://www.tvquran.com/ar/selection/940",
+      "duration": 1632.616878
+    }
+  ],
+  "sourceVerification": [
+    {
+      "name": "idris",
+      "url": "https://download.tvquran.com/download/selections/9/590e58957bc22.mp3",
+      "status": 206,
+      "type": "audio/mpeg",
+      "cors": null,
+      "range": "bytes 0-8191/13246768",
+      "bytes": 8192
+    },
+    {
+      "name": "luhaidan",
+      "url": "https://archive.org/download/Roqia4u/%D8%B3%D9%88%D8%B1%D8%AA%D8%A7%D9%86%20%D8%AA%D9%86%D9%81%D8%B9%D8%A7%D9%86%20%D9%84%D9%85%D9%86%20%D9%8A%D8%B9%D8%A7%D9%86%D9%8A%20%D9%85%D9%86%20%D8%B3%D8%AD%D8%B1%20%D8%A3%D9%88%20%D8%B9%D9%8A%D9%86%20%D8%A3%D9%88%20%D8%A3%D9%84%D9%85%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B8%D9%87%D8%B1%20%D8%A3%D9%88%20%D8%AB%D9%82%D9%84%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A3%D9%83%D8%AA%D8%A7%D9%81%20%D8%A8%D8%B5%D9%88%D8%AA%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%A7%D9%84%D9%84%D8%AD%D9%8A%D8%AF%D8%A7%D9%86.mp3",
+      "status": 206,
+      "type": "audio/mpeg",
+      "cors": "*",
+      "range": "bytes 0-8191/6264196",
+      "bytes": 8192
+    }
+  ],
+  "rightsReviewStatus": "needs-review",
+  "notes": [
+    "Separate recordings, not chapter115 or invented ayah timings.",
+    "Luhaidan source portal explicitly names him; short recording duration390.71seconds confirmed by Archive metadata.",
+    "Idris short recording explicitly labelled ruqyah and attributed toIdris on TVQuran author9/selection940.",
+    "Download links open provider audio files for saving, no claim of in-app offline cache; TVQuran endpoint lacksCORS.",
+    "No health/cure claims copied from source portal titles. No background telemetry."
+  ],
+  "bundledAudio": false,
+  "actualBrowserIdris": {
+    "readyState": 4,
+    "positionSeconds": 28.853246,
+    "durationSeconds": 1632.616878,
+    "pausedAfterTest": true
+  }
+}
