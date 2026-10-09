@@ -86,3 +86,5 @@ body.home-page .quran-broadcast-overlay.is-mini,body.learning-focus .quran-broad
 .quran-scan-entry{flex:0 0 44px;width:44px;height:44px;min-height:44px;margin:0;padding:9px;border-radius:12px}
 .quran-scan-entry svg{display:block;width:24px;height:24px;fill:currentColor}
 @media(max-width:420px){.quran-section-title .quran-section-heading{gap:12px}.quran-section-title .quran-section-heading a{font-size:28px}.quran-heading-read{gap:8px}}
+
+.quran-output-actions{grid-column:2;grid-row:2;display:flex;align-items:center;gap:5px;justify-content:flex-end}.quran-output-actions .quran-handoff-button{min-width:32px}.quran-output-actions [data-tv]{padding:5px 8px}.quran-output-actions [data-tv] svg{width:18px;height:18px}

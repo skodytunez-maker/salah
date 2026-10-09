@@ -1,0 +1,22 @@
+{
+  "version": 260,
+  "date": "2026-10-09",
+  "scope": [
+    "Menu TV entry with screen-mirroring guides for iPhone/iPad,Android anddesktop; optionalTV browser publicURL.",
+    "Quran/ruqyah audio button invokes nativeAirPlay orRemotePlayback only after user clicks.",
+    "No automatic discovery, no CastSDK or server credentials. No fabricated connection status."
+  ],
+  "limits": [
+    "Web app cannot enable whole-phone mirroring; user does it throughOS.",
+    "Compatible phone/browser andTV required; generic native support does not promiseChromecast on every browser.",
+    "PhysicalTV not tested."
+  ],
+  "references": [
+    "https://developer.apple.com/documentation/webkitjs/adding_an_airplay_button_to_your_safari_media_controls",
+    "https://www.w3.org/TR/remote-playback/",
+    "https://support.apple.com/ru-ru/102661",
+    "https://support.google.com/chromecast/answer/6059461?hl=ru",
+    "https://support.google.com/chromecast/answer/3228332?hl=ru",
+    "https://www.samsung.com/ru/support/mobile-devices/how-to-mirror-from-your-samsung-smartphone-to-your-tv/"
+  ]
+}

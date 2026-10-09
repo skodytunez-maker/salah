@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import{requestMediaOutput}from '../dist/js/media-output-core.js';
+import{createQuranPlayer}from '../dist/js/quran-audio.js';
+assert.equal((await requestMediaOutput(null)).status,'no-media');assert.equal((await requestMediaOutput({src:''})).status,'no-media');let calls=0;
+const air={src:'https://example.test/audio.mp3',webkitShowPlaybackTargetPicker(){calls++;},remote:{prompt(){throw Error('Wrong protocol');}}};assert.equal(calls,0);assert.deepEqual(await requestMediaOutput(air),{status:'picker',kind:'airplay'});assert.equal(calls,1,'Only an explicit request opens the picker');
+const remote={src:air.src,remote:{state:'connected',prompt(){calls++;return Promise.resolve();}}};assert.deepEqual(await requestMediaOutput(remote),{status:'connected',kind:'remote'});
+for(const [name,expected]of [['AbortError','cancelled'],['NotFoundError','unavailable'],['NotSupportedError','unavailable'],['NotAllowedError','denied'],['Error','unavailable']])assert.equal((await requestMediaOutput({src:air.src,remote:{prompt(){return Promise.reject(Object.assign(Error(),{name}));}}})).status,expected);
+assert.equal((await requestMediaOutput({src:air.src})).status,'unavailable');assert.equal((await requestMediaOutput({src:air.src,webkitShowPlaybackTargetPicker(){throw Object.assign(Error(),{name:'NotSupportedError'});}})).status,'unavailable');
+const tracks=[];const player=createQuranPlayer({surah:{number:1,verses:[{number:1,ayah:1}]},reciter:'ar.alafasy',getAudio:async()=>null,createAudio:url=>{const a={src:url,pause(){},async play(){},webkitShowPlaybackTargetPicker(){calls++;}};tracks.push(a);return a;},onState(){},onVerse(){},onError(){}});
+assert.equal((await player.requestOutput()).status,'no-media');const before=calls;await player.play(0,true);assert.equal(calls,before,'Starting Quran cannot discover or connectTVs');assert.equal((await player.requestOutput()).status,'picker');player.destroy();assert.equal((await player.requestOutput()).status,'no-media');assert.equal(tracks[0].src,'');
+console.log('PASS: explicit-only AirPlay/RemotePlayback, correct protocol priority, cancellation/denial/missing-device fallback, no startup discovery, player uses current audio and releases after stop');

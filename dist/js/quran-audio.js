@@ -1,3 +1,4 @@
+import{requestMediaOutput}from './media-output-core.js';
 import{reciterInfo}from './quran-reciters.js';
 import{audioUrl}from './quran-data.js';
 import{offlineAudioStore}from './quran-offline-store.js';
@@ -58,5 +59,5 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){const id=token;audio.play().then(()=>{if(!disposed&&id===token){status='playing';sync(id);prepareNext();emit()}}).catch(()=>fail(id))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy(){disposed=true;token++;clearNext();release()}
- return{play,toggle,pause,move,destroy,get state(){return{index:current,status,ayah,timingStatus,positionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset}}}
+ return{play,toggle,pause,move,destroy,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,positionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset}}}
 }
