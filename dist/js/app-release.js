@@ -1,4 +1,4 @@
-export const APP_VERSION=266;
+export const APP_VERSION=267;
 export const APP_UPDATED_AT='2026-10-10';
 export const APP_CHANGES=["В разделе «Коран» появился аят дня и карточки аятов для сторис и публикаций."];
 // Public notes list new user-facing features or sections only. Internal settings,

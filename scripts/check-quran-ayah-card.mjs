@@ -25,6 +25,7 @@ for(const format of ['square','story'])for(const arabic of [true,false])for(cons
  if(arabic)assert.ok(printedArabic.includes(normalized(longVerse.arabic)),'Arabic text must be complete across pages');
  if(translation)assert.ok(printedTranslation.includes(normalized(longVerse.translation)),'Translation must be complete across pages');
  assert.ok(draws.every(row=>row.x>=0&&row.x<=1080&&row.y>0&&row.y<(format==='story'?1920:1080)));
+ if(format==='story')assert.ok(draws.every(row=>row.y>=300&&row.y<=1520),'Story text and credits must remain within reserved viewer-safe bounds');
  if(format==='square')assert.ok(pages.length>1,'Longest verse must paginate');
 }
 const quran=await fs.readFile(new URL('dist/js/quran.js',root),'utf8');

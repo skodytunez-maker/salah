@@ -31,13 +31,15 @@ export function wrapCardText(ctx,text,width){
 async function renderCards(surah,verse,meta,options){
  await document.fonts.ready;
  if(options.theme==='auto')options={...options,theme:automaticBackground(surah.number,verse.ayah)};
- const width=1080,height=options.format==='story'?1920:1080,pad=100,rows=[];
+ const story=options.format==='story',width=1080,height=story?1920:1080,pad=100,rows=[];
+ // Keep all meaningful content clear of story viewer controls; square posts retain their layout.
+ const topInset=story?228:0,bottomInset=story?332:0;
  const short=verse.arabic.length+verse.translation.length<500;const arabicSize=short?68:52,translationSize=short?54:42;
  const measure=document.createElement('canvas').getContext('2d');
  if(options.arabic){measure.font=arabicSize+'px serif';for(const text of wrapCardText(measure,verse.arabic,width-pad*2))rows.push({text,arabic:true,height:arabicSize*1.65});}
  if(options.arabic&&options.translation)rows.push({text:'',height:48});
  if(options.translation){measure.font='600 '+translationSize+'px sans-serif';for(const text of wrapCardText(measure,verse.translation,width-pad*2))rows.push({text,arabic:false,height:translationSize*1.55});}
- const pages=[];let page=[],used=0;const capacity=height-650;
+ const pages=[];let page=[],used=0;const capacity=height-650-topInset-bottomInset;
  for(const row of rows){if(used+row.height>capacity&&page.length){pages.push(page);page=[];used=0;}page.push(row);used+=row.height;}
  if(page.length)pages.push(page);
  const photoPaths={mosque:'./wallpapers/istanbul/night-v1.webp',mountains:'./wallpapers/pamir/day-v1.webp',...Object.fromEntries(AYAH_PHOTO_BACKGROUNDS.map(bg=>[bg.id,bg.path]))};
@@ -51,15 +53,15 @@ async function renderCards(surah,verse,meta,options){
   ctx.strokeStyle=colors[3];ctx.globalAlpha=.28;ctx.lineWidth=2;ctx.strokeRect(48,48,width-96,height-96);
   ctx.globalAlpha=.12;ctx.beginPath();ctx.moveTo(78,height-280);ctx.lineTo(78,560);ctx.bezierCurveTo(78,380,300,390,540,315);ctx.bezierCurveTo(780,390,1002,380,1002,560);ctx.lineTo(1002,height-280);ctx.stroke();ctx.globalAlpha=1;
   ctx.direction='ltr';ctx.textAlign='center';ctx.fillStyle=colors[3];
-  if(logo.complete&&logo.naturalWidth)ctx.drawImage(logo,width/2-30,72,60,60);
-  ctx.font='76px serif';ctx.fillText('SALAH',width/2,220);
-  ctx.font='25px sans-serif';ctx.fillText('К О Р А Н  ·  '+surah.number+':'+verse.ayah,width/2,275);
-  ctx.fillStyle=colors[2];let y=330+Math.max(0,(capacity-lines.reduce((n,r)=>n+r.height,0))/2)+arabicSize;
+  if(logo.complete&&logo.naturalWidth)ctx.drawImage(logo,width/2-30,72+topInset,60,60);
+  ctx.font='76px serif';ctx.fillText('SALAH',width/2,220+topInset);
+  ctx.font='25px sans-serif';ctx.fillText('К О Р А Н  ·  '+surah.number+':'+verse.ayah,width/2,275+topInset);
+  ctx.fillStyle=colors[2];let y=330+topInset+Math.max(0,(capacity-lines.reduce((n,r)=>n+r.height,0))/2)+arabicSize;
   for(const row of lines){ctx.direction=row.arabic?'rtl':'ltr';ctx.textAlign='center';ctx.font=row.arabic?arabicSize+'px serif':'600 '+translationSize+'px sans-serif';ctx.fillText(row.text,width/2,y);y+=row.height;}
-  ctx.direction='ltr';ctx.textAlign='center';ctx.font='30px sans-serif';ctx.fillStyle=colors[3];ctx.fillText(meta.name+(pages.length>1?' · '+(i+1)+'/'+pages.length:''),width/2,height-235);
-  if(options.translation){ctx.font='21px sans-serif';ctx.globalAlpha=.75;ctx.fillText('Перевод Эльмира Кулиева',width/2,height-192);ctx.globalAlpha=1;}
-  ctx.globalAlpha=.5;ctx.beginPath();ctx.moveTo(430,height-153);ctx.lineTo(650,height-153);ctx.stroke();ctx.globalAlpha=1;
-  ctx.font='32px sans-serif';ctx.fillText('Saadi Kobilov',width/2,height-102);ctx.font='20px sans-serif';ctx.globalAlpha=.72;ctx.fillText('АВТОР ПРИЛОЖЕНИЯ SALAH',width/2,height-68);ctx.globalAlpha=1;
+  ctx.direction='ltr';ctx.textAlign='center';ctx.font='30px sans-serif';ctx.fillStyle=colors[3];ctx.fillText(meta.name+(pages.length>1?' · '+(i+1)+'/'+pages.length:''),width/2,height-235-bottomInset);
+  if(options.translation){ctx.font='21px sans-serif';ctx.globalAlpha=.75;ctx.fillText('Перевод Эльмира Кулиева',width/2,height-192-bottomInset);ctx.globalAlpha=1;}
+  ctx.globalAlpha=.5;ctx.beginPath();ctx.moveTo(430,height-153-bottomInset);ctx.lineTo(650,height-153-bottomInset);ctx.stroke();ctx.globalAlpha=1;
+  ctx.font=(story?44:32)+'px sans-serif';ctx.fillText('Saadi Kobilov',width/2,height-102-bottomInset);ctx.font=(story?24:20)+'px sans-serif';ctx.globalAlpha=.72;ctx.fillText('АВТОР ПРИЛОЖЕНИЯ SALAH',width/2,height-68-bottomInset);ctx.globalAlpha=1;
   return canvas;
  });
 }
