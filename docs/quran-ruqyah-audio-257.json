@@ -1,0 +1,77 @@
+{
+  "version": 257,
+  "date": "2026-10-09",
+  "recordings": [
+    {
+      "id": "luhaidan-audio",
+      "reciter": "ar.muhammadalluhaidan",
+      "title": "Рукъя · длинная запись",
+      "url": "https://abuamarah.co.uk/wp-content/uploads/2025/08/Shaykh-Luhaidan-Ruqyah_01.mp3",
+      "source": "https://abuamarah.co.uk/ruqyah-audio/",
+      "duration": 2594.175417
+    },
+    {
+      "id": "idris-short",
+      "reciter": "ar.idrisabkar",
+      "title": "Рукъя · короткая запись",
+      "url": "https://download.tvquran.com/download/selections/9/590e58957bc22.mp3",
+      "source": "https://www.tvquran.com/ar/selection/940",
+      "duration": 1632.616878
+    },
+    {
+      "id": "alafasy-ruqyah",
+      "reciter": "ar.alafasy",
+      "title": "Рукъя",
+      "url": "https://download.tvquran.com/download/TvQuran.com__Rouqia/TvQuran.com__r07.mp3",
+      "source": "https://www.tvquran.com/ar/selection/85",
+      "duration": 4418.983756
+    },
+    {
+      "id": "mansour-ruqyah",
+      "reciter": "ar.mansouralsalimi",
+      "title": "Рукъя",
+      "url": "https://ashefaa.com/ruqia/%D8%A7%D9%84%D8%B1%D9%82%D9%8A%D8%A9-%D8%A7%D9%84%D8%B4%D8%B1%D8%B9%D9%8A%D8%A9-%D9%85%D9%86-%D8%A7%D9%84%D8%B3%D8%AD%D8%B1-%D9%88%D8%A7%D9%84%D9%85%D8%B3-%D9%88%D8%A7%D9%84%D8%B9%D9%8A%D9%86-%D9%88%D8%A7%D9%84%D8%AD%D8%B3%D8%AF-.mp3",
+      "source": "https://ashefaa.com/play-32160.html",
+      "duration": 3640.336
+    }
+  ],
+  "sourceChecks": {
+    "mansour": {
+      "url": "https://ashefaa.com/ruqia/%D8%A7%D9%84%D8%B1%D9%82%D9%8A%D8%A9-%D8%A7%D9%84%D8%B4%D8%B1%D8%B9%D9%8A%D8%A9-%D9%85%D9%86-%D8%A7%D9%84%D8%B3%D8%AD%D8%B1-%D9%88%D8%A7%D9%84%D9%85%D8%B3-%D9%88%D8%A7%D9%84%D8%B9%D9%8A%D9%86-%D9%88%D8%A7%D9%84%D8%AD%D8%B3%D8%AF-.mp3",
+      "status": 206,
+      "bytesRange": "bytes 0-8191/29123712",
+      "source": "https://ashefaa.com/play-32160.html"
+    },
+    "luhaidan": {
+      "url": "https://abuamarah.co.uk/wp-content/uploads/2025/08/Shaykh-Luhaidan-Ruqyah_01.mp3",
+      "source": "https://abuamarah.co.uk/ruqyah-audio/",
+      "durationSeconds": 2594.175417,
+      "knownBrowserReadyState": 4
+    }
+  },
+  "rightsReviewStatus": "needs-review",
+  "youtubeEmbeddingRemoved": true,
+  "newMediaHostsOnly": [
+    "https://abuamarah.co.uk",
+    "https://ashefaa.com"
+  ],
+  "notes": [
+    "User accepted the verified43-minute Luhaidan fallback. No hour-length claim.",
+    "Public MP3s played from source publishers; no YouTube extraction, accounts or cookies used.",
+    "Download links open the source file for saving; no in-app offline cache claimed."
+  ],
+  "browserVerification": {
+    "mansour": {
+      "readyState": 4,
+      "durationSeconds": 3640.336,
+      "playedSeconds": 98.965911,
+      "stopped": true
+    },
+    "luhaidan": {
+      "readyState": 4,
+      "durationSeconds": 2594.175417,
+      "playedSeconds": 106.484613,
+      "stopped": true
+    }
+  }
+}
