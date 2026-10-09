@@ -1,0 +1,13 @@
+{
+  "version": 249,
+  "change": "Compact QR icon beside Quran heading, shared across reading and reciter tabs",
+  "accessibleLabel": "Сканировать передачу",
+  "tapSize": [
+    44,
+    44
+  ],
+  "scannerBehaviorUnchanged": true,
+  "cameraPermissionScopeUnchanged": true,
+  "phone390Overflow": false,
+  "copyReplacementPreserved": true
+}
