@@ -67,3 +67,17 @@ body.home-page .quran-broadcast-overlay.is-mini,body.learning-focus .quran-broad
 .quran-broadcast-overlay.is-mini .quran-live-audio{padding:10px;gap:6px;min-height:70px}
 .quran-broadcast-overlay.is-mini .quran-live-audio-icon{width:26px}.quran-broadcast-overlay.is-mini .quran-live-audio-icon svg{width:24px}
 .quran-broadcast-overlay.is-mini .quran-live-audio strong{font-size:12px}.quran-broadcast-overlay.is-mini .quran-live-audio [data-audio-status]{font-size:10px}
+
+/* Sharing fits beside the reciter row, without moving the fixed tab bar. */
+.quran-global-player .quran-player-reciter{grid-column:1}
+.quran-handoff-button{grid-column:2;grid-row:2;justify-self:end;min-height:32px;padding:4px 10px;border:1px solid #d9c39855;border-radius:10px;color:#d9c398;font-size:11px}
+.quran-handoff-button:disabled{opacity:.4}
+.quran-listen-qr{display:grid;place-items:center;margin:18px auto;background:#fff;width:min(260px,100%);border-radius:14px;overflow:hidden}
+.quran-listen-qr svg{display:block;width:100%;height:auto}
+#quran-listen-link{width:100%;min-height:44px;font-size:16px}
+.quran-listen-share-actions{display:grid;gap:10px;margin-top:14px}
+.quran-share-title{font-size:20px;margin-bottom:8px}
+.quran-received-listening{text-align:center;max-width:520px;margin:28px auto}
+.quran-received-portrait{display:block;width:110px;aspect-ratio:4/5;object-fit:cover;object-position:center 28%;border-radius:16px;margin:0 auto 20px}
+.quran-received-listening .button{width:100%;margin:14px 0}
+.quran-received-listening .text-button{display:inline-flex;align-items:center;min-height:44px}

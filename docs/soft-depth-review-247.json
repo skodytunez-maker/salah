@@ -1,0 +1,22 @@
+{
+  "version": 247,
+  "verifiedOnPublic246": {
+    "toggleFunctional": true,
+    "missingGroups": [
+      "wallpaper-picker-face",
+      "background-mode-buttons button",
+      "quran-player-controls button"
+    ]
+  },
+  "fix": "Expand depth selector coverage and modestly increase edge contrast",
+  "preserved": [
+    "background colors",
+    "text colors",
+    "control dimensions",
+    "fixed navigation",
+    "keyboard focus outlines",
+    "in-app/system reduced-motion preferences"
+  ],
+  "preview": "Local isolated existing-control comparison",
+  "physicalIphoneVerified": false
+}

@@ -1,3 +1,4 @@
+import{mountListeningShare}from './quran-listen-share.js';
 import{mountReciterLibrary,saveReciterFavorite,quranSectionTabs}from './quran-reciter-library.js';
 import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-favorites.js';
 import{broadcastButton,bindQuranBroadcast,minimizeQuranBroadcast}from './quran-broadcast.js';
@@ -9,7 +10,7 @@ import{esc,toast,modal}from './ui.js';
 import{loadIndex,loadSurah,loadSearch,validPosition,searchSurahs,searchTranslation,offlineTextCount,saveAllTexts,estimatedAudioBytes,saveSurahAudio}from './quran-data.js';
 import{quranPlayback}from './quran-session.js';
 import{quranDownloadsMarkup,mountQuranDownloads}from './quran-downloads.js';
-let unmountDownloads=null,unmountReciters=null;
+let unmountDownloads=null,unmountReciters=null,unmountListeningShare=null;
 const reciterFavorites=()=>normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS);
 let activeSurah=null,host=null,index=null,generation=0,libraryTab='surahs',query='',searchTimer=null,searchGeneration=0,observer=null,saveTimer=null,lastPosition=null,unsubscribePlayback=null,audioDownload=null,textDownload=false;
 const defaults={transcriptionEdition:'salah-preview',translationEdition:'ru.kuliev',arabicEdition:'quran-uthmani',hints:true,arabic:true,translation:true,transliteration:false,numbers:true,arabicSize:34,textSize:20,theme:'dark',reciter:'ar.alafasy'};
@@ -28,13 +29,14 @@ function preferences(){
 function positionUrl(surah,ayah=1){return '#quran?surah='+surah+'&ayah='+ayah}
 function bookmarks(){const saved=read('quran-bookmarks',[]);return Array.isArray(saved)?saved.filter(v=>validPosition(index,v)):[]}
 function savePosition(){clearTimeout(saveTimer);if(lastPosition&&index&&validPosition(index,lastPosition)){if(!write('quran-last-position',lastPosition))toast('Не удалось сохранить место чтения')}lastPosition=null}
-export function stopQuran(){minimizeQuranBroadcast();unmountReciters?.();unmountReciters=null;unmountDownloads?.();unmountDownloads=null;generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;audioDownload?.abort();audioDownload=null;document.body.classList.remove('quran-focus')}
+export function stopQuran(){minimizeQuranBroadcast();unmountListeningShare?.();unmountListeningShare=null;unmountReciters?.();unmountReciters=null;unmountDownloads?.();unmountDownloads=null;generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;audioDownload?.abort();audioDownload=null;document.body.classList.remove('quran-focus')}
 export async function showQuran(container){
  stopQuran();host=container;const token=generation;
  host.innerHTML='<section class="panel section"><h2>Коран</h2><p class="muted">Открываем библиотеку…</p></section>';
  try{
   index=await loadIndex();if(token!==generation)return;
   const params=new URLSearchParams(location.hash.split('?')[1]||''),surah=Number(params.get('surah')),ayah=params.has('ayah')?Number(params.get('ayah')):1;
+  if(params.has('listen')){unmountListeningShare=mountListeningShare(host,index,location.hash);return;}
   if(params.has('surah')){
    if(!validPosition(index,{surah,ayah})){host.innerHTML='<section class="panel section"><h2>Такого аята нет</h2><a class="button" href="#quran">К списку сур</a></section>';return}
    const data=await loadSurah(surah);if(token!==generation)return;const chosen=params.get('reciter');if(RECITERS.some(r=>r.id===chosen)&&reciterHasSurah(chosen,surah))write('quran-preferences',{...preferences(),reciter:chosen});reader(data,ayah,token,params.get('offline')==='1');

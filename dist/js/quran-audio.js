@@ -4,6 +4,7 @@ import{offlineAudioStore}from './quran-offline-store.js';
 import{loadAyahTimings,ayahAtTime,timingUrl}from './quran-timing.js';
 export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings}){
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
+ let startOffset=0;
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
  function emit(){if(!disposed)onState({index:current,status,ayah,timingStatus,canPrevious:!whole&&current>0,canNext:!whole&&current<surah.verses.length-1})}
  function release(){timingController?.abort();timingController=null;timings=null;if(audio){audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
@@ -13,10 +14,10 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   const n=ayahAtTime(timings,audio.currentTime);
   if(n!==ayah||force){ayah=n;if(n){current=n-1;onVerse(n)}emit()}
  }
- async function play(index=current,all=continuous){
+ async function play(index=current,all=continuous,seconds=0){
   if(disposed||!Number.isInteger(index)||index<0||index>=surah.verses.length)return;
   if(whole)index=0;
-  const id=++token;release();current=index;continuous=all;status='loading';ayah=whole?null:surah.verses[index].ayah;timingStatus=whole?(timed?'loading':'unavailable'):'ready';emit();if(!whole)onVerse(ayah);
+  const id=++token;release();startOffset=Number.isFinite(seconds)&&seconds>=0&&seconds<=86400?seconds:0;current=index;continuous=all;status='loading';ayah=whole?null:surah.verses[index].ayah;timingStatus=whole?(timed?'loading':'unavailable'):'ready';emit();if(!whole)onVerse(ayah);
   try{
    let url=audioUrl(surah.verses[index].number,reciter,surah.number),blob=null;
    try{blob=await offlineAudioStore.getAudio(url);}catch{}
@@ -25,7 +26,8 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    if(offlineOnly&&!blob)throw Error('Сура не скачана');
    audio=createAudio(url);
    audio.onerror=()=>fail(id);
-   audio.ontimeupdate=audio.onseeked=audio.onloadedmetadata=()=>sync(id);
+   audio.ontimeupdate=audio.onseeked=()=>sync(id);
+   const seekStart=()=>{if(disposed||id!==token||!audio)return;if(startOffset>0){try{audio.currentTime=Number.isFinite(audio.duration)&&audio.duration>0?Math.min(startOffset,Math.max(0,audio.duration-.1)):startOffset;}catch{}}sync(id,true)};audio.onloadedmetadata=seekStart;if(audio.readyState>=1)seekStart();
    audio.onended=()=>{if(disposed||id!==token)return;if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);else{status='ended';emit()}};
    if(whole&&timed){
     const controller=new AbortController();timingController=controller;
@@ -34,10 +36,10 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    await audio.play();if(disposed||id!==token)return;status='playing';sync(id);emit();
   }catch{fail(id)}
  }
- function fail(id){if(disposed||id!==token)return;release();ayah=null;status='error';emit();onError()}
+ function fail(id){if(disposed||id!==token)return;if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
  function pause(){if(disposed)return;if(status==='loading'){token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
- function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){const id=token;audio.play().then(()=>{if(!disposed&&id===token){status='playing';sync(id);emit()}}).catch(()=>fail(id))}else void play(current,continuous)}
+ function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){const id=token;audio.play().then(()=>{if(!disposed&&id===token){status='playing';sync(id);emit()}}).catch(()=>fail(id))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy(){disposed=true;token++;release()}
- return{play,toggle,pause,move,destroy,get state(){return{index:current,status,ayah,timingStatus}}}
+ return{play,toggle,pause,move,destroy,get state(){return{index:current,status,ayah,timingStatus,positionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset}}}
 }

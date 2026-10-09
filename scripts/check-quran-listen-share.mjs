@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import {listeningShareUrl,parseListeningShare,listeningTime} from '../dist/js/quran-listen-share-core.js';
+import {createQuranPlayer} from '../dist/js/quran-audio.js';
+import {createQuranSession} from '../dist/js/quran-session.js';
+const position={surah:2,reciter:'ar.badralturki',ayah:1,seconds:132.45};
+const link=listeningShareUrl(position),hash=new URL(link).hash;
+assert.equal(new URL(link).origin,'https://skodytunez-maker.github.io');
+assert.deepEqual(parseListeningShare(hash),{...position,seconds:132.4});
+assert.equal(listeningTime(3661),'1:01:01');
+for(const malformed of [hash+'&t=4',hash+'&url=https://evil.test/a.mp3',hash.replace('reciter=ar.badralturki','reciter=unknown'),hash.replace('t=132.4','t=Infinity'),hash.replace('t=132.4','t=-1'),hash.replace('surah=2','surah=999'),hash.replace('ayah=1','ayah=0'),hash.replace('listen=1','listen=2')])assert.equal(parseListeningShare(malformed),null);
+assert.throws(()=>listeningShareUrl({...position,seconds:NaN}));
+assert.throws(()=>listeningShareUrl({...position,reciter:'ar.tariqmuhammad',surah:3}),'Partial catalogue must not share unavailable recordings');
+assert.ok(!link.includes('blob:')&&!link.includes('token')&&!link.includes('account'));
+const tracks=[];
+class AudioFixture{constructor(url){this.src=url;this.currentTime=0;this.duration=300;this.readyState=0;this.paused=true;tracks.push(this)}async play(){this.paused=false}pause(){this.paused=true}}
+const surah={number:2,verses:[{number:8,ayah:1},{number:9,ayah:2}]};
+let lastState;
+const player=createQuranPlayer({surah,reciter:'ar.badralturki',onState:s=>lastState=s,onVerse(){},onError(){},createAudio:url=>new AudioFixture(url),loadTimings:async()=>null});
+await player.play(0,true,132.4);let track=tracks.at(-1);track.onloadedmetadata();assert.equal(track.currentTime,132.4);track.currentTime=143.2;assert.equal(player.state.positionSeconds,143.2,'Share must sample the current audio time, not the last ayah update');player.pause();assert.equal(player.state.positionSeconds,143.2);player.destroy();
+const verse=createQuranPlayer({surah,reciter:'ar.alafasy',onState(){},onVerse(){},onError(){},createAudio:url=>new AudioFixture(url)});
+await verse.play(1,true,8.2);track=tracks.at(-1);track.onloadedmetadata();assert.equal(track.currentTime,8.2);assert.ok(track.src.endsWith('/9.mp3'),'Verse share resumes the selected ayah recording');verse.destroy();
+const loading=createQuranPlayer({surah,reciter:'ar.badralturki',onState(){},onVerse(){},onError(){},createAudio:url=>new AudioFixture(url),loadTimings:async()=>null});
+const pending=loading.play(0,true,21.5);loading.pause();loading.toggle();await pending;for(let i=0;i<3;i++)await new Promise(resolve=>setImmediate(resolve));tracks.at(-1).onloadedmetadata();assert.equal(tracks.at(-1).currentTime,21.5,'Pausing a pending handoff must retain its saved offset on retry');loading.destroy();
+const catalog={surahs:Array.from({length:114},(_,i)=>({number:i+1,name:'Сура '+(i+1)}))};
+let argumentsReceived;
+const session=createQuranSession({loadCatalog:async()=>catalog,createPlayer:opts=>({play(...args){argumentsReceived=args;opts.onState({status:'playing',index:1,ayah:2,timingStatus:'ready'})},destroy(){},get state(){return {positionSeconds:8.2}}})});
+await session.start(surah,'ar.alafasy',1,true,false,8.2);assert.deepEqual(argumentsReceived,[1,true,8.2]);assert.equal(session.state.positionSeconds,8.2);session.stop();
+console.log('PASS: public position-only links, strict validation, partial catalogues, whole-surah and verse offsets, paused capture and session integration.');
