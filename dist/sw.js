@@ -144,7 +144,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":256,"date":"2026-10-09","changes":["В профилях Мухаммада Люхайдана и Идриса Абкара появился отдельный блок «Рукъя» с прослушиванием и сохранением файла.","В каталоге чтецов добавлен фильтр «Рукъя»."],"announcement":{"version":256,"date":"2026-10-09","changes":["В профилях Мухаммада Люхайдана и Идриса Абкара появился отдельный блок «Рукъя» с прослушиванием и сохранением файла.","В каталоге чтецов добавлен фильтр «Рукъя»."]}};
+const RELEASE={"version":256,"date":"2026-10-09","changes":["В профилях Мухаммада Люхайдана и Идриса Абкара появился отдельный блок «Рукъя».","В каталоге чтецов добавлен фильтр «Рукъя»."],"announcement":{"version":256,"date":"2026-10-09","changes":["В профилях Мухаммада Люхайдана и Идриса Абкара появился отдельный блок «Рукъя».","В каталоге чтецов добавлен фильтр «Рукъя»."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
