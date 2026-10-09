@@ -1,4 +1,4 @@
-export const APP_VERSION=253;
+export const APP_VERSION=254;
 export const APP_UPDATED_AT='2026-10-09';
 export const APP_CHANGES=["В разделе «Коран» теперь можно сканировать QR передачи и продолжать прослушивание внутри SALAH.","В окне передачи кнопка «Сканировать» открывает квадратную камеру с полупрозрачным рисунком QR-кода."];
 // Public notes list new user-facing features or sections only. Internal settings,

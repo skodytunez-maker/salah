@@ -74,3 +74,9 @@ offlineCallbacks.onState({status:'ended',index:1,ayah:2});await flush();
 assert.equal(savedSession.state.status,'ended');assert.deepEqual(offlineLoads,[114],'Final saved surah must not request online audio');
 savedSession.stop();
 console.log('PASS: automatic surah continuation, persistent playback, continuous ayahs, pause/resume, previous/next surahs, reciter preservation, errors, boundaries and stale-load cancellation');
+
+const smooth=createQuranSession(options);await smooth.start(surah(1),'ar.yasseraldossari');await flush();assert.equal(smooth.state.reciter,'ar.yasseraldossaricontinuous');assert.ok(activeTrack().src.endsWith('/yasser/001.mp3'));const fullTrack=activeTrack();assert.equal(smooth.state.index,0);fullTrack.onended();await flush();assert.equal(smooth.state.surah.number,2);assert.ok(activeTrack().src.endsWith('/yasser/002.mp3'));smooth.stop();
+await smooth.start(surah(1),'ar.yasseraldossari',1,true,false,3);await flush();assert.equal(smooth.state.reciter,'ar.yasseraldossari','Old verse-offset handoff retains its recording');smooth.stop();
+let legacyOpts;const legacy=createQuranSession({...options,loadSaved:async()=>[{surah:1}],createPlayer:opts=>{legacyOpts=opts;return{play(){opts.onState({status:'playing',index:0,ayah:1})},destroy(){}}}});await legacy.start(surah(1),'ar.yasseraldossari',0,true,true);assert.equal(legacyOpts.reciter,'ar.yasseraldossari','Downloaded verse cache must not be silently replaced');legacy.stop();console.log('PASS: Daussari whole-file default, same recording across chapters, legacy offline and shared verse offsets preserved');
+
+await smooth.start(surah(1),'ar.yasseraldossaricontinuous');await flush();await smooth.changeReciter('ar.yasseraldossari');await flush();assert.equal(smooth.state.reciter,'ar.yasseraldossari','Explicit choice of verse mode remains possible online');smooth.stop();

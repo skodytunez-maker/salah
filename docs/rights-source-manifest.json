@@ -3363,6 +3363,11 @@
       "path": "dist/assets/reciters/nasseralqatami.png",
       "gitBlobSha": "615685adb03a1563a8ffe194446fe4cf516b33f2",
       "bytes": 252299
+    },
+    {
+      "path": "dist/assets/reciters/abdulbasitabdussamad.png",
+      "gitBlobSha": "c974b97f026d8c882449b18f9217d543e46f9435",
+      "bytes": 180494
     }
   ]
 }

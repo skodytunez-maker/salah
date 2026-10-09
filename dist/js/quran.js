@@ -97,7 +97,7 @@ function reader(surah,ayah,token,offlineOnly=false){
  const updatePlayback=state=>{
   if(token!==generation)return;
   const following=followPlayback(state);if(following){location.hash=following;return;}
-  if(state.reciter&&state.reciter!==p.reciter&&preferences().reciter===state.reciter){Object.assign(p,preferences());host.querySelector('[data-quran-option=reciter]').value=p.reciter;applyPreferences(p)}
+  if(state.reciter&&state.reciter!==p.reciter&&(preferences().reciter===state.reciter||reciterInfo(p.reciter).continuousReciter===state.reciter)){write('quran-preferences',{...preferences(),reciter:state.reciter});Object.assign(p,preferences());host.querySelector('[data-quran-option=reciter]').value=p.reciter;applyPreferences(p)}
   const matches=state.surah?.number===surah.number,active=matches&&['loading','playing','paused'].includes(state.status),n=active&&Number.isInteger(state.ayah)?state.ayah:null;
   const currentLabel=host.querySelector('#quran-current-verse');currentLabel.hidden=!active;
   const prefix=state.status==='paused'?'На паузе · ':state.status==='loading'?'Загрузка · ':'Читается · ';

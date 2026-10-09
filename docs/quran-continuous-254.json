@@ -1,0 +1,60 @@
+{
+  "version": 254,
+  "daussari": {
+    "wholeFile": {
+      "id": "ar.yasseraldossaricontinuous",
+      "group": "makkah",
+      "name": "Ясир ад-Даусари",
+      "format": "surah",
+      "server": "https://server11.mp3quran.net/yasser/",
+      "timingRead": 92,
+      "timingServer": "https://server11.mp3quran.net/yasser/",
+      "portrait": "assets/reciters/yasseraldossari.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=92",
+      "verifiedOn": "2026-10-09"
+    },
+    "legacyReciter": "ar.yasseraldossari",
+    "switch": "Online, autoplay, chapter start at zero only; prior offline recordings and verse-offset links retain old verse source",
+    "firstSurahIdenticalToProvider": [
+      {
+        "url": "https://server11.mp3quran.net/yasser/001.mp3",
+        "status": 200,
+        "bytes": 774896,
+        "sha256": "08237b30a2fcdabe9df6633208442395b5bbb0cd0e612f15bb43de5d0ed72a33"
+      },
+      {
+        "url": "https://cdn.mp3quran.net/audio/yasser-dosari/r1/001.mp3",
+        "status": 200,
+        "bytes": 774896,
+        "sha256": "08237b30a2fcdabe9df6633208442395b5bbb0cd0e612f15bb43de5d0ed72a33"
+      }
+    ],
+    "oneAudioFilePerSurah": true,
+    "naturalBreathingPreserved": true,
+    "physicalPhoneVerified": false
+  },
+  "abdulBasit": {
+    "reciter": {
+      "id": "ar.abdulbasitabdussamad",
+      "name": "Абдуль-Басит Абдус-Самад",
+      "format": "verse",
+      "folder": "Abdul_Basit_Murattal_192kbps",
+      "portrait": "assets/reciters/abdulbasitabdussamad.png",
+      "source": "https://everyayah.com/data/Abdul_Basit_Murattal_192kbps/",
+      "verifiedOn": "2026-10-09"
+    },
+    "allExpectedAyahFilesPresent": 6236,
+    "portraitUrl": "https://s.raseef22.com/storage/attachments/118/INSIDE_KurdsEgypt_abdulbasit_442557.jpg/r/800/image.jpg",
+    "sourcePage": "https://raseef22.net/article/117628",
+    "processing": {
+      "faceRedrawn": false,
+      "protectedFacePixelsUnchanged": true,
+      "size": [
+        700,
+        644
+      ],
+      "protectedRegion": "tight facial polygon; no rectangular background patch"
+    },
+    "rightsStatus": "needs-review"
+  }
+}
