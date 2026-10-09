@@ -1,0 +1,51 @@
+{
+  "version": 251,
+  "change": "Dua source labels now point to primary hadith collections, with transmission caveats preserved",
+  "checkedAt": "2026-10-09",
+  "sources": {
+    "asbahna": {
+      "source": "https://sunnah.com/muslim:2723b",
+      "sourceLabel": "Сахих Муслим · 2723b"
+    },
+    "alim": {
+      "source": "https://sunnah.com/tirmidhi:3529",
+      "sourceLabel": "Ат-Тирмизи · 3529; Абу Дауд · 5067",
+      "additionalSource": "https://sunnah.com/abudawud:5067",
+      "grade": "Хасан · оценка Darussalam для ат-Тирмизи 3529; Абу Дауд 5067 — сахих по аль-Альбани",
+      "sourceNote": "Формула передана в нескольких вариантах. Окончание о причинении зла себе или другому мусульманину приведено у ат-Тирмизи 3529; свидетельство единобожия — у Абу Дауда 5067."
+    },
+    "tahlil": {
+      "source": "https://sunnah.com/bukhari:6404",
+      "sourceLabel": "Сахих аль-Бухари · 6404 · десять повторений",
+      "grade": "Основание: Сахих аль-Бухари · 6404",
+      "sourceNote": "В этой передаче указаны десять повторений без ограничения утренним или вечерним временем."
+    },
+    "raditu": {
+      "source": "https://sunnah.com/ibnmajah:3870",
+      "sourceLabel": "Ибн Маджа · 3870; Абу Дауд · 5072",
+      "additionalSource": "https://sunnah.com/abudawud:5072",
+      "grade": "Ибн Маджа 3870 — хасан по Darussalam; Абу Дауд 5072 — слабая передача по аль-Альбани",
+      "sourceNote": "Оценки отдельных передач различаются. В указанных текстах число трёх повторений не установлено; счётчик приложения не является самостоятельным доказательством этого числа."
+    },
+    "hasbi": {
+      "source": "https://sunnah.com/abudawud:5081",
+      "sourceLabel": "Абу Дауд · 5081 · семь повторений",
+      "sourceNote": "Оценки передач различаются: в Абу Дауде 5081 аль-Альбани оценил приведённую передачу как вымышленную. Этот пункт не представлен как бесспорно достоверная сунна."
+    },
+    "bikaEvening": {
+      "source": "https://sunnah.com/ibnmajah:3868",
+      "sourceLabel": "Ибн Маджа · 3868 · вечерний вариант",
+      "grade": "Сахих · оценка Darussalam для Ибн Маджи 3868"
+    }
+  },
+  "unchangedContentSha256": "593cbb30d5ed56b3b53fcce87c01152d4374b8cd071915ef0bac8458cb6fc948",
+  "unchangedFields": [
+    "id",
+    "arabic",
+    "translation",
+    "transliteration",
+    "target"
+  ],
+  "audioProvenancePreserved": true,
+  "legalConclusion": "No legal compliance conclusion; specific Russian editions appear in the official list; the app content and audio are not legally certified by changing labels."
+}
