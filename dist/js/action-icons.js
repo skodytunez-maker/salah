@@ -1,0 +1,4 @@
+import{esc}from './ui.js';
+const paths={play:'<path d="m9 5 10 7-10 7z"/>',pause:'<path d="M8 5v14M16 5v14"/>',download:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10m-3.5-3.5L12 17l3.5-3.5"/>',external:'<path d="M13 4h7v7m0-7-10 10M9 4H4v16h16v-5"/>',back:'<path d="m14 5-7 7 7 7M7 12h13"/>',next:'<path d="m10 5 7 7-7 7M4 12h13"/>',expand:'<path d="M14 3h7v7m0-7-7 7M3 14v7h7m-7 0 7-7"/>',collapse:'<path d="m6 9 6 6 6-6"/>'};
+export function actionIcon(name){const path=paths[name];return path?'<svg class="action-icon action-icon-'+name+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>':'';}
+export function actionLabel(name,text){return actionIcon(name)+'<span>'+esc(text)+'</span>';}

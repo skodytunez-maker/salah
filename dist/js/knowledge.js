@@ -1,3 +1,4 @@
+import{actionIcon,actionLabel}from './action-icons.js';
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
 const entries = [
@@ -47,7 +48,7 @@ export function showKnowledge(container, { onStart } = {}) {
         </div>
         <h2>${entry.title}</h2>
         <p>${entry.description}</p>
-        <span class="knowledge-action">${entry.action}<span aria-hidden="true">→</span></span>
+        <span class="knowledge-action">${entry.action}${actionIcon('next')}</span>
       </a>`).join('')}
     </div>
   </section>`;
