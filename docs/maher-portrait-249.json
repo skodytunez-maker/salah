@@ -1,0 +1,12 @@
+{
+  "version": 249,
+  "reciter": "ar.mahermuaiqly",
+  "asset": "dist/assets/reciters/mahermuaiqly.png",
+  "gitBlobSha": "bd409f19aeb3890d81a76755dc937900e7ea6fbd",
+  "source": "User-supplied portrait screenshot, 2026-10-09",
+  "background": "Matched to current Luhaidan portrait",
+  "facePixelsIdentical": true,
+  "faceRedrawn": false,
+  "scarfRepair": "Small mirrored source scarf patch above face; screenshot controls excluded",
+  "rightsReviewStatus": "needs-review"
+}

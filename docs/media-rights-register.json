@@ -1150,12 +1150,12 @@
     },
     {
       "path": "dist/assets/reciters/mahermuaiqly.png",
-      "gitBlobSha": "dedfac4ed77e5bb890e1277087e2c0dcdea2f7a3",
-      "bytes": 314620,
+      "gitBlobSha": "bd409f19aeb3890d81a76755dc937900e7ea6fbd",
+      "bytes": 1151785,
       "kind": "reciter-portrait",
       "rightsReviewStatus": "needs-review",
       "rightsEvidence": "docs/reciter-expansion-20261009.json",
-      "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review. Release 243: background replaced with a sample from Luhaidan; no face synthesis; Bandar slightly cropped. Original files retained in local release backup."
+      "note": "User-supplied Maher portrait, background matched to Luhaidan. Original face pixels preserved; small original scarf patch used above face to remove screenshot controls. Usage rights remain needs-review."
     },
     {
       "path": "dist/assets/reciters/abdelazizsheim.jpg",
