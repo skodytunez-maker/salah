@@ -1,0 +1,25 @@
+{
+  "version": 261,
+  "date": "2026-10-09",
+  "changes": [
+    "Persistent session owns ruqyah HTMLAudio independently of profile unmount",
+    "Shared player supports ruqyah seek, time, pause, stop, TV and Home display",
+    "Optional MediaSession metadata, play/pause/stop/seek for Quran and ruqyah; Quran previous/next surah",
+    "Explicit foreground playback claims prevent simultaneous ruqyah, Quran and live broadcast"
+  ],
+  "validation": {
+    "checks": "90/90",
+    "browser": [
+      "Actual Luhaidan ruqyah audio played",
+      "Navigation to Home retained running audio and advanced elapsed time",
+      "Quran selection stopped and released ruqyah; whole Al-Fatiha played",
+      "Persistent Quran progress showed elapsed time and duration",
+      "No browser console errors"
+    ],
+    "physicalLockedPhone": "Not tested; background behavior depends on OS/browser; no claim of force-quit persistence"
+  },
+  "sources": [
+    "https://developer.chrome.com/blog/media-session",
+    "https://web.dev/articles/media-session"
+  ]
+}

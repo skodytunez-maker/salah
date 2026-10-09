@@ -88,3 +88,8 @@ body.home-page .quran-broadcast-overlay.is-mini,body.learning-focus .quran-broad
 @media(max-width:420px){.quran-section-title .quran-section-heading{gap:12px}.quran-section-title .quran-section-heading a{font-size:28px}.quran-heading-read{gap:8px}}
 
 .quran-output-actions{grid-column:2;grid-row:2;display:flex;align-items:center;gap:5px;justify-content:flex-end}.quran-output-actions .quran-handoff-button{min-width:32px}.quran-output-actions [data-tv]{padding:5px 8px}.quran-output-actions [data-tv] svg{width:18px;height:18px}
+
+/* Progress shares the persistent player; the navigation stays fixed. */
+.quran-player-progress{grid-column:1 / -1;grid-row:3;display:flex;align-items:center;gap:8px;color:#b8c4d5;font-size:10px;padding-top:4px}.quran-player-progress input{flex:1;min-width:0;width:100%;height:24px;padding:0;accent-color:#d9c398}.quran-player-progress span{font-variant-numeric:tabular-nums;white-space:nowrap}.quran-player-progress[hidden],.quran-player-reciter[hidden],.quran-output-actions button[hidden]{display:none}
+
+.quran-global-player.is-ruqyah .quran-now-playing{grid-column:1 / -1;grid-row:1}.quran-global-player.is-ruqyah .quran-global-controls{grid-column:1;grid-row:2}.quran-global-player.is-ruqyah .quran-now-playing strong{font-size:14px}

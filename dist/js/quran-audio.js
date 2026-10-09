@@ -21,7 +21,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    prepared.onerror=()=>{if(next===pending)clearNext();};prepared.load?.();
   }catch{if(next===pending){if(pending.resource)clearNext();else{next=null;if(preparedUrl)URL.revokeObjectURL(preparedUrl);}}}})();
  }
- function release(){timingController?.abort();timingController=null;timings=null;if(audio){audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
+ function release(){timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
  function sync(id,force=false){
   if(disposed||id!==token||!audio||!whole)return;
   if(timings&&Number.isFinite(audio.duration)&&timings.at(-1).end>audio.duration+3){timings=null;timingStatus='unavailable';force=true}
@@ -44,7 +44,8 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
     audio=createAudio(url);
    }
    audio.onerror=()=>fail(id);
-   audio.ontimeupdate=audio.onseeked=()=>sync(id);
+   audio.onplay=()=>{if(!disposed&&id===token){status='playing';emit();}};audio.onpause=()=>{if(!disposed&&id===token&&status==='playing'&&!audio.ended){status='paused';emit();}};
+   audio.ontimeupdate=audio.onseeked=()=>{sync(id);emit();};
    const seekStart=()=>{if(disposed||id!==token||!audio)return;if(startOffset>0){try{audio.currentTime=Number.isFinite(audio.duration)&&audio.duration>0?Math.min(startOffset,Math.max(0,audio.duration-.1)):startOffset;}catch{}}sync(id,true)};audio.onloadedmetadata=seekStart;if(audio.readyState>=1)seekStart();
    audio.onended=()=>{if(disposed||id!==token)return;if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);else{status='ended';emit()}};
    if(whole&&timed){
@@ -59,5 +60,6 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){const id=token;audio.play().then(()=>{if(!disposed&&id===token){status='playing';sync(id);prepareNext();emit()}}).catch(()=>fail(id))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy(){disposed=true;token++;clearNext();release()}
- return{play,toggle,pause,move,destroy,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,positionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset}}}
+ function seek(seconds){if(disposed||!audio||!Number.isFinite(seconds))return;try{audio.currentTime=Math.max(0,Math.min(seconds,Number.isFinite(audio.duration)?Math.max(0,audio.duration-.01):86400));sync(token,true);}catch{}}
+ return{play,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationSeconds:Number.isFinite(audio?.duration)?audio.duration:0,positionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset}}}
 }

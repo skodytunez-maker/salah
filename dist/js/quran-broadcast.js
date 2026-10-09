@@ -1,3 +1,4 @@
+import{claimPlayback,registerPlayback}from './media-playback-focus.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{setForegroundAudio}from './audio-focus.js';
 import{quranPlayback}from './quran-session.js';
@@ -11,7 +12,7 @@ export function broadcastButton(compact=false){return '<button type="button" cla
 // Keep the same iframe connected to the body: reparenting or recreating it restarts YouTube.
 export function createQuranBroadcast({doc=document,win=window,playback=quranPlayback,createAudio=createBroadcastAudio}={}){
  let root=null,section=null,screen=null,selected=null,mini=false,detach=null,returnFocus=null,inertSiblings=[],audioMode=false,liveAudio=null;
- const audioOwner={};
+ const audioOwner={};registerPlayback(audioOwner,stop);
  const restorePage=()=>{for(const [element,previous]of inertSiblings)element.inert=previous;inertSiblings=[]};
  const lockPage=()=>{restorePage();for(const element of doc.body.children){if(element===root||element.matches('dialog,script,style,link'))continue;inertSiblings.push([element,element.inert]);element.inert=true}};
  const focusBack=()=>{if(returnFocus?.isConnected&&!returnFocus.inert)returnFocus.focus();else doc.querySelector('#app')?.focus({preventScroll:true})};
@@ -40,6 +41,7 @@ export function createQuranBroadcast({doc=document,win=window,playback=quranPlay
  }
  const route=()=>minimize({focus:false});
  function open(){
+  claimPlayback(audioOwner);
   if(root){returnFocus=doc.activeElement;setMode(false);return}
   playback.pause();returnFocus=doc.activeElement;root=doc.createElement('aside');root.className='quran-broadcast-overlay';
   root.innerHTML='<section class="quran-broadcast-dialog"><div class="quran-broadcast-heading"><div><span class="eyebrow">ПРЯМОЙ ЭФИР</span><h2 class="quran-broadcast-title">Мекка</h2></div><div class="quran-broadcast-controls"><button type="button" data-broadcast-size aria-label="Свернуть трансляцию" aria-expanded="true">'+actionIcon('collapse')+'</button><button type="button" data-broadcast-stop aria-label="Выключить трансляцию">×</button></div></div><div class="quran-broadcast-tabs" role="group" aria-label="Выбор трансляции">'+BROADCAST_CHANNELS.map(c=>'<button type="button" data-channel="'+c.id+'" aria-pressed="false">'+c.name+'</button>').join('')+'</div><p class="quran-broadcast-place"></p><div class="quran-broadcast-screen"></div><p class="quran-broadcast-note">Каналы Saudi Quran TV и Saudi Sunnah TV · YouTube</p><a class="text-button quran-broadcast-external" target="_blank" rel="noopener noreferrer">Открыть эфир на YouTube '+actionIcon('external')+'</a></section>';
