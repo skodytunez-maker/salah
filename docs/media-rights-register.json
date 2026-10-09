@@ -1247,6 +1247,30 @@
       "role": "night",
       "rightsReviewStatus": "needs-review",
       "note": "Release 244: built-in image edit of night-tablet-v1.webp removed the small churches from the far bank; bridge and panorama retained. Original reference provenance remains in docs/tyumen-tablet-provenance.json."
+    },
+    {
+      "path": "dist/assets/reciters/idrisabkar.png",
+      "gitBlobSha": "5dd49b92f68b8324aacc7667424d9197cc31e3e8",
+      "bytes": 4085444,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "note": "Identified public portrait source and unchanged face evidence: docs/quran-continuation-reciters-253.json. Background composited from existing Luhaidan reference; no face synthesis. Public availability does not establish redistribution rights."
+    },
+    {
+      "path": "dist/assets/reciters/abubakrshatri.png",
+      "gitBlobSha": "2cc6292f9f487eff149333648e381c28b4ba0eca",
+      "bytes": 319888,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "note": "Identified public portrait source and unchanged face evidence: docs/quran-continuation-reciters-253.json. Background composited from existing Luhaidan reference; no face synthesis. Public availability does not establish redistribution rights."
+    },
+    {
+      "path": "dist/assets/reciters/nasseralqatami.png",
+      "gitBlobSha": "615685adb03a1563a8ffe194446fe4cf516b33f2",
+      "bytes": 252299,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "note": "Identified public portrait source and unchanged face evidence: docs/quran-continuation-reciters-253.json. Background composited from existing Luhaidan reference; no face synthesis. Public availability does not establish redistribution rights."
     }
   ],
   "wallpaperSets": [
