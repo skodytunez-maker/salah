@@ -902,12 +902,13 @@
     {
       "id": "ar.mahermuaiqly",
       "path": "assets/reciters/mahermuaiqly.png",
-      "url": "https://static.qurancdn.com/images/reciters/25/Maher-al-Muaiqly-profile.png",
-      "bytes": 416018,
-      "sourcePage": "https://quran.com/reciters",
+      "bytes": 1151785,
+      "sourcePage": "User-supplied portrait screenshot (2026-10-09)",
       "rights": "needs-review",
-      "identityNote": "Named reciter catalog association; downloaded original without image editing.",
-      "rightsReviewStatus": "needs-review"
+      "identityNote": "User requested this named portrait. Background matched to Luhaidan using conventional processing; source face pixels unchanged.",
+      "rightsReviewStatus": "needs-review",
+      "previousSourceUrl": "https://static.qurancdn.com/images/reciters/25/Maher-al-Muaiqly-profile.png",
+      "edited": true
     },
     {
       "id": "ar.abdelazizsheim",
