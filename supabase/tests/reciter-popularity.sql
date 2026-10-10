@@ -7,7 +7,7 @@ begin
  select minutes into n from public.reciter_popularity_minutes where listener_hash=h and reciter='ar.alafasy';
  if n<>1 then raise exception 'duplicate counted';end if;
  if public.reciter_popularity_add(h,'ar.alafasy','22222222-2222-4222-8222-222222222222') then raise exception 'rate limit bypass';end if;
- if exists(select 1 from public.reciter_popularity_rank()) then raise exception 'single listener exposed';end if;
+ if not exists(select 1 from public.reciter_popularity_rank() where reciter='ar.alafasy') then raise exception 'first minute not visible';end if;
  insert into public.reciter_popularity_minutes values(repeat('b',64),current_date,'ar.alafasy',5),(repeat('c',64),current_date,'ar.alafasy',5);
  if not exists(select 1 from public.reciter_popularity_rank() where reciter='ar.alafasy') then raise exception 'eligible aggregate missing';end if;
  if has_function_privilege('anon','public.reciter_popularity_add(text,text,uuid)','execute') or has_function_privilege('authenticated','public.reciter_popularity_rank()','execute') then raise exception 'direct RPC exposed';end if;

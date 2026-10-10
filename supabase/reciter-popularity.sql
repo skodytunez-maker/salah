@@ -21,7 +21,7 @@ begin
  return true;
 end $$;
 create function public.reciter_popularity_rank() returns table(reciter text) language sql stable security invoker set search_path=public,pg_temp as $$
- select m.reciter from public.reciter_popularity_minutes m where m.day>=current_date-29 group by m.reciter having count(distinct m.listener_hash)>=3 and sum(m.minutes)>=10 order by sum(m.minutes) desc,m.reciter limit 12;
+ select m.reciter from public.reciter_popularity_minutes m where m.day>=current_date-29 group by m.reciter having sum(m.minutes)>=1 order by sum(m.minutes) desc,m.reciter limit 12;
 $$;
 revoke all on function public.reciter_popularity_add(text,text,uuid),public.reciter_popularity_rank() from public,anon,authenticated;
 grant execute on function public.reciter_popularity_add(text,text,uuid),public.reciter_popularity_rank() to service_role;
