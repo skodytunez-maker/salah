@@ -1,6 +1,6 @@
-import {esc,modal,toast} from './ui.js';
+import {esc,modal,toast,closeModal} from './ui.js';
 import {loadSurah} from './quran-data.js';
-import {actionLabel} from './action-icons.js';
+import {actionLabel,actionIcon} from './action-icons.js';
 
 // Stable local calendar day; no random selection during render and no inferred reading history.
 export function dailyPosition(index,date=new Date()){
@@ -9,11 +9,30 @@ export function dailyPosition(index,date=new Date()){
  let offset=((day%total)+total)%total;
  for(const s of index.surahs){if(offset<s.ayahs)return {surah:s.number,ayah:offset+1};offset-=s.ayahs;}
 }
-export async function mountDailyAyah(slot,index,listen){
+let dailySurface=null;
+export function closeDailyAyah(){dailySurface?.dispose();dailySurface=null;}
+export async function mountDailyAyah(slot,index,listen,{compact=false}={}){
+ closeDailyAyah();
  const position=dailyPosition(index);
  try{
   const surah=await loadSurah(position.surah);if(!slot.isConnected)return;
   const verse=surah.verses[position.ayah-1],meta=index.surahs[position.surah-1];
+  if(compact){
+   slot.innerHTML='<button type="button" class="quran-day-short" aria-haspopup="dialog" aria-expanded="false" aria-controls="quran-day-popover"><span>Аят дня</span><small>'+position.surah+':'+position.ayah+'</small></button>';
+   const invoker=slot.querySelector('button'),panel=document.createElement('section');panel.id='quran-day-popover';panel.className='quran-day-popover';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Аят дня');
+   panel.innerHTML='<div class="quran-day-popover-head"><h2>Аят дня</h2><button type="button" class="quran-small-close" aria-label="Закрыть аят дня" data-day-close>'+actionIcon('close')+'</button></div><p class="muted">'+esc(meta.name)+' · '+position.surah+':'+position.ayah+'</p><p class="ayah-day-arabic" dir="rtl" lang="ar">'+esc(verse.arabic)+'</p><p class="ayah-day-translation">'+esc(verse.translation)+'</p><div class="ayah-day-actions"><button class="text-button" data-day-listen>'+actionLabel('play','Слушать')+'</button><button class="text-button" data-day-share>Поделиться</button><a class="text-button" href="#quran?surah='+position.surah+'&ayah='+position.ayah+'" data-day-read>Читать полностью</a></div>';
+   document.body.append(panel);
+   const hide=()=>{panel.hidden=true;invoker.setAttribute('aria-expanded','false');};
+   const place=()=>{const rect=invoker.getBoundingClientRect(),top=Math.max(8,Math.min(rect.bottom+8,innerHeight-100));panel.style.top=top+'px';panel.style.maxHeight=Math.max(80,innerHeight-top-12)+'px';};
+   const outside=e=>{if(!panel.hidden&&!panel.contains(e.target)&&!invoker.contains(e.target))hide();};
+   const key=e=>{if(e.key==='Escape'&&!panel.hidden){e.preventDefault();hide();invoker.focus({preventScroll:true});}};
+   const resize=()=>{if(!panel.hidden)place();};
+   document.addEventListener('pointerdown',outside);document.addEventListener('keydown',key);window.addEventListener('resize',resize);
+   dailySurface={dispose(){hide();panel.remove();document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',key);window.removeEventListener('resize',resize);}};
+   invoker.onclick=()=>{if(!panel.hidden){hide();return;}const searchClose=document.getElementById('quran-search-close');if(searchClose&&!searchClose.hidden)searchClose.click();place();panel.hidden=false;invoker.setAttribute('aria-expanded','true');panel.querySelector('[data-day-close]').focus({preventScroll:true});};
+   panel.querySelector('[data-day-close]').onclick=()=>{hide();invoker.focus({preventScroll:true});};
+   panel.querySelector('[data-day-listen]').onclick=()=>{hide();listen(surah,position.ayah);};panel.querySelector('[data-day-share]').onclick=()=>{hide();showAyahCard(surah,verse,meta);};panel.querySelector('[data-day-read]').onclick=hide;return;
+  }
   slot.innerHTML='<details class="ayah-day-disclosure"><summary><span class="ayah-day-heading"><span class="eyebrow">АЯТ ДНЯ</span><span class="ayah-day-reference">'+esc(meta.name)+' · '+position.surah+':'+position.ayah+'</span></span><span class="ayah-day-excerpt">'+esc(verse.translation)+'</span></summary><div class="ayah-day-body"><p class="ayah-day-arabic" dir="rtl" lang="ar">'+esc(verse.arabic)+'</p><p class="ayah-day-translation">'+esc(verse.translation)+'</p><div class="ayah-day-actions"><button class="text-button" data-day-listen>'+actionLabel('play','Слушать')+'</button><button class="text-button" data-day-share>Поделиться</button><a class="text-button" href="#quran?surah='+position.surah+'&ayah='+position.ayah+'">Читать полностью</a></div></div></details>';
   slot.querySelector('[data-day-listen]').onclick=()=>listen(surah,position.ayah);
   slot.querySelector('[data-day-share]').onclick=()=>showAyahCard(surah,verse,meta);
