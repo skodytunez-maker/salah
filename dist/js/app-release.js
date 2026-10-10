@@ -1,4 +1,4 @@
-export const APP_VERSION=279;
+export const APP_VERSION=280;
 export const APP_UPDATED_AT='2026-10-10';
 export const APP_CHANGES=["В топе чтецов появился подиум, время прослушивания и лидеры по периодам.","Можно выбрать показ среди слушателей или анонимность со скрытым ником и фото."];
 // Public notes list new user-facing features or sections only. Internal settings,
