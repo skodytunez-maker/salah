@@ -6,3 +6,5 @@
 #ayah-card-preview{align-items:flex-start}#ayah-card-preview[data-format="story"] canvas{width:min(100%,calc(42vh * 9 / 16));height:auto}#ayah-card-preview[data-format="square"] canvas{width:min(100%,42vh);height:auto}.ayah-card-options label:nth-child(n+3){flex-wrap:nowrap;font-size:13px}.ayah-card-options input[type="checkbox"]{flex:0 0 20px;margin:0}.ayah-card-actions{padding-bottom:8px}
 
 .ayah-card-heading{position:sticky;top:-32px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#1a2440;padding:12px 0;border-bottom:1px solid #dbc08e30}.ayah-card-heading h2{margin:0;font-size:22px}.ayah-card-heading [data-close]{min-height:44px;padding:8px 12px;color:#e3cc9e;flex-shrink:0}.ayah-card-actions .ayah-card-done{flex-basis:100%;min-height:44px;color:#e3cc9e}
+
+#ayah-card-preview[data-format="full"] canvas{width:min(100%,calc(42vh * 9 / 19.5));height:auto}
