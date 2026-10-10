@@ -88,3 +88,7 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 
 .ruqyah-duration{color:var(--muted);font-size:13px;white-space:nowrap;margin-left:5px}
 
+
+/* Let the surah library appear on the initial phone screen. */
+
+.quran-library .quran-continue{grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:12px 15px;margin:0 0 14px;border-radius:16px}.quran-library .quran-continue>.eyebrow{grid-column:1/-1}.quran-library .quran-continue strong{font-size:17px;line-height:1.4}.quran-library .quran-continue>span:last-child{align-self:center;font-size:12px}.quran-library .quran-search-label{margin-bottom:5px}.quran-library #quran-search{min-height:44px;padding:10px 12px;font-size:14px;margin:0}.quran-library .quran-tabs{margin:12px 0 2px}.quran-library .quran-tabs button{padding:8px;min-height:40px}.quran-library .quran-surah-row{padding:14px 0}
