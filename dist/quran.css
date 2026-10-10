@@ -136,7 +136,7 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 
 .rank-privacy-bar{padding:12px 14px;border:1px solid var(--line);border-radius:16px;margin:16px 0;background:#111a2f}.rank-privacy-bar .switch-row{font-size:13px;min-height:40px;margin:4px 0}.rank-privacy-bar p{font-size:11px;line-height:1.6;margin:8px 0 0}.rank-privacy-bar p:empty{display:none}
 
-.rank-privacy-bar .listener-icon-switch{justify-content:center;gap:18px;min-height:48px}.listener-mode-icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;opacity:.4}.listener-mode-icon img{width:27px;height:27px}.listener-icon-switch:has(input:checked) .listener-mode-anonymous,.listener-icon-switch:has(input:not(:checked)) .listener-mode-public{opacity:1}
+.rank-privacy-bar .listener-icon-switch{justify-content:center;gap:18px;min-height:48px}.listener-mode-icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;opacity:.4}.listener-mode-icon img,.listener-mode-icon svg{width:27px;height:27px}.listener-icon-switch:has(input:checked) .listener-mode-anonymous,.listener-icon-switch:has(input:not(:checked)) .listener-mode-public{opacity:1}
 
 .rank-page .quran-section-title{margin:12px 0 16px}.rank-page .quran-section-title>.muted{display:none}.rank-page .field{margin:0 0 12px}.rank-page #reciter-search{min-height:40px;padding:10px 12px;font-size:13px;margin:0}.rank-page .reciter-filter-tabs{margin:12px 0 20px}.rank-page .reciter-top-tab{min-height:64px}.rank-page .reciter-top-tabs{margin-bottom:18px}.rank-page .reciter-popular-heading h2{margin-top:14px}.rank-page .rank-showcase{margin-top:14px}.rank-podium .rank-listeners{flex-wrap:wrap;width:100%}
 
@@ -179,7 +179,7 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 .rank-privacy-bar>.muted{font-size:12px}
 .rank-privacy-bar .listener-icon-switch{min-height:36px;margin:0;gap:8px;cursor:pointer}
 .rank-privacy-bar .listener-mode-icon{width:22px;height:22px}
-.rank-privacy-bar .listener-mode-icon img{width:20px;height:20px}
+.rank-privacy-bar .listener-mode-icon img,.rank-privacy-bar .listener-mode-icon svg{width:20px;height:20px}
 .rank-privacy-bar input[role=switch]{width:40px;height:24px;min-height:24px;flex-basis:40px;margin:0}
 .rank-privacy-bar input[role=switch]::before{width:16px;height:16px}
 .rank-privacy-bar input[role=switch]:checked::before{transform:translateX(16px)}
@@ -251,7 +251,7 @@ header.quran-section-title{height:auto}
 .rank-podium-card.rank-medal-gold .reciter-portrait{border:3px solid #d8be88;box-shadow:0 0 0 4px #d8be8810}.rank-podium-card.rank-medal-silver .reciter-portrait{border:3px solid #c2cbd8;box-shadow:0 0 0 4px #c2cbd810}.rank-podium-card.rank-medal-bronze .reciter-portrait{border:3px solid #bf926c;box-shadow:0 0 0 4px #bf926c10}.rank-intention{min-height:36px;margin:8px 0 0!important;font-size:13px!important;line-height:1.5!important;color:var(--gold)!important}
 
 /* Listener competition: one account, one favorite voice. */
-.competition-heading{margin:16px 0 8px}.competition-heading h2{margin:0;font-size:26px}.competition-heading .rank-intention{min-height:22px;margin:4px 0 0!important}
+.competition-heading{margin:12px 0 8px}.competition-heading .rank-intention{min-height:22px;margin:0!important}
 .competition-caption{display:flex;justify-content:space-between;gap:10px;margin:12px 0;color:var(--gold);font-size:12px}.competition-caption b{text-align:right;font-weight:500}
 .competition-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end;padding-top:8px}.competition-podium-1{grid-template-columns:minmax(0,170px);justify-content:center}.competition-podium-2{grid-template-columns:repeat(2,minmax(0,170px));justify-content:center}
 .competition-card{min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 6px;border:1px solid var(--line,#ffffff20);border-radius:20px;background:linear-gradient(145deg,#192438,#0d1524);gap:9px}.competition-podium-3 .competition-slot-1{grid-column:2;grid-row:1;padding-top:20px;padding-bottom:22px}.competition-podium-3 .competition-slot-2{grid-column:1;grid-row:1}.competition-podium-3 .competition-slot-3{grid-column:3;grid-row:1}
