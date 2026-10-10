@@ -1,0 +1,12 @@
+[
+  {
+    "path": "assets/icons/user.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.7.2/svgs/solid/user.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/user-ninja.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.7.2/svgs/solid/user-ninja.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  }
+]
