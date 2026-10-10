@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import{competitionMotionPlan}from '../dist/js/competition-motion.js';
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import{competitionSnapshot,competitionDay,competitionSubscription}from '../supabase/functions/reciter-competition/core.mjs';
+import{competitionPushEvent,dispatchCompetitionPush}from '../supabase/functions/background-reminders/competition-push.mjs';
+import{notification}from '../supabase/functions/background-reminders/core.mjs';
+import{reciterInfo}from '../dist/js/quran-reciters.js';
+import{rankTime,listenerRing,assignListenerRings,medalForRank}from '../dist/js/reciter-ranking-core.js';
+const now=Date.parse('2026-10-11T10:00:00Z'),id='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
+const sample={action:'snapshot',device:id,totals:{'ar.alafasy':2400,'ar.badralturki':1500},days:{'2026-10-11':{'ar.alafasy':2400,'ar.badralturki':1500}},timeZone:'Asia/Yekaterinburg'};
+assert.equal(competitionSnapshot(sample,now).totals['ar.alafasy'],2400);
+assert.throws(()=>competitionSnapshot({...sample,totals:{'ar.alafasy':10}},now));
+assert.throws(()=>competitionSnapshot({...sample,days:{'2026-02-30':{'ar.alafasy':1}}},now));
+assert.throws(()=>competitionSnapshot({...sample,days:{'2026-10-11':{'ar.alafasy':86401}}},now));
+assert.throws(()=>competitionSnapshot({...sample,totals:{'ar.unknown':10}},now));
+assert.throws(()=>competitionSnapshot({...sample,timeZone:'Invalid/Place'},now));
+assert.throws(()=>competitionSnapshot({...sample,nickname:'No identities in snapshots'},now));
+assert.equal(competitionDay('2026-10-11',now),'2026-10-11');assert.throws(()=>competitionDay('2026-09-01',now));
+const keys={p256dh:Buffer.from([4,...new Array(64).fill(1)]).toString('base64url'),auth:Buffer.alloc(16,1).toString('base64url')};
+assert.equal(competitionSubscription({endpoint:'https://web.push.apple.com/a',keys}).keys.auth,keys.auth);
+for(const endpoint of ['http://fcm.googleapis.com/a','https://localhost/a','https://web.push.apple.com.evil.example/a','https://user@web.push.apple.com/a','https://web.push.apple.com:8443/a'])assert.throws(()=>competitionSubscription({endpoint,keys}));
+assert.throws(()=>competitionSubscription({endpoint:'https://web.push.apple.com/a',keys:{...keys,auth:'broken'}}));
+const event={id,subscription:{},event_id:other,old_place:1,new_place:2,period:'all',at:now-1000};
+assert.equal(competitionPushEvent(event,now).kind,'competition');assert.equal(competitionPushEvent({...event,new_place:1},now),null);assert.equal(competitionPushEvent({...event,at:now-3600000},now),null);
+const payload=notification(competitionPushEvent(event,now),now);assert.equal(payload.url,'#quran?view=reciters&filter=salah-top&period=all');assert.equal(payload.expiresAt,event.at+3600000);
+let sends=0,claimed=false;const db={competitionEvents:async()=>[event,event],competitionActive:async()=>true,competitionClaim:async()=>{if(claimed)return false;claimed=true;return true;},competitionComplete:async()=>{}};
+assert.equal(await dispatchCompetitionPush({db,send:async()=>{sends++;return 'sent'},clock:()=>now}),1);assert.equal(sends,1);
+claimed=false;db.competitionActive=async()=>false;assert.equal(await dispatchCompetitionPush({db,send:async()=>{throw Error('Must not notify after retaking place')},clock:()=>now}),0);
+const source=await fs.readFile(new URL('../dist/js/competition-view.js',import.meta.url),'utf8'),escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ctx=vm.createContext({read:()=>({}),write:()=>true,esc:escape,modal(){},closeModal(){},reciterInfo,rankTime,listenerRing,assignListenerRings,medalForRank,competitionAvatar:()=>{throw Error('Anonymous photo must never be requested')}});
+const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({competitionMarkup})',ctx);
+const people=Array.from({length:6},(_,i)=>({id:'00000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),mode:'initial',initial:'SA',reciter:'ar.alafasy',seconds:2400-i*60,rank:i+1,nickname:'Hidden nickname',hasPhoto:false}));
+const html=api.competitionMarkup(people);assert.equal((html.match(/class="competition-card /g)||[]).length,3);assert.equal((html.match(/class="competition-list-row"/g)||[]).length,2);assert.ok(!html.includes('Hidden nickname'));assert.match(html,/rank-medal-gold/);assert.match(html,/rank-medal-silver/);assert.match(html,/rank-medal-bronze/);assert.match(html,/40 мин/);assert.match(html,/Весь рейтинг/);
+const tied=api.competitionMarkup([{...people[0],rank:1},{...people[1],rank:1},{...people[2],rank:3}]);assert.equal((tied.match(/rank-medal-gold/g)||[]).length,2);assert.match(tied,/rank-medal-bronze/);
+console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');
+
+const oldPlaces=new Map([['a',{id:'a',rank:1,role:'podium',x:100,y:100,reciter:'one'}],['b',{id:'b',rank:2,role:'podium',x:0,y:120,reciter:'two'}]]);const newPlaces=[{id:'a',rank:2,role:'podium',x:0,y:120,reciter:'one'},{id:'b',rank:1,role:'podium',x:100,y:100,reciter:'two'}];const motion=competitionMotionPlan(oldPlaces,newPlaces);assert.equal(motion.length,2);assert.equal(motion.find(p=>p.id==='b').leader,true);assert.equal(motion.find(p=>p.id==='b').x,-100);assert.deepEqual(competitionMotionPlan(oldPlaces,newPlaces,true),[]);assert.deepEqual(competitionMotionPlan(new Map(),newPlaces),[]);console.log('PASS: leader swap preserves identities, moves in the right direction and respects reduced motion.');
+
+// Polling seconds must update text without remounting photos or the page shell.
+const pageSource=await fs.readFile(new URL('../dist/js/competition-page.js',import.meta.url),'utf8');let domWrites=0,timeUpdates=0,clockRows=[people[0]],refreshCallback;const eventHandlers={},host={querySelector:()=>null,querySelectorAll:()=>[],set innerHTML(value){domWrites++},get innerHTML(){return ''}};
+const pageContext=vm.createContext({URLSearchParams,location:{hash:'#quran?view=reciters&filter=salah-top'},read:(key,fallback)=>fallback,write:()=>true,esc:escape,toast(){},counterSyncStatus:()=>({signedIn:false}),RECITERS:[{id:'ar.alafasy'}],RECITER_FAVORITES_KEY:'fixture-favorites',normalizeReciterFavorites:()=>[],RANK_INTENTION_PHRASES:['Не забывай о намерении'],rankTime,listenerPrivacyMarkup:()=>'',bindPopularConsent(){},loadCompetition:async()=>clockRows,competitionOwn:()=>null,refreshCompetitionOwn:async()=>null,saveCompetitionSettings:async()=>{},connectCompetitionNotifications:async()=>{},syncCompetitionNow:async()=>{},competitionMarkup:()=>'<p>ranking fixture</p>',bindCompetitionView(){},captureCompetitionLayout:()=>new Map(),animateCompetitionChange(){},updateCompetitionTimes:(target,rows)=>{timeUpdates++;assert.equal(rows[0].seconds,2460)},window:{addEventListener:(name,fn)=>eventHandlers[name]=fn,removeEventListener(){}},document:{hidden:false,addEventListener(){},removeEventListener(){}},setInterval:fn=>{if(!refreshCallback)refreshCallback=fn;return 1},clearInterval(){},Date});
+const pageApi=vm.runInContext(pageSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountCompetition})',pageContext);const cleanup=pageApi.mountCompetition(host,()=>'<h1>Коран</h1>');await new Promise(resolve=>setImmediate(resolve));const beforePoll=domWrites;clockRows=[{...people[0],seconds:2460}];refreshCallback();await new Promise(resolve=>setImmediate(resolve));assert.equal(domWrites,beforePoll,'Seconds polling must preserve the existing page and portraits');assert.equal(timeUpdates,1);cleanup();console.log('PASS: repeated polling updates seconds in place, without remounting portrait cards.');

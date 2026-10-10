@@ -1,3 +1,4 @@
+import{dispatchCompetitionPush}from './competition-push.mjs';
 import {dispatchNativeSupportPush} from './native-support-dispatch.mjs';
 import {dispatchSupportPush}from './support-push.mjs';
 import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
@@ -96,12 +97,12 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='competition'?event.at+3600000:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
  async function send(device,event){
   try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
-  catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
+  catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
   const origin=request.headers.get('Origin'),action=new URL(request.url).pathname.split('/').pop();
@@ -132,6 +133,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
     if(!await db.lease(clock()))return reply({busy:true});
     let delivered=0;
     try{
+     delivered+=await dispatchCompetitionPush({db,send,clock});
      delivered+=await dispatchSupportPush({db,send,clock});
      delivered+=await dispatchNativeSupportPush({db,sender:firebaseSender,clock});
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
