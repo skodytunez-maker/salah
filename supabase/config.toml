@@ -27,3 +27,7 @@ verify_jwt = false
 [functions.error-summary]
 # Public bounded deidentified reports; owner summary requires existing live-session + MFA gate.
 verify_jwt = false
+
+[functions.reciter-popularity]
+# Aggregate GET is public; POST verifies the Auth user in the handler.
+verify_jwt = false
