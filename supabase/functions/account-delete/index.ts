@@ -18,6 +18,8 @@ if(typeof Deno!=='undefined'){
    await tx`select pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(${uid}::text,0))`;
    const photos=await tx`select name from storage.objects where bucket_id='support-photos' and (name like ${'salah/'+uid+'/%'} or name like ${'sahaba/'+uid+'/%'})`;
    for(let i=0;i<photos.length;i+=100){const {error}=await admin.storage.from('support-photos').remove(photos.slice(i,i+100).map(photo=>photo.name));if(error)throw error;}
+   const avatarRows=await tx`select name from storage.objects where bucket_id='profile-avatars' and name=${uid+'/profile.jpg'}`;
+   if(avatarRows.length){const {error:avatarError}=await admin.storage.from('profile-avatars').remove(avatarRows.map(photo=>photo.name));if(avatarError)throw avatarError;}
    const {error}=await admin.auth.admin.deleteUser(uid);if(error)throw error;
   })
  }));
