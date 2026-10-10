@@ -191,7 +191,7 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 
 #quran-resume-listening{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 
-.quran-library-compact .quran-section-title{margin:12px 0 14px}
+.quran-library-compact .quran-section-title{margin:22px 0 14px}
 .quran-library-compact .quran-section-title>.muted{display:none}
 .quran-library-compact>.quran-broadcast-button{margin-bottom:12px}
 .quran-quick-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 12px}
