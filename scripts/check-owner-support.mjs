@@ -37,7 +37,7 @@ assert.ok(migration.includes('public.support_actor(true)'));assert.ok(migration.
 const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 const menuSource=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf("\nwindow.addEventListener('salah:counter-status'"));
 for(const owner of [true,false]){
- const menuApp={innerHTML:''},context=createContext({tvEntryMarkup,esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',bindAppSharing(){}});
+ const menuApp={innerHTML:''},context=createContext({mountMenuAvatar(){},tvEntryMarkup,esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',bindAppSharing(){}});
  new Script(menuSource+';more();').runInContext(context);
  assert.equal(menuApp.innerHTML.includes('menu-helper-badge'),owner,'Helper badge only appears for the verified owner');
  const label=owner?'Обращения пользователей':'Обращения в поддержку',attribute=owner?'data-owner-support-status':'data-user-support-status';
