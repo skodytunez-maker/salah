@@ -7,3 +7,6 @@ export function listenerRing(id){let hash=2166136261;for(const ch of String(id))
 
 export const LISTENER_RING_COLORS=['#d8be88','#80c7b5','#8db7e3','#b4a1d9','#d39d7c'];
 export function assignListenerRings(people,saved={}){const result={},groups=new Map();for(const p of people){if(!groups.has(p.initial))groups.set(p.initial,new Set());groups.get(p.initial).add(p.id);}for(const ids of groups.values()){if(ids.size<2)continue;const ordered=[...ids].sort(),used=new Set();for(const id of ordered)if(LISTENER_RING_COLORS.includes(saved[id])&&!used.has(saved[id])){result[id]=saved[id];used.add(saved[id]);}for(const id of ordered)if(!result[id]){const color=LISTENER_RING_COLORS.find(c=>!used.has(c))||listenerRing(id);result[id]=color;used.add(color);}}return result;}
+
+export const RANK_INTENTION_PHRASES=['Не забывай о намерении','Опережайте друг друга в благих делах'];
+export function medalForRank(rank){return rank===1?'gold':rank===2?'silver':rank===3?'bronze':'';}

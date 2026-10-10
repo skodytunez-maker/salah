@@ -245,6 +245,19 @@ function createReminderTracker({read=()=>({}),write=()=>{},maxGap=65000,freshnes
   return {tick,reset};
 }
 
+const COMPETITION_EVENT_ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+function competitionPushEvent(row,now){
+ const at=Number(row?.at),place=Number(row?.new_place),old=Number(row?.old_place);if(!COMPETITION_EVENT_ID.test(row?.event_id||'')||!['day','week','month','all'].includes(row?.period)||!Number.isSafeInteger(place)||!Number.isSafeInteger(old)||place<=old||old<1||!Number.isFinite(at)||at>now||now-at>=3600000)return null;
+ return{kind:'competition',hash:'competition-'+row.event_id,eventId:row.event_id,period:row.period,at,message:'Вас обошли в Топ SALAH. Теперь у вас '+place+' место. Не забывай о намерении.'};
+}
+async function dispatchCompetitionPush({db,send,clock}){
+ if(!db.competitionEvents)return 0;const started=clock(),rows=await db.competitionEvents(started);let cursor=0,sent=0;
+ await Promise.all(Array.from({length:Math.min(4,rows.length)},async()=>{while(cursor<rows.length&&clock()-started<20000){const row=rows[cursor++],event=competitionPushEvent(row,clock());if(!event||!COMPETITION_EVENT_ID.test(row.id||''))continue;
+ if(!await db.competitionActive(row.id,event.eventId)||!await db.competitionClaim(row.id,event.eventId,clock()))continue;
+ let result;try{result=await send(row,event);}catch{result='retry';}await db.competitionComplete(row.id,event.eventId,result);if(result==='sent')sent++;
+ }}));return sent;
+}
+
 const SUPPORT_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function supportPushEvent(row,now){
  const at=Number(row?.at);
@@ -405,12 +418,12 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='competition'?event.at+3600000:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
  async function send(device,event){
   try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
-  catch(error){if([404,410].includes(error.statusCode)){await db.expire(device.id);return 'expired';}return 'retry';}
+  catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
   const origin=request.headers.get('Origin'),action=new URL(request.url).pathname.split('/').pop();
@@ -441,6 +454,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
     if(!await db.lease(clock()))return reply({busy:true});
     let delivered=0;
     try{
+     delivered+=await dispatchCompetitionPush({db,send,clock});
      delivered+=await dispatchSupportPush({db,send,clock});
      delivered+=await dispatchNativeSupportPush({db,sender:firebaseSender,clock});
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
@@ -505,6 +519,12 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
 
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,idle_timeout:20,connect_timeout:10,prepare:false});
 const db={
+ async competitionEvents(now){await sql`select public.competition_refresh()`;await sql`delete from salah_competition_private.events where created_at<now()-interval '2 days'`;await sql`delete from salah_competition_private.days where day<current_date-94`;await sql`delete from salah_competition_private.legacy_days where day<current_date-94`;await sql`delete from salah_competition_private.favorite_state where period<>'all' and bucket<current_date-94`; await sql`delete from salah_competition_private.devices where updated_at<now()-interval '90 days'`;return sql`select d.id,d.subscription,e.id event_id,e.period,e.old_place,e.new_place,extract(epoch from e.created_at)*1000 at from salah_competition_private.events e join salah_competition_private.preferences p using(user_id)join public.reciter_listener_visibility v using(user_id)join salah_competition_private.devices d using(user_id)join auth.sessions s on s.id=d.session_id and s.user_id=d.user_id where p.enabled and p.notify and v.mode<>'hidden' and d.enabled and(s.not_after is null or s.not_after>now())and d.updated_at>now()-interval '90 days' and e.created_at>now()-interval '1 hour' and not exists(select 1 from salah_competition_private.deliveries x where x.device_id=d.id and x.event_id=e.id and x.state='sent')order by e.created_at desc limit 100`;},
+ async competitionActive(id,event){const rows=await sql`select e.old_place,e.new_place,e.period,e.bucket,p.time_zone,p.user_id from salah_competition_private.events e join salah_competition_private.preferences p using(user_id)join public.reciter_listener_visibility v using(user_id)join salah_competition_private.devices d using(user_id)join auth.sessions s on s.id=d.session_id and s.user_id=d.user_id where e.id=${event}::uuid and d.id=${id}::uuid and p.enabled and p.notify and p.period=e.period and v.mode<>'hidden' and d.enabled and(s.not_after is null or s.not_after>now())and e.created_at>now()-interval '1 hour' and not exists(select 1 from salah_competition_private.events newer where newer.user_id=e.user_id and newer.created_at>e.created_at)`;if(!rows.length)return false;const row=rows[0];const current=await sql`select b.place,case ${row.period}when 'all' then '1970-01-01'::date when 'week'then date_trunc('week',(now()at time zone ${row.time_zone}))::date when 'month'then date_trunc('month',(now()at time zone ${row.time_zone}))::date else (now()at time zone ${row.time_zone})::date end bucket from public.competition_board(${row.period},(now()at time zone ${row.time_zone})::date)b where b.user_id=${row.user_id}::uuid`;return current.length===1&&String(current[0].bucket)===String(row.bucket)&&Number(current[0].place)>=Number(row.new_place);},
+ async competitionClaim(id,event,now){const rows=await sql`insert into salah_competition_private.deliveries(device_id,event_id,state,updated_at)values(${id}::uuid,${event}::uuid,'sending',to_timestamp(${now}/1000.0))on conflict(device_id,event_id)do update set state='sending',updated_at=excluded.updated_at where deliveries.state='failed'or(deliveries.state='sending'and deliveries.updated_at<to_timestamp(${now}/1000.0)-interval '30 seconds')returning event_id`;return rows.length===1;},
+ async competitionComplete(id,event,state){await sql`update salah_competition_private.deliveries set state=${state==='sent'?'sent':'failed'},updated_at=now()where device_id=${id}::uuid and event_id=${event}::uuid`;},
+ async competitionExpire(id){await sql`update salah_competition_private.devices set enabled=false where id=${id}::uuid`;},
+
  async config(){const [row]=await sql`select vapid,cron_secret from salah_push_private.config where id=1`;return row;},
  async ensureConfig(generate){let row=await this.config();if(!row)throw Error('migration-required');if(!row.vapid){const keys=generate();await sql`update salah_push_private.config set vapid=${sql.json(keys)} where id=1 and vapid is null`;row=await this.config();}return row;},
  async get(id){const [row]=await sql`select id,token_hash,subscription,preferences from salah_push_private.devices where id=${id}::uuid`;return row;},
