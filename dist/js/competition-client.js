@@ -9,7 +9,10 @@ export const competitionOwn=()=>own&&scope===account().userId?own:null;
 export const competitionAvatar=id=>endpoint+'?avatar='+encodeURIComponent(id);
 const announce=()=>window.dispatchEvent(new Event('salah:competition-updated'));
 async function request(body=null){
- const user=account().userId;if(!account().signedIn||!user)throw Error('Войдите в аккаунт');const{data,error}=await client().auth.getSession();if(error||data?.session?.user?.id!==user||account().userId!==user)throw Error('Войдите в аккаунт');
+ const user=account().userId;if(!account().signedIn||!user)throw Error('Войдите в аккаунт');
+ // Auth status events can run inside the SDK session lock. Leave that callback before requesting the session.
+ await new Promise(resolve=>setTimeout(resolve,0));if(account().userId!==user)throw Error('Аккаунт изменился');
+ const{data,error}=await client().auth.getSession();if(error||data?.session?.user?.id!==user||account().userId!==user)throw Error('Войдите в аккаунт');
  const response=await fetch(endpoint+(body?'':'?own=true&day='+listeningDayKey(Date.now())+'&participation='+(enabled()?'on':'off')),{method:body?'POST':'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
  if(account().userId!==user)throw Error('Аккаунт изменился');if(!response.ok){const error=Error(response.status===429?'Повторим синхронизацию чуть позже':'Не удалось сохранить. Проверьте соединение.');error.status=response.status;throw error;}return response.json();
 }
