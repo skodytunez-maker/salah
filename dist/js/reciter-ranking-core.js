@@ -1,0 +1,4 @@
+
+export function rankListening(items){let previous=null,rank=0;return items.map((item,index)=>{if(item.seconds!==previous)rank=index+1;previous=item.seconds;return {...item,rank};});}
+export function rankTime(seconds){const value=Math.max(0,Math.floor(seconds||0)),hours=Math.floor(value/3600),minutes=Math.floor(value%3600/60),rest=value%60;return hours?hours+' ч '+minutes+' мин'+(rest?' '+rest+' с':''):minutes?minutes+' мин'+(rest?' '+rest+' с':''):value+' с';}
+export function safeListener(item){if(!item||!['initial','profile'].includes(item.mode)||!/^[-a-f0-9]{36}$/i.test(item.id||''))return null;const initial=Array.from(String(item.initial||'С')).slice(0,2).join('').toLocaleUpperCase('ru');return item.mode==='initial'?{id:item.id,mode:'initial',initial}:{id:item.id,mode:'profile',initial,nickname:String(item.nickname||'Слушатель').slice(0,40),hasPhoto:item.hasPhoto===true};}

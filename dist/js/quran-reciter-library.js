@@ -1,3 +1,4 @@
+import{mountReciterRanking}from './reciter-ranking-page.js';
 import{loadPopularReciters,popularConsentMarkup,bindPopularConsent,personalListening,personalTop,formatListeningTime,listeningDayKey}from './reciter-popularity.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{ruqyahFor,ruqyahMarkup,bindRuqyah}from './quran-ruqyah.js';
@@ -22,6 +23,8 @@ export function saveReciterFavorite(id){
 const card=(r,saved,note='',rank=0)=>'<article class="reciter-card"><a href="#quran?view=reciters&reciter='+encodeURIComponent(r.id)+'">'+(rank?'<span class="reciter-rank" aria-label="Место '+rank+'">'+rank+'</span>':'')+reciterPortrait(r)+'<strong>'+esc(r.name)+'</strong><small>'+(r.availableSurahs?r.availableSurahs.length+' записей':'114 сур')+'</small>'+(note?'<span class="reciter-listening-time" data-personal-time="'+esc(r.id)+'">'+esc(note)+'</span>':'')+'</a>'+favoriteButton(r,saved)+'</article>';
 export function quranSectionTabs(active='read'){const reading=active==='read';return '<header class="quran-section-title"><nav class="quran-section-heading" aria-label="Раздел Корана"><div class="quran-heading-read"><a href="#quran" aria-current="'+(reading?'page':'false')+'">'+(reading?'<h1>Коран</h1>':'Коран')+'</a><button type="button" class="button secondary quran-scan-entry" id="quran-open-listening-scanner" aria-label="Сканировать передачу" title="Сканировать QR прослушивания"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M4 4h18v18H4zM7 7h12v12H7zM10 10h6v6H10zM42 4h18v18H42zM45 7h12v12H45zM48 10h6v6H48zM4 42h18v18H4zM7 45h12v12H7zM10 48h6v6H10zM30 8h4v12h-4zM28 28h12v12H28zM46 30h10v6H46zM30 46h6v14h-6zM44 44h8v8h-8zM54 54h6v6h-6z"/></svg></button></div><a href="#quran?view=reciters" aria-current="'+(!reading?'page':'false')+'">'+(!reading?'<h1>Чтецы</h1>':'Чтецы')+'</a></nav><p class="muted">'+(reading?'114 сур':'Выберите голос, который вам близок')+'</p></header>';}
 export function mountReciterLibrary(host,index,chosen,filter){
+ if(!chosen&&['my-top','salah-top','popular'].includes(filter))return mountReciterRanking(host,filter,()=>quranSectionTabs('reciters'));
+
  let renderedDay=listeningDayKey(Date.now());let listeningPeriod=read('reciter-listening-period','day');if(!['day','week','month','all'].includes(listeningPeriod))listeningPeriod='day';let disposeRuqyah=null;let closed=false,request=0,currentQuery='',rankingMode=filter==='salah-top'?'global':'personal',popularIds=null,popularError=false,savedSurahs=new Set();const r=RECITERS.find(r=>r.id===chosen)||null;
  const draw=()=>{renderedDay=listeningDayKey(Date.now());
   disposeRuqyah?.();disposeRuqyah=null;

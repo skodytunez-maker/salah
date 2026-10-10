@@ -104,3 +104,72 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 .reciter-top-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:-10px 0 22px}.reciter-top-tab{display:flex;align-items:center;gap:10px;min-width:0;min-height:80px;padding:13px 12px;border:1px solid #d8be8840;border-radius:18px;background:linear-gradient(145deg,#182338,#0e1728);color:#d8be88;transition:border-color .15s,background .15s}.reciter-top-global{color:#adc8ec;border-color:#adc8ec35;background:linear-gradient(145deg,#15263a,#0e1728)}.reciter-top-icon{flex:0 0 30px;width:30px;height:30px;display:grid;place-items:center}.reciter-top-icon svg{width:27px;height:27px}.reciter-top-tab>span:last-child{min-width:0}.reciter-top-tab strong,.reciter-top-tab small{display:block}.reciter-top-tab strong{font-size:16px;line-height:1.4}.reciter-top-tab small{margin-top:4px;font-size:11px;line-height:1.45;color:var(--muted)}.reciter-top-tab[aria-current=page]{border-color:currentColor;background:linear-gradient(145deg,#24334b,#141e31);box-shadow:inset 0 1px 0 #ffffff0b}.reciter-top-tab:focus-visible{outline:2px solid currentColor;outline-offset:3px}@media(max-width:360px){.reciter-top-tab{gap:7px;padding:12px 9px}.reciter-top-tab strong{font-size:14px}.reciter-top-icon{flex-basis:24px}.reciter-top-icon svg{width:24px;height:24px}}
 
 .reciter-period-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;margin:0 0 12px;border:1px solid var(--line);border-radius:14px;background:#10182b}.reciter-period-tabs button{min-height:42px;min-width:0;padding:8px 4px;font-size:12px;border-radius:10px;color:var(--muted)}.reciter-period-tabs button[aria-pressed=true]{background:#25304c;color:var(--gold)}.reciter-period-tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.rank-global-periods{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rank-showcase{margin:18px 0 22px}
+.rank-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end}
+.rank-podium .rank-podium-card{padding:0;border:0;background:none;box-shadow:none;min-width:0;text-align:center}
+.rank-podium-card>a{display:flex;flex-direction:column;align-items:center;padding:0;text-decoration:none}
+.rank-podium-3 .rank-slot-1{grid-column:2;grid-row:1}.rank-podium-3 .rank-slot-2{grid-column:1;grid-row:1}.rank-podium-3 .rank-slot-3{grid-column:3;grid-row:1}
+.rank-podium-2{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;padding:0 12px}.rank-podium-1{grid-template-columns:1fr;max-width:230px;margin:auto}
+.rank-place{font-size:11px;color:var(--muted);margin-bottom:10px}
+.rank-podium-card .reciter-portrait{width:82px;height:82px;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 28%;margin:0 auto 12px;border:2px solid #8c9fb340}
+.rank-podium-card.rank-slot-1 .reciter-portrait{width:108px;height:108px;border:2px solid #d8be88;box-shadow:0 0 0 5px #d8be8810}
+.rank-podium-card strong{font-size:13px;line-height:1.5;font-weight:600;min-height:40px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;margin:0 0 10px;color:var(--text)}
+.rank-result{width:100%;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:14px 6px;border:1px solid #adc8ec30;border-radius:14px 14px 8px 8px;background:#142139;min-height:76px}
+.rank-result span{font-size:10px;color:var(--muted)}.rank-result b{font-size:15px;font-weight:700;color:#adc8ec}
+.rank-slot-1 .rank-result{min-height:100px;border-color:#d8be8860;background:#202737}.rank-slot-1 .rank-result b{color:var(--gold)}.rank-slot-1 .rank-place{color:var(--gold)}
+.rank-slot-3 .rank-result{min-height:66px;color:#cfb6a0}
+.rank-next,.rank-full-list,.rank-search-results{display:grid;gap:8px;margin-top:18px}
+.rank-list-row.reciter-card{padding:0;min-width:0;border-radius:15px}
+.rank-list-row>a{display:grid;grid-template-columns:24px 44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px}
+.rank-list-row .reciter-portrait{width:44px;height:44px;aspect-ratio:1;border-radius:50%;margin:0;object-fit:cover;object-position:center 28%}
+.rank-list-row strong{font-size:13px;line-height:1.5;margin:0;min-width:0}
+.rank-row-number{color:var(--muted);font-size:13px;text-align:center}.rank-row-time{color:var(--gold);font-size:13px;font-weight:600;white-space:nowrap}
+.rank-open-all{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:14px;min-height:46px;font-size:14px}.rank-open-all span{font-size:12px;color:var(--muted)}
+.rank-tie-note{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;margin:12px 0}
+.rank-listeners{display:flex;justify-content:center;gap:4px;margin:10px 0 0}.rank-list-row>.rank-listeners{justify-content:flex-start;margin:0 12px 12px 88px}
+.rank-listener{position:relative;display:grid;place-items:center;width:30px;height:30px;min-height:30px;padding:0!important;margin:0!important;border:1px solid #adc8ec50;border-radius:50%;background:#24344c;color:#e2e8ef;font-size:12px;overflow:hidden}.rank-listener img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rank-listener:focus-visible,.rank-podium-card a:focus-visible,.rank-list-row a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.listener-privacy{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.listener-privacy label{display:block!important;font-size:13px!important;line-height:1.5}.listener-privacy select{width:100%;min-height:44px;margin:8px 0;font-size:13px}.listener-privacy button{width:100%;font-size:13px;min-height:44px}
+@media(max-width:360px){.rank-podium{gap:7px}.rank-podium-card .reciter-portrait{width:68px;height:68px}.rank-podium-card.rank-slot-1 .reciter-portrait{width:88px;height:88px}.rank-podium-card strong{font-size:12px;min-height:54px}.rank-result b{font-size:13px}.rank-list-row>a{gap:7px;padding:10px;grid-template-columns:20px 38px minmax(0,1fr) auto}.rank-list-row .reciter-portrait{width:38px;height:38px}.rank-row-time{font-size:12px}}
+
+.rank-privacy-bar{padding:12px 14px;border:1px solid var(--line);border-radius:16px;margin:16px 0;background:#111a2f}.rank-privacy-bar .switch-row{font-size:13px;min-height:40px;margin:4px 0}.rank-privacy-bar p{font-size:11px;line-height:1.6;margin:8px 0 0}.rank-privacy-bar p:empty{display:none}
+
+.rank-privacy-bar .listener-icon-switch{justify-content:center;gap:18px;min-height:48px}.listener-mode-icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;opacity:.4}.listener-mode-icon img{width:27px;height:27px}.listener-icon-switch:has(input:checked) .listener-mode-anonymous,.listener-icon-switch:has(input:not(:checked)) .listener-mode-public{opacity:1}
+
+.rank-page .quran-section-title{margin:12px 0 16px}.rank-page .quran-section-title>.muted{display:none}.rank-page .field{margin:0 0 12px}.rank-page #reciter-search{min-height:40px;padding:10px 12px;font-size:13px;margin:0}.rank-page .reciter-filter-tabs{margin:12px 0 20px}.rank-page .reciter-top-tab{min-height:64px}.rank-page .reciter-top-tabs{margin-bottom:18px}.rank-page .reciter-popular-heading h2{margin-top:14px}.rank-page .rank-showcase{margin-top:14px}.rank-podium .rank-listeners{flex-wrap:wrap;width:100%}
+
+.rank-result b{overflow-wrap:anywhere;line-height:1.45}.rank-row-time{white-space:normal;max-width:86px;text-align:right;line-height:1.5}
+
+.rank-privacy-bar input[role=switch]{appearance:none;-webkit-appearance:none;position:relative;width:50px;height:28px;min-height:28px;flex:0 0 50px;box-sizing:border-box;border:1px solid #8c9fb355;border-radius:18px;background:#203049;cursor:pointer;transition:background .15s,border-color .15s}
+.rank-privacy-bar input[role=switch]::before{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#d8be88;box-shadow:0 1px 4px #00000030;transition:transform .15s}
+.rank-privacy-bar input[role=switch]:checked{background:#d8be8825;border-color:#d8be8870}
+.rank-privacy-bar input[role=switch]:checked::before{transform:translateX(22px)}
+.rank-privacy-bar input[role=switch]:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.rank-privacy-bar input[role=switch]:disabled{opacity:.45;cursor:default}
+.rank-podium-card strong{width:100%;min-height:64px;height:64px;max-height:64px;overflow:hidden}
+#modal:has(.rank-full-list){width:min(480px,calc(100vw - 24px));max-height:calc(100dvh - 32px);overflow:auto;padding:14px}
+#modal:has(.rank-full-list) .modal-head{position:sticky;top:0;z-index:2;background:#111a2f;padding:8px 0 12px}
+#modal:has(.rank-full-list) h2{font-size:20px}
+
+.rank-page .reciter-top-tab{padding:10px;min-height:58px;gap:8px}
+.rank-page .reciter-top-tabs{margin-bottom:12px;gap:8px}
+.rank-page .reciter-filter-tabs{margin:8px 0 16px}
+.rank-page .reciter-popular-heading h2{margin:10px 0 5px}
+.rank-page .reciter-period-tabs{margin-bottom:10px}
+.rank-page .rank-showcase{margin:12px 0 14px}
+.rank-podium-card .reciter-portrait{width:76px;height:76px;margin-bottom:8px}
+.rank-podium-card.rank-slot-1 .reciter-portrait{width:104px;height:104px}
+.rank-podium-card strong{font-size:12px;line-height:1.45;height:56px;min-height:56px;max-height:56px;margin-bottom:6px}
+.rank-result{min-height:64px;padding:10px 5px;gap:4px}
+.rank-slot-1 .rank-result{min-height:84px;background:#17223a}
+.rank-slot-3 .rank-result{min-height:56px}
+.rank-next{margin-top:12px;gap:6px}
+.rank-list-row>a{padding:9px 11px;gap:8px}
+.rank-open-all{margin-top:10px;min-height:44px}
+.rank-privacy-bar{margin:12px 0;padding:10px 12px}
+.rank-privacy-bar .switch-row{min-height:34px;margin:2px 0;font-size:12px}
+.rank-privacy-bar .listener-icon-switch{min-height:40px;gap:14px}
+.rank-privacy-bar p{margin-top:5px;font-size:11px}
+@media(max-width:360px){.rank-podium-card .reciter-portrait{width:66px;height:66px}.rank-podium-card.rank-slot-1 .reciter-portrait{width:88px;height:88px}}

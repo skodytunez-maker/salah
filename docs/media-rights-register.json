@@ -1395,6 +1395,26 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/ayah-background-generation.json",
       "note": "Newly generated with the built-in image_gen tool for SALAH on 2026-10-10; scene prompt and generation method recorded. WebP export from original PNG."
+    },
+    {
+      "path": "dist/assets/icons/user.svg",
+      "gitBlobSha": "8c558cf06e5fef5e65f6d1b86df7f1672c110230",
+      "bytes": 489,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Font Awesome Free 6.7.2 official icon, original attribution retained; fill recolored to SALAH gold. Source recorded in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/icons/user-ninja.svg",
+      "gitBlobSha": "8ff1c7f2d7c1ded07d9f0c038449065efc98e77f",
+      "bytes": 995,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Font Awesome Free 6.7.2 official icon, original attribution retained; fill recolored to SALAH gold. Source recorded in dist/assets/icons/source.json."
     }
   ],
   "wallpaperSets": [
