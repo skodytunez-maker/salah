@@ -39,6 +39,7 @@ const menuSource=appSource.slice(appSource.indexOf('function more(){'),appSource
 for(const owner of [true,false]){
  const menuApp={innerHTML:''},context=createContext({tvEntryMarkup,esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',bindAppSharing(){}});
  new Script(menuSource+';more();').runInContext(context);
+ assert.equal(menuApp.innerHTML.includes('menu-helper-badge'),owner,'Helper badge only appears for the verified owner');
  const label=owner?'Обращения пользователей':'Обращения в поддержку',attribute=owner?'data-owner-support-status':'data-user-support-status';
  assert.ok(menuApp.innerHTML.includes(label+'</span><span class="support-state-dot" '+attribute),'Each account sees its own dot directly on the Menu support row');
 }
