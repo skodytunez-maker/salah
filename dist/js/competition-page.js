@@ -28,9 +28,10 @@ export function mountCompetition(host,heading){
  }
  async function act(action){if(busy)return;busy=true;draw();try{await action();}catch(e){toast(e.message||'Не удалось сохранить');}finally{busy=false;draw();}}
  async function refresh(){if(closed||document.hidden)return;const token=++generation;try{const data=await loadCompetition(period);if(closed||token!==generation)return;rows=data;loading=false;error=false;}catch{if(closed||token!==generation)return;loading=false;error=true;}draw();}
+ const privacyUpdate=()=>{const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh();};
  const ownUpdate=()=>{void refresh();},authUpdate=()=>{void refreshCompetitionOwn().catch(()=>{});void refresh();},visible=()=>{if(!document.hidden)void refresh();};
- window.addEventListener('salah:competition-updated',ownUpdate);window.addEventListener('salah:popularity-updated',authUpdate);window.addEventListener('salah:counter-status',authUpdate);document.addEventListener('visibilitychange',visible);
+ window.addEventListener('salah:listener-visibility',privacyUpdate);window.addEventListener('salah:competition-updated',ownUpdate);window.addEventListener('salah:popularity-updated',authUpdate);window.addEventListener('salah:counter-status',authUpdate);document.addEventListener('visibilitychange',visible);
  const timer=setInterval(()=>void refresh(),15000),phraseTimer=setInterval(()=>{const line=host.querySelector('#rank-intention');if(line&&!document.hidden)line.textContent=RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length];},15000);
  draw();void refresh();void refreshCompetitionOwn().catch(()=>{});
- return()=>{closed=true;generation++;clearInterval(timer);clearInterval(phraseTimer);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
+ return()=>{closed=true;generation++;clearInterval(timer);clearInterval(phraseTimer);window.removeEventListener('salah:listener-visibility',privacyUpdate);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
 }

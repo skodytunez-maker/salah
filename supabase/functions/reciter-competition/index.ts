@@ -14,9 +14,9 @@ async function verified(req:Request){
  return sessions.length?{id:user.id,session:claim.session_id}:null;
 }
 async function hashFor(id:string){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(key),{name:'HMAC',hash:'SHA-256'},false,['sign']);return Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',k,new TextEncoder().encode('reciter-ranking-v1:'+id))),v=>v.toString(16).padStart(2,'0')).join('');}
-async function ensure(user:any){const hash=await hashFor(user.id);await sql.begin(async tx=>{
+async function ensure(user:any,initialEnabled=true){const hash=await hashFor(user.id);await sql.begin(async tx=>{
  await tx`insert into public.reciter_listener_visibility(user_id,listener_hash,mode)values(${user.id}::uuid,${hash},'initial')on conflict(user_id)do nothing`;
- await tx`insert into salah_competition_private.preferences(user_id)values(${user.id}::uuid)on conflict(user_id)do nothing`;
+ await tx`insert into salah_competition_private.preferences(user_id,enabled)values(${user.id}::uuid,${initialEnabled})on conflict(user_id)do nothing`;
  await tx`insert into salah_competition_private.legacy(user_id,reciter,seconds,seed_seconds)select ${user.id}::uuid,reciter,sum(minutes::bigint*60+extra_seconds),case when exists(select 1 from salah_competition_private.totals t where t.user_id=${user.id}::uuid and t.reciter=m.reciter)then 0 else sum(minutes::bigint*60+extra_seconds)end from public.reciter_popularity_minutes m where listener_hash=${hash}group by reciter on conflict(user_id,reciter)do update set seconds=greatest(legacy.seconds,excluded.seconds)`;
  await tx`insert into salah_competition_private.legacy_days(user_id,day,reciter,seconds)select ${user.id}::uuid,m.day,m.reciter,case when exists(select 1 from salah_competition_private.days d where d.user_id=${user.id}::uuid and d.day=m.day and d.reciter=m.reciter)then 0 else m.minutes::bigint*60+m.extra_seconds end from public.reciter_popularity_minutes m where listener_hash=${hash}on conflict(user_id,day,reciter)do nothing`;
  await tx`select public.competition_refresh()`;
@@ -45,7 +45,7 @@ Deno.serve(async req=>{
  }
  const user=await verified(req);if(!user)return reply({error:'sign_in_required'},401);
  if(req.method==='GET'){
-  await ensure(user);const pref=(await sql`select p.enabled,p.notify,p.period,v.public_id as id,v.mode from salah_competition_private.preferences p join public.reciter_listener_visibility v using(user_id)where p.user_id=${user.id}::uuid`)[0];
+  await ensure(user,params.get('participation')!=='off');const pref=(await sql`select p.enabled,p.notify,p.period,v.public_id as id,v.mode from salah_competition_private.preferences p join public.reciter_listener_visibility v using(user_id)where p.user_id=${user.id}::uuid`)[0];
   const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));const totals:any={};for(const period of COMPETITION_PERIODS){const rows=await sql`select reciter,seconds from public.competition_scores(${period},${day}::date)where user_id=${user.id}::uuid`;totals[period]=Object.fromEntries(rows.map(r=>[r.reciter,Number(r.seconds)]));}return reply({...pref,totals});
  }
  if(req.method!=='POST')return reply({error:'method'},405);
