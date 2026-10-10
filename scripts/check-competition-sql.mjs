@@ -1,0 +1,4 @@
+import assert from 'node:assert/strict';import fs from 'node:fs/promises';
+const files=['supabase/functions/reciter-competition/index.ts','supabase/functions/background-reminders/runtime.txt','supabase/functions/background-reminders/index.ts'];let statements=0;
+for(const file of files){const text=await fs.readFile(new URL('../'+file,import.meta.url),'utf8');for(const match of text.matchAll(/\b(?:sql|tx)`([^`]+)`/g)){const prepared=match[1].replace(/\$\{[^}]+\}/g,()=>'$1');assert.ok(!/\$\d+[A-Za-z_]/.test(prepared),'A bound value must be separated from a following SQL word in '+file);assert.ok(!/[A-Za-z_]\$\d+/.test(prepared),'A preceding SQL word must be separated from a bound value in '+file);statements++;}}
+assert.ok(statements>40,'The guard must cover real Edge and dispatcher statements');console.log('PASS: '+statements+' real PostgreSQL tagged statements keep valid parameter token boundaries.');
