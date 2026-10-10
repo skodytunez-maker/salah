@@ -1,4 +1,4 @@
-export const APP_VERSION=276;
+export const APP_VERSION=277;
 export const APP_UPDATED_AT='2026-10-10';
 export const APP_CHANGES=["В аккаунте можно добавить фото профиля, выбрать кадр и показывать аватар рядом с ником."];
 // Public notes list new user-facing features or sections only. Internal settings,
