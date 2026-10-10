@@ -83,9 +83,9 @@ body.home-page .quran-broadcast-overlay.is-mini,body.learning-focus .quran-broad
 .quran-received-listening .text-button{display:inline-flex;align-items:center;min-height:44px}
 
 .quran-heading-read{display:flex;align-items:center;gap:10px;min-width:0}
-.quran-scan-entry{flex:0 0 44px;width:44px;height:44px;min-height:44px;margin:0;padding:9px;border-radius:12px}
-.quran-scan-entry svg{display:block;width:24px;height:24px;fill:currentColor}
-@media(max-width:420px){.quran-section-title .quran-section-heading{gap:12px}.quran-section-title .quran-section-heading a{font-size:28px}.quran-heading-read{gap:8px}}
+.quran-section-heading .quran-scan-entry{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;margin:0;padding:8px;border-radius:14px;border:1px solid #ead09b55;background:linear-gradient(145deg,#1d2b40,#101b2d);color:#ead09b;box-shadow:inset 0 1px 0 #ffffff09,0 3px 10px #00000020}
+.quran-scan-entry svg{display:block;width:26px;height:26px;fill:none}.quran-section-heading .quran-scan-entry:focus-visible{outline:2px solid #ead09b;outline-offset:3px}.quran-section-heading .quran-scan-entry:active{background:#23344a}
+@media(max-width:420px){.quran-section-title .quran-section-heading{gap:8px}.quran-section-title .quran-section-heading a{font-size:24px;padding:9px 10px}.quran-heading-tabs{gap:2px}}
 
 .quran-output-actions{grid-column:2;grid-row:2;display:flex;align-items:center;gap:5px;justify-content:flex-end}.quran-output-actions .quran-handoff-button{min-width:32px}.quran-output-actions [data-tv]{padding:5px 8px}.quran-output-actions [data-tv] svg{width:18px;height:18px}
 
