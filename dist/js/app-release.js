@@ -1,4 +1,4 @@
-export const APP_VERSION=282;
+export const APP_VERSION=283;
 export const APP_UPDATED_AT='2026-10-10';
 export const APP_CHANGES=["Коран запоминает последнее место прослушивания и выбранного чтеца.","В плеере показывается общее время суры.","Одинаковые буквы слушателей различаются цветными рамками."];
 // Public notes list new user-facing features or sections only. Internal settings,
