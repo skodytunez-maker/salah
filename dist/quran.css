@@ -186,3 +186,7 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 .rank-privacy-bar #listener-join-anonymous{font-size:12px;min-height:36px;padding:4px 0}
 .rank-privacy-bar #listener-join-anonymous[hidden]{display:none}
 .rank-privacy-bar #listener-mode-status{flex-basis:100%;margin:0}
+
+.rank-listener-collision{border:2px solid var(--listener-ring);box-shadow:0 0 0 1px #ffffff08}.rank-listener-collision:focus-visible{outline-color:var(--listener-ring)}
+
+#quran-resume-listening{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}

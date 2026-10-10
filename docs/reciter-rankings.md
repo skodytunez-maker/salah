@@ -17,3 +17,6 @@ Photo/name UI tests use invented local fixture data. No real account was made pu
 
 
 Release 281: signed-in accounts count new playback automatically, unless their account-scoped setting explicitly disables counting. Guests do not send reports. On the first accepted minute, missing listener preferences are enrolled with initials only; existing hidden, anonymous or public preferences are preserved. Nickname/photo publication still needs explicit in-app confirmation. Extra seconds preserve approved one-time corrections; reports remain whole minutes.
+
+
+Release 282: accepted-minute acknowledgment is checked explicitly. A 200 response with counted=false leaves the idempotent event in a persisted account-scoped queue for retry after 60 seconds; network failures retry after 15 seconds. Queues are bounded to 120 events and expire after 30 days. Opt-out clears the queue. Background progress produces one event per actual elapsed minute. Duplicate listener initials receive contrasting muted ring colors stored on the device.
