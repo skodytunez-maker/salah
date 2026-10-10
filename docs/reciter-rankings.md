@@ -14,3 +14,6 @@ The visibility table has RLS enabled and no direct anon/authenticated grants. Al
 The avatar bucket remains private. A public proxy serves the processed JPEG only for a currently opted-in profile with recent listening and a confirmed non-anonymous account. Hidden or anonymous profiles cannot use the proxy. Responses are no-store; no Auth UID, email, JWT, original filename or EXIF is sent in ranking data. The photo remains in the user's own private account when anonymity is enabled.
 
 Photo/name UI tests use invented local fixture data. No real account was made public and no personal photo was uploaded during testing. Icons come from Font Awesome Free 6.7.2, with notices and sources bundled.
+
+
+Release 281: signed-in accounts count new playback automatically, unless their account-scoped setting explicitly disables counting. Guests do not send reports. On the first accepted minute, missing listener preferences are enrolled with initials only; existing hidden, anonymous or public preferences are preserved. Nickname/photo publication still needs explicit in-app confirmation. Extra seconds preserve approved one-time corrections; reports remain whole minutes.

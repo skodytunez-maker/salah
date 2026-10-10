@@ -8,7 +8,7 @@ const KEY='reciter-popularity-consent-v1',endpoint=OWNER_PROJECT_URL+'/functions
 let account=()=>({signedIn:false}),client=()=>null,cache=null,loaded=0,inflight=null,initialized=false;
 const rankingData=new Map();let selectedGlobalPeriod='month';
 const allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
-export const popularityEnabled=()=>read(KEY+':'+(account().userId||'device'),false)===true;
+export const popularityEnabled=()=>!!account().signedIn&&!!account().userId&&read(KEY+':'+account().userId,true)===true;
 
 let visibilityRevision=0;
 export async function loadPopularReciters(){
@@ -19,11 +19,11 @@ export async function loadPopularReciters(){
   if(!response.ok)throw Error('unavailable');const data=await response.json();if(!Array.isArray(data.items)||![1,7,30].includes(data.windowDays))throw Error('invalid');
   const ids=[...new Set(data.items.filter(id=>allowed.has(id)))].slice(0,33);
   if(selectedGlobalPeriod!==period||visibilityRevision!==revision)return ids;
-  rankingData.clear();for(const row of data.ranking||[])if(allowed.has(row.reciter)&&Number.isSafeInteger(row.minutes)&&row.minutes>0)rankingData.set(row.reciter,{minutes:row.minutes,listeners:Array.isArray(row.listeners)?row.listeners.map(safeListener).filter(Boolean).slice(0,4):[]});
+  rankingData.clear();for(const row of data.ranking||[])if(allowed.has(row.reciter)&&Number.isSafeInteger(row.minutes)&&row.minutes>0)rankingData.set(row.reciter,{minutes:row.minutes,seconds:Number.isSafeInteger(row.seconds)&&row.seconds>0?row.seconds:row.minutes*60,listeners:Array.isArray(row.listeners)?row.listeners.map(safeListener).filter(Boolean).slice(0,4):[]});
   cache=ids;loaded=Date.now();return ids;
  })();inflight=task;try{return await task;}finally{if(inflight===task)inflight=null;}
 }
-export function popularConsentMarkup(){const signed=account().signedIn;return '<details class="popular-participation"><summary>Участвовать в рейтинге</summary><p>Учитываем только минуты воспроизведения Корана. Отправляются чтец, отметка минуты и случайный код события. Для защиты от повторов сервер хранит технический код аккаунта, а не имя или почту. Аяты не отправляются. Записи хранятся 30 дней.</p>'+(signed?'<label><input type="checkbox" data-popular-consent '+(popularityEnabled()?'checked':'')+'> Учитывать мои прослушивания</label><p>Можно отключить в любой момент. Уже учтённые минуты остаются в общем рейтинге до истечения срока хранения.</p>':'<a class="text-button" href="#account">Войти для участия</a>')+''+'</details>';} 
+export function popularConsentMarkup(){const signed=account().signedIn;return '<details class="popular-participation"><summary>Учёт прослушиваний</summary><p>Новые прослушивания учитываются автоматически, по умолчанию анонимно. Ник и фото доступны только после вашего выбора. Учитываем только минуты воспроизведения Корана. Отправляются чтец, отметка минуты и случайный код события. Для защиты от повторов сервер хранит технический код аккаунта, а не имя или почту. Аяты не отправляются. Записи хранятся 30 дней.</p>'+(signed?'<label><input type="checkbox" data-popular-consent '+(popularityEnabled()?'checked':'')+'> Учитывать мои прослушивания</label><p>Можно отключить в любой момент. Уже учтённые минуты остаются в общем рейтинге до истечения срока хранения.</p>':'<a class="text-button" href="#account">Войти для участия</a>')+''+'</details>';} 
 export function bindPopularConsent(host){const input=host.querySelector('[data-popular-consent]');if(input)input.onchange=()=>{if(!write(KEY+':'+(account().userId||'device'),input.checked)){input.checked=popularityEnabled();return;}window.dispatchEvent(new Event('salah:popularity-consent'));};bindListenerPrivacy(host);}
 const PERSONAL='reciter-personal-listening-v1:',localScope=()=>PERSONAL+(account().userId||'device');let workingKey=null,working=null;
 function cleanTotals(data){const totals={};if(data&&typeof data==='object')for(const [id,n]of Object.entries(data))if(allowed.has(id)&&Number.isFinite(n)&&n>0&&n<315360000)totals[id]=n;return totals;}
@@ -43,7 +43,7 @@ export function initReciterPopularity({playback,getAccount,getClient,now=Date.no
 export const publicListenerPhoto=id=>endpoint+'?avatar='+encodeURIComponent(id);
 const visibility=new Map();
 export const rankingListeners=id=>rankingData.get(id)?.listeners||[];
-export const rankingSeconds=id=>(rankingData.get(id)?.minutes||0)*60;
+export const rankingSeconds=id=>rankingData.get(id)?.seconds||0;
 export const globalRankingPeriod=()=>selectedGlobalPeriod;
 export function setGlobalRankingPeriod(period){if(['day','week','month'].includes(period)){selectedGlobalPeriod=period;cache=null;loaded=0;inflight=null;rankingData.clear();}}
 async function profileRequest(body){
