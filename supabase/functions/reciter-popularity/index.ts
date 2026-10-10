@@ -40,23 +40,23 @@ Deno.serve(async req=>{
  }
  if(req.method==='GET'){
   const windowDays=params.get('period')==='day'?1:params.get('period')==='week'?7:30;
-  const rows=await sql`select reciter,sum(minutes)::bigint as minutes from public.reciter_popularity_minutes where day>=current_date-${windowDays-1}::integer group by reciter order by sum(minutes) desc,reciter limit 33`;
+  const rows=await sql`select reciter,sum(minutes)::bigint as minutes,sum(minutes::bigint*60+extra_seconds)::bigint as seconds from public.reciter_popularity_minutes where day>=current_date-${windowDays-1}::integer group by reciter order by sum(minutes::bigint*60+extra_seconds) desc,reciter limit 33`;
   const listeners=await sql`with heard as (
    select m.reciter,v.public_id as id,v.mode,
     upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1)) as initial,
     upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2)) as prefix,
     case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40) else null end as nickname,
     case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars' and o.name=v.user_id::text||'/profile.jpg') else false end as has_photo,
-    sum(m.minutes) as minutes
+    sum(m.minutes::bigint*60+m.extra_seconds) as seconds
    from public.reciter_popularity_minutes m
    join public.reciter_listener_visibility v on v.listener_hash=m.listener_hash
    join auth.users u on u.id=v.user_id
    where m.day>=current_date-${windowDays-1}::integer and v.mode<>'hidden' and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)
    group by m.reciter,v.public_id,v.mode,v.user_id,u.raw_user_meta_data
-  ), numbered as (select *,row_number() over(partition by reciter order by minutes desc,id) as position from heard)
+  ), numbered as (select *,row_number() over(partition by reciter order by seconds desc,id) as position from heard)
   select reciter,id,mode,initial,prefix,nickname,has_photo from numbered where position<=4 order by reciter,position`;
   const visiblePeople=publicListenerRows(listeners);
-  const ranking=rows.filter(r=>reciters.has(r.reciter)).map(r=>({reciter:r.reciter,minutes:Number(r.minutes),listeners:visiblePeople.filter(p=>p.reciter===r.reciter).map(({reciter,...person})=>person)}));
+  const ranking=rows.filter(r=>reciters.has(r.reciter)).map(r=>({reciter:r.reciter,minutes:Number(r.minutes),seconds:Number(r.seconds),listeners:visiblePeople.filter(p=>p.reciter===r.reciter).map(({reciter,...person})=>person)}));
   return reply({items:ranking.map(r=>r.reciter),ranking,windowDays});
  }
  if(req.method!=='POST')return reply({error:'method'},405);
@@ -70,7 +70,9 @@ Deno.serve(async req=>{
   return reply({mode:body.profileMode});
  }
  if(!body||body.consent!==true||!reciters.has(body.reciter)||typeof body.eventId!=='string'||!uuid.test(body.eventId)||Object.keys(body).some(k=>!['consent','reciter','eventId'].includes(k)))return reply({error:'invalid_input'},400);
- const counted=await rpc('reciter_popularity_add',{p_listener:await listenerCode(user.id),p_reciter:body.reciter,p_event:body.eventId});
+ const hash=await listenerCode(user.id);
+  const counted=await rpc('reciter_popularity_add',{p_listener:hash,p_reciter:body.reciter,p_event:body.eventId});
+  if(counted)await sql`insert into public.reciter_listener_visibility(user_id,listener_hash,mode) values(${user.id}::uuid,${hash},'initial') on conflict(user_id) do nothing`;
  return reply({ok:true,counted});
  }catch{return reply({error:'temporarily_unavailable'},503);}
 });
