@@ -12,7 +12,7 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
  let offlineOnly=false,savedSurahs=new Set();
  const listeners=new Set(),audioOwner={};
  const adjacent=delta=>{let number=view.surah?adjacentReciterSurah(view.reciter,view.surah.number,delta):null;while(offlineOnly&&number!==null&&!savedSurahs.has(number))number=adjacentReciterSurah(view.reciter,number,delta);return number;};
- const snapshot=()=>({...view,durationSeconds:player?.state?.durationSeconds||0,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
+ const snapshot=()=>({...view,durationStatus:player?.state?.durationStatus||'loading',durationSeconds:player?.state?.durationSeconds||0,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,trackPositionSeconds:player?.state?.trackPositionSeconds??player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
  const emit=()=>{if(['loading','playing'].includes(view.status))claim();const s=snapshot(),r=view.reciter?reciterInfo(view.reciter):null;media.update(view.surah?{status:view.status,title:view.meta?.name||'Коран',artist:r?.name||'SALAH',artwork:r?.portrait?new URL(r.portrait,globalThis.location?.href||'https://skodytunez-maker.github.io/salah/').href:null,duration:s.durationSeconds,position:s.positionSeconds}:null,{play:()=>{if(!['playing','loading'].includes(view.status))toggle();},pause,stop,seekto:e=>player?.seek?.(e.seekTime),seekbackward:e=>player?.seek?.(snapshot().positionSeconds-(e.seekOffset||10)),seekforward:e=>player?.seek?.(snapshot().positionSeconds+(e.seekOffset||10)),previoustrack:()=>changeSurah(-1),nexttrack:()=>changeSurah(1)});setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
  function stop(){offlineOnly=false;savedSurahs=new Set();request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};emit()}
  async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0,preferContinuous=true){
@@ -53,7 +53,7 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
   if(player){player.toggle();return}
   if(view.status==='loading'){pause();return}
   const number=view.surah.number,reciter=view.reciter;
-  if(view.surah.verses)start(view.surah,reciter,view.index,true,offlineOnly);else{
+  if(view.surah.verses)start(view.surah,reciter,view.index,true,offlineOnly,view.positionSeconds||0,false);else{
    const id=++request;view.status='loading';emit();
    load(number).then(surah=>{if(id===request)start(surah,reciter,0,true,offlineOnly)}).catch(()=>{if(id===request){view.status='error';emit()}});
   }

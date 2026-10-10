@@ -1,13 +1,15 @@
+import{read,write}from './storage.js';
 
 import{esc,modal,closeModal}from './ui.js';
 import{RECITERS,reciterInfo}from './quran-reciters.js';
-import{rankListening,rankTime}from './reciter-ranking-core.js';
+import{rankListening,rankTime,listenerRing,assignListenerRings}from './reciter-ranking-core.js';
 import{rankingListeners,publicListenerPhoto}from './reciter-popularity.js';
-let activeEntries=[],activeGlobal=false;
+let activeEntries=[],activeGlobal=false,duplicateInitials=new Set(),ringColors={};
 const face=r=>'<img class="reciter-portrait" src="./'+esc(r.portrait||'assets/person.svg')+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
-function listeners(id){const people=rankingListeners(id);if(!people.length)return '';return '<div class="rank-listeners" aria-label="Слушатели">'+people.map((p,index)=>'<button type="button" class="rank-listener" data-listener-reciter="'+esc(id)+'" data-listener-index="'+index+'" aria-label="'+esc(p.mode==='profile'?p.nickname:'Анонимный слушатель')+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(publicListenerPhoto(p.id))+'" alt="" loading="lazy">':'')+'</button>').join('')+'</div>';}
+function listeners(id){const people=rankingListeners(id);if(!people.length)return '';return '<div class="rank-listeners" aria-label="Слушатели">'+people.map((p,index)=>'<button type="button" class="rank-listener'+(duplicateInitials.has(p.initial)?' rank-listener-collision':'')+'" style="--listener-ring:'+(ringColors[p.id]||listenerRing(p.id))+'" data-listener-reciter="'+esc(id)+'" data-listener-index="'+index+'" aria-label="'+esc(p.mode==='profile'?p.nickname:'Анонимный слушатель')+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(publicListenerPhoto(p.id))+'" alt="" loading="lazy">':'')+'</button>').join('')+'</div>';}
 const row=e=>'<article class="reciter-card rank-list-row"><a href="#quran?view=reciters&reciter='+encodeURIComponent(e.id)+'"><span class="rank-row-number">'+e.rank+'</span>'+face(reciterInfo(e.id))+'<strong>'+esc(reciterInfo(e.id).name)+'</strong><span class="rank-row-time">'+esc(rankTime(e.seconds))+'</span></a>'+listeners(e.id)+'</article>';
 export function rankingMarkup(ids,{seconds,query='',global=false,leader='Лидер'}){
+ const letterUsers=new Map();for(const id of ids)for(const person of rankingListeners(id)){if(!letterUsers.has(person.initial))letterUsers.set(person.initial,new Set());letterUsers.get(person.initial).add(person.id);}duplicateInitials=new Set([...letterUsers].filter(([,users])=>users.size>1).map(([letter])=>letter));const savedRings=read('listener-ring-colors-v1',{});ringColors=assignListenerRings(ids.flatMap(rankingListeners),savedRings);if(Object.keys(ringColors).length)write('listener-ring-colors-v1',Object.fromEntries(Object.entries({...savedRings,...ringColors}).slice(-512)));
  const entries=rankListening(ids.map(id=>({id,seconds:seconds(id)})));activeEntries=entries;activeGlobal=global;
  const q=query.toLocaleLowerCase('ru').replace(/ё/g,'е').trim(),matching=q?entries.filter(e=>reciterInfo(e.id).name.toLocaleLowerCase('ru').replace(/ё/g,'е').includes(q)):entries;
  if(q)return '<div class="rank-search-results">'+matching.map(row).join('')+'</div>'+(matching.length?'':'<p class="reciter-empty">Чтец не найден</p>');
