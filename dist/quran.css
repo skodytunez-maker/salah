@@ -173,3 +173,16 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 .rank-privacy-bar .listener-icon-switch{min-height:40px;gap:14px}
 .rank-privacy-bar p{margin-top:5px;font-size:11px}
 @media(max-width:360px){.rank-podium-card .reciter-portrait{width:66px;height:66px}.rank-podium-card.rank-slot-1 .reciter-portrait{width:88px;height:88px}}
+
+/* One compact identity switch; enrollment remains an explicit choice. */
+.rank-privacy-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 12px;padding:6px 10px;border-radius:12px}
+.rank-privacy-bar>.muted{font-size:12px}
+.rank-privacy-bar .listener-icon-switch{min-height:36px;margin:0;gap:8px;cursor:pointer}
+.rank-privacy-bar .listener-mode-icon{width:22px;height:22px}
+.rank-privacy-bar .listener-mode-icon img{width:20px;height:20px}
+.rank-privacy-bar input[role=switch]{width:40px;height:24px;min-height:24px;flex-basis:40px;margin:0}
+.rank-privacy-bar input[role=switch]::before{width:16px;height:16px}
+.rank-privacy-bar input[role=switch]:checked::before{transform:translateX(16px)}
+.rank-privacy-bar #listener-join-anonymous{font-size:12px;min-height:36px;padding:4px 0}
+.rank-privacy-bar #listener-join-anonymous[hidden]{display:none}
+.rank-privacy-bar #listener-mode-status{flex-basis:100%;margin:0}
