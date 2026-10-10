@@ -14,18 +14,19 @@ for(let day=0;day<6236;day++){
  assert.ok(position.surah>=1&&position.surah<=114&&position.ayah>=1&&position.ayah<=index.surahs[position.surah-1].ayahs);
 }
 const longVerse=surah.verses[281];
-for(const format of ['square','story'])for(const arabic of [true,false])for(const translation of [true,false]){
+for(const format of ['square','story','full'])for(const arabic of [true,false])for(const translation of [true,false]){
  if(!arabic&&!translation)continue;
  draws.length=0;
  const pages=await vm.runInContext('renderCards',context)(surah,longVerse,index.surahs[1],{format,theme:'night',arabic,translation});
  assert.ok(pages.length>0);
+ assert.equal(pages[0].width,1080);assert.equal(pages[0].height,format==='full'?2340:format==='story'?1920:1080);
  const normalized=text=>text.replace(/\s+/g,' ').trim();
  const printedArabic=normalized(draws.filter(row=>row.direction==='rtl').map(row=>row.text).join(' '));
  const printedTranslation=normalized(draws.filter(row=>['600 42px sans-serif','600 54px sans-serif'].includes(row.font)).map(row=>row.text).join(' '));
  if(arabic)assert.ok(printedArabic.includes(normalized(longVerse.arabic)),'Arabic text must be complete across pages');
  if(translation)assert.ok(printedTranslation.includes(normalized(longVerse.translation)),'Translation must be complete across pages');
- assert.ok(draws.every(row=>row.x>=0&&row.x<=1080&&row.y>0&&row.y<(format==='story'?1920:1080)));
- if(format==='story')assert.ok(draws.every(row=>row.y>=300&&row.y<=1520),'Story text and credits must remain within reserved viewer-safe bounds');
+ assert.ok(draws.every(row=>row.x>=0&&row.x<=1080&&row.y>0&&row.y<(format==='full'?2340:format==='story'?1920:1080)));
+ if(format!=='square')assert.ok(draws.every(row=>row.y>=300+(format==='full'?210:0)&&row.y<=1520+(format==='full'?210:0)),'Story text and credits must remain within reserved viewer-safe bounds');
  if(format==='square')assert.ok(pages.length>1,'Longest verse must paginate');
 }
 const quran=await fs.readFile(new URL('dist/js/quran.js',root),'utf8');
