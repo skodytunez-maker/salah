@@ -5,7 +5,8 @@ import{rankTime,listenerRing,assignListenerRings,medalForRank}from './reciter-ra
 import{competitionAvatar}from './competition-client.js';
 let entries=[],rings={};
 const label=p=>p.mode==='profile'?p.nickname:p.initial;
-const avatar=p=>'<span class="competition-user-face" style="--listener-ring:'+(rings[p.id]||listenerRing(p.id))+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(competitionAvatar(p.id))+'" alt="" loading="lazy">':'')+'</span>';
+const medalRings={gold:'#d8be88',silver:'#c2cbd8',bronze:'#bf926c'};
+const avatar=p=>'<span class="competition-user-face" style="--listener-ring:'+(medalRings[medalForRank(p.rank)]||rings[p.id]||listenerRing(p.id))+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(competitionAvatar(p.id))+'" alt="" loading="lazy">':'')+'</span>';
 const person=p=>'<button type="button" class="competition-person" data-competition-person="'+esc(p.id)+'" aria-label="'+esc(p.mode==='profile'?'Профиль: '+p.nickname:'Анонимный слушатель')+'">'+avatar(p)+'<strong>'+esc(label(p))+'</strong></button>';
 const picture=p=>'<a class="competition-reciter" href="#quran?view=reciters&reciter='+encodeURIComponent(p.reciter)+'" aria-label="Слушать: '+esc(reciterInfo(p.reciter).name)+'"><img class="reciter-portrait" src="./'+esc(reciterInfo(p.reciter).portrait||'assets/person.svg')+'" alt="'+esc(reciterInfo(p.reciter).name)+'" loading="lazy"><small>'+esc(reciterInfo(p.reciter).name)+'</small></a>';
 const row=p=>'<article class="competition-list-row" data-competition-entry="'+esc(p.id)+'" data-competition-rank="'+p.rank+'" data-competition-reciter="'+esc(p.reciter)+'"><b class="competition-place">'+p.rank+'</b>'+picture(p)+'<div>'+person(p)+'<span class="competition-time">'+esc(rankTime(p.seconds))+'</span></div></article>';
