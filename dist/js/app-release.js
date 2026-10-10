@@ -1,4 +1,4 @@
-export const APP_VERSION=273;
+export const APP_VERSION=275;
 export const APP_UPDATED_AT='2026-10-10';
 export const APP_CHANGES=["В разделе «Чтецы» появился личный топ и счётчик времени прослушивания.","Общий топ SALAH формируется по добровольным прослушиваниям за 30 дней."];
 // Public notes list new user-facing features or sections only. Internal settings,
