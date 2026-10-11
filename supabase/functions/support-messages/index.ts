@@ -86,6 +86,7 @@ if(typeof Deno!=='undefined'){
    else if(name==='support_list')rows=await tx`select public.support_list(${a.p_app}::text,${a.p_owner}::boolean,${a.p_before}::timestamptz) as data`;
    else if(name==='support_read'){
     rows=await tx`select public.support_read(${a.p_id}::uuid,${a.p_app}::text,${a.p_owner}::boolean) as data`;
+    if(a.p_owner&&a.p_app==='salah'){const [visibility]=await tx`select team_visible from public.support_threads where id=${a.p_id}::uuid and app='salah'`;rows[0].data.thread.team_visible=visibility?.team_visible===true;}
     const [manifest]=await tx`select public.support_photo_manifest(${a.p_id}::uuid,${a.p_app}::text,${a.p_owner}::boolean) as data`;
     rows[0].data.photos=await Promise.all((manifest.data||[]).map(async photo=>{const {data,error}=await storage.createSignedUrl(photo.path,300);return error?{message_id:photo.message_id,unavailable:true}:{message_id:photo.message_id,url:data.signedUrl}}));
    }
