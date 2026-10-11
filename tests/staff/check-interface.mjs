@@ -7,7 +7,7 @@ const win=new Window({url:'https://fixture.invalid/#staff'});
 for(const key of ['window','document','location','history','navigator','FormData','File','Blob','Event','InputEvent','HTMLElement'])Object.defineProperty(globalThis,key,{configurable:true,writable:true,value:key==='window'?win:win[key]});
 win.confirm=()=>true;
 const timers=[];const nativeInterval=globalThis.setInterval;globalThis.setInterval=fn=>{timers.push(fn);return timers.length;};globalThis.clearInterval=()=>{};
-const {showStaffCabinet,stopStaffCabinet}=await import('../../dist/js/staff-cabinet.js');
+const {showStaffCabinet,stopStaffCabinet,mountStaffEntry}=await import('../../dist/js/staff-cabinet.js');
 const uid=crypto.randomUUID(),mid=crypto.randomUUID(),room=crypto.randomUUID(),contact=crypto.randomUUID(),dm=crypto.randomUUID(),draft=crypto.randomUUID();
 const members=[{id:contact,nickname:'Тестовый сотрудник',role:'moderator',active:true}],calls=[],messages=[];let role='owner',heldUpload=null,revision=1;
 const draftRow={id:draft,kind:'reciter',entity_id:'ar.alafasy',payload:{name:'Мишари аль-Афаси',format:'verse',comment:''},status:'draft',revision:1};
@@ -31,6 +31,7 @@ const host=document.createElement('main');document.body.append(host);let checks=
 const yes=x=>{assert.ok(x);checks++;};
 async function settle(){for(let i=0;i<12;i++)await new Promise(resolve=>setImmediate(resolve));}
 async function click(selector){const element=host.querySelector(selector);assert.ok(element,selector);element.click();await settle();}
+const entryHost=document.createElement('div');document.body.append(entryHost);await mountStaffEntry(entryHost,{request});yes(!entryHost.hidden&&entryHost.textContent.includes('Кабинет команды'));await mountStaffEntry(entryHost,{request:async()=>{throw Object.assign(Error('Нет доступа'),{code:'staff_only'});}});yes(entryHost.hidden&&entryHost.textContent==='');await mountStaffEntry(entryHost,{request:async()=>{throw Object.assign(Error('Войдите'),{code:'sign_in_required'});}});yes(entryHost.hidden&&!entryHost.querySelector('a'));await mountStaffEntry(entryHost,{request,isActive:()=>false});yes(entryHost.hidden);await showStaffCabinet(host,{request:async()=>{throw Object.assign(Error('Нет доступа'),{code:'staff_only'});},demo:true});yes(!host.textContent.includes('Кабинет команды')&&!host.querySelector('[data-staff-tab]'));
 await showStaffCabinet(host,{request,demo:true});yes(host.textContent.includes('Кабинет команды'));yes(host.querySelector('[data-staff-tab="team"]'));
 await click('[data-staff-tab="chat"]');const textarea=host.querySelector('textarea');textarea.value='Черновик сообщения';textarea.dispatchEvent(new win.Event('input'));await click('[data-smile]');await click('[data-emoji="🤍"]');yes(textarea.value.includes('🤍'));
 await click('.staff-send');yes(calls.filter(x=>x[0]==='chat.send').length===1);yes(host.querySelector('[role="log"]').textContent.includes('Черновик сообщения'));

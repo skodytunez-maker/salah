@@ -93,12 +93,12 @@ export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()
   if(new URL(req.url).search)return reply(400,{error:'invalid_parameters'});
   if(!req.headers.get('Content-Type')?.startsWith('application/json'))return reply(415,{error:'invalid_parameters'});
   const bearer=req.headers.get('Authorization')||'';if(!/^Bearer [A-Za-z0-9._-]{16,8192}$/.test(bearer))return reply(401,{error:'sign_in_required'});
-  let claims,actor;
+  let claims,actor,authStage='user';
   try{
-   const userResult=await getUser(bearer.slice(7)),claimResult=await getClaims(bearer.slice(7));const user=userResult.data?.user;claims=claimResult.data?.claims;
+   const userResult=await getUser(bearer.slice(7));authStage='claims';const claimResult=await getClaims(bearer.slice(7));const user=userResult.data?.user;claims=claimResult.data?.claims;
    if(userResult.error||claimResult.error||!user?.email_confirmed_at||user.is_anonymous||!UUID.test(user.id||'')||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
-   actor=await rpc('gate',{},claims);
-  }catch(error){return reply(error.code==='42501'?403:503,{error:error.code==='42501'?'staff_only':'auth_unavailable'});}
+   authStage='role';actor=await rpc('gate',{},claims);
+  }catch(error){if(error.code!=='42501')console.warn('staff_auth_check',authStage,/^[A-Za-z0-9_]{1,40}$/.test(error.code||'')?error.code:'unknown');return reply(error.code==='42501'?403:503,{error:error.code==='42501'?'staff_only':'auth_unavailable'});}
   try{
    const envelope=exactObject(await boundedJson(req,15000000),['action','args']);const action=envelope.action,args=validateAction(action,envelope.args);
    if(action==='gate')return reply(200,{data:actor});
