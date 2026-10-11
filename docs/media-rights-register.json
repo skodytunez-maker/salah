@@ -1415,6 +1415,15 @@
       "license": "CC-BY-4.0",
       "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
       "note": "Font Awesome Free 6.7.2 official icon, original attribution retained; fill recolored to SALAH gold. Source recorded in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/salah-social-cover-v1.jpg",
+      "gitBlobSha": "53be94773a4c92ce7634dbcb6ee716418190239e",
+      "bytes": 100803,
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "dist/assets/salah-mark.svg; docs/content-rights-register.json",
+      "note": "Authored social-link composition using the existing SALAH project mark, original geometric decoration and rasterized system-font text. No third-party photograph, new external artwork or embedded font file."
     }
   ],
   "wallpaperSets": [
