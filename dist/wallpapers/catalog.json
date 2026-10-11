@@ -263,14 +263,14 @@
       "latitude": 21.4225,
       "longitude": 39.8262,
       "radius": 30,
-      "day": "wallpapers/makkah/day-v1.webp",
-      "night": "wallpapers/makkah/night-v1.webp",
-      "mask": "wallpapers/makkah/sky-v1.svg",
-      "fitSubject": true,
-      "focalX": 0.5,
-      "tabletFocus": {
-        "x": 0.5,
-        "y": 0.65
+      "day": "wallpapers/makkah/day-phone-v1.webp",
+      "night": "wallpapers/makkah/night-phone-v1.webp",
+      "mask": "wallpapers/makkah/sky-phone-v1.svg",
+      "tablet": {
+        "day": "wallpapers/makkah/day-v1.webp",
+        "night": "wallpapers/makkah/night-v1.webp",
+        "mask": "wallpapers/makkah/sky-v1.svg",
+        "focalX": 0.5
       }
     },
     {
@@ -280,14 +280,14 @@
       "latitude": 24.4673,
       "longitude": 39.6105,
       "radius": 25,
-      "day": "wallpapers/madinah/day-v1.webp",
-      "night": "wallpapers/madinah/night-v1.webp",
-      "mask": "wallpapers/madinah/sky-v1.svg",
-      "fitSubject": true,
-      "focalX": 0.5,
-      "tabletFocus": {
-        "x": 0.5,
-        "y": 0.65
+      "day": "wallpapers/madinah/day-phone-v1.webp",
+      "night": "wallpapers/madinah/night-phone-v1.webp",
+      "mask": "wallpapers/madinah/sky-phone-v1.svg",
+      "tablet": {
+        "day": "wallpapers/madinah/day-v1.webp",
+        "night": "wallpapers/madinah/night-v1.webp",
+        "mask": "wallpapers/madinah/sky-v1.svg",
+        "focalX": 0.5
       }
     },
     {
@@ -297,14 +297,14 @@
       "latitude": 24.5141,
       "longitude": 39.6115,
       "radius": 4,
-      "day": "wallpapers/uhud/day-v1.webp",
-      "night": "wallpapers/uhud/night-v1.webp",
-      "mask": "wallpapers/uhud/sky-v1.svg",
-      "fitSubject": true,
-      "focalX": 0.5,
-      "tabletFocus": {
-        "x": 0.5,
-        "y": 0.65
+      "day": "wallpapers/uhud/day-phone-v1.webp",
+      "night": "wallpapers/uhud/night-phone-v1.webp",
+      "mask": "wallpapers/uhud/sky-phone-v1.svg",
+      "tablet": {
+        "day": "wallpapers/uhud/day-v1.webp",
+        "night": "wallpapers/uhud/night-v1.webp",
+        "mask": "wallpapers/uhud/sky-v1.svg",
+        "focalX": 0.5
       }
     },
     {
@@ -314,14 +314,14 @@
       "latitude": 31.7761,
       "longitude": 35.2358,
       "radius": 15,
-      "day": "wallpapers/al-aqsa/day-v1.webp",
-      "night": "wallpapers/al-aqsa/night-v1.webp",
-      "mask": "wallpapers/al-aqsa/sky-v1.svg",
-      "fitSubject": true,
-      "focalX": 0.5,
-      "tabletFocus": {
-        "x": 0.5,
-        "y": 0.65
+      "day": "wallpapers/al-aqsa/day-phone-v1.webp",
+      "night": "wallpapers/al-aqsa/night-phone-v1.webp",
+      "mask": "wallpapers/al-aqsa/sky-phone-v1.svg",
+      "tablet": {
+        "day": "wallpapers/al-aqsa/day-v1.webp",
+        "night": "wallpapers/al-aqsa/night-v1.webp",
+        "mask": "wallpapers/al-aqsa/sky-v1.svg",
+        "focalX": 0.5
       }
     }
   ]

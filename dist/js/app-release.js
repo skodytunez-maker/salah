@@ -1,5 +1,5 @@
-export const APP_VERSION=297;
-export const APP_UPDATED_AT='2026-10-11';
+export const APP_VERSION=298;
+export const APP_UPDATED_AT='2026-10-12';
 export const APP_CHANGES=["Топ SALAH: слушатели и их самые прослушиваемые чтецы.","Золотые, серебряные и бронзовые рамки первых мест.","Анонимность и уведомления об обгоне."];
 // Public notes list new user-facing features or sections only. Internal settings,
 // maintenance fixes and owner-only changes stay in Git history, not these lists.
