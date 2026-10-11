@@ -1,6 +1,6 @@
-# SALAH staff cabinet — prepared version 299
+# SALAH staff cabinet — version 300
 
-Status: source and local tests prepared. Production database/function deployment is pending explicit approval after an automatic approval review rejected the migration. No staff member has been granted access and no real message has been sent.
+Status: owner explicitly approved the permanent role schema, private chat/files and public owner-approved media on 2026-10-12. Migration and four functions are deployed; frontend 299 is published. Version 300 corrects typed JSON arguments in the private adapter and verifies that unassigned/guest accounts have no cabinet entry. No staff member has been granted access and no real message has been sent.
 
 ## Owner and staff workflow
 
@@ -42,16 +42,18 @@ The project uses modern signing-key JWTs, so Edge's legacy gateway `verify_jwt` 
 
 ## Tests and review limits
 
-- `node scripts/check-app.mjs`: all app checks, including 55 staff endpoint/security/publication checks.
+- `node scripts/check-app.mjs`: all app checks, including 57 staff endpoint/security/publication checks.
 - From `tests/staff`, install the pinned dependencies with the committed pnpm lockfile and scripts disabled; run `pnpm test`: actual local PostgreSQL schema execution and DOM interactions, using synthetic users/files/messages only.
 - Local database coverage includes forged role metadata, moderator permissions, MFA/session expiry, draft revisions, owner-only publication, revocation, SALAH-only support, private direct conversations, attachment scoping, and private grants/RLS.
 - Local DOM coverage includes role-specific tabs, emoji insertion, sending, composer preservation/no poll flicker, room switching, pending-upload guards, and save-before-submit revisions.
-- Edge adapters are syntax checked. The browser could not reach the local preview, and local-file navigation is prohibited by its policy. No real-device visual or production-server check is claimed.
+- Edge adapters are syntax checked. The browser could not reach the local preview, and local-file navigation is prohibited by its policy. Production checks confirm guest/origin/method denial, private grants/storage, empty members/messages and public approved-only catalog. The existing owner session opened the cabinet in the browser after the typed JSON correction. No real role grant, upload or message was used for verification. Phone hardware verification remains pending.
 
 ## Approval and rollout
 
-Automatic review rejected permanently creating the role schema and public approved-asset bucket without approval of that specific scope. Do not deploy by another route to circumvent that rejection. Ask the owner to approve the exact private staff/chat system and public approved media storage after presenting the local result.
+The owner explicitly approved the previously blocked scope. The exact migration and four functions were installed through the official connector, with no policy workaround. Nine tables have RLS and no anon/authenticated schema/table/function grants. Draft/chat storage is private; only approved display images are public.
 
-After approval: apply `20261011194033_staff_cabinet.sql` to SALAH project `kbltwszfvphgbxdbczsb`; deploy `staff-cabinet`, `approved-catalog`, and the changed reciter competition/popularity functions; verify unauthenticated denial, owner MFA gate, empty roster, empty published catalog, and storage privacy without creating staff or sending real messages. Merge/publish frontend 299 only after the backend checks succeed. Confirm exact release and Pages publication. The owner assigns real staff and enters authenticator codes themselves.
+Frontend 299 was published after guest-server checks. An authenticated browser check then caught double JSON serialization in the adapter; version 300 uses tx.json(args) for both private request functions. The existing owner session now opens the Team screen. The owner assigns real staff and enters authenticator codes themselves.
 
-If rollout fails, keep frontend 298 and restore prior ranking function source; revoke any role grants if later made through the owner UI. Preserve private data. Never delete schemas/buckets or purge published images as an automatic rollback.
+Unassigned accounts and guests have no cabinet entry, and direct denied navigation shows a neutral access-closed screen. Local DOM tests cover authorized, unassigned, guest, stale and direct-route cases.
+
+If rollout fails, preserve private data. Never delete schemas/buckets or purge published images as an automatic rollback.

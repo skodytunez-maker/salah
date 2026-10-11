@@ -1,4 +1,4 @@
-export const APP_VERSION=299;
+export const APP_VERSION=300;
 export const APP_UPDATED_AT='2026-10-12';
 export const APP_CHANGES=["Топ SALAH: слушатели и их самые прослушиваемые чтецы.","Золотые, серебряные и бронзовые рамки первых мест.","Анонимность и уведомления об обгоне."];
 // Public notes list new user-facing features or sections only. Internal settings,

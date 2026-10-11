@@ -6,8 +6,8 @@ import{reciterImageUrl}from './approved-catalog.js';
 import{loadLandmark}from './landmarks.js';
 let dispose=null;
 export function stopStaffCabinet(){dispose?.();dispose=null;}
-export async function mountStaffEntry(host,{isActive=()=>true}={}){
- host.hidden=true;try{const actor=await staffRequest('gate');if(!isActive())return;host.innerHTML='<a class="staff-account-entry" href="#staff">'+icon('team')+'<span>Кабинет команды</span>'+icon('back')+'</a>';host.hidden=false;host.dataset.role=actor.role;}catch{}
+export async function mountStaffEntry(host,{isActive=()=>true,request=staffRequest}={}){
+ host.hidden=true;host.replaceChildren();try{const actor=await request('gate');if(!isActive())return;host.innerHTML='<a class="staff-account-entry" href="#staff">'+icon('team')+'<span>Кабинет команды</span>'+icon('back')+'</a>';host.hidden=false;host.dataset.role=actor.role;}catch{}
 }
 export async function showStaffCabinet(host,{request=staffRequest,demo=false}={}){
  stopStaffCabinet();let alive=true,tab='',viewVersion=0,actor=null,dirty=false,chatTimer=null,gateTimer=null,authSubscription=null;const controllers=new Set();
@@ -20,7 +20,7 @@ export async function showStaffCabinet(host,{request=staffRequest,demo=false}={}
  const report=message=>{if(active())host.querySelector('.staff-status').textContent=message;};
  const run=async(button,fn)=>{if(button?.disabled)return;if(button)button.disabled=true;try{report('');await fn();}catch(error){if(alive&&error.name!=='AbortError')report(error.message);if(['forbidden','staff_only','invalid_session','sign_in_required'].includes(error.code)){dirty=false;clearInterval(chatTimer);host.querySelector('.staff-content').innerHTML='<p class="staff-empty">'+esc(error.message)+'</p><a href="#account">В аккаунт</a>';}}finally{if(button?.isConnected)button.disabled=false;}};
  host.innerHTML='<section class="staff-cabinet"><p role="status">Проверяем доступ…</p></section>';
- try{actor=await call('gate');if(!alive)return;}catch(error){if(alive)host.innerHTML='<section class="panel section"><h1>Кабинет команды</h1><p role="status">'+esc(error.message)+'</p><a class="button" href="#account">В аккаунт</a></section>';return;}
+ try{actor=await call('gate');if(!alive)return;}catch(error){if(alive)host.innerHTML='<section class="panel section"><h1>Доступ закрыт</h1><p role="status">'+esc(error.message)+'</p><a class="button" href="#account">В аккаунт</a></section>';return;}
  async function mfa(){
   host.innerHTML=staffShell(actor,'',{demo});const area=host.querySelector('.staff-content');area.innerHTML='<h2>Защищённый вход</h2><p class="staff-subtle">Кабинет команды открывается после кода из приложения-аутентификатора.</p><div class="staff-mfa"></div>';
   const auth=accountAuthClient().auth;let factorId=null;

@@ -12,7 +12,7 @@ if(!adminKey)throw Error('Storage server key is not configured');
 const bucket=createClient(PROJECT,adminKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{fetch:(url,init)=>fetch(url,{...init,signal:AbortSignal.timeout(15000)})}}).storage;
 const rpc=async(action:string,args:object,claims:object)=>sql.begin(async tx=>{
  await tx`select pg_catalog.set_config('request.jwt.claims',${JSON.stringify(claims)},true)`;
- const rows=action.startsWith('chat.')?await tx`select salah_staff_private.chat_request(${action},${JSON.stringify(args)}::jsonb) AS data`:await tx`select salah_staff_private.request(${action},${JSON.stringify(args)}::jsonb) AS data`;
+ const rows=action.startsWith('chat.')?await tx`select salah_staff_private.chat_request(${action},${tx.json(args)}::jsonb) AS data`:await tx`select salah_staff_private.request(${action},${tx.json(args)}::jsonb) AS data`;
  return rows[0].data;
 });
 const storage={
