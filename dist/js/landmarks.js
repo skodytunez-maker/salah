@@ -1,4 +1,5 @@
 // The catalogue and chosen city's pair are fetched only when this mode is used.
+import{curatedAsset,applyApprovedWallpapers}from './approved-catalog.js';
 export const LANDMARK_CACHE='salah-landmarks-v1';
 const base=new URL('../',import.meta.url),catalogUrl=new URL('wallpapers/catalog.json',base).href;
 const validPoint=c=>Number.isFinite(c?.latitude)&&Math.abs(c.latitude)<=90&&Number.isFinite(c?.longitude)&&Math.abs(c.longitude)<=180;
@@ -9,7 +10,7 @@ export function landmarkDistance(a,b){
  return 6371*2*Math.asin(Math.sqrt(Math.min(1,h)));
 }
 const validRegion=r=>r&&['south','north','west','east'].every(k=>Number.isFinite(r[k]))&&r.south>=-90&&r.north<=90&&r.west>=-180&&r.east<=180&&r.south<r.north&&r.west<r.east&&r.north-r.south<=6&&r.east-r.west<=6;
-const validAssets=(assets,id)=>['day','night','mask'].every(key=>typeof assets?.[key]==='string'&&new RegExp('^wallpapers/'+id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(assets[key]));
+const validAssets=(assets,id)=>['day','night','mask'].every(key=>typeof assets?.[key]==='string'&&(new RegExp('^wallpapers/'+id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(assets[key])||curatedAsset(assets[key],'wallpaper',id,key==='mask'?'svg':'jpg')));
 const focus=value=>Number.isFinite(value)&&value>=0&&value<=1?value:null;
 export function landmarkAssetSet(entry,tablet=false){
  if(!tablet)return entry;
@@ -18,7 +19,7 @@ export function landmarkAssetSet(entry,tablet=false){
 }
 export function validateLandmarkCatalog(value){
  if(value?.version!==1||!Array.isArray(value.cities)||value.cities.length>500)return [];
- return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&(!c.region||validRegion(c.region))&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&['day','night','mask'].every(key=>typeof c[key]==='string'&&new RegExp('^wallpapers/'+c.id+'/[a-z0-9-]+\\.'+(key==='mask'?'svg':'webp')+'$').test(c[key])));
+ return value.cities.filter(c=>/^[a-z0-9-]{1,60}$/.test(c?.id)&&(!c.region||validRegion(c.region))&&validPoint(c)&&Number.isFinite(c.radius)&&c.radius>0&&c.radius<=80&&typeof c.name==='string'&&c.name.length<=120&&typeof c.landmark==='string'&&c.landmark.length<=120&&validAssets(c,c.id)&&(!c.tablet||validAssets(c.tablet,c.id)));
 }
 export function matchLandmark(city,catalog,chosen='auto'){
  if(chosen!=='auto')return catalog.find(c=>c.id===chosen)||null;
@@ -28,7 +29,7 @@ export function matchLandmark(city,catalog,chosen='auto'){
  return catalog.find(c=>validRegion(c.region)&&city.latitude>=c.region.south&&city.latitude<=c.region.north&&city.longitude>=c.region.west&&city.longitude<=c.region.east)||null;
 }
 const abort=signal=>{if(signal?.aborted)throw Object.assign(new Error('Aborted'),{name:'AbortError'})};
-export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=globalThis.caches}={}){
+export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=globalThis.caches,overlay=null}={}){
  let catalogTask=null;
  async function cache(){try{return await cacheStorage?.open(LANDMARK_CACHE)}catch{return null}}
  async function publicFile(url,signal,{type,limit}){
@@ -48,12 +49,12 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   catch{response=await store?.match(catalogUrl).catch(()=>null);return response?validateLandmarkCatalog(await response.json()):[]}
   finally{clearTimeout(timer)}
  }
- const entries=()=>catalogTask??=catalogue().then(entries=>{if(!entries.length)catalogTask=null;return entries});
+ const entries=()=>catalogTask??=catalogue().then(async entries=>{if(!entries.length)catalogTask=null;return overlay?await overlay(entries,validateLandmarkCatalog):entries});
  const load=async function load(city,{signal,chosen='auto',tablet=false}={}){
   abort(signal);const entry=matchLandmark(city,await entries(),chosen);abort(signal);
   if(!entry)return {status:(await entries()).length?'unavailable':'offline',entry:null};
   let selected=landmarkAssetSet(entry,tablet);
-  const files=asset=>Promise.all(['day','night','mask'].map(key=>publicFile(new URL(asset[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/webp/,limit:key==='mask'?32768:3145728})));
+  const files=asset=>Promise.all(['day','night','mask'].map(key=>publicFile(new URL(asset[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/(?:webp|jpeg)/,limit:key==='mask'?32768:3145728})));
   let responses;
   try{responses=await files(selected)}catch(error){abort(signal);if(selected.day===entry.day&&selected.night===entry.night)throw error;selected=landmarkAssetSet({...entry,tablet:undefined},tablet);responses=await files(selected)}
   abort(signal);
@@ -67,4 +68,4 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
  load.catalogue=entries;
  return load;
 }
-export const loadLandmark=createLandmarkLoader();
+export const loadLandmark=createLandmarkLoader({overlay:applyApprovedWallpapers});

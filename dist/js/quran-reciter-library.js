@@ -1,3 +1,4 @@
+import{reciterImageUrl}from './approved-catalog.js';
 import{mountReciterRanking}from './reciter-ranking-page.js';
 import{loadPopularReciters,popularConsentMarkup,bindPopularConsent,personalListening,personalTop,formatListeningTime,listeningDayKey}from './reciter-popularity.js';
 import{actionIcon,actionLabel}from './action-icons.js';
@@ -12,8 +13,8 @@ import{esc,toast}from './ui.js';
 import{reciterRecording}from './quran-reciter-recording.js';
 import{quranPlayback}from './quran-session.js';
 const favorites=()=>[...new Set(normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).map(id=>reciterInfo(id).variantOf||id))];
-const catalogReciters=RECITERS.filter(r=>!r.variantOf);
-export const reciterPortrait=r=>'<img class="reciter-portrait" src="./'+esc(r.portrait||'assets/person.svg')+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
+const catalogReciters={get length(){return RECITERS.filter(r=>!r.variantOf).length;},filter(fn){return RECITERS.filter(r=>!r.variantOf).filter(fn);}};
+export const reciterPortrait=r=>'<img class="reciter-portrait" src="'+esc(reciterImageUrl(r.portrait))+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
 const favoriteButton=(r,saved)=>'<button type="button" class="reciter-favorite" data-reciter-favorite="'+r.id+'" aria-pressed="'+saved.includes(r.id)+'" aria-label="'+(saved.includes(r.id)?'Убрать из избранных: ':'Добавить в избранные: ')+esc(r.name)+'"><img src="./assets/'+(saved.includes(r.id)?'star-fill':'star')+'.svg" alt="" aria-hidden="true"></button>';
 export function saveReciterFavorite(id){
  const info=RECITERS.find(r=>r.id===id);if(!info)return false;const next=toggleReciterFavorite(favorites(),info.variantOf||id,RECITERS);if(!next)return false;

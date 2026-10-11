@@ -31,3 +31,11 @@ verify_jwt = false
 [functions.reciter-popularity]
 # Aggregate GET is public; POST verifies the Auth user in the handler.
 verify_jwt = false
+
+[functions.staff-cabinet]
+# Modern signing-key JWT is checked by getUser/getClaims plus DB live session, role and MFA.
+verify_jwt = false
+
+[functions.approved-catalog]
+# Public owner-published catalog only; no account or draft data.
+verify_jwt = false

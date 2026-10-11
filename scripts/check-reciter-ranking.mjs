@@ -1,3 +1,4 @@
+import{reciterImageUrl}from '../dist/js/approved-catalog.js';
 import{publicListenerRows}from '../supabase/functions/reciter-popularity/listener-labels.mjs';
 
 import assert from 'node:assert/strict';
@@ -12,7 +13,7 @@ assert.deepEqual(Object.keys(anonymous).sort(),['id','initial','mode']);assert.o
 assert.equal(safeListener({id:'bad',mode:'profile'}),null);assert.equal(safeListener({id:'11111111-1111-4111-8111-111111111111',mode:'hidden'}),null);
 const source=await fs.readFile(new URL('../dist/js/reciter-ranking-view.js',import.meta.url),'utf8');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const context=vm.createContext({RECITERS,reciterInfo,rankListening,rankTime,listenerRing,assignListenerRings,medalForRank,read:()=>({}),write:()=>true,esc,rankingListeners:()=>[anonymous],publicListenerPhoto:()=>{throw Error('Anonymous photo must never be requested');},modal(){},closeModal(){}});
+const context=vm.createContext({reciterImageUrl,RECITERS,reciterInfo,rankListening,rankTime,listenerRing,assignListenerRings,medalForRank,read:()=>({}),write:()=>true,esc,rankingListeners:()=>[anonymous],publicListenerPhoto:()=>{throw Error('Anonymous photo must never be requested');},modal(){},closeModal(){}});
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({rankingMarkup});',context);
 const ids=RECITERS.filter(r=>!r.variantOf).slice(0,8).map(r=>r.id);const markup=api.rankingMarkup(ids,{seconds:id=>900-ids.indexOf(id)*60,global:true});
 assert.equal((markup.match(/rank-podium-card/g)||[]).length,3);assert.equal((markup.match(/rank-list-row/g)||[]).length,2);assert.match(markup,/Весь рейтинг/);assert.ok(!markup.includes('Must stay private'));assert.ok(!markup.includes('?avatar='));

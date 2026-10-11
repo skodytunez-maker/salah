@@ -1,3 +1,4 @@
+import{reciterImageUrl}from './approved-catalog.js';
 import{read,write}from './storage.js';
 
 import{esc,modal,closeModal}from './ui.js';
@@ -5,7 +6,7 @@ import{RECITERS,reciterInfo}from './quran-reciters.js';
 import{rankListening,rankTime,listenerRing,assignListenerRings,medalForRank}from './reciter-ranking-core.js';
 import{rankingListeners,publicListenerPhoto}from './reciter-popularity.js';
 let activeEntries=[],activeGlobal=false,duplicateInitials=new Set(),ringColors={};
-const face=r=>'<img class="reciter-portrait" src="./'+esc(r.portrait||'assets/person.svg')+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
+const face=r=>'<img class="reciter-portrait" src="'+esc(reciterImageUrl(r.portrait))+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
 function listeners(id){const people=rankingListeners(id);if(!people.length)return '';return '<div class="rank-listeners" aria-label="Слушатели">'+people.map((p,index)=>'<button type="button" class="rank-listener'+(duplicateInitials.has(p.initial)?' rank-listener-collision':'')+'" style="--listener-ring:'+(ringColors[p.id]||listenerRing(p.id))+'" data-listener-reciter="'+esc(id)+'" data-listener-index="'+index+'" aria-label="'+esc(p.mode==='profile'?p.nickname:'Анонимный слушатель')+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(publicListenerPhoto(p.id))+'" alt="" loading="lazy">':'')+'</button>').join('')+'</div>';}
 const row=e=>'<article class="reciter-card rank-list-row" data-personal-reciter="'+esc(e.id)+'" data-personal-reciter="'+esc(e.id)+'"><a href="#quran?view=reciters&reciter='+encodeURIComponent(e.id)+'"><span class="rank-row-number">'+e.rank+'</span>'+face(reciterInfo(e.id))+'<strong>'+esc(reciterInfo(e.id).name)+'</strong><span class="rank-row-time">'+esc(rankTime(e.seconds))+'</span></a>'+listeners(e.id)+'</article>';
 export function rankingMarkup(ids,{seconds,query='',global=false,leader='Лидер'}){

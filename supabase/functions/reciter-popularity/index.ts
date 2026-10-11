@@ -38,9 +38,10 @@ Deno.serve(async req=>{
   const rows=await sql`select mode from public.reciter_listener_visibility where user_id=${user.id}::uuid`;
   return reply({mode:rows[0]?.mode||'hidden'});
  }
+ const approved=await sql`SELECT entity_id FROM salah_staff_private.catalog WHERE kind='reciter'`;const allowedReciters=new Set([...reciters,...approved.map(x=>x.entity_id)]);
  if(req.method==='GET'){
   const windowDays=params.get('period')==='day'?1:params.get('period')==='week'?7:30;
-  const rows=await sql`select reciter,sum(minutes)::bigint as minutes,sum(minutes::bigint*60+extra_seconds)::bigint as seconds from public.reciter_popularity_minutes where day>=current_date-${windowDays-1}::integer group by reciter order by sum(minutes::bigint*60+extra_seconds) desc,reciter limit 33`;
+  const rows=await sql`select reciter,sum(minutes)::bigint as minutes,sum(minutes::bigint*60+extra_seconds)::bigint as seconds from public.reciter_popularity_minutes where day>=current_date-${windowDays-1}::integer group by reciter order by sum(minutes::bigint*60+extra_seconds) desc,reciter limit 100`;
   const listeners=await sql`with heard as (
    select m.reciter,v.public_id as id,v.mode,
     upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1)) as initial,
@@ -56,7 +57,7 @@ Deno.serve(async req=>{
   ), numbered as (select *,row_number() over(partition by reciter order by seconds desc,id) as position from heard)
   select reciter,id,mode,initial,prefix,nickname,has_photo from numbered where position<=4 order by reciter,position`;
   const visiblePeople=publicListenerRows(listeners);
-  const ranking=rows.filter(r=>reciters.has(r.reciter)).map(r=>({reciter:r.reciter,minutes:Number(r.minutes),seconds:Number(r.seconds),listeners:visiblePeople.filter(p=>p.reciter===r.reciter).map(({reciter,...person})=>person)}));
+  const ranking=rows.filter(r=>allowedReciters.has(r.reciter)).map(r=>({reciter:r.reciter,minutes:Number(r.minutes),seconds:Number(r.seconds),listeners:visiblePeople.filter(p=>p.reciter===r.reciter).map(({reciter,...person})=>person)}));
   return reply({items:ranking.map(r=>r.reciter),ranking,windowDays});
  }
  if(req.method!=='POST')return reply({error:'method'},405);
@@ -69,7 +70,7 @@ Deno.serve(async req=>{
   await sql`insert into public.reciter_listener_visibility(user_id,listener_hash,mode) values(${user.id}::uuid,${hash},${body.profileMode}) on conflict(user_id) do update set listener_hash=excluded.listener_hash,public_id=case when reciter_listener_visibility.mode<>excluded.mode then gen_random_uuid() else reciter_listener_visibility.public_id end,mode=excluded.mode,updated_at=now()`;
   return reply({mode:body.profileMode});
  }
- if(!body||body.consent!==true||!reciters.has(body.reciter)||typeof body.eventId!=='string'||!uuid.test(body.eventId)||Object.keys(body).some(k=>!['consent','reciter','eventId'].includes(k)))return reply({error:'invalid_input'},400);
+ if(!body||body.consent!==true||!allowedReciters.has(body.reciter)||typeof body.eventId!=='string'||!uuid.test(body.eventId)||Object.keys(body).some(k=>!['consent','reciter','eventId'].includes(k)))return reply({error:'invalid_input'},400);
  const hash=await listenerCode(user.id);
   const counted=await rpc('reciter_popularity_add',{p_listener:hash,p_reciter:body.reciter,p_event:body.eventId});
   if(counted)await sql`insert into public.reciter_listener_visibility(user_id,listener_hash,mode) values(${user.id}::uuid,${hash},'initial') on conflict(user_id) do nothing`;
