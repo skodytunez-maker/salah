@@ -2380,14 +2380,29 @@
       "bytes": 1173
     },
     {
+      "path": "dist/wallpapers/al-aqsa/day-phone-v1.webp",
+      "gitBlobSha": "489baed95b23994eb6a854f8c0f1b196e0f6087d",
+      "bytes": 314158
+    },
+    {
       "path": "dist/wallpapers/al-aqsa/day-v1.webp",
       "gitBlobSha": "ced0a9181bb549e040b126214f1523d864ff5340",
       "bytes": 267338
     },
     {
+      "path": "dist/wallpapers/al-aqsa/night-phone-v1.webp",
+      "gitBlobSha": "2ec9e871636eca8ca488bb7778037120bc73b17d",
+      "bytes": 180264
+    },
+    {
       "path": "dist/wallpapers/al-aqsa/night-v1.webp",
       "gitBlobSha": "45c30c51f95de46cefa6560a946aec9a72d3f1d2",
       "bytes": 241944
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/sky-phone-v1.svg",
+      "gitBlobSha": "a43f11e56c2140c55770cfbd4f2aab472b5b611d",
+      "bytes": 531
     },
     {
       "path": "dist/wallpapers/al-aqsa/sky-v1.svg",
@@ -2585,14 +2600,29 @@
       "bytes": 725
     },
     {
+      "path": "dist/wallpapers/madinah/day-phone-v1.webp",
+      "gitBlobSha": "0fe60143dca772cdb3e3f6abd4170ffe9501257d",
+      "bytes": 227798
+    },
+    {
       "path": "dist/wallpapers/madinah/day-v1.webp",
       "gitBlobSha": "062f284c4e96069f211de863f12a78c26739a5ba",
       "bytes": 193200
     },
     {
+      "path": "dist/wallpapers/madinah/night-phone-v1.webp",
+      "gitBlobSha": "0dd7e6ccbb0579b477b175951b6e42eee78a540b",
+      "bytes": 174010
+    },
+    {
       "path": "dist/wallpapers/madinah/night-v1.webp",
       "gitBlobSha": "41d89a7cb493dfb67b22173d32261ef6a82e20f4",
       "bytes": 181808
+    },
+    {
+      "path": "dist/wallpapers/madinah/sky-phone-v1.svg",
+      "gitBlobSha": "d6e9f4f64e13cc2d50593ca8dab183d74226c6fa",
+      "bytes": 598
     },
     {
       "path": "dist/wallpapers/madinah/sky-v1.svg",
@@ -2615,14 +2645,29 @@
       "bytes": 860
     },
     {
+      "path": "dist/wallpapers/makkah/day-phone-v1.webp",
+      "gitBlobSha": "aef484d39fbcc51a7461d5bd60e26a453085c659",
+      "bytes": 177376
+    },
+    {
       "path": "dist/wallpapers/makkah/day-v1.webp",
       "gitBlobSha": "be149b52712e2b1d98c6006e98a2ec5fc8d3fae9",
       "bytes": 222692
     },
     {
+      "path": "dist/wallpapers/makkah/night-phone-v1.webp",
+      "gitBlobSha": "ae08ab83c22530d57fb9f51f8bc6402b1905f6a6",
+      "bytes": 156704
+    },
+    {
       "path": "dist/wallpapers/makkah/night-v1.webp",
       "gitBlobSha": "f3c180ca6f5cd65348f05cdea0a6fd400ad442b1",
       "bytes": 231296
+    },
+    {
+      "path": "dist/wallpapers/makkah/sky-phone-v1.svg",
+      "gitBlobSha": "dcc222cba29185117a21c0d4ac4f2caa9a2cdfe1",
+      "bytes": 602
     },
     {
       "path": "dist/wallpapers/makkah/sky-v1.svg",
@@ -2730,14 +2775,29 @@
       "bytes": 626
     },
     {
+      "path": "dist/wallpapers/uhud/day-phone-v1.webp",
+      "gitBlobSha": "5997e62f5b96b933a337fd8915a29e2dc4c41841",
+      "bytes": 360188
+    },
+    {
       "path": "dist/wallpapers/uhud/day-v1.webp",
       "gitBlobSha": "8d3044eea2fe7dbaaaf7cccd978f624a6c321af7",
       "bytes": 291862
     },
     {
+      "path": "dist/wallpapers/uhud/night-phone-v1.webp",
+      "gitBlobSha": "d08dfaca6eaf07703ec803a5df992fc009313f07",
+      "bytes": 186636
+    },
+    {
       "path": "dist/wallpapers/uhud/night-v1.webp",
       "gitBlobSha": "2ff08cfab7c3904c05941b574a751b9f90c93588",
       "bytes": 121674
+    },
+    {
+      "path": "dist/wallpapers/uhud/sky-phone-v1.svg",
+      "gitBlobSha": "0f8d939874ac0b12bc8dbc03c609858795f6db96",
+      "bytes": 303
     },
     {
       "path": "dist/wallpapers/uhud/sky-v1.svg",
@@ -3519,6 +3579,25 @@
       ],
       "evidence": "docs/holy-wallpapers-20261011.json",
       "baseCommit": "84a8e7b216a539801e16afa1b738112e53124794"
+    },
+    {
+      "date": "2026-10-11",
+      "paths": [
+        "dist/wallpapers/makkah/day-phone-v1.webp",
+        "dist/wallpapers/makkah/night-phone-v1.webp",
+        "dist/wallpapers/makkah/sky-phone-v1.svg",
+        "dist/wallpapers/madinah/day-phone-v1.webp",
+        "dist/wallpapers/madinah/night-phone-v1.webp",
+        "dist/wallpapers/madinah/sky-phone-v1.svg",
+        "dist/wallpapers/uhud/day-phone-v1.webp",
+        "dist/wallpapers/uhud/night-phone-v1.webp",
+        "dist/wallpapers/uhud/sky-phone-v1.svg",
+        "dist/wallpapers/al-aqsa/day-phone-v1.webp",
+        "dist/wallpapers/al-aqsa/night-phone-v1.webp",
+        "dist/wallpapers/al-aqsa/sky-phone-v1.svg"
+      ],
+      "evidence": "docs/holy-wallpapers-phone-20261011.json",
+      "baseCommit": "911d599c4220c7f7217a1a927b1884dc5bdc0606"
     }
   ]
 }

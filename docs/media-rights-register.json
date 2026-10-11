@@ -1556,6 +1556,138 @@
       "role": "mask",
       "rightsEvidence": "docs/holy-wallpapers-20261011.json",
       "note": "Project-authored SVG sky mask aligned with this generated scene."
+    },
+    {
+      "path": "dist/wallpapers/makkah/day-phone-v1.webp",
+      "gitBlobSha": "aef484d39fbcc51a7461d5bd60e26a453085c659",
+      "bytes": 177376,
+      "kind": "raster",
+      "wallpaperSet": "makkah",
+      "role": "day-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/makkah/night-phone-v1.webp",
+      "gitBlobSha": "ae08ab83c22530d57fb9f51f8bc6402b1905f6a6",
+      "bytes": 156704,
+      "kind": "raster",
+      "wallpaperSet": "makkah",
+      "role": "night-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/makkah/sky-phone-v1.svg",
+      "gitBlobSha": "dcc222cba29185117a21c0d4ac4f2caa9a2cdfe1",
+      "bytes": 602,
+      "kind": "vector",
+      "wallpaperSet": "makkah",
+      "role": "mask-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Project-native 853x1844 phone sky mask."
+    },
+    {
+      "path": "dist/wallpapers/madinah/day-phone-v1.webp",
+      "gitBlobSha": "0fe60143dca772cdb3e3f6abd4170ffe9501257d",
+      "bytes": 227798,
+      "kind": "raster",
+      "wallpaperSet": "madinah",
+      "role": "day-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/madinah/night-phone-v1.webp",
+      "gitBlobSha": "0dd7e6ccbb0579b477b175951b6e42eee78a540b",
+      "bytes": 174010,
+      "kind": "raster",
+      "wallpaperSet": "madinah",
+      "role": "night-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/madinah/sky-phone-v1.svg",
+      "gitBlobSha": "d6e9f4f64e13cc2d50593ca8dab183d74226c6fa",
+      "bytes": 598,
+      "kind": "vector",
+      "wallpaperSet": "madinah",
+      "role": "mask-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Project-native 853x1844 phone sky mask."
+    },
+    {
+      "path": "dist/wallpapers/uhud/day-phone-v1.webp",
+      "gitBlobSha": "5997e62f5b96b933a337fd8915a29e2dc4c41841",
+      "bytes": 360188,
+      "kind": "raster",
+      "wallpaperSet": "uhud",
+      "role": "day-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/uhud/night-phone-v1.webp",
+      "gitBlobSha": "d08dfaca6eaf07703ec803a5df992fc009313f07",
+      "bytes": 186636,
+      "kind": "raster",
+      "wallpaperSet": "uhud",
+      "role": "night-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/uhud/sky-phone-v1.svg",
+      "gitBlobSha": "0f8d939874ac0b12bc8dbc03c609858795f6db96",
+      "bytes": 303,
+      "kind": "vector",
+      "wallpaperSet": "uhud",
+      "role": "mask-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Project-native 853x1844 phone sky mask."
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/day-phone-v1.webp",
+      "gitBlobSha": "489baed95b23994eb6a854f8c0f1b196e0f6087d",
+      "bytes": 314158,
+      "kind": "raster",
+      "wallpaperSet": "al-aqsa",
+      "role": "day-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/night-phone-v1.webp",
+      "gitBlobSha": "2ec9e871636eca8ca488bb7778037120bc73b17d",
+      "bytes": 180264,
+      "kind": "raster",
+      "wallpaperSet": "al-aqsa",
+      "role": "night-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Phone artwork expanded/recomposed with built-in image tool from the project-owned generated panorama; prompt and fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/sky-phone-v1.svg",
+      "gitBlobSha": "a43f11e56c2140c55770cfbd4f2aab472b5b611d",
+      "bytes": 531,
+      "kind": "vector",
+      "wallpaperSet": "al-aqsa",
+      "role": "mask-phone",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/holy-wallpapers-phone-20261011.json",
+      "note": "Project-native 853x1844 phone sky mask."
     }
   ],
   "wallpaperSets": [
@@ -1910,12 +2042,12 @@
       "id": "makkah",
       "name": "Мекка",
       "paths": [
-        "dist/wallpapers/makkah/day-v1.webp",
-        "dist/wallpapers/makkah/night-v1.webp",
-        "dist/wallpapers/makkah/sky-v1.svg"
+        "dist/wallpapers/makkah/day-phone-v1.webp",
+        "dist/wallpapers/makkah/night-phone-v1.webp",
+        "dist/wallpapers/makkah/sky-phone-v1.svg"
       ],
       "rightsReviewStatus": "origin-supported",
-      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "creation": "Dedicated phone composition and aligned night edit, plus original landscape tablet/landscape-phone scene.",
       "reference": {
         "url": null,
         "author": null,
@@ -1923,7 +2055,8 @@
         "licenseUrl": null
       },
       "rightsEvidence": [
-        "docs/holy-wallpapers-20261011.json"
+        "docs/holy-wallpapers-20261011.json",
+        "docs/holy-wallpapers-phone-20261011.json"
       ],
       "nextAction": "Retain generated originals and creation evidence."
     },
@@ -1931,12 +2064,12 @@
       "id": "madinah",
       "name": "Медина",
       "paths": [
-        "dist/wallpapers/madinah/day-v1.webp",
-        "dist/wallpapers/madinah/night-v1.webp",
-        "dist/wallpapers/madinah/sky-v1.svg"
+        "dist/wallpapers/madinah/day-phone-v1.webp",
+        "dist/wallpapers/madinah/night-phone-v1.webp",
+        "dist/wallpapers/madinah/sky-phone-v1.svg"
       ],
       "rightsReviewStatus": "origin-supported",
-      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "creation": "Dedicated phone composition and aligned night edit, plus original landscape tablet/landscape-phone scene.",
       "reference": {
         "url": null,
         "author": null,
@@ -1944,7 +2077,8 @@
         "licenseUrl": null
       },
       "rightsEvidence": [
-        "docs/holy-wallpapers-20261011.json"
+        "docs/holy-wallpapers-20261011.json",
+        "docs/holy-wallpapers-phone-20261011.json"
       ],
       "nextAction": "Retain generated originals and creation evidence."
     },
@@ -1952,12 +2086,12 @@
       "id": "uhud",
       "name": "Гора Ухуд",
       "paths": [
-        "dist/wallpapers/uhud/day-v1.webp",
-        "dist/wallpapers/uhud/night-v1.webp",
-        "dist/wallpapers/uhud/sky-v1.svg"
+        "dist/wallpapers/uhud/day-phone-v1.webp",
+        "dist/wallpapers/uhud/night-phone-v1.webp",
+        "dist/wallpapers/uhud/sky-phone-v1.svg"
       ],
       "rightsReviewStatus": "origin-supported",
-      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "creation": "Dedicated phone composition and aligned night edit, plus original landscape tablet/landscape-phone scene.",
       "reference": {
         "url": null,
         "author": null,
@@ -1965,7 +2099,8 @@
         "licenseUrl": null
       },
       "rightsEvidence": [
-        "docs/holy-wallpapers-20261011.json"
+        "docs/holy-wallpapers-20261011.json",
+        "docs/holy-wallpapers-phone-20261011.json"
       ],
       "nextAction": "Retain generated originals and creation evidence."
     },
@@ -1973,12 +2108,12 @@
       "id": "al-aqsa",
       "name": "Мечеть Аль-Акса",
       "paths": [
-        "dist/wallpapers/al-aqsa/day-v1.webp",
-        "dist/wallpapers/al-aqsa/night-v1.webp",
-        "dist/wallpapers/al-aqsa/sky-v1.svg"
+        "dist/wallpapers/al-aqsa/day-phone-v1.webp",
+        "dist/wallpapers/al-aqsa/night-phone-v1.webp",
+        "dist/wallpapers/al-aqsa/sky-phone-v1.svg"
       ],
       "rightsReviewStatus": "origin-supported",
-      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "creation": "Dedicated phone composition and aligned night edit, plus original landscape tablet/landscape-phone scene.",
       "reference": {
         "url": null,
         "author": null,
@@ -1986,7 +2121,8 @@
         "licenseUrl": null
       },
       "rightsEvidence": [
-        "docs/holy-wallpapers-20261011.json"
+        "docs/holy-wallpapers-20261011.json",
+        "docs/holy-wallpapers-phone-20261011.json"
       ],
       "nextAction": "Retain generated originals and creation evidence."
     }
