@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "auditedAt": "2026-10-09",
+  "auditedAt": "2026-10-11",
   "repository": "skodytunez-maker/salah",
   "sourceCommit": "4d23a54bc3b676b7c3584e1b28b936ec65792d3b",
   "note": "This records evidence and missing evidence; no status grants ownership, no declaration of infringement. sourceCommit is the audited baseline, not a requirement that all future code commits are identical.",
@@ -1424,6 +1424,138 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "dist/assets/salah-mark.svg; docs/content-rights-register.json",
       "note": "Authored social-link composition using the existing SALAH project mark, original geometric decoration and rasterized system-font text. No third-party photograph, new external artwork or embedded font file."
+    },
+    {
+      "path": "dist/wallpapers/makkah/day-v1.webp",
+      "gitBlobSha": "be149b52712e2b1d98c6006e98a2ec5fc8d3fae9",
+      "bytes": 222692,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "makkah",
+      "role": "day",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/makkah/night-v1.webp",
+      "gitBlobSha": "f3c180ca6f5cd65348f05cdea0a6fd400ad442b1",
+      "bytes": 231296,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "makkah",
+      "role": "night",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/makkah/sky-v1.svg",
+      "gitBlobSha": "656527ff5bae90e8724e81e1ce6dd1688b5e8442",
+      "bytes": 573,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "makkah",
+      "role": "mask",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Project-authored SVG sky mask aligned with this generated scene."
+    },
+    {
+      "path": "dist/wallpapers/madinah/day-v1.webp",
+      "gitBlobSha": "062f284c4e96069f211de863f12a78c26739a5ba",
+      "bytes": 193200,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "madinah",
+      "role": "day",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/madinah/night-v1.webp",
+      "gitBlobSha": "41d89a7cb493dfb67b22173d32261ef6a82e20f4",
+      "bytes": 181808,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "madinah",
+      "role": "night",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/madinah/sky-v1.svg",
+      "gitBlobSha": "e4d6b9cb7c66ebabc0db275de640d6692a82aae0",
+      "bytes": 691,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "madinah",
+      "role": "mask",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Project-authored SVG sky mask aligned with this generated scene."
+    },
+    {
+      "path": "dist/wallpapers/uhud/day-v1.webp",
+      "gitBlobSha": "8d3044eea2fe7dbaaaf7cccd978f624a6c321af7",
+      "bytes": 291862,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "uhud",
+      "role": "day",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/uhud/night-v1.webp",
+      "gitBlobSha": "2ff08cfab7c3904c05941b574a751b9f90c93588",
+      "bytes": 121674,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "uhud",
+      "role": "night",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/uhud/sky-v1.svg",
+      "gitBlobSha": "204b06e23fba35a0f8f7dd4da2ebd709b12784b6",
+      "bytes": 419,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "uhud",
+      "role": "mask",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Project-authored SVG sky mask aligned with this generated scene."
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/day-v1.webp",
+      "gitBlobSha": "ced0a9181bb549e040b126214f1523d864ff5340",
+      "bytes": 267338,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "al-aqsa",
+      "role": "day",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/night-v1.webp",
+      "gitBlobSha": "45c30c51f95de46cefa6560a946aec9a72d3f1d2",
+      "bytes": 241944,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "al-aqsa",
+      "role": "night",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Generated with the built-in image tool; prompt, generation ID and original/packaged fingerprints recorded."
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/sky-v1.svg",
+      "gitBlobSha": "90f64771a48d3a3c09333014409e3ec2c4a7b377",
+      "bytes": 530,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "wallpaperSet": "al-aqsa",
+      "role": "mask",
+      "rightsEvidence": "docs/holy-wallpapers-20261011.json",
+      "note": "Project-authored SVG sky mask aligned with this generated scene."
     }
   ],
   "wallpaperSets": [
@@ -1773,6 +1905,90 @@
         "docs/wallpaper-expansion-20261007.json"
       ],
       "nextAction": "Retain the generated originals and creation evidence."
+    },
+    {
+      "id": "makkah",
+      "name": "Мекка",
+      "paths": [
+        "dist/wallpapers/makkah/day-v1.webp",
+        "dist/wallpapers/makkah/night-v1.webp",
+        "dist/wallpapers/makkah/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/holy-wallpapers-20261011.json"
+      ],
+      "nextAction": "Retain generated originals and creation evidence."
+    },
+    {
+      "id": "madinah",
+      "name": "Медина",
+      "paths": [
+        "dist/wallpapers/madinah/day-v1.webp",
+        "dist/wallpapers/madinah/night-v1.webp",
+        "dist/wallpapers/madinah/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/holy-wallpapers-20261011.json"
+      ],
+      "nextAction": "Retain generated originals and creation evidence."
+    },
+    {
+      "id": "uhud",
+      "name": "Гора Ухуд",
+      "paths": [
+        "dist/wallpapers/uhud/day-v1.webp",
+        "dist/wallpapers/uhud/night-v1.webp",
+        "dist/wallpapers/uhud/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/holy-wallpapers-20261011.json"
+      ],
+      "nextAction": "Retain generated originals and creation evidence."
+    },
+    {
+      "id": "al-aqsa",
+      "name": "Мечеть Аль-Акса",
+      "paths": [
+        "dist/wallpapers/al-aqsa/day-v1.webp",
+        "dist/wallpapers/al-aqsa/night-v1.webp",
+        "dist/wallpapers/al-aqsa/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "origin-supported",
+      "creation": "Recorded built-in generation and aligned night lighting edit; project-native sky mask.",
+      "reference": {
+        "url": null,
+        "author": null,
+        "claimedLicense": null,
+        "licenseUrl": null
+      },
+      "rightsEvidence": [
+        "docs/holy-wallpapers-20261011.json"
+      ],
+      "nextAction": "Retain generated originals and creation evidence."
     }
   ]
 }

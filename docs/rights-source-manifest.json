@@ -65,16 +65,6 @@
       "bytes": 2972
     },
     {
-      "path": "README.md",
-      "gitBlobSha": "9591ca669d3cc5be20227b3fa58eb544d80ff65d",
-      "bytes": 4813
-    },
-    {
-      "path": "SECURITY.md",
-      "gitBlobSha": "e6de2cd124e18ac1ed2d08950c226b848751e38b",
-      "bytes": 7819
-    },
-    {
       "path": "design/window-wallpaper-assets.json",
       "gitBlobSha": "e0f970da203faf2f421bb4e6749af0e7ffd31072",
       "bytes": 3128
@@ -113,6 +103,66 @@
       "path": "dist/assets/audio/adhan-mishary.mp3",
       "gitBlobSha": "4ed88ba424b9e634ad708eb9c681a68af5281e1c",
       "bytes": 4114842
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/coastal-mosque.webp",
+      "gitBlobSha": "e850c9f6a4c1ecd2ac8c2d085ce5402bed338354",
+      "bytes": 198720
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/desert-dawn.webp",
+      "gitBlobSha": "4ee8e10e2c1d62a8f6897f90b0296a39fbbf493b",
+      "bytes": 168032
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/garden-stream.webp",
+      "gitBlobSha": "fd641a07818ba52cfd75164d190893ef70e13864",
+      "bytes": 349722
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/lantern-courtyard.webp",
+      "gitBlobSha": "334d704f7e9ea4209749871e0f0dbef2455addcd",
+      "bytes": 147828
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/misty-lake.webp",
+      "gitBlobSha": "66ce977825859da1ffee324fa8ee8c8559473038",
+      "bytes": 211096
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/moon-mosque.webp",
+      "gitBlobSha": "fb19de936fded4ba9d197d5b476634a620e82d83",
+      "bytes": 100988
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/mosque-arches.webp",
+      "gitBlobSha": "6ea5b403968ae3dbddbeb3ee10bc63f152ca738e",
+      "bytes": 204278
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/mountain-night.webp",
+      "gitBlobSha": "3772453d48f3d20db777db7ea8d655711b38282b",
+      "bytes": 247940
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/ocean-dusk.webp",
+      "gitBlobSha": "b42d6e5034e7fb5fb9f9e287afdf9fc692404200",
+      "bytes": 196698
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/olive-grove.webp",
+      "gitBlobSha": "29ef7500b4635d16144405dfa23d081c9bf7a09f",
+      "bytes": 276358
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/rain-window.webp",
+      "gitBlobSha": "3cd44d77c07c7649e5940bc011cb1726d9c7376d",
+      "bytes": 232244
+    },
+    {
+      "path": "dist/assets/ayah-backgrounds/snow-forest.webp",
+      "gitBlobSha": "19eb2f5bd80f3c3bc2584c3bde23836df16038de",
+      "bytes": 259234
     },
     {
       "path": "dist/assets/book.svg",
@@ -195,6 +245,171 @@
       "bytes": 1283672
     },
     {
+      "path": "dist/assets/reciters/abdelazizsheim.jpg",
+      "gitBlobSha": "8588f77760fd99cdf4947df64d08b25b69815655",
+      "bytes": 116114
+    },
+    {
+      "path": "dist/assets/reciters/abdulbarialthubaity.jpg",
+      "gitBlobSha": "22e3ffd56af535df71115e9e407b4789e595abef",
+      "bytes": 14883
+    },
+    {
+      "path": "dist/assets/reciters/abdulbasitabdussamad.png",
+      "gitBlobSha": "c974b97f026d8c882449b18f9217d543e46f9435",
+      "bytes": 180494
+    },
+    {
+      "path": "dist/assets/reciters/abdullahalbuayjan.jpg",
+      "gitBlobSha": "945c8367d3329ae09733c3d0fa1dbd66133e0b38",
+      "bytes": 163389
+    },
+    {
+      "path": "dist/assets/reciters/abdullahaljuhany.jpg",
+      "gitBlobSha": "e2b612131717877caecf74538a622f20143625d1",
+      "bytes": 770854
+    },
+    {
+      "path": "dist/assets/reciters/abdulmuhsinalqasim.jpg",
+      "gitBlobSha": "1857fef18b25d5c251f4a1908f76d121e29a7d00",
+      "bytes": 169644
+    },
+    {
+      "path": "dist/assets/reciters/abdulrahmanmossad.jpg",
+      "gitBlobSha": "99a58162d947254e2d44f2749167ab5eb39dae60",
+      "bytes": 135227
+    },
+    {
+      "path": "dist/assets/reciters/abdurrahmanalsudais.jpg",
+      "gitBlobSha": "07748c5f9586153b1951a4cf4e2a0135b39a4064",
+      "bytes": 266990
+    },
+    {
+      "path": "dist/assets/reciters/abubakrshatri.png",
+      "gitBlobSha": "2cc6292f9f487eff149333648e381c28b4ba0eca",
+      "bytes": 319888
+    },
+    {
+      "path": "dist/assets/reciters/ahmadalhuthaifi.jpg",
+      "gitBlobSha": "eb5493a259fc21e23bc765ab2fd4526a08d5a46b",
+      "bytes": 51728
+    },
+    {
+      "path": "dist/assets/reciters/ahmedkaseb.jpg",
+      "gitBlobSha": "01a2fb2d0dfa3153d44d4ea993c1df94a38db3e1",
+      "bytes": 168417
+    },
+    {
+      "path": "dist/assets/reciters/alafasy.webp",
+      "gitBlobSha": "747c2caaa027f8516df4118faacdeb2b4fccc924",
+      "bytes": 74448
+    },
+    {
+      "path": "dist/assets/reciters/alialhuthaifi.jpg",
+      "gitBlobSha": "bbfaf26d950b616515dbe7a61f91aa66792205f3",
+      "bytes": 112030
+    },
+    {
+      "path": "dist/assets/reciters/badralturki.jpg",
+      "gitBlobSha": "31e2ee957818cb92fd31e3e45955bafc583966a4",
+      "bytes": 78775
+    },
+    {
+      "path": "dist/assets/reciters/bandarbalilah.png",
+      "gitBlobSha": "b8b3f799fde27c2ba4540cb97eed813822049102",
+      "bytes": 166573
+    },
+    {
+      "path": "dist/assets/reciters/haithamaldukhain.jpg",
+      "gitBlobSha": "a309b920ee6561a11e3a85f5c3caeb7a68158a10",
+      "bytes": 416507
+    },
+    {
+      "path": "dist/assets/reciters/haithamaljadani.jpg",
+      "gitBlobSha": "c3babf97962402ded0b82f2eb61380dacaf8a4ce",
+      "bytes": 357361
+    },
+    {
+      "path": "dist/assets/reciters/hazzaalbalushi.jpg",
+      "gitBlobSha": "34986c78d0265b63d05dc31ff14c497c7392459a",
+      "bytes": 45721
+    },
+    {
+      "path": "dist/assets/reciters/husary-original.png",
+      "gitBlobSha": "4dd567cfc1640aa043fb1f2f5708263803882766",
+      "bytes": 45384
+    },
+    {
+      "path": "dist/assets/reciters/idrisabkar.png",
+      "gitBlobSha": "5dd49b92f68b8324aacc7667424d9197cc31e3e8",
+      "bytes": 4085444
+    },
+    {
+      "path": "dist/assets/reciters/khalidalmuhanna.jpg",
+      "gitBlobSha": "a16e8c74d9ed20917ca50285359a3cd4fd7a7e16",
+      "bytes": 243861
+    },
+    {
+      "path": "dist/assets/reciters/mahermuaiqly.png",
+      "gitBlobSha": "bd409f19aeb3890d81a76755dc937900e7ea6fbd",
+      "bytes": 1151785
+    },
+    {
+      "path": "dist/assets/reciters/mansouralsalimi.png",
+      "gitBlobSha": "94497df6bcc938747db05d6dadcd1d7c19f66f07",
+      "bytes": 461352
+    },
+    {
+      "path": "dist/assets/reciters/minshawi-original.jpg",
+      "gitBlobSha": "8ee627a2775739f2ef14da955fe5a12802a83149",
+      "bytes": 40674
+    },
+    {
+      "path": "dist/assets/reciters/muhammadalluhaidan.jpg",
+      "gitBlobSha": "7a4b9fd5154c585004c496e431edfdd2f678dcfa",
+      "bytes": 388268
+    },
+    {
+      "path": "dist/assets/reciters/nasseralqatami.png",
+      "gitBlobSha": "615685adb03a1563a8ffe194446fe4cf516b33f2",
+      "bytes": 252299
+    },
+    {
+      "path": "dist/assets/reciters/obaidamuafaq.jpg",
+      "gitBlobSha": "0bc92b3e2b8c4256843bd5882971cebe5142a255",
+      "bytes": 151843
+    },
+    {
+      "path": "dist/assets/reciters/raadalkurdi-approved.jpg",
+      "gitBlobSha": "0bfdae2becfb879590b5235e1f2b5b848cae6017",
+      "bytes": 144294
+    },
+    {
+      "path": "dist/assets/reciters/salahalbudair.jpg",
+      "gitBlobSha": "12e727bb23c5504392a64ffc16fdca4ab17676be",
+      "bytes": 233817
+    },
+    {
+      "path": "dist/assets/reciters/saudalshuraim.jpg",
+      "gitBlobSha": "7d2837e62fc88ae3e169fc8b8957672fc92e70c5",
+      "bytes": 259784
+    },
+    {
+      "path": "dist/assets/reciters/siratulloraupov.jpg",
+      "gitBlobSha": "d4ba51f9eb49b0bb6f48a816f2f7271b25f8714c",
+      "bytes": 50424
+    },
+    {
+      "path": "dist/assets/reciters/tariqmuhammad.jpg",
+      "gitBlobSha": "c1aebe7d5d916aed5924d40b5c910a0b5a317bb2",
+      "bytes": 45719
+    },
+    {
+      "path": "dist/assets/reciters/yasseraldossari.jpg",
+      "gitBlobSha": "53c3e0e79b497ba867b355e9551981b519da278d",
+      "bytes": 66623
+    },
+    {
       "path": "dist/assets/salah-mark.svg",
       "gitBlobSha": "d043cd4b7b8868bcb49c310246e18527275e485a",
       "bytes": 1309
@@ -208,6 +423,11 @@
       "path": "dist/assets/salah-qr.svg",
       "gitBlobSha": "5407a80f960c7597118b72bb32d38f862aec4819",
       "bytes": 6190
+    },
+    {
+      "path": "dist/assets/salah-social-cover-v1.jpg",
+      "gitBlobSha": "53be94773a4c92ce7634dbcb6ee716418190239e",
+      "bytes": 100803
     },
     {
       "path": "dist/assets/star-fill.svg",
@@ -240,9 +460,19 @@
       "bytes": 7560
     },
     {
+      "path": "dist/assets/window-new-york-day-tablet-v1.webp",
+      "gitBlobSha": "3197a9f212bbdfe2c10bfaada561ff7944329d50",
+      "bytes": 262828
+    },
+    {
       "path": "dist/assets/window-new-york-day.webp",
       "gitBlobSha": "5f56f6099d9d7949d8fa81df4fbd56b03461c58a",
       "bytes": 266932
+    },
+    {
+      "path": "dist/assets/window-new-york-night-tablet-v1.webp",
+      "gitBlobSha": "7df7bcf8e68f07798c490f6e50c687f335eb2392",
+      "bytes": 231266
     },
     {
       "path": "dist/assets/window-new-york-night.webp",
@@ -250,9 +480,19 @@
       "bytes": 173168
     },
     {
+      "path": "dist/assets/window-sky-mask-tablet-v1.svg",
+      "gitBlobSha": "1fa8bc861ad12de5c616e125d7cf2ac15bdc28e5",
+      "bytes": 1092
+    },
+    {
       "path": "dist/assets/window-sky-mask.svg",
       "gitBlobSha": "0dc22c407dee21d2fddaff99df046471e4da7f1b",
       "bytes": 6890
+    },
+    {
+      "path": "dist/assets/window-weather-mask-tablet-v1.svg",
+      "gitBlobSha": "3066cc4deb62d152e6c2225454edbb49fa1a6d1f",
+      "bytes": 123
     },
     {
       "path": "dist/assets/window-weather-mask.svg",
@@ -2010,6 +2250,11 @@
       "bytes": 234
     },
     {
+      "path": "dist/js/vendor/jsQR-LICENSE.txt",
+      "gitBlobSha": "8f71f43fee3f78649d238238cbde51e6d7055c82",
+      "bytes": 11358
+    },
+    {
       "path": "dist/js/vendor/suncalc-LICENSE.txt",
       "gitBlobSha": "be7ac39d4a6afcc1094d68b467806406c2e78d6c",
       "bytes": 1322
@@ -2133,6 +2378,21 @@
       "path": "dist/wallpapers/afghanistan/sky-v1.svg",
       "gitBlobSha": "cc343e6561ab5853445387d0449d6fcb8a01d2da",
       "bytes": 1173
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/day-v1.webp",
+      "gitBlobSha": "ced0a9181bb549e040b126214f1523d864ff5340",
+      "bytes": 267338
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/night-v1.webp",
+      "gitBlobSha": "45c30c51f95de46cefa6560a946aec9a72d3f1d2",
+      "bytes": 241944
+    },
+    {
+      "path": "dist/wallpapers/al-aqsa/sky-v1.svg",
+      "gitBlobSha": "90f64771a48d3a3c09333014409e3ec2c4a7b377",
+      "bytes": 530
     },
     {
       "path": "dist/wallpapers/almaty/day-v1.webp",
@@ -2280,14 +2540,29 @@
       "bytes": 666
     },
     {
+      "path": "dist/wallpapers/khujand/day-tablet-v1.webp",
+      "gitBlobSha": "03f0295e1c1a2edca097e041a47b9a67a24159bd",
+      "bytes": 458850
+    },
+    {
       "path": "dist/wallpapers/khujand/day-v1.webp",
       "gitBlobSha": "18dd82cd68de94ae3929a3786e1d4b2afa5fbc11",
       "bytes": 399180
     },
     {
+      "path": "dist/wallpapers/khujand/night-tablet-v1.webp",
+      "gitBlobSha": "b9c0fe2dadcef40662292bb5b1ace090f79676cb",
+      "bytes": 374024
+    },
+    {
       "path": "dist/wallpapers/khujand/night-v1.webp",
       "gitBlobSha": "ce26532d9070e76b280bf123ef159587d5213cec",
       "bytes": 318854
+    },
+    {
+      "path": "dist/wallpapers/khujand/sky-tablet-v1.svg",
+      "gitBlobSha": "67517e4f3b505528f0beee7f8eea3f5bca655b0d",
+      "bytes": 423
     },
     {
       "path": "dist/wallpapers/khujand/sky-v1.svg",
@@ -2310,6 +2585,21 @@
       "bytes": 725
     },
     {
+      "path": "dist/wallpapers/madinah/day-v1.webp",
+      "gitBlobSha": "062f284c4e96069f211de863f12a78c26739a5ba",
+      "bytes": 193200
+    },
+    {
+      "path": "dist/wallpapers/madinah/night-v1.webp",
+      "gitBlobSha": "41d89a7cb493dfb67b22173d32261ef6a82e20f4",
+      "bytes": 181808
+    },
+    {
+      "path": "dist/wallpapers/madinah/sky-v1.svg",
+      "gitBlobSha": "e4d6b9cb7c66ebabc0db275de640d6692a82aae0",
+      "bytes": 691
+    },
+    {
       "path": "dist/wallpapers/makhachkala/day-v1.webp",
       "gitBlobSha": "108b1efa85786594fce54feef4c630a5606d6b46",
       "bytes": 380528
@@ -2323,6 +2613,21 @@
       "path": "dist/wallpapers/makhachkala/sky-v1.svg",
       "gitBlobSha": "0cc7470fb4b9d9b03a03e5e7cad64671ef7e27de",
       "bytes": 860
+    },
+    {
+      "path": "dist/wallpapers/makkah/day-v1.webp",
+      "gitBlobSha": "be149b52712e2b1d98c6006e98a2ec5fc8d3fae9",
+      "bytes": 222692
+    },
+    {
+      "path": "dist/wallpapers/makkah/night-v1.webp",
+      "gitBlobSha": "f3c180ca6f5cd65348f05cdea0a6fd400ad442b1",
+      "bytes": 231296
+    },
+    {
+      "path": "dist/wallpapers/makkah/sky-v1.svg",
+      "gitBlobSha": "656527ff5bae90e8724e81e1ce6dd1688b5e8442",
+      "bytes": 573
     },
     {
       "path": "dist/wallpapers/moscow/day-v1.webp",
@@ -2390,9 +2695,24 @@
       "bytes": 730
     },
     {
+      "path": "dist/wallpapers/tyumen/day-tablet-v1.webp",
+      "gitBlobSha": "76664f7e506c7e13b73621e675f7952b8391f12d",
+      "bytes": 292874
+    },
+    {
       "path": "dist/wallpapers/tyumen/day-v1.webp",
       "gitBlobSha": "08ad31e3d57154c0a6ba4a6a96fc80873aa5c8dd",
       "bytes": 201266
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v1.webp",
+      "gitBlobSha": "5bf75ff106e1ab54c471f0d613b1ec8f9e3c0b4c",
+      "bytes": 251518
+    },
+    {
+      "path": "dist/wallpapers/tyumen/night-tablet-v2.webp",
+      "gitBlobSha": "d22cb87bf1a89a9635196d0708082a7cc92ce0ff",
+      "bytes": 365470
     },
     {
       "path": "dist/wallpapers/tyumen/night-v1.webp",
@@ -2400,9 +2720,29 @@
       "bytes": 149284
     },
     {
+      "path": "dist/wallpapers/tyumen/sky-tablet-v1.svg",
+      "gitBlobSha": "5c8038aba0f0e74afa36dad80b12c9f063740343",
+      "bytes": 556
+    },
+    {
       "path": "dist/wallpapers/tyumen/sky-v1.svg",
       "gitBlobSha": "1281c1568a352f9415fa844c30f1b194f84c2bca",
       "bytes": 626
+    },
+    {
+      "path": "dist/wallpapers/uhud/day-v1.webp",
+      "gitBlobSha": "8d3044eea2fe7dbaaaf7cccd978f624a6c321af7",
+      "bytes": 291862
+    },
+    {
+      "path": "dist/wallpapers/uhud/night-v1.webp",
+      "gitBlobSha": "2ff08cfab7c3904c05941b574a751b9f90c93588",
+      "bytes": 121674
+    },
+    {
+      "path": "dist/wallpapers/uhud/sky-v1.svg",
+      "gitBlobSha": "204b06e23fba35a0f8f7dd4da2ebd709b12784b6",
+      "bytes": 419
     },
     {
       "path": "dist/weather.css",
@@ -2485,11 +2825,6 @@
       "bytes": 13031
     },
     {
-      "path": "mobile/README.md",
-      "gitBlobSha": "1aaaacfb1f8c9628e4c6d895616c4b16849de947",
-      "bytes": 5811
-    },
-    {
       "path": "mobile/capacitor.config.json",
       "gitBlobSha": "ff4a05aee4c63a1389dd20e7f45e3da6a5e85adf",
       "bytes": 81
@@ -2515,21 +2850,6 @@
       "bytes": 409
     },
     {
-      "path": "mobile/native/android/SalahPrayerWidgetProvider.java",
-      "gitBlobSha": "a7fa9b7e54ad4829a1bdddb24411d8a7bc742203",
-      "bytes": 7114
-    },
-    {
-      "path": "mobile/native/android/SalahWidgetPlugin.java",
-      "gitBlobSha": "ecc99bd10416b20a12f62ca587d7a39f671f69e6",
-      "bytes": 1224
-    },
-    {
-      "path": "mobile/native/android/salah_widget.xml",
-      "gitBlobSha": "378d05de60fcb637409a6d9e9491c4fe15bbfdcb",
-      "bytes": 5948
-    },
-    {
       "path": "mobile/native/android/salah_widget_bg.xml",
       "gitBlobSha": "05fa0fdac00f05414c8eef7bf6db1a3ce21acd16",
       "bytes": 333
@@ -2538,6 +2858,21 @@
       "path": "mobile/native/android/salah_widget_info.xml",
       "gitBlobSha": "6aadb0cab834cc60cf0974f450cacd2f223794e4",
       "bytes": 486
+    },
+    {
+      "path": "mobile/native/android/salah_widget.xml",
+      "gitBlobSha": "378d05de60fcb637409a6d9e9491c4fe15bbfdcb",
+      "bytes": 5948
+    },
+    {
+      "path": "mobile/native/android/SalahPrayerWidgetProvider.java",
+      "gitBlobSha": "a7fa9b7e54ad4829a1bdddb24411d8a7bc742203",
+      "bytes": 7114
+    },
+    {
+      "path": "mobile/native/android/SalahWidgetPlugin.java",
+      "gitBlobSha": "ecc99bd10416b20a12f62ca587d7a39f671f69e6",
+      "bytes": 1224
     },
     {
       "path": "mobile/native/android/widget_strings.xml",
@@ -2585,6 +2920,11 @@
       "bytes": 1048
     },
     {
+      "path": "mobile/README.md",
+      "gitBlobSha": "1aaaacfb1f8c9628e4c6d895616c4b16849de947",
+      "bytes": 5811
+    },
+    {
       "path": "mobile/scripts/android-release.mjs",
       "gitBlobSha": "75ca7f9ea603f29bf0c0a2d79a6b176f6920d238",
       "bytes": 2667
@@ -2630,14 +2970,14 @@
       "bytes": 2313
     },
     {
-      "path": "mobile/shared/README.md",
-      "gitBlobSha": "d6a0fc5816ccc989b7052af16a39011dfe532be6",
-      "bytes": 760
-    },
-    {
       "path": "mobile/shared/prayer-widget.schema.json",
       "gitBlobSha": "e90c66762511ebe55bb83e852d312a078333efe0",
       "bytes": 1732
+    },
+    {
+      "path": "mobile/shared/README.md",
+      "gitBlobSha": "d6a0fc5816ccc989b7052af16a39011dfe532be6",
+      "bytes": 760
     },
     {
       "path": "mobile/tests/ios/main.swift",
@@ -2653,6 +2993,11 @@
       "path": "mobile/tests/platform-licenses.mjs",
       "gitBlobSha": "7268f8c6352f498a6bfc39942f9997f658170cbf",
       "bytes": 3364
+    },
+    {
+      "path": "README.md",
+      "gitBlobSha": "9591ca669d3cc5be20227b3fa58eb544d80ff65d",
+      "bytes": 4813
     },
     {
       "path": "scripts/build-push-function.mjs",
@@ -3020,6 +3365,11 @@
       "bytes": 2609
     },
     {
+      "path": "SECURITY.md",
+      "gitBlobSha": "e6de2cd124e18ac1ed2d08950c226b848751e38b",
+      "bytes": 7819
+    },
+    {
       "path": "supabase/config.toml",
       "gitBlobSha": "f340a6efa6a5dc179131b551b0b720b0c1f312c7",
       "bytes": 559
@@ -3050,11 +3400,6 @@
       "bytes": 6690
     },
     {
-      "path": "supabase/functions/background-reminders/README.md",
-      "gitBlobSha": "3848c4de6105553aa6632cfc6bcb06881d1a4b35",
-      "bytes": 4587
-    },
-    {
       "path": "supabase/functions/background-reminders/core.mjs",
       "gitBlobSha": "539aa41b3dd1e7d648ed64df9aae1d51024f36a7",
       "bytes": 18615
@@ -3063,6 +3408,11 @@
       "path": "supabase/functions/background-reminders/index.ts",
       "gitBlobSha": "a646ce3f5e7bbf94fd05254306272b8144b8d3d9",
       "bytes": 37853
+    },
+    {
+      "path": "supabase/functions/background-reminders/README.md",
+      "gitBlobSha": "3848c4de6105553aa6632cfc6bcb06881d1a4b35",
+      "bytes": 4587
     },
     {
       "path": "supabase/functions/background-reminders/runtime.txt",
@@ -3080,16 +3430,6 @@
       "bytes": 10298
     },
     {
-      "path": "supabase/migrations/2026100201_background_reminders.sql",
-      "gitBlobSha": "607bab8375ef0ac1e16fdde004379f6f7d5c9fd7",
-      "bytes": 2030
-    },
-    {
-      "path": "supabase/migrations/2026100202_background_reminders_cron.sql",
-      "gitBlobSha": "251df95803240d223d714886810edf47c842ad1c",
-      "bytes": 580
-    },
-    {
       "path": "supabase/migrations/20261002_adhkar_accounts.sql",
       "gitBlobSha": "21bb12948a0ba182f8403876488537a9b8183535",
       "bytes": 842
@@ -3098,6 +3438,16 @@
       "path": "supabase/migrations/20261002_owner_presence.sql",
       "gitBlobSha": "ae3cb3e5a81d194a36bcd48c653557d948304e61",
       "bytes": 2185
+    },
+    {
+      "path": "supabase/migrations/2026100201_background_reminders.sql",
+      "gitBlobSha": "607bab8375ef0ac1e16fdde004379f6f7d5c9fd7",
+      "bytes": 2030
+    },
+    {
+      "path": "supabase/migrations/2026100202_background_reminders_cron.sql",
+      "gitBlobSha": "251df95803240d223d714886810edf47c842ad1c",
+      "bytes": 580
     },
     {
       "path": "supabase/migrations/20261004_notification_status.sql",
@@ -3148,296 +3498,27 @@
       "path": "supabase/tests/support_owner_messages.sql",
       "gitBlobSha": "a62bf3e9076a41fd585aa9e7abda7892f69c7b61",
       "bytes": 2332
-    },
+    }
+  ],
+  "incrementalEvidence": [
     {
-      "path": "dist/wallpapers/khujand/day-tablet-v1.webp",
-      "gitBlobSha": "03f0295e1c1a2edca097e041a47b9a67a24159bd",
-      "bytes": 458850
-    },
-    {
-      "path": "dist/wallpapers/khujand/night-tablet-v1.webp",
-      "gitBlobSha": "b9c0fe2dadcef40662292bb5b1ace090f79676cb",
-      "bytes": 374024
-    },
-    {
-      "path": "dist/wallpapers/khujand/sky-tablet-v1.svg",
-      "gitBlobSha": "67517e4f3b505528f0beee7f8eea3f5bca655b0d",
-      "bytes": 423
-    },
-    {
-      "path": "dist/js/vendor/jsQR-LICENSE.txt",
-      "gitBlobSha": "8f71f43fee3f78649d238238cbde51e6d7055c82",
-      "bytes": 11358
-    },
-    {
-      "path": "dist/wallpapers/tyumen/day-tablet-v1.webp",
-      "gitBlobSha": "76664f7e506c7e13b73621e675f7952b8391f12d",
-      "bytes": 292874
-    },
-    {
-      "path": "dist/wallpapers/tyumen/night-tablet-v1.webp",
-      "gitBlobSha": "5bf75ff106e1ab54c471f0d613b1ec8f9e3c0b4c",
-      "bytes": 251518
-    },
-    {
-      "path": "dist/wallpapers/tyumen/sky-tablet-v1.svg",
-      "gitBlobSha": "5c8038aba0f0e74afa36dad80b12c9f063740343",
-      "bytes": 556
-    },
-    {
-      "path": "dist/assets/window-new-york-day-tablet-v1.webp",
-      "gitBlobSha": "3197a9f212bbdfe2c10bfaada561ff7944329d50",
-      "bytes": 262828
-    },
-    {
-      "path": "dist/assets/window-new-york-night-tablet-v1.webp",
-      "gitBlobSha": "7df7bcf8e68f07798c490f6e50c687f335eb2392",
-      "bytes": 231266
-    },
-    {
-      "path": "dist/assets/window-sky-mask-tablet-v1.svg",
-      "gitBlobSha": "1fa8bc861ad12de5c616e125d7cf2ac15bdc28e5",
-      "bytes": 1092
-    },
-    {
-      "path": "dist/assets/window-weather-mask-tablet-v1.svg",
-      "gitBlobSha": "3066cc4deb62d152e6c2225454edbb49fa1a6d1f",
-      "bytes": 123
-    },
-    {
-      "path": "dist/assets/reciters/alafasy.webp",
-      "gitBlobSha": "747c2caaa027f8516df4118faacdeb2b4fccc924",
-      "bytes": 74448
-    },
-    {
-      "path": "dist/assets/reciters/tariqmuhammad.jpg",
-      "gitBlobSha": "c1aebe7d5d916aed5924d40b5c910a0b5a317bb2",
-      "bytes": 45719
-    },
-    {
-      "path": "dist/assets/reciters/abdurrahmanalsudais.jpg",
-      "gitBlobSha": "07748c5f9586153b1951a4cf4e2a0135b39a4064",
-      "bytes": 266990
-    },
-    {
-      "path": "dist/assets/reciters/abdullahaljuhany.jpg",
-      "gitBlobSha": "e2b612131717877caecf74538a622f20143625d1",
-      "bytes": 770854
-    },
-    {
-      "path": "dist/assets/reciters/salahalbudair.jpg",
-      "gitBlobSha": "12e727bb23c5504392a64ffc16fdca4ab17676be",
-      "bytes": 233817
-    },
-    {
-      "path": "dist/assets/reciters/abdulbarialthubaity.jpg",
-      "gitBlobSha": "22e3ffd56af535df71115e9e407b4789e595abef",
-      "bytes": 14883
-    },
-    {
-      "path": "dist/assets/reciters/abdulmuhsinalqasim.jpg",
-      "gitBlobSha": "1857fef18b25d5c251f4a1908f76d121e29a7d00",
-      "bytes": 169644
-    },
-    {
-      "path": "dist/assets/reciters/abdullahalbuayjan.jpg",
-      "gitBlobSha": "945c8367d3329ae09733c3d0fa1dbd66133e0b38",
-      "bytes": 163389
-    },
-    {
-      "path": "dist/assets/reciters/ahmadalhuthaifi.jpg",
-      "gitBlobSha": "eb5493a259fc21e23bc765ab2fd4526a08d5a46b",
-      "bytes": 51728
-    },
-    {
-      "path": "dist/assets/reciters/khalidalmuhanna.jpg",
-      "gitBlobSha": "a16e8c74d9ed20917ca50285359a3cd4fd7a7e16",
-      "bytes": 243861
-    },
-    {
-      "path": "dist/assets/reciters/alialhuthaifi.jpg",
-      "gitBlobSha": "bbfaf26d950b616515dbe7a61f91aa66792205f3",
-      "bytes": 112030
-    },
-    {
-      "path": "dist/assets/reciters/badralturki.jpg",
-      "gitBlobSha": "31e2ee957818cb92fd31e3e45955bafc583966a4",
-      "bytes": 78775
-    },
-    {
-      "path": "dist/assets/reciters/husary-original.png",
-      "gitBlobSha": "4dd567cfc1640aa043fb1f2f5708263803882766",
-      "bytes": 45384
-    },
-    {
-      "path": "dist/assets/reciters/yasseraldossari.jpg",
-      "gitBlobSha": "53c3e0e79b497ba867b355e9551981b519da278d",
-      "bytes": 66623
-    },
-    {
-      "path": "dist/assets/reciters/muhammadalluhaidan.jpg",
-      "gitBlobSha": "7a4b9fd5154c585004c496e431edfdd2f678dcfa",
-      "bytes": 388268
-    },
-    {
-      "path": "dist/assets/reciters/minshawi-original.jpg",
-      "gitBlobSha": "8ee627a2775739f2ef14da955fe5a12802a83149",
-      "bytes": 40674
-    },
-    {
-      "path": "dist/assets/reciters/bandarbalilah.png",
-      "gitBlobSha": "b8b3f799fde27c2ba4540cb97eed813822049102",
-      "bytes": 166573
-    },
-    {
-      "path": "dist/assets/reciters/saudalshuraim.jpg",
-      "gitBlobSha": "7d2837e62fc88ae3e169fc8b8957672fc92e70c5",
-      "bytes": 259784
-    },
-    {
-      "path": "dist/assets/reciters/mahermuaiqly.png",
-      "gitBlobSha": "bd409f19aeb3890d81a76755dc937900e7ea6fbd",
-      "bytes": 1151785
-    },
-    {
-      "path": "dist/assets/reciters/abdelazizsheim.jpg",
-      "gitBlobSha": "8588f77760fd99cdf4947df64d08b25b69815655",
-      "bytes": 116114
-    },
-    {
-      "path": "dist/assets/reciters/hazzaalbalushi.jpg",
-      "gitBlobSha": "34986c78d0265b63d05dc31ff14c497c7392459a",
-      "bytes": 45721
-    },
-    {
-      "path": "dist/assets/reciters/haithamaljadani.jpg",
-      "gitBlobSha": "c3babf97962402ded0b82f2eb61380dacaf8a4ce",
-      "bytes": 357361
-    },
-    {
-      "path": "dist/assets/reciters/raadalkurdi-approved.jpg",
-      "gitBlobSha": "0bfdae2becfb879590b5235e1f2b5b848cae6017",
-      "bytes": 144294
-    },
-    {
-      "path": "dist/assets/reciters/abdulrahmanmossad.jpg",
-      "gitBlobSha": "99a58162d947254e2d44f2749167ab5eb39dae60",
-      "bytes": 135227
-    },
-    {
-      "path": "dist/assets/reciters/haithamaldukhain.jpg",
-      "gitBlobSha": "a309b920ee6561a11e3a85f5c3caeb7a68158a10",
-      "bytes": 416507
-    },
-    {
-      "path": "dist/assets/reciters/ahmedkaseb.jpg",
-      "gitBlobSha": "01a2fb2d0dfa3153d44d4ea993c1df94a38db3e1",
-      "bytes": 168417
-    },
-    {
-      "path": "dist/assets/reciters/obaidamuafaq.jpg",
-      "gitBlobSha": "0bc92b3e2b8c4256843bd5882971cebe5142a255",
-      "bytes": 151843
-    },
-    {
-      "path": "dist/assets/reciters/siratulloraupov.jpg",
-      "gitBlobSha": "d4ba51f9eb49b0bb6f48a816f2f7271b25f8714c",
-      "bytes": 50424
-    },
-    {
-      "path": "dist/wallpapers/tyumen/night-tablet-v2.webp",
-      "gitBlobSha": "d22cb87bf1a89a9635196d0708082a7cc92ce0ff",
-      "bytes": 365470
-    },
-    {
-      "path": "dist/assets/reciters/idrisabkar.png",
-      "gitBlobSha": "5dd49b92f68b8324aacc7667424d9197cc31e3e8",
-      "bytes": 4085444
-    },
-    {
-      "path": "dist/assets/reciters/abubakrshatri.png",
-      "gitBlobSha": "2cc6292f9f487eff149333648e381c28b4ba0eca",
-      "bytes": 319888
-    },
-    {
-      "path": "dist/assets/reciters/nasseralqatami.png",
-      "gitBlobSha": "615685adb03a1563a8ffe194446fe4cf516b33f2",
-      "bytes": 252299
-    },
-    {
-      "path": "dist/assets/reciters/abdulbasitabdussamad.png",
-      "gitBlobSha": "c974b97f026d8c882449b18f9217d543e46f9435",
-      "bytes": 180494
-    },
-    {
-      "path": "dist/assets/reciters/mansouralsalimi.png",
-      "gitBlobSha": "94497df6bcc938747db05d6dadcd1d7c19f66f07",
-      "bytes": 461352
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/moon-mosque.webp",
-      "gitBlobSha": "fb19de936fded4ba9d197d5b476634a620e82d83",
-      "bytes": 100988
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/desert-dawn.webp",
-      "gitBlobSha": "4ee8e10e2c1d62a8f6897f90b0296a39fbbf493b",
-      "bytes": 168032
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/misty-lake.webp",
-      "gitBlobSha": "66ce977825859da1ffee324fa8ee8c8559473038",
-      "bytes": 211096
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/rain-window.webp",
-      "gitBlobSha": "3cd44d77c07c7649e5940bc011cb1726d9c7376d",
-      "bytes": 232244
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/ocean-dusk.webp",
-      "gitBlobSha": "b42d6e5034e7fb5fb9f9e287afdf9fc692404200",
-      "bytes": 196698
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/mosque-arches.webp",
-      "gitBlobSha": "6ea5b403968ae3dbddbeb3ee10bc63f152ca738e",
-      "bytes": 204278
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/olive-grove.webp",
-      "gitBlobSha": "29ef7500b4635d16144405dfa23d081c9bf7a09f",
-      "bytes": 276358
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/mountain-night.webp",
-      "gitBlobSha": "3772453d48f3d20db777db7ea8d655711b38282b",
-      "bytes": 247940
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/lantern-courtyard.webp",
-      "gitBlobSha": "334d704f7e9ea4209749871e0f0dbef2455addcd",
-      "bytes": 147828
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/garden-stream.webp",
-      "gitBlobSha": "fd641a07818ba52cfd75164d190893ef70e13864",
-      "bytes": 349722
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/snow-forest.webp",
-      "gitBlobSha": "19eb2f5bd80f3c3bc2584c3bde23836df16038de",
-      "bytes": 259234
-    },
-    {
-      "path": "dist/assets/ayah-backgrounds/coastal-mosque.webp",
-      "gitBlobSha": "e850c9f6a4c1ecd2ac8c2d085ce5402bed338354",
-      "bytes": 198720
-    },
-    {
-      "path": "dist/assets/salah-social-cover-v1.jpg",
-      "gitBlobSha": "53be94773a4c92ce7634dbcb6ee716418190239e",
-      "bytes": 100803
+      "date": "2026-10-11",
+      "paths": [
+        "dist/wallpapers/makkah/day-v1.webp",
+        "dist/wallpapers/makkah/night-v1.webp",
+        "dist/wallpapers/makkah/sky-v1.svg",
+        "dist/wallpapers/madinah/day-v1.webp",
+        "dist/wallpapers/madinah/night-v1.webp",
+        "dist/wallpapers/madinah/sky-v1.svg",
+        "dist/wallpapers/uhud/day-v1.webp",
+        "dist/wallpapers/uhud/night-v1.webp",
+        "dist/wallpapers/uhud/sky-v1.svg",
+        "dist/wallpapers/al-aqsa/day-v1.webp",
+        "dist/wallpapers/al-aqsa/night-v1.webp",
+        "dist/wallpapers/al-aqsa/sky-v1.svg"
+      ],
+      "evidence": "docs/holy-wallpapers-20261011.json",
+      "baseCommit": "84a8e7b216a539801e16afa1b738112e53124794"
     }
   ]
 }
