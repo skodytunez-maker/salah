@@ -219,13 +219,13 @@ header.quran-section-title{display:block;position:static;inset:auto;width:auto;m
 .quran-top-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;margin:8px 0 14px}
 .quran-top-actions>.ayah-day{margin:0;padding:0;border:0;min-width:0;background:none;overflow:visible}
 .quran-top-actions>.quran-broadcast-button,.quran-top-actions>.quran-continue,.quran-top-actions .quran-day-short{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:44px;min-height:44px;margin:0;padding:8px 6px;border:1px solid var(--line);border-radius:13px;background:#121c30;color:var(--gold);font-family:inherit;font-size:12px;font-weight:500;text-align:center;white-space:nowrap}
-.quran-top-actions>.quran-broadcast-button>svg{width:18px;height:18px;flex-shrink:0}
+.quran-top-actions :is(.quran-broadcast-button,.quran-day-short,.quran-continue)>svg{width:18px;height:18px;flex-shrink:0}
 .quran-top-actions>.quran-broadcast-button>span{display:block;flex:0}
 .quran-top-actions>.quran-broadcast-button strong,.quran-top-actions>.quran-continue>span,.quran-top-actions .quran-day-short>span{font-family:inherit;font-size:12px;font-weight:500;letter-spacing:0}
 .quran-top-actions :is(.quran-live-badge,small){display:none!important}
 .quran-top-actions>.quran-continue[hidden]{display:none!important}
 .quran-top-actions:has(>.quran-continue[hidden]),.quran-top-actions:not(:has(>.quran-continue)){grid-template-columns:repeat(2,minmax(0,1fr))}
-@media(max-width:360px){.quran-top-actions{gap:5px}.quran-top-actions>.quran-broadcast-button{gap:4px}.quran-top-actions>.quran-broadcast-button>svg{width:16px;height:16px}}
+@media(max-width:360px){.quran-top-actions{gap:5px}.quran-top-actions :is(.quran-broadcast-button,.quran-day-short,.quran-continue){gap:4px;padding-inline:4px}.quran-top-actions :is(.quran-broadcast-button,.quran-day-short,.quran-continue)>svg{width:16px;height:16px}.quran-top-actions :is(.quran-broadcast-button strong,.quran-day-short>span,.quran-continue>span){font-size:11px}}
 
 header.quran-section-title{height:auto}
 
