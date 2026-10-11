@@ -1,3 +1,4 @@
+import{staffRequest}from './staff-transport.js';
 import{enableNativeSupportNotifications}from './native-support-push.js';
 import{prepareSupportPhoto}from './support-photo.js';
 import{createSupportRpc}from './support-transport.js';
@@ -23,5 +24,5 @@ export async function showSupport(app){
  if(id!==screen||!app.isConnected||location.hash!==hash)return;
  if(!owner&&(requested||ownerNeedsMfa())){app.innerHTML='<section class="panel section"><a class="button" href="#account?owner=1">Войти в кабинет владельца</a></section>';return}
  app.innerHTML='<a class="settings-back" href="'+(owner?'#account':'#more')+'"><span aria-hidden="true">‹</span>'+(owner?'Мой аккаунт':'Меню')+'</a>'+title(owner?'Обращения пользователей':'Обращения в поддержку')+'<section class="panel section" id="support-root"></section>';
- const client=accountAuthClient();cleanup=mountSupportPanel(app.querySelector('#support-root'),{auth:{auth:client.auth,rpc:createSupportRpc(client)},app:'salah',version:APP_VERSION,owner,enableNotifications:enableSupportNotifications,signInHref:'#account',preparePhoto:owner?undefined:prepareSupportPhoto,createDiagnostics:owner?undefined:()=>createSupportDiagnostics({version:APP_VERSION}),initialThreadId:new URLSearchParams(hash.split('?')[1]||'').get('thread'),recipientId:owner&&validOwnerUserId(new URLSearchParams(hash.split('?')[1]||'').get('user'))?new URLSearchParams(hash.split('?')[1]||'').get('user'):null});
+ const client=accountAuthClient();cleanup=mountSupportPanel(app.querySelector('#support-root'),{auth:{auth:client.auth,rpc:createSupportRpc(client)},app:'salah',version:APP_VERSION,owner,enableNotifications:enableSupportNotifications,signInHref:'#account',preparePhoto:owner?undefined:prepareSupportPhoto,createDiagnostics:owner?undefined:()=>createSupportDiagnostics({version:APP_VERSION}),setTeamVisibility:owner?((id,visible)=>staffRequest('support.share',{id,visible})):undefined,initialThreadId:new URLSearchParams(hash.split('?')[1]||'').get('thread'),recipientId:owner&&validOwnerUserId(new URLSearchParams(hash.split('?')[1]||'').get('user'))?new URLSearchParams(hash.split('?')[1]||'').get('user'):null});
 }

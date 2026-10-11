@@ -48,6 +48,7 @@ export function validateAction(action,args){
  if(action==='draft.save'){exactObject(args,['id','kind','entityId','payload','revision']);const k=kind(args.kind);return{id:id(args.id),kind:k,entityId:args.entityId,payload:validateDraftPayload(k,args.payload,args.entityId),...(args.revision===undefined?{}:{revision:revision(args.revision)})};}
  if(action==='draft.submit'||action==='catalog.publish'){exactObject(args,['id','kind','revision']);return{id:id(args.id),kind:kind(args.kind),revision:revision(args.revision)};}
  if(action==='review.return'||action==='review.reject'){exactObject(args,['id','revision','note']);return{id:id(args.id),revision:revision(args.revision),note:cleanText(args.note,1000)};}
+ if(action==='support.share'){exactObject(args,['id','visible']);if(typeof args.visible!=='boolean')fail();return{id:id(args.id),visible:args.visible};}
  if(action==='support.list'){exactObject(args,['before']);return{before:timestamp(args.before)};}
  if(action==='support.read'||action==='support.close'){exactObject(args,['id']);return{id:id(args.id)};}
  if(action==='support.reply'){exactObject(args,['id','messageId','body']);return{id:id(args.id),messageId:id(args.messageId),body:cleanText(args.body,3000)};}
@@ -82,7 +83,7 @@ export function chatUpload(filename,data){
  if(ext==='txt'){if(bytes.includes(0))fail('invalid_file');try{new TextDecoder('utf-8',{fatal:true}).decode(bytes);}catch{fail('invalid_file');}}
  return{bytes,mimeType:allowed[ext]};
 }
-const OWNER_ACTIONS=new Set(['member.list','member.search','member.set','review.list','review.return','review.reject','catalog.publish','audit.list']);
+const OWNER_ACTIONS=new Set(['member.list','member.search','member.set','support.share','review.list','review.return','review.reject','catalog.publish','audit.list']);
 async function boundedJson(req,max){const reader=req.body?.getReader();if(!reader)fail();const chunks=[];let length=0;while(true){const r=await reader.read();if(r.done)break;length+=r.value.length;if(length>max){await reader.cancel();fail('request_too_large',413);}chunks.push(r.value);}const b=new Uint8Array(length);let offset=0;for(const c of chunks){b.set(c,offset);offset+=c.length;}try{return JSON.parse(new TextDecoder().decode(b));}catch{fail();}}
 export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()=>crypto.randomUUID(),publishDraft}){
  return async req=>{

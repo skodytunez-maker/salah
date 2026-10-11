@@ -1,4 +1,4 @@
-# SALAH staff cabinet — version 300
+# SALAH staff cabinet — version 301
 
 Status: owner explicitly approved the permanent role schema, private chat/files and public owner-approved media on 2026-10-12. Migration and four functions are deployed; frontend 299 is published. Version 300 corrects typed JSON arguments in the private adapter and verifies that unassigned/guest accounts have no cabinet entry. No staff member has been granted access and no real message has been sent.
 
@@ -57,3 +57,9 @@ Frontend 299 was published after guest-server checks. An authenticated browser c
 Unassigned accounts and guests have no cabinet entry, and direct denied navigation shows a neutral access-closed screen. Local DOM tests cover authorized, unassigned, guest, stale and direct-route cases.
 
 If rollout fails, preserve private data. Never delete schemas/buckets or purge published images as an automatic rollback.
+
+## Private correspondence and compact cabinet
+
+Existing and future support threads default to owner-private (`team_visible=false`). The team queue lists and opens only deliberately shared SALAH conversations. Reading, replying, closing and signing their photos all use the same server-side visibility gate. Administrators/moderators cannot change sharing; only the owner with MFA can. The private owner inbox still retains every conversation. Its “Передать команде” action confirms that staff will see all messages and photos, and “Вернуть в личные” closes staff access. This rollout shares no real conversation.
+
+“Публикации” groups reciter/wallpaper drafts with compact inner selectors. “Сообщения” groups shared support and team/direct chat. Their separate database permissions and storage remain enforced. Local PostgreSQL checks cover default privacy, staff direct-ID denial, owner-only sharing, MFA, cross-project denial and withdrawal without deletion.

@@ -19,6 +19,7 @@ async function main(){
  CREATE TABLE public.support_messages(id uuid PRIMARY KEY,thread_id uuid,author_id uuid,owner_reply boolean,body text,created_at timestamptz DEFAULT clock_timestamp());
  CREATE TABLE salah_support_private.photos(message_id uuid,object_path text,photo_index integer);`);
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011194033_staff_cabinet.sql'),'utf8'));
+ await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011221126_staff_support_privacy.sql'),'utf8'));
  const sessions=new Map();
  for(const [user,nickname] of [[owner,'Владелец (тест)'],[admin,'Админ (тест)'],[mod,'Модератор (тест)'],[outsider,'Не сотрудник (тест)']]){
   const sid=crypto.randomUUID();sessions.set(user,sid);
@@ -49,8 +50,10 @@ async function main(){
  await denied(()=>rpc('catalog.publish',{id:draft,revision:6,payload:{id:'ar.test-reciter'}}),'P0001');
  await as(mod);await denied(()=>rpc('draft.get',{id:draft,kind:'wallpaper'}),'42501');
  const support=crypto.randomUUID(),sahaba=crypto.randomUUID();await db.query(`INSERT INTO support_threads(id,user_id,app,subject,version,status)VALUES($1,$2,'salah','Тест',298,'new'),($3,$2,'sahaba','Другой проект',298,'new')`,[support,outsider,sahaba]);
- yes((await rpc('support.list')).length===1);await denied(()=>rpc('support.read',{id:sahaba}),'42501');yes((await rpc('support.read',{id:support})).thread.id===support);
+ yes((await rpc('support.list')).length===0);await denied(()=>rpc('support.read',{id:support}),'42501');await denied(()=>rpc('support.close',{id:support}),'42501');await denied(()=>rpc('support.reply',{id:support,messageId:crypto.randomUUID(),body:'Нет доступа'}),'42501');await denied(()=>rpc('support.share',{id:support,visible:true}),'42501');
+ await as(admin);await denied(()=>rpc('support.share',{id:support,visible:true}),'42501');await as(owner,'aal1');await denied(()=>rpc('support.share',{id:support,visible:true}),'42501');await as(owner);await denied(()=>rpc('support.share',{id:sahaba,visible:true}),'42501');yes((await rpc('support.list')).length===0);await rpc('support.share',{id:support,visible:true});await as(mod);yes((await rpc('support.list')).length===1);await denied(()=>rpc('support.read',{id:sahaba}),'42501');yes((await rpc('support.read',{id:support})).thread.id===support);
  await rpc('support.reply',{id:support,messageId:crypto.randomUUID(),body:'Тестовый ответ'});await rpc('support.close',{id:support});await denied(()=>rpc('support.reply',{id:support,messageId:crypto.randomUUID(),body:'Закрыт'}),'22023');
+ await as(owner);await rpc('support.share',{id:support,visible:false});await as(mod);yes((await rpc('support.list')).length===0);await denied(()=>rpc('support.read',{id:support}),'42501');yes((await db.query('select count(*) as n from support_threads')).rows[0].n===2);
  yes((await rpc('chat.contacts')).length===2);const team=(await rpc('chat.rooms'))[0];yes(team.kind==='team');
  const dm=await rpc('chat.open',{userId:admin});yes(dm.kind==='direct');await denied(()=>rpc('chat.open',{userId:outsider}),'42501');
  const file=crypto.randomUUID();await rpc('chat.file.register',{roomId:dm.id,fileId:file,path:`${mod}/${dm.id}/${file}/test.txt`,filename:'test.txt',mimeType:'text/plain',bytes:4,sha256:'1'.repeat(64)});
