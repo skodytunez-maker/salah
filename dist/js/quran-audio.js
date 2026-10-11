@@ -1,5 +1,5 @@
 import{loadSurahDurations,timelinePosition}from './quran-duration.js';
-import{requestMediaOutput}from './media-output-core.js';
+import{requestMediaOutput,prepareMediaOutput,clearMediaOutputSources}from './media-output-core.js';
 import{reciterInfo}from './quran-reciters.js';
 import{audioUrl}from './quran-data.js';
 import{offlineAudioStore}from './quran-offline-store.js';
@@ -9,20 +9,20 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  let startOffset=0,next=null,durationTable=null,durationTask=null,durationStatus=whole?'ready':'loading';const durationController=new AbortController();
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
  function emit(){if(!disposed)onState({index:current,status,ayah,timingStatus,canPrevious:!whole&&current>0,canNext:!whole&&current<surah.verses.length-1})}
- function discardPrepared(r){r.audio.onended=r.audio.onerror=r.audio.onloadedmetadata=null;r.audio.pause();r.audio.src='';if(r.objectUrl)URL.revokeObjectURL(r.objectUrl);}
+ function discardPrepared(r){r.audio.onended=r.audio.onerror=r.audio.onloadedmetadata=null;r.audio.pause();clearMediaOutputSources(r.audio);r.audio.src='';if(r.objectUrl)URL.revokeObjectURL(r.objectUrl);}
  function clearNext(){const pending=next;next=null;if(pending?.resource){discardPrepared(pending.resource);pending.resource=null;}}
  function prepareNext(){
   if(disposed||whole||!continuous||current>=surah.verses.length-1)return;
   clearNext();const pending={index:current+1,resource:null};next=pending;
   void(async()=>{let preparedUrl=null;try{
-   let url=audioUrl(surah.verses[pending.index].number,reciter,surah.number),blob=null;try{blob=await getAudio(url);}catch{}
+   const remoteUrl=audioUrl(surah.verses[pending.index].number,reciter,surah.number);let url=remoteUrl,blob=null;try{blob=await getAudio(url);}catch{}
    if(disposed||next!==pending)return;if(offlineOnly&&!blob){clearNext();return;}
    if(blob){preparedUrl=URL.createObjectURL(blob);url=preparedUrl;}
-   const prepared=createAudio(url);prepared.preload='auto';pending.resource={audio:prepared,objectUrl:preparedUrl};
+   const prepared=createAudio(url);prepareMediaOutput(prepared,remoteUrl,{networkAllowed:!offlineOnly});prepared.preload='auto';pending.resource={audio:prepared,objectUrl:preparedUrl};
    prepared.onerror=()=>{if(next===pending)clearNext();};prepared.load?.();
   }catch{if(next===pending){if(pending.resource)clearNext();else{next=null;if(preparedUrl)URL.revokeObjectURL(preparedUrl);}}}})();
  }
- function release(){timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
+ function release(){timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();clearMediaOutputSources(audio);audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
  function sync(id,force=false){
   if(disposed||id!==token||!audio||!whole)return;
   if(timings&&Number.isFinite(audio.duration)&&timings.at(-1).end>audio.duration+3){timings=null;timingStatus='unavailable';force=true}
@@ -37,12 +37,12 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   if(disposed||id!==token){if(prepared)discardPrepared(prepared);return;}
   try{
    if(prepared){audio=prepared.audio;objectUrl=prepared.objectUrl;}else{
-    let url=audioUrl(surah.verses[index].number,reciter,surah.number),blob=null;
+    const remoteUrl=audioUrl(surah.verses[index].number,reciter,surah.number);let url=remoteUrl,blob=null;
     try{blob=await getAudio(url);}catch{}
     if(blob){if(disposed||id!==token)return;objectUrl=URL.createObjectURL(blob);url=objectUrl}
     if(disposed||id!==token)return;
     if(offlineOnly&&!blob)throw Error('Сура не скачана');
-    audio=createAudio(url);
+    audio=createAudio(url);prepareMediaOutput(audio,remoteUrl,{networkAllowed:!offlineOnly});
    }
    audio.onerror=()=>fail(id);
    audio.onplay=()=>{if(!disposed&&id===token){status='playing';emit();}};audio.onpause=()=>{if(!disposed&&id===token&&status==='playing'&&!audio.ended){status='paused';emit();}};
