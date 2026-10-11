@@ -50,9 +50,9 @@ async function navigate(path){
  events.fetch({request:{mode:'navigate',method:'GET',url:'https://skodytunez-maker.github.io'+path,headers:new Headers()},respondWith:value=>{response=value},waitUntil:()=>{}});
  return response?await response:null;
 }
-for(const path of ['/salah/','/salah/index.html','/salah/owner.html']){
+for(const path of ['/salah/','/salah/index.html','/salah/share.html','/salah/owner.html']){
  const response=await navigate(path);
- assert.equal(await response.text(),'cached:https://skodytunez-maker.github.io'+(path==='/salah/'?'/salah/index.html':path));
+ assert.equal(await response.text(),'cached:https://skodytunez-maker.github.io'+(path==='/salah/'||path==='/salah/share.html'?'/salah/index.html':path));
 }
 for(const path of ['/salah/wallpapers/preview.html','/salah/api/private','/salah/unknown.html','/other-app/']){
  assert.equal(await navigate(path),null,'Non-app documents bypass the shell: '+path);

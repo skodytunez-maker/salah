@@ -1,17 +1,18 @@
 import{toast,modal}from './ui.js';
 export const PUBLIC_APP_URL='https://skodytunez-maker.github.io/salah/';
+export const PUBLIC_SHARE_URL=PUBLIC_APP_URL+'share.html';
 export function createAppSharing({navigator:device=globalThis.navigator,notify=toast,fallback=showLink}={}){
  let pending=false;
  async function copy(){
-  try{if(!device?.clipboard?.writeText)throw Error();await device.clipboard.writeText(PUBLIC_APP_URL);notify('Ссылка на SALAH скопирована.');}
-  catch{fallback(PUBLIC_APP_URL);}
+  try{if(!device?.clipboard?.writeText)throw Error();await device.clipboard.writeText(PUBLIC_SHARE_URL);notify('Ссылка на SALAH скопирована.');}
+  catch{fallback(PUBLIC_SHARE_URL);}
  }
  return{
   async share(){
    if(pending)return;pending=true;
    try{
     if(typeof device?.share==='function'){
-     try{await device.share({title:'SALAH',url:PUBLIC_APP_URL});return;}
+     try{await device.share({title:'SALAH',url:PUBLIC_SHARE_URL});return;}
      catch(error){if(error?.name==='AbortError')return;}
     }
     await copy();
