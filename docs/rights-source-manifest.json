@@ -3433,6 +3433,11 @@
       "path": "dist/assets/ayah-backgrounds/coastal-mosque.webp",
       "gitBlobSha": "e850c9f6a4c1ecd2ac8c2d085ce5402bed338354",
       "bytes": 198720
+    },
+    {
+      "path": "dist/assets/salah-social-cover-v1.jpg",
+      "gitBlobSha": "53be94773a4c92ce7634dbcb6ee716418190239e",
+      "bytes": 100803
     }
   ]
 }
