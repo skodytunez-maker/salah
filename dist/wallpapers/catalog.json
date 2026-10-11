@@ -255,6 +255,74 @@
       "night": "wallpapers/kuala-lumpur/night-v1.webp",
       "mask": "wallpapers/kuala-lumpur/sky-v1.svg",
       "fitSubject": true
+    },
+    {
+      "id": "makkah",
+      "name": "Мекка",
+      "landmark": "Кааба и мечеть Аль-Харам",
+      "latitude": 21.4225,
+      "longitude": 39.8262,
+      "radius": 30,
+      "day": "wallpapers/makkah/day-v1.webp",
+      "night": "wallpapers/makkah/night-v1.webp",
+      "mask": "wallpapers/makkah/sky-v1.svg",
+      "fitSubject": true,
+      "focalX": 0.5,
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
+    },
+    {
+      "id": "madinah",
+      "name": "Медина",
+      "landmark": "Мечеть Пророка",
+      "latitude": 24.4673,
+      "longitude": 39.6105,
+      "radius": 25,
+      "day": "wallpapers/madinah/day-v1.webp",
+      "night": "wallpapers/madinah/night-v1.webp",
+      "mask": "wallpapers/madinah/sky-v1.svg",
+      "fitSubject": true,
+      "focalX": 0.5,
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
+    },
+    {
+      "id": "uhud",
+      "name": "Гора Ухуд",
+      "landmark": "Красные скалы Ухуда",
+      "latitude": 24.5141,
+      "longitude": 39.6115,
+      "radius": 4,
+      "day": "wallpapers/uhud/day-v1.webp",
+      "night": "wallpapers/uhud/night-v1.webp",
+      "mask": "wallpapers/uhud/sky-v1.svg",
+      "fitSubject": true,
+      "focalX": 0.5,
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
+    },
+    {
+      "id": "al-aqsa",
+      "name": "Мечеть Аль-Акса",
+      "landmark": "Мечеть Аль-Акса в Иерусалиме",
+      "latitude": 31.7761,
+      "longitude": 35.2358,
+      "radius": 15,
+      "day": "wallpapers/al-aqsa/day-v1.webp",
+      "night": "wallpapers/al-aqsa/night-v1.webp",
+      "mask": "wallpapers/al-aqsa/sky-v1.svg",
+      "fitSubject": true,
+      "focalX": 0.5,
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.65
+      }
     }
   ]
 }

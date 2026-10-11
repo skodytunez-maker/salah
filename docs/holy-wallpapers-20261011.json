@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-11",
+  "baseCommit": "84a8e7b216a539801e16afa1b738112e53124794",
+  "method": "Built-in image_gen",
+  "scope": "New photographic-style artistic wallpaper illustrations based on factual landmark descriptions. No third-party image files supplied. Night variants are lighting edits of the generated day images. Provenance is not a certificate of exclusive copyright.",
+  "references": [
+    "https://commons.wikimedia.org/wiki/File:Holy_Kaaba.jpg",
+    "https://commons.wikimedia.org/wiki/File:Green_Dome_in_2024.jpg",
+    "https://www.visitsaudi.com/en/madinah/attractions/uhud-mountain-in-madinah",
+    "https://commons.wikimedia.org/wiki/File:Al-Aqsa_Mosque,_Jerusalem_-_Exterior_-_panoramio.jpg"
+  ],
+  "prompts": [
+    {
+      "id": "makkah",
+      "name": "Мекка",
+      "prompt": "Use case: ads-marketing. Asset type: SALAH app architectural wallpaper, full-bleed landscape 1536 x 1024, 3:2. A newly created photographic-style artistic illustration of the named real landmark, not a poster. Authentic restrained travel photography, fine natural stone texture, realistic non-fictional architecture, natural daylight and soft blue sky with a few wispy clouds. Composition engineered for both tablet and tall phone crops: the defining landmark MUST sit in the central 28% of image width (x 550..986 at 1536 pixels); keep every defining dome and minaret within the central 30% width. Buildings and landscape predominantly in lower half; upper 40% unobstructed quiet sky for app weather, no decorative framing. Peripheral buildings may be cropped on a phone but the identifying landmark must remain. Realistic proportions and distant camera position, subtle warm stone and cool sky, high-quality editorial image. No drawn Sun or Moon in the sky (the app adds astronomical objects), no text overlay, no logos or watermarks, no imaginary calligraphy or readable invented religious quotations, no ornate border, no fake UI. No nearby faces or identifiable people. No gold-glowing fantasy or CGI. Main subject: the Kaaba in Masjid al-Haram, Mecca. An accurate single black stone cuboid clothed in black kiswah with the recognizable restrained gold embroidered band near its top and gold door on its actual facade, not a mosque with a dome. Three-quarter view from the open white marble courtyard; Kaaba exactly at image center, about 240 pixels wide and 200 pixels high, its top around y 550 and base around y 750. The bright white real arcaded multi-level mosque is behind it at y 530..720, two slender pale mosque minarets at x 635 and x 900 extending up to y 310..400. Far surrounding urban towers may appear at far edges, no invented towers or domes. Tiny distant pilgrims only as soft, indistinct background scale, foreground largely unobstructed white marble. Frame respectfully and calmly; Kaaba's edges and black/gold identity clear, golden embroidery not rendered as legible text."
+    },
+    {
+      "id": "madinah",
+      "name": "Медина",
+      "prompt": "Use case: ads-marketing. Asset type: SALAH app architectural wallpaper, full-bleed landscape 1536 x 1024, 3:2. A newly created photographic-style artistic illustration of the named real landmark, not a poster. Authentic restrained travel photography, fine natural stone texture, realistic non-fictional architecture, natural daylight and soft blue sky with a few wispy clouds. Composition engineered for both tablet and tall phone crops: the defining landmark MUST sit in the central 28% of image width (x 550..986 at 1536 pixels); keep every defining dome and minaret within the central 30% width. Buildings and landscape predominantly in lower half; upper 40% unobstructed quiet sky for app weather, no decorative framing. Peripheral buildings may be cropped on a phone but the identifying landmark must remain. Realistic proportions and distant camera position, subtle warm stone and cool sky, high-quality editorial image. No drawn Sun or Moon in the sky (the app adds astronomical objects), no text overlay, no logos or watermarks, no imaginary calligraphy or readable invented religious quotations, no ornate border, no fake UI. No nearby faces or identifiable people. No gold-glowing fantasy or CGI. Main subject: Al-Masjid an-Nabawi, the Prophet's Mosque in Medina. True iconic modest GREEN DOME (not gold, not turquoise, not oversized) on the historic southern prayer hall, centered at x 780, top around y 530 and base around y 650. One recognizable adjacent historic slender white/cream minaret stands at x 670, tip around y 260 and base around y 660; another more distant modern cream minaret at x 905 can be smaller. Historic cream stone arcaded facade beneath the green dome, authentic closed courtyard umbrella columns at the far sides rather than blocking the dome, broad pale marble plaza below. Distinctive green dome and nearest minaret fully inside central 28% width for phone crop. Accurate mosque proportions, gentle morning light, wide open courtyard, no gold fantasy domes, no Kaaba, no giant umbrellas covering the whole frame."
+    },
+    {
+      "id": "uhud",
+      "name": "Гора Ухуд",
+      "prompt": "Use case: ads-marketing. Asset type: SALAH app architectural wallpaper, full-bleed landscape 1536 x 1024, 3:2. A newly created photographic-style artistic illustration of the named real landmark, not a poster. Authentic restrained travel photography, fine natural stone texture, realistic non-fictional architecture, natural daylight and soft blue sky with a few wispy clouds. Composition engineered for both tablet and tall phone crops: the defining landmark MUST sit in the central 28% of image width (x 550..986 at 1536 pixels); keep every defining dome and minaret within the central 30% width. Buildings and landscape predominantly in lower half; upper 40% unobstructed quiet sky for app weather, no decorative framing. Peripheral buildings may be cropped on a phone but the identifying landmark must remain. Realistic proportions and distant camera position, subtle warm stone and cool sky, high-quality editorial image. No drawn Sun or Moon in the sky (the app adds astronomical objects), no text overlay, no logos or watermarks, no imaginary calligraphy or readable invented religious quotations, no ornate border, no fake UI. No nearby faces or identifiable people. No gold-glowing fantasy or CGI. Main subject: the authentic Mount Uhud mountain range north of Medina in Saudi Arabia, viewed from its southern plain. A long rugged low red-brown and dusky ochre rock ridge spanning the image horizontally in the lower half, its highest broad irregular central shoulder around y 510, NOT a single cone, NOT a sharp Alpine peak, NOT snowy mountains, no forest. Real barren craggy volcanic/desert rock and sparse low scrub, broad sandy rocky foreground below y 730, subtle Medina low buildings at very distant far edges only. Warm pale morning side-light makes the reddish rock ridges tactile; clear airy sky above. The central ridge profile is strongly identifiable and remains inside the central phone crop. Quiet landscape, no invented monumental mosque or tomb, no cars or people in the foreground."
+    },
+    {
+      "id": "al-aqsa",
+      "name": "Мечеть Аль-Акса",
+      "prompt": "Use case: ads-marketing. Asset type: SALAH app architectural wallpaper, full-bleed landscape 1536 x 1024, 3:2. A newly created photographic-style artistic illustration of the named real landmark, not a poster. Authentic restrained travel photography, fine natural stone texture, realistic non-fictional architecture, natural daylight and soft blue sky with a few wispy clouds. Composition engineered for both tablet and tall phone crops: the defining landmark MUST sit in the central 28% of image width (x 550..986 at 1536 pixels); keep every defining dome and minaret within the central 30% width. Buildings and landscape predominantly in lower half; upper 40% unobstructed quiet sky for app weather, no decorative framing. Peripheral buildings may be cropped on a phone but the identifying landmark must remain. Realistic proportions and distant camera position, subtle warm stone and cool sky, high-quality editorial image. No drawn Sun or Moon in the sky (the app adds astronomical objects), no text overlay, no logos or watermarks, no imaginary calligraphy or readable invented religious quotations, no ornate border, no fake UI. No nearby faces or identifiable people. No gold-glowing fantasy or CGI. Main subject: the southern Al-Qibli prayer hall of the Al-Aqsa mosque compound in Jerusalem, viewed from its northern courtyard. The actual understated lead-grey / silver-grey rounded dome (NEVER a golden dome) centered over the central bay of the historic warm pale-stone facade, dome top around y 490 and base y 610. Correct seven-bay arcaded northern porch stretches horizontally at y 600..780, central entrance aligned with the dome, several dark arched openings and modest rectangular clerestory windows. Dome and central three arch bays contained within central 28% width. Side arcades can run towards image edges. Foreground warm limestone courtyard with subtle irregular wear, low olive foliage at far edges, blue sky in upper half. Do NOT depict the golden octagonal Dome of the Rock, no golden roof, no church, no crosses, no exaggerated spire, no fantasy architecture, no flags or political symbols."
+    }
+  ],
+  "nightPrompt": "Use case: lighting-weather. Edit target: supplied SALAH daytime wallpaper. Change ONLY time of day and ambient lighting to beautiful natural deep blue night. Preserve EXACT camera position, canvas ratio and dimensions, horizon, framing, physical shapes, coordinates, every building/dome/minaret/arch/Kaaba edge and the terrain. No camera movement, no resize, no new objects. Keep the named landmark completely unchanged and just relight it. A midnight indigo sky with very faint cloud texture; NO visible astronomical Moon or Sun, no star spray (the app overlays celestial bodies). Authentic restrained warm lighting on built structures if present, soft cool moonless ambient light and subtle rock visibility for the mountain. No invented neon outlines, no fantasy glowing golden dome, no text overlay or new lettering, no watermark. The Kaaba must remain black, Medina's dome GREEN, Al-Aqsa's dome grey, Mount Uhud red-brown. Do not add/remove pilgrims, umbrellas, columns, trees or architectural details. Night counterpart precisely aligned with day for a smooth opacity crossfade. Full bleed to all edges.",
+  "records": [
+    {
+      "id": "makkah",
+      "role": "day",
+      "path": "dist/wallpapers/makkah/day-v1.webp",
+      "bytes": 222692,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "deb3833fb7956b8a2ed7df6800ed6c5635b2de902e5110992bde68ace042705b",
+      "sha256": "2fd98f9be0048efee5210c509e9c707355445c9630ed8a1dbab82f7cc4873db5",
+      "gitBlobSha": "be149b52712e2b1d98c6006e98a2ec5fc8d3fae9",
+      "generationId": "exec-0eb4554b-8724-43ea-8f28-78931ad795c9",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "makkah",
+      "role": "night",
+      "path": "dist/wallpapers/makkah/night-v1.webp",
+      "bytes": 231296,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "533b5a440ead82bff62adefa76f5a5c36d828c57d20c3f06ca3cec35f8d2f8cd",
+      "sha256": "bfe6c396b10a81b30b6895178d489bd2ff18fce106a8235df0d7473eedb0cfa9",
+      "gitBlobSha": "f3c180ca6f5cd65348f05cdea0a6fd400ad442b1",
+      "generationId": "exec-7632ec14-074f-4e5f-9aaa-f52c5d812c7d",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "makkah",
+      "role": "mask",
+      "path": "dist/wallpapers/makkah/sky-v1.svg",
+      "bytes": 573,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": null,
+      "sha256": "5fff558814af43a7d8dec8101787a6ff27ba718c66801ea93101215f6c84d8ec",
+      "gitBlobSha": "656527ff5bae90e8724e81e1ce6dd1688b5e8442",
+      "generationId": null,
+      "processing": "Project-authored conservative source-space sky occlusion mask"
+    },
+    {
+      "id": "madinah",
+      "role": "day",
+      "path": "dist/wallpapers/madinah/day-v1.webp",
+      "bytes": 193200,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "dfb31259efc298811041729662dd329feae07bf39c413208c5eeee84a163fcf8",
+      "sha256": "c33c7f3f950d6fc26e02f984358b38007cf4e951ed3a38000a2d59724b040c9b",
+      "gitBlobSha": "062f284c4e96069f211de863f12a78c26739a5ba",
+      "generationId": "exec-7298e195-9e69-45fe-9ca3-948738d8014d",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "madinah",
+      "role": "night",
+      "path": "dist/wallpapers/madinah/night-v1.webp",
+      "bytes": 181808,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "187cf75bde64d52cb51443bd2472e28170971816d49f18cb50cdd8a8be888049",
+      "sha256": "1f6010c1151d8a0956e03c0fad0149a7a699895648e6a068211b210587761002",
+      "gitBlobSha": "41d89a7cb493dfb67b22173d32261ef6a82e20f4",
+      "generationId": "exec-9c4bf8c7-e13c-49bb-a7f9-d8adf90c220c",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "madinah",
+      "role": "mask",
+      "path": "dist/wallpapers/madinah/sky-v1.svg",
+      "bytes": 691,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": null,
+      "sha256": "c723b5b95bdb2b2ad8c2d70aa909688ba0cc9db3d2db6642dda39ae6ff42224f",
+      "gitBlobSha": "e4d6b9cb7c66ebabc0db275de640d6692a82aae0",
+      "generationId": null,
+      "processing": "Project-authored conservative source-space sky occlusion mask"
+    },
+    {
+      "id": "uhud",
+      "role": "day",
+      "path": "dist/wallpapers/uhud/day-v1.webp",
+      "bytes": 291862,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "2903f65f354a1bf479e7eff5e62cf09cfb3ae45692cafb5ab7001076b938e3aa",
+      "sha256": "906f7103c2e72418946251905db94d066253f440c146e7a875d7f4ea02201b9c",
+      "gitBlobSha": "8d3044eea2fe7dbaaaf7cccd978f624a6c321af7",
+      "generationId": "exec-e4ef646d-c80d-4842-88f2-c550603c2a82",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "uhud",
+      "role": "night",
+      "path": "dist/wallpapers/uhud/night-v1.webp",
+      "bytes": 121674,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "e3e9c274f8d5e73ff318f4c1db4c110d0ba5b650096fef64c54f133cb0252828",
+      "sha256": "f1a6a1d6bbe3325213b245d00462b6e029f56ed2a30bdb21d6b4c7d6ec7f542a",
+      "gitBlobSha": "2ff08cfab7c3904c05941b574a751b9f90c93588",
+      "generationId": "exec-037ad3d5-6576-4c44-a520-5cb0eb9e6168",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "uhud",
+      "role": "mask",
+      "path": "dist/wallpapers/uhud/sky-v1.svg",
+      "bytes": 419,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": null,
+      "sha256": "75bda284978fe6a2ad7eb3aa6f4d21a052ca7daeef796e9f3e55cdc5f7145720",
+      "gitBlobSha": "204b06e23fba35a0f8f7dd4da2ebd709b12784b6",
+      "generationId": null,
+      "processing": "Project-authored conservative source-space sky occlusion mask"
+    },
+    {
+      "id": "al-aqsa",
+      "role": "day",
+      "path": "dist/wallpapers/al-aqsa/day-v1.webp",
+      "bytes": 267338,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "25c01d0786fa84a1657447f4c9f31c2eebc9fff883f7014c77ca5a5d90fd955e",
+      "sha256": "b6915cf01e52755162264f20bef49eeb6c40d99d5517d3d2dfc21c22279b460c",
+      "gitBlobSha": "ced0a9181bb549e040b126214f1523d864ff5340",
+      "generationId": "exec-6736cfeb-91c3-418f-9a75-7b47bb2c9774",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "al-aqsa",
+      "role": "night",
+      "path": "dist/wallpapers/al-aqsa/night-v1.webp",
+      "bytes": 241944,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": "9c7e420a6963cc02b179c354a0e8d3f238d2319e43d8e040166008dba83f9e75",
+      "sha256": "9546a60a28fbc01cf050ee9f9c7b61ab15f400c27652f11d6ed7f8d51e1ac142",
+      "gitBlobSha": "45c30c51f95de46cefa6560a946aec9a72d3f1d2",
+      "generationId": "exec-3d0d0f79-a0b8-4f39-a804-20c29c421552",
+      "processing": "WebP encoding and normalized 1536x1024 source rectangle, no semantic pixel editing"
+    },
+    {
+      "id": "al-aqsa",
+      "role": "mask",
+      "path": "dist/wallpapers/al-aqsa/sky-v1.svg",
+      "bytes": 530,
+      "width": 1536,
+      "height": 1024,
+      "originalSha256": null,
+      "sha256": "05aaf7fd4fa4bb3e84306d31c3c5c4eee1fa0b2080c55186456ef23093412510",
+      "gitBlobSha": "90f64771a48d3a3c09333014409e3ec2c4a7b377",
+      "generationId": null,
+      "processing": "Project-authored conservative source-space sky occlusion mask"
+    }
+  ]
+}
