@@ -1,5 +1,5 @@
 import postgres from 'npm:postgres@3.4.9';
-import{COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionSubscription}from './core.mjs';
+import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionSubscription}from './core.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
 const url=Deno.env.get('SUPABASE_URL')!,key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL')!,{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
@@ -51,7 +51,7 @@ Deno.serve(async req=>{
  if(req.method!=='POST')return reply({error:'method'},405);
  if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}await ensure(user);
  if(body?.action==='snapshot'){
-  let snapshot;try{snapshot=competitionSnapshot(body);}catch{return reply({error:'invalid_snapshot'},400);}
+  let snapshot;try{const approved=await sql`SELECT entity_id FROM salah_staff_private.catalog WHERE kind='reciter'`;snapshot=competitionSnapshot(body,Date.now(),[...COMPETITION_RECITERS,...approved.map(x=>x.entity_id)]);}catch{return reply({error:'invalid_snapshot'},400);}
   await sql.begin(async tx=>{
    await tx`select pg_advisory_xact_lock(hashtextextended(${user.id},285))`;
    const pref=(await tx`select p.enabled,v.mode from salah_competition_private.preferences p join public.reciter_listener_visibility v using(user_id)where p.user_id=${user.id}::uuid`)[0];if(!pref.enabled||pref.mode==='hidden')throw Error('disabled');

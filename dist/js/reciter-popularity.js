@@ -8,7 +8,7 @@ import{createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodT
 const KEY='reciter-popularity-consent-v1',endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-popularity';
 let account=()=>({signedIn:false}),client=()=>null,cache=null,loaded=0,inflight=null,initialized=false;
 const rankingData=new Map();let selectedGlobalPeriod='month';
-const allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
+const allowed={has:id=>RECITERS.some(r=>!r.variantOf&&r.id===id)};
 export const popularityEnabled=()=>!!account().signedIn&&!!account().userId&&read(KEY+':'+account().userId,true)===true;
 
 let visibilityRevision=0;
@@ -18,7 +18,7 @@ export async function loadPopularReciters(){
  const task=(async()=>{
   const response=await fetch(endpoint+'?period='+period,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(10000)});
   if(!response.ok)throw Error('unavailable');const data=await response.json();if(!Array.isArray(data.items)||![1,7,30].includes(data.windowDays))throw Error('invalid');
-  const ids=[...new Set(data.items.filter(id=>allowed.has(id)))].slice(0,33);
+  const ids=[...new Set(data.items.filter(id=>allowed.has(id)))].slice(0,100);
   if(selectedGlobalPeriod!==period||visibilityRevision!==revision)return ids;
   rankingData.clear();for(const row of data.ranking||[])if(allowed.has(row.reciter)&&Number.isSafeInteger(row.minutes)&&row.minutes>0)rankingData.set(row.reciter,{minutes:row.minutes,seconds:Number.isSafeInteger(row.seconds)&&row.seconds>0?row.seconds:row.minutes*60,listeners:Array.isArray(row.listeners)?row.listeners.map(safeListener).filter(Boolean).slice(0,4):[]});
   cache=ids;loaded=Date.now();return ids;

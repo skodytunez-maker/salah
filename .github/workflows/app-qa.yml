@@ -1,9 +1,9 @@
 name: Verify complete SALAH app
 on:
   pull_request:
-    paths: ['dist/**', 'scripts/**', 'docs/**', '.github/workflows/app-qa.yml']
+    paths: ['dist/**', 'scripts/**', 'docs/**', 'supabase/**', 'tests/staff/**', '.github/workflows/app-qa.yml']
   push:
-    paths: ['dist/**', 'scripts/**', 'docs/**', '.github/workflows/app-qa.yml']
+    paths: ['dist/**', 'scripts/**', 'docs/**', 'supabase/**', 'tests/staff/**', '.github/workflows/app-qa.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,10 +21,19 @@ jobs:
           node-version: '22'
       - name: Check all application contracts and regressions
         run: node scripts/check-app.mjs "$RUNNER_TEMP/salah-app-qa.json"
+      - name: Install pinned local staff test dependencies
+        run: npx --yes pnpm@11.25.0 --dir tests/staff install --frozen-lockfile --ignore-scripts
+      - name: Verify actual staff schema and isolated DOM workflows
+        run: |
+          node tests/staff/check-database.cjs
+          node tests/staff/check-interface.mjs
       - name: Save QA report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: salah-app-qa
-          path: ${{ runner.temp }}/salah-app-qa.json
+          path: |
+            ${{ runner.temp }}/salah-app-qa.json
+            ${{ runner.temp }}/salah-staff-database-checks.json
+            ${{ runner.temp }}/salah-staff-interface-checks.json
           if-no-files-found: error

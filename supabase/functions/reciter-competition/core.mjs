@@ -6,9 +6,9 @@ export function competitionDay(value,now=Date.now()){
  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))throw Error('invalid_day');
  const time=Date.parse(value+'T00:00:00Z');if(!Number.isFinite(time)||new Date(time).toISOString().slice(0,10)!==value||Math.abs(time-now)>172800000)throw Error('invalid_day');return value;
 }
-export function competitionSnapshot(body,now=Date.now()){
+export function competitionSnapshot(body,now=Date.now(),approved=COMPETITION_RECITERS){
  if(!body||body.action!=='snapshot'||!validCompetitionId(body.device)||Object.keys(body).some(k=>!['action','device','totals','days','timeZone'].includes(k)))throw Error('invalid_snapshot');
- const totals={},days={},known=new Set(COMPETITION_RECITERS);
+ const totals={},days={},known=new Set(approved);
  if(!body.totals||Array.isArray(body.totals)||typeof body.totals!=='object'||!body.days||Array.isArray(body.days)||typeof body.days!=='object')throw Error('invalid_snapshot');
  let total=0;for(const[id,n]of Object.entries(body.totals)){if(!known.has(id)||!Number.isSafeInteger(n)||n<0||n>315360000)throw Error('invalid_total');totals[id]=n;total+=n;}if(total>315360000)throw Error('invalid_total');
  if(Object.keys(body.days).length>93)throw Error('invalid_days');
