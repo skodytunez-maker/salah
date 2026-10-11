@@ -18,7 +18,7 @@ export async function mountDailyAyah(slot,index,listen,{compact=false}={}){
   const surah=await loadSurah(position.surah);if(!slot.isConnected)return;
   const verse=surah.verses[position.ayah-1],meta=index.surahs[position.surah-1];
   if(compact){
-   slot.innerHTML='<button type="button" class="quran-day-short" aria-haspopup="dialog" aria-expanded="false" aria-controls="quran-day-popover"><span>Аят дня</span><small>'+position.surah+':'+position.ayah+'</small></button>';
+   slot.innerHTML='<button type="button" class="quran-day-short" aria-haspopup="dialog" aria-expanded="false" aria-controls="quran-day-popover">'+actionLabel('book','Аят дня')+'<small>'+position.surah+':'+position.ayah+'</small></button>';
    const invoker=slot.querySelector('button'),panel=document.createElement('section');panel.id='quran-day-popover';panel.className='quran-day-popover';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Аят дня');
    panel.innerHTML='<div class="quran-day-popover-head"><h2>Аят дня</h2><button type="button" class="quran-small-close" aria-label="Закрыть аят дня" data-day-close>'+actionIcon('close')+'</button></div><p class="muted">'+esc(meta.name)+' · '+position.surah+':'+position.ayah+'</p><p class="ayah-day-arabic" dir="rtl" lang="ar">'+esc(verse.arabic)+'</p><p class="ayah-day-translation">'+esc(verse.translation)+'</p><div class="ayah-day-actions"><button class="text-button" data-day-listen>'+actionLabel('play','Слушать')+'</button><button class="text-button" data-day-share>Поделиться</button><a class="text-button" href="#quran?surah='+position.surah+'&ayah='+position.ayah+'" data-day-read>Читать полностью</a></div>';
    document.body.append(panel);
