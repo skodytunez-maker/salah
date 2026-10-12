@@ -1,6 +1,6 @@
-export const APP_VERSION=316;
+export const APP_VERSION=317;
 export const APP_UPDATED_AT='2026-10-13';
-export const APP_CHANGES=["Медальоны лидера недели и месяца в общей серии наград.","Первопроходец SALAH — награда первым 100 пользователям.","Плавная анимация нового дня прослушивания в серии."];
+export const APP_CHANGES=["В профиле — только полученные награды, с горизонтальным пролистыванием."];
 // Public notes list new user-facing features or sections only. Internal settings,
 // maintenance fixes and owner-only changes stay in Git history, not these lists.
 // Keep the announcement unchanged for minor builds; advance only for major public features.

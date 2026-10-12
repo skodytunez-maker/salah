@@ -100,7 +100,32 @@
       "generationTool": "built-in imagegen",
       "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-e80f-7820-814f-73856ab0ee0f/exec-5459b4ff-2fb8-487c-a43f-212e5298cd61.png",
       "prompt": "Original founding-member satin pale platinum/ivory coin with gold SALAH mark, engraved thin geometric rim and exact НАЧАЛО, transparent background"
+    },
+    {
+      "kind": "month",
+      "path": "dist/assets/awards/leader-month-v2.png",
+      "gitBlobSha": "34c82359d2c5ca172171dd66a3fe08cc9a0df8cd",
+      "bytes": 1244369,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-32d5eb51-10c4-4362-9d0b-efebcce31c3c.png",
+      "prompt": "User-authorized distinct gold monthly calendar leader award: three-step winners podium, raised first step, SALAH arch/crescent/star trophy, isolated original transparent square."
+    },
+    {
+      "kind": "week",
+      "path": "dist/assets/awards/leader-week-v2.png",
+      "gitBlobSha": "b35fa220cb9bb42f4f527d45ea1c15ccbdd0772f",
+      "bytes": 1210798,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-ab6ab771-b229-4446-9b4d-06f1c758bac7.png",
+      "prompt": "User-authorized distinct silver weekly calendar leader award: three-step winners podium, raised first step, SALAH arch/crescent/star trophy, isolated original transparent square."
     }
   ],
-  "version": 316
+  "version": 316,
+  "calendarLeaderDirection": "Release317: sculptural podiums replace week/month medallions at user request; original streak medal family retained."
 }

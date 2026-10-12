@@ -3633,6 +3633,16 @@
       "path": "dist/assets/awards/founder-v1.png",
       "gitBlobSha": "a40db9d730ed677868c58b56afa007cb5aa7a6c9",
       "bytes": 2112585
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v2.png",
+      "gitBlobSha": "34c82359d2c5ca172171dd66a3fe08cc9a0df8cd",
+      "bytes": 1244369
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v2.png",
+      "gitBlobSha": "b35fa220cb9bb42f4f527d45ea1c15ccbdd0772f",
+      "bytes": 1210798
     }
   ],
   "incrementalEvidence": [
