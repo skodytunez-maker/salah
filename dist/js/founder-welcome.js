@@ -1,14 +1,23 @@
-import{modal,closeModal}from './ui.js';
 import{competitionOwn,refreshCompetitionOwn}from './competition-client.js';
 import{awardArtwork}from './quran-awards-core.js';
 import{FOUNDER_WELCOME_FIELD,founderWelcomeKey,founderWelcomeEligible,confirmedFounderUser,founderWelcomePreference,hasFounderWelcomeSeen}from './founder-welcome-core.js';
-let started=false;
-const assets=['./assets/awards/founder-gift-closed-v1.png','./assets/awards/founder-gift-open-v1.png',awardArtwork('founder')];
+let started=false,layer=null,exitTimer=null,removeTimer=null;
+const assets=[awardArtwork('founder')];
 let imageTask=null;
 const loadImages=()=>imageTask??=Promise.all(assets.map(src=>{const im=new Image();im.src=src;return im.decode();})).catch(error=>{imageTask=null;throw error;});
-export function showFounderWelcome({preview=false,onRewards=()=>{closeModal();location.hash='account';},reduced=matchMedia('(prefers-reduced-motion: reduce)').matches}={}){
- modal('<div class="founder-welcome'+(reduced?' founder-welcome-reduced':'')+'"><div class="modal-head"><span>SALAH</span><button type="button" class="text-button" data-close>Закрыть</button></div><div class="founder-gift-stage" aria-hidden="true"><img class="founder-gift-closed" src="'+assets[0]+'" alt=""><img class="founder-gift-open" src="'+assets[1]+'" alt=""><img class="founder-gift-medal" src="'+assets[2]+'" alt=""></div><h2>Первопроходец SALAH</h2><p>Спасибо, что вы с нами<br>с самого начала.</p>'+(preview?'<small>Предпросмотр · награды и счётчик не меняются</small>':'')+'<button type="button" class="button" data-founder-continue>Продолжить</button><button type="button" class="text-button" data-founder-rewards>Мои награды</button></div>');
- const root=document.querySelector('.founder-welcome');root.querySelector('[data-founder-continue]').onclick=closeModal;root.querySelector('[data-founder-rewards]').onclick=onRewards;
+export function hideFounderWelcome(root=layer,{immediate=false}={}){
+ if(!root||root!==layer)return;
+ clearTimeout(exitTimer);clearTimeout(removeTimer);
+ const remove=()=>{if(layer===root)layer=null;root.remove();root.dispatchEvent(new window.Event('founder-welcome-ended'));};
+ if(immediate||root.classList.contains('founder-welcome-reduced')){remove();return;}
+ root.classList.add('founder-welcome-ending');removeTimer=setTimeout(remove,420);
+}
+export function showFounderWelcome({preview=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches}={}){
+ hideFounderWelcome(layer,{immediate:true});
+ const root=document.createElement('div');root.className='founder-welcome'+(reduced?' founder-welcome-reduced':'');
+ root.innerHTML='<button type="button" class="founder-welcome-close" aria-label="Закрыть благодарность"><img src="./assets/x-lg.svg" alt=""></button><div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+'" alt=""></div><h2>Спасибо, что вы с нами.</h2><p>Первопроходец SALAH</p>'+(preview?'<small>Предпросмотр · награды и счётчик не меняются</small>':'')+'</div>';
+ layer=root;document.body.append(root);root.querySelector('.founder-welcome-close').onclick=()=>hideFounderWelcome(root);
+ exitTimer=setTimeout(()=>hideFounderWelcome(root),15000);
  return root;
 }
 export function initFounderWelcome({getAccount,getClient,canShow=()=>true,isReduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches,playback}){
@@ -28,8 +37,9 @@ export function initFounderWelcome({getAccount,getClient,canShow=()=>true,isRedu
    if(seen(id)&&!requested()){await acknowledge(id);return;}
    await loadImages();if(!active(id)||!founderWelcomeEligible(getAccount(),competitionOwn()?.awards))return;
    const root=showFounderWelcome({reduced:isReduced()});mark(id);if(requested()){try{history.replaceState(history.state,'',location.pathname+location.search+'#home');}catch{}}
-   const guard=()=>{if(getAccount().userId!==id&&root.isConnected)closeModal();};
-   window.addEventListener('salah:counter-status',guard);document.getElementById('modal').addEventListener('close',()=>window.removeEventListener('salah:counter-status',guard),{once:true});
+   const guard=()=>{if(root.isConnected&&(getAccount().userId!==id||document.hidden||location.hash.split('?')[0]!=='#home'))hideFounderWelcome(root,{immediate:true});};
+   window.addEventListener('salah:counter-status',guard);window.addEventListener('hashchange',guard);document.addEventListener('visibilitychange',guard);
+   root.addEventListener('founder-welcome-ended',()=>{window.removeEventListener('salah:counter-status',guard);window.removeEventListener('hashchange',guard);document.removeEventListener('visibilitychange',guard);},{once:true});
    if(!remoteSeen)await acknowledge(id);
   }catch{}finally{busy=false;}
  }
