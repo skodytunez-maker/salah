@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';import fs from 'node:fs/promises';
+import{QURAN_AWARDS,safeAward,safeAwardState,awardShareIdentity,awardPeriod,weekDays}from '../dist/js/quran-awards-core.js';
+assert.deepEqual(QURAN_AWARDS.map(a=>a.kind),['week','month']);
+const id='11111111-1111-4111-8111-111111111111',row={id,kind:'week',start:'2026-10-12',end:'2026-10-19',reciter:'ar.alafasy',seconds:1982,listener:{id,mode:'initial',initial:'SA',nickname:'Secret nickname',hasPhoto:true}};
+const result=safeAward(row);assert.ok(result);assert.ok(!JSON.stringify(result).includes('Secret nickname'));assert.equal(awardShareIdentity(result.listener).photo,false);assert.equal(awardShareIdentity(result.listener).label,'SA');
+assert.equal(safeAward({...row,kind:'streak7'}),null);assert.equal(safeAward({...row,start:'2026-02-30'}),null);assert.equal(safeAward({...row,seconds:-1}),null);assert.ok(!awardPeriod(row).includes('19 окт'),'Display end of Sunday, not following Monday');
+const days=weekDays('2026-10-13',['2026-10-12']);assert.equal(days.length,7);assert.equal(days[0].day,'2026-10-12');assert.equal(days[0].heard,true);assert.equal(days[1].today,true);assert.equal(days[2].future,true);
+const state=safeAwardState({day:'2026-10-13',items:[row],listener:row.listener,streak:{current:2,best:9,today:true,days:['2026-10-12','2026-10-13','bad']}});assert.equal(state.streak.days.length,2);
+const code=await fs.readFile(new URL('../dist/js/quran-awards.js',import.meta.url),'utf8');assert.ok(!code.includes('localStorage'),'Private awards are never cached across accounts');assert.match(code,/navigator\.canShare/);assert.match(code,/1080/);assert.match(code,/1920/);
+for(const page of ['index','share','owner'])assert.match(await fs.readFile(new URL('../dist/'+page+'.html',import.meta.url),'utf8'),/css\/quran-awards.css/);
+const sqlFile=(await fs.readdir(new URL('../supabase/migrations/',import.meta.url))).find(f=>f.endsWith('_quran_awards.sql')),sql=await fs.readFile(new URL('../supabase/migrations/'+sqlFile,import.meta.url),'utf8');assert.match(sql,/security invoker/g);assert.match(sql,/enable row level security/g);assert.ok(!sql.includes('streak7')&&!sql.includes('streak30'));assert.match(sql,/interval '24 hours'/);assert.match(sql,/where b.place=1/);
+console.log('PASS: two reward types, safe anonymous cards, calendar dates, daily counter, authenticated privacy, shell assets and actual export controls.');

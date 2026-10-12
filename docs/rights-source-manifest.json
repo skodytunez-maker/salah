@@ -3558,6 +3558,16 @@
       "path": "supabase/tests/support_owner_messages.sql",
       "gitBlobSha": "a62bf3e9076a41fd585aa9e7abda7892f69c7b61",
       "bytes": 2332
+    },
+    {
+      "path": "dist/assets/icons/trophy.svg",
+      "gitBlobSha": "195b169c848c675f8410f17cb79c890ef6724207",
+      "bytes": 1001
+    },
+    {
+      "path": "dist/assets/icons/medal.svg",
+      "gitBlobSha": "7c9fddde7d9c686a42f32a35d2cfb1450f4e8e4a",
+      "bytes": 977
     }
   ],
   "incrementalEvidence": [
