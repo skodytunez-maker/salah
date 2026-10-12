@@ -2,3 +2,5 @@
 .competition-award-badges{display:inline-flex;gap:3px;flex:none}.competition-award-badges img{width:12px;height:12px}.award-mini-list{max-width:290px;margin-left:auto;margin-right:auto}
 
 #account-awards .award-section-head h2{font-size:18px;line-height:1.25}#account-awards .award-section-head .text-button{font-size:11px;padding:4px 0}#account-awards .award-section-head{margin-bottom:10px}#account-awards .award-mini-list{margin-top:12px;margin-bottom:3px}
+
+.award-reserves{display:flex;align-items:center;gap:5px;font-size:11px;color:#a6afc3;margin:9px 0 11px;flex-wrap:wrap}.award-reserves img{width:14px;height:14px}.award-reserves small{font-size:10px;margin-left:auto;color:#909db4}.award-day.is-protected{color:#9cbedf;border-color:#9cbedf42;background:#9cbedf10}

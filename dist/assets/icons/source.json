@@ -18,5 +18,30 @@
     "path": "assets/icons/medal.svg",
     "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/medal.svg",
     "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/seedling.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/seedling.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/book-open.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/book-open.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/gem.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/gem.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/award.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/award.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/snowflake.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/snowflake.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
   }
 ]

@@ -3568,6 +3568,31 @@
       "path": "dist/assets/icons/medal.svg",
       "gitBlobSha": "7c9fddde7d9c686a42f32a35d2cfb1450f4e8e4a",
       "bytes": 977
+    },
+    {
+      "path": "dist/assets/icons/seedling.svg",
+      "gitBlobSha": "e05c7fd0ef6a293f8f3fdb3923cf3da6fc4d4644",
+      "bytes": 558
+    },
+    {
+      "path": "dist/assets/icons/book-open.svg",
+      "gitBlobSha": "7a6a9c026971cf98e733fe7d7f1a5f40771e08d6",
+      "bytes": 770
+    },
+    {
+      "path": "dist/assets/icons/gem.svg",
+      "gitBlobSha": "ca8c3d48025f0c6c3ef20e37c5db4bcacdb42599",
+      "bytes": 763
+    },
+    {
+      "path": "dist/assets/icons/award.svg",
+      "gitBlobSha": "352599ad084e939b5bfb147a15f4383fa0985355",
+      "bytes": 1702
+    },
+    {
+      "path": "dist/assets/icons/snowflake.svg",
+      "gitBlobSha": "c1fc2fb3926d860c70c68a90ef111311928fe2b8",
+      "bytes": 1523
     }
   ],
   "incrementalEvidence": [
