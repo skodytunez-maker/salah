@@ -3653,6 +3653,16 @@
       "path": "dist/assets/awards/leader-month-v3.png",
       "gitBlobSha": "a7e47321c8b3ca93bd84abb0f0c42be6a4db7627",
       "bytes": 1120968
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v4.png",
+      "gitBlobSha": "cda58c5c8bec3a07a6a40a8395501592ddc9cebe",
+      "bytes": 790339
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v4.png",
+      "gitBlobSha": "99428031af97554c09f3ac7aa5434c6e6fbf0575",
+      "bytes": 669105
     }
   ],
   "incrementalEvidence": [

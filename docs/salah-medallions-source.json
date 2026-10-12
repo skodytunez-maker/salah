@@ -148,8 +148,32 @@
       "generationTool": "built-in imagegen",
       "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-06b34ea3-ffc3-4987-a5f1-38972492ef8e.png",
       "prompt": "User-requested edit of leader-month-v2 podium: replace complete arch/crescent trophy with one sculptural capital S; preserve gold three-step2/1/3 base and transparent original pixels."
+    },
+    {
+      "kind": "week",
+      "path": "dist/assets/awards/leader-week-v4.png",
+      "gitBlobSha": "cda58c5c8bec3a07a6a40a8395501592ddc9cebe",
+      "bytes": 790339,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-8a75d422-a46e-42de-b510-a0860fc10ee3.png",
+      "prompt": "User-requested low broad podium redesign avoiding tall central hand-like silhouette: modest20%stepheight difference, compact round plaque with engraved capital S, transparent original square, silver satin."
+    },
+    {
+      "kind": "month",
+      "path": "dist/assets/awards/leader-month-v4.png",
+      "gitBlobSha": "99428031af97554c09f3ac7aa5434c6e6fbf0575",
+      "bytes": 669105,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-b62a86f1-aed2-4097-89dc-735768cebcd7.png",
+      "prompt": "User-requested low broad podium redesign avoiding tall central hand-like silhouette: modest20%stepheight difference, compact round plaque with engraved capital S, transparent original square, gold satin."
     }
   ],
   "version": 316,
-  "calendarLeaderDirection": "Final318: capital S sculptural podiums for weekly/monthly leaders; user distinguishes them from arch/crescent consistency medallions."
+  "calendarLeaderDirection": "Final318: low broad podiums with small round engraved S plaque remove tall narrow silhouette, while consistency milestones retain the selected arch/crescent medallion family."
 }

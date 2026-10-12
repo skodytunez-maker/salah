@@ -34,4 +34,4 @@ Release317: calendar leaders have distinct silver/week and gold/month podium art
 
 Release318: the My Awards heading itself is a compact same-font toggle to Missing. Earned opens first; missing types remain explicitly unearned. Both strips support native horizontal swiping; selection survives routine own-state refresh. Keyboard activation and a small directional arrow make the single button accessible. Separate collection retained for existing callers.
 
-Final318 leader refinement: the trophy atop each silver/week or gold/month podium is a large sculptural capital S, keeping winner awards distinct from the arch/crescent medallion series.
+Final318 leader refinement: the trophy atop each low, broad silver/week or gold/month podium is a compact round plaque with an engraved capital S, keeping winner awards distinct from the arch/crescent medallion series.

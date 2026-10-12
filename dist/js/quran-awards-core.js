@@ -1,7 +1,7 @@
 import{safeListener,rankTime}from './reciter-ranking-core.js';
 export const QURAN_AWARDS=[
- {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v3.png',color:'#c2cbd8',rule:'Первое место по времени любимого чтеца за календарную неделю.'},
- {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v3.png',color:'#d8be88',rule:'Первое место по времени любимого чтеца за календарный месяц.'},
+ {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Первое место по времени любимого чтеца за календарную неделю.'},
+ {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Первое место по времени любимого чтеца за календарный месяц.'},
  {kind:'streak7',title:'Неделя с Кораном',icon:'seedling',color:'#bf926c',days:7,artwork:'assets/awards/streak-7-v1.png',rule:'7 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak30',title:'Месяц с Кораном',icon:'book-open',color:'#d8be88',days:30,artwork:'assets/awards/streak-30-v1.png',rule:'30 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak100',title:'100 дней с Кораном',icon:'gem',color:'#c2cbd8',days:100,artwork:'assets/awards/streak-100-v1.png',rule:'100 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
