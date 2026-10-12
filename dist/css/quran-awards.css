@@ -16,3 +16,7 @@
 .award-total{font-size:11px;color:#a6afc3}.award-mini-status{display:block;color:#a6afc3;font-size:10px;line-height:1.4;margin-top:4px}
 
 .award-heading-switch{display:inline-flex;align-items:center;gap:8px;min-height:36px;border:0;background:none;color:inherit;font:inherit;text-align:left;padding:0;cursor:pointer}.award-heading-switch img{width:14px;height:14px;flex:none;opacity:.75}.award-heading-switch .points-next{transform:rotate(180deg)}.award-heading-switch:focus-visible{outline:2px solid #d8be88;outline-offset:4px;border-radius:5px}
+
+#account-awards{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+
+#account-awards .award-section-head .award-heading-switch{font:inherit;line-height:inherit;color:inherit;background:none;border:0;padding:0;display:inline-flex;align-items:center;gap:8px;min-height:36px;text-align:left;width:auto}
