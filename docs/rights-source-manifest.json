@@ -3663,6 +3663,16 @@
       "path": "dist/assets/awards/leader-month-v4.png",
       "gitBlobSha": "99428031af97554c09f3ac7aa5434c6e6fbf0575",
       "bytes": 669105
+    },
+    {
+      "path": "dist/assets/icons/shield-heart.svg",
+      "gitBlobSha": "7a7e06b169cad8d90babf9d7fcb5f972e6bcb5eb",
+      "bytes": 754
+    },
+    {
+      "path": "dist/assets/icons/arrows-rotate.svg",
+      "gitBlobSha": "f387bb72df8eb615cd963096f61c83cb9b4cc382",
+      "bytes": 1086
     }
   ],
   "incrementalEvidence": [

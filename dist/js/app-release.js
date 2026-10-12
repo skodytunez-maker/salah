@@ -1,6 +1,6 @@
-export const APP_VERSION=319;
+export const APP_VERSION=320;
 export const APP_UPDATED_AT='2026-10-13';
-export const APP_CHANGES=["В профиле — переключение полученных и неполученных наград одной кнопкой."];
+export const APP_CHANGES=["Счётчик переключается между текущей и лучшей серией."];
 // Public notes list new user-facing features or sections only. Internal settings,
 // maintenance fixes and owner-only changes stay in Git history, not these lists.
 // Keep the announcement unchanged for minor builds; advance only for major public features.

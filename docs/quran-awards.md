@@ -35,3 +35,5 @@ Release317: calendar leaders have distinct silver/week and gold/month podium art
 Release318: the My Awards heading itself is a compact same-font toggle to Missing. Earned opens first; missing types remain explicitly unearned. Both strips support native horizontal swiping; selection survives routine own-state refresh. Keyboard activation and a small directional arrow make the single button accessible. Separate collection retained for existing callers.
 
 Final318 leader refinement: the trophy atop each low, broad silver/week or gold/month podium is a compact round plaque with an engraved capital S, keeping winner awards distinct from the arch/crescent medallion series.
+
+Release320: current/best series toggle, licensed protection/recovery icons and recovery progress. Reward collection title/close controls sit outside the scrolling body; the long detail footer is removed. Actual daily animation only appears in Quran after60confirmed played seconds; leaving Quran cancels pending presentation, without changing counters, and the first threshold requests the normal bounded upload promptly. Account preview remains explicitly labelled and read-only.

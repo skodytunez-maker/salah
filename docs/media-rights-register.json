@@ -1884,6 +1884,26 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/salah-medallions-source.json",
       "note": "Built-in ImageGen original low broad calendar winner podium, user-requested shape correction and round S plaque; native transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/icons/shield-heart.svg",
+      "gitBlobSha": "7a7e06b169cad8d90babf9d7fcb5f972e6bcb5eb",
+      "bytes": 754,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Official Font Awesome Free6.7.2 shield-heart icon; original paths and attribution retained, fill recolored to SALAH palette. Source in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/icons/arrows-rotate.svg",
+      "gitBlobSha": "f387bb72df8eb615cd963096f61c83cb9b4cc382",
+      "bytes": 1086,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Official Font Awesome Free6.7.2 arrows-rotate icon; original paths and attribution retained, fill recolored to SALAH palette. Source in dist/assets/icons/source.json."
     }
   ],
   "wallpaperSets": [

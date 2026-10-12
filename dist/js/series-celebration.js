@@ -1,5 +1,5 @@
-import{createSeriesCelebration}from './series-celebration-core.js';
-import{competitionOwn}from './competition-client.js';
+import{createSeriesCelebration,isQuranCelebrationRoute}from './series-celebration-core.js';
+import{competitionOwn,syncCompetitionNow}from './competition-client.js';
 import{personalListening}from './reciter-popularity.js';
 import{listeningDayKey}from './reciter-popularity-core.js';
 import{dayCountLabel}from './quran-awards-core.js';
@@ -18,11 +18,12 @@ export function showSeriesCelebration(event){
  timer=setTimeout(()=>{if(layer){layer.classList.add('series-celebration-ending');timer=setTimeout(hideSeriesCelebration,reduced?1:320);}},reduced?1400:2300);
 }
 export function initSeriesCelebration({getAccount}){
- if(started)return;started=true;const engine=createSeriesCelebration({storage:localStorage,getUser:getAccount,getOwn:()=>competitionOwn()?.awards,getLocalDay:()=>{const day=listeningDayKey(Date.now()),values=personalListening().days?.[day]||{};return{day,seconds:Object.values(values).reduce((n,s)=>n+(Number.isFinite(s)?s:0),0)};},isVisible:()=>!document.hidden&&!document.getElementById('modal')?.open,show:showSeriesCelebration});
+ if(started)return;started=true;const engine=createSeriesCelebration({storage:localStorage,getUser:getAccount,getOwn:()=>competitionOwn()?.awards,getLocalDay:()=>{const day=listeningDayKey(Date.now()),values=personalListening().days?.[day]||{};return{day,seconds:Object.values(values).reduce((n,s)=>n+(Number.isFinite(s)?s:0),0)};},isVisible:()=>isQuranCelebrationRoute(location.hash)&&!document.hidden&&!document.getElementById('modal')?.open,show:showSeriesCelebration});
  let scope=getAccount()?.userId||null;
  const auth=()=>{const id=getAccount()?.signedIn?getAccount().userId:null;if(scope!==id){hideSeriesCelebration();engine.reset();scope=id;}engine.observe();};
  window.addEventListener('salah:counter-status',auth);window.addEventListener('salah:competition-updated',()=>engine.observe());
- window.addEventListener('salah:personal-listening-progress',()=>engine.progress());
+ window.addEventListener('salah:personal-listening-progress',()=>{if(isQuranCelebrationRoute(location.hash)&&engine.progress())void syncCompetitionNow(true);});
+ window.addEventListener('hashchange',()=>{if(!isQuranCelebrationRoute(location.hash)){hideSeriesCelebration();engine.cancelPending();}engine.observe();});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)hideSeriesCelebration();else engine.observe();});
  document.getElementById('modal')?.addEventListener('close',()=>engine.observe());engine.observe();
 }
