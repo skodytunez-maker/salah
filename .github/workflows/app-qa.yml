@@ -19,10 +19,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check all application contracts and regressions
-        run: node scripts/check-app.mjs "$RUNNER_TEMP/salah-app-qa.json"
       - name: Install pinned local staff test dependencies
         run: npx --yes pnpm@11.25.0 --dir tests/staff install --frozen-lockfile --ignore-scripts
+      - name: Check all application contracts and regressions
+        run: node scripts/check-app.mjs "$RUNNER_TEMP/salah-app-qa.json"
       - name: Verify actual staff schema and isolated DOM workflows
         run: |
           node tests/staff/check-database.cjs
