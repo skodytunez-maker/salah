@@ -4,7 +4,11 @@ import{RECITERS}from './quran-reciters.js';
 import{listeningDayKey}from './reciter-popularity-core.js';
 import{safeListener}from './reciter-ranking-core.js';
 const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition',allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
-let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,initialized=false,own=null,scope=null,inflight=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
+const boards=new Map(),boardRequests=new Map();
+export function cachedCompetition(period='all'){const entry=boards.get(listeningDayKey(Date.now())+':'+period);return entry&&Date.now()-entry.at<10000?entry.rows.slice():null;}
+export function clearCompetitionCache(){boards.clear();for(const request of boardRequests.values())request.controller.abort();boardRequests.clear();}
+export function preloadCompetition(){return loadCompetition('all').catch(()=>[]);}
+let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
 export const competitionOwn=()=>own&&scope===account().userId?own:null;
 export const competitionAvatar=id=>endpoint+'?avatar='+encodeURIComponent(id);
 const announce=()=>window.dispatchEvent(new Event('salah:competition-updated'));
@@ -16,12 +20,23 @@ async function request(body=null){
  const response=await fetch(endpoint+(body?'':'?own=true&day='+listeningDayKey(Date.now())+'&participation='+(enabled()?'on':'off')),{method:body?'POST':'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
  if(account().userId!==user)throw Error('Аккаунт изменился');if(!response.ok){const error=Error(response.status===429?'Повторим синхронизацию чуть позже':'Не удалось сохранить. Проверьте соединение.');error.status=response.status;throw error;}return response.json();
 }
-export async function refreshCompetitionOwn(){if(!account().signedIn){own=null;return null;}const user=account().userId;const data=await request();if(user!==account().userId)return null;own=data;lastOwn=Date.now();announce();return own;}
-export async function saveCompetitionSettings(values){await request({action:'settings',...values});await refreshCompetitionOwn();}
+export async function refreshCompetitionOwn({force=false}={}){
+ const user=account().signedIn?account().userId:null;if(!user){own=null;scope=null;return null;}if(scope!==user){scope=user;own=null;lastOwn=lastUpload=retryAt=0;lastSignature='';}
+ if(ownRequest?.user===user){const result=await ownRequest.task;return force?refreshCompetitionOwn({force:true}):result;}
+ if(!force&&own&&Date.now()-lastOwn<5000)return own;
+ const entry={user,task:null};ownRequest=entry;entry.task=(async()=>{const data=await request();if(user!==account().userId)return null;const changed=JSON.stringify(own)!==JSON.stringify(data);own=data;lastOwn=Date.now();if(changed)announce();return own;})();try{return await entry.task;}finally{if(ownRequest===entry)ownRequest=null;}
+}
+export async function saveCompetitionSettings(values){await request({action:'settings',...values});await refreshCompetitionOwn({force:true});}
 export function sharedPersonalTotals(local,period){const cloud=competitionOwn()?.totals?.[period];if(!cloud)return local;const merged={...local};for(const[id,n]of Object.entries(cloud))if(allowed.has(id)&&Number.isSafeInteger(n)&&n>=0)merged[id]=Math.max(merged[id]||0,n);return merged;}
-export async function loadCompetition(period='all'){
- const day=listeningDayKey(Date.now());const response=await fetch(endpoint+'?period='+encodeURIComponent(period)+'&day='+day,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('unavailable');const data=await response.json();if(data.period!==period||data.day!==day||!Array.isArray(data.items))throw Error('invalid');
- const seen=new Set();return data.items.flatMap(row=>{const person=safeListener(row);if(!person||seen.has(person.id)||!allowed.has(row.reciter)||!Number.isSafeInteger(row.seconds)||row.seconds<=0||!Number.isSafeInteger(row.rank)||row.rank<=0)return[];seen.add(person.id);return[{...person,reciter:row.reciter,seconds:row.seconds,rank:row.rank}];});
+export async function loadCompetition(period='all',{force=false}={}){
+ if(!['all','day','week','month'].includes(period))throw Error('invalid');
+ const day=listeningDayKey(Date.now()),cached=cachedCompetition(period);if(cached&&!force)return cached;
+ if(boardRequests.has(day)){await boardRequests.get(day).task;return cachedCompetition(period)||[];}
+ const controller=new AbortController(),entry={controller,task:null},timeout=setTimeout(()=>controller.abort(),8000);
+ entry.task=(async()=>{const response=await fetch(endpoint+'?boards=1&day='+day,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});if(!response.ok)throw Error('unavailable');const data=await response.json();if(data.day!==day||!data.boards)throw Error('invalid');
+  const parsed=[];for(const p of ['all','day','week','month']){if(!Array.isArray(data.boards[p]?.items))throw Error('invalid');const seen=new Set(),rows=data.boards[p].items.flatMap(row=>{const person=safeListener(row);if(!person||seen.has(person.id)||!allowed.has(row.reciter)||!Number.isSafeInteger(row.seconds)||row.seconds<=0||!Number.isSafeInteger(row.rank)||row.rank<=0)return[];seen.add(person.id);return[{...person,reciter:row.reciter,seconds:row.seconds,rank:row.rank}];});parsed.push([p,rows]);}
+  if(controller.signal.aborted)throw Error('cancelled');for(const stored of boards.keys())if(!stored.startsWith(day+':'))boards.delete(stored);for(const[p,rows]of parsed)boards.set(day+':'+p,{rows,at:Date.now()});
+ })();boardRequests.set(day,entry);try{await entry.task;return cachedCompetition(period)||[];}finally{clearTimeout(timeout);if(boardRequests.get(day)===entry)boardRequests.delete(day);}
 }
 function deviceId(){const key='competition-device-v1:'+account().userId;let id=read(key,null);if(!/^[a-f0-9-]{36}$/i.test(id||'')){id=crypto.randomUUID();if(!write(key,id))throw Error('Не удалось сохранить устройство');}return id;}
 export async function connectCompetitionNotifications(period){
@@ -41,7 +56,7 @@ export async function syncCompetitionNow(force=false){
   const source=snapshot(),totals=Object.fromEntries(Object.entries(source.totals||{}).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0).map(([id,n])=>[id,Math.floor(n)]));
   const days=Object.fromEntries(Object.entries(source.days||{}).map(([day,rows])=>[day,Object.fromEntries(Object.entries(rows).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0).map(([id,n])=>[id,Math.floor(n)]))]));
   const signature=JSON.stringify({totals,days});if(!Object.keys(totals).length||signature===lastSignature&&!force||Date.now()-lastUpload<15000)return;
-  await request({action:'snapshot',device:deviceId(),totals,days,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'});if(user!==account().userId)return;lastSignature=signature;lastUpload=Date.now();await refreshCompetitionOwn();
+  await request({action:'snapshot',device:deviceId(),totals,days,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'});if(user!==account().userId)return;lastSignature=signature;lastUpload=Date.now();await refreshCompetitionOwn({force:true});
  }catch{retryAt=Date.now()+15000;}})();inflight=task;try{await task;}finally{if(inflight===task)inflight=null;}
 }
 export function initCompetition({getAccount,getClient,getSnapshot,isEnabled}){if(initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;

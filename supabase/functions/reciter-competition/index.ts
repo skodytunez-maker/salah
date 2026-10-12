@@ -21,6 +21,15 @@ async function ensure(user:any,initialEnabled=true){const hash=await hashFor(use
  await tx`insert into salah_competition_private.legacy_days(user_id,day,reciter,seconds)select ${user.id}::uuid,m.day,m.reciter,case when exists(select 1 from salah_competition_private.days d where d.user_id=${user.id}::uuid and d.day=m.day and d.reciter=m.reciter)then 0 else m.minutes::bigint*60+m.extra_seconds end from public.reciter_popularity_minutes m where listener_hash=${hash} on conflict(user_id,day,reciter)do nothing`;
  await tx`select public.competition_refresh()`;
 });}
+async function publicBoard(period:string,day:string){
+ const rows=await sql`select b.reciter,b.seconds,b.place,v.public_id as id,v.mode,
+ upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
+ upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
+ case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
+ case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
+ from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id order by b.place,v.public_id limit 1000`;
+ const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],seconds:Number(r.seconds),rank:Number(r.place)})),limited:rows.length===1000};
+}
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  try{
@@ -35,13 +44,8 @@ Deno.serve(async req=>{
  }
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
-  const rows=await sql`select b.reciter,b.seconds,b.place,v.public_id as id,v.mode,
-  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
-  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
-  case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
-  case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
-  from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id order by b.place,v.public_id limit 1000`;
-  const labels=publicListenerRows(rows);return reply({period,day,items:rows.map((r:any,i:number)=>({...labels[i],seconds:Number(r.seconds),rank:Number(r.place)})),limited:rows.length===1000});
+  if(params.get('boards')==='1'){const boards:any={};for(const p of COMPETITION_PERIODS)boards[p]=await publicBoard(p,day);return reply({day,boards});}
+  return reply({period,day,...await publicBoard(period,day)});
  }
  const user=await verified(req);if(!user)return reply({error:'sign_in_required'},401);
  if(req.method==='GET'){
