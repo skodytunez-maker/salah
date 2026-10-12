@@ -6,6 +6,7 @@ import{competitionSnapshot,competitionDay,competitionSubscription}from '../supab
 import{competitionPushEvent,dispatchCompetitionPush}from '../supabase/functions/background-reminders/competition-push.mjs';
 import{notification}from '../supabase/functions/background-reminders/core.mjs';
 import{reciterInfo}from '../dist/js/quran-reciters.js';
+import{awardArtwork}from '../dist/js/quran-awards-core.js';
 import{rankTime,listenerRing,assignListenerRings,medalForRank}from '../dist/js/reciter-ranking-core.js';
 const now=Date.parse('2026-10-11T10:00:00Z'),id='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
 const sample={action:'snapshot',device:id,totals:{'ar.alafasy':2400,'ar.badralturki':1500},days:{'2026-10-11':{'ar.alafasy':2400,'ar.badralturki':1500}},timeZone:'Asia/Yekaterinburg'};
@@ -28,7 +29,7 @@ let sends=0,claimed=false;const db={competitionEvents:async()=>[event,event],com
 assert.equal(await dispatchCompetitionPush({db,send:async()=>{sends++;return 'sent'},clock:()=>now}),1);assert.equal(sends,1);
 claimed=false;db.competitionActive=async()=>false;assert.equal(await dispatchCompetitionPush({db,send:async()=>{throw Error('Must not notify after retaking place')},clock:()=>now}),0);
 const source=await fs.readFile(new URL('../dist/js/competition-view.js',import.meta.url),'utf8'),escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ctx=vm.createContext({read:()=>({}),write:()=>true,esc:escape,modal(){},closeModal(){},reciterInfo,rankTime,listenerRing,assignListenerRings,medalForRank,competitionAvatar:()=>{throw Error('Anonymous photo must never be requested')}});
+const ctx=vm.createContext({read:()=>({}),write:()=>true,esc:escape,modal(){},closeModal(){},reciterInfo,rankTime,listenerRing,assignListenerRings,medalForRank,awardArtwork,competitionAvatar:()=>{throw Error('Anonymous photo must never be requested')}});
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({competitionMarkup,avatar})',ctx);
 const people=Array.from({length:6},(_,i)=>({id:'00000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),mode:'initial',initial:'SA',reciter:'ar.alafasy',seconds:2400-i*60,rank:i+1,nickname:'Hidden nickname',hasPhoto:false}));
 const html=api.competitionMarkup(people);assert.equal((html.match(/class="competition-card /g)||[]).length,3);assert.equal((html.match(/class="competition-list-row"/g)||[]).length,2);assert.ok(!html.includes('Hidden nickname'));assert.match(html,/rank-medal-gold/);assert.match(html,/rank-medal-silver/);assert.match(html,/rank-medal-bronze/);assert.match(html,/40 мин/);assert.match(html,/Весь рейтинг/);

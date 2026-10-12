@@ -64,6 +64,43 @@
       "generationTool": "built-in imagegen",
       "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-1c4e6655-8c0a-4471-b8a1-f0de4fd348d4.png",
       "prompt": "Individual reference-matched front-facing satin SALAH arch/crescent/star/baseline medallion with embossed 365 numeral, true transparent background, no labels/other objects; thin continuous incised geometric rim with gold accents, no crossing strips"
+    },
+    {
+      "kind": "week",
+      "path": "dist/assets/awards/leader-week-v1.png",
+      "gitBlobSha": "ec25515b3fbb3e7d8901dde5cb591032119a5e06",
+      "bytes": 1928695,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-339e3f7f-1aff-48f5-92a0-724d5b638bfc.png",
+      "prompt": "Reference-family silver leader coin, SALAH mark, restrained inner laurel branches, exact НЕДЕЛЯ, transparent background"
+    },
+    {
+      "kind": "month",
+      "path": "dist/assets/awards/leader-month-v1.png",
+      "gitBlobSha": "88da0db15325b1a522c0134fd8b3d742ea2e874c",
+      "bytes": 2147683,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-9cb7eab5-a243-4848-8001-c0b822237f8e.png",
+      "prompt": "Reference-family gold leader coin, SALAH mark, restrained inner laurel branches, exact МЕСЯЦ, transparent background"
+    },
+    {
+      "kind": "founder",
+      "path": "dist/assets/awards/founder-v1.png",
+      "gitBlobSha": "a40db9d730ed677868c58b56afa007cb5aa7a6c9",
+      "bytes": 2112585,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-e80f-7820-814f-73856ab0ee0f/exec-5459b4ff-2fb8-487c-a43f-212e5298cd61.png",
+      "prompt": "Original founding-member satin pale platinum/ivory coin with gold SALAH mark, engraved thin geometric rim and exact НАЧАЛО, transparent background"
     }
-  ]
+  ],
+  "version": 316
 }

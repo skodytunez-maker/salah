@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';import fs from 'node:fs/promises';
 import{QURAN_AWARDS,safeAward,safeAwardState,awardShareIdentity,awardPeriod,weekDays,awardArtwork}from '../dist/js/quran-awards-core.js';
-assert.deepEqual(QURAN_AWARDS.map(a=>a.kind),['week','month','streak7','streak30','streak100','streak200','streak365']);
+assert.deepEqual(QURAN_AWARDS.map(a=>a.kind),['week','month','streak7','streak30','streak100','streak200','streak365','founder']);
 const id='11111111-1111-4111-8111-111111111111',row={id,kind:'week',start:'2026-10-12',end:'2026-10-19',reciter:'ar.alafasy',seconds:1982,listener:{id,mode:'initial',initial:'SA',nickname:'Secret nickname',hasPhoto:true}};
 const result=safeAward(row);assert.ok(result);assert.ok(!JSON.stringify(result).includes('Secret nickname'));assert.equal(awardShareIdentity(result.listener).photo,false);assert.equal(awardShareIdentity(result.listener).label,'SA');
 assert.ok(safeAward({...row,kind:'streak7',reciter:null,seconds:0}));assert.equal(safeAward({...row,start:'2026-02-30'}),null);assert.equal(safeAward({...row,seconds:-1}),null);assert.ok(!awardPeriod(row).includes('19 окт'),'Display end of Sunday, not following Monday');
@@ -9,7 +9,7 @@ const state=safeAwardState({day:'2026-10-13',items:[row],listener:row.listener,s
 const code=await fs.readFile(new URL('../dist/js/quran-awards.js',import.meta.url),'utf8');assert.ok(!code.includes('localStorage'),'Private awards are never cached across accounts');assert.match(code,/navigator\.canShare/);assert.match(code,/1080/);assert.match(code,/1920/);
 for(const page of ['index','share','owner'])assert.match(await fs.readFile(new URL('../dist/'+page+'.html',import.meta.url),'utf8'),/css\/quran-awards.css/);
 const sqlFile=(await fs.readdir(new URL('../supabase/migrations/',import.meta.url))).find(f=>f.endsWith('_quran_awards.sql')),sql=await fs.readFile(new URL('../supabase/migrations/'+sqlFile,import.meta.url),'utf8');assert.match(sql,/security invoker/g);assert.match(sql,/enable row level security/g);const extraFile=(await fs.readdir(new URL('../supabase/migrations/',import.meta.url))).find(f=>f.endsWith('_quran_award_milestones.sql')),extra=await fs.readFile(new URL('../supabase/migrations/'+extraFile,import.meta.url),'utf8');assert.match(extra,/streak365/);assert.match(extra,/reserves:=3/);assert.match(extra,/refill_days=7/);assert.match(extra,/salah-quran-awards','\* \* \* \* \*'/);assert.match(sql,/where b.place=1/);
-console.log('PASS: seven fixed reward types, safe anonymous cards, calendar dates, daily counter, authenticated privacy, shell assets and actual export controls.');
+console.log('PASS: eight fixed reward types, safe anonymous cards, calendar dates, daily counter, authenticated privacy, shell assets and actual export controls.');
 
 for(const day of [7,30,100,200,365]){const path=awardArtwork('streak'+day);assert.match(path,/assets\/awards\/streak-\d+-v1\.png$/);const b=await fs.readFile(new URL('../dist/'+path.slice(2),import.meta.url));assert.equal(b.subarray(1,4).toString(),'PNG');assert.equal(b[25],6,'Medallion assets retain true RGBA channels');assert.ok(b.readUInt32BE(16)>=1024&&b.readUInt32BE(20)>=1024,'Large exports have enough source detail');}
 console.log('PASS: all five selected-family medallions are high-resolution RGBA assets and200-day parsing is accepted.');

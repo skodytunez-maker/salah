@@ -28,6 +28,7 @@ jobs:
           node tests/staff/check-database.cjs
           node tests/staff/check-interface.mjs
           node tests/awards/check-database.cjs
+          node tests/awards/check-founders.cjs
           node tests/awards/check-interface.mjs
       - name: Save QA report
         if: always()
