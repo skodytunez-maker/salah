@@ -21,6 +21,7 @@ async function main(){
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011194033_staff_cabinet.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011221126_staff_support_privacy.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012160940_staff_message_status.sql'),'utf8'));
+ await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012174334_staff_background_notifications.sql'),'utf8'));
  const sessions=new Map();
  for(const [user,nickname] of [[owner,'Владелец (тест)'],[admin,'Админ (тест)'],[mod,'Модератор (тест)'],[outsider,'Не сотрудник (тест)']]){
   const sid=crypto.randomUUID();sessions.set(user,sid);
@@ -29,8 +30,8 @@ async function main(){
   await db.query(`INSERT INTO auth.mfa_factors VALUES($1,'totp','verified')`,[user]);
  }
  async function as(user,aal='aal2',sid=sessions.get(user)){await db.query(`SELECT set_config('request.jwt.claims',$1,false)`,[JSON.stringify({sub:user,session_id:sid,aal})]);}
- async function rpc(action,args={}){const fn=action.startsWith('chat.')?'chat_request':'request';return (await db.query(`SELECT salah_staff_private.${fn}($1,$2::jsonb) AS data`,[action,JSON.stringify(args)])).rows[0].data;}
- const yes=(x)=>{assert.ok(x);checks++;};
+ async function rpc(action,args={}){const fn=action.startsWith('chat.push.')?'chat_push_request':action.startsWith('chat.')?'chat_request':'request';return (await db.query(`SELECT salah_staff_private.${fn}($1,$2::jsonb) AS data`,[action,JSON.stringify(args)])).rows[0].data;}
+ const yes=(x,message)=>{assert.ok(x,message);checks++;};
  async function denied(fn,code){await assert.rejects(fn,e=>e.code===code);checks++;}
  await as(outsider);await denied(()=>rpc('gate'),'42501');
  await as(owner);yes((await rpc('gate')).owner);
@@ -78,7 +79,7 @@ async function main(){
  await as(owner);await rpc('member.set',{userId:admin,role:'admin',active:false});await as(admin);await denied(()=>rpc('chat.read',{roomId:dm.id}),'42501');
  await as(mod,'aal2',crypto.randomUUID());await denied(()=>rpc('gate'),'42501');
  await as(mod);await db.query(`UPDATE auth.sessions SET not_after=now()-interval '1 second' WHERE id=$1`,[sessions.get(mod)]);await denied(()=>rpc('gate'),'42501');
- const tables=(await db.query(`SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='salah_staff_private' AND relkind='r'`)).rows;yes(tables.length===9&&tables.every(t=>t.relrowsecurity));
+ const tables=(await db.query(`SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='salah_staff_private' AND relkind='r'`)).rows;yes(tables.length===11&&tables.every(t=>t.relrowsecurity));
  yes((await db.query(`SELECT has_schema_privilege('authenticated','salah_staff_private','USAGE') AS allowed`)).rows[0].allowed===false);
  yes((await db.query(`SELECT has_function_privilege('authenticated','salah_staff_private.request(text,jsonb)','EXECUTE') AS allowed`)).rows[0].allowed===false);
 
@@ -111,6 +112,40 @@ async function main(){
  await db.query(`UPDATE auth.sessions SET not_after=now()-interval '1 second' WHERE id=$1`,[pushSession]);yes((await adapter.competitionEvents(Date.now())).length===0);await db.query(`UPDATE auth.sessions SET not_after=null WHERE id=$1`,[pushSession]);
  await db.query(`UPDATE salah_competition_private.events SET created_at=now()-interval '2 hours' WHERE id=$1`,[retaken]);yes((await adapter.competitionEvents(Date.now())).length===0);
  console.log('PASS: production competition SQL parses and dispatches once; retaken ranks, disabled notices, hidden profiles, disabled devices, expired sessions and stale events are suppressed.');
+
+
+ // Staff delivery uses the same production dispatcher adapter, never public grants.
+ const {dispatchStaffPush}=await import('../../supabase/functions/background-reminders/staff-push.mjs');
+ await db.query('UPDATE auth.sessions SET not_after=null WHERE id=$1',[sessions.get(mod)]);await as(owner);await rpc('member.set',{userId:admin,role:'admin',active:true});
+ const staffDevice=crypto.randomUUID(),ownerDevice=crypto.randomUUID(),nativeDevice=crypto.randomUUID();
+ const subscription={endpoint:'https://web.push.apple.com/local-fixture',keys:{p256dh:'local-fixture',auth:'local-fixture'}};
+ const register=(id,account,extra={})=>rpc('chat.push.register',{device:id,account,platform:'web',subscription,...extra});
+ await as(outsider);await denied(()=>register(staffDevice,outsider),'42501');await as(admin,'aal1');await denied(()=>register(staffDevice,admin),'42501');await as(admin);await denied(()=>register(staffDevice,owner),'42501');
+ yes((await register(staffDevice,admin)).enabled);yes((await rpc('chat.push.status',{device:staffDevice})).enabled);yes(!JSON.stringify(await rpc('chat.push.status',{device:staffDevice})).includes('endpoint'));
+ yes((await adapter.staffPushEvents()).length===0,'Historical messages before opt-in must not send');
+ // PGlite uses a millisecond wall clock; put fixtures in explicit past windows so fast Linux execution cannot make opt-in and message timestamps equal.
+ await db.exec("UPDATE salah_staff_private.chat_messages SET created_at=clock_timestamp()-interval '20 seconds'; UPDATE salah_staff_private.chat_reads SET seen_at=clock_timestamp()-interval '10 seconds'; UPDATE salah_staff_private.push_devices SET enabled_since=clock_timestamp()-interval '5 seconds'");
+ const incomingStaff=crypto.randomUUID();await db.query('INSERT INTO salah_staff_private.chat_messages(id,room_id,author_id,body)VALUES($1,$2,$3,$4)',[incomingStaff,dm.id,mod,'Private fixture text']);
+ let candidates=await adapter.staffPushEvents();yes(candidates.length===1&&candidates[0].message_id===incomingStaff&&Number.isFinite(Number(candidates[0].at)));yes(!JSON.stringify(candidates).includes('Private fixture text'));
+ await as(owner);yes(!(await rpc('chat.push.status',{device:staffDevice})).enabled);await denied(()=>register(staffDevice,owner),'42501');yes((await register(ownerDevice,owner,{subscription:{...subscription,endpoint:subscription.endpoint+'/owner'}})).enabled);yes((await adapter.staffPushEvents()).every(r=>r.user_id!==owner),'Owner is not a private-chat participant');
+ await as(admin);const ownStaff=crypto.randomUUID(),redactedStaff=crypto.randomUUID();await db.query('INSERT INTO salah_staff_private.chat_messages(id,room_id,author_id,body,redacted)VALUES($1,$2,$3,$4,false),($5,$2,$6,$4,true)',[ownStaff,dm.id,admin,'Fixture',redactedStaff,mod]);yes((await adapter.staffPushEvents()).length===1,'Own and redacted messages suppressed');
+ const staffSent=[];const staffSend=async(r,e)=>{staffSent.push(e);return'sent';};yes(await dispatchStaffPush({db:adapter,send:staffSend,sender:null,clock:Date.now})===1);yes(await dispatchStaffPush({db:adapter,send:staffSend,sender:null,clock:Date.now})===0);yes(staffSent.length===1&&staffSent[0].message==='Новое сообщение команды');
+ const retryMessage=crypto.randomUUID();await db.query('INSERT INTO salah_staff_private.chat_messages(id,room_id,author_id,body)VALUES($1,$2,$3,$4)',[retryMessage,dm.id,mod,'Retry fixture']);
+ yes(await dispatchStaffPush({db:adapter,send:async()=>{throw Error('fixture transport');},sender:null,clock:Date.now})===0);yes((await db.query('SELECT state FROM salah_staff_private.push_deliveries WHERE device_id=$1 AND message_id=$2',[staffDevice,retryMessage])).rows[0].state==='retry');yes(await adapter.staffPushClaim(staffDevice,retryMessage,Date.now()));yes(!await adapter.staffPushClaim(staffDevice,retryMessage,Date.now()));await adapter.staffPushComplete(staffDevice,retryMessage,'retry');
+ await rpc('chat.read',{roomId:dm.id});yes(!(await adapter.staffPushActive(staffDevice,retryMessage)));yes(await dispatchStaffPush({db:adapter,send:staffSend,sender:null,clock:Date.now})===0);
+ const unreadStaff=crypto.randomUUID();await db.query('INSERT INTO salah_staff_private.chat_messages(id,room_id,author_id,body)VALUES($1,$2,$3,$4)',[unreadStaff,dm.id,mod,'Unread fixture']);
+ await rpc('chat.push.remove',{device:staffDevice,account:admin});yes(!(await adapter.staffPushActive(staffDevice,unreadStaff)));yes(!(await register(staffDevice,admin,{renew:true})).enabled,'Silent renew never reverses explicit off');await register(staffDevice,admin);yes(!(await adapter.staffPushActive(staffDevice,unreadStaff)),'Reenabled notifications start from opt-in time');
+ await db.exec("UPDATE salah_staff_private.chat_messages SET created_at=clock_timestamp()-interval '5 seconds'; UPDATE salah_staff_private.chat_reads SET seen_at=clock_timestamp()-interval '2 seconds'; UPDATE salah_staff_private.push_devices SET enabled_since=clock_timestamp()-interval '1 second'");
+ const freshStaff=crypto.randomUUID();await db.query('INSERT INTO salah_staff_private.chat_messages(id,room_id,author_id,body)VALUES($1,$2,$3,$4)',[freshStaff,dm.id,mod,'Fresh fixture']);await db.query("UPDATE salah_staff_private.chat_messages SET created_at=clock_timestamp()-interval '100 milliseconds' WHERE id=$1",[freshStaff]);yes(await adapter.staffPushActive(staffDevice,freshStaff),'A fresh unread message after opt-in is eligible');await adapter.staffPushExpire(staffDevice);yes((await rpc('chat.push.status',{device:staffDevice})).reason==='expired');yes((await register(staffDevice,admin,{renew:true})).enabled);yes(await adapter.staffPushActive(staffDevice,freshStaff));
+ await as(owner);await rpc('member.set',{userId:admin,role:'admin',active:false});yes(!(await adapter.staffPushActive(staffDevice,freshStaff)));await as(admin);await denied(()=>rpc('chat.push.status',{device:staffDevice}),'42501');await as(owner);await rpc('member.set',{userId:admin,role:'admin',active:true});await as(admin);
+ await db.query('UPDATE auth.sessions SET not_after=now()-interval \'1 second\' WHERE id=$1',[sessions.get(admin)]);yes(!(await adapter.staffPushActive(staffDevice,freshStaff)));await db.query('UPDATE auth.sessions SET not_after=null WHERE id=$1',[sessions.get(admin)]);
+ await db.query('UPDATE auth.mfa_factors SET status=\'unverified\' WHERE user_id=$1',[admin]);yes(!(await adapter.staffPushActive(staffDevice,freshStaff)));await db.query('UPDATE auth.mfa_factors SET status=\'verified\' WHERE user_id=$1',[admin]);
+ await db.query('UPDATE auth.users SET email_confirmed_at=null WHERE id=$1',[admin]);yes(!(await adapter.staffPushActive(staffDevice,freshStaff)));await db.query('UPDATE auth.users SET email_confirmed_at=now() WHERE id=$1',[admin]);
+ yes((await rpc('chat.push.register',{device:nativeDevice,account:admin,platform:'android',token:'x'.repeat(160)})).enabled);await db.query("UPDATE salah_staff_private.push_devices SET enabled_since=clock_timestamp()-interval '50 milliseconds' WHERE id=$1",[nativeDevice]);const nativeStaff=crypto.randomUUID();await db.query('INSERT INTO salah_staff_private.chat_messages(id,room_id,author_id,body)VALUES($1,$2,$3,$4)',[nativeStaff,dm.id,mod,'Native fixture']);
+ await db.query("UPDATE salah_staff_private.chat_messages SET created_at=clock_timestamp()-interval '10 milliseconds' WHERE id=$1",[nativeStaff]);let nativeSends=0;await dispatchStaffPush({db:adapter,send:staffSend,sender:async(r,event)=>{yes(event.kind==='staff'&&event.thread===dm.id&&!event.body);nativeSends++;return'sent';},clock:Date.now});yes(nativeSends===1);yes(await dispatchStaffPush({db:adapter,send:staffSend,sender:async()=>{throw Error('duplicate');},clock:Date.now})===0);
+ for(const functionName of ['chat_push_request(text,jsonb)','push_candidates(uuid,uuid)'])yes((await db.query('SELECT has_function_privilege(\'authenticated\',$1,\'EXECUTE\') AS allowed',['salah_staff_private.'+functionName])).rows[0].allowed===false);
+ for(const tableName of ['push_devices','push_deliveries'])yes((await db.query('SELECT has_table_privilege(\'authenticated\',$1,\'SELECT,INSERT,UPDATE,DELETE\') AS allowed',['salah_staff_private.'+tableName])).rows[0].allowed===false);
+ console.log('PASS production staff push SQL: verified staff/session/MFA, explicit opt-in, private rooms, generic payloads, unread-only sending, retries, dedupe, opt-out, revoked role, native route and denied public access.');
 
  await db.close();fs.writeFileSync(require('node:path').join(process.env.RUNNER_TEMP||require('node:os').tmpdir(),'salah-staff-database-checks.json'),JSON.stringify({localOnly:true,checks,passed:true,engine:'PGlite 0.5.8',date:new Date().toISOString()},null,2));console.log(`Local database checks passed: ${checks}`);
 }

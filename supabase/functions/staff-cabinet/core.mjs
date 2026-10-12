@@ -52,6 +52,9 @@ export function validateAction(action,args){
  if(action==='support.list'){exactObject(args,['before']);return{before:timestamp(args.before)};}
  if(action==='support.read'||action==='support.close'){exactObject(args,['id']);return{id:id(args.id)};}
  if(action==='support.reply'){exactObject(args,['id','messageId','body']);return{id:id(args.id),messageId:id(args.messageId),body:cleanText(args.body,3000)};}
+ if(action==='chat.push.status'){exactObject(args,['device']);return{device:id(args.device)};}
+ if(action==='chat.push.remove'){exactObject(args,['device','account']);return{device:id(args.device),account:id(args.account)};}
+ if(action==='chat.push.register'){exactObject(args,['device','account','platform','subscription','token','renew']);if(!['web','android'].includes(args.platform)||args.renew!==undefined&&typeof args.renew!=='boolean')fail();const out={device:id(args.device),account:id(args.account),platform:args.platform,renew:args.renew===true};if(args.platform==='web'){if(args.token!==undefined)fail();out.subscription=staffPushSubscription(args.subscription);}else{if(args.subscription!==undefined||typeof args.token!=='string'||args.token.length<100||args.token.length>4096||!/^[-\w:.]+$/.test(args.token))fail();out.token=args.token;}return out;}
  if(action==='chat.open'){exactObject(args,['userId']);return{userId:id(args.userId)};}
  if(action==='chat.read'){exactObject(args,['roomId','before','beforeId']);if(args.beforeId&&!args.before)fail();return{roomId:id(args.roomId),before:timestamp(args.before),...(args.beforeId?{beforeId:id(args.beforeId)}:{})};}
  if(action==='chat.send'){exactObject(args,['roomId','messageId','body','files']);if(!Array.isArray(args.files)||args.files.length>5||new Set(args.files).size!==args.files.length)fail('invalid_files');const body=cleanText(args.body||'',5000,{empty:true});if(!body&&!args.files.length)fail('invalid_message');return{roomId:id(args.roomId),messageId:id(args.messageId),body,files:args.files.map(id)};}
@@ -85,7 +88,7 @@ export function chatUpload(filename,data){
 }
 const OWNER_ACTIONS=new Set(['member.list','member.search','member.set','support.share','review.list','review.return','review.reject','catalog.publish','audit.list']);
 async function boundedJson(req,max){const reader=req.body?.getReader();if(!reader)fail();const chunks=[];let length=0;while(true){const r=await reader.read();if(r.done)break;length+=r.value.length;if(length>max){await reader.cancel();fail('request_too_large',413);}chunks.push(r.value);}const b=new Uint8Array(length);let offset=0;for(const c of chunks){b.set(c,offset);offset+=c.length;}try{return JSON.parse(new TextDecoder().decode(b));}catch{fail();}}
-export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()=>crypto.randomUUID(),publishDraft}){
+export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()=>crypto.randomUUID(),publishDraft,nativeSenderReady=()=>true}){
  return async req=>{
   const origin=req.headers.get('Origin');const headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff'};
   if(ORIGINS.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, apikey, content-type, x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS'});
@@ -103,7 +106,7 @@ export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()
   try{
    const envelope=exactObject(await boundedJson(req,15000000),['action','args']);const action=envelope.action,args=validateAction(action,envelope.args);
    if(action==='gate')return reply(200,{data:actor});
-   if(actor.mfaRequired)return reply(403,{error:'mfa_required'});
+   if(actor.mfaRequired)return reply(403,{error:'mfa_required'});if(action==='chat.push.register'&&args.platform==='android'&&!nativeSenderReady())return reply(503,{error:'sender_unavailable'});
    if(OWNER_ACTIONS.has(action)&&!actor.owner)return reply(403,{error:'owner_only'});
    let data;
    if(action==='asset.upload'){
@@ -135,4 +138,11 @@ export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()
    return reply(503,{error:'workspace_unavailable'});
   }
  };
+}
+
+export function staffPushSubscription(value){
+ if(!value||typeof value.endpoint!=='string'||value.endpoint.length>4096)fail('invalid_subscription');let u;try{u=new URL(value.endpoint)}catch{fail('invalid_subscription')};
+ if(u.protocol!=='https:'||u.port&&u.port!=='443'||u.username||u.password||u.hash||!['web.push.apple.com','fcm.googleapis.com','updates.push.services.mozilla.com'].includes(u.hostname)&&!(/^[a-z0-9-]+\.notify\.windows\.com$/.test(u.hostname)))fail('invalid_subscription');
+ for(const[key,size]of [['p256dh',65],['auth',16]]){const text=value.keys?.[key];if(typeof text!=='string'||!/^[-\w]+$/.test(text)||text.length>100)fail('invalid_subscription');let bytes;try{bytes=Uint8Array.from(atob(text.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));}catch{fail('invalid_subscription')};if(bytes.length!==size||key==='p256dh'&&bytes[0]!==4)fail('invalid_subscription');}
+ return{endpoint:u.href,keys:{p256dh:value.keys.p256dh,auth:value.keys.auth}};
 }

@@ -4,10 +4,10 @@ const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]
 const base64url=value=>btoa(String.fromCharCode(...new Uint8Array(value))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
 const json64=value=>base64url(new TextEncoder().encode(JSON.stringify(value)));
 export function firebaseSupportPayload(device,event,now){
- const at=Number(event?.at);
+ const at=Number(event?.at),kind=event?.kind||'support';if(!['support','staff'].includes(kind))throw Error('invalid_firebase_support_event');
  if(!UUID.test(device?.user_id||'')||typeof device.token!=='string'||device.token.length<100||device.token.length>4096||!/^[-\w:.]+$/.test(device.token)||!UUID.test(event?.messageId||'')||!UUID.test(event.thread||'')||!Number.isFinite(at)||at>now||now-at>=86400000)throw Error('invalid_firebase_support_event');
  const expires=Math.floor(at+86400000);
- return {message:{token:device.token,data:{kind:'support',thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
+ return {message:{token:device.token,data:{kind,thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
 }
 export function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now}){
  if(credential?.type!=='service_account'||credential.project_id!==PROJECT||!new RegExp('^[\\w-]+@'+PROJECT+'\\.iam\\.gserviceaccount\\.com$').test(credential.client_email||'')||credential.token_uri!==TOKEN_URL||typeof credential.private_key!=='string'||credential.private_key.length>12000||!credential.private_key.startsWith('-----BEGIN PRIVATE KEY-----'))throw Error('invalid_firebase_sender_configuration');

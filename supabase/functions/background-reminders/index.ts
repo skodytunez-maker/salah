@@ -258,6 +258,24 @@ async function dispatchCompetitionPush({db,send,clock}){
  }}));return sent;
 }
 
+const STAFF_PUSH_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+function staffPushEvent(row,now){
+ const at=Number(row?.at);
+ if(!['web','android'].includes(row?.platform)||![row.id,row.user_id,row.message_id,row.room_id].every(x=>STAFF_PUSH_UUID.test(x||''))||!Number.isFinite(at)||at>now||now-at>=86400000)return null;
+ return{kind:'staff',hash:'staff-'+row.message_id,messageId:row.message_id,thread:row.room_id,user:row.user_id,at,message:'Новое сообщение команды'};
+}
+async function dispatchStaffPush({db,send,sender,clock}){
+ if(!db.staffPushEvents)return 0;
+ const started=clock(),rows=await db.staffPushEvents(),results={sent:0};let cursor=0;
+ await Promise.all(Array.from({length:Math.min(4,rows.length)},async()=>{while(cursor<rows.length&&clock()-started<20000){
+  const row=rows[cursor++],event=staffPushEvent(row,clock());if(!event||row.platform==='android'&&!sender)continue;
+  if(!await db.staffPushActive(row.id,row.message_id)||!await db.staffPushClaim(row.id,row.message_id,clock()))continue;
+  if(!await db.staffPushActive(row.id,row.message_id)){await db.staffPushComplete(row.id,row.message_id,'expired');continue;}
+  let result;try{result=row.platform==='web'?await send(row,event):await sender(row,{kind:'staff',thread:event.thread,messageId:event.messageId,at:event.at});}catch{result='retry';}
+  await db.staffPushComplete(row.id,row.message_id,result);if(result==='expired')await db.staffPushExpire(row.id);if(result==='sent')results.sent++;
+ }}));return results.sent;
+}
+
 const SUPPORT_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function supportPushEvent(row,now){
  const at=Number(row?.at);
@@ -280,10 +298,10 @@ const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]
 const base64url=value=>btoa(String.fromCharCode(...new Uint8Array(value))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
 const json64=value=>base64url(new TextEncoder().encode(JSON.stringify(value)));
 function firebaseSupportPayload(device,event,now){
- const at=Number(event?.at);
+ const at=Number(event?.at),kind=event?.kind||'support';if(!['support','staff'].includes(kind))throw Error('invalid_firebase_support_event');
  if(!UUID.test(device?.user_id||'')||typeof device.token!=='string'||device.token.length<100||device.token.length>4096||!/^[-\w:.]+$/.test(device.token)||!UUID.test(event?.messageId||'')||!UUID.test(event.thread||'')||!Number.isFinite(at)||at>now||now-at>=86400000)throw Error('invalid_firebase_support_event');
  const expires=Math.floor(at+86400000);
- return {message:{token:device.token,data:{kind:'support',thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
+ return {message:{token:device.token,data:{kind,thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
 }
 function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now}){
  if(credential?.type!=='service_account'||credential.project_id!==PROJECT||!new RegExp('^[\\w-]+@'+PROJECT+'\\.iam\\.gserviceaccount\\.com$').test(credential.client_email||'')||credential.token_uri!==TOKEN_URL||typeof credential.private_key!=='string'||credential.private_key.length>12000||!credential.private_key.startsWith('-----BEGIN PRIVATE KEY-----'))throw Error('invalid_firebase_sender_configuration');
@@ -418,12 +436,12 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,at:event.at,expiresAt:event.kind==='competition'?event.at+3600000:event.kind==='support'?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
  async function send(device,event){
   try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
-  catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
+  catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else if(event.kind==='staff')await db.staffPushExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
   const origin=request.headers.get('Origin'),action=new URL(request.url).pathname.split('/').pop();
@@ -457,6 +475,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
      delivered+=await dispatchCompetitionPush({db,send,clock});
      delivered+=await dispatchSupportPush({db,send,clock});
      delivered+=await dispatchNativeSupportPush({db,sender:firebaseSender,clock});
+     try{delivered+=await dispatchStaffPush({db,send,sender:firebaseSender,clock});}catch{console.warn('staff_push_unavailable');}
      const devices=await db.active(clock()),grouped=new Map(),started=clock();let cursor=0;
      async function deliverDevice(device){
       const p=preferences(device.preferences),signature=JSON.stringify(p);
@@ -519,6 +538,12 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
 
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,idle_timeout:20,connect_timeout:10,prepare:false});
 const db={
+ async staffPushEvents(){await sql`delete from salah_staff_private.push_deliveries where claimed_at<now()-interval '7 days'`;await sql`delete from salah_staff_private.push_devices where updated_at<now()-interval '90 days'`;return sql`select * from salah_staff_private.push_candidates()`;},
+ async staffPushActive(id,message){const rows=await sql`select id from salah_staff_private.push_candidates(${id}::uuid,${message}::uuid)`;return rows.length===1;},
+ async staffPushClaim(id,message,now){const rows=await sql`insert into salah_staff_private.push_deliveries(device_id,message_id,state,claimed_at)values(${id}::uuid,${message}::uuid,'sending',to_timestamp(${now}/1000.0))on conflict(device_id,message_id)do update set state='sending',claimed_at=excluded.claimed_at where push_deliveries.state='retry'or(push_deliveries.state='sending'and push_deliveries.claimed_at<to_timestamp(${now}/1000.0)-interval '30 seconds')returning message_id`;return rows.length===1;},
+ async staffPushComplete(id,message,state){await sql`update salah_staff_private.push_deliveries set state=${state},claimed_at=now() where device_id=${id}::uuid and message_id=${message}::uuid`;},
+ async staffPushExpire(id){await sql`update salah_staff_private.push_devices set enabled=false,disabled_reason='expired' where id=${id}::uuid`;},
+
  async competitionEvents(now){await sql`select public.competition_refresh()`;await sql`delete from salah_competition_private.events where created_at<now()-interval '2 days'`;await sql`delete from salah_competition_private.days where day<current_date-94`;await sql`delete from salah_competition_private.legacy_days where day<current_date-94`;await sql`delete from salah_competition_private.favorite_state where period<>'all' and bucket<current_date-94`; await sql`delete from salah_competition_private.devices where updated_at<now()-interval '90 days'`;return sql`select d.id,d.subscription,e.id event_id,e.period,e.old_place,e.new_place,extract(epoch from e.created_at)*1000 AS "at" from salah_competition_private.events e join salah_competition_private.preferences p using(user_id)join public.reciter_listener_visibility v using(user_id)join salah_competition_private.devices d using(user_id)join auth.sessions s on s.id=d.session_id and s.user_id=d.user_id where p.enabled and p.notify and v.mode<>'hidden' and d.enabled and(s.not_after is null or s.not_after>now())and d.updated_at>now()-interval '90 days' and e.created_at>now()-interval '1 hour' and not exists(select 1 from salah_competition_private.deliveries x where x.device_id=d.id and x.event_id=e.id and x.state='sent')order by e.created_at desc limit 100`;},
  async competitionActive(id,event){const rows=await sql`select e.old_place,e.new_place,e.period,e.bucket,p.time_zone,p.user_id from salah_competition_private.events e join salah_competition_private.preferences p using(user_id)join public.reciter_listener_visibility v using(user_id)join salah_competition_private.devices d using(user_id)join auth.sessions s on s.id=d.session_id and s.user_id=d.user_id where e.id=${event}::uuid and d.id=${id}::uuid and p.enabled and p.notify and p.period=e.period and v.mode<>'hidden' and d.enabled and(s.not_after is null or s.not_after>now())and e.created_at>now()-interval '1 hour' and not exists(select 1 from salah_competition_private.events newer where newer.user_id=e.user_id and newer.created_at>e.created_at)`;if(!rows.length)return false;const row=rows[0];const current=await sql`select b.place,case ${row.period} when 'all' then '1970-01-01'::date when 'week'then date_trunc('week',(now()at time zone ${row.time_zone}))::date when 'month'then date_trunc('month',(now()at time zone ${row.time_zone}))::date else (now()at time zone ${row.time_zone})::date end bucket from public.competition_board(${row.period},(now()at time zone ${row.time_zone})::date)b where b.user_id=${row.user_id}::uuid`;return current.length===1&&String(current[0].bucket)===String(row.bucket)&&Number(current[0].place)>=Number(row.new_place);},
  async competitionClaim(id,event,now){const rows=await sql`insert into salah_competition_private.deliveries(device_id,event_id,state,updated_at)values(${id}::uuid,${event}::uuid,'sending',to_timestamp(${now}/1000.0))on conflict(device_id,event_id)do update set state='sending',updated_at=excluded.updated_at where deliveries.state='failed'or(deliveries.state='sending'and deliveries.updated_at<to_timestamp(${now}/1000.0)-interval '30 seconds')returning event_id`;return rows.length===1;},

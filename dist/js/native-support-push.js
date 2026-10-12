@@ -11,7 +11,7 @@ export function initNativeSupportNotifications(){
  register:async(session,value)=>{
   const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/native-support-devices',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},body:JSON.stringify({action:'register',device:value.device,token:value.token}),credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
   const result=await response.json();if(!response.ok||result.ok!==true)throw Error(result.error||'registration_unavailable');
- },notice:value=>supportNotice({...value,generic:true,owner:ownerVerified()}),open:thread=>{const target='#support?thread='+thread;if(location.hash!==target)location.hash=target;else window.dispatchEvent(new CustomEvent('salah:support-open',{detail:{thread}}));}});
+ },notice:value=>{if(value.kind==='staff')window.dispatchEvent(new Event('salah:staff-messages-refresh'));else supportNotice({...value,generic:true,owner:ownerVerified()});},open:(thread,kind)=>{if(kind==='staff'){if(location.hash.split('?')[0]==='#staff')window.dispatchEvent(new CustomEvent('salah:staff-message-open',{detail:{room:thread}}));else location.hash='staff?room='+thread;return;}const target='#support?thread='+thread;if(location.hash!==target)location.hash=target;else window.dispatchEvent(new CustomEvent('salah:support-open',{detail:{thread}}));}});
  const refresh=()=>void client.accountChanged().catch(()=>{});
  auth.auth.onAuthStateChange((_event,session)=>setTimeout(()=>void client.accountChanged(session).catch(()=>{}),0));
  plugin.addListener('message',value=>client.message(value)).catch(()=>{});

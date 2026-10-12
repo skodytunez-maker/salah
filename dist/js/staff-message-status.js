@@ -32,8 +32,8 @@ export function createStaffMessageStatus({getUserId,request=staffRequest,documen
   if(stopped)return;const user=getUserId();if(user!==actor)reset(user);paint();if(!user||documentRef?.visibilityState==='hidden')return;
   if(controller){if(force)again=true;return;}if(!force&&(clock()<blockedUntil||snapshot&&clock()-lastCheck<10000))return;
   const version=++generation,scope=actor,pending=new AbortController();controller=pending;const timeout=setTimeout(()=>pending.abort(),10000);
-  try{const result=normalizeStaffMessageStatus(await request('chat.status',{},pending.signal));if(pending.signal.aborted||stopped||generation!==version||getUserId()!==scope)return;snapshot=result;lastCheck=clock();blockedUntil=0;paint();if(!result.pending)removeNotice();else announce(result.latest);}
-  catch(error){if(stopped||generation!==version||getUserId()!==scope)return;if(error.name!=='AbortError'){snapshot=null;removeNotice();paint();blockedUntil=clock()+60000;}}
+  try{const result=normalizeStaffMessageStatus(await request('chat.status',{},pending.signal));if(pending.signal.aborted||stopped||generation!==version||getUserId()!==scope)return;snapshot=result;lastCheck=clock();blockedUntil=0;paint();windowRef?.dispatchEvent(new CustomEvent('salah:staff-messages-ready',{detail:{actor:scope}}));if(!result.pending)removeNotice();else announce(result.latest);}
+  catch(error){if(stopped||generation!==version||getUserId()!==scope)return;if(error.name!=='AbortError'){if(['staff_only','forbidden','invalid_session','sign_in_required','mfa_required'].includes(error.code))windowRef?.dispatchEvent(new CustomEvent('salah:staff-messages-ready',{detail:{actor:null}}));snapshot=null;removeNotice();paint();blockedUntil=clock()+60000;}}
   finally{clearTimeout(timeout);if(controller===pending){controller=null;if(again){again=false;void refresh({force:true});}}}
  }
  const changed=()=>void refresh(),force=()=>void refresh({force:true}),visible=()=>{if(documentRef?.visibilityState!=='hidden')force();};
