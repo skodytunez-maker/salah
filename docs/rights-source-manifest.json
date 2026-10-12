@@ -3593,6 +3593,31 @@
       "path": "dist/assets/icons/snowflake.svg",
       "gitBlobSha": "c1fc2fb3926d860c70c68a90ef111311928fe2b8",
       "bytes": 1523
+    },
+    {
+      "path": "dist/assets/awards/streak-7-v1.png",
+      "gitBlobSha": "3eb5c84366039d2cf4f10908b850c251cf9cdfb1",
+      "bytes": 2073240
+    },
+    {
+      "path": "dist/assets/awards/streak-30-v1.png",
+      "gitBlobSha": "0d9521cd72e36bb791be3382b6f0152e34aa4e58",
+      "bytes": 2030665
+    },
+    {
+      "path": "dist/assets/awards/streak-100-v1.png",
+      "gitBlobSha": "6879cf871ed1b99e1bb27d08a4230bc993ec940d",
+      "bytes": 2317673
+    },
+    {
+      "path": "dist/assets/awards/streak-200-v1.png",
+      "gitBlobSha": "934b2b84b7bd55fc7536feb89f5207758bdd7b69",
+      "bytes": 1904482
+    },
+    {
+      "path": "dist/assets/awards/streak-365-v1.png",
+      "gitBlobSha": "931710cdc9664088bb3dee462d0b2eca689f528b",
+      "bytes": 1993515
     }
   ],
   "incrementalEvidence": [

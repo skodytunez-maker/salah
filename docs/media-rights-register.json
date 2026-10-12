@@ -1758,6 +1758,51 @@
       "license": "CC-BY-4.0",
       "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
       "note": "Font Awesome Free 6.7.2 official snowflake icon, original attribution retained; fill recolored to SALAH palette. Source recorded in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/awards/streak-7-v1.png",
+      "gitBlobSha": "3eb5c84366039d2cf4f10908b850c251cf9cdfb1",
+      "bytes": 2073240,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen individually produced this transparent SALAH medallion from the user-selected third generated concept and the supplied SALAH mark. Original generated output retained; not cropped from a sheet. No third-party logo or copied reward illustration is installed."
+    },
+    {
+      "path": "dist/assets/awards/streak-30-v1.png",
+      "gitBlobSha": "0d9521cd72e36bb791be3382b6f0152e34aa4e58",
+      "bytes": 2030665,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen individually produced this transparent SALAH medallion from the user-selected third generated concept and the supplied SALAH mark. Original generated output retained; not cropped from a sheet. No third-party logo or copied reward illustration is installed."
+    },
+    {
+      "path": "dist/assets/awards/streak-100-v1.png",
+      "gitBlobSha": "6879cf871ed1b99e1bb27d08a4230bc993ec940d",
+      "bytes": 2317673,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen individually produced this transparent SALAH medallion from the user-selected third generated concept and the supplied SALAH mark. Original generated output retained; not cropped from a sheet. No third-party logo or copied reward illustration is installed."
+    },
+    {
+      "path": "dist/assets/awards/streak-200-v1.png",
+      "gitBlobSha": "934b2b84b7bd55fc7536feb89f5207758bdd7b69",
+      "bytes": 1904482,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen individually produced this transparent SALAH medallion from the user-selected third generated concept and the supplied SALAH mark. Original generated output retained; not cropped from a sheet. No third-party logo or copied reward illustration is installed."
+    },
+    {
+      "path": "dist/assets/awards/streak-365-v1.png",
+      "gitBlobSha": "931710cdc9664088bb3dee462d0b2eca689f528b",
+      "bytes": 1993515,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen individually produced this transparent SALAH medallion from the user-selected third generated concept and the supplied SALAH mark. Original generated output retained; not cropped from a sheet. No third-party logo or copied reward illustration is installed."
     }
   ],
   "wallpaperSets": [

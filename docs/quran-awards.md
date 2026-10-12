@@ -13,3 +13,7 @@ Private schema, RLS enabled, anon/authenticated grants revoked. Verified confirm
 Leader and constancy cards export 1080x1920 PNG with real favorite-reciter seconds or real milestone day count, SALAH branding and Saadi Kobilov inside story-safe margins. Native share uses prepared files; unsupported devices save images. No social messages/posts sent automatically. Current identity/privacy refresh before opening export and local privacy/account change closes stale export.
 
 CI runs application contracts, actual isolated PostgreSQL rules, isolated DOM and export workflows. Physical phone receipt is not needed for this feature. No production listening minutes or ranking places are changed for testing.
+
+
+## Release315 — selected medallion family and200 days
+Five individually generated transparent1254px PNG medallions replace the unrelated consistency icons: bronze7, silver30, gold100, faceted pale gold200, platinum365 with a thin engraved geometric rim. They retain embossed milestone numerals. Collection/details/history/share cards consume these assets directly; missing rewards remain recognizably colored and clearly labelled unearned. Calendar awards remain separate. Seven collection types total, repeated wins grouped;200 is one-time and observes the same protected actual-played-day series as other milestones. Existing history is eligible on the next normal authenticated refresh, never manufactured. The200 SQL migration preserves midnight calendar rules, three skip reserves/refill and all previous awards.
