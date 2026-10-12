@@ -1848,6 +1848,42 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/salah-medallions-source.json",
       "note": "Built-in ImageGen original transparent SALAH calendar winner podium, requested by user; source pixels preserved."
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v3.png",
+      "gitBlobSha": "958f49fcbfa69082f401fafc183fd48097bc696e",
+      "bytes": 1066532,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original user-requested capital S edit of calendar leader podium, transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v3.png",
+      "gitBlobSha": "a7e47321c8b3ca93bd84abb0f0c42be6a4db7627",
+      "bytes": 1120968,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original user-requested capital S edit of calendar leader podium, transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v4.png",
+      "gitBlobSha": "cda58c5c8bec3a07a6a40a8395501592ddc9cebe",
+      "bytes": 790339,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original low broad calendar winner podium, user-requested shape correction and round S plaque; native transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v4.png",
+      "gitBlobSha": "99428031af97554c09f3ac7aa5434c6e6fbf0575",
+      "bytes": 669105,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original low broad calendar winner podium, user-requested shape correction and round S plaque; native transparent pixels retained."
     }
   ],
   "wallpaperSets": [
