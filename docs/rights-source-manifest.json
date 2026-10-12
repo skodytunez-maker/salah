@@ -3618,6 +3618,21 @@
       "path": "dist/assets/awards/streak-365-v1.png",
       "gitBlobSha": "931710cdc9664088bb3dee462d0b2eca689f528b",
       "bytes": 1993515
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v1.png",
+      "gitBlobSha": "ec25515b3fbb3e7d8901dde5cb591032119a5e06",
+      "bytes": 1928695
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v1.png",
+      "gitBlobSha": "88da0db15325b1a522c0134fd8b3d742ea2e874c",
+      "bytes": 2147683
+    },
+    {
+      "path": "dist/assets/awards/founder-v1.png",
+      "gitBlobSha": "a40db9d730ed677868c58b56afa007cb5aa7a6c9",
+      "bytes": 2112585
     }
   ],
   "incrementalEvidence": [

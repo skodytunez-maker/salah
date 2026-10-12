@@ -1,6 +1,7 @@
 import{publicListenerRows}from './listener-labels.mjs';
 const awardItem=r=>({id:r.id,kind:r.kind,start:r.starts_on,end:r.ends_on,reciter:r.reciter,seconds:Number(r.seconds),earnedAt:r.earned_at});
 export async function ownAwards(sql,user){
+ await sql`select salah_competition_private.claim_founder(${user.id}::uuid)`;
  const [{day}]=await sql`select (now()at time zone p.time_zone)::date::text AS "day" from salah_competition_private.preferences p where p.user_id=${user.id}::uuid`;
  const [{streak}]=await sql`select salah_competition_private.award_streak(${user.id}::uuid,${day}::date)streak`;
  const items=await sql`select id,kind,starts_on::text,ends_on::text,reciter,seconds,earned_at from salah_competition_private.awards where user_id=${user.id}::uuid order by earned_at desc,id limit 200`;
