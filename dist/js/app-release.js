@@ -1,4 +1,4 @@
-export const APP_VERSION=318;
+export const APP_VERSION=319;
 export const APP_UPDATED_AT='2026-10-13';
 export const APP_CHANGES=["В профиле — переключение полученных и неполученных наград одной кнопкой."];
 // Public notes list new user-facing features or sections only. Internal settings,
