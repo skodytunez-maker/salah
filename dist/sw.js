@@ -144,7 +144,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":304,"date":"2026-10-12","changes":["Топ SALAH: слушатели и их самые прослушиваемые чтецы.","Золотые, серебряные и бронзовые рамки первых мест.","Анонимность и уведомления об обгоне."],"announcement":{"version":285,"date":"2026-10-11","changes":["Топ SALAH: слушатели и их самые прослушиваемые чтецы.","Золотые, серебряные и бронзовые рамки первых мест.","Анонимность и уведомления об обгоне."]}};
+const RELEASE={"version":305,"date":"2026-10-12","changes":["Топ SALAH: слушатели и их самые прослушиваемые чтецы.","Золотые, серебряные и бронзовые рамки первых мест.","Анонимность и уведомления об обгоне."],"announcement":{"version":285,"date":"2026-10-11","changes":["Топ SALAH: слушатели и их самые прослушиваемые чтецы.","Золотые, серебряные и бронзовые рамки первых мест.","Анонимность и уведомления об обгоне."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
