@@ -124,8 +124,32 @@
       "generationTool": "built-in imagegen",
       "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-ab6ab771-b229-4446-9b4d-06f1c758bac7.png",
       "prompt": "User-authorized distinct silver weekly calendar leader award: three-step winners podium, raised first step, SALAH arch/crescent/star trophy, isolated original transparent square."
+    },
+    {
+      "kind": "week",
+      "path": "dist/assets/awards/leader-week-v3.png",
+      "gitBlobSha": "958f49fcbfa69082f401fafc183fd48097bc696e",
+      "bytes": 1066532,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-28b0afa0-bc26-485b-8368-9400f02898b8.png",
+      "prompt": "User-requested edit of leader-week-v2 podium: replace complete arch/crescent trophy with one sculptural capital S; preserve silver three-step2/1/3 base and transparent original pixels."
+    },
+    {
+      "kind": "month",
+      "path": "dist/assets/awards/leader-month-v3.png",
+      "gitBlobSha": "a7e47321c8b3ca93bd84abb0f0c42be6a4db7627",
+      "bytes": 1120968,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-06b34ea3-ffc3-4987-a5f1-38972492ef8e.png",
+      "prompt": "User-requested edit of leader-month-v2 podium: replace complete arch/crescent trophy with one sculptural capital S; preserve gold three-step2/1/3 base and transparent original pixels."
     }
   ],
   "version": 316,
-  "calendarLeaderDirection": "Release317: sculptural podiums replace week/month medallions at user request; original streak medal family retained."
+  "calendarLeaderDirection": "Final318: capital S sculptural podiums for weekly/monthly leaders; user distinguishes them from arch/crescent consistency medallions."
 }

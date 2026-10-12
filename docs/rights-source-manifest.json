@@ -3643,6 +3643,16 @@
       "path": "dist/assets/awards/leader-week-v2.png",
       "gitBlobSha": "b35fa220cb9bb42f4f527d45ea1c15ccbdd0772f",
       "bytes": 1210798
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v3.png",
+      "gitBlobSha": "958f49fcbfa69082f401fafc183fd48097bc696e",
+      "bytes": 1066532
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v3.png",
+      "gitBlobSha": "a7e47321c8b3ca93bd84abb0f0c42be6a4db7627",
+      "bytes": 1120968
     }
   ],
   "incrementalEvidence": [
