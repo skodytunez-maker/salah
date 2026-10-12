@@ -1,4 +1,4 @@
-export const APP_VERSION=312;
+export const APP_VERSION=313;
 export const APP_UPDATED_AT='2026-10-13';
 export const APP_CHANGES=["Счётчик дней прослушивания Корана в профиле.","Награды лидера недели и месяца с историей побед.","Карточки победителей для сторис с сохранением анонимности."];
 // Public notes list new user-facing features or sections only. Internal settings,
