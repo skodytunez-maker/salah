@@ -39,7 +39,7 @@ export function validateDraftPayload(type,value,entityId){
 function timestamp(x){if(x===null||x===undefined)return null;if(typeof x!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/.test(x)||!Number.isFinite(Date.parse(x)))fail();return x;}
 export function validateAction(action,args){
  if(typeof action!=='string'||action.length>60)fail();
- const simple=['gate','member.list','review.list','audit.list','chat.rooms','chat.contacts'];
+ const simple=['gate','member.list','review.list','audit.list','chat.rooms','chat.contacts','chat.status'];
  if(simple.includes(action)){exactObject(args,action==='review.list'?['kind']:[]);if(args.kind!==undefined)kind(args.kind);return {...args};}
  if(action==='member.search'){exactObject(args,['query']);return{query:cleanText(args.query,40)};}
  if(action==='member.set'){exactObject(args,['userId','role','active']);if(!['admin','moderator'].includes(args.role)||typeof args.active!=='boolean')fail('invalid_member');return{userId:id(args.userId),role:args.role,active:args.active};}

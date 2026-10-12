@@ -20,6 +20,7 @@ async function main(){
  CREATE TABLE salah_support_private.photos(message_id uuid,object_path text,photo_index integer);`);
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011194033_staff_cabinet.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011221126_staff_support_privacy.sql'),'utf8'));
+ await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012160940_staff_message_status.sql'),'utf8'));
  const sessions=new Map();
  for(const [user,nickname] of [[owner,'Владелец (тест)'],[admin,'Админ (тест)'],[mod,'Модератор (тест)'],[outsider,'Не сотрудник (тест)']]){
   const sid=crypto.randomUUID();sessions.set(user,sid);
@@ -58,6 +59,13 @@ async function main(){
  const dm=await rpc('chat.open',{userId:admin});yes(dm.kind==='direct');await denied(()=>rpc('chat.open',{userId:outsider}),'42501');
  const file=crypto.randomUUID();await rpc('chat.file.register',{roomId:dm.id,fileId:file,path:`${mod}/${dm.id}/${file}/test.txt`,filename:'test.txt',mimeType:'text/plain',bytes:4,sha256:'1'.repeat(64)});
  const mid=crypto.randomUUID();await rpc('chat.send',{roomId:dm.id,messageId:mid,body:'Привет 🙂',files:[file]});await rpc('chat.send',{roomId:dm.id,messageId:mid,body:'Привет 🙂',files:[file]});
+
+ const ownStatus=await rpc('chat.status');yes(ownStatus.pending===0&&ownStatus.latest===null);
+ await as(owner);const privateStatus=await rpc('chat.status');yes(privateStatus.pending===0&&privateStatus.rooms.every(r=>r.id!==dm.id));
+ await as(admin,'aal1');await denied(()=>rpc('chat.status'),'42501');await as(outsider);await denied(()=>rpc('chat.status'),'42501');
+ await as(admin);const unreadStatus=await rpc('chat.status');yes(unreadStatus.pending===1&&unreadStatus.latest.id===mid&&unreadStatus.latest.room===dm.id);yes(!JSON.stringify(unreadStatus).includes('Привет'));yes(unreadStatus.rooms[0].unread===1);yes((await rpc('chat.status')).pending===1);
+ await rpc('chat.read',{roomId:dm.id});yes((await rpc('chat.status')).pending===0);
+ await as(mod);
  let chat=await rpc('chat.read',{roomId:dm.id});yes(chat.messages.length===1&&chat.files.length===1);
  await as(owner);await denied(()=>rpc('chat.read',{roomId:dm.id}),'42501');yes((await rpc('chat.rooms')).every(r=>r.id!==dm.id));
  await as(admin);chat=await rpc('chat.read',{roomId:dm.id});yes(chat.messages[0].body==='Привет 🙂');
