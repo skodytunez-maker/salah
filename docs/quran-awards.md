@@ -31,3 +31,5 @@ Series overlay listens to actual personal playback progress and only presents a 
 The account’s main reward strip now shows only kinds actually earned, with one grouped tile per kind and repeat calendar wins kept as counts/history. A single earned founder medal is centered; multiple received types form a native horizontal touch scroll/snap carousel. No unearned leader placeholder appears as if obtained. All unearned types remain accessible through the separate missing collection tab. No listening data or awards are changed by this presentation update.
 
 Release317: calendar leaders have distinct silver/week and gold/month podium artwork. Consistency milestones and founder artwork retain the selected medallion family. The account reward strip contains only actually earned kinds and supports horizontal native swiping.
+
+Release318: received/missing reward tabs sit directly in the account block. Received opens first; missing types remain explicitly unearned. Both strips support native horizontal swiping; tab selection survives routine own-state refresh. Separate collection retained for existing callers.
