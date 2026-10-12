@@ -81,6 +81,37 @@ async function main(){
  const tables=(await db.query(`SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='salah_staff_private' AND relkind='r'`)).rows;yes(tables.length===9&&tables.every(t=>t.relrowsecurity));
  yes((await db.query(`SELECT has_schema_privilege('authenticated','salah_staff_private','USAGE') AS allowed`)).rows[0].allowed===false);
  yes((await db.query(`SELECT has_function_privilege('authenticated','salah_staff_private.request(text,jsonb)','EXECUTE') AS allowed`)).rows[0].allowed===false);
+
+ // Execute the production SQL adapter against an isolated PostgreSQL engine.
+ await db.exec(`CREATE SCHEMA salah_competition_private;
+ CREATE TABLE salah_competition_private.events(id uuid PRIMARY KEY,user_id uuid,period text,bucket date,old_place integer,new_place integer,created_at timestamptz);
+ CREATE TABLE salah_competition_private.preferences(user_id uuid PRIMARY KEY,enabled boolean,notify boolean,period text,time_zone text);
+ CREATE TABLE public.reciter_listener_visibility(user_id uuid PRIMARY KEY,mode text);
+ CREATE TABLE salah_competition_private.devices(id uuid PRIMARY KEY,user_id uuid,session_id uuid,subscription jsonb,enabled boolean,updated_at timestamptz);
+ CREATE TABLE salah_competition_private.deliveries(device_id uuid,event_id uuid,state text,updated_at timestamptz,PRIMARY KEY(device_id,event_id));
+ CREATE TABLE salah_competition_private.days(day date);CREATE TABLE salah_competition_private.legacy_days(day date);CREATE TABLE salah_competition_private.favorite_state(period text,bucket date);
+ CREATE TABLE public.fixture_competition_place(user_id uuid PRIMARY KEY,place integer);
+ CREATE FUNCTION public.competition_refresh() RETURNS integer LANGUAGE sql AS 'SELECT 0';
+ CREATE FUNCTION public.competition_board(text,date) RETURNS TABLE(user_id uuid,place integer) LANGUAGE sql AS 'SELECT user_id,place FROM public.fixture_competition_place';`);
+ const listener=crypto.randomUUID(),pushSession=crypto.randomUUID(),device=crypto.randomUUID(),event=crypto.randomUUID();
+ await db.query(`INSERT INTO auth.users(id,email_confirmed_at)VALUES($1,now());`,[listener]);await db.query(`INSERT INTO auth.sessions(id,user_id)VALUES($1,$2)`,[pushSession,listener]);
+ await db.query(`INSERT INTO salah_competition_private.preferences VALUES($1,true,true,'all','UTC')`,[listener]);await db.query(`INSERT INTO public.reciter_listener_visibility VALUES($1,'initials')`,[listener]);await db.query(`INSERT INTO salah_competition_private.devices VALUES($1,$2,$3,'{"endpoint":"https://fixture.invalid/push"}',true,now())`,[device,listener,pushSession]);await db.query(`INSERT INTO public.fixture_competition_place VALUES($1,2)`,[listener]);
+ await db.query(`INSERT INTO salah_competition_private.events VALUES($1,$2,'all','1970-01-01',1,2,now()-interval '1 second')`,[event,listener]);
+ const runtime=fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/functions/background-reminders/runtime.txt'),'utf8').replace(/\r\n/g,'\n');
+ const adapterSource=runtime.slice(runtime.indexOf('const db={'),runtime.indexOf('let firebaseSender'));
+ const sql=async(strings,...values)=>{let query=strings[0];for(let i=0;i<values.length;i++)query+='$'+(i+1)+strings[i+1];return(await db.query(query,values)).rows;};sql.json=JSON.stringify;
+ const adapter=require('node:vm').runInNewContext(adapterSource+';db',{sql,String,Number,Math});
+ const {dispatchCompetitionPush}=await import('../../supabase/functions/background-reminders/competition-push.mjs');const sent=[];const send=async(row,notice)=>{sent.push({row,notice});return'sent';};
+ yes(await dispatchCompetitionPush({db:adapter,send,clock:Date.now})===1);yes(sent.length===1&&sent[0].notice.kind==='competition');yes(Number.isFinite(sent[0].notice.at)&&Math.abs(Date.now()-sent[0].notice.at)<60000);yes(sent[0].row.event_id===event);yes((await db.query(`SELECT state FROM salah_competition_private.deliveries WHERE event_id=$1`,[event])).rows[0].state==='sent');
+ yes(await dispatchCompetitionPush({db:adapter,send,clock:Date.now})===0);yes(sent.length===1);
+ const retaken=crypto.randomUUID();await db.query(`INSERT INTO salah_competition_private.events VALUES($1,$2,'all','1970-01-01',1,2,now())`,[retaken,listener]);await db.query(`UPDATE public.fixture_competition_place SET place=1 WHERE user_id=$1`,[listener]);yes(await dispatchCompetitionPush({db:adapter,send,clock:Date.now})===0);yes(sent.length===1);await db.query(`UPDATE public.fixture_competition_place SET place=2 WHERE user_id=$1`,[listener]);
+ await db.query(`UPDATE salah_competition_private.preferences SET notify=false WHERE user_id=$1`,[listener]);yes((await adapter.competitionEvents(Date.now())).length===0);await db.query(`UPDATE salah_competition_private.preferences SET notify=true WHERE user_id=$1`,[listener]);
+ await db.query(`UPDATE public.reciter_listener_visibility SET mode='hidden' WHERE user_id=$1`,[listener]);yes((await adapter.competitionEvents(Date.now())).length===0);await db.query(`UPDATE public.reciter_listener_visibility SET mode='initials' WHERE user_id=$1`,[listener]);
+ await db.query(`UPDATE salah_competition_private.devices SET enabled=false WHERE id=$1`,[device]);yes((await adapter.competitionEvents(Date.now())).length===0);await db.query(`UPDATE salah_competition_private.devices SET enabled=true WHERE id=$1`,[device]);
+ await db.query(`UPDATE auth.sessions SET not_after=now()-interval '1 second' WHERE id=$1`,[pushSession]);yes((await adapter.competitionEvents(Date.now())).length===0);await db.query(`UPDATE auth.sessions SET not_after=null WHERE id=$1`,[pushSession]);
+ await db.query(`UPDATE salah_competition_private.events SET created_at=now()-interval '2 hours' WHERE id=$1`,[retaken]);yes((await adapter.competitionEvents(Date.now())).length===0);
+ console.log('PASS: production competition SQL parses and dispatches once; retaken ranks, disabled notices, hidden profiles, disabled devices, expired sessions and stale events are suppressed.');
+
  await db.close();fs.writeFileSync(require('node:path').join(process.env.RUNNER_TEMP||require('node:os').tmpdir(),'salah-staff-database-checks.json'),JSON.stringify({localOnly:true,checks,passed:true,engine:'PGlite 0.5.8',date:new Date().toISOString()},null,2));console.log(`Local database checks passed: ${checks}`);
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
