@@ -13,4 +13,6 @@
 
 .award-mini-list.award-earned-carousel{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;max-width:100%;padding:3px 2px 8px;justify-content:flex-start}.award-earned-carousel::-webkit-scrollbar{display:none}.award-earned-carousel[data-count="1"]{justify-content:center}.award-earned-carousel .award-mini{flex:0 0 112px;scroll-snap-align:center;min-width:0}.award-earned-carousel .award-emblem-medallion{width:100px;height:100px;margin:auto}.award-earned-carousel .award-mini small{font-size:12px;max-width:108px;line-height:1.35;overflow-wrap:anywhere}.award-tile strong{overflow-wrap:anywhere}
 
-.award-account-filter{margin:4px 0 9px}.award-account-filter button{font-size:12px;padding:8px 3px}.award-total{font-size:11px;color:#a6afc3}.award-mini-status{display:block;color:#a6afc3;font-size:10px;line-height:1.4;margin-top:4px}
+.award-total{font-size:11px;color:#a6afc3}.award-mini-status{display:block;color:#a6afc3;font-size:10px;line-height:1.4;margin-top:4px}
+
+.award-heading-switch{display:inline-flex;align-items:center;gap:8px;min-height:36px;border:0;background:none;color:inherit;font:inherit;text-align:left;padding:0;cursor:pointer}.award-heading-switch img{width:14px;height:14px;flex:none;opacity:.75}.award-heading-switch .points-next{transform:rotate(180deg)}.award-heading-switch:focus-visible{outline:2px solid #d8be88;outline-offset:4px;border-radius:5px}

@@ -32,4 +32,4 @@ The account’s main reward strip now shows only kinds actually earned, with one
 
 Release317: calendar leaders have distinct silver/week and gold/month podium artwork. Consistency milestones and founder artwork retain the selected medallion family. The account reward strip contains only actually earned kinds and supports horizontal native swiping.
 
-Release318: received/missing reward tabs sit directly in the account block. Received opens first; missing types remain explicitly unearned. Both strips support native horizontal swiping; tab selection survives routine own-state refresh. Separate collection retained for existing callers.
+Release318: the My Awards heading itself is a compact same-font toggle to Missing. Earned opens first; missing types remain explicitly unearned. Both strips support native horizontal swiping; selection survives routine own-state refresh. Keyboard activation and a small directional arrow make the single button accessible. Separate collection retained for existing callers.

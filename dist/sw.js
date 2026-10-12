@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":318,"date":"2026-10-13","changes":["В профиле — вкладки полученных и неполученных наград, с пролистыванием."],"announcement":{"version":316,"date":"2026-10-13","changes":["Медальоны лидера недели и месяца в общей серии наград.","Первопроходец SALAH — награда первым 100 пользователям.","Плавная анимация нового дня прослушивания в серии."]}};
+const RELEASE={"version":318,"date":"2026-10-13","changes":["В профиле — переключение полученных и неполученных наград одной кнопкой."],"announcement":{"version":316,"date":"2026-10-13","changes":["Медальоны лидера недели и месяца в общей серии наград.","Первопроходец SALAH — награда первым 100 пользователям.","Плавная анимация нового дня прослушивания в серии."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
