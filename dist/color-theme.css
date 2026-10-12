@@ -16,7 +16,7 @@
 :root[data-color-theme=forest] :is(.quran-section-heading a,.quran-section-heading .quran-scan-entry){border-color:var(--line);color:var(--muted)}
 :root[data-color-theme=forest] :is(.quran-section-heading a[aria-current=page],.quran-section-heading .quran-scan-entry){background:var(--forest-raised);border-color:var(--gold);color:var(--ivory)}
 :root[data-color-theme=forest] :is(.quran-top-actions>.quran-broadcast-button,.quran-top-actions>.quran-continue,.quran-top-actions .quran-day-short,.reciter-top-tab,.reciter-top-global,.quran-broadcast-button,.quran-handoff-button,.quran-qr-scan-button,.reciter-favorite,.reciter-download,.quran-player-controls button,.quran-global-controls button,.background-mode-buttons button,.wallpaper-picker-face){background:var(--forest-field);border-color:var(--line);color:var(--gold)}
-:root[data-color-theme=forest] :is(.quran-top-actions .quran-day-short[aria-expanded=true],.quran-library-toolbar button[aria-expanded=true]){background:var(--forest-raised);border-color:var(--gold)}
+:root[data-color-theme=forest] :is(.quran-top-actions .quran-day-short[aria-expanded=true],.quran-library-tools .quran-search-open[aria-expanded=true]){background:var(--forest-raised);border-color:var(--gold)}
 :root[data-color-theme=forest] :is(.button:not(.secondary),.quran-global-controls [data-toggle],.quran-player-controls #quran-audio-toggle,.app-update button){background:var(--gold);color:var(--bg)}
 :root[data-color-theme=forest] .button.secondary{background:transparent;color:var(--ivory);border-color:var(--line)}
 :root[data-color-theme=forest] :is(.quran-now-playing small,.quran-broadcast-button small,.quran-broadcast-note,.quran-handoff-note,.quran-player-reciter select,.reciter-card small){color:var(--muted)}
@@ -48,3 +48,6 @@
 :root[data-color-theme=forest] .knowledge-page .knowledge-card:hover{background:var(--forest-raised);border-color:var(--gold)}
 :root[data-color-theme=forest] .knowledge-page .knowledge-icon{background:rgba(168,199,170,.1)}
 :root[data-color-theme=forest] .quran-section-heading a:focus-visible,:root[data-color-theme=forest] .quran-section-heading .quran-scan-entry:focus-visible{outline-color:var(--gold)}
+
+:root[data-color-theme=forest] :is(.quran-search-open,.quran-section-heading .quran-scan-entry){background:var(--forest-field);border-color:var(--line);color:var(--gold)}
+:root[data-color-theme=forest] #quran-search{background:var(--forest-field);color:var(--ivory);border-color:var(--line)}
