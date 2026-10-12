@@ -1,8 +1,5 @@
-export const APP_VERSION=319;
+export const APP_VERSION=320;
 export const APP_UPDATED_AT='2026-10-13';
-export const APP_CHANGES=["В профиле — переключение полученных и неполученных наград одной кнопкой."];
-// Public notes list new user-facing features or sections only. Internal settings,
-// maintenance fixes and owner-only changes stay in Git history, not these lists.
-// Keep the announcement unchanged for minor builds; advance only for major public features.
-export const APP_ANNOUNCEMENT={"version":316,"date":"2026-10-13","changes":["Медальоны лидера недели и месяца в общей серии наград.","Первопроходец SALAH — награда первым 100 пользователям.","Плавная анимация нового дня прослушивания в серии."]};
+export const APP_CHANGES=["Награды за 7, 30, 100, 200 и 365 дней прослушивания.","Серия и рекорд — одним нажатием. 3 защищённых пропуска; запас восстанавливается каждые 7 дней прослушивания.","Без запаса пропущенный день обнуляет серию. Рекорд и полученные награды сохраняются.","Лидер недели и месяца: награды по времени одного любимого чтеца.","Первопроходец SALAH: подарок первым 100 пользователям.","Собранный аккаунт и запуск с главной; после сворачивания сохраняется прежнее место."];
+export const APP_ANNOUNCEMENT={"version":320,"date":"2026-10-13","changes":["Награды за 7, 30, 100, 200 и 365 дней прослушивания.","Серия и рекорд — одним нажатием. 3 защищённых пропуска; запас восстанавливается каждые 7 дней прослушивания.","Без запаса пропущенный день обнуляет серию. Рекорд и полученные награды сохраняются.","Лидер недели и месяца: награды по времени одного любимого чтеца.","Первопроходец SALAH: подарок первым 100 пользователям.","Собранный аккаунт и запуск с главной; после сворачивания сохраняется прежнее место."]};
 export const APP_UPDATE_DATE=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(APP_UPDATED_AT)).replace(/ г\.$/,'');

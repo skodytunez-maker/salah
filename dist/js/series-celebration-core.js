@@ -1,4 +1,5 @@
 const validDay=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d);
+export const isQuranCelebrationRoute=hash=>typeof hash==='string'&&hash.split('?')[0]==='#quran';
 export function seriesColor(days){return days>=365?'#e1e5eb':days>=200?'#e7d4a8':days>=100?'#d8be88':days>=30?'#c2cbd8':days>=7?'#bf926c':'#d8be88';}
 export function createSeriesCelebration({storage,getUser,getOwn,getLocalDay,isVisible,show,now=()=>Date.now()}){
  let scope=null,last=null,pending=null;const shown=new Set();
@@ -19,7 +20,7 @@ export function createSeriesCelebration({storage,getUser,getOwn,getLocalDay,isVi
   const id=scopeNow();if(!id||!last||last.id!==id)return;
   const local=getLocalDay();if(!validDay(local?.day)||local.day<last.day||!(local.seconds>=60))return;
   if(last.today&&local.day===last.day)return;
-  if(!pending)pending={id,day:local.day,from:last.current,at:now(),ready:false};observe();
+  const created=!pending;if(created)pending={id,day:local.day,from:last.current,at:now(),ready:false};observe();return created;
  }
- return{observe,progress,reset(){scope=null;last=null;pending=null;}};
+ return{observe,progress,cancelPending(){pending=null;},reset(){scope=null;last=null;pending=null;}};
 }

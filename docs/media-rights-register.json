@@ -1884,6 +1884,64 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/salah-medallions-source.json",
       "note": "Built-in ImageGen original low broad calendar winner podium, user-requested shape correction and round S plaque; native transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/icons/shield-heart.svg",
+      "gitBlobSha": "7a7e06b169cad8d90babf9d7fcb5f972e6bcb5eb",
+      "bytes": 754,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Official Font Awesome Free6.7.2 shield-heart icon; original paths and attribution retained, fill recolored to SALAH palette. Source in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/icons/arrows-rotate.svg",
+      "gitBlobSha": "f387bb72df8eb615cd963096f61c83cb9b4cc382",
+      "bytes": 1086,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Official Font Awesome Free6.7.2 arrows-rotate icon; original paths and attribution retained, fill recolored to SALAH palette. Source in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/awards/founder-gift-closed-v1.png",
+      "gitBlobSha": "db44764445ddc027225207d61295fad7dcec5cb9",
+      "bytes": 1800096,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original founder welcome gift artwork, original transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/awards/founder-gift-open-v1.png",
+      "gitBlobSha": "78d6768e82f57620886d1009f80f431d5520ec27",
+      "bytes": 1613592,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original founder welcome gift artwork, original transparent pixels retained."
+    },
+    {
+      "path": "dist/assets/icons/pen.svg",
+      "gitBlobSha": "eb2c06270e78faf2de0694295546f1e39f7a1180",
+      "bytes": 566,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Official Font Awesome Free6.7.2 pen icon; original paths and attribution retained, fill recolored. Source in dist/assets/icons/source.json."
+    },
+    {
+      "path": "dist/assets/icons/right-from-bracket.svg",
+      "gitBlobSha": "184d7f5314d276deb601d0f3082786a132af4a85",
+      "bytes": 755,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "CC-BY-4.0",
+      "rightsEvidence": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "note": "Official Font Awesome Free6.7.2 right-from-bracket icon; original paths and attribution retained, fill recolored. Source in dist/assets/icons/source.json."
     }
   ],
   "wallpaperSets": [

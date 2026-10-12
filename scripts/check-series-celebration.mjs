@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';import{createSeriesCelebration,seriesColor}from '../dist/js/series-celebration-core.js';
+import assert from 'node:assert/strict';import{createSeriesCelebration,seriesColor,isQuranCelebrationRoute}from '../dist/js/series-celebration-core.js';
 let user={signedIn:true,userId:'user-a'},own={day:'2026-10-13',streak:{current:6,today:false}},local={day:'2026-10-13',seconds:0},visible=true,time=0;const storage=new Map(),events=[];
 const engine=createSeriesCelebration({storage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},getUser:()=>user,getOwn:()=>own,getLocalDay:()=>local,isVisible:()=>visible,show:e=>events.push(e),now:()=>time});
 engine.observe();local.seconds=59;engine.progress();own={day:'2026-10-13',streak:{current:6,today:false}};engine.observe();assert.equal(events.length,0);
@@ -10,3 +10,6 @@ engine.reset();user={signedIn:true,userId:'user-a'};own={day:'2026-10-15',streak
 engine.reset();own={day:'2026-10-18',streak:{current:0,today:false}};engine.observe();local={day:'2026-10-18',seconds:60};engine.progress();visible=false;own.streak={current:1,today:true};engine.observe();time=3600001;visible=true;engine.observe();assert.equal(events.length,3,'Old pending event expires');
 assert.equal(seriesColor(30),'#c2cbd8');assert.equal(seriesColor(100),'#d8be88');assert.equal(seriesColor(200),'#e7d4a8');assert.equal(seriesColor(365),'#e1e5eb');
 console.log('PASS: confirmed new played day, once-only, midnight continuation, private scope, pending foreground/expiry and medal-tier animation colors.');
+
+assert.equal(isQuranCelebrationRoute('#quran'),true);assert.equal(isQuranCelebrationRoute('#quran?view=reciters'),true);assert.equal(isQuranCelebrationRoute('#home'),false);assert.equal(isQuranCelebrationRoute('#account'),false);engine.reset();own={day:'2026-10-20',streak:{current:9,today:false}};local={day:'2026-10-20',seconds:60};engine.observe();assert.equal(engine.progress(),true);engine.cancelPending();own.streak={current:10,today:true};engine.observe();assert.equal(events.length,3,'Leaving playback screen cancels the delayed animation without changing saved series');
+console.log('PASS: Quran-only presentation and cancelled route-away pending animation.');
