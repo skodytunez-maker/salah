@@ -1,0 +1,2 @@
+// Apply the saved appearance before styles load, including offline launch.
+(()=>{let theme='classic';try{const value=JSON.parse(localStorage.getItem('salah:settings')||'{}');if(value?.colorTheme==='forest')theme='forest';}catch{}document.documentElement.dataset.colorTheme=theme;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='forest'?'#11221d':'#070b16';})();
