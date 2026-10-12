@@ -172,6 +172,30 @@
       "generationTool": "built-in imagegen",
       "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-b62a86f1-aed2-4097-89dc-735768cebcd7.png",
       "prompt": "User-requested low broad podium redesign avoiding tall central hand-like silhouette: modest20%stepheight difference, compact round plaque with engraved capital S, transparent original square, gold satin."
+    },
+    {
+      "kind": "founder-gift-closed",
+      "path": "dist/assets/awards/founder-gift-closed-v1.png",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-ac81cf5a-6554-48a9-a992-1b31e2ca553d.png",
+      "prompt": "Closed premium midnightnavy SALAH giftbox, champagnegold ribbon and small embossed S; transparent original.",
+      "gitBlobSha": "db44764445ddc027225207d61295fad7dcec5cb9",
+      "bytes": 1800096,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen"
+    },
+    {
+      "kind": "founder-gift-open",
+      "path": "dist/assets/awards/founder-gift-open-v1.png",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-4f5481b0-b317-4e8a-bd1b-e4adc888979e.png",
+      "prompt": "Referenced closed original edited to opened lid and empty interior, matching materials and framing; transparent original.",
+      "gitBlobSha": "78d6768e82f57620886d1009f80f431d5520ec27",
+      "bytes": 1613592,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen"
     }
   ],
   "version": 316,

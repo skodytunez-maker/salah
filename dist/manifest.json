@@ -39,19 +39,19 @@
       "name": "Коран",
       "short_name": "Коран",
       "description": "Открыть чтение и прослушивание Корана",
-      "url": "./#quran"
+      "url": "./?entry=shortcut#quran"
     },
     {
       "name": "Азкары",
       "short_name": "Азкары",
       "description": "Открыть утренние и вечерние азкары",
-      "url": "./#adhkar"
+      "url": "./?entry=shortcut#adhkar"
     },
     {
       "name": "Кибла",
       "short_name": "Кибла",
       "description": "Открыть направление Киблы",
-      "url": "./#qibla"
+      "url": "./?entry=shortcut#qibla"
     }
   ]
 }

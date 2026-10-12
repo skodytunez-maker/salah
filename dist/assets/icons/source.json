@@ -53,5 +53,15 @@
     "path": "assets/icons/arrows-rotate.svg",
     "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrows-rotate.svg",
     "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/pen.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/pen.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/right-from-bracket.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/right-from-bracket.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
   }
 ]
