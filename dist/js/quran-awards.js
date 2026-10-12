@@ -1,0 +1,93 @@
+import{esc,modal,closeModal,toast}from './ui.js';
+import{competitionOwn,refreshCompetitionOwn,competitionAvatar}from './competition-client.js';
+import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
+import{reciterInfo}from './quran-reciters.js';
+import{reciterImageUrl}from './approved-catalog.js';
+import{rankTime}from './reciter-ranking-core.js';
+import{QURAN_AWARDS,awardInfo,awardPeriod,awardShareIdentity,safeAward,safeAwardState,weekDays,dayCountLabel}from './quran-awards-core.js';
+const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition';
+const emblem=(kind,locked=false)=>{const a=awardInfo(kind);return '<span class="award-emblem'+(locked?' award-locked':'')+'" style="--award-color:'+a.color+'"><img src="./assets/icons/'+a.icon+'.svg" alt=""></span>';};
+const counts=state=>Object.fromEntries(QURAN_AWARDS.map(a=>[a.kind,state.counts?.[a.kind]??state.items.filter(x=>x.kind===a.kind).length]));
+export function accountAwardsMarkup(state){
+ const got=counts(state),received=Object.values(got).filter(Boolean).length;
+ return '<div class="award-section-head"><h2>С Кораном каждый день</h2><button type="button" class="text-button" data-award-help aria-label="Как считается серия дней">О счётчике</button></div><div class="award-streak-head"><strong>'+state.streak.current+'</strong><span>'+dayCountLabel(state.streak.current)+' подряд</span></div><p class="award-best">Лучшая серия · '+state.streak.best+' '+dayCountLabel(state.streak.best)+'</p><div class="award-week" aria-label="Прослушивание за неделю">'+weekDays(state.day,state.streak.days).map(d=>'<div class="award-day'+(d.heard?' is-heard':'')+(d.today?' is-today':'')+(d.future?' is-future':'')+'" aria-label="'+d.label+', '+d.number+(d.heard?', прослушано':d.today?', сегодня':'')+'"><span>'+d.label+'</span><b>'+d.number+'</b><span class="award-day-dot" aria-hidden="true"></span></div>').join('')+'</div><div class="award-section-head" style="margin-top:20px"><h2>Мои награды</h2><button type="button" class="text-button" data-award-collection>Получено '+received+'/2</button></div><div class="award-mini-list">'+QURAN_AWARDS.map(a=>'<button type="button" class="award-mini" data-award-kind="'+a.kind+'" aria-label="'+esc(a.title)+(got[a.kind]?', побед: '+got[a.kind]:', ещё не получена')+'">'+emblem(a.kind,!got[a.kind])+'<small>'+a.title+(got[a.kind]?' · '+got[a.kind]:'')+'</small></button>').join('')+'</div>';
+}
+export function mountAccountAwards(container,{userId,isActive=()=>true}){
+ const host=container.querySelector('#account-awards');if(!host)return;
+ let closed=false,last='',state=null;
+ const valid=()=>!closed&&host.isConnected&&isActive();
+ const dispose=()=>{closed=true;for(const e of ['salah:competition-updated','salah:counter-status','hashchange'])window.removeEventListener(e,updated);};
+ const draw=()=>{
+  if(!valid()){dispose();return;}const own=competitionOwn();if(!own?.awards)return;
+  try{state=safeAwardState(own.awards);}catch{return;}const signature=JSON.stringify(state);if(signature===last)return;last=signature;
+  host.innerHTML=accountAwardsMarkup(state);host.querySelector('[data-award-help]').onclick=()=>modal('<div class="modal-head"><h2>Дни с Кораном</h2><button class="text-button" data-close>Закрыть</button></div><p>День засчитывается после минуты прослушивания Корана. Учитываются все чтецы и устройства вашего аккаунта.</p><p>Если сегодня ещё не слушали, вчерашняя серия сохраняется до конца дня. Пропущенный день начинает новую серию; лучший результат остаётся.</p><p class="muted">Дни считаются по часовому поясу устройства при прослушивании. В рейтинг попадает время одного любимого чтеца.</p>');
+  host.querySelector('[data-award-collection]').onclick=()=>showAwardCollection(state,{isActive:valid});
+  host.querySelectorAll('[data-award-kind]').forEach(b=>b.onclick=()=>showAwardDetail(state,b.dataset.awardKind,{isActive:valid}));
+ };
+ const updated=()=>{if(!valid()){dispose();return;}draw();};
+ host.innerHTML='<p class="award-note" role="status">Загружаем счётчик и награды…</p>';
+ for(const e of ['salah:competition-updated','salah:counter-status','hashchange'])window.addEventListener(e,updated);
+ draw();void refreshCompetitionOwn({force:true}).then(draw).catch(()=>{if(valid())host.innerHTML='<p class="award-note">Награды временно недоступны.</p><button type="button" class="text-button" data-awards-retry>Повторить</button>';const b=host.querySelector('[data-awards-retry]');if(b)b.onclick=()=>void refreshCompetitionOwn({force:true}).then(draw).catch(()=>toast('Проверьте соединение'));});
+ return dispose;
+}
+function protectAwardDialog(isActive){
+ const dialog=document.getElementById('modal'),check=()=>{if(!isActive())closeModal();};
+ window.addEventListener('salah:counter-status',check);window.addEventListener('hashchange',check);
+ dialog.addEventListener('close',()=>{window.removeEventListener('salah:counter-status',check);window.removeEventListener('hashchange',check);},{once:true});
+}
+export function showAwardCollection(state,{isActive=()=>true}={}){
+ if(!isActive())return;let selected='received';const got=counts(state);
+ const draw=()=>{
+  modal('<div class="award-collection"><div class="modal-head"><h2>Мои награды</h2><button class="text-button" data-close>Закрыть</button></div><div class="award-filter" role="group" aria-label="Коллекция наград"><button type="button" data-award-tab="received" aria-pressed="'+(selected==='received')+'">Полученные</button><button type="button" data-award-tab="missing" aria-pressed="'+(selected==='missing')+'">Неполученные</button></div><div class="award-grid">'+QURAN_AWARDS.filter(a=>selected==='received'?got[a.kind]:!got[a.kind]).map(a=>'<button type="button" class="award-tile" data-award-kind="'+a.kind+'">'+emblem(a.kind,!got[a.kind])+'<strong>'+a.title+'</strong><small>'+(got[a.kind]?'Побед: '+got[a.kind]:'Ещё впереди')+'</small></button>').join('')+'</div>'+(selected==='received'&&!Object.values(got).some(Boolean)?'<p class="award-note">Здесь сохранятся ваши победы недели и месяца.</p>':'')+'<p class="award-collection-note">Не забывайте о намерении.</p></div>');
+  const root=document.getElementById('modal-content');root.querySelectorAll('[data-award-tab]').forEach(b=>b.onclick=()=>{if(isActive()){selected=b.dataset.awardTab;draw();}});
+  root.querySelectorAll('[data-award-kind]').forEach(b=>b.onclick=()=>showAwardDetail(state,b.dataset.awardKind,{isActive}));
+ };
+ draw();protectAwardDialog(isActive);
+}
+export function showAwardDetail(state,kind,{isActive=()=>true}={}){
+ if(!isActive())return;const a=awardInfo(kind);if(!a)return;const history=state.items.filter(x=>x.kind===kind);
+ modal('<div class="award-collection"><div class="modal-head"><button type="button" class="text-button" data-award-back>Назад</button><button class="text-button" data-close>Закрыть</button></div><div class="award-detail">'+emblem(kind,!history.length)+'<h3>'+a.title+'</h3><p>'+a.rule+'</p>'+(history.length?'<p class="award-note">Побед: '+history.length+'</p>':'<p class="award-note">Результат фиксируется по завершении периода.</p>')+'</div>'+history.map(row=>'<button type="button" class="award-winner-entry" data-award-result="'+row.id+'">'+emblem(kind)+'<span><strong>'+esc(awardPeriod(row))+'</strong><small>'+esc(rankTime(row.seconds))+'</small></span></button>').join('')+'<p class="award-collection-note">Календарные периоды — по Москве. Итоги фиксируются спустя сутки для синхронизации. При одинаковом времени награду получают все лидеры.</p></div>');
+ const root=document.getElementById('modal-content');root.querySelector('[data-award-back]').onclick=()=>showAwardCollection(state,{isActive});
+ root.querySelectorAll('[data-award-result]').forEach(b=>b.onclick=async()=>{if(!isActive())return;b.disabled=true;try{await refreshCompetitionOwn({force:true});if(!isActive())return;const current=safeAwardState(competitionOwn()?.awards),row=current.items.find(x=>x.id===b.dataset.awardResult);if(!row)throw Error('missing');await showWinnerCard({...row,listener:current.listener},{isActive,own:true});}catch{if(isActive())toast('Не удалось открыть карточку. Повторите позже.');}finally{if(b.isConnected)b.disabled=false;}});
+}
+export async function loadAwardWinners(){
+ const response=await fetch(endpoint+'?winners=1',{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(8000)});
+ if(!response.ok)throw Error('unavailable');const data=await response.json();if(!Array.isArray(data.items))throw Error('invalid');
+ return data.items.map(safeAward).filter(a=>a&&a.listener);
+}
+export async function showAwardWinners({isActive=()=>true}={}){
+ modal('<div class="award-collection"><div class="modal-head"><h2>Итоги SALAH</h2><button class="text-button" data-close>Закрыть</button></div><p class="award-note" role="status">Загружаем победителей…</p></div>');
+ const root=document.getElementById('modal-content'),current=root.firstElementChild;
+ try{const rows=await loadAwardWinners();if(!isActive()||!current.isConnected)return;
+  current.innerHTML='<div class="modal-head"><h2>Итоги SALAH</h2><button class="text-button" data-close>Закрыть</button></div>'+QURAN_AWARDS.map(a=>'<h3>'+a.title+'</h3>'+(rows.filter(x=>x.kind===a.kind).map(row=>'<button type="button" class="award-winner-entry" data-award-winner="'+row.id+'">'+emblem(row.kind)+'<span><strong>'+esc(awardShareIdentity(row.listener).label)+'</strong><small>'+esc(rankTime(row.seconds))+' · '+esc(awardPeriod(row))+'</small></span></button>').join('')||'<p class="award-note">Победитель появится после завершения периода.</p>')).join('')+'<p class="award-collection-note">Итоги по Москве, спустя сутки для синхронизации. Один слушатель — один любимый чтец. Не забывайте о намерении.</p>';
+  current.querySelector('[data-close]').onclick=closeModal;
+  current.querySelectorAll('[data-award-winner]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const fresh=(await loadAwardWinners()).find(x=>x.id===b.dataset.awardWinner);if(!current.isConnected||!isActive())return;if(!fresh)throw Error('hidden');await showWinnerCard(fresh,{isActive});}catch{if(current.isConnected)toast('Карточка недоступна. Обновите итоги.');}finally{if(b.isConnected)b.disabled=false;}});
+ }catch{if(current.isConnected)current.innerHTML='<div class="modal-head"><h2>Итоги SALAH</h2><button class="text-button" data-close>Закрыть</button></div><p class="award-note">Не удалось загрузить итоги.</p><button class="text-button" data-award-retry>Повторить</button>';current.querySelector('[data-close]')?.addEventListener('click',closeModal);current.querySelector('[data-award-retry]')?.addEventListener('click',()=>void showAwardWinners({isActive}));}
+}
+const image=async(src)=>{const img=new Image();img.src=src;await img.decode();return img;};
+const lines=(ctx,text,width)=>{const words=String(text).split(/\s+/),rows=[];let row='';for(const word of words){const next=row?row+' '+word:word;if(row&&ctx.measureText(next).width>width){rows.push(row);row=word;}else row=next;}if(row)rows.push(row);return rows;};
+export async function renderWinnerCard(row){
+ const a=awardInfo(row.kind),who=awardShareIdentity(row.listener),r=reciterInfo(row.reciter),canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;const ctx=canvas.getContext('2d');
+ const [logo,icon,portrait]=await Promise.all([image('./favicon.svg'),image('./assets/icons/'+a.icon+'.svg'),image(reciterImageUrl(r.portrait)).catch(()=>null)]);
+ let face=null;if(who.photo&&who.id)try{const response=await fetch(competitionAvatar(who.id),{credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(6000)});if(response.ok&&/^image\/jpeg/.test(response.headers.get('content-type')||'')){const blob=await response.blob();if(blob.size<=200000){const url=URL.createObjectURL(blob);try{face=await image(url);}finally{URL.revokeObjectURL(url);}}}}catch{}
+ ctx.fillStyle='#0d1424';ctx.fillRect(0,0,1080,1920);ctx.strokeStyle=a.color;ctx.globalAlpha=.3;ctx.lineWidth=2;ctx.strokeRect(58,58,964,1804);ctx.globalAlpha=1;
+ ctx.drawImage(logo,506,180,68,68);ctx.textAlign='center';ctx.fillStyle='#e7d5ae';ctx.font='72px Georgia, serif';ctx.fillText('SALAH',540,326);ctx.fillStyle=a.color;ctx.font='25px sans-serif';ctx.fillText('НЕ ЗАБЫВАЙТЕ О НАМЕРЕНИИ',540,379);
+ ctx.drawImage(icon,490,455,100,100);ctx.fillStyle='#f4f0e5';ctx.font='bold 52px Georgia,serif';ctx.fillText(a.title,540,637);ctx.font='24px sans-serif';ctx.fillStyle='#a9b4c8';ctx.fillText(awardPeriod(row),540,687);
+ if(portrait){const x=380,y=748,w=320,h=370,scale=Math.max(w/portrait.naturalWidth,h/portrait.naturalHeight);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,26);ctx.clip();ctx.drawImage(portrait,x+(w-portrait.naturalWidth*scale)/2,y+(h-portrait.naturalHeight*scale)/2,portrait.naturalWidth*scale,portrait.naturalHeight*scale);ctx.restore();}
+ ctx.fillStyle='#f4f0e5';ctx.font='30px sans-serif';let y=1168;for(const line of lines(ctx,r.name,820)){ctx.fillText(line,540,y);y+=42;}
+ ctx.strokeStyle=a.color;ctx.lineWidth=3;ctx.beginPath();ctx.arc(540,1290,52,0,Math.PI*2);ctx.stroke();ctx.save();ctx.beginPath();ctx.arc(540,1290,46,0,Math.PI*2);ctx.clip();if(face){const k=Math.max(92/face.naturalWidth,92/face.naturalHeight);ctx.drawImage(face,540-face.naturalWidth*k/2,1290-face.naturalHeight*k/2,face.naturalWidth*k,face.naturalHeight*k);}else{ctx.fillStyle='#202c40';ctx.fillRect(488,1238,104,104);ctx.font='34px sans-serif';ctx.fillStyle=a.color;ctx.fillText(who.label==='Ник скрыт'?'С':String(row.listener?.initial||'С').slice(0,2),540,1302);}ctx.restore();
+ ctx.fillStyle='#f4f0e5';ctx.font='bold 40px sans-serif';y=1410;for(const line of lines(ctx,who.label,840)){ctx.fillText(line,540,y);y+=50;}
+ ctx.fillStyle=a.color;ctx.font='bold 48px sans-serif';ctx.fillText(rankTime(row.seconds),540,1565);ctx.font='23px sans-serif';ctx.fillStyle='#a9b4c8';ctx.fillText('ВРЕМЯ ПРОСЛУШИВАНИЯ ЛЮБИМОГО ЧТЕЦА',540,1612);
+ ctx.font='30px sans-serif';ctx.fillStyle='#d8be88';ctx.fillText('Saadi Kobilov',540,1740);ctx.font='21px sans-serif';ctx.fillStyle='#a9b4c8';ctx.fillText('АВТОР ПРИЛОЖЕНИЯ SALAH',540,1778);return canvas;
+}
+const downloadAward=file=>{const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);};
+export async function showWinnerCard(row,{isActive=()=>true,own=false}={}){
+ if(!isActive())return;modal('<div class="award-collection"><div class="modal-head"><h2>Карточка победителя</h2><button class="text-button" data-close>Закрыть</button></div><div data-award-preview></div><p class="award-note" data-award-status role="status">Готовим карточку…</p><div class="award-card-actions"><button class="button" data-award-share disabled>Поделиться</button><button class="button secondary" data-award-save disabled>Сохранить</button></div></div>');
+ const root=document.getElementById('modal-content'),preview=root.querySelector('[data-award-preview]'),line=root.querySelector('[data-award-status]'),send=root.querySelector('[data-award-share]'),save=root.querySelector('[data-award-save]');let file=null,valid=true;
+ const revoke=()=>{valid=false;send.disabled=save.disabled=true;if(preview.isConnected)closeModal();};const checkAccount=()=>{if(!isActive())revoke();};
+ window.addEventListener('salah:listener-visibility',revoke);window.addEventListener('salah:counter-status',checkAccount);document.getElementById('modal').addEventListener('close',()=>{valid=false;file=null;window.removeEventListener('salah:listener-visibility',revoke);window.removeEventListener('salah:counter-status',checkAccount);},{once:true});
+ try{const canvas=await renderWinnerCard(row);const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error()),'image/png'));if(!valid||!preview.isConnected||!isActive())return;file=new File([blob],'SALAH-'+row.kind+'-'+row.start+'.png',{type:'image/png'});canvas.className='award-card-preview';canvas.setAttribute('aria-label',awardInfo(row.kind).title+' · '+awardShareIdentity(row.listener).label);preview.replaceChildren(canvas);line.textContent='Сторис · 1080 × 1920';send.disabled=save.disabled=false;}catch{if(line.isConnected)line.textContent='Не удалось создать карточку.';}
+ save.onclick=()=>{if(valid&&isActive()&&file)downloadAward(file);};
+ send.onclick=async()=>{if(!valid||!isActive()||!file)return;try{if(navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:'SALAH · '+awardInfo(row.kind).title});else{downloadAward(file);toast('Карточка сохранена для отправки');}}catch(e){if(e.name!=='AbortError')toast('Не удалось поделиться. Сохраните карточку.');}};
+ protectAwardDialog(isActive);
+}

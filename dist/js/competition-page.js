@@ -1,4 +1,5 @@
 import{captureCompetitionLayout,animateCompetitionChange}from './competition-motion.js';
+import{showAwardWinners}from './quran-awards.js';
 import{read,write}from './storage.js';
 import{esc,toast}from './ui.js';
 import{counterSyncStatus}from './counter-account.js';
@@ -23,8 +24,10 @@ export function mountCompetition(host,heading){
  if(error&&rows.length)html+='<p class="muted competition-sync-note">Показан последний загруженный результат.</p>';
  if(!signed)html+='<a class="text-button" href="#account">Войти в аккаунт</a>';
  else if(own){html+='<div class="competition-settings">'+(!own.enabled?'<p class="muted competition-explanation">Учёт в рейтинге отключён для этого аккаунта.</p>':'')+(own.enabled?listenerPrivacyMarkup({allowJoin:false})+'<div class="rank-privacy-bar competition-notify-row"><label class="switch-row"><span>Уведомлять, если меня обошли</span><input type="checkbox" role="switch" id="competition-notify" aria-label="Уведомлять, если меня обошли" '+(own.notify?'checked ':'')+(busy?'disabled':'')+'></label></div>':'')+'</div>';}
+ html+='<button type="button" class="competition-awards-link" id="competition-awards"><img src="./assets/icons/trophy.svg" alt="">Итоги и награды</button>';
  html+='</section>';const before=captureCompetitionLayout(host);host.innerHTML=html;bindCompetitionView(host);animateCompetitionChange(host,before);bindPopularConsent(host);
  host.querySelectorAll('[data-competition-period]').forEach(button=>button.onclick=()=>{if(period===button.dataset.competitionPeriod)return;period=button.dataset.competitionPeriod;write('competition-period',period);const cached=cachedCompetition(period);rows=cached||[];loading=cached===null;error=false;draw();void refresh();});const retry=host.querySelector('#competition-retry');if(retry)retry.onclick=()=>void refresh(true);
+ const awards=host.querySelector('#competition-awards');if(awards)awards.onclick=()=>void showAwardWinners({isActive:()=>!closed});
  const notify=host.querySelector('#competition-notify');if(notify)notify.onchange=()=>{const enabled=notify.checked;void act(async()=>{if(enabled)await connectCompetitionNotifications(period);else await saveCompetitionSettings({notify:false});});};
  }
  async function act(action){if(busy)return;busy=true;draw();try{await action();}catch(e){toast(e.message||'Не удалось сохранить');}finally{busy=false;draw();}}

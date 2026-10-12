@@ -8,5 +8,15 @@
     "path": "assets/icons/user-ninja.svg",
     "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.7.2/svgs/solid/user-ninja.svg",
     "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/trophy.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/trophy.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
+  },
+  {
+    "path": "assets/icons/medal.svg",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/medal.svg",
+    "license": "CC BY 4.0 / Font Awesome Free 6.7.2"
   }
 ]

@@ -1,4 +1,5 @@
 import postgres from 'npm:postgres@3.4.9';
+import{ownAwards,awardWinners}from './awards.mjs';
 import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionSubscription}from './core.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
 const url=Deno.env.get('SUPABASE_URL')!,key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -23,12 +24,13 @@ async function ensure(user:any,initialEnabled=true){const hash=await hashFor(use
 });}
 async function publicBoard(period:string,day:string){
  const rows=await sql`select b.reciter,b.seconds,b.place,v.public_id as id,v.mode,
+ exists(select 1 from salah_competition_private.awards a where a.user_id=b.user_id and a.kind='week')won_week,exists(select 1 from salah_competition_private.awards a where a.user_id=b.user_id and a.kind='month')won_month,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
  case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
  case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
  from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id order by b.place,v.public_id limit 1000`;
- const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],seconds:Number(r.seconds),rank:Number(r.place)})),limited:rows.length===1000};
+ const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],seconds:Number(r.seconds),rank:Number(r.place),awards:[...(r.won_week?['week']:[]),...(r.won_month?['month']:[])]})),limited:rows.length===1000};
 }
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
@@ -42,6 +44,7 @@ Deno.serve(async req=>{
   if(!response.ok||!/^image\/jpeg(?:;|$)/i.test(response.headers.get('content-type')||''))return reply({error:'not_found'},404);const bytes=await response.arrayBuffer();if(bytes.byteLength>200000)return reply({error:'not_found'},404);
   return new Response(bytes,{headers:{...headers,'Content-Type':'image/jpeg'}});
  }
+ if(req.method==='GET'&&params.get('winners')==='1')return reply(await awardWinners(sql));
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
   if(params.get('boards')==='1'){const boards:any={};for(const p of COMPETITION_PERIODS)boards[p]=await publicBoard(p,day);return reply({day,boards});}
@@ -50,7 +53,7 @@ Deno.serve(async req=>{
  const user=await verified(req);if(!user)return reply({error:'sign_in_required'},401);
  if(req.method==='GET'){
   await ensure(user,params.get('participation')!=='off');const pref=(await sql`select p.enabled,p.notify,p.period,v.public_id as id,v.mode from salah_competition_private.preferences p join public.reciter_listener_visibility v using(user_id)where p.user_id=${user.id}::uuid`)[0];
-  const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));const totals:any={};for(const period of COMPETITION_PERIODS){const rows=await sql`select reciter,seconds from public.competition_scores(${period},${day}::date)where user_id=${user.id}::uuid`;totals[period]=Object.fromEntries(rows.map(r=>[r.reciter,Number(r.seconds)]));}return reply({...pref,totals});
+  const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));const totals:any={};for(const period of COMPETITION_PERIODS){const rows=await sql`select reciter,seconds from public.competition_scores(${period},${day}::date)where user_id=${user.id}::uuid`;totals[period]=Object.fromEntries(rows.map(r=>[r.reciter,Number(r.seconds)]));}return reply({...pref,totals,awards:await ownAwards(sql,user)});
  }
  if(req.method!=='POST')return reply({error:'method'},405);
  if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}await ensure(user);
