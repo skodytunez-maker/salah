@@ -13,3 +13,6 @@ console.log('PASS: eight fixed reward types, safe anonymous cards, calendar date
 
 for(const day of [7,30,100,200,365]){const path=awardArtwork('streak'+day);assert.match(path,/assets\/awards\/streak-\d+-v1\.png$/);const b=await fs.readFile(new URL('../dist/'+path.slice(2),import.meta.url));assert.equal(b.subarray(1,4).toString(),'PNG');assert.equal(b[25],6,'Medallion assets retain true RGBA channels');assert.ok(b.readUInt32BE(16)>=1024&&b.readUInt32BE(20)>=1024,'Large exports have enough source detail');}
 console.log('PASS: all five selected-family medallions are high-resolution RGBA assets and200-day parsing is accepted.');
+
+for(const kind of ['week','month']){const p=awardArtwork(kind);assert.match(p,/leader-(week|month)-v2\.png$/);const b=await fs.readFile(new URL('../dist/'+p.slice(2),import.meta.url));assert.equal(b[25],6);assert.ok(b.readUInt32BE(16)>=1024);}
+console.log('PASS: calendar leader awards use separate high-resolution transparent podium illustrations.');

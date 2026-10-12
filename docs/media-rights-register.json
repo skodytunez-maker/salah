@@ -1830,6 +1830,24 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/salah-medallions-source.json",
       "note": "Built-in ImageGen individual original SALAH medallion from the selected family and user-authorized leader/founder reward brief. Transparent original pixels, no cropped sheet or third-party logo."
+    },
+    {
+      "path": "dist/assets/awards/leader-month-v2.png",
+      "gitBlobSha": "34c82359d2c5ca172171dd66a3fe08cc9a0df8cd",
+      "bytes": 1244369,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original transparent SALAH calendar winner podium, requested by user; source pixels preserved."
+    },
+    {
+      "path": "dist/assets/awards/leader-week-v2.png",
+      "gitBlobSha": "b35fa220cb9bb42f4f527d45ea1c15ccbdd0772f",
+      "bytes": 1210798,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/salah-medallions-source.json",
+      "note": "Built-in ImageGen original transparent SALAH calendar winner podium, requested by user; source pixels preserved."
     }
   ],
   "wallpaperSets": [
