@@ -1,2 +1,2 @@
-// Apply the saved appearance before styles load, including offline launch.
-(()=>{let theme='classic';try{const value=JSON.parse(localStorage.getItem('salah:settings')||'{}');if(value?.colorTheme==='forest')theme='forest';}catch{}document.documentElement.dataset.colorTheme=theme;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='forest'?'#11221d':'#070b16';})();
+// Compatibility for cached version310 documents: only the original appearance remains.
+(()=>{document.documentElement.dataset.colorTheme='classic';const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content='#070b16';})();

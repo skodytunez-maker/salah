@@ -40,10 +40,10 @@ export function read(key,fallback){
 export function write(key,value){
  try{localStorage.setItem('salah:'+key,JSON.stringify(value));return true}catch{storageProblem('Не удалось сохранить данные. Проверьте свободное место и доступ к хранилищу.');return false}
 }
-export const defaults={tyumenTimeSource:'auto',madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',colorTheme:'classic',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
+export const defaults={tyumenTimeSource:'auto',madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
 const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const BOOLEAN_FIELDS=['weather','weatherAnimation','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
-const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders']);
+const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders','colorTheme']);
 const validTime=value=>typeof value==='string'&&(value===''||personalTime(value)!=='');
 export function normalizeSettings(value,{strict=false,warnings=[]}={}){
  const result={...defaults,offsets:{...defaults.offsets},tableOffsets:{...defaults.tableOffsets},mosqueTimes:{}};
@@ -63,7 +63,8 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
  if(Object.hasOwn(value,'madhhab')){
   if(typeof value.madhhab==='string'&&/^[a-z][a-z-]{0,29}$/.test(value.madhhab))result.madhhab=value.madhhab;else bad('Некорректное значение мазхаба.');
  }
- if(Object.hasOwn(value,'colorTheme')){if(['classic','forest'].includes(value.colorTheme))result.colorTheme=value.colorTheme;else bad('Некорректная цветовая тема.')}
+ // Accept backups/settings from the short-lived optional theme without warnings, then discard that retired preference.
+ if(Object.hasOwn(value,'colorTheme')&&!['classic','forest'].includes(value.colorTheme))bad('Некорректная цветовая тема.');
  if(Object.hasOwn(value,'backgroundMode')&&!['dark','light','auto'].includes(value.backgroundMode))bad('Некорректный режим фона.');
  if(Object.hasOwn(value,'wallpaper')&&wallpaperChoice(value.wallpaper)!==value.wallpaper)bad('Некорректные обои.');
  if(Object.hasOwn(value,'landmarkCity')){
@@ -121,7 +122,7 @@ export const settings=normalizeSettings(read('settings',{}),{warnings:storageWar
 export const history=normalizeHistory(read('history',{}),{warnings:storageWarnings});
 const replace=(target,value)=>{for(const key of Object.keys(target))delete target[key];Object.assign(target,value)};
 // Keep live references used by the app and other modules when restoring data.
-export function replacePersonalState(nextSettings,nextHistory){replace(settings,nextSettings);replace(history,nextHistory);if(typeof window!=='undefined')window.dispatchEvent(new Event('salah:settings-changed'))}
+export function replacePersonalState(nextSettings,nextHistory){replace(settings,nextSettings);replace(history,nextHistory)}
 export function updateSettings(value){
  if(!isRecord(value))return false;
  // A resumed tab may have an older in-memory snapshot. Partial changes must

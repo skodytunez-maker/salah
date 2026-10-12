@@ -1,9 +1,5 @@
-import{settings,read,normalizeSettings,updateSettings}from './storage.js';
-import{toast}from './ui.js';
-export const COLOR_THEMES=[['classic','Классическая'],['forest','Зелёная']];
-export function applyColorTheme(value,documentRef=document){const theme=value==='forest'?'forest':'classic';documentRef.documentElement.dataset.colorTheme=theme;const meta=documentRef.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='forest'?'#11221d':'#070b16';return theme;}
-let started=false,detachSetting=null;const listeners=new Set();
-function savedTheme(){return normalizeSettings(read('settings',settings)).colorTheme;}
-function syncColorTheme(){const theme=applyColorTheme(savedTheme());for(const render of listeners)render(theme);}
-export function initColorTheme(){if(started)return;started=true;syncColorTheme();window.addEventListener('salah:settings-changed',syncColorTheme);window.addEventListener('storage',event=>{if(event.key===null||event.key==='salah:settings')syncColorTheme();});}
-export function mountColorThemeSetting(container){const host=container.querySelector('#color-theme-setting');if(!host)return()=>{};detachSetting?.();host.innerHTML='<fieldset class="color-theme-picker"><legend>Тема приложения</legend><div class="color-theme-choices">'+COLOR_THEMES.map(([value,label])=>'<label class="color-theme-choice" data-color-choice="'+value+'"><input type="radio" name="color-theme" value="'+value+'"><span>'+label+'</span></label>').join('')+'</div></fieldset>';const inputs=[...host.querySelectorAll('input')];const render=theme=>{for(const input of inputs)input.checked=input.value===theme;};render(savedTheme());listeners.add(render);for(const input of inputs)input.onchange=()=>{if(!input.checked)return;const saved=updateSettings({colorTheme:input.value});const theme=applyColorTheme(settings.colorTheme);render(theme);toast(saved?(theme==='forest'?'Зелёная тема включена':'Классическая тема включена'):'Тема включена, но не удалось сохранить выбор.');};let alive=true;const cleanup=()=>{if(!alive)return;alive=false;listeners.delete(render);for(const input of inputs)input.onchange=null;window.removeEventListener('hashchange',route);if(detachSetting===cleanup)detachSetting=null;};const route=()=>{if(!host.isConnected)cleanup();};window.addEventListener('hashchange',route);detachSetting=cleanup;return cleanup;}
+// Compatibility exports keep cached version310 entry modules loading without a broken import.
+export const COLOR_THEMES=[];
+export function applyColorTheme(_value,documentRef=document){documentRef.documentElement.dataset.colorTheme='classic';const meta=documentRef.querySelector('meta[name="theme-color"]');if(meta)meta.content='#070b16';return 'classic';}
+export function initColorTheme(){applyColorTheme('classic');}
+export function mountColorThemeSetting(container){const host=container.querySelector('#color-theme-setting');if(host){host.innerHTML='';host.hidden=true;}return()=>{};}
