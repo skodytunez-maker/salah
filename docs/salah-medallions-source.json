@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-13",
+  "selectedDisplayedOption": 3,
+  "selectedVisualSource": "C:/Users/ПК/.codex/generated_images/01a0f25b-270d-77d3-a76e-633ece56c374/exec-c80991b7-eb11-40e8-b992-18d5b40604ce.png",
+  "product": "SALAH",
+  "assets": [
+    {
+      "days": 7,
+      "path": "dist/assets/awards/streak-7-v1.png",
+      "gitBlobSha": "3eb5c84366039d2cf4f10908b850c251cf9cdfb1",
+      "bytes": 2073240,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-81f2f90a-d122-43ef-8f13-1a80e33643f0.png",
+      "prompt": "Individual reference-matched front-facing satin SALAH arch/crescent/star/baseline medallion with embossed 7 numeral, true transparent background, no labels/other objects; bronze, double rim"
+    },
+    {
+      "days": 30,
+      "path": "dist/assets/awards/streak-30-v1.png",
+      "gitBlobSha": "0d9521cd72e36bb791be3382b6f0152e34aa4e58",
+      "bytes": 2030665,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-55022926-d7b4-414c-b4d3-fcac0f6ba976.png",
+      "prompt": "Individual reference-matched front-facing satin SALAH arch/crescent/star/baseline medallion with embossed 30 numeral, true transparent background, no labels/other objects; brushed silver, double rim"
+    },
+    {
+      "days": 100,
+      "path": "dist/assets/awards/streak-100-v1.png",
+      "gitBlobSha": "6879cf871ed1b99e1bb27d08a4230bc993ec940d",
+      "bytes": 2317673,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-e80f-7820-814f-73856ab0ee0f/exec-a7410965-3a91-4f1b-88fb-f6b6594c7ba6.png",
+      "prompt": "Individual reference-matched front-facing satin SALAH arch/crescent/star/baseline medallion with embossed 100 numeral, true transparent background, no labels/other objects; restrained satin gold, double rim"
+    },
+    {
+      "days": 200,
+      "path": "dist/assets/awards/streak-200-v1.png",
+      "gitBlobSha": "934b2b84b7bd55fc7536feb89f5207758bdd7b69",
+      "bytes": 1904482,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131ca-ebdb-71c0-be61-ad47022f91c7/exec-7c207add-9d84-451c-99bf-eca7e712872e.png",
+      "prompt": "Individual reference-matched front-facing satin SALAH arch/crescent/star/baseline medallion with embossed 200 numeral, true transparent background, no labels/other objects; pale champagne gold, faceted outer band"
+    },
+    {
+      "days": 365,
+      "path": "dist/assets/awards/streak-365-v1.png",
+      "gitBlobSha": "931710cdc9664088bb3dee462d0b2eca689f528b",
+      "bytes": 1993515,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a131cb-2f60-7df3-9839-52e2614f16af/exec-1c4e6655-8c0a-4471-b8a1-f0de4fd348d4.png",
+      "prompt": "Individual reference-matched front-facing satin SALAH arch/crescent/star/baseline medallion with embossed 365 numeral, true transparent background, no labels/other objects; thin continuous incised geometric rim with gold accents, no crossing strips"
+    }
+  ]
+}

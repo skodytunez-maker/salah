@@ -2,10 +2,11 @@ import{safeListener,rankTime}from './reciter-ranking-core.js';
 export const QURAN_AWARDS=[
  {kind:'week',title:'Лидер недели',icon:'medal',color:'#c2cbd8',rule:'Первое место по времени любимого чтеца за календарную неделю.'},
  {kind:'month',title:'Лидер месяца',icon:'trophy',color:'#d8be88',rule:'Первое место по времени любимого чтеца за календарный месяц.'},
- {kind:'streak7',title:'Неделя с Кораном',icon:'seedling',color:'#9bbba9',days:7,rule:'7 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
- {kind:'streak30',title:'Месяц с Кораном',icon:'book-open',color:'#d8be88',days:30,rule:'30 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
- {kind:'streak100',title:'100 дней с Кораном',icon:'gem',color:'#c2cbd8',days:100,rule:'100 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
- {kind:'streak365',title:'Год с Кораном',icon:'award',color:'#d8be88',days:365,rule:'365 дней прослушивания в одной серии. Награда остаётся в коллекции.'}
+ {kind:'streak7',title:'Неделя с Кораном',icon:'seedling',color:'#9bbba9',days:7,artwork:'assets/awards/streak-7-v1.png',rule:'7 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
+ {kind:'streak30',title:'Месяц с Кораном',icon:'book-open',color:'#d8be88',days:30,artwork:'assets/awards/streak-30-v1.png',rule:'30 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
+ {kind:'streak100',title:'100 дней с Кораном',icon:'gem',color:'#c2cbd8',days:100,artwork:'assets/awards/streak-100-v1.png',rule:'100 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
+ {kind:'streak200',title:'200 дней с Кораном',icon:'gem',color:'#e7d4a8',days:200,artwork:'assets/awards/streak-200-v1.png',rule:'200 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
+ {kind:'streak365',title:'Год с Кораном',icon:'award',color:'#d8be88',days:365,artwork:'assets/awards/streak-365-v1.png',rule:'365 дней прослушивания в одной серии. Награда остаётся в коллекции.'}
 ];
 export const awardInfo=kind=>QURAN_AWARDS.find(a=>a.kind===kind);
 export const calendarAward=kind=>kind==='week'||kind==='month';
@@ -25,3 +26,5 @@ export function awardCaption(row){return calendarAward(row.kind)?rankTime(row.se
 export function weekDays(today,heard,protectedDays=[]){const anchor=new Date(today+'T12:00:00Z'),monday=new Date(anchor);monday.setUTCDate(monday.getUTCDate()-(monday.getUTCDay()+6)%7);const set=new Set(heard),protectedSet=new Set(protectedDays);return Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setUTCDate(d.getUTCDate()+i);const day=d.toISOString().slice(0,10);return{day,number:d.getUTCDate(),label:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][i],heard:set.has(day),protected:protectedSet.has(day),today:day===today,future:day>today};});}
 
 export function dayCountLabel(n){return n%100>=11&&n%100<=14?'дней':n%10===1?'день':n%10>=2&&n%10<=4?'дня':'дней';}
+
+export function awardArtwork(kind){const a=awardInfo(kind);if(!a)throw Error('Unknown award');return './'+(a.artwork||'assets/icons/'+a.icon+'.svg');}
