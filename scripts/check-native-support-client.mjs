@@ -9,7 +9,8 @@ await client.sync();assert.equal(saves,1,'unchanged token/session does not rewri
 client.message({user:'another',id:device,thread});assert.equal(notices,0);client.message({user:uid,id:device,thread});assert.equal(notices,1);
 client.tap({user:uid,thread,tap:'tap-one'});client.tap({user:uid,thread,tap:'tap-one'});assert.equal(opens,1);
 client.tap({user:uid,thread,tap:'tap-two'});assert.equal(opens,2,'later tap for same thread still opens it');
-session=null;await client.accountChanged();client.message({user:uid,id:device,thread});assert.equal(notices,1,'sign-out suppresses old-account messages');client.stop();
+client.message({user:uid,id:device,thread,kind:'staff'});assert.equal(notices,2);client.message({user:uid,id:device,thread,kind:'evil'});assert.equal(notices,2);client.tap({user:uid,thread,tap:'tap-two',kind:'staff'});assert.equal(opens,3,'staff and support taps are isolated');client.tap({user:uid,thread,tap:'tap-evil',kind:'evil'});assert.equal(opens,3);
+session=null;await client.accountChanged();client.message({user:uid,id:device,thread});assert.equal(notices,2,'sign-out suppresses old-account messages');client.stop();
 console.log('PASS native support opt-in, no startup prompt, registration dedupe, per-account notice/tap isolation and sign-out');
 let releaseStatus,currentSession={user:{id:uid,email_confirmed_at:'2026-10-08'},access_token:'test-only'},statusHold=false,latePrompts=0,lateSaves=0;
 const slow=createNativeSupportClient({plugin:{...plugin,getStatus:async()=>statusHold?new Promise(resolve=>releaseStatus=resolve):{supported:true,enabled:false},enable:async()=>{latePrompts++;return {device,token:'b'.repeat(160)}}},getSession:async()=>currentSession,register:async()=>lateSaves++});

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import{firebaseSupportPayload,createFirebaseSupportSender}from '../supabase/functions/background-reminders/firebase-support-sender.mjs';
 const now=Date.now(),device={user_id:'11111111-1111-4111-8111-111111111111',token:'a'.repeat(160)},event={messageId:'22222222-2222-4222-8222-222222222222',thread:'33333333-3333-4333-8333-333333333333',at:now-1000,body:'must never leave the server'};
 const payload=firebaseSupportPayload(device,event,now);assert.ok(!JSON.stringify(payload).includes(event.body));assert.equal(payload.message.data.user,device.user_id);assert.equal(payload.message.android.priority,'high');
+const staffPayload=firebaseSupportPayload(device,{...event,kind:'staff'},now);assert.equal(staffPayload.message.data.kind,'staff');assert.ok(!JSON.stringify(staffPayload).includes(event.body));assert.throws(()=>firebaseSupportPayload(device,{...event,kind:'evil'},now));
 assert.throws(()=>firebaseSupportPayload(device,{...event,at:now+1},now));assert.throws(()=>firebaseSupportPayload(device,{...event,at:now-86400000},now));
 assert.throws(()=>createFirebaseSupportSender({credential:{project_id:'foreign'}}));
 const keys=await crypto.subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);

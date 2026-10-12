@@ -5,7 +5,7 @@ export function createNativeSupportClient({plugin,getSession,register,notice=()=
  const queue=task=>{const result=tail.catch(()=>{}).then(task);tail=result.catch(()=>{});return result;};
  async function bounded(task,ms=15000){let timer;try{return await Promise.race([task,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('native_support_timeout')),ms)})]);}finally{clearTimeout(timer)}}
  const valid=s=>UUID.test(s?.user?.id||'')&&s.user.email_confirmed_at&&!s.user.is_anonymous;
- function tap(value){if(!UUID.test(value?.user||'')||!UUID.test(value.thread||''))return;pendingTap=value;if(actor===value.user){const key=value.tap||value.user+':'+value.thread;if(!taps.has(key)){taps.add(key);if(taps.size>50)taps.delete(taps.values().next().value);open(value.thread);}pendingTap=null;}}
+ function tap(value){if(!UUID.test(value?.user||'')||!UUID.test(value.thread||'')||value.kind!==undefined&&!['support','staff'].includes(value.kind))return;pendingTap=value;if(actor===value.user){const key=(value.kind||'support')+':'+(value.tap||value.user+':'+value.thread);if(!taps.has(key)){taps.add(key);if(taps.size>50)taps.delete(taps.values().next().value);open(value.thread,value.kind||'support');}pendingTap=null;}}
  async function sync({enable=false}={}){
   const id=revision,current=session,expectedActor=actor;
   if(!actor||!current)return {ready:false,message:'Войдите в аккаунт.'};
@@ -31,6 +31,6 @@ export function createNativeSupportClient({plugin,getSession,register,notice=()=
   const clicked=await bounded(plugin.consumeTap(),2000);if(id!==revision)return;tap(clicked);if(pendingTap)tap(pendingTap);
   if(actor)await sync();
  }
- function message(value){if(actor&&value?.user===actor&&UUID.test(value.id||'')&&UUID.test(value.thread||''))notice({actor,pending:1,latest:{id:value.id,thread:value.thread}});}
+ function message(value){if(actor&&value?.user===actor&&UUID.test(value.id||'')&&UUID.test(value.thread||'')&&(value.kind===undefined||['support','staff'].includes(value.kind)))notice({...value.kind==='staff'?{kind:'staff'}:{},actor,pending:1,latest:{id:value.id,thread:value.thread}});}
  return {accountChanged,enable:()=>sync({enable:true}),sync,message,tap,stop(){revision++;actor=session=pendingTap=null;receipt='';}};
 }
