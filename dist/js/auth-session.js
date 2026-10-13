@@ -1,5 +1,5 @@
 // Verify the live Auth session without rotating its refresh token. The SDK alone
-// renews expiring tokens; repeated UI checks must not compete with that renewal.
+// renews tokens automatically; repeated UI checks must not compete with renewal.
 export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
  let pending=null,checkedToken=null,checkedAt=0;
  const check=async function({force=false}={}){
@@ -7,9 +7,24 @@ export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
   const task=(async()=>{
    const auth=getAuth();let first;try{first=await auth.getSession();}catch{return{state:'unavailable'};}
    if(first.error)return{state:'unavailable'};
-   const current=first.data?.session;if(!current){checkedToken=null;return{state:'signed_out',session:null};}
+   let current=first.data?.session;if(!current){checkedToken=null;return{state:'signed_out',session:null};}
    if(!force&&current.access_token===checkedToken&&now()-checkedAt<interval)return{state:'valid',session:current};
    let verified;try{verified=await auth.getUser(current.access_token);}catch{return{state:'unavailable'};}
+   // An expired access token (including clock skew) is not proof that the
+   // refresh session is revoked. Try one SDK recovery only after Auth rejects it.
+   if(verified.error?.code==='bad_jwt'){
+    let latest;try{latest=await auth.getSession();}catch{return{state:'unavailable'};}
+    if(latest.error)return{state:'unavailable'};
+    if(!latest.data?.session)return{state:'signed_out',session:null};
+    if(latest.data.session.access_token!==current.access_token)return{state:'changed'};
+    let recovery;try{recovery=await auth.refreshSession();}catch{return{state:'unavailable'};}
+    if(recovery.error)verified={error:recovery.error};
+    else{
+     const next=recovery.data?.session;if(!next)return{state:'signed_out',session:null};
+     if(next.user?.id!==current.user?.id)return{state:'changed'};
+     current=next;try{verified=await auth.getUser(current.access_token);}catch{return{state:'unavailable'};}
+    }
+   }
    if(verified.error){
     const error=verified.error,revoked=['refresh_token_not_found','refresh_token_already_used','session_not_found','user_not_found','user_banned','bad_jwt'].includes(error.code)||[401,403].includes(error.status)||/invalid refresh token|refresh token.*not found/i.test(error.message||'');
     if(!revoked)return{state:'unavailable'};
