@@ -3,6 +3,9 @@ import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{ARABIC_LETTERS,RIGHT_JOINING,letterById,letterForms,normalizeAlphabetProgress,validAlphabetProgress,reviewLetter,alphabetQuestion}from '../dist/js/arabic-alphabet-core.js';
 let checks=0;const yes=(v,m)=>{assert.ok(v,m);checks++;};
 yes(ARABIC_LETTERS.length===28&&new Set(ARABIC_LETTERS.map(l=>l.char)).size===28,'28 distinct standard letters');
+const expectedNames={"alif":"Алиф","ba":"Ба","ta":"Та","tha":"Са","jim":"Джим","ha":"Ха","kha":"Хо̃","dal":"Даль","dhal":"Заль","ra":"Ро̃","zay":"За","sin":"Син","shin":"Шин","sad":"Со̃д","dad":"До̃д","tta":"То̃","za":"Зо̃","ayn":"‘Айн","ghayn":"‘Го̃йн","fa":"Фа","qaf":"Ко̃ф","kaf":"Каф","lam":"Лям","mim":"Мим","nun":"Нун","heh":"Ха","waw":"Уау","ya":"Йа"};
+for(const [id,name]of Object.entries(expectedNames))yes(letterById(id).name===name,'User-reference name preserved for '+id);
+const alphabetCss=await fs.readFile(new URL('../dist/css/arabic-alphabet.css',import.meta.url),'utf8');yes(/\.alphabet-grid\{direction:rtl;/.test(alphabetCss),'Alphabet grid reads from the right while retaining canonical DOM and progress order');
 yes(RIGHT_JOINING.map(id=>letterById(id).char).join('')==='ادذرزو','Six non-following-joining letters, not guessed by alphabet position');
 for(const id of RIGHT_JOINING){const f=letterForms(id);yes(f[0].text===f[1].text&&f[2].text===f[3].text&&!f[2].text.endsWith('\u0640'),'Right-joining letters have two forms and never a false left connector');}
 yes(letterForms('ba').map(f=>f.text).join('|')==='ب|بـ|ـبـ|ـب','Baa contextual forms follow Arabic joining');

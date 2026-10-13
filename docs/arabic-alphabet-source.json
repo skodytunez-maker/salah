@@ -23,5 +23,39 @@
     "unchanged": true
   },
   "content": "Original SALAH lesson text and practice.28 standard letters; contextual strings use normal letters and tatweel, not fake forms or disjoint forced joins.",
-  "scope": "Alphabet foundation only. Audio, handwriting assessment and the full Quran-reading course are future work, not presented as available."
+  "scope": "Alphabet foundation only. Audio, handwriting assessment and the full Quran-reading course are future work, not presented as available.",
+  "naming": {
+    "reference": "User-provided Dar al-Mubin alphabet screenshot, 2026-10-13",
+    "scope": "Russian labels follow the user-provided reference, with short Ба/Та/Са and single а as requested. Original glyph forms and stable progress IDs preserved. Лям retains the original SALAH spelling as requested.",
+    "names": {
+      "alif": "Алиф",
+      "ba": "Ба",
+      "ta": "Та",
+      "tha": "Са",
+      "jim": "Джим",
+      "ha": "Ха",
+      "kha": "Хо̃",
+      "dal": "Даль",
+      "dhal": "Заль",
+      "ra": "Ро̃",
+      "zay": "За",
+      "sin": "Син",
+      "shin": "Шин",
+      "sad": "Со̃д",
+      "dad": "До̃д",
+      "tta": "То̃",
+      "za": "Зо̃",
+      "ayn": "‘Айн",
+      "ghayn": "‘Го̃йн",
+      "fa": "Фа",
+      "qaf": "Ко̃ф",
+      "kaf": "Каф",
+      "lam": "Лям",
+      "mim": "Мим",
+      "nun": "Нун",
+      "heh": "Ха",
+      "waw": "Уау",
+      "ya": "Йа"
+    }
+  }
 }

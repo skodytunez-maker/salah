@@ -1,12 +1,12 @@
 export const ALPHABET_SOURCE='https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-9/';
 const rows=[
  ['alif','ا','Алиф','Alif'],['ba','ب','Ба','Bāʼ'],['ta','ت','Та','Tāʼ'],['tha','ث','Са','Thāʼ'],
- ['jim','ج','Джим','Jīm'],['ha','ح','Ха','Ḥāʼ'],['kha','خ','Ха','Khāʼ'],['dal','د','Даль','Dāl'],
- ['dhal','ذ','Заль','Dhāl'],['ra','ر','Ра','Rāʼ'],['zay','ز','Зай','Zāy'],['sin','س','Син','Sīn'],
- ['shin','ش','Шин','Shīn'],['sad','ص','Сад','Ṣād'],['dad','ض','Дад','Ḍād'],['tta','ط','Та','Ṭāʼ'],
- ['za','ظ','За','Ẓāʼ'],['ayn','ع','Айн','ʿAyn'],['ghayn','غ','Гайн','Ghayn'],['fa','ف','Фа','Fāʼ'],
- ['qaf','ق','Каф','Qāf'],['kaf','ك','Кяф','Kāf'],['lam','ل','Лям','Lām'],['mim','م','Мим','Mīm'],
- ['nun','ن','Нун','Nūn'],['heh','ه','Ха','Hāʼ'],['waw','و','Вав','Wāw'],['ya','ي','Йа','Yāʼ']
+ ['jim','ج','Джим','Jīm'],['ha','ح','Ха','Ḥāʼ'],['kha','خ','Хо̃','Khāʼ'],['dal','د','Даль','Dāl'],
+ ['dhal','ذ','Заль','Dhāl'],['ra','ر','Ро̃','Rāʼ'],['zay','ز','За','Zāy'],['sin','س','Син','Sīn'],
+ ['shin','ش','Шин','Shīn'],['sad','ص','Со̃д','Ṣād'],['dad','ض','До̃д','Ḍād'],['tta','ط','То̃','Ṭāʼ'],
+ ['za','ظ','Зо̃','Ẓāʼ'],['ayn','ع','‘Айн','ʿAyn'],['ghayn','غ','‘Го̃йн','Ghayn'],['fa','ف','Фа','Fāʼ'],
+ ['qaf','ق','Ко̃ф','Qāf'],['kaf','ك','Каф','Kāf'],['lam','ل','Лям','Lām'],['mim','م','Мим','Mīm'],
+ ['nun','ن','Нун','Nūn'],['heh','ه','Ха','Hāʼ'],['waw','و','Уау','Wāw'],['ya','ي','Йа','Yāʼ']
 ];
 export const RIGHT_JOINING=Object.freeze(['alif','dal','dhal','ra','zay','waw']);
 export const ARABIC_LETTERS=Object.freeze(rows.map(([id,char,name,latin],index)=>Object.freeze({id,char,name,latin,index,rightOnly:RIGHT_JOINING.includes(id)})));
