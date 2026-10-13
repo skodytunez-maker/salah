@@ -15,7 +15,7 @@ export function hideFounderWelcome(root=layer,{immediate=false}={}){
 export function showFounderWelcome({preview=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches}={}){
  hideFounderWelcome(layer,{immediate:true});
  const root=document.createElement('div');root.className='founder-welcome'+(reduced?' founder-welcome-reduced':'');
- root.innerHTML='<button type="button" class="founder-welcome-close" aria-label="Закрыть благодарность"><img src="./assets/x-lg.svg" alt=""></button><div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+'" alt=""></div><h2>Спасибо, что вы с нами.</h2><p>Первопроходец SALAH</p>'+(preview?'<small>Предпросмотр · награды и счётчик не меняются</small>':'')+'</div>';
+ root.innerHTML='<div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+'" alt=""></div><h2>Спасибо, что вы с нами.</h2><p>Первопроходец SALAH</p>'+(preview?'<small>Предпросмотр · награды и счётчик не меняются</small>':'')+'<button type="button" class="founder-welcome-close">Спасибо</button></div>';
  layer=root;document.body.append(root);root.querySelector('.founder-welcome-close').onclick=()=>hideFounderWelcome(root);
  exitTimer=setTimeout(()=>hideFounderWelcome(root),15000);
  return root;
