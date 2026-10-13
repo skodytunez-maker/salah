@@ -1,7 +1,9 @@
+import{showArabicAlphabet}from './arabic-alphabet.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
 const entries = [
+  {kind:'alphabet',icon:'book',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
   {kind:'umrah',icon:'landmark',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
   {
     kind: 'basic',
@@ -29,7 +31,9 @@ const entries = [
   }
 ];
 
-export function showKnowledge(container, { onStart } = {}) {
+export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'' } = {}) {
+  if(new URLSearchParams(hash.split('?')[1]||'').get('view')==='alphabet'){if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
+  delete container.dataset.alphabetHash;
   const saved=savedLesson(read('learning-progress',null));
   container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title">
     <div class="page-head knowledge-head">

@@ -3693,6 +3693,16 @@
       "path": "dist/assets/icons/right-from-bracket.svg",
       "gitBlobSha": "184d7f5314d276deb601d0f3082786a132af4a85",
       "bytes": 755
+    },
+    {
+      "path": "dist/assets/amiri-regular.ttf",
+      "gitBlobSha": "3d5f5fb786ec50ac84c41cc89d08b05c20e14135",
+      "bytes": 612940
+    },
+    {
+      "path": "dist/assets/amiri-regular-OFL.txt",
+      "gitBlobSha": "a6051797e5f1910347b586dc06d4c1130f00da28",
+      "bytes": 4389
     }
   ],
   "incrementalEvidence": [
