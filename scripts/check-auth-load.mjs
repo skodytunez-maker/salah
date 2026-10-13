@@ -7,12 +7,13 @@ import {createSessionGuard} from '../dist/js/auth-session.js';
 const source=await readFile(new URL('../dist/js/owner-auth.js',import.meta.url),'utf8');
 const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({verifyOwner,accountAuthClient,ownerVerified,initOwnerAccess});';
 const callbacks=[],queue=[],tabs=[],routes=[],storageListeners=[];
-let now=1000,refreshes=0,gates=0,allow=true;
+let now=1000,refreshes=0,userChecks=0,gates=0,allow=true;
 let session={access_token:'fixture-0',user:{id:'11111111-1111-4111-8111-111111111111'}};
 for(let i=0;i<3;i++){
  const auth={
   onAuthStateChange:fn=>{callbacks.push(fn);},
   getSession:async()=>({data:{session}}),
+  getUser:async token=>{userChecks++;assert.equal(token,session.access_token);return{data:{user:session.user}};},
   refreshSession:async()=>{refreshes++;session={...session,access_token:'fixture-'+refreshes};for(const fn of callbacks)fn('TOKEN_REFRESHED',session);for(const listener of storageListeners)listener({key:'salah-owner-session-v1',newValue:JSON.stringify(session)});return{data:{session}};},
   signOut:async()=>({error:null})
  };
@@ -27,7 +28,7 @@ const observed={refreshes,gates,rounds,queued:queue.length};
 if(process.argv.includes('--baseline'))console.log(JSON.stringify(observed));
 else{
  assert.equal(queue.length,0,'A refresh event must settle, not start another refresh loop');
- assert.ok(refreshes<=3,'Each starting tab checks once; SDK/storage renewals never rotate again');
+ assert.equal(refreshes,0,'UI checks cannot rotate tokens in any starting tab');assert.ok(userChecks<=3,'Live Auth checks stay bounded');
  assert.ok(gates<=6,'Server owner checks remain bounded');
  assert.ok(tabs.every(tab=>tab.ownerVerified()));
  // Routine renewal of the same verified owner does not collapse the cabinet.
@@ -44,8 +45,8 @@ else{
 }
 
 // A late refresh response cannot replace a newer broadcast renewal.
-let current={access_token:'old'},release;
-const guard=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{session:current}}),refreshSession:()=>new Promise(done=>release=done)}),now:()=>1000});
+let current={access_token:'old',user:{id:'fixture-user'}},release;
+const guard=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{session:current}}),getUser:()=>new Promise(done=>release=done)}),now:()=>1000});
 const pending=guard({force:true});for(let i=0;!release&&i<10;i++)await Promise.resolve();
-current={access_token:'newer'};guard.acceptRefresh(current);release({data:{session:{access_token:'older-response'}}});
+current={access_token:'newer',user:{id:'fixture-user'}};guard.acceptRefresh(current);release({data:{user:{id:'fixture-user'}}});
 assert.equal((await pending).session.access_token,'newer');assert.equal((await guard()).session.access_token,'newer');
