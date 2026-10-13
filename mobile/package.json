@@ -14,7 +14,8 @@
     "android:sync": "npm run sync:web && npx cap sync android && npm run android:configure",
     "ios:configure": "node ./scripts/ios-dependency-evidence.mjs --pin && ruby ./scripts/configure-ios.rb",
     "ios:sync": "npm run sync:web && npx cap sync ios && npm run ios:configure",
-    "licenses:report": "node ./scripts/collect-licenses.mjs"
+    "licenses:report": "node ./scripts/collect-licenses.mjs",
+    "android:play": "node ./scripts/configure-play-release.mjs"
   },
   "dependencies": {
     "@capacitor/core": "8.5.2"
