@@ -109,7 +109,7 @@ const gateScope={settings:{onboarded:true},currentRoute:'adhkar',toast(){},regis
  app:{querySelector:selector=>reader&&selector.split(',').includes(reader)?{}:null},
  counterSyncStatus:()=>({status:sync}),foregroundAudioBusy:()=>audio};
 vm.runInNewContext(gateCall,gateScope);
-for(const selector of ['.adhkar-shell','.dhikr-list-shell','.lesson-complete','.dua-reader','.quran-reader','.lesson-content']){
+for(const selector of ['.adhkar-shell','.dhikr-list-shell','.lesson-complete','.dua-reader','.quran-reader','.lesson-content','.alphabet-page']){
  reader=selector;assert.equal(updateGate.canAutoUpdate(),false,'A downloaded update must wait while reading '+selector);
 }
 reader=null;assert.equal(updateGate.canAutoUpdate(),true,'The collection menu still updates automatically');

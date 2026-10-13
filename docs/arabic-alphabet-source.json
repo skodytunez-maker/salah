@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "verifiedOn": "2026-10-13",
+  "topic": "Arabic alphabet and contextual joining",
+  "sources": [
+    {
+      "label": "Unicode16 · Chapter9 Arabic cursive joining",
+      "url": "https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-9/",
+      "scope": "Nominal letters, contextual joining, six right-joining letters, hamza and lam-alef ligature"
+    }
+  ],
+  "font": {
+    "project": "Amiri",
+    "repository": "https://github.com/aliftype/amiri",
+    "commit": "d3d0c5cb6fe7196cb4a58608fc5c8ecd2e6e80fa",
+    "upstreamPath": "fonts/Amiri-Regular.ttf",
+    "path": "dist/assets/amiri-regular.ttf",
+    "gitBlobSha": "3d5f5fb786ec50ac84c41cc89d08b05c20e14135",
+    "bytes": 612940,
+    "license": "SIL-OFL-1.1",
+    "licensePath": "dist/assets/amiri-regular-OFL.txt",
+    "licenseBlobSha": "a6051797e5f1910347b586dc06d4c1130f00da28",
+    "unchanged": true
+  },
+  "content": "Original SALAH lesson text and practice.28 standard letters; contextual strings use normal letters and tatweel, not fake forms or disjoint forced joins.",
+  "scope": "Alphabet foundation only. Audio, handwriting assessment and the full Quran-reading course are future work, not presented as available."
+}
