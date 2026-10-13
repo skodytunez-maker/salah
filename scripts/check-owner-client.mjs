@@ -10,6 +10,7 @@ globalThis.window={supabase:{createClient:(_url,key,options)=>{
  return {auth:{
   onAuthStateChange:fn=>{authCallback=fn;},
   getSession:async()=>({data:{session}}),
+  getUser:async token=>{assert.equal(token,session.access_token);return{data:{user:session.user}};},
   refreshSession:async()=>{if(notifyRefresh){session={...session,access_token:session.access_token+'-renewed'};authCallback('TOKEN_REFRESHED',session);}return{data:{session}};},
   mfa:{listFactors:async()=>({data:{totp:[{id:'fixture-factor',status:'verified'}]}}),enroll:async()=>({data:{id:'fixture-factor',totp:{qr_code:'<svg/>',secret:'TEST-ONLY'}}}),challengeAndVerify:async({factorId,code})=>{assert.equal(factorId,'fixture-factor');if(code!=='123456')return {error:Error('invalid code')};needsMfa=false;return{error:null};}},
   signInWithPassword:async()=>({error:null}),
@@ -20,10 +21,10 @@ globalThis.fetch=async(url,options)=>{requests++;assert.equal(options.cache,'no-
 const {verifyOwner,ownerVerified,onOwnerChange,signOutOwner,ownerStatistics,ownerNeedsMfa,ownerMfaFactors,verifyOwnerMfa}=await import('../dist/js/owner-auth.js');
 onOwnerChange(()=>changed++);
 assert.equal(await verifyOwner(),false);assert.equal(requests,0);assert.equal(ownerVerified(),false);
-session={access_token:'forged-token'};
+session={access_token:'forged-token',user:{id:'fixture-user'}};
 assert.equal(await verifyOwner(),false,'A non-owner 403 is a normal role denial, not a support-page error');assert.equal(ownerVerified(),false);assert.equal(changed,0);
 // Only the successful server response authorizes menu visibility.
-session={access_token:'verified-user-session'};allowed=true;
+session={access_token:'verified-user-session',user:{id:'fixture-user'}};allowed=true;
 assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(changed,1);
 await assert.rejects(ownerStatistics(7),/ещё не подключена/);assert.equal(ownerVerified(),true);
 // A later server denial removes access immediately, even with a saved session.
@@ -33,7 +34,7 @@ allowed=true;await verifyOwner();await signOutOwner();assert.equal(ownerVerified
 // session; it cannot authorize the stale response or strand a valid owner.
 const originalFetch=globalThis.fetch;let refreshDuringGate=true;
 await verifyOwner(); // Finish the sign-out callback's empty-session check.
-session={access_token:'verified-user-session'};allowed=true;
+session={access_token:'verified-user-session',user:{id:'fixture-user'}};allowed=true;
 globalThis.fetch=async(...args)=>{const response=await originalFetch(...args);if(refreshDuringGate){refreshDuringGate=false;authCallback('TOKEN_REFRESHED',session);}return response;};
 const beforeRefresh=requests;assert.equal(await verifyOwner(),true);assert.equal(ownerVerified(),true);assert.equal(requests,beforeRefresh+2);
 notifyRefresh=true;assert.equal(await verifyOwner({verifySession:true}),true);notifyRefresh=false;
@@ -41,7 +42,7 @@ await signOutOwner();assert.equal(ownerVerified(),false);
 console.log('PASS: saved session alone does not authorize; server deny removes owner access; sign-out revokes the menu.');
 
 await verifyOwner();
-session={access_token:'verified-user-session'};allowed=true;needsMfa=true;
+session={access_token:'verified-user-session',user:{id:'fixture-user'}};allowed=true;needsMfa=true;
 assert.equal(await verifyOwner(),false);assert.equal(ownerVerified(),false);assert.equal(ownerNeedsMfa(),true);
 assert.equal((await ownerMfaFactors())[0].id,'fixture-factor');
 await assert.rejects(verifyOwnerMfa('fixture-factor','123'),/шесть цифр/);
