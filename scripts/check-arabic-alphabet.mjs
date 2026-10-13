@@ -26,7 +26,7 @@ showKnowledge(host,{hash:'#knowledge?view=alphabet&letter=ba'});w.location.hash=
 yes(host.querySelectorAll('.alphabet-form').length===4,'Letter page shows four position cards');
 yes([...host.querySelectorAll('.alphabet-form .alphabet-glyph')].every(x=>x.lang==='ar'&&x.dir==='rtl'),'All Arabic samples carry language and direction');
 host.querySelector('[data-review]').click();yes(JSON.parse(w.localStorage.getItem('salah:arabic-alphabet-progress')).reviewed.join('')==='ba','Repetition saved only in alphabet key');
-host.querySelector('[data-quiz-start]').click();yes(host.querySelectorAll('.alphabet-quiz-choices .alphabet-glyph').length===4,'Similar Russian letter names remain unambiguous with nominal Arabic option glyphs');const q0=alphabetQuestion(0,1);host.querySelector('[data-answer="'+q0.choices.find(c=>c.id!==q0.target.id).id+'"]').click();
+w.scrollTo(0,200);host.querySelector('[data-quiz-start]').click();yes(w.scrollY===0,'Practice starts at the top even after reading lower on a letter page');yes(host.querySelectorAll('.alphabet-quiz-choices .alphabet-glyph').length===4,'Similar Russian letter names remain unambiguous with nominal Arabic option glyphs');const q0=alphabetQuestion(0,1);host.querySelector('[data-answer="'+q0.choices.find(c=>c.id!==q0.target.id).id+'"]').click();
 yes(host.querySelector('.alphabet-feedback').textContent.includes(q0.target.name),'Wrong answer teaches the correct letter');host.querySelector('[data-answer="'+q0.target.id+'"]').click();
 for(let n=1;n<8;n++){host.querySelector('[data-question-next]').click();host.querySelector('[data-answer="'+alphabetQuestion(n,1).target.id+'"]').click();}
 host.querySelector('[data-question-next]').click();yes(host.textContent.includes('7 из 8'),'Duplicate answer cannot inflate practice result');
@@ -35,7 +35,7 @@ yes(w.localStorage.getItem('salah:learning-progress')===JSON.stringify(prayer),'
 yes(JSON.parse(w.localStorage.getItem('salah:adhkar-progress-v2')).totals.tasbih===120,'Practice cannot alter worship counters');
 w.location.hash='knowledge?view=alphabet';showKnowledge(host,{hash:w.location.hash});host.querySelector('[data-quiz-start]').click();
 const quizRoot=host.querySelector('.alphabet-quiz');showKnowledge(host,{hash:w.location.hash});yes(host.querySelector('.alphabet-quiz')===quizRoot,'Same-hash offline/refresh render preserves practice');
-host.querySelector('a[href="#knowledge?view=alphabet"]').click();yes(host.querySelectorAll('.alphabet-tile').length===28,'Practice started on grid returns even when target hash is unchanged');
+w.scrollTo(0,180);host.querySelector('a[href="#knowledge?view=alphabet"]').click();yes(w.scrollY===0,'Same-hash return opens the alphabet grid at its heading');yes(host.querySelectorAll('.alphabet-tile').length===28,'Practice started on grid returns even when target hash is unchanged');
 showArabicAlphabet(host,{hash:'#knowledge?view=alphabet&letter=unknown'});yes(host.querySelectorAll('.alphabet-tile').length===28,'Malformed deep link safely returns to grid');
 showArabicAlphabet(host,{hash:'#knowledge?view=alphabet&letter=alif'});yes(host.querySelector('[data-letter-prev]').disabled&&host.textContent.includes('две формы'),'Alif has a clear joining exception and start boundary');
 showArabicAlphabet(host,{hash:'#knowledge?view=alphabet&letter=ya'});yes(host.querySelector('[data-letter-next]').disabled,'Yaa has a clear final boundary');
