@@ -4,6 +4,7 @@ import {preferences,scheduleRows,serverTimings,eventsFor} from '../supabase/func
 import {pushPreferences} from '../dist/js/push-reminders.js';
 import {buildPrayerWidgetSnapshot} from '../dist/js/native-widget.js';
 import vm from 'node:vm';
+import {APP_VERSION} from '../dist/js/app-release.js';
 const root=new URL('../',import.meta.url),day='2026-10-05',memory=new Map(),calls=[];
 globalThis.localStorage={getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)};
 const read=async file=>JSON.parse(await readFile(new URL('dist/data/'+file,root),'utf8'));
@@ -69,7 +70,7 @@ updateSettings({city,tyumenTimeSource:'auto',school:0});
 const appSource=await readFile(new URL('dist/js/app.js',root),'utf8'),elements=new Map();let refreshes=0,resets=0;
 const element=id=>{if(!elements.has(id))elements.set(id,{value:'',checked:false,validity:{valid:true},querySelector:()=>({remove(){}})});return elements.get(id)};
 const rootElement={innerHTML:'',querySelectorAll:()=>[]};
-const context=vm.createContext({mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
+const context=vm.createContext({mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
 vm.runInContext(appSource.slice(appSource.indexOf('const settingsIconPaths='),appSource.indexOf('let historyPeriod=')),context);
 vm.runInContext(appSource.split('\n').filter(line=>/^function (tyumenSourceSettings|tyumenSourceNote|settingsPage)\(/.test(line)).join('\n'),context);
 context.settingsPage();
