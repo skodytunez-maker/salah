@@ -8,3 +8,10 @@ mobile/www/
 mobile/android/
 mobile/ios/
 mobile/reports/
+# Private Android upload/signing material
+*.jks
+*.keystore
+*.p12
+*.pfx
+keystore.properties
+signing-secrets/

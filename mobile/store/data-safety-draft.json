@@ -1,0 +1,113 @@
+{
+  "status": "draft-needs-owner-review-in-Play-Console",
+  "app": "SALAH",
+  "supportEmail": "skodytunez@gmail.com",
+  "transport": "HTTPS for app API/media requests",
+  "deletion": {
+    "inApp": "Мой аккаунт → Данные аккаунта → Удалить аккаунт",
+    "web": "https://skodytunez-maker.github.io/salah/delete-account.html",
+    "requestByEmail": "skodytunez@gmail.com",
+    "logsAndBackups": "Provider retention and deletion procedures require review; do not declare instant deletion from backups"
+  },
+  "data": [
+    {
+      "type": "Personal info: name, email, user IDs",
+      "collected": true,
+      "optional": "Account and optional nickname",
+      "purpose": [
+        "Account management",
+        "App functionality"
+      ],
+      "publicSharing": "Only chosen nickname in rating; email is private",
+      "evidence": [
+        "dist/js/counter-account.js",
+        "dist/js/competition-page.js"
+      ]
+    },
+    {
+      "type": "Other personal info / app activity: worship counters, listening time, streaks, awards",
+      "collected": true,
+      "optional": "Cloud functions of a signed-in account; some listening participation is automatic",
+      "purpose": [
+        "App functionality"
+      ],
+      "publicSharing": "Chosen rating profile and favorite-reciter time; anonymity available",
+      "evidence": [
+        "dist/js/counter-account.js",
+        "dist/js/quran-awards.js",
+        "dist/js/reciter-competition.js"
+      ]
+    },
+    {
+      "type": "Photos and files",
+      "collected": true,
+      "optional": "Uploaded avatar and chosen support attachments only",
+      "purpose": [
+        "App functionality",
+        "Developer communications"
+      ],
+      "publicSharing": "Avatar under chosen public profile mode; support attachments private",
+      "evidence": [
+        "dist/js/account-avatar.js",
+        "dist/js/support-transport.js"
+      ]
+    },
+    {
+      "type": "Messages / other user-generated content",
+      "collected": true,
+      "optional": "Support messages; staff messages for employees",
+      "purpose": [
+        "Developer communications",
+        "App functionality"
+      ],
+      "publicSharing": false,
+      "evidence": [
+        "dist/js/support-transport.js"
+      ]
+    },
+    {
+      "type": "Approximate and precise location",
+      "collected": true,
+      "optional": "Consented city detection or selected city queries",
+      "purpose": [
+        "App functionality"
+      ],
+      "processors": [
+        "Open-Meteo",
+        "BigDataCloud",
+        "prayer-time providers"
+      ],
+      "evidence": [
+        "dist/js/city-data.js",
+        "dist/js/weather-data.js"
+      ],
+      "review": "Full GPS coordinates are sent to reverse-geocoding/timezone providers after permission; do not declare location as purely on-device."
+    },
+    {
+      "type": "Device or other IDs and app interactions",
+      "collected": true,
+      "optional": "Notifications/account features",
+      "purpose": [
+        "App functionality",
+        "Security"
+      ],
+      "processors": [
+        "Supabase",
+        "Firebase Cloud Messaging"
+      ],
+      "evidence": [
+        "dist/js/account-presence.js",
+        "mobile/native/android/SalahSupportPushPlugin.java"
+      ],
+      "review": "GoatCounter web counter is gated off in the current Android origin; FCM tokens and app device identifiers still exist."
+    }
+  ],
+  "pendingDeclarations": [
+    "Developer account identity and verification",
+    "Target audience and content-rating questionnaire",
+    "UGC/support declarations and app access for reviewers",
+    "Foreground service mediaPlayback declaration and evidence",
+    "Owner review of processor sharing exceptions and retention",
+    "Signing key ownership and compatibility with earlier APKs"
+  ]
+}

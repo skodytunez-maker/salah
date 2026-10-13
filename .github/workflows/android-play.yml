@@ -1,0 +1,110 @@
+name: Build SALAH Google Play bundle
+on:
+  workflow_dispatch:
+    inputs:
+      sign_bundle:
+        description: Sign using the protected Google Play upload key
+        type: boolean
+        default: false
+  pull_request:
+    paths: ['mobile/**', 'dist/**', 'scripts/check-google-play.mjs', '.github/workflows/android-play.yml']
+  push:
+    branches: [main]
+    paths: ['mobile/**', 'dist/js/app-release.js', '.github/workflows/android-play.yml']
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android SDK 36
+        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+      - name: Prepare native release project
+        working-directory: mobile
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run sync:web
+          npx cap add android
+          npm run android:configure
+          npx cap sync android
+          npm run android:configure
+          node scripts/configure-play-release.mjs
+      - name: Preserve Android dependency notices
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew -I ../scripts/collect-android-licenses.gradle :app:salahNativeLicenseReport --stacktrace
+      - name: Build release App Bundle
+        working-directory: mobile/android
+        run: ./gradlew testReleaseUnitTest bundleRelease --stacktrace
+      - name: Validate actual release bundle
+        env:
+          BUNDLETOOL_JAR: ${{ runner.temp }}/bundletool.jar
+        run: |
+          node mobile/scripts/download-bundletool.mjs "$BUNDLETOOL_JAR"
+          node mobile/scripts/inspect-android-bundle.mjs mobile/android/app/build/outputs/bundle/release/app-release.aab mobile/reports/play/bundle-report.json
+          unzip -p mobile/android/app/build/outputs/bundle/release/app-release.aab base/assets/public/third-party/Android-NOTICES.txt | cmp - mobile/reports/android/Android-NOTICES.txt
+      - name: Verify signing with a disposable CI key
+        env:
+          BUNDLETOOL_JAR: ${{ runner.temp }}/bundletool.jar
+        run: node mobile/scripts/test-play-signing.mjs mobile/android/app/build/outputs/bundle/release/app-release.aab
+      - name: Save unsigned release bundle and evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-google-play-unsigned
+          path: |
+            mobile/android/app/build/outputs/bundle/release/app-release.aab
+            mobile/reports/
+          if-no-files-found: error
+          retention-days: 30
+  sign:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.sign_bundle && github.repository == 'skodytunez-maker/salah'
+    needs: bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: google-play-upload
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/download-artifact@v4
+        with:
+          name: salah-google-play-unsigned
+          path: unsigned
+      - name: Sign using the approved upload certificate
+        env:
+          SALAH_UPLOAD_KEYSTORE_BASE64: ${{ secrets.SALAH_UPLOAD_KEYSTORE_BASE64 }}
+          SALAH_UPLOAD_KEY_ALIAS: ${{ secrets.SALAH_UPLOAD_KEY_ALIAS }}
+          SALAH_UPLOAD_STORE_PASSWORD: ${{ secrets.SALAH_UPLOAD_STORE_PASSWORD }}
+          SALAH_UPLOAD_KEY_PASSWORD: ${{ secrets.SALAH_UPLOAD_KEY_PASSWORD }}
+          SALAH_UPLOAD_CERT_SHA256: ${{ secrets.SALAH_UPLOAD_CERT_SHA256 }}
+        run: node mobile/scripts/sign-play-bundle.mjs unsigned/android/app/build/outputs/bundle/release/app-release.aab signed/SALAH.aab
+      - name: Verify signed bundle
+        env:
+          BUNDLETOOL_JAR: ${{ runner.temp }}/bundletool.jar
+        run: |
+          node mobile/scripts/download-bundletool.mjs "$BUNDLETOOL_JAR"
+          node mobile/scripts/inspect-android-bundle.mjs signed/SALAH.aab signed/bundle-report.json --signed
+      - uses: actions/upload-artifact@v4
+        with:
+          name: salah-google-play-signed
+          path: signed/
+          if-no-files-found: error
+          retention-days: 14

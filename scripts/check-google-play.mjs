@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {configurePlayGradle} from '../mobile/scripts/configure-play-release.mjs';
+import {bundleManifestReport} from '../mobile/scripts/inspect-android-bundle.mjs';
+import {APP_VERSION} from '../dist/js/app-release.js';
+const release={versionCode:APP_VERSION,versionName:String(APP_VERSION)};
+const manifest='<manifest package="com.saadikobilov.salah" android:versionCode="'+APP_VERSION+'" android:versionName="'+APP_VERSION+'"><uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36"/><application android:debuggable="false"/></manifest>';
+assert.equal(bundleManifestReport(manifest,release).targetSdk,36);
+for(const bad of [manifest.replace('targetSdkVersion="36"','targetSdkVersion="35"'),manifest.replace('debuggable="false"','debuggable="true"'),manifest.replace('com.saadikobilov.salah','another.app'),manifest.replace('versionCode="'+APP_VERSION+'"','versionCode="1"')])assert.throws(()=>bundleManifestReport(bad,release));
+const gradle='android { defaultConfig { applicationId "com.saadikobilov.salah" } buildTypes { release { minifyEnabled false } } }';const next=configurePlayGradle(gradle);assert.equal(configurePlayGradle(next),next);assert.throws(()=>configurePlayGradle(gradle.replace('minifyEnabled false','signingConfig signingConfigs.debug')));assert.throws(()=>configurePlayGradle('unknown'));
+const root=new URL('../',import.meta.url),read=p=>fs.readFile(new URL(p,root),'utf8');
+const listing=JSON.parse(await read('mobile/store/ru-RU.json'));assert.ok([...listing.title].length<=30);assert.ok([...listing.shortDescription].length<=80);assert.ok([...listing.fullDescription].length<=4000);assert.equal(listing.supportEmail,'skodytunez@gmail.com');
+const policy=await read('dist/privacy.html'),deletion=await read('dist/delete-account.html');for(const text of [policy,deletion]){assert.ok(text.includes('skodytunez@gmail.com'));assert.ok(text.includes('SALAH'));assert.ok(!text.includes('<script'));assert.ok(!text.includes('gmail.xom'));}assert.ok(deletion.includes('mailto:skodytunez@gmail.com?subject='));assert.ok(deletion.includes('?entry=shortcut#account'));assert.ok(policy.includes('BigDataCloud'));
+const workflow=await read('.github/workflows/android-play.yml');assert.ok(workflow.includes('bundleRelease'));assert.ok(workflow.includes('testReleaseUnitTest'));assert.ok(workflow.includes('salah-google-play-unsigned'));assert.ok(workflow.includes("github.ref == 'refs/heads/main'"));assert.ok(workflow.includes('environment: google-play-upload'));assert.ok(!workflow.includes('pull_request_target'));assert.ok(!workflow.includes('assembleDebug'));
+const result=spawnSync(process.execPath,[fileURLToPath(new URL('../mobile/scripts/sign-play-bundle.mjs',import.meta.url)),'fixture.aab','fixture-signed.aab'],{encoding:'utf8',env:{PATH:process.env.PATH,SystemRoot:process.env.SystemRoot||''}});assert.notEqual(result.status,0);assert.ok(result.stderr.includes('configuration is incomplete'));
+console.log('PASS: release package/version/SDK/debug guard, idempotent Gradle, safe missing-key refusal, private signing isolation and functional public privacy/deletion links.');
