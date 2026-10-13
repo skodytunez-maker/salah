@@ -100,7 +100,7 @@ assert.ok(APP_CHANGES.every(x=>!/владел|админ|owner|admin/iu.test(x))
 console.log('PASS: private owner notes excluded from installed and waiting public update dialogs.');
 
 // Exercise the actual app callback, not a mocked safe predicate.
-const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');assert.ok(!appSource.includes('id="check-update"'),'Settings do not require a manual update button');
+const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');assert.ok(appSource.includes('id="check-update"'),'Settings include the optional manual update button');assert.ok(appSource.includes('await checkAppUpdate()'),'Settings use the existing update check without replacing automatic updates');
 const gateStart=appSource.indexOf('registerAppWorker({toast');
 assert.ok(gateStart>=0);
 const gateCall=appSource.slice(gateStart,appSource.indexOf('});',gateStart)+3);
