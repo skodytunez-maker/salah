@@ -1952,6 +1952,69 @@
       "license": "SIL-OFL-1.1",
       "rightsEvidence": "docs/arabic-alphabet-source.json",
       "note": "Unmodified official Amiri-Regular font pinned to upstream commit; exact blob and bundled OFL notice recorded."
+    },
+    {
+      "path": "dist/assets/awards/listening-25-v1.svg",
+      "gitBlobSha": "09858b78607406942b9e6eb7e9b2bfb044d9f919",
+      "bytes": 3545,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
+    },
+    {
+      "path": "dist/assets/awards/listening-50-v1.svg",
+      "gitBlobSha": "322baede0c637ec1daff16acccb3f667206e91ac",
+      "bytes": 3578,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
+    },
+    {
+      "path": "dist/assets/awards/listening-100-v1.svg",
+      "gitBlobSha": "b48567ff24b94aebc1b4ecb652881166a1d1e776",
+      "bytes": 3651,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
+    },
+    {
+      "path": "dist/assets/awards/listening-250-v1.svg",
+      "gitBlobSha": "414312bf82d666c0cd6fa88e69ab4f879f94faa7",
+      "bytes": 3765,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
+    },
+    {
+      "path": "dist/assets/awards/listening-500-v1.svg",
+      "gitBlobSha": "7764dec31f37f31826f4345df7a08aa11079b92f",
+      "bytes": 3857,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
+    },
+    {
+      "path": "dist/assets/awards/listening-1000-v1.svg",
+      "gitBlobSha": "92b34408c6ff5258485516a75f3e7b38022e67bf",
+      "bytes": 3834,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
+    },
+    {
+      "path": "dist/assets/awards/listening-5000-v1.svg",
+      "gitBlobSha": "649624c94314228d98ea20747cfa4d79a6588d9e",
+      "bytes": 4016,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/quran-listening-award-source.json",
+      "note": "Original code-authored SVG listening-hour shield with headphones and open book. Created in this SALAH task, without external artwork or embedded third-party assets."
     }
   ],
   "wallpaperSets": [
