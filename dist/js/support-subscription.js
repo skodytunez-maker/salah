@@ -44,10 +44,12 @@ export function mountSupportSubscription(host,{account,client,fetcher=fetch}){
   const dialog=document.querySelector('.support-unlink-dialog');opened=dialog;dialog.querySelector('[data-close]').focus({preventScroll:true});
   dialog.querySelector('[data-support-confirm]').onclick=async()=>{
    if(busy||!active()||account().userId!==id)return;busy=true;
-   const button=dialog.querySelector('[data-support-confirm]'),error=dialog.querySelector('[data-support-unlink-error]');button.disabled=true;button.textContent='Отключаем…';error.hidden=true;
+   const button=dialog.querySelector('[data-support-confirm]'),leave=dialog.querySelector('[data-close]'),error=dialog.querySelector('[data-support-unlink-error]'),nativeDialog=dialog.closest('dialog');
+   const preventDismiss=e=>e.preventDefault();nativeDialog?.addEventListener('cancel',preventDismiss);
+   button.disabled=true;leave.disabled=true;button.textContent='Отключаем…';error.hidden=true;
    try{const result=await request('unlink');if(!active()||account().userId!==id)return;generation++;render(result);if(opened===dialog&&dialog.isConnected){closeModal();opened=null;}}
-   catch{if(active()&&account().userId===id&&dialog.isConnected){error.hidden=false;error.textContent='Отключение не подтверждено. Повторите попытку.';button.disabled=false;button.textContent='Отключить и отвязать';}}
-   finally{busy=false;}
+   catch{if(active()&&account().userId===id&&dialog.isConnected){error.hidden=false;error.textContent='Отключение не подтверждено. Повторите попытку.';button.disabled=false;leave.disabled=false;button.textContent='Отключить и отвязать';}}
+   finally{nativeDialog?.removeEventListener('cancel',preventDismiss);busy=false;}
   };
  }
  const changed=()=>{if(active()&&scope!==(account().signedIn?account().userId:null))void load();};
