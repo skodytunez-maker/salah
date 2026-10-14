@@ -7,6 +7,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 public class MainActivity extends BridgeActivity {
+    private int nativeVersion() {
+        try {return getPackageManager().getPackageInfo(getPackageName(),0).versionCode;}
+        catch(android.content.pm.PackageManager.NameNotFoundException e) {throw new IllegalStateException(e);}
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Register before BridgeActivity creates the WebView and native plugin headers.
@@ -16,13 +20,13 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(SalahSupportPushPlugin.class);
         registerPlugin(SalahLiveUpdatePlugin.class);
         SalahLiveUpdateStore updates = new SalahLiveUpdateStore(this);
-        int nativeVersion = BuildConfig.VERSION_CODE;
+        int nativeVersion = nativeVersion();
         int selected = updates.launch(nativeVersion);
         if(selected > 0) bridgeBuilder.setServerPath(new ServerPath(ServerPath.PathType.BASE_PATH, updates.version(selected).getAbsolutePath()));
         super.onCreate(savedInstanceState);
         // A broken web release cannot strand the app; retain the original APK assets.
         if(updates.prefs.getInt("trial",0) > 0) new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if(isFinishing() || isDestroyed() || updates.prefs.getInt("trial",0) == 0) return;
+            if(bridge == null || isFinishing() || isDestroyed() || updates.prefs.getInt("trial",0) == 0) return;
             updates.rejectTrial();
             int confirmed=updates.prefs.getInt("confirmed",0);
             if(confirmed>nativeVersion && updates.complete(confirmed)) bridge.setServerBasePath(updates.version(confirmed).getAbsolutePath());
