@@ -39,6 +39,46 @@
       "path": "dist/assets/awards/listening-5000-v1.svg",
       "gitBlobSha": "649624c94314228d98ea20747cfa4d79a6588d9e",
       "bytes": 4016
+    },
+    {
+      "path": "dist/assets/awards/listening-25-v2.svg",
+      "gitBlobSha": "fd323ac2aa1c2cc2022d11f92c9c54b6a7167c55",
+      "bytes": 2853
+    },
+    {
+      "path": "dist/assets/awards/listening-50-v2.svg",
+      "gitBlobSha": "d09911d6658995c8d4607af6a5146662f187154b",
+      "bytes": 2886
+    },
+    {
+      "path": "dist/assets/awards/listening-100-v2.svg",
+      "gitBlobSha": "7fdf0ee83c7283888ccc250fb14d9788b66fc187",
+      "bytes": 2958
+    },
+    {
+      "path": "dist/assets/awards/listening-250-v2.svg",
+      "gitBlobSha": "65f870c8a2a130ce948266896678cd138f38a3be",
+      "bytes": 3072
+    },
+    {
+      "path": "dist/assets/awards/listening-500-v2.svg",
+      "gitBlobSha": "a92d28b3c3b4663774e4793859d2679d9406cb09",
+      "bytes": 3164
+    },
+    {
+      "path": "dist/assets/awards/listening-1000-v2.svg",
+      "gitBlobSha": "a53e1a337065e6d651a19a46c9524cd416daaa88",
+      "bytes": 3140
+    },
+    {
+      "path": "dist/assets/awards/listening-5000-v2.svg",
+      "gitBlobSha": "c091af1fd776fd19cedb7f7ec23817aa9b24fa7e",
+      "bytes": 3322
     }
-  ]
+  ],
+  "refinement": {
+    "date": "2026-10-14",
+    "version": 2,
+    "changes": "Removed doubled glyph highlights and subpixel grain. Text and engraving remain outside SVG filter; strengthened contrast and small detail stroke widths."
+  }
 }
