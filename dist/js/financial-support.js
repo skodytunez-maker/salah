@@ -1,4 +1,5 @@
 import {title,esc} from './ui.js';
+import {mountSupportSubscription} from './support-subscription.js';
 export const MONTHLY_SUPPORT_AMOUNTS=Object.freeze([150,300,500]);
 export const CUSTOM_SUPPORT_MIN=150;
 let selectedAmount=300,customSelected=false,customValue='150';
@@ -23,10 +24,11 @@ export function monthlySupportMarkup(amount=300,{custom=false,value='150'}={}){
  '<div class="financial-support-custom" '+(!custom?'hidden':'')+'><label for="monthly-support-custom-amount">Сумма в месяц, ₽</label><input id="monthly-support-custom-amount" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="16" value="'+esc(value)+'" aria-describedby="monthly-support-custom-error" aria-invalid="'+Boolean(custom&&!validation.valid)+'"><p id="monthly-support-custom-error" aria-live="polite" '+(!custom||validation.valid?'hidden':'')+'>'+(!validation.valid?validation.message:'')+'</p></div>'+
  '<div class="financial-support-total"><span>Выбранная сумма</span><output aria-live="polite" aria-atomic="true" data-monthly-support-total>'+(custom?(validation.valid?amountLabel(validation.amount)+' / месяц':'—'):amountLabel(selected)+' / месяц')+'</output></div>'+
  '<button class="button financial-support-unavailable" type="button" disabled aria-describedby="monthly-support-note">Оплата скоро появится</button>'+
- '<p class="financial-support-note" id="monthly-support-note">Оплату включим после одобрения ЮKassa.<br>Сейчас деньги не списываются.</p></section>'+
+ '<p class="financial-support-note" id="monthly-support-note">Готовим подключение ежемесячной поддержки.<br>Сейчас деньги не списываются.</p></section>'+
+ '<section class="support-subscription" data-support-subscription aria-label="Моя поддержка"><h2>Моя поддержка</h2><p>Ежемесячная поддержка не подключена.</p><p class="muted">Способ оплаты не привязан. Автоматических списаний нет.</p></section>'+
  '<div class="financial-support-free"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4c3-1 6-1 9 1 3-2 6-2 9-1v15c-3-1-6-1-9 1-3-2-6-2-9-1V4Zm9 1v15"/></svg><p>Все функции SALAH остаются бесплатными.<br>Поддержка — только по вашему желанию.</p></div></section>';
 }
-export function mountFinancialSupport(host){
+export function mountFinancialSupport(host,subscriptionOptions={}){
  if(!host.querySelector('.financial-support'))host.innerHTML=monthlySupportMarkup(selectedAmount,{custom:customSelected,value:customValue});
  const total=host.querySelector('[data-monthly-support-total]'),custom=host.querySelector('.financial-support-custom'),amount=host.querySelector('#monthly-support-custom-amount'),error=host.querySelector('#monthly-support-custom-error');
  const updateCustom=()=>{
@@ -45,4 +47,5 @@ export function mountFinancialSupport(host){
    const value=Number(input.value);if(!MONTHLY_SUPPORT_AMOUNTS.includes(value))return;selectedAmount=value;total.textContent=amountLabel(value)+' / месяц';
   };
  }
+ mountSupportSubscription(host,subscriptionOptions);
 }

@@ -39,3 +39,7 @@ verify_jwt = false
 [functions.approved-catalog]
 # Public owner-published catalog only; no account or draft data.
 verify_jwt = false
+
+[functions.support-billing]
+# Auth getUser + cryptographic getClaims, confirmed user and active session are required in the handler.
+verify_jwt = false

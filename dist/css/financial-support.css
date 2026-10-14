@@ -42,3 +42,17 @@
 .financial-support-custom input[aria-invalid=true]{border-color:#bd8589}
 .financial-support-custom p{color:#e0a4a7;font-size:13px;line-height:1.5;margin:9px 0 13px}
 .financial-support-total output{text-align:right;white-space:normal;overflow-wrap:anywhere;min-width:0}
+.support-subscription{margin-top:18px;padding:22px 24px;background:#111a2b;border:1px solid var(--line);border-radius:24px;min-width:0}
+.support-subscription h2{font-size:21px;line-height:1.4;margin:0 0 13px;color:var(--ivory)}
+.support-subscription p,.support-unlink-dialog p{font-size:14px;line-height:1.7;margin:10px 0;overflow-wrap:anywhere}
+.support-subscription .button{display:flex;justify-content:center;align-items:center;min-height:48px;text-decoration:none;text-align:center;width:100%;margin-top:14px}
+.support-subscription-amount{display:block;font-size:30px;color:var(--gold);font-variant-numeric:tabular-nums;margin:16px 0}.support-subscription-amount small{font-size:14px;font-weight:400;color:var(--muted)}
+.support-subscription-badge{display:inline-block;border:1px solid #c9b47f55;border-radius:20px;padding:5px 12px;color:var(--gold);font-size:12px}
+.support-subscription dl{margin:0}.support-subscription dl>div{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line);font-size:13px;line-height:1.6}.support-subscription dt{color:var(--muted)}.support-subscription dd{margin:0;text-align:right;overflow-wrap:anywhere}
+.support-subscription-unlink.button{background:rgba(184,101,108,.1);border:1px solid #b46f7755;color:#e7b1b7;box-shadow:none;padding:13px 15px;font-size:14px;border-radius:14px;min-height:48px;white-space:normal;line-height:1.45}
+.support-subscription-unlink:focus-visible,.support-unlink-dialog .button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.support-subscription-success{color:var(--gold)}
+.support-unlink-dialog{width:min(100%,460px);margin:auto}.support-unlink-dialog h2{font-size:25px;margin:0 0 16px;line-height:1.4}.support-unlink-method{padding:14px;border:1px solid var(--line);border-radius:14px;color:var(--gold)}
+.support-unlink-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}.support-unlink-actions .button{width:100%;min-height:48px}.support-unlink-dialog [role=alert]{color:#e7b1b7}
+.account-support-link{display:flex;align-items:center;justify-content:space-between;min-height:52px;margin:18px 0;padding:14px 17px;border:1px solid var(--line);border-radius:16px;background:#111a2b;color:var(--ivory);text-decoration:none;gap:12px}
+@media(max-width:380px){.support-subscription{padding:20px 16px}.support-subscription dl>div{gap:8px;font-size:12px}}
