@@ -84,6 +84,15 @@ jobs:
           node scripts/check-native-widget.mjs
           node scripts/check-android-widget.mjs
           node scripts/check-android-update.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare verified Android web updates
+        working-directory: mobile
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run sync:web
+          node scripts/build-web-update.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload SALAH

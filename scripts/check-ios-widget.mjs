@@ -39,7 +39,7 @@ for (const [native, available] of [[true, true], [true, false], [false, false]])
   const proxy = {updateSnapshot() {}, clearSnapshot() {}};
   const Capacitor = {
     isNativePlatform: () => native,
-    isPluginAvailable: () => available
+    isPluginAvailable: name => name === 'SalahWidget' && available
   };
   const context = vm.createContext({
     Capacitor,
@@ -54,10 +54,10 @@ for (const [native, available] of [[true, true], [true, false], [false, false]])
     }
   });
 
-  vm.runInContext(
-    entry
+  await vm.runInContext(
+    '(async()=>{'+entry
       .replace(/^import .*;$/m, '')
-      .replace("await import('./app.js');", 'boot();'),
+      .replace("await import('./app.js');", 'boot();')+'})()',
     context
   );
 

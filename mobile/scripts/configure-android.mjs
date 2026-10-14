@@ -24,6 +24,8 @@ try{await fs.access(androidRoot)}catch{
 }
 
 await copy('MainActivity.java',path.join(javaRoot,'MainActivity.java'));
+for(const name of ['SalahLiveUpdatePlugin','SalahLiveUpdateStore','SalahLiveUpdatePolicy'])await copy(name+'.java',path.join(javaRoot,name+'.java'));
+for(const name of ['SalahLiveUpdatePolicyTest','SalahLiveUpdateStoreTest'])await copy(name+'.java',path.join(androidRoot,'..','test','java',packagePath,name+'.java'));
 await copy('SalahWidgetPlugin.java',path.join(javaRoot,'SalahWidgetPlugin.java'));
 await copy('SalahSupportPhotoPlugin.java',path.join(javaRoot,'SalahSupportPhotoPlugin.java'));
 await copy('SalahPrayerWidgetProvider.java',path.join(javaRoot,'SalahPrayerWidgetProvider.java'));

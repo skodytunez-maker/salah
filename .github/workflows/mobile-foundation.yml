@@ -27,8 +27,23 @@ jobs:
         with:
           node-version: '22'
       - run: node scripts/check-mobile-foundation.mjs
+      - run: node scripts/check-live-update.mjs
       - run: node scripts/check-native-widget.mjs
       - run: node scripts/check-android-widget.mjs
       - run: node scripts/check-ios-widget.mjs
       - run: node mobile/tests/licenses.mjs
       - run: node mobile/tests/platform-licenses.mjs
+
+      - name: Build complete Android web update
+        working-directory: mobile
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run sync:web
+          node scripts/build-web-update.mjs
+      - name: Verify complete web update archive
+        run: python3 mobile/scripts/check-web-update.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: salah-android-web-update
+          path: dist/mobile-updates/
+          if-no-files-found: error

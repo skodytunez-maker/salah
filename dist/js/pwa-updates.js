@@ -32,6 +32,21 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
 export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,showRelease=showAppRelease}={}) {
+ const nativeUpdater=globalThis.Capacitor?.Plugins?.SalahLiveUpdate;
+ if(nativeUpdater){
+  manualCheck=async(force=false)=>{
+   if(navigator.onLine===false)return 'offline';
+   const result=await nativeUpdater.check({force});
+   if(force && result.status==='available')toast('Обновление загружено. Установится при следующем запуске SALAH.');
+   else if(force && result.status==='native-required')toast('Для этого обновления нужна новая версия приложения из Google Play.');
+   return result.status==='native-required'?'unavailable':result.status;
+  };
+  // A service worker must never mask files from a new native web bundle.
+  if('serviceWorker' in navigator){for(const registration of await navigator.serviceWorker.getRegistrations().catch(()=>[]))await registration.unregister().catch(()=>{});}
+  void manualCheck().catch(()=>{});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void manualCheck().catch(()=>{});});
+  return;
+ }
  if(!('serviceWorker' in navigator))return;
  manualCheck=null;
  let requested=false,reloaded=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
