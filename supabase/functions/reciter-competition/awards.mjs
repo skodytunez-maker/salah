@@ -4,13 +4,14 @@ export async function ownAwards(sql,user){
  await sql`select salah_competition_private.claim_founder(${user.id}::uuid)`;
  const [{day}]=await sql`select (now()at time zone p.time_zone)::date::text AS "day" from salah_competition_private.preferences p where p.user_id=${user.id}::uuid`;
  const [{streak}]=await sql`select salah_competition_private.award_streak(${user.id}::uuid,${day}::date)streak`;
- const items=await sql`select id,kind,starts_on::text,ends_on::text,reciter,seconds,earned_at from salah_competition_private.awards where user_id=${user.id}::uuid order by earned_at desc,id limit 200`;
+ const [{listening_seconds}]=await sql`select salah_competition_private.award_hours(${user.id}::uuid,${day}::date)listening_seconds`;
+ const items=await sql`select id,kind,starts_on::text,ends_on::text,reciter,seconds,earned_at from salah_competition_private.awards where user_id=${user.id}::uuid order by (kind not in('week','month'))desc,earned_at desc,id limit 200`;
  const summary=await sql`select kind,count(*)::integer wins from salah_competition_private.awards where user_id=${user.id}::uuid group by kind`;
  const rows=await sql`select v.public_id as id,case when v.mode='profile'then 'profile'else 'initial'end mode,upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))initial,
  case when v.mode='profile'then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
  case when v.mode='profile'then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
  from public.reciter_listener_visibility v join auth.users u on u.id=v.user_id where v.user_id=${user.id}::uuid`;
- return {day,streak,items:items.map(awardItem),counts:Object.fromEntries(summary.map(r=>[r.kind,r.wins])),listener:publicListenerRows(rows)[0]||null,timeZone:'Europe/Moscow',graceHours:0};
+ return {day,streak,listeningSeconds:Number(listening_seconds),items:items.map(awardItem),counts:Object.fromEntries(summary.map(r=>[r.kind,r.wins])),listener:publicListenerRows(rows)[0]||null,timeZone:'Europe/Moscow',graceHours:0};
 }
 export async function awardWinners(sql){
  const rows=await sql`with recent as(select kind,max(ends_on)ends_on from salah_competition_private.award_periods group by kind)
