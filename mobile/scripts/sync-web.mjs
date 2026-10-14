@@ -16,7 +16,7 @@ const licenseEvidence=await collectMobileLicenses(mobileRoot);
 const platformNotices=await Promise.all(['Apache-2.0.txt','Cordova-NOTICE.txt'].map(async name=>({name,bytes:await fs.readFile(path.join(mobileRoot,'licenses',name))})));
 await fs.rm(target,{recursive:true,force:true});
 await fs.mkdir(target,{recursive:true});
-await fs.cp(source,target,{recursive:true,force:true});
+await fs.cp(source,target,{recursive:true,force:true,filter:src=>!src.startsWith(path.join(source,'mobile-updates'))});
 
 await fs.mkdir(path.join(target,'js/vendor'),{recursive:true});
 await fs.copyFile(runtime,path.join(target,'js/vendor/capacitor-core.js'));
