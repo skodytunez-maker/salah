@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {androidReleaseVersion} from './android-release.mjs';
-import {PLAY_PACKAGE} from './configure-play-release.mjs';
+import {PLAY_PACKAGE,NATIVE_PACKAGE} from './configure-play-release.mjs';
 export function bundleManifestReport(xml,expected){
  const attribute=(tag,name)=>xml.match(new RegExp('<'+tag+'\\b[^>]*\\b'+name+'="([^"<>]+)"'))?.[1];
  const report={applicationId:attribute('manifest','package'),versionCode:Number(attribute('manifest','android:versionCode')),versionName:attribute('manifest','android:versionName'),targetSdk:Number(attribute('uses-sdk','android:targetSdkVersion')),minSdk:Number(attribute('uses-sdk','android:minSdkVersion')),debuggable:attribute('application','android:debuggable')==='true'};
@@ -21,8 +21,10 @@ export async function inspectBundle(bundle,output,{signed=false}={}){
  const expected=androidReleaseVersion(await fs.readFile(path.join(root,'dist/js/app-release.js'),'utf8'));
  const report=bundleManifestReport(xml,expected);
  const entries=execFileSync('unzip',['-Z1',path.resolve(bundle)],{encoding:'utf8',timeout:30000}).split(/\r?\n/);
- for(const entry of ['base/assets/public/index.html','base/assets/public/js/native-entry.js','base/assets/public/js/app-release.js','base/assets/public/privacy.html','base/assets/public/delete-account.html','base/assets/public/third-party/Android-NOTICES.txt'])if(!entries.includes(entry))throw Error('Required bundle entry missing: '+entry);
+ for(const entry of ['base/assets/capacitor.config.json','base/assets/public/index.html','base/assets/public/js/native-entry.js','base/assets/public/js/app-release.js','base/assets/public/privacy.html','base/assets/public/delete-account.html','base/assets/public/third-party/Android-NOTICES.txt'])if(!entries.includes(entry))throw Error('Required bundle entry missing: '+entry);
  if(entries.some(p=>['.jks','.keystore','.p12','.pfx'].some(ext=>p.toLowerCase().endsWith(ext))||p.split('/').some(part=>part==='.env'||part.startsWith('.env.')||part==='signing-secrets')))throw Error('Private signing material must not enter the bundle');
+ const bridge=JSON.parse(execFileSync('unzip',['-p',path.resolve(bundle),'base/assets/capacitor.config.json'],{encoding:'utf8',timeout:30000}));
+ if(bridge.appId!==PLAY_PACKAGE||!xml.includes('android:name="'+NATIVE_PACKAGE+'.MainActivity"'))throw Error('Play bridge or launch component mismatch');
  const packaged=execFileSync('unzip',['-p',path.resolve(bundle),'base/assets/public/js/app-release.js'],{encoding:'utf8',timeout:30000});
  if(JSON.stringify(androidReleaseVersion(packaged))!==JSON.stringify(expected))throw Error('Packaged app version mismatch');
  if(signed){const verified=execFileSync('jarsigner',['-verify',path.resolve(bundle)],{encoding:'utf8',timeout:30000,env:{...process.env,LANG:'C'}});if(!/jar verified\./.test(verified)||/jar is unsigned/i.test(verified)||!entries.some(p=>p.startsWith('META-INF/')&&/\.(RSA|EC|DSA)$/i.test(p)))throw Error('Bundle signature verification failed');}
