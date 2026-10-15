@@ -1,9 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+const FIREBASE_APPS={'com.saadikobilov.salah':'1:305914198771:android:fd81d98ec02057836a1586','com.salah.bysaadi':'1:305914198771:android:a18e2b8ff256e4d06a1586'};
 export function validateFirebaseConfig(value,packageName){
  if(value?.project_info?.project_id!=='salah-8b73f'||String(value.project_info.project_number)!=='305914198771'||JSON.stringify(value).includes('private_key'))throw Error('Unexpected Firebase project or server credential');
  const clients=value.client?.filter(client=>client.client_info?.android_client_info?.package_name===packageName);
- if(clients?.length!==1||clients[0].client_info.mobilesdk_app_id!=='1:305914198771:android:fd81d98ec02057836a1586'||!clients[0].api_key?.some(key=>/^AIza[\w-]{35}$/.test(key.current_key||'')))throw Error('Firebase configuration does not match SALAH APK');
+ if(clients?.length!==1||!FIREBASE_APPS[packageName]||clients[0].client_info.mobilesdk_app_id!==FIREBASE_APPS[packageName]||!clients[0].api_key?.some(key=>/^AIza[\w-]{35}$/.test(key.current_key||'')))throw Error('Firebase configuration does not match SALAH APK');
  return {...value,client:clients};
 }
 export async function configureFirebaseAndroid(mobileRoot,packageName){

@@ -7,3 +7,12 @@ assert.throws(()=>validateFirebaseConfig({...value,private_key:'must-never-be-in
 assert.throws(()=>validateFirebaseConfig({...value,project_info:{...value.project_info,project_id:'other'}},'com.saadikobilov.salah'));
 assert.throws(()=>validateFirebaseConfig({...value,client:[...value.client,...value.client]},'com.saadikobilov.salah'));
 console.log('PASS correct Firebase project/package; foreign, duplicate and server-secret configs rejected');
+
+const playClient={client_info:{android_client_info:{package_name:'com.salah.bysaadi'},mobilesdk_app_id:'1:305914198771:android:a18e2b8ff256e4d06a1586'},api_key:[{current_key:'AIza'+'b'.repeat(35)}]};
+const multi={...value,client:[...value.client,playClient]};
+assert.equal(validateFirebaseConfig(multi,'com.salah.bysaadi').client[0].client_info.android_client_info.package_name,'com.salah.bysaadi');
+assert.equal(validateFirebaseConfig(multi,'com.saadikobilov.salah').client[0].client_info.android_client_info.package_name,'com.saadikobilov.salah');
+assert.throws(()=>validateFirebaseConfig({...multi,client:[{...playClient,client_info:{...playClient.client_info,mobilesdk_app_id:value.client[0].client_info.mobilesdk_app_id}}]},'com.salah.bysaadi'));
+const actual=JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../mobile/native/android/google-services.json',import.meta.url),'utf8'));
+for(const packageName of ['com.saadikobilov.salah','com.salah.bysaadi'])assert.equal(validateFirebaseConfig(actual,packageName).client.length,1);
+console.log('PASS: supplied production Firebase clients have exact, distinct package/app IDs for legacy APK and Google Play.');
