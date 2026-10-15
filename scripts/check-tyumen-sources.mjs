@@ -1,3 +1,4 @@
+import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {preferences,scheduleRows,serverTimings,eventsFor} from '../supabase/functions/background-reminders/core.mjs';
@@ -70,7 +71,7 @@ updateSettings({city,tyumenTimeSource:'auto',school:0});
 const appSource=await readFile(new URL('dist/js/app.js',root),'utf8'),elements=new Map();let refreshes=0,resets=0;
 const element=id=>{if(!elements.has(id))elements.set(id,{value:'',checked:false,validity:{valid:true},querySelector:()=>({remove(){}})});return elements.get(id)};
 const rootElement={innerHTML:'',querySelectorAll:()=>[]};
-const context=vm.createContext({mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
+const context=vm.createContext({personalDataAllowed,mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
 vm.runInContext(appSource.slice(appSource.indexOf('const settingsIconPaths='),appSource.indexOf('let historyPeriod=')),context);
 vm.runInContext(appSource.split('\n').filter(line=>/^function (tyumenSourceSettings|tyumenSourceNote|settingsPage)\(/.test(line)).join('\n'),context);
 context.settingsPage();

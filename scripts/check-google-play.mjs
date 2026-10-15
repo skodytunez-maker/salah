@@ -33,7 +33,8 @@ assert.equal(configurePlayManifest(configurePlayManifest(component)),configurePl
 const temporary=await fs.mkdtemp(path.join(os.tmpdir(),'salah-play-package-'));
 try{
  const fixtureRoot=path.join(temporary,'mobile'),main=path.join(fixtureRoot,'android/app/src/main');
- await fs.mkdir(path.join(main,'assets'),{recursive:true});
+ await fs.mkdir(path.join(main,'assets/public/js'),{recursive:true});
+ await fs.copyFile(new URL('../dist/js/audience-mode.js',import.meta.url),path.join(main,'assets/public/js/audience-mode.js'));
  await fs.mkdir(path.join(main,'res/values'),{recursive:true});
  await fs.mkdir(path.join(fixtureRoot,'native/android'),{recursive:true});
  const baseConfig=JSON.stringify({appId:NATIVE_PACKAGE,appName:'SALAH',webDir:'www'});
@@ -44,6 +45,7 @@ try{
  await fs.writeFile(path.join(fixtureRoot,'android/app/build.gradle'),'android { namespace "'+NATIVE_PACKAGE+'" defaultConfig { applicationId "'+NATIVE_PACKAGE+'" } }');
  await fs.copyFile(new URL('../mobile/native/android/google-services.json',import.meta.url),path.join(fixtureRoot,'native/android/google-services.json'));
  await configurePlayRelease(fixtureRoot);
+ assert.match(await fs.readFile(path.join(main,'assets/public/js/audience-mode.js'),'utf8'),/FAMILIES_REQUIRED=true/);
  const builtGradle=await fs.readFile(path.join(fixtureRoot,'android/app/build.gradle'),'utf8');
  assert.ok(builtGradle.includes('namespace "'+NATIVE_PACKAGE+'"'));
  assert.ok(builtGradle.includes('applicationId "'+PLAY_PACKAGE+'"'));

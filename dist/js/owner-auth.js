@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 import{createAuthTransport}from './auth-transport.js';
 import{createSessionGuard}from './auth-session.js';
 // Public connection key; owner authority is always checked by the server.
@@ -10,6 +11,7 @@ function publish(){for(const fn of listeners)fn();}
 function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;if(changed)publish();}
 const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support'].includes(location.hash.split('?')[0]);
 function authClient(){
+ if(!personalDataAllowed())throw Error('Личные данные защищены: аккаунт в этом режиме недоступен.');
  if(!client){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});

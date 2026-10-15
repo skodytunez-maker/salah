@@ -1,3 +1,4 @@
+import{personalDataAllowed,showRestrictedFeature}from './audience.js';
 import{captureCompetitionLayout,animateCompetitionChange}from './competition-motion.js';
 import{showAwardWinners}from './quran-awards.js';
 import{read,write}from './storage.js';
@@ -10,6 +11,7 @@ import{listenerPrivacyMarkup,bindPopularConsent,personalListening}from './recite
 import{loadCompetition,cachedCompetition,preloadCompetition,clearCompetitionCache,competitionOwn,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes}from './competition-view.js';
 export function mountCompetition(host,heading){
+ if(!personalDataAllowed()){showRestrictedFeature(host,'Топ SALAH');return()=>{};}
  const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null;const previews=new Map();
  if(!['day','week','month','all'].includes(period))period='all';
  const periods=[['day','День'],['week','Неделя'],['month','Месяц'],['all','Всё время']],leaders={day:'Лидер дня',week:'Лидер недели',month:'Лидер месяца',all:'Лидер SALAH'};

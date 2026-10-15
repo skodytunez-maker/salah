@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 import{initCompetition}from './competition-client.js';
 import{safeListener}from './reciter-ranking-core.js';
 import{read,write}from './storage.js';
@@ -9,10 +10,11 @@ const KEY='reciter-popularity-consent-v1',endpoint=OWNER_PROJECT_URL+'/functions
 let account=()=>({signedIn:false}),client=()=>null,cache=null,loaded=0,inflight=null,initialized=false;
 const rankingData=new Map();let selectedGlobalPeriod='month';
 const allowed={has:id=>RECITERS.some(r=>!r.variantOf&&r.id===id)};
-export const popularityEnabled=()=>!!account().signedIn&&!!account().userId&&read(KEY+':'+account().userId,true)===true;
+export const popularityEnabled=()=>personalDataAllowed()&&!!account().signedIn&&!!account().userId&&read(KEY+':'+account().userId,true)===true;
 
 let visibilityRevision=0;
 export async function loadPopularReciters(){
+ if(!personalDataAllowed())return [];
  const period=selectedGlobalPeriod,revision=visibilityRevision;
  if(cache&&Date.now()-loaded<60000)return cache;if(inflight)return inflight;
  const task=(async()=>{
