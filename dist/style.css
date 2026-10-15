@@ -244,3 +244,13 @@ html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
 .action-icon{width:1.15em;height:1.15em;vertical-align:-.2em;display:inline-block;flex-shrink:0}.ruqyah-actions .button,.reciter-play-label,.reciter-download{display:inline-flex;align-items:center;justify-content:center;gap:8px}.source-reference,.lesson-sources,.hadith-source,.dua-source,.quran-sources,.quran-search-source,.umrah-sources,a[href="#sources"]{display:none!important}
 
 .tv-output h3{font-size:18px;margin:22px 0 10px}.tv-output p,.tv-output li{font-size:14px;line-height:1.6}.tv-output li{margin:10px 0}.tv-output-tabs{display:flex;gap:6px;flex-wrap:wrap}.tv-output-tabs button{min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px}.tv-output-tabs button[aria-pressed=true]{color:var(--gold);border-color:var(--gold)}.tv-output [data-tv-audio]{display:inline-flex;align-items:center;gap:9px}.tv-output [data-tv-status]:empty{display:none}.tv-public-url{width:100%;font-size:13px}.tv-browser-option{margin-top:22px}.tv-output .muted{font-size:12px}
+
+/* Official project and founder profiles, using the application's quiet button style. */
+.about-social-links{display:grid;gap:12px;margin-top:24px}
+.about-social-links .about-social-link{display:flex;justify-content:flex-start;gap:14px;min-height:72px;padding:15px 18px;text-align:left;border-radius:16px}
+.about-social-link>svg{width:24px;height:24px;flex:none;color:var(--gold)}
+.about-social-link>span{display:grid;gap:4px;min-width:0}
+.about-social-link strong{font-size:14px;font-weight:600;line-height:1.5;overflow-wrap:anywhere}
+.about-social-link small{font-size:12px;font-weight:400;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.about-social-link>svg.about-social-external{width:18px;height:18px;margin-left:auto;color:var(--muted)}
+@media(hover:hover){.about-social-link:hover{border-color:var(--gold);background:rgba(201,180,127,.06)}}
