@@ -109,5 +109,12 @@
     "Foreground service mediaPlayback declaration and evidence",
     "Owner review of processor sharing exceptions and retention",
     "Signing key ownership and compatibility with earlier APKs"
-  ]
+  ],
+  "audience": {
+    "googlePlay": "mixed ages including children; owner review pending",
+    "gate": "neutral date input; only age band stored locally; date not retained or sent",
+    "restricted": "under 18 and unknown age; no account/profile/photos/ranking/support messages/remote push/precise geolocation/QR camera",
+    "adult": "existing optional account and notification functions",
+    "verification": "local integration checks plus pending actual Android device verification; not a legal compliance certification"
+  }
 }

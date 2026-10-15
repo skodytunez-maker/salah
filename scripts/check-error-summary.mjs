@@ -1,3 +1,4 @@
+import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -18,7 +19,7 @@ assert.equal((await get()).status,401);assert.equal((await get(true)).status,403
 const ui=await fs.readFile(new URL('dist/js/error-reporting.js',root),'utf8');
 const executable=ui.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({createErrorReporter,errorContext,errorModule,expectedDiagnosticFailure,ownDiagnosticSource});';
 const listeners={},queue=[],storage=new Map(),sent=[],win={location:{hash:'#account?qr=SECRET&approve=SECRET'},innerWidth:390,addEventListener:(name,fn)=>listeners[name]=fn,removeEventListener:name=>delete listeners[name]},doc={hidden:false,addEventListener(){},removeEventListener(){}},nav={onLine:true,doNotTrack:'0'};
-const scope=vm.createContext({URL,Map,setTimeout,clearTimeout,fetch:()=>{throw Error('No real network allowed')},AbortSignal,crypto,OWNER_PROJECT_URL:'fixture',OWNER_PUBLIC_KEY:'fixture',window:win,document:doc,navigator:nav,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)}});
+const scope=vm.createContext({personalDataAllowed,URL,Map,setTimeout,clearTimeout,fetch:()=>{throw Error('No real network allowed')},AbortSignal,crypto,OWNER_PROJECT_URL:'fixture',OWNER_PUBLIC_KEY:'fixture',window:win,document:doc,navigator:nav,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)}});
 const api=vm.runInContext(executable,scope),reporter=api.createErrorReporter({version:226,win,doc,nav,storage:scope.localStorage,Observer:null,send:async(events,version)=>sent.push({events:JSON.parse(JSON.stringify(events)),version}),setTimer:fn=>{queue.push(fn);return queue.length},clearTimer(){}});
 listeners.error({message:'password=SECRET',filename:'https://example.test/salah/js/adhkar.js?token=SECRET',target:win});await reporter.flush();assert.equal(sent.length,0,'Off by default');
 assert.equal(reporter.setEnabled(true),true);listeners.error({message:'password=SECRET',filename:'https://example.test/salah/js/adhkar.js?token=SECRET',target:win});listeners.unhandledrejection({reason:{email:'private'}});await reporter.flush();assert.equal(sent.length,1);assert.ok(!JSON.stringify(sent).includes('SECRET'));assert.ok(!JSON.stringify(sent).includes('private'));assert.equal(sent[0].events[0].route,'account');assert.equal(sent[0].events[0].module,'adhkar');

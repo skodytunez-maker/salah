@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{read,write}from './storage.js';
 import{RECITERS}from './quran-reciters.js';
@@ -13,6 +14,7 @@ export const competitionOwn=()=>own&&scope===account().userId?own:null;
 export const competitionAvatar=id=>endpoint+'?avatar='+encodeURIComponent(id);
 const announce=()=>window.dispatchEvent(new Event('salah:competition-updated'));
 async function request(body=null){
+ if(!personalDataAllowed())throw Error('Личные данные защищены');
  const user=account().userId;if(!account().signedIn||!user)throw Error('Войдите в аккаунт');
  // Auth status events can run inside the SDK session lock. Leave that callback before requesting the session.
  await new Promise(resolve=>setTimeout(resolve,0));if(account().userId!==user)throw Error('Аккаунт изменился');
@@ -29,6 +31,7 @@ export async function refreshCompetitionOwn({force=false}={}){
 export async function saveCompetitionSettings(values){await request({action:'settings',...values});await refreshCompetitionOwn({force:true});}
 export function sharedPersonalTotals(local,period){const cloud=competitionOwn()?.totals?.[period];if(!cloud)return local;const merged={...local};for(const[id,n]of Object.entries(cloud))if(allowed.has(id)&&Number.isSafeInteger(n)&&n>=0)merged[id]=Math.max(merged[id]||0,n);return merged;}
 export async function loadCompetition(period='all',{force=false}={}){
+ if(!personalDataAllowed())return [];
  if(!['all','day','week','month'].includes(period))throw Error('invalid');
  const day=listeningDayKey(Date.now()),cached=cachedCompetition(period);if(cached&&!force)return cached;
  if(boardRequests.has(day)){await boardRequests.get(day).task;return cachedCompetition(period)||[];}
@@ -59,6 +62,6 @@ export async function syncCompetitionNow(force=false){
   await request({action:'snapshot',device:deviceId(),totals,days,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'});if(user!==account().userId)return;lastSignature=signature;lastUpload=Date.now();await refreshCompetitionOwn({force:true});
  }catch{retryAt=Date.now()+15000;}})();inflight=task;try{await task;}finally{if(inflight===task)inflight=null;}
 }
-export function initCompetition({getAccount,getClient,getSnapshot,isEnabled}){if(initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;
+export function initCompetition({getAccount,getClient,getSnapshot,isEnabled}){if(!personalDataAllowed()||initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;
  setInterval(()=>void syncCompetitionNow(),15000);window.addEventListener('salah:personal-listening',()=>void syncCompetitionNow());window.addEventListener('online',()=>void syncCompetitionNow());window.addEventListener('salah:counter-status',()=>void syncCompetitionNow());window.addEventListener('salah:popularity-updated',()=>{lastOwn=0;void syncCompetitionNow();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCompetitionNow();});void syncCompetitionNow();
 }

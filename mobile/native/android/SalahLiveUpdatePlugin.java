@@ -77,6 +77,7 @@ public class SalahLiveUpdatePlugin extends Plugin {
                 }
             }
             for(String required:new String[]{"index.html","js/app.js","js/native-entry.js","js/app-release.js","js/vendor/capacitor-core.js"})if(!new File(stage,required).isFile())throw new Exception("Incomplete update");
+            if(getContext().getPackageName().equals("com.salah.bysaadi"))for(String required:new String[]{"js/audience.js","js/audience-core.js","js/audience-mode.js","css/audience.css"})if(!new File(stage,required).isFile())throw new Exception("Families guard missing from update");
             String release;
             try(InputStream input=new FileInputStream(new File(stage,"js/app-release.js"));ByteArrayOutputStream output=new ByteArrayOutputStream()){
                 byte[] buffer=new byte[8192];int count;while((count=input.read(buffer))!=-1){if(output.size()+count>32768)throw new Exception("Release descriptor too large");output.write(buffer,0,count);}

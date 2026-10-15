@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 export function qrCameraCrop(width,height){if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)return null;const side=Math.min(width,height);return {x:(width-side)/2,y:(height-side)/2,side,size:Math.min(640,Math.round(side))};}
 // Camera frames remain on this device; scanning never approves a login by itself.
 export function parseSalahQr(value){
@@ -11,6 +12,7 @@ export function stopQrScanner(){currentClose?.();currentClose=null;}
 let decoderPromise;
 function loadDecoder(){return decoderPromise??=new Promise((resolve,reject)=>{if(globalThis.jsQR){resolve(globalThis.jsQR);return;}const script=document.createElement('script');script.src=new URL('./vendor/jsQR.js',import.meta.url).href;script.onload=()=>globalThis.jsQR?resolve(globalThis.jsQR):reject(Error('decoder'));script.onerror=()=>{decoderPromise=null;script.remove();reject(Error('decoder'));};document.head.append(script);});}
 export function mountQrScanner(area,{isActive=()=>true,onScan,onStop,parse=parseSalahQr,entryButton=null,entryLabel='Сканировать QR',title='Сканировать QR',hint='Наведите камеру на QR входа SALAH.',invalidHint='Это не QR входа SALAH.'}={}){
+ if(!personalDataAllowed()){if(entryButton)entryButton.hidden=true;const dispose=()=>{};dispose.open=()=>{};return dispose;}
  const entry=entryButton||document.createElement('button');entry.type='button';if(!entryButton)entry.className='button secondary qr-login-entry';entry.textContent=entryLabel;if(!entryButton)area.append(entry);
  let close=null;
  entry.onclick=async()=>{

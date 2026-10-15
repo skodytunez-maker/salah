@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 const KEY='salah:diagnostics-v1';
 export const ERROR_ROUTES=['home','knowledge','quran','adhkar','more','account','settings','calendar','qibla','umrah','support','learning','other'];
@@ -22,12 +23,13 @@ export function errorContext(win){
 export function errorModule(filename){try{const name=new URL(filename).pathname.split('/').at(-1).replace(/\.js$/,'');if(ERROR_MODULES.includes(name))return name;for(const group of ['quran','adhkar','support','weather','settings'])if(name.startsWith(group+'-'))return group;return 'other';}catch{return 'other';}}
 export function diagnosticEnabled(storage=null){try{return (storage||globalThis.localStorage).getItem(KEY)==='true';}catch{return false;}}
 export async function sendErrorBatch(events,version){
+ if(!personalDataAllowed())return;
  const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/error-summary',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,'Content-Type':'application/json'},body:JSON.stringify({id:crypto.randomUUID(),version,events}),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(10000)});if(!response.ok)throw Error('unavailable');
 }
 export function createErrorReporter({version,win=globalThis.window,doc=globalThis.document,nav=globalThis.navigator,storage=null,send=sendErrorBatch,setTimer=setTimeout,clearTimer=clearTimeout,Observer=globalThis.PerformanceObserver}={}){
  try{storage=storage||globalThis.localStorage;}catch{}
  let enabled=diagnosticEnabled(storage),timer=null,disposed=false,sending=false,units=0;const pending=new Map();
- const allowed=()=>enabled&&!disposed&&nav?.doNotTrack!=='1';
+ const allowed=()=>personalDataAllowed()&&enabled&&!disposed&&nav?.doNotTrack!=='1';
  const flush=async()=>{clearTimer(timer);timer=null;if(!allowed()||doc?.hidden||nav?.onLine===false||sending||!pending.size)return;sending=true;const keys=[...pending.keys()].slice(0,10),batch=keys.map(k=>pending.get(k));keys.forEach(k=>pending.delete(k));try{await send(batch,version);}catch{}finally{sending=false;if(allowed()&&pending.size)timer=setTimer(flush,10000);}};
  const record=(kind,module='other')=>{
   if(!allowed()||doc?.hidden||units>=20)return;const context=errorContext(win),key=[context.route,context.screen,kind,module].join(':');units++;const row=pending.get(key)||{...context,kind,module,count:0};row.count++;pending.set(key,row);if(!timer)timer=setTimer(flush,10000);

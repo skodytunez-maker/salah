@@ -5,6 +5,10 @@ import {validateFirebaseConfig} from './firebase-android.mjs';
 export const PLAY_PACKAGE='com.salah.bysaadi';
 export const NATIVE_PACKAGE='com.saadikobilov.salah';
 const knownPackage=value=>value===NATIVE_PACKAGE||value===PLAY_PACKAGE;
+export function configurePlayAudience(source){
+ if(!/^export const FAMILIES_REQUIRED=(?:false|true);$/m.test(source))throw Error('Missing audience guard mode');
+ return source.replace(/^export const FAMILIES_REQUIRED=(?:false|true);$/m,'export const FAMILIES_REQUIRED=true;');
+}
 export function configurePlayGradle(source){
  const ids=[...source.matchAll(/\bapplicationId\s+"([^"]+)"/g)];
  if(ids.length!==1||!knownPackage(ids[0][1]))throw Error('Unexpected release package');
@@ -37,7 +41,8 @@ export async function configurePlayRelease(mobileRoot){
   [path.join(app,'build.gradle'),configurePlayGradle],
   [path.join(main,'assets/capacitor.config.json'),configurePlayCapacitor],
   [path.join(main,'res/values/strings.xml'),configurePlayStrings],
-  [path.join(main,'AndroidManifest.xml'),configurePlayManifest]
+  [path.join(main,'AndroidManifest.xml'),configurePlayManifest],
+  [path.join(main,'assets/public/js/audience-mode.js'),configurePlayAudience]
  ];
  const prepared=await Promise.all(targets.map(async([file,convert])=>[file,convert(await fs.readFile(file,'utf8'))]));
  const raw=JSON.parse((await fs.readFile(path.join(mobileRoot,'native/android/google-services.json'),'utf8')).replace(/^\uFEFF/,''));

@@ -25,6 +25,17 @@ public class SalahSupportPushPlugin extends Plugin {
     static final String PREFS="salah_support_push";
     static WeakReference<SalahSupportPushPlugin> active=new WeakReference<>(null);
     private boolean foreground=false;
+    private boolean familiesBuild(){return getContext().getPackageName().equals("com.salah.bysaadi");}
+    private boolean audienceAllowsAccount(){return !familiesBuild()||prefs().getBoolean("audience_adult",false);}
+    @PluginMethod public void setAudience(PluginCall call){
+        Boolean adult=call.getBoolean("adult");if(adult==null){call.reject("invalid_audience");return;}
+        boolean hadRegistration=!prefs().getString("user","").isEmpty()||prefs().getBoolean("enabled",false)||prefs().getBoolean("staff_enabled",false);
+        if(!prefs().edit().putBoolean("audience_adult",adult).commit()){call.reject("audience_not_saved");return;}
+        if(!familiesBuild()){call.resolve();return;}
+        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+        if(!adult){prefs().edit().remove("user").remove("device").remove("staff_device").putBoolean("enabled",false).putBoolean("staff_enabled",false).apply();pendingTap=null;if(hadRegistration){FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(task->call.resolve());return;}}
+        call.resolve();
+    }
     private JSObject pendingTap;
     static boolean uuid(String value){return value!=null&&value.matches("(?i)[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}");}
     private SharedPreferences prefs(){return getContext().getSharedPreferences(PREFS,0);}
@@ -42,13 +53,14 @@ public class SalahSupportPushPlugin extends Plugin {
     }
     @PluginMethod public void consumeTap(PluginCall call){JSObject value=pendingTap;pendingTap=null;call.resolve(value==null?new JSObject():value);}
     @PluginMethod public void setAccount(PluginCall call){
-        String user=call.getString("user","");if(!user.isEmpty()&&!uuid(user)){call.reject("invalid_account");return;}
+        String user=call.getString("user","");if(!user.isEmpty()&&!audienceAllowsAccount()){call.reject("audience_restricted");return;}if(!user.isEmpty()&&!uuid(user)){call.reject("invalid_account");return;}
         String previous=prefs().getString("user","");
         if(!previous.equals(user)){prefs().edit().putString("user",user).remove("device").remove("staff_device").putBoolean("staff_enabled",false).putBoolean("enabled",false).apply();FirebaseMessaging.getInstance().setAutoInitEnabled(false);FirebaseMessaging.getInstance().deleteToken();}
         call.resolve();
     }
-    @PluginMethod public void getStatus(PluginCall call){JSObject result=new JSObject();result.put("supported",supported());result.put("permission",granted()?"granted":"denied");result.put("enabled",prefs().getBoolean("enabled",false));result.put("staffMessages",true);result.put("staffEnabled",prefs().getBoolean("staff_enabled",false));call.resolve(result);}
+    @PluginMethod public void getStatus(PluginCall call){JSObject result=new JSObject();result.put("familiesRequired",familiesBuild());result.put("audienceAdult",audienceAllowsAccount());result.put("supported",supported());result.put("permission",granted()?"granted":"denied");result.put("enabled",prefs().getBoolean("enabled",false));result.put("staffMessages",true);result.put("staffEnabled",prefs().getBoolean("staff_enabled",false));call.resolve(result);}
     @PluginMethod public void enable(PluginCall call){
+        if(!audienceAllowsAccount()){call.reject("audience_restricted");return;}
         if(!supported()){call.reject("google_services_unavailable");return;}
         String user=call.getString("user","");if(!uuid(user)||!user.equals(prefs().getString("user",""))){call.reject("account_changed");return;}
         if(Build.VERSION.SDK_INT>=33&&getPermissionState("notifications")!=PermissionState.GRANTED){requestPermissionForAlias("notifications",call,"permissionResult");return;}
@@ -58,9 +70,10 @@ public class SalahSupportPushPlugin extends Plugin {
     @PluginMethod public void getRegistration(PluginCall call){registration(call,false);}
     private void registration(PluginCall call,boolean enable){registration(call,enable,false);}
     private void registration(PluginCall call,boolean enable,boolean staff){
+        if(!audienceAllowsAccount()){call.reject("audience_restricted");return;}
         String user=call.getString("user","");
         if(!uuid(user)||!user.equals(prefs().getString("user",""))||!granted()||!supported()||(!enable&&!prefs().getBoolean(staff?"staff_enabled":"enabled",false))){call.reject("notifications_unavailable");return;}
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        FirebaseMessaging.getInstance().setAutoInitEnabled(!familiesBuild());
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task->{
             if(!task.isSuccessful()||!user.equals(prefs().getString("user",""))){call.reject("registration_unavailable");return;}
             String id=prefs().getString(staff?"staff_device":"device","");if(!uuid(id))id=UUID.randomUUID().toString();
@@ -69,7 +82,7 @@ public class SalahSupportPushPlugin extends Plugin {
         });
     }
     @PluginMethod public void disable(PluginCall call){prefs().edit().putBoolean("enabled",false).apply();if(!prefs().getBoolean("staff_enabled",false)){FirebaseMessaging.getInstance().setAutoInitEnabled(false);FirebaseMessaging.getInstance().deleteToken();}call.resolve();}
-    @PluginMethod public void enableStaff(PluginCall call){if(!supported()){call.reject("google_services_unavailable");return;}String user=call.getString("user","");if(!uuid(user)||!user.equals(prefs().getString("user",""))){call.reject("account_changed");return;}if(Build.VERSION.SDK_INT>=33&&getPermissionState("notifications")!=PermissionState.GRANTED){requestPermissionForAlias("notifications",call,"staffPermissionResult");return;}registration(call,true,true);}
+    @PluginMethod public void enableStaff(PluginCall call){if(!audienceAllowsAccount()){call.reject("audience_restricted");return;}if(!supported()){call.reject("google_services_unavailable");return;}String user=call.getString("user","");if(!uuid(user)||!user.equals(prefs().getString("user",""))){call.reject("account_changed");return;}if(Build.VERSION.SDK_INT>=33&&getPermissionState("notifications")!=PermissionState.GRANTED){requestPermissionForAlias("notifications",call,"staffPermissionResult");return;}registration(call,true,true);}
     @PermissionCallback private void staffPermissionResult(PluginCall call){if(!granted()){call.reject("notifications_denied");return;}registration(call,true,true);}
     @PluginMethod public void getStaffRegistration(PluginCall call){registration(call,false,true);}
     @PluginMethod public void disableStaff(PluginCall call){prefs().edit().putBoolean("staff_enabled",false).apply();if(!prefs().getBoolean("enabled",false)){FirebaseMessaging.getInstance().setAutoInitEnabled(false);FirebaseMessaging.getInstance().deleteToken();}call.resolve();}

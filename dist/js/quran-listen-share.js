@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 import{esc,toast,modal,closeModal}from './ui.js';
 import{mountQrScanner,stopQrScanner}from './qr-scanner.js';
 import{quranPlayback}from './quran-session.js';
@@ -28,6 +29,7 @@ export function mountListeningShare(host,index,hash){
 }
 
 export function showListeningScanner(){
+ if(!personalDataAllowed()){toast('Камера в этом режиме недоступна.');return;}
  stopQrScanner();modal('<div class="modal-head"><h2>Сканировать передачу</h2><button class="icon-button" data-close aria-label="Закрыть">×</button></div><div id="quran-listening-scanner"></div>');
  const area=document.getElementById('quran-listening-scanner');const scanner=mountQrScanner(area,{entryLabel:'Открыть камеру',title:'',hint:'Наведите камеру на QR прослушивания SALAH.',invalidHint:'Это не QR передачи прослушивания SALAH.',parse:parseListeningQr,onScan:request=>{closeModal();location.hash=request.hash}});document.getElementById('modal').addEventListener('close',scanner,{once:true});void scanner.open();
 }

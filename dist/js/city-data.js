@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 // Small GeoNames/Open-Meteo seed list gives useful suggestions from two letters, also offline.
 export const commonCities=[
   {
@@ -169,6 +170,6 @@ export function cityFromLocation(place,zone,coords){
  return cleanCity({name,country:place.countryName,admin1:place.principalSubdivision,latitude:coords.latitude,longitude:coords.longitude,timezone:zone.timezone});
 }
 // Only call from the current device's fresh, consented Geolocation position. No IP fallback.
-export async function locateCity(coords,{signal,fetcher=fetch}={}){if(!validCoordinates(coords.latitude,coords.longitude))throw Error('Invalid coordinates');const reverse=new URL('https://api.bigdatacloud.net/data/reverse-geocode-client');reverse.search=new URLSearchParams({latitude:String(coords.latitude),longitude:String(coords.longitude),localityLanguage:'ru'});const timezone=new URL('https://api.open-meteo.com/v1/forecast');timezone.search=new URLSearchParams({latitude:String(coords.latitude),longitude:String(coords.longitude),timezone:'auto'});const [place,zone]=await Promise.all([json(reverse,signal,fetcher),json(timezone,signal,fetcher)]);const city=cityFromLocation(place,zone,coords);if(!city)throw Error('City not resolved');return city}
+export async function locateCity(coords,{signal,fetcher=fetch}={}){if(!personalDataAllowed())throw Error('Выберите город вручную.');if(!validCoordinates(coords.latitude,coords.longitude))throw Error('Invalid coordinates');const reverse=new URL('https://api.bigdatacloud.net/data/reverse-geocode-client');reverse.search=new URLSearchParams({latitude:String(coords.latitude),longitude:String(coords.longitude),localityLanguage:'ru'});const timezone=new URL('https://api.open-meteo.com/v1/forecast');timezone.search=new URLSearchParams({latitude:String(coords.latitude),longitude:String(coords.longitude),timezone:'auto'});const [place,zone]=await Promise.all([json(reverse,signal,fetcher),json(timezone,signal,fetcher)]);const city=cityFromLocation(place,zone,coords);if(!city)throw Error('City not resolved');return city}
 // Every new query invalidates the previous request, even if a provider ignores cancellation.
 export function latestRequest(){let version=0,controller;return {start(){controller?.abort();controller=new AbortController();const id=++version;return {signal:controller.signal,current:()=>id===version&&!controller.signal.aborted}},cancel(){version++;controller?.abort()}}}

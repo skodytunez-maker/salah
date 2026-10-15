@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import{ensureAudienceChoice}from '../dist/js/audience.js';
 import {readFile, writeFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {buildPrayerWidgetSnapshot} from '../dist/js/native-widget.js';
@@ -41,7 +42,7 @@ for (const [native, available] of [[true, true], [true, false], [false, false]])
     isNativePlatform: () => native,
     isPluginAvailable: name => name === 'SalahWidget' && available
   };
-  const context = vm.createContext({
+  const context = vm.createContext({ensureAudienceChoice,
     Capacitor,
     registerPlugin: name => {
       assert.equal(name, 'SalahWidget');
@@ -56,7 +57,7 @@ for (const [native, available] of [[true, true], [true, false], [false, false]])
 
   await vm.runInContext(
     '(async()=>{'+entry
-      .replace(/^import .*;$/m, '')
+      .replace(/^import .*;$/gm, '')
       .replace("await import('./app.js');", 'boot();')+'})()',
     context
   );

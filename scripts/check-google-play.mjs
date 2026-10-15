@@ -16,7 +16,7 @@ const root=new URL('../',import.meta.url),read=p=>fs.readFile(new URL(p,root),'u
 const listing=JSON.parse(await read('mobile/store/ru-RU.json'));assert.ok([...listing.title].length<=30);assert.ok([...listing.shortDescription].length<=80);assert.ok([...listing.fullDescription].length<=4000);assert.equal(listing.supportEmail,'skodytunez@gmail.com');
 const policy=await read('dist/privacy.html'),deletion=await read('dist/delete-account.html');for(const text of [policy,deletion]){assert.ok(text.includes('skodytunez@gmail.com'));assert.ok(text.includes('SALAH'));assert.ok(!text.includes('<script'));assert.ok(!text.includes('gmail.xom'));}assert.ok(deletion.includes('mailto:skodytunez@gmail.com?subject='));assert.ok(deletion.includes('?entry=shortcut#account'));assert.ok(policy.includes('BigDataCloud'));
 const workflow=await read('.github/workflows/android-play.yml');assert.ok(workflow.includes('bundleRelease'));assert.ok(workflow.includes('testReleaseUnitTest'));assert.ok(workflow.includes('salah-google-play-unsigned'));assert.ok(workflow.includes("github.ref == 'refs/heads/main'"));assert.ok(workflow.includes('environment: google-play-upload'));assert.ok(!workflow.includes('pull_request_target'));assert.ok(!workflow.includes('assembleDebug'));
-const result=spawnSync(process.execPath,[fileURLToPath(new URL('../mobile/scripts/sign-play-bundle.mjs',import.meta.url)),'fixture.aab','fixture-signed.aab'],{encoding:'utf8',env:{PATH:process.env.PATH,SystemRoot:process.env.SystemRoot||''}});assert.notEqual(result.status,0);assert.ok(result.stderr.includes('configuration is incomplete'));
+const runSigningProbe=()=>spawnSync(process.execPath,[fileURLToPath(new URL('../mobile/scripts/sign-play-bundle.mjs',import.meta.url)),'fixture.aab','fixture-signed.aab'],{encoding:'utf8',env:{PATH:process.env.PATH,SystemRoot:process.env.SystemRoot||''}});let result=runSigningProbe();for(let retry=0;retry<2&&process.platform==='win32'&&(result.status===3221225477||result.status===-1073741819);retry++)result=runSigningProbe();assert.notEqual(result.status,0);assert.ok(result.stderr.includes('configuration is incomplete'));
 console.log('PASS: release package/version/SDK/debug guard, idempotent Gradle, safe missing-key refusal, private signing isolation and functional public privacy/deletion links.');
 
 assert.equal(PLAY_PACKAGE,'com.salah.bysaadi');
@@ -33,7 +33,8 @@ assert.equal(configurePlayManifest(configurePlayManifest(component)),configurePl
 const temporary=await fs.mkdtemp(path.join(os.tmpdir(),'salah-play-package-'));
 try{
  const fixtureRoot=path.join(temporary,'mobile'),main=path.join(fixtureRoot,'android/app/src/main');
- await fs.mkdir(path.join(main,'assets'),{recursive:true});
+ await fs.mkdir(path.join(main,'assets/public/js'),{recursive:true});
+ await fs.copyFile(new URL('../dist/js/audience-mode.js',import.meta.url),path.join(main,'assets/public/js/audience-mode.js'));
  await fs.mkdir(path.join(main,'res/values'),{recursive:true});
  await fs.mkdir(path.join(fixtureRoot,'native/android'),{recursive:true});
  const baseConfig=JSON.stringify({appId:NATIVE_PACKAGE,appName:'SALAH',webDir:'www'});
@@ -44,6 +45,7 @@ try{
  await fs.writeFile(path.join(fixtureRoot,'android/app/build.gradle'),'android { namespace "'+NATIVE_PACKAGE+'" defaultConfig { applicationId "'+NATIVE_PACKAGE+'" } }');
  await fs.copyFile(new URL('../mobile/native/android/google-services.json',import.meta.url),path.join(fixtureRoot,'native/android/google-services.json'));
  await configurePlayRelease(fixtureRoot);
+ assert.match(await fs.readFile(path.join(main,'assets/public/js/audience-mode.js'),'utf8'),/FAMILIES_REQUIRED=true/);
  const builtGradle=await fs.readFile(path.join(fixtureRoot,'android/app/build.gradle'),'utf8');
  assert.ok(builtGradle.includes('namespace "'+NATIVE_PACKAGE+'"'));
  assert.ok(builtGradle.includes('applicationId "'+PLAY_PACKAGE+'"'));

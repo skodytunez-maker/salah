@@ -1,3 +1,4 @@
+import{personalDataAllowed}from './audience.js';
 import {readDhikrActivity} from './dhikr-reminder.js';
 import {normalizeReminders,PRAYER_KEYS} from './reminder-events.js';
 import {esc} from './ui.js';
@@ -35,8 +36,9 @@ export function pushConnectionReport({supported=false,enabled=false,city=false,p
 export function createPushReminders({getSettings,toast=()=>{}}){
  let lastActivitySync=0,activityTimer=null;
  let mounted=null,busy=false,status='',config=null,onlineReady=false,needsSync=false,timer,state=read(),lastSignature=state?.signature||'',configLoading=null,lastConfigAttempt=0,diagnostic=null;
- const supported=()=>!nativeRuntime()&&globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
+ const supported=()=>personalDataAllowed()&&!nativeRuntime()&&globalThis.isSecureContext&&'Notification'in globalThis&&'PushManager'in globalThis&&!!navigator.serviceWorker&&(!IOS()||installed());
  async function call(action,body){
+  if(!personalDataAllowed())throw Error('Личные данные защищены');
   const response=await fetch(API+'/'+action,{method:body?'POST':'GET',mode:'cors',cache:'no-store',credentials:'omit',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(20000)});
   const result=await response.json().catch(()=>({}));if(!response.ok)throw Error(result.error||'Доставка временно недоступна');return result;
  }
