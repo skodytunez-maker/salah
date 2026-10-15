@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":337,"date":"2026-10-15","changes":["В разделе «О приложении» добавлены Instagram SALAH и профиль основателя."],"announcement":{"version":335,"date":"2026-10-14","changes":["Раздел «Моя поддержка» в аккаунте: просмотр состояния и самостоятельное отключение с отвязкой способа оплаты. Подключение платежей ещё готовится."]}};
+const RELEASE={"version":338,"date":"2026-10-16","changes":["В версии Google Play добавлена защита детей: дата рождения не сохраняется, личные и облачные функции доступны только взрослым."],"announcement":{"version":338,"date":"2026-10-16","changes":["В версии Google Play добавлена защита детей: дата рождения не сохраняется, личные и облачные функции доступны только взрослым."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
