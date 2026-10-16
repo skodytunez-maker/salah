@@ -3813,6 +3813,11 @@
       "path": "dist/assets/updates/kazan-v1.webp",
       "gitBlobSha": "d65db2f3df14a36f0829403bec5a12c6d129d5b2",
       "bytes": 14666
+    },
+    {
+      "path": "dist/assets/tyumen-november-source-2025.jpg",
+      "gitBlobSha": "23edda6c984d337ada980788a2accd193c561328",
+      "bytes": 142373
     }
   ],
   "incrementalEvidence": [
@@ -3881,6 +3886,14 @@
       ],
       "evidence": "docs/quran-listening-award-source.json",
       "baseCommit": "3d4c8c0be0bf8eae49b8f66b0ef4fc768cb68eef"
+    },
+    {
+      "date": "2026-10-16",
+      "paths": [
+        "dist/assets/tyumen-november-source-2025.jpg"
+      ],
+      "evidence": "docs/tyumen-november-2026.json",
+      "baseCommit": "5e9d200aec519fbb7e7f53a15e2f3de8f5845798"
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"

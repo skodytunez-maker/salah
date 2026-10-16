@@ -11,6 +11,8 @@ const spark=()=>'<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
+ if(version===342)return gallery([card('<svg viewBox="0 0 150 140" fill="none"><rect x="24" y="25" width="102" height="96" rx="14" stroke="currentColor" stroke-width="2"/><path d="M24 52h102M48 16v20M102 16v20" stroke="currentColor" stroke-width="2"/><text x="75" y="88" text-anchor="middle" fill="currentColor" font-family="Georgia,serif" font-size="32">30</text><text x="75" y="108" text-anchor="middle" fill="currentColor" font-size="10">НОЯБРЬ</text></svg>','Ноябрь в календаре Тюмени','Месяц добавлен по присланной таблице: первое время Асра и Аср в мечетях сохранены отдельно.','Времена перенесены из таблицы 2025 года; дни недели указаны для ноября 2026.'),card('<div class="release-total-preview"><div><span>МОЙ ТОП</span><strong>Ваше время</strong></div><div><span>ТОП SALAH</span><strong>Вместе прослушали</strong></div></div>','Компактнее и точнее','Счётчик в топах занимает меньше места — подиум виден выше.','Повторный учёт старых минут в месячном итоге исправлен.')]);
+
  if(![339,340,341].includes(version)){
   if(!Number.isSafeInteger(version)||version<=341||!Array.isArray(changes))return '';
   const safe=changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8);

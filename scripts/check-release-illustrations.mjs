@@ -23,7 +23,8 @@ bindIllustratedRelease(root);
 assert.equal(cards.filter(x=>!x.inert).length,1);
 root.querySelector('[data-release-next]').click();assert.equal(root.querySelector('[data-release-page]').textContent,'2/7');assert.equal(cards[0].inert,true);assert.equal(cards[1].inert,false);
 strip.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(root.querySelector('[data-release-page]').textContent,'1/7');assert.equal(root.querySelector('[data-release-prev]').disabled,true);
-const future=illustratedReleaseMarkup(342,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
+const novemberNews=illustratedReleaseMarkup(342);root.innerHTML=novemberNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Ноябрь в календаре Тюмени'));assert.ok(root.textContent.includes('таблицы 2025 года'));assert.equal(root.querySelectorAll('svg').length,1);
+const future=illustratedReleaseMarkup(343,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 const profile=doc.createElement('div');doc.body.append(profile);let dismissed=0;profile.onclick=()=>dismissed++;

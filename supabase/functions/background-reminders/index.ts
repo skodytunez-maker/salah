@@ -7,7 +7,8 @@ const TYUMEN_SOURCES=['auto','calendar','al-hakk'];
 function normalizeTyumenSource(value){return TYUMEN_SOURCES.includes(value)?value:'auto'}
 function tyumenSourceFiles(value){
  const source=normalizeTyumenSource(value);
- return source==='calendar'?['tyumen-october-2026.json']:source==='al-hakk'?['al-hakk-tyumen.json']:['al-hakk-tyumen.json','tyumen-october-2026.json'];
+ const calendar=['tyumen-october-2026.json','tyumen-november-2026.json'];
+ return source==='calendar'?calendar:source==='al-hakk'?['al-hakk-tyumen.json']:['al-hakk-tyumen.json',...calendar];
 }
 function matchesTyumenSource(value,row){
  const source=normalizeTyumenSource(value);
@@ -415,7 +416,7 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  async function json(url){const response=await fetcher(url,{signal:AbortSignal.timeout(15000),redirect:'error'});if(!response.ok)throw Error('schedule-unavailable');return response.json();}
  if(isTyumen(p)){
   // Never invent a new Tyumen timetable when no approved local month exists.
-  const key='tyumen-published-v2:'+normalizeTyumenSource(p.tyumenTimeSource),saved=await cache.get(key,now);
+  const key='tyumen-published-v3:'+normalizeTyumenSource(p.tyumenTimeSource),saved=await cache.get(key,now);
   if(saved)return saved;
   for(const file of tyumenSourceFiles(p.tyumenTimeSource)){const data=await json(PUBLIC_APP+'data/'+file);Object.assign(rows,data.days||{});}
   const supplement=await json(PUBLIC_APP+'data/tyumen-first-asr.json');
