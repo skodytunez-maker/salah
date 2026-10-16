@@ -11,7 +11,7 @@ import{read,write}from './storage.js';
 import{toast}from './ui.js';
 const icon=path=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';
 const previous=icon('<path d="M6 5v14M18 5l-9 7 9 7z"/>'),next=icon('<path d="M18 5v14M6 5l9 7-9 7z"/>');
-const play=icon('<path d="M8 5l11 7-11 7z"/>'),pause=icon('<path d="M8 5v14M16 5v14"/>');
+const play=icon('<path d="M6.5 5l11 7-11 7z"/>'),pause=icon('<path d="M8 5v14M16 5v14"/>');
 export function playerDockOffset(viewportHeight,{top=0,height=0,visible=false}={}){return visible&&height>0?Math.max(12,viewportHeight-top+8):12;}
 export function mountQuranPlayer(){
  const panel=document.createElement('section');panel.id='quran-global-player';panel.className='quran-global-player';panel.hidden=true;panel.setAttribute('aria-label','Плеер Корана');
