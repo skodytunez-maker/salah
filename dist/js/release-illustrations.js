@@ -11,8 +11,8 @@ const spark=()=>'<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
- if(![339,340].includes(version)){
-  if(!Number.isSafeInteger(version)||version<=340||!Array.isArray(changes))return '';
+ if(![339,340,341].includes(version)){
+  if(!Number.isSafeInteger(version)||version<=341||!Array.isArray(changes))return '';
   const safe=changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8);
   return safe.length?gallery(safe.map((text,i)=>card(spark(),'Обновление '+(i+1),text))):'';
  }
