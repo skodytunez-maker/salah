@@ -1,14 +1,14 @@
-// Deploy only to the separate SALAH project. No service-role key is required.
+// Deploy only to the separate SALAH project. Storage credentials stay server-side.
 // A valid session is checked against Auth on EVERY request before owner access.
 const OWNER_ID='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 const APP_ORIGINS=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);
 const PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 // Returned only after fresh identity, active session and MFA verification.
-const OWNER_RELEASES={salah:[{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
+const OWNER_RELEASES={salah:[{date:'2026-10-16',version:'339',changes:['Профили пользователей открываются из списка: фото, сохранённое время прослушивания, любимые чтецы и полученные награды.','Доступ к профилям и фото проверяется на сервере при каждом запросе: только владелец с действующей сессией и вторым фактором.']},{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readAvatar=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -51,6 +51,21 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    if(!readProfiles)return reply(503,{error:'profiles_unavailable'});
    try{const rows=await readProfiles(ids);if(!Array.isArray(rows))throw Error('invalid');return reply(200,{profiles:rows.filter(row=>ids.includes(row.id)).slice(0,50).map(row=>({id:row.id,nickname:typeof row.nickname==='string'?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):''}))});}catch{return reply(503,{error:'profiles_unavailable'});}
   }
+  if(mode==='user'||mode==='user-avatar'){
+   const id=url.searchParams.get('ids')||'';
+   if(url.searchParams.has('days')||url.searchParams.has('page')||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))return reply(400,{error:'invalid_parameters'});
+   if(!readUser)return reply(503,{error:'user_unavailable'});
+   try{
+    const details=await readUser(id.toLowerCase());if(!details)return reply(404,{error:'not_found'});
+    if(mode==='user-avatar'){
+     if(!details.hasAvatar||!readAvatar)return reply(404,{error:'not_found'});
+     const bytes=await readAvatar(id.toLowerCase());
+     if(!(bytes instanceof Uint8Array)||bytes.length<3||bytes.length>200000||bytes[0]!==255||bytes[1]!==216||bytes[2]!==255)return reply(404,{error:'not_found'});
+     return new Response(bytes,{status:200,headers:{...headers,'Content-Type':'image/jpeg','Content-Disposition':'inline'}});
+    }
+    return reply(200,safeOwnerUserDetails(details,id.toLowerCase()));
+   }catch{return reply(503,{error:'user_unavailable'});}
+  }
   if(url.searchParams.has('ids'))return reply(400,{error:'invalid_parameters'});
   if(mode==='users'){
    if(url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
@@ -79,6 +94,30 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
  };
 }
 
+export function safeOwnerUserDetails(details,id){
+ const seconds=n=>(typeof n==='number'||typeof n==='string'&&/^\d+$/.test(n))&&Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):null;
+ const kinds=new Set(['founder','week','month','streak7','streak30','streak100','streak200','streak365','hours25','hours50','hours100','hours250','hours500','hours1000','hours5000']);
+ const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
+ return{id,hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,
+  reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
+  awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null})),
+  updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
+}
+
+export async function readOwnerUserDetails(sql,id){
+ return sql.begin(async tx=>{
+  await tx`set transaction read only`;
+  const [user]=await tx`select exists(select 1 from storage.objects o where o.bucket_id='profile-avatars' and o.name=u.id::text||'/profile.jpg') as "hasAvatar",exists(select 1 from salah_competition_private.preferences p where p.user_id=u.id) as connected,(now()at time zone 'Europe/Moscow')::date::text as day from auth.users u where u.id=${id}::uuid and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)`;
+  if(!user)return null;
+  const scores=await tx`select periods.period,s.reciter,s.seconds::text from(values('all'),('day'),('week'),('month')) periods(period) cross join lateral public.competition_scores(periods.period,${user.day}::date) s where s.user_id=${id}::uuid`;
+  const periods={all:0,day:0,week:0,month:0};for(const row of scores){const value=Number(row.seconds);if(!Object.hasOwn(periods,row.period)||!Number.isSafeInteger(value)||value<0||!Number.isSafeInteger(periods[row.period]+value))throw Error('invalid_score');periods[row.period]+=value;}
+  const reciters=scores.filter(row=>row.period==='all').map(row=>({id:row.reciter,seconds:Number(row.seconds)})).sort((a,b)=>b.seconds-a.seconds||a.id.localeCompare(b.id)).slice(0,5);
+  const awards=await tx`select kind,count(*)::int as count,max(earned_at) as "earnedAt" from salah_competition_private.awards where user_id=${id}::uuid group by kind order by max(earned_at) desc,kind limit 15`;
+  const [saved]=await tx`select max(updated_at) as "updatedAt" from salah_competition_private.totals where user_id=${id}::uuid`;
+  return{hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards,updatedAt:saved?.updatedAt||null};
+ });
+}
+
 if(typeof Deno!=='undefined'){
  const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
  const {default:postgres}=await import('npm:postgres@3.4.9');
@@ -88,7 +127,7 @@ if(typeof Deno!=='undefined'){
  const [presence]=await tx`select count(distinct p.user_id)::int as online from public.app_presence p join auth.users u on u.id=p.user_id where p.app='salah' and p.active and p.last_seen>=now()-interval '90 seconds' and u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false`;
  const users=await tx`select u.id::text as id,u.raw_user_meta_data->>'nickname' as nickname,u.created_at as "joinedAt",u.last_sign_in_at as "lastSignInAt",p.last_seen as "lastSeenAt",coalesce(p.online,false) as online,v.app_version as "appVersion",v.version_checked_at as "versionCheckedAt",c.saved_at as "lastSavedAt",n.checked_at as "notificationCheckedAt",n.enabled as "notificationEnabled",n.granted as "notificationGranted",n.denied as "notificationDenied",n.background as "notificationBackground" from auth.users u left join lateral(select max(last_seen) as last_seen,bool_or(active and last_seen>=now()-interval '90 seconds') as online from public.app_presence where user_id=u.id and app='salah') p on true left join lateral(select app_version,version_checked_at from public.app_presence where user_id=u.id and app='salah' and app_version is not null and version_checked_at is not null order by version_checked_at desc,tab_id limit 1) v on true left join lateral(select max(saved_at) as saved_at from salah_counter_private.components where user_id=u.id) c on true left join lateral(
  select max(n.checked_at) as checked_at,bool_or(n.enabled) as enabled,bool_or(n.enabled and n.permission='granted') as granted,bool_or(n.enabled) and bool_and(not n.enabled or n.permission='denied') as denied,
- bool_or(n.enabled and n.permission='granted' and coalesce(d.enabled,false) and d.subscription is not null and d.preferences is not null and d.updated_at>now()-interval '90 days' and d.preferences->'reminders'->>'enabled'='true' and exists(select 1 from jsonb_each(coalesce(d.preferences->'reminders'->'prayers','{}'::jsonb)) r where r.key in('Fajr','Dhuhr','Asr','Maghrib','Isha') and (r.value->>'atTime'='true' or r.value->>'beforeMinutes' in('5','10','15','30')))) as background
+ bool_or(n.enabled and n.permission='granted' and ((n.native_until>now() and n.native_until<=n.checked_at+interval '14 days') or (coalesce(d.enabled,false) and d.subscription is not null and d.preferences is not null and d.updated_at>now()-interval '90 days' and d.preferences->'reminders'->>'enabled'='true' and exists(select 1 from jsonb_each(coalesce(d.preferences->'reminders'->'prayers','{}'::jsonb)) r where r.key in('Fajr','Dhuhr','Asr','Maghrib','Isha') and (r.value->>'atTime'='true' or r.value->>'beforeMinutes' in('5','10','15','30')))))) as background
  from(select distinct on(s.session_id) s.* from public.app_notification_status s join auth.sessions a on a.id=s.session_id and a.user_id=s.user_id where s.user_id=u.id and s.checked_at>now()-interval '90 days' order by s.session_id,s.checked_at desc,s.tab_id) n
  left join salah_push_private.devices d on d.id=n.push_device_id
  ) n on true where u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false order by coalesce(p.online,false) desc,p.last_seen desc nulls last,u.id limit 50 offset ${(page-1)*50}`;
@@ -97,5 +136,6 @@ if(typeof Deno!=='undefined'){
  const readProfiles=async ids=>sql`select id::text as id,raw_user_meta_data->>'nickname' as nickname from auth.users where id=any(${ids}::uuid[]) and email_confirmed_at is not null and coalesce(is_anonymous,false)=false`;
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readUser:id=>readOwnerUserDetails(sql,id),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

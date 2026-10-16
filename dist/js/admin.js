@@ -5,6 +5,7 @@ import{analyticsSite}from './analytics.js';
 import{esc,title}from './ui.js';
 import{notificationLabels}from './notification-status.js';
 import{ownerUserCard,validOwnerUserId,bindOwnerNotificationInfo}from './owner-user-card.js';
+import{createOwnerUserDetail}from './owner-user-detail.js';
 import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerUsers,ownerReleases,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
 let screen=0,period=7,cabinetView='overview';
 
@@ -82,14 +83,16 @@ export async function showAdmin(app,options={}){
  let selectedView=cabinetView,usersPage=1,usersLoad=0,usersBusy=false,usersSnapshot=[],selectedUser=null;
  const cardArea=app.querySelector('#owner-panel-users');cardArea.insertAdjacentHTML('beforeend','<div id="owner-user-detail" hidden><button type="button" class="text-button" id="owner-user-back">'+actionLabel('back','Пользователи')+'</button><div id="owner-user-card"></div><p class="muted owner-card-status" id="owner-user-card-status" role="status" aria-live="polite"></p><button type="button" class="text-button" id="owner-user-refresh">Обновить</button></div>');
  const detail=app.querySelector('#owner-user-detail'),card=app.querySelector('#owner-user-card'),cardStatus=app.querySelector('#owner-user-card-status');
- const renderCard=()=>{if(!selectedUser)return;const focused=document.activeElement?.id==='owner-user-name',markup=ownerUserCard(selectedUser);if(card.innerHTML!==markup){card.innerHTML=markup;bindOwnerNotificationInfo(card);if(focused)card.querySelector('#owner-user-name').focus();}};
+ let privateProfile={};
+ const profileDetail=createOwnerUserDetail({isActive:active,onChange:state=>{privateProfile=state;renderCard();}});
+ const renderCard=()=>{if(!selectedUser)return;const focused=document.activeElement?.id==='owner-user-name',markup=ownerUserCard(selectedUser,privateProfile);if(card.innerHTML!==markup){card.innerHTML=markup;bindOwnerNotificationInfo(card);if(focused)card.querySelector('#owner-user-name').focus();}};
  let listPosition=null;
- const closeCard=()=>{const previous=selectedUser?.id;selectedUser=null;detail.hidden=true;card.innerHTML='';cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus({preventScroll:true});if(listPosition)window.scrollTo?.({...listPosition,behavior:'instant'});};
+ const closeCard=()=>{const previous=selectedUser?.id;profileDetail.reset();privateProfile={};selectedUser=null;detail.hidden=true;card.innerHTML='';cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=false;Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus({preventScroll:true});if(listPosition)window.scrollTo?.({...listPosition,behavior:'instant'});};
  const cardHistory=createOwnerCardHistory({dismiss:closeCard,isActive:active,win:window});
- const openUser=user=>{if(!validOwnerUserId(user.id)||!cardHistory.open())return;listPosition={left:window.scrollX||0,top:window.scrollY||0};selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;card.querySelector('#owner-user-name').focus();};
+ const openUser=user=>{if(!validOwnerUserId(user.id)||!cardHistory.open())return;listPosition={left:window.scrollX||0,top:window.scrollY||0};selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;card.querySelector('#owner-user-name').focus();void profileDetail.select(user.id);};
  app.querySelector('#owner-user-back').onclick=()=>cardHistory.back();
  bindOwnerCardNavigation(detail,{dismiss:()=>cardHistory.back(),isOpen:()=>!!selectedUser});
- app.querySelector('#owner-user-refresh').onclick=()=>readUsers(true);
+ app.querySelector('#owner-user-refresh').onclick=()=>{void profileDetail.refresh();return readUsers(true);};
  const notificationMarkup=user=>{const status=notificationLabels(user.notifications);return '<div class="owner-notifications is-'+status.state+'"'+(status.checked?' title="'+esc(status.checked)+'"':'')+'><span>'+esc(status.primary)+'</span>'+(status.secondary?'<small>'+esc(status.secondary)+'</small>':'')+'</div>';};
  const readUsers=async(quiet=false)=>{if(quiet&&usersBusy)return;usersBusy=true;const version=++usersLoad,area=app.querySelector('#owner-users-list'),count=app.querySelector('#owner-users-count');if(!quiet||!area.children.length)area.innerHTML='<p class="muted" role="status">Загружаем пользователей…</p>';try{const result=await ownerUsers(usersPage);if(!active()||version!==usersLoad)return;if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('Список пользователей временно недоступен.');count.textContent=result.total.toLocaleString('ru-RU');app.querySelector('#owner-registered').textContent=result.total.toLocaleString('ru-RU');app.querySelector('#owner-online').textContent=Number.isSafeInteger(result.online)?result.online.toLocaleString('ru-RU'):'—';const date=value=>value?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Ещё не входил';usersSnapshot=result.users;
  if(selectedUser){const current=usersSnapshot.find(user=>user.id===selectedUser.id);if(current){selectedUser=current;renderCard();cardStatus.textContent='';}else cardStatus.textContent='Пользователь сейчас на другой странице списка. Данные карточки пока не обновлены.';}
@@ -99,7 +102,7 @@ export async function showAdmin(app,options={}){
  app.querySelector('#owner-open-users').onclick=app.querySelector('#owner-open-online').onclick=()=>{selectView('users');app.querySelector('#owner-tab-users').focus();};selectView(selectedView);
  const presenceTimer=setInterval(()=>{if(!active()){app.ownerDispose?.();return;}if(!document.hidden&&selectedView==='users')void readUsers(true);},30000);
  const closePolling=()=>{if(!active())app.ownerDispose?.();};window.addEventListener('hashchange',closePolling);
- app.ownerDispose=()=>{cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
+ app.ownerDispose=()=>{profileDetail.dispose();privateProfile={};cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
  let load=0;
  const readStats=async()=>{
   const version=++load,visits=app.querySelector('#owner-visits'),status=app.querySelector('#owner-stats-status'),metrics=app.querySelector('#owner-metrics'),activity=app.querySelector('#owner-activity-content');visits.textContent='…';status.textContent='Загружаем статистику…';metrics.innerHTML='';activity.innerHTML='<p class="muted" role="status">Загружаем статистику…</p>';app.querySelector('#owner-visits-label').textContent='Посетители за '+({1:'сутки',7:'неделю',30:'месяц'}[period]);

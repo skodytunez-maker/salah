@@ -1,3 +1,4 @@
+import{createOwnerUserDetail}from '../dist/js/owner-user-detail.js';
 import{actionIcon,actionLabel}from '../dist/js/action-icons.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -70,11 +71,12 @@ class Element {
  querySelector(selector){return this.querySelectorAll(selector)[0]||null;}
  setAttribute(key,value){this.attributes[key]=String(value);}
  getAttribute(key){return this.attributes[key]??null;}
- focus(){this.focused=true;}
+ get id(){return this.attributes.id||'';}
+ focus(){this.focused=true;Element.activeElement=this;}
 }
 function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request,browser=null}={}){
- const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false};let timerId=0;
- const context=createContext({actionIcon,actionLabel,mountOwnerErrorSummary:()=>{},bindOwnerNotificationInfo,bindOwnerCardNavigation,createOwnerCardHistory,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:browser||{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>stats,signOutOwner:async()=>{allowed=false;}});
+ const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false,get activeElement(){return Element.activeElement;}};let timerId=0;
+ const context=createContext({createOwnerUserDetail:options=>createOwnerUserDetail({...options,load:async id=>({id,connected:false,hasAvatar:false,periods:{},awards:[],reciters:[]})}),actionIcon,actionLabel,mountOwnerErrorSummary:()=>{},bindOwnerNotificationInfo,bindOwnerCardNavigation,createOwnerCardHistory,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:browser||{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>allowed,URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async()=>stats,signOutOwner:async()=>{allowed=false;}});
  return{app,location,calls,result,intervals,events,document,setAllowed:value=>{allowed=value;events.get('owner-change')?.()},...new Script(adminExecutable).runInContext(context)};
 }
 const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};

@@ -1,4 +1,6 @@
 import postgres from 'npm:postgres@3.4.9';
+import{createListeningTotalsLoader}from './listening-totals.mjs';
+const loadListeningTotals=createListeningTotalsLoader();
 import{ownAwards,awardWinners}from './awards.mjs';
 import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionSubscription}from './core.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
@@ -47,7 +49,7 @@ Deno.serve(async req=>{
  if(req.method==='GET'&&params.get('winners')==='1')return reply(await awardWinners(sql));
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
-  if(params.get('boards')==='1'){const boards:any={};for(const p of COMPETITION_PERIODS)boards[p]=await publicBoard(p,day);return reply({day,boards});}
+  if(params.get('boards')==='1'){const boards:any={};for(const p of COMPETITION_PERIODS)boards[p]=await publicBoard(p,day);let listeningTotals;try{listeningTotals=await loadListeningTotals(sql,day);}catch{/* Keep the existing board available if its summary fails. */}return reply({day,boards,...(listeningTotals?{listeningTotals}:{})});}
   return reply({period,day,...await publicBoard(period,day)});
  }
  const user=await verified(req);if(!user)return reply({error:'sign_in_required'},401);

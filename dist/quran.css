@@ -263,3 +263,8 @@ header.quran-section-title{height:auto}
 
 /* Keep mobile ranking headers level with the reciter portrait catalogue. */
 @media(max-width:850px){.rank-page .quran-section-title{margin-top:22px}}
+
+/* A quiet typographic total: awards typeface and the Top SALAH accent. */
+.rank-page .listening-summary{display:grid;justify-items:center;gap:8px;min-width:0;margin:20px 0 24px;padding:0;border:0;border-radius:0;background:none;text-align:center}
+.listening-summary>span{font-size:11px;font-weight:500;line-height:1.6;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.rank-page .listening-summary strong{max-width:100%;font-family:'Prata',Georgia,serif;font-size:clamp(24px,6.6vw,36px);font-weight:400;line-height:1.45;color:#adc8ec;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}

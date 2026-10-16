@@ -10,3 +10,6 @@ const final=createReaderFollow(114);final(state(114));assert.equal(final(state(1
 console.log('PASS: active reader follows next chapter once, preserves reciter/offline, ignores unrelated/stopped sessions and final-surah wrap');
 
 const promoted=createReaderFollow(1);promoted(state(1,'playing','ar.yasseraldossari'));assert.equal(promoted(state(2,'loading','ar.yasseraldossaricontinuous')),'#quran?surah=2&ayah=1&reciter=ar.yasseraldossaricontinuous');
+
+const shuffled=createReaderFollow(2);shuffled(state(2));assert.equal(shuffled({...state(67,'loading','ar.husary'),playlist:{id:1,index:0}}),'#quran?surah=67&ayah=1&reciter=ar.husary','An explicit shuffle follows its first random recording');
+const backwards=createReaderFollow(67);backwards({...state(67,'playing','ar.husary'),playlist:{id:1,index:1}});assert.equal(backwards({...state(2,'loading','ar.alafasy'),playlist:{id:1,index:0}}),'#quran?surah=2&ayah=1&reciter=ar.alafasy','An active playlist follows backwards and across readers');
