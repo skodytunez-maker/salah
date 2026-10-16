@@ -14,3 +14,30 @@ const failure=setup();await failure.player.play(0,true);await flush();failure.tr
 console.log('PASS: Daussari next ayah preloads while paused, same-turn transition, bounded lookahead, no overlap, pause/stop/late-read cleanup, isolated preload error and whole-surah/single-ayah behavior.');
 
 let interrupted;const handoffStop=setup({onState:s=>{if(s.status==='loading'&&s.index===1)interrupted.player.destroy();}});interrupted=handoffStop;await handoffStop.player.play(0,true);await flush();const queuedBeforeStop=handoffStop.tracks[1];handoffStop.tracks[0].onended();await flush();assert.equal(queuedBeforeStop.playCalls,0,'A state subscriber stopping during handoff must prevent queued playback');assert.equal(queuedBeforeStop.src,'');console.log('PASS: reentrant stop during queued handoff never restarts detached audio.');
+
+function clock(){let sequence=0;const pending=new Map();return{setTimer(fn,ms){assert.equal(ms,15000);const id=++sequence;pending.set(id,fn);return id;},clearTimer:id=>pending.delete(id),fire(){assert.ok(pending.size<=1,'At most one active playback watchdog');const entry=pending.entries().next().value;if(!entry)return;const [id,fn]=entry;pending.delete(id);fn();},get size(){return pending.size;}};}
+const stallClock=clock(),stalled=setup({reciter:'ar.alafasy',...stallClock});
+await stalled.player.play(0,true);await flush();const primary=stalled.tracks[0],staleError=primary.onerror;
+primary.currentTime=8;primary.ontimeupdate();stallClock.fire();await flush();
+const recovered=stalled.tracks.find(a=>a.playCalls>0&&a!==primary);
+assert.ok(recovered,'Stalled audio must recover through an alternate source');
+assert.equal(recovered.original,'https://everyayah.com/data/Alafasy_128kbps/001001.mp3');
+assert.equal(recovered.currentTime,8,'Recovery retains position within the same ayah');
+assert.equal(stalled.state.index,0,'Recovery cannot skip an ayah');assert.equal(stalled.errors,0);
+assert.equal(primary.src,'','Failed source is released before fallback starts');staleError();assert.equal(stalled.errors,0);
+assert.ok(stalled.reads.every(url=>url.startsWith('https://cdn.islamic.network/')),'Offline cache keys remain canonical');
+recovered.onended();await flush();const continued=stalled.tracks.filter(a=>a.playCalls>0).at(-1);
+assert.equal(continued.original,'https://everyayah.com/data/Alafasy_128kbps/001002.mp3','Next ayah keeps the working source');
+stallClock.fire();await flush();assert.equal(stalled.state.status,'error');assert.equal(stalled.errors,1,'Both failed sources produce one actionable error instead of a retry loop');assert.equal(stallClock.size,0);stalled.player.destroy();
+
+const pausedClock=clock(),paused=setup({reciter:'ar.alafasy',...pausedClock});await paused.player.play(0,true);await flush();paused.player.pause();assert.equal(pausedClock.size,0,'Pause cancels recovery');paused.player.toggle();await flush();assert.equal(pausedClock.size,1);paused.player.destroy();assert.equal(pausedClock.size,0,'Stop cancels recovery');
+
+let lateResolve;const hangingClock=clock(),hanging=setup({reciter:'ar.alafasy',...hangingClock,getAudio:()=>new Promise(resolve=>lateResolve=resolve)});void hanging.player.play(0,false);await flush();assert.equal(hanging.tracks.length,0);hangingClock.fire();await flush();assert.equal(hanging.tracks.length,1,'A stuck cache read cannot block the fallback');assert.ok(hanging.tracks[0].original.includes('everyayah.com'));hanging.player.destroy();lateResolve(null);await flush();assert.equal(hanging.tracks.length,1,'Late cache completion cannot restart playback');
+
+let finishOldPlay;const pendingTracks=[],pendingClock=clock();const pendingPlay=setup({reciter:'ar.alafasy',...pendingClock,createAudio:url=>{const a={src:url,original:url,currentTime:0,readyState:1,play(){return pendingTracks[0]===a?new Promise(resolve=>finishOldPlay=resolve):Promise.resolve();},pause(){},load(){}};pendingTracks.push(a);return a;}});void pendingPlay.player.play(0,false);await flush();pendingClock.fire();await flush();assert.equal(pendingTracks.length,2);pendingClock.fire();assert.equal(pendingPlay.state.status,'error');finishOldPlay();await flush();assert.equal(pendingPlay.state.status,'error','Late play fulfillment cannot revive a failed attempt');pendingPlay.player.destroy();
+
+const deniedClock=clock(),denied=setup({reciter:'ar.alafasy',...deniedClock,createAudio:url=>({src:url,currentTime:0,readyState:1,play:async()=>{throw Object.assign(Error('Permission'),{name:'NotAllowedError'});},pause(){},load(){}})});await denied.player.play(0,false);assert.equal(denied.state.status,'error');assert.equal(denied.errors,1);assert.equal(deniedClock.size,0,'Autoplay restrictions must not trigger automatic retry');denied.player.destroy();
+const offlineClock=clock(),offline=setup({reciter:'ar.alafasy',offlineOnly:true,...offlineClock});await offline.player.play(0,true);assert.equal(offline.errors,1);assert.equal(offline.tracks.length,0,'Offline-only playback never requests a remote fallback');assert.equal(offlineClock.size,0);offline.player.destroy();
+const healthyClock=clock(),healthy=setup({reciter:'ar.alafasy',...healthyClock});await healthy.player.play(0,false);healthy.tracks[0].currentTime=4;healthyClock.fire();assert.equal(healthy.state.status,'playing','Advancing audio must not be mistaken for a stall when timeupdate is delayed');assert.equal(healthy.tracks.length,1);healthy.player.destroy();
+const baqaraClock=clock(),baqara=setup({surah:{number:2,verses:[{number:27,ayah:20},{number:28,ayah:21}]},reciter:'ar.alafasy',...baqaraClock});await baqara.player.play(0,true);await flush();baqara.tracks[0].onerror();await flush();assert.equal(baqara.tracks.filter(a=>a.playCalls>0).at(-1).original,'https://everyayah.com/data/Alafasy_128kbps/002020.mp3','Global ayah 27 must recover as Al-Baqara ayah 20');assert.equal(baqara.state.ayah,20);baqara.player.destroy();
+console.log('PASS: bounded stalled-source recovery, same ayah/position, canonical offline keys, sticky fallback, pause/stop cleanup, late cache/play guards, no autoplay retry and offline isolation.');
