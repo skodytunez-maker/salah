@@ -1,14 +1,15 @@
+import{getDevicePosition}from '../dist/js/city-location.js';
 import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {latestRequest} from '../dist/js/city-data.js';
 const source=await readFile(new URL('../dist/js/city-dialog.js',import.meta.url),'utf8');
-const controls=new Map();let calls=0,success,options,selected=null;
+const controls=new Map();let calls=0,success,optionsCaptured,selected=null;
 function element(){return {open:true,isConnected:true,value:'',children:[],events:{},addEventListener(k,f){this.events[k]=f},replaceChildren(){this.children=[]},append(x){this.children.push(x)},focus(){}}}
 for(const id of ['modal','city-search','city-name','city-results','city-status','geolocate'])controls.set(id,element());
 const saved={name:'Тюмень',latitude:57.15,longitude:65.52,timezone:'Asia/Yekaterinburg'};
-const context=vm.createContext({personalDataAllowed,document:{getElementById:id=>controls.get(id),createElement:element},navigator:{geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;options=opts}}},esc:x=>x,modal:()=>{},toast:()=>{},localCities:()=>[saved],searchCities:async()=>[saved],locateCity:async()=>saved,latestRequest,setTimeout,clearTimeout});
+const context=vm.createContext({getDevicePosition:options=>getDevicePosition({...options,geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;optionsCaptured=opts}}}),personalDataAllowed,document:{getElementById:id=>controls.get(id),createElement:element},navigator:{geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;optionsCaptured=opts}}},esc:x=>x,modal:()=>{},toast:()=>{},localCities:()=>[saved],searchCities:async()=>[saved],locateCity:async()=>saved,latestRequest,setTimeout,clearTimeout});
 vm.runInContext(source.replace(/^import.*;\n/gm,'').replace('export function','function')+'\nglobalThis.openCityDialog=openCityDialog;',context);
 context.openCityDialog(saved,city=>selected=city);
 assert.equal(calls,0,'Opening city selection must not request GPS');
@@ -17,7 +18,7 @@ assert.equal(calls,0,'Typing uses city search, not GPS');
 controls.get('city-results').children[0].onclick();assert.equal(selected,saved);
 assert.equal(calls,0,'Manual city choice never requests GPS');
 context.openCityDialog(saved,city=>selected=city);controls.get('geolocate').onclick();
-assert.equal(calls,1,'Only the explicit location button requests GPS');assert.equal(options.maximumAge,15*60*1000);
+assert.equal(calls,1,'Only the explicit location button requests GPS');assert.equal(optionsCaptured.maximumAge,15*60*1000);
 controls.get('modal').events.close();await success({coords:{latitude:57.15,longitude:65.52}});assert.equal(calls,1,'Closing the dialog cannot retry location');
 const app=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 assert.doesNotMatch(app,/initQiblaAccess\s*\(/,'No startup sensor permission request on unrelated taps');
