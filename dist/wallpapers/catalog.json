@@ -323,6 +323,36 @@
         "mask": "wallpapers/al-aqsa/sky-v1.svg",
         "focalX": 0.5
       }
+    },
+    {
+      "id": "kaspiysk",
+      "name": "Каспийск",
+      "landmark": "Мечеть Каспийска",
+      "latitude": 42.8803,
+      "longitude": 47.6389,
+      "radius": 12,
+      "day": "wallpapers/kaspiysk/day-v1.webp",
+      "night": "wallpapers/kaspiysk/night-v1.webp",
+      "mask": "wallpapers/kaspiysk/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.68
+      }
+    },
+    {
+      "id": "kazan",
+      "name": "Казань",
+      "landmark": "Мечеть Кул-Шариф",
+      "latitude": 55.7988,
+      "longitude": 49.1055,
+      "radius": 30,
+      "day": "wallpapers/kazan/day-v1.webp",
+      "night": "wallpapers/kazan/night-v1.webp",
+      "mask": "wallpapers/kazan/sky-v1.svg",
+      "tabletFocus": {
+        "x": 0.5,
+        "y": 0.68
+      }
     }
   ]
 }

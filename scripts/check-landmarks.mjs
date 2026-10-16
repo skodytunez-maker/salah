@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {createLandmarkLoader,validateLandmarkCatalog,matchLandmark,landmarkDistance,LANDMARK_CACHE,landmarkAssetSet} from '../dist/js/landmarks.js';
 const root=new URL('../dist/',import.meta.url),catalog=JSON.parse(await readFile(new URL('wallpapers/catalog.json',root),'utf8')),entries=validateLandmarkCatalog(catalog),city={latitude:57.15222,longitude:65.52722};
-assert.equal(entries.length,21);
+assert.equal(entries.length,23);
 assert.equal(new Set(entries.map(x=>x.id)).size,entries.length);
 assert.ok(!entries.some(x=>x.id==='yekaterinburg'),'Excluded city must not appear in the collection');
-for(const entry of entries)assert.equal(matchLandmark({latitude:entry.latitude,longitude:entry.longitude},entries)?.id,entry.id,'Each city must select its own pair');assert.equal(matchLandmark(city,entries).id,'tyumen');assert.ok(landmarkDistance(city,entries[0])<1);
+for(const entry of entries)assert.equal(matchLandmark({latitude:entry.latitude,longitude:entry.longitude},entries)?.id,entry.id,'Each city must select its own pair');assert.equal(matchLandmark(city,entries).id,'tyumen');assert.equal(matchLandmark({latitude:42.8803,longitude:47.6389},entries).id,'kaspiysk');assert.equal(matchLandmark({latitude:42.9849,longitude:47.5047},entries).id,'makhachkala');assert.equal(matchLandmark({latitude:55.7988,longitude:49.1055},entries).id,'kazan');assert.ok(landmarkDistance(city,entries[0])<1);
 assert.equal(matchLandmark({name:'Тюмень',latitude:0,longitude:0},entries),null,'Matching a duplicate name elsewhere must not choose Tyumen');
 assert.equal(matchLandmark({latitude:NaN,longitude:65},entries),null);assert.equal(matchLandmark({latitude:55.75,longitude:37.6},entries).id,'moscow');
 assert.equal(matchLandmark({latitude:56.8389,longitude:60.6057},entries),null);
@@ -55,7 +55,7 @@ console.log('PASS: lazy city catalogue, unified alphabetical choices, Afghanista
 
 const otherCity={latitude:35.6762,longitude:139.6503},copy={...otherCity};
 assert.equal(matchLandmark(otherCity,entries,'derbent').id,'derbent');assert.equal(matchLandmark(null,entries,'pamir').id,'pamir');
-const count=requests.length;assert.equal((await load.catalogue()).length,21);assert.equal(requests.length,count,'Opening city choices never downloads photos');
+const count=requests.length;assert.equal((await load.catalogue()).length,23);assert.equal(requests.length,count,'Opening city choices never downloads photos');
 assert.equal((await load(otherCity,{chosen:'pamir'})).entry.id,'pamir');assert.deepEqual(otherCity,copy,'Choosing a wallpaper must not rewrite location');
 const invalidCount=requests.length;assert.equal((await load(otherCity,{chosen:'https://evil.test/image'})).status,'unavailable');assert.equal(requests.length,invalidCount);
 const chosenOffline=createLandmarkLoader({fetcher:async()=>{throw Error('Offline')},cacheStorage});assert.equal((await chosenOffline(null,{chosen:'pamir'})).status,'ready');

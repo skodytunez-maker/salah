@@ -25,7 +25,7 @@ function acknowledge(release=APP_ANNOUNCEMENT){try{localStorage.setItem(SEEN_KEY
 export function hasSeenAnnouncement(release=APP_ANNOUNCEMENT){try{return Math.max(Number(localStorage.getItem(SEEN_KEY))||0,Number(localStorage.getItem(LEGACY_SEEN_KEY))||0)>=release.version;}catch{return true;}}
 export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowledgeAnnouncement=true,onClose=null}={}){
  const safe=validatedRelease(release)||(available?{version:0,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']}:APP_ANNOUNCEMENT);
- modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2 tabindex="-1" autofocus>'+(available?'Что изменится':'Что нового')+'</h2>'+(illustratedReleaseMarkup(safe.version)||'<ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'<button class="button secondary" type="button" data-close>Понятно</button></div>');
+ modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2 tabindex="-1" autofocus>'+(available?'Что изменится':'Что нового')+'</h2>'+(illustratedReleaseMarkup(safe.version,safe.changes)||'<ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'<button class="button secondary" type="button" data-close>Понятно</button></div>');
  bindIllustratedRelease(document.querySelector('.release-dialog'));
  if(typeof onClose==='function'){const dialog=document.getElementById('modal'),closed=()=>onClose();dialog.addEventListener('close',closed,{once:true});}
  if(!available&&acknowledgeAnnouncement)acknowledge(safe);

@@ -255,3 +255,8 @@ html.salah-update-restoring.salah-update-restoring-done::after{opacity:0}
 .about-social-link small{font-size:12px;font-weight:400;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
 .about-social-link>svg.about-social-external{width:18px;height:18px;margin-left:auto;color:var(--muted)}
 @media(hover:hover){.about-social-link:hover{border-color:var(--gold);background:rgba(201,180,127,.06)}}
+button.owner-user-avatar{padding:0;border:1px solid var(--line);cursor:zoom-in;flex-shrink:0}
+.owner-avatar-preview{position:fixed;inset:0;margin:auto;padding:0;width:max-content;max-width:calc(100vw - 28px);max-height:calc(100dvh - 28px);border:1px solid #adc8ec44;border-radius:18px;background:#10192a;overflow:hidden}
+.owner-avatar-preview::backdrop{background:#030813dc;backdrop-filter:blur(8px)}
+.owner-avatar-preview>img{display:block;width:auto;max-width:min(640px,calc(100vw - 28px));height:auto;max-height:calc(100dvh - 28px);object-fit:contain}
+.owner-avatar-close{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:40px;height:40px;border:1px solid #ffffff40;border-radius:50%;background:#10192acc;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:1}
