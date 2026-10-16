@@ -2078,6 +2078,90 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/quran-listening-award-source.json",
       "note": "Refinement of original SALAH SVG listening-hour shield. Crisp single engraving, stronger detail contrast and outer-shield-only shadow; no external artwork."
+    },
+    {
+      "path": "dist/wallpapers/kaspiysk/day-v1.webp",
+      "gitBlobSha": "02b43b3eb6e076398cc24ac8738e88dc11c9904f",
+      "bytes": 286448,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "wallpaperSet": "kaspiysk",
+      "role": "day",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/wallpapers/kaspiysk/night-v1.webp",
+      "gitBlobSha": "e58adff8917bc478c432d50209f02a268f4e8ba0",
+      "bytes": 219946,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "wallpaperSet": "kaspiysk",
+      "role": "night",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/wallpapers/kaspiysk/sky-v1.svg",
+      "gitBlobSha": "bdf0998ad9433fed16c866171f6271d8dde63039",
+      "bytes": 115,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "wallpaperSet": "kaspiysk",
+      "role": "mask",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/assets/updates/kaspiysk-v1.webp",
+      "gitBlobSha": "1adc0388085cefde3c3d26c9753c8daf64715752",
+      "bytes": 12884,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/wallpapers/kazan/day-v1.webp",
+      "gitBlobSha": "7a1d9c972718703bf16e4a36d68b7ba09a4412ee",
+      "bytes": 241544,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "wallpaperSet": "kazan",
+      "role": "day",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/wallpapers/kazan/night-v1.webp",
+      "gitBlobSha": "a82699260c1ea8cb9e6107c654157d99b7468fa2",
+      "bytes": 206072,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "wallpaperSet": "kazan",
+      "role": "night",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/wallpapers/kazan/sky-v1.svg",
+      "gitBlobSha": "4efdb671e3ec3f41b63eb575a8813f88fda3e939",
+      "bytes": 115,
+      "kind": "vector",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "wallpaperSet": "kazan",
+      "role": "mask",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/assets/updates/kazan-v1.webp",
+      "gitBlobSha": "d65db2f3df14a36f0829403bec5a12c6d129d5b2",
+      "bytes": 14666,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/city-wallpapers-20261016.json",
+      "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
     }
   ],
   "wallpaperSets": [
@@ -2515,6 +2599,34 @@
         "docs/holy-wallpapers-phone-20261011.json"
       ],
       "nextAction": "Retain generated originals and creation evidence."
+    },
+    {
+      "id": "kaspiysk",
+      "name": "Каспийск",
+      "paths": [
+        "dist/wallpapers/kaspiysk/day-v1.webp",
+        "dist/wallpapers/kaspiysk/night-v1.webp",
+        "dist/wallpapers/kaspiysk/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": [
+        "docs/city-wallpapers-20261016.json"
+      ],
+      "nextAction": "Review reference and derivative conditions before marking cleared."
+    },
+    {
+      "id": "kazan",
+      "name": "Казань",
+      "paths": [
+        "dist/wallpapers/kazan/day-v1.webp",
+        "dist/wallpapers/kazan/night-v1.webp",
+        "dist/wallpapers/kazan/sky-v1.svg"
+      ],
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": [
+        "docs/city-wallpapers-20261016.json"
+      ],
+      "nextAction": "Review reference and derivative conditions before marking cleared."
     }
   ]
 }
