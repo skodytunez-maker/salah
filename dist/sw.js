@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":345,"date":"2026-10-16","changes":["Подиум выровнен во всех периодах: общее основание и постоянная высота ступеней. Время на трёх карточках показано одной строкой."],"announcement":{"version":345,"date":"2026-10-16","changes":["Подиум выровнен во всех периодах: общее основание и постоянная высота ступеней. Время на трёх карточках показано одной строкой."]}};
+const RELEASE={"version":346,"date":"2026-10-16","changes":["Если загрузка аята зависла, плеер пробует резервную запись и сохраняет место прослушивания."],"announcement":{"version":346,"date":"2026-10-16","changes":["Если загрузка аята зависла, плеер пробует резервную запись и сохраняет место прослушивания."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
