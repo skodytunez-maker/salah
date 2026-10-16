@@ -1,0 +1,12 @@
+{
+  "targetMonth": "2026-11",
+  "printedSourceYear": 2025,
+  "sourceImage": "dist/assets/tyumen-november-source-2025.jpg",
+  "sourceTable": "dist/data/tyumen-november-2026.json",
+  "calendarDatesUpdated": true,
+  "timesCopiedWithoutCorrections": true,
+  "independent2026TimeVerification": false,
+  "userInstruction": "Use supplied monthly timetable as next-year basis; update year",
+  "officialNovemberUnchanged": true,
+  "rowsChecked": 30
+}

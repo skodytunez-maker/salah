@@ -2162,6 +2162,14 @@
       "rightsReviewStatus": "needs-review",
       "rightsEvidence": "docs/city-wallpapers-20261016.json",
       "note": "Source and generation fingerprints recorded. Final derivative rights and redistribution conditions remain for review; no permission or ownership claim."
+    },
+    {
+      "path": "dist/assets/tyumen-november-source-2025.jpg",
+      "gitBlobSha": "23edda6c984d337ada980788a2accd193c561328",
+      "bytes": 142373,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "note": "User supplied a monthly prayer timetable; original source image retained with printed year 2025. No license clearance asserted."
     }
   ],
   "wallpaperSets": [
