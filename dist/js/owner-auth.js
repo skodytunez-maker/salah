@@ -30,13 +30,13 @@ export function ownerVerified(){return verified&&Date.now()-verifiedAt<60000;}
 export function verifiedOwnerId(){return ownerVerified()?verifiedUserId:null;}
 export function ownerNeedsMfa(){return mfaRequired;}
 export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}
-async function callOwner(session,query=''){
+async function callOwner(session,query='',{binary=false}={}){
  if(!session?.access_token)throw Error('Войдите в аккаунт владельца.');
  let response;
  try{response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});}
  catch{revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
  if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403){const denied=Error('Этот аккаунт не имеет доступа к кабинету.');denied.status=403;throw denied;}if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
- return response.json();
+ return binary?response.blob():response.json();
 }
 export async function verifyOwner({verifySession=false}={}){
  if(pending)return pending;
@@ -119,5 +119,19 @@ export const accountAuthClient=()=>authClient();
 export const checkAccountSession=createSessionGuard({getAuth:()=>authClient().auth});
 
 export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error("Неизвестная страница.");const {data,error}=await authClient().auth.getSession();if(error)throw Error("Войдите снова.");return callOwner(data.session,"?mode=users&page="+page);}
+
+export async function ownerUserDetails(id){
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
+ const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ return callOwner(data.session,'?mode=user&ids='+encodeURIComponent(id));
+}
+export async function ownerUserAvatar(id){
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
+ const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ const blob=await callOwner(data.session,'?mode=user-avatar&ids='+encodeURIComponent(id),{binary:true});
+ if(blob.type!=='image/jpeg'||blob.size<3||blob.size>200000)throw Error('Фото недоступно.');
+ const bytes=new Uint8Array(await blob.slice(0,3).arrayBuffer());if(bytes[0]!==255||bytes[1]!==216||bytes[2]!==255)throw Error('Фото недоступно.');
+ return blob;
+}
 
 export async function ownerReleases(){const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');return callOwner(data.session,'?mode=releases');}

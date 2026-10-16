@@ -1,3 +1,4 @@
+import{listeningSummaryMarkup,updateListeningSummary}from './listening-summary.js';
 import{personalDataAllowed,showRestrictedFeature}from './audience.js';
 import{captureCompetitionLayout,animateCompetitionChange}from './competition-motion.js';
 import{showAwardWinners}from './quran-awards.js';
@@ -8,7 +9,7 @@ import{RECITERS}from './quran-reciters.js';
 import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-favorites.js';
 import{RANK_INTENTION_PHRASES,rankTime}from './reciter-ranking-core.js';
 import{listenerPrivacyMarkup,bindPopularConsent,personalListening}from './reciter-popularity.js';
-import{loadCompetition,cachedCompetition,preloadCompetition,clearCompetitionCache,competitionOwn,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
+import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompetition,clearCompetitionCache,competitionOwn,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes}from './competition-view.js';
 export function mountCompetition(host,heading){
  if(!personalDataAllowed()){showRestrictedFeature(host,'Топ SALAH');return()=>{};}
@@ -18,9 +19,10 @@ export function mountCompetition(host,heading){
  function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>{if(row.id!==own.id)return row;const key=own.id+':'+period+':'+new Date().toDateString()+':'+row.reciter,local=totals[row.reciter]||0,previous=previews.get(key),seconds=previous?Math.max(row.seconds,previous.seconds+Math.max(0,local-previous.local)):row.seconds;previews.set(key,{local,seconds});return{...row,seconds};});}
  function draw(){if(closed)return;const shown=displayRows(),own=competitionOwn(),signed=counterSyncStatus().signedIn,me=own?shown.find(p=>p.id===own.id):null,count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
  const key=JSON.stringify({period,busy,signed,favorites,count,own:own?{id:own.id,mode:own.mode,enabled:own.enabled,notify:own.notify,period:own.period}:null,loading:loading&&!rows.length,error,rows:rows.map(({seconds,...person})=>person)});
- if(key===renderKey){updateCompetitionTimes(host,shown);const self=host.querySelector('[data-competition-self]');if(self&&me)self.textContent='Вы: '+me.rank+' место · '+rankTime(me.seconds);return;}renderKey=key;
+ if(key===renderKey){updateListeningSummary(host,competitionListeningTotal(period));updateCompetitionTimes(host,shown);const self=host.querySelector('[data-competition-self]');if(self&&me)self.textContent='Вы: '+me.rank+' место · '+rankTime(me.seconds);return;}renderKey=key;
  let html='<section class="quran-library quran-reciters-library rank-page competition-page">'+heading()+'<nav class="reciter-filter-tabs" aria-label="Каталог чтецов"><a href="#quran?view=reciters">Все '+count+'</a><a href="#quran?view=reciters&filter=favorites">Избранные '+favorites+'</a><a href="#quran?view=reciters&filter=ruqyah">Рукъя</a></nav><nav class="reciter-top-tabs" aria-label="Топы"><a class="reciter-top-tab reciter-top-personal" href="#quran?view=reciters&filter=my-top"><span><strong>Мой топ</strong><small>Ваше время</small></span></a><a class="reciter-top-tab reciter-top-global" href="#quran?view=reciters&filter=salah-top" aria-current="page"><span><strong>Топ SALAH</strong><small>Слушатели</small></span></a></nav>';
  html+='<div class="competition-heading"><p class="rank-intention" id="rank-intention" aria-live="off">'+RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length]+'</p></div><div class="reciter-period-tabs" role="group" aria-label="Период">'+periods.map(([p,label])=>'<button type="button" data-competition-period="'+p+'" aria-pressed="'+(p===period)+'">'+label+'</button>').join('')+'</div>';
+ html+=listeningSummaryMarkup(competitionListeningTotal(period));
  html+='<div class="competition-caption"><span>'+leaders[period]+'</span>'+(me?'<b data-competition-self>Вы: '+me.rank+' место · '+esc(rankTime(me.seconds))+'</b>':'')+'</div>';
  html+=loading&&!rows.length?'<p class="reciter-empty">Загружаем рейтинг…</p>':error&&!rows.length?'<p class="reciter-empty">Рейтинг временно недоступен.<button class="text-button" id="competition-retry">Повторить</button></p>':competitionMarkup(shown);
  if(error&&rows.length)html+='<p class="muted competition-sync-note">Показан последний загруженный результат.</p>';

@@ -7,6 +7,7 @@ import{safeListener}from './reciter-ranking-core.js';
 const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition',allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
 const boards=new Map(),boardRequests=new Map();
 export function cachedCompetition(period='all'){const entry=boards.get(listeningDayKey(Date.now())+':'+period);return entry&&Date.now()-entry.at<10000?entry.rows.slice():null;}
+export function competitionListeningTotal(period='all'){return boards.get(listeningDayKey(Date.now())+':'+period)?.totalSeconds??null;}
 export function clearCompetitionCache(){boards.clear();for(const request of boardRequests.values())request.controller.abort();boardRequests.clear();}
 export function preloadCompetition(){return loadCompetition('all').catch(()=>[]);}
 let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
@@ -38,7 +39,7 @@ export async function loadCompetition(period='all',{force=false}={}){
  const controller=new AbortController(),entry={controller,task:null},timeout=setTimeout(()=>controller.abort(),8000);
  entry.task=(async()=>{const response=await fetch(endpoint+'?boards=1&day='+day,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});if(!response.ok)throw Error('unavailable');const data=await response.json();if(data.day!==day||!data.boards)throw Error('invalid');
   const parsed=[];for(const p of ['all','day','week','month']){if(!Array.isArray(data.boards[p]?.items))throw Error('invalid');const seen=new Set(),rows=data.boards[p].items.flatMap(row=>{const person=safeListener(row);if(!person||seen.has(person.id)||!allowed.has(row.reciter)||!Number.isSafeInteger(row.seconds)||row.seconds<=0||!Number.isSafeInteger(row.rank)||row.rank<=0)return[];seen.add(person.id);return[{...person,reciter:row.reciter,seconds:row.seconds,rank:row.rank,awards:Array.isArray(row.awards)?row.awards.filter(k=>k==='week'||k==='month').slice(0,2):[]}];});parsed.push([p,rows]);}
-  if(controller.signal.aborted)throw Error('cancelled');for(const stored of boards.keys())if(!stored.startsWith(day+':'))boards.delete(stored);for(const[p,rows]of parsed)boards.set(day+':'+p,{rows,at:Date.now()});
+  if(controller.signal.aborted)throw Error('cancelled');for(const stored of boards.keys())if(!stored.startsWith(day+':'))boards.delete(stored);for(const[p,rows]of parsed)boards.set(day+':'+p,{rows,at:Date.now(),totalSeconds:Number.isSafeInteger(data.listeningTotals?.[p])&&data.listeningTotals[p]>=0?data.listeningTotals[p]:null});
  })();boardRequests.set(day,entry);try{await entry.task;return cachedCompetition(period)||[];}finally{clearTimeout(timeout);if(boardRequests.get(day)===entry)boardRequests.delete(day);}
 }
 function deviceId(){const key='competition-device-v1:'+account().userId;let id=read(key,null);if(!/^[a-f0-9-]{36}$/i.test(id||'')){id=crypto.randomUUID();if(!write(key,id))throw Error('Не удалось сохранить устройство');}return id;}
