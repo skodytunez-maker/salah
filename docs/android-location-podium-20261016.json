@@ -1,0 +1,21 @@
+{
+  "reportedOn": "2026-10-16",
+  "version": 343,
+  "location": {
+    "before": "One high-accuracy browser location attempt; native Android configuration omitted foreground location permissions.",
+    "after": "Coarse/cached position first; one GPS fallback for unavailable or timed-out position. Denial/abort do not retry. Per-attempt watchdog bounds missing WebView callbacks.",
+    "coordinateTransmission": "Unchanged: only the existing consented city lookup providers; no IP fallback, no location tracking.",
+    "permissions": "ACCESS_COARSE_LOCATION and ACCESS_FINE_LOCATION; only explicit user-triggered WebView request. No background location.",
+    "nativeUpdateRequired": true,
+    "originalRuntimeSource": "https://github.com/ionic-team/capacitor/blob/8.5.2/android/capacitor/src/main/java/com/getcapacitor/BridgeWebChromeClient.java"
+  },
+  "podium": {
+    "cause": "End-aligned cards have content-dependent intrinsic heights",
+    "fix": "Stretch a common grid row; runner-ups have a 20px top inset. Names and times can wrap without clipping or changing ranks."
+  },
+  "validation": [
+    "Device position fallback/denial/timeout/abort/late callback regression",
+    "No location request during manual city search",
+    "APK and AAB inspectors reject version 343+ if foreground permissions are missing"
+  ]
+}

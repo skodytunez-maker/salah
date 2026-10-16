@@ -20,6 +20,8 @@ export async function inspectBundle(bundle,output,{signed=false}={}){
  const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
  const expected=androidReleaseVersion(await fs.readFile(path.join(root,'dist/js/app-release.js'),'utf8'));
  const report=bundleManifestReport(xml,expected);
+ report.permissions=[...xml.matchAll(/<uses-permission\b[^>]*android:name="([^"]+)"/g)].map(m=>m[1]);
+ if(expected.versionCode>=343)for(const permission of ['ACCESS_COARSE_LOCATION','ACCESS_FINE_LOCATION'])if(!report.permissions.includes('android.permission.'+permission))throw Error('Bundle is missing foreground location permission: '+permission);
  const entries=execFileSync('unzip',['-Z1',path.resolve(bundle)],{encoding:'utf8',timeout:30000}).split(/\r?\n/);
  for(const entry of ['base/assets/capacitor.config.json','base/assets/public/js/audience.js','base/assets/public/js/audience-core.js','base/assets/public/js/audience-mode.js','base/assets/public/css/audience.css','base/assets/public/index.html','base/assets/public/js/native-entry.js','base/assets/public/js/app-release.js','base/assets/public/privacy.html','base/assets/public/delete-account.html','base/assets/public/third-party/Android-NOTICES.txt'])if(!entries.includes(entry))throw Error('Required bundle entry missing: '+entry);
  if(entries.some(p=>['.jks','.keystore','.p12','.pfx'].some(ext=>p.toLowerCase().endsWith(ext))||p.split('/').some(part=>part==='.env'||part.startsWith('.env.')||part==='signing-secrets')))throw Error('Private signing material must not enter the bundle');

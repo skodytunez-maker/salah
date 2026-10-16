@@ -14,6 +14,8 @@ const signing=process.platform==='win32'?execFileSync('java',['-jar',path.join(b
 const meta=badging.match(/^package: name='([^']+)' versionCode='(\d+)' versionName='([^']+)'/m);
 if(!meta)throw Error('Cannot read APK package metadata');
 const report={applicationId:meta[1],versionCode:Number(meta[2]),versionName:meta[3],apkSha256:createHash('sha256').update(await fs.readFile(apk)).digest('hex'),signingCertificateSha256:verifiedSigningCertificates(signing),buildCommit:process.env.GITHUB_SHA||null,buildType:'debug',checkedAt:new Date().toISOString()};
+report.permissions=[...badging.matchAll(/^uses-permission: name='([^']+)'/gm)].map(m=>m[1]);
+if(report.versionCode>=343)for(const permission of ['ACCESS_COARSE_LOCATION','ACCESS_FINE_LOCATION'])if(!report.permissions.includes('android.permission.'+permission))throw Error('APK is missing foreground location permission: '+permission);
 if(!report.signingCertificateSha256.length){console.error(signing);throw Error('No verified APK signing certificate');}
 report.update=installed?compareAndroidUpdate(JSON.parse(await fs.readFile(installed,'utf8')),report):{compatible:false,reason:'installed_package_not_checked'};
 await fs.mkdir(path.dirname(path.resolve(output)),{recursive:true});await fs.writeFile(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
