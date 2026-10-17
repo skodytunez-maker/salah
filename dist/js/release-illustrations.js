@@ -11,11 +11,15 @@ const spark=()=>'<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
- if(version===348)return gallery([
+ if(version===348||version===349){
+ const cards=[
   card('<div class="release-new-readers release-reader-quartet"><figure>'+portrait('ahmadalnufais.jpg')+'<figcaption>Ахмад ан-Нуфайс</figcaption></figure><figure>'+portrait('khalidaljalil.jpg')+'<figcaption>Халид аль-Джалиль</figcaption></figure><figure>'+portrait('wadeealyamani.jpg')+'<figcaption>Вади аль-Ямани</figcaption></figure><figure>'+portrait('abdullahkamel.jpg')+'<figcaption>Абдуллах Камиль</figcaption></figure></div>','Новые чтецы',"Ахмад ан-Нуфайс, Халид аль-Джалиль, Вади аль-Ямани, Абдуллах Камиль.","В каталоге теперь 46 чтецов. Коран → Чтецы.",'release-reciter-art'),
   card('<div class="release-new-readers release-reader-quartet"><figure>'+portrait('haniarrifai.jpg')+'<figcaption>Хани ар-Рифаи</figcaption></figure><figure>'+portrait('alijaber.jpg')+'<figcaption>Али Джабир</figcaption></figure><figure>'+portrait('muhammadayyub.jpg')+'<figcaption>Мухаммад Айюб</figcaption></figure><figure>'+portrait('salahbukhatir.jpg')+'<figcaption>Салах Бухатир</figcaption></figure></div>','Новые чтецы',"Хани ар-Рифаи, Али Джабир, Мухаммад Айюб, Салах Бухатир.","У всех восьмерых — по 114 сур. Для Абдуллаха Камиля разметка аятов пока недоступна.",'release-reciter-art'),
   card('<div class="release-new-readers"><figure>'+portrait('islamsobhi.jpg')+'<figcaption>Ислам Субхи</figcaption></figure><figure>'+portrait('abdulrahmanalawsi.jpg')+'<figcaption>Абдуррахман аль-Ауси</figcaption></figure><figure>'+portrait('saadalghamdi.jpg')+'<figcaption>Саад аль-Гамиди</figcaption></figure><figure>'+portrait('ahmadalajmi.jpg')+'<figcaption>Ахмад аль-Аджми</figcaption></figure><figure>'+portrait('faresabbad.jpg')+'<figcaption>Фарис Аббад</figcaption></figure></div>','Новые чтецы',"Ранее добавлены: Ислам Субхи, Абдуррахман аль-Ауси, Саад аль-Гамиди, Ахмад аль-Аджми, Фарис Аббад.","У Ислама Субхи доступны 109 сур.",'release-reciter-art')
- ]);
+ ];
+ if(version===349)cards.unshift(card('<div class="release-discovery-preview"><div class="release-filter-preview"><span>Все 46</span><span class="selected">Новые 13</span><span>Избранные</span><span>Рукъя</span></div><figure>'+portrait('raadalkurdi-v349.jpg')+'<figcaption>Мухаммад аль-Курди</figcaption></figure></div>','Новые чтецы — в начале','Первые три дня новые голоса появляются сразу после избранных.','Фильтр «Новые» показывает добавления за последние 30 дней. Обновлён портрет Мухаммада аль-Курди.'));
+ return gallery(cards);
+ }
 
  if(version===347)return gallery([card('<div class="release-new-readers"><figure>'+portrait('islamsobhi.jpg')+'<figcaption>Ислам Субхи</figcaption></figure><figure>'+portrait('abdulrahmanalawsi.jpg')+'<figcaption>Абдуррахман аль-Ауси</figcaption></figure><figure>'+portrait('saadalghamdi.jpg')+'<figcaption>Саад аль-Гамиди</figcaption></figure><figure>'+portrait('ahmadalajmi.jpg')+'<figcaption>Ахмад аль-Аджми</figcaption></figure><figure>'+portrait('faresabbad.jpg')+'<figcaption>Фарис Аббад</figcaption></figure></div>','Новые чтецы','Ислам Субхи, Абдуррахман аль-Ауси, Саад аль-Гамиди, Ахмад аль-Аджми и Фарис Аббад — теперь в SALAH.','Коран → Чтецы. У Ислама Субхи доступны 109 сур, у остальных — по 114.','release-reciter-art')]);
 

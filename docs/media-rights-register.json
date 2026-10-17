@@ -2300,6 +2300,16 @@
       "sourceUrl": "https://media.way2quran.com/imgs/salah-boukhatir.jpg?v=1780235037871",
       "sourcePage": "https://way2quran.com/en/reciters/salah-boukhatir",
       "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/raadalkurdi-v349.jpg",
+      "gitBlobSha": "78299360092e4530bf5499e31913d319e9f85960",
+      "bytes": 30641,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://tvquran.com/uploads/authors/images/%D8%B1%D8%B9%D8%AF%20%D8%A7%D9%84%D9%83%D8%B1%D8%AF%D9%8A.jpg",
+      "sourcePage": "https://www.tvquran.com/en/scholar/224/profile/raad-al-kurdi",
+      "note": "Different named-profile portrait selected to replace the previous catalog image at the user request. Original image bytes visually inspected and bundled unchanged; reuse permission not independently established."
     }
   ],
   "wallpaperSets": [

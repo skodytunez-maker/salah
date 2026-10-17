@@ -1,0 +1,22 @@
+{
+  "version": 349,
+  "date": "2026-10-17",
+  "promotion": {
+    "hours": 72,
+    "startsAt": "First public delivery timestamp, not app update or verifiedOn date",
+    "favoritePriority": true,
+    "restoresStableOrder": true
+  },
+  "newFilter": {
+    "days": 30,
+    "registeredReciters": 13
+  },
+  "portrait": {
+    "id": "ar.raadalkurdi",
+    "name": "Мухаммад аль-Курди",
+    "path": "assets/reciters/raadalkurdi-v349.jpg",
+    "sourcePage": "https://www.tvquran.com/en/scholar/224/profile/raad-al-kurdi",
+    "sourceUrl": "https://tvquran.com/uploads/authors/images/%D8%B1%D8%B9%D8%AF%20%D8%A7%D9%84%D9%83%D8%B1%D8%AF%D9%8A.jpg",
+    "transformation": "none; original downloaded bytes"
+  }
+}
