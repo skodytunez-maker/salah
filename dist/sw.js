@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":351,"date":"2026-10-17","changes":["Мусхаф — Коран как книга: только арабский текст, 604 страницы.","Перелистывание, переход к суре или джузу, закладки и сохранение последней страницы."],"announcement":{"version":351,"date":"2026-10-17","changes":["Мусхаф — Коран как книга: только арабский текст, 604 страницы.","Перелистывание, переход к суре или джузу, закладки и сохранение последней страницы."]}};
+const RELEASE={"version":351,"date":"2026-10-17","changes":["Мусхаф — Коран как книга: только арабский текст, 604 страницы.","Перелистывание, переход к суре или джузу, закладки и сохранение последней страницы.","Тёмный и светлый фон мусхафа с сохранением выбора."],"announcement":{"version":351,"date":"2026-10-17","changes":["Мусхаф — Коран как книга: только арабский текст, 604 страницы.","Перелистывание, переход к суре или джузу, закладки и сохранение последней страницы.","Тёмный и светлый фон мусхафа с сохранением выбора."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
