@@ -29,7 +29,7 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  function scrollToAyah(key,force=false){
   if(!key||(!force&&key===lastScrolled)||(host.querySelector('.mushaf-options')?.open||host.querySelector('#mushaf-colors-dialog')?.open))return;
   const word=paper.querySelector('[data-verse="'+key+'"]');if(!word)return;
-  lastScrolled=key;const rect=word.getBoundingClientRect(),top=host.querySelector('.mushaf-top')?.getBoundingClientRect().bottom||60,dock=document.getElementById('quran-global-player'),bottom=dock&&!dock.hidden?dock.getBoundingClientRect().top:innerHeight-20;
+  lastScrolled=key;const rect=word.getBoundingClientRect(),top=Math.max(host.querySelector('.mushaf-top')?.getBoundingClientRect().bottom||60,host.querySelector('.mushaf-actions')?.getBoundingClientRect().bottom||0),dock=document.getElementById('quran-global-player'),bottom=dock&&!dock.hidden?dock.getBoundingClientRect().top:innerHeight-20;
   if(force||rect.top<top+12||rect.bottom>bottom-16)word.scrollIntoView?.({block:'center',inline:'nearest',behavior:globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
  }
  function draw(state){
