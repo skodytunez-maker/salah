@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
-import{PRINT_LAYOUT_SHA256,PRINT_VERSE_PAGES}from '../dist/js/quran-mushaf-print-index.js';
+import{PRINT_LAYOUT_SHA256,PRINT_VERSE_PAGES,MADANI_LAYOUT_SHA256,MADANI_VERSE_PAGES}from '../dist/js/quran-mushaf-print-index.js';
 import{printedVerseKeys,printedPageForPosition,printedNeedsBasmala,printedPageMarkup,printedFitSize}from '../dist/js/quran-mushaf-print.js';
 const bytes=await fs.readFile(new URL('../dist/data/mushaf-print/layout.json',import.meta.url)),data=JSON.parse(bytes);
 assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),PRINT_LAYOUT_SHA256);assert.equal(data.pages.length,604);
@@ -32,13 +32,21 @@ host.innerHTML=printedPageMarkup(data.pages[123],124,index,surahs,esc,'ﱁ ﱂ �
 assert.ok([...host.querySelectorAll('.mushaf-print-word')].every(e=>e.style.fontFamily==='SALAHMushaf124'&&e.getAttribute('aria-hidden')==='true'));assert.ok(!host.querySelector('.quran-translation,.quran-transliteration'));
 const keys=printedVerseKeys(data.pages[123]);assert.deepEqual(keys,['5:96','5:97','5:98','5:99','5:100','5:101','5:102','5:103']);assert.deepEqual([...host.querySelectorAll('.mushaf-ayah-text')].map(e=>e.textContent),keys.map(k=>{const [s,a]=k.split(':').map(Number);return surahs.get(s).verses[a-1].arabic;}));
 for(const width of [280,320,360,600]){const size=printedFitSize(width,600);assert.ok(size>=15&&size<=48);assert.ok(size*600/40<=width+.01);}assert.equal(printedFitSize(0,0),24);
+
+const madaniBytes=await fs.readFile(new URL('../dist/data/mushaf-print/madani-layout.json',import.meta.url)),madani=JSON.parse(madaniBytes);
+assert.equal(crypto.createHash('sha256').update(madaniBytes).digest('hex'),MADANI_LAYOUT_SHA256);assert.equal(madani.pages.length,604);
+const madaniFirst={},madaniEnds=new Set(),madaniIds=new Set();let madaniPrevious=0,madaniWords=0;
+for(const [p,rows]of madani.pages.entries()){assert.ok(rows.length===15||p<2);for(const [n,type,s,words]of rows){for(const [ss,aa,ww,gg]of words){const id=ss+':'+aa+':'+ww,key=ss+':'+aa;assert.ok(!madaniIds.has(id));madaniIds.add(id);madaniWords++;assert.ok(offsets[ss]+aa>=madaniPrevious);madaniPrevious=offsets[ss]+aa;madaniFirst[key]??=p+1;if(gg.includes(' '))madaniEnds.add(key);}}}
+assert.equal(madaniWords,78005);assert.equal(madaniEnds.size,6236);assert.deepEqual(madaniFirst,MADANI_VERSE_PAGES);assert.equal(printedPageForPosition(4,1,'madani'),77);
+host.innerHTML=printedPageMarkup(madani.pages[123],124,index,surahs,esc,'ﱁ ﱂ ﱃ ﱄ','madani');assert.ok([...host.querySelectorAll('.mushaf-print-word')].every(e=>e.style.fontFamily==='SALAHMushaf124Madani'));
+host.innerHTML=printedPageMarkup(madani.pages[0],1,index,surahs,esc,'','madani');assert.equal(host.querySelectorAll('[data-print-type=text]:not(.mushaf-print-centered)').length,0);
 const original={fetch:globalThis.fetch,document:globalThis.document,FontFace:globalThis.FontFace};let fetches=0,loads=0,fail=false;const added=new Set();
-globalThis.fetch=async()=>{fetches++;return new Response(bytes);};globalThis.document={getElementById:id=>w.document.getElementById(id),createElement:(...a)=>w.document.createElement(...a),head:w.document.head,fonts:{add:f=>added.add(f),delete:f=>added.delete(f)}};
-globalThis.FontFace=class{constructor(family,source){this.family=family;this.source=source;}async load(){loads++;assert.match(this.source,/^url\("https:\/\/verses\.quran\.foundation\/fonts\/quran\/hafs\/v4\/colrv1\/woff2\/p\d+\.woff2"\)$/);if(fail)throw Error('offline font');return this;}};
+globalThis.fetch=async url=>{fetches++;return new Response(String(url).includes('madani-layout')?madaniBytes:bytes);};globalThis.document={getElementById:id=>w.document.getElementById(id),createElement:(...a)=>w.document.createElement(...a),head:w.document.head,fonts:{add:f=>added.add(f),delete:f=>added.delete(f)}};
+globalThis.FontFace=class{constructor(family,source){this.family=family;this.source=source;}async load(){loads++;assert.match(this.source,/^url\("https:\/\/verses\.quran\.foundation\/fonts\/quran\/hafs\/(?:v4\/colrv1|v2)\/woff2\/p\d+\.woff2"\)$/);if(fail)throw Error('offline font');return this;}};
 try{
  const module=await import('../dist/js/quran-mushaf-print.js?loader-check');await Promise.all([module.loadPrintedPage(1),module.loadPrintedPage(124)]);assert.equal(fetches,1);
  assert.deepEqual(await module.loadPrintedPage(124),data.pages[123]);await assert.rejects(()=>module.loadPrintedPage(605));
- const families=await Promise.all([module.ensurePrintedFont(124),module.ensurePrintedFont(124)]);assert.deepEqual(families,['SALAHMushaf124','SALAHMushaf124']);assert.equal(loads,1);assert.match(w.document.getElementById('mushaf-palette-124').textContent,/base-palette:1/);
+ const families=await Promise.all([module.ensurePrintedFont(124),module.ensurePrintedFont(124)]);assert.deepEqual(families,['SALAHMushaf124','SALAHMushaf124']);assert.equal(loads,1);assert.deepEqual(await module.loadPrintedPage(124,'madani'),madani.pages[123]);assert.equal(await module.ensurePrintedFont(124,'madani'),'SALAHMushaf124Madani');assert.match(w.document.getElementById('mushaf-palette-124').textContent,/base-palette:1/);
  fail=true;await assert.rejects(()=>module.ensurePrintedFont(2));fail=false;assert.equal(await module.ensurePrintedFont(2),'SALAHMushaf2');
  for(let p=1;p<=12;p++)await module.ensurePrintedFont(p);module.trimPrintedFonts([12,1]);assert.equal(added.size,8);assert.ok([...added].some(f=>f.family==='SALAHMushaf12'));
  globalThis.fetch=async()=>new Response('corrupt');const broken=await import('../dist/js/quran-mushaf-print.js?bad-hash-check');await assert.rejects(()=>broken.loadPrintedPage(1));globalThis.fetch=async()=>new Response(bytes);assert.deepEqual(await broken.loadPrintedPage(1),data.pages[0]);

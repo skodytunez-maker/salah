@@ -14,3 +14,8 @@ Arabic text for accessible reading: the existing verified Tanzil/Uthmani corpus 
 https://tanzil.net
 
 The layout metadata contains source glyph codes and positions. The existing Quran text files are unchanged.
+
+Default edition: Madinah Mushaf, Hafs an Asim, QCF V2 / KFGQPC V2 (1421H print), 604 pages.
+Layout data: QUL, packaged as v2.zip in the same NedaaDevs release.
+Runtime fonts: https://verses.quran.foundation/fonts/quran/hafs/v2/woff2/p{PAGE}.woff2
+Color Tajweed remains a separate QCF V4 edition; the two datasets and fonts are never mixed.

@@ -329,5 +329,18 @@ header.quran-section-title{height:auto}
 .mushaf-print-heading>span{padding:0 12px}.mushaf-print-basmala{justify-content:center}
 .mushaf-accessible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .mushaf-tools{margin:6px 0}.mushaf-top{min-height:56px;padding:6px 0}.mushaf-pagination{margin-top:10px}
-@supports not(font-palette:--mushaf-test){.mushaf-shell[data-theme=night] .mushaf-print-glyph{filter:invert(1) hue-rotate(180deg)}}
+@supports not(font-palette:--mushaf-test){.mushaf-shell[data-theme=night][data-edition=tajweed] .mushaf-print-glyph{filter:invert(1) hue-rotate(180deg)}}
 @media(max-width:480px){body.quran-focus:has(.mushaf-shell) .workspace{padding-inline:5px}.mushaf-paper{padding:5px 6px 9px}.mushaf-print-meta{font-size:12px;gap:9px;padding-top:4px}.mushaf-print-number{font-size:21px;min-height:30px}.mushaf-top{padding-inline:6px}.mushaf-tools{padding-inline:6px}.mushaf-pagination{padding-inline:5px}.mushaf-shell{padding-bottom:85px}}
+
+/* SALAH reader chrome: navy surfaces and restrained warm gold. */
+.mushaf-shell[data-theme=night]{--paper-bg:#101929;--paper-ink:#eee9df;--paper-line:#c9b47f66;--mushaf-rule:#c9b47f30}
+.mushaf-shell[data-theme=paper]{--paper-bg:#fffaf0;--paper-ink:#22201c;--paper-line:#9f875677;--mushaf-rule:#9f875633}
+.mushaf-top{border-bottom-color:#c9b47f40}.mushaf-top>strong{font-family:'Prata',Georgia,serif;color:#ddc591;font-size:17px}.mushaf-options>summary{color:#dec78e;border-color:#c9b47f55;background:#182238;border-radius:14px}
+.mushaf-paper{border-radius:16px;border-color:var(--paper-line);box-shadow:inset 0 0 0 3px var(--paper-bg),inset 0 0 0 4px var(--mushaf-rule)}
+.mushaf-print-meta{gap:8px;padding-block:7px 8px}.mushaf-print-meta>span,.mushaf-print-meta>strong{border:1px solid var(--paper-line);border-radius:10px;padding:7px 5px;color:var(--paper-ink)}
+.mushaf-shell[data-theme=night] .mushaf-print-meta>span,.mushaf-shell[data-theme=night] .mushaf-print-meta>strong{background:#1a2639;color:#ddc591}
+.mushaf-print-number{font-family:'Prata',Georgia,serif;font-size:20px;color:var(--paper-ink)}.mushaf-shell[data-theme=night] .mushaf-print-number{color:#ddc591}
+.mushaf-print-number:before,.mushaf-print-number:after{border-color:var(--paper-line)}
+.mushaf-print-heading{color:var(--paper-ink)}.mushaf-shell[data-theme=night] .mushaf-print-heading{color:#ddc591}
+.mushaf-pagination button{border-color:#c9b47f55;background:#182238;color:#ddc591;border-radius:14px}.mushaf-tools button{border-color:#c9b47f55;color:#ddc591}
+.mushaf-edition{font-size:10px;text-align:center;letter-spacing:.2px;color:#aebbd0;margin:8px 0 0;line-height:1.5}

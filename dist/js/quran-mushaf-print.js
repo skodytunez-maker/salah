@@ -1,16 +1,17 @@
-import{PRINT_LAYOUT_SHA256,PRINT_VERSE_PAGES}from './quran-mushaf-print-index.js';
+import{PRINT_LAYOUT_SHA256,PRINT_VERSE_PAGES,MADANI_LAYOUT_SHA256,MADANI_VERSE_PAGES}from './quran-mushaf-print-index.js';
 export const PRINT_FONT_ORIGIN='https://verses.quran.foundation';
-export const printedPageForPosition=(surah,ayah=1)=>PRINT_VERSE_PAGES[surah+':'+ayah]??null;
-let dataPromise=null;const fonts=new Map(),pendingFonts=new Map();
-export async function loadPrintedPage(page){
+export const printedPageForPosition=(surah,ayah=1,edition='madani')=>(edition==='tajweed'?PRINT_VERSE_PAGES:MADANI_VERSE_PAGES)[surah+':'+ayah]??null;
+const dataPromises=new Map();const fonts=new Map(),pendingFonts=new Map();
+export async function loadPrintedPage(page,edition='tajweed'){
+ const key=edition==='madani'?'madani':'tajweed';
  if(!Number.isInteger(page)||page<1||page>604)throw Error('Такой страницы нет');
- if(!dataPromise)dataPromise=(async()=>{
-  const response=await fetch('./data/mushaf-print/layout.json');if(!response.ok)throw Error('Страницы недоступны');
+ if(!dataPromises.has(key))dataPromises.set(key,(async()=>{
+  const response=await fetch('./data/mushaf-print/'+(key==='madani'?'madani-layout.json':'layout.json'));if(!response.ok)throw Error('Страницы недоступны');
   const bytes=await response.arrayBuffer(),hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(n=>n.toString(16).padStart(2,'0')).join('');
-  if(hash!==PRINT_LAYOUT_SHA256)throw Error('Не удалось проверить печатную разметку');
+  if(hash!==(key==='madani'?MADANI_LAYOUT_SHA256:PRINT_LAYOUT_SHA256))throw Error('Не удалось проверить печатную разметку');
   const data=JSON.parse(new TextDecoder().decode(bytes));if(data.schema!==1||data.pages?.length!==604)throw Error('Неполный мусхаф');return data.pages;
- })().catch(e=>{dataPromise=null;throw e;});
- return (await dataPromise)[page-1];
+ })().catch(e=>{dataPromises.delete(key);throw e;}));
+ return (await dataPromises.get(key))[page-1];
 }
 function fontPalette(page,family){
  if(document.getElementById('mushaf-palette-'+page))return;
@@ -18,28 +19,30 @@ function fontPalette(page,family){
  style.textContent='@font-palette-values --mushaf-light-'+page+'{font-family:"'+family+'";base-palette:0}@font-palette-values --mushaf-dark-'+page+'{font-family:"'+family+'";base-palette:1}.mushaf-shell[data-theme=paper] [data-font-page="'+page+'"]{font-palette:--mushaf-light-'+page+'}.mushaf-shell[data-theme=night] [data-font-page="'+page+'"]{font-palette:--mushaf-dark-'+page+'}';
  document.head.append(style);
 }
-export async function ensurePrintedFont(page){
+export async function ensurePrintedFont(page,edition='tajweed'){
+ const madani=edition==='madani',key=(madani?'madani:':'tajweed:')+page;
  if(!Number.isInteger(page)||page<1||page>604)throw Error('Неизвестный шрифт');
- if(fonts.has(page)){const face=fonts.get(page);fonts.delete(page);fonts.set(page,face);return face.family;}
- if(!pendingFonts.has(page))pendingFonts.set(page,(async()=>{
+ if(fonts.has(key)){const face=fonts.get(key);fonts.delete(key);fonts.set(key,face);return face.family;}
+ if(!pendingFonts.has(key))pendingFonts.set(key,(async()=>{
   // Runtime rendering from the documented provider CDN; font files are not redistributed in the app.
-  const family='SALAHMushaf'+page,face=new FontFace(family,'url("'+PRINT_FONT_ORIGIN+'/fonts/quran/hafs/v4/colrv1/woff2/p'+page+'.woff2")');
+  const family='SALAHMushaf'+page+(madani?'Madani':''),face=new FontFace(family,'url("'+PRINT_FONT_ORIGIN+'/fonts/quran/hafs/'+(madani?'v2/woff2/':'v4/colrv1/woff2/')+'p'+page+'.woff2")');
   let timer;try{await Promise.race([face.load(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Шрифт пока не загрузился')),18000);})]);}finally{clearTimeout(timer);}
-  document.fonts.add(face);fontPalette(page,family);fonts.set(page,face);return family;
- })().finally(()=>pendingFonts.delete(page)));
- return pendingFonts.get(page);
+  document.fonts.add(face);if(!madani)fontPalette(page,family);fonts.set(key,face);return family;
+ })().finally(()=>pendingFonts.delete(key)));
+ return pendingFonts.get(key);
 }
-export function trimPrintedFonts(retained=[]){const keep=new Set(retained);for(const [page,face]of fonts){if(fonts.size<=8)break;if(!keep.has(page)){document.fonts.delete(face);fonts.delete(page);}}}
+export function trimPrintedFonts(retained=[],edition='tajweed'){const keep=new Set(retained.map(page=>(edition==='madani'?'madani:':'tajweed:')+page));for(const [page,face]of fonts){if(fonts.size<=8)break;if(!keep.has(page)){document.fonts.delete(face);fonts.delete(page);}}}
 export const printedVerseKeys=lines=>[...new Set(lines.flatMap(line=>line[3].map(w=>w[0]+':'+w[1])))];
 export const printedNeedsBasmala=lines=>lines.some(line=>line[1]==='basmala');
-export function printedPageMarkup(lines,page,index,surahs,escape,basmalaGlyphs){
+export function printedPageMarkup(lines,page,index,surahs,escape,basmalaGlyphs,edition='tajweed'){
+ const suffix=edition==='madani'?'Madani':'';
  const keys=printedVerseKeys(lines),first=keys[0]?.split(':').map(Number),meta=first&&index.surahs[first[0]-1],juz=first&&surahs.get(first[0])?.verses[first[1]-1]?.juz;
  const header='<div class="mushaf-print-meta"><span>Джуз '+(juz||'')+'</span><strong>'+escape(meta?.name||'Мусхаф')+'</strong></div><div class="mushaf-print-number">'+page+'</div>';
  const rows=lines.map(([number,type,surah,words],lineIndex)=>{
   if(type==='surah-header')return '<div class="mushaf-print-line mushaf-print-heading" data-print-line="'+number+'" data-print-type="'+type+'"><span lang="ar" dir="rtl">'+escape(index.surahs[surah-1].arabicName)+'</span></div>';
-  if(type==='basmala')return '<div class="mushaf-print-line mushaf-print-basmala" data-print-line="'+number+'" data-print-type="'+type+'"><span class="mushaf-print-glyph" data-font-page="1" style="font-family:SALAHMushaf1" lang="ar" dir="rtl" aria-label="'+escape(surahs.get(1)?.verses[0].arabic||'')+'">'+escape(basmalaGlyphs)+'</span></div>';
+  if(type==='basmala')return '<div class="mushaf-print-line mushaf-print-basmala" data-print-line="'+number+'" data-print-type="'+type+'"><span class="mushaf-print-glyph" data-font-page="1" style="font-family:SALAHMushaf1'+suffix+'" lang="ar" dir="rtl" aria-label="'+escape(surahs.get(1)?.verses[0].arabic||'')+'">'+escape(basmalaGlyphs)+'</span></div>';
   const centered=page<=2||lines[lineIndex+1]?.[1]==='surah-header'||(page===604&&lineIndex===lines.length-1);
-  return '<div class="mushaf-print-line'+(centered?' mushaf-print-centered':'')+'" data-print-line="'+number+'" data-print-type="text" dir="rtl" lang="ar">'+words.map(([s,a,w,glyph])=>'<span class="mushaf-print-word mushaf-print-glyph" data-font-page="'+page+'" data-verse="'+s+':'+a+'" aria-hidden="true" style="font-family:SALAHMushaf'+page+'">'+escape(glyph)+'</span>').join('')+'</div>';
+  return '<div class="mushaf-print-line'+(centered?' mushaf-print-centered':'')+'" data-print-line="'+number+'" data-print-type="text" dir="rtl" lang="ar">'+words.map(([s,a,w,glyph])=>'<span class="mushaf-print-word mushaf-print-glyph" data-font-page="'+page+'" data-verse="'+s+':'+a+'" aria-hidden="true" style="font-family:SALAHMushaf'+page+suffix+'">'+escape(glyph)+'</span>').join('')+'</div>';
  }).join('');
  const accessible='<div class="mushaf-accessible">'+keys.map(key=>{const [s,a]=key.split(':').map(Number),verse=surahs.get(s)?.verses[a-1];return '<span class="mushaf-ayah-text" lang="ar" dir="rtl">'+escape(verse?.arabic||'')+'</span>';}).join(' ')+'</div>';
  return header+'<div class="mushaf-print-scroll"><div class="mushaf-print-page" data-print-page="'+page+'">'+rows+'</div></div><div class="mushaf-print-number mushaf-print-number-bottom">'+page+'</div>'+accessible;

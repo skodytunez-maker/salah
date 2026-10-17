@@ -37,5 +37,18 @@
     "scripts/check-mushaf-print.mjs",
     "scripts/check-quran-mushaf.mjs"
   ],
-  "visualQa": "design-qa.md"
+  "visualQa": "design-qa.md",
+  "madani": {
+    "source": "QUL KFGQPC V2 layout (1421H print), QCF V2 glyphs",
+    "sourceUrl": "https://qul.tarteel.ai/resources/mushaf-layout/10",
+    "package": "https://github.com/NedaaDevs/quran-image-generator/releases/download/assets/v2.zip",
+    "packageSha256": "90f0ff89515e149a56a9774574324ac9fcf1296f615def6ab0f15f61dfe7a4d5",
+    "path": "dist/data/mushaf-print/madani-layout.json",
+    "sha256": "61f89883d4f13f2a722baa5403c3fe2a05b357daaa7a4c0eada9dcfe50895f88",
+    "pages": 604,
+    "wordCells": 78005,
+    "verses": 6236,
+    "defaultEdition": true,
+    "fontUrl": "https://verses.quran.foundation/fonts/quran/hafs/v2/woff2/p{page}.woff2"
+  }
 }
