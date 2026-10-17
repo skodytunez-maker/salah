@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":353,"date":"2026-10-18","changes":["Мусхаф: выбор чтеца, подсветка текущего аята и автоматическое перелистывание страниц.","Кнопки «Коран» и «Aa» всегда доступны при прокрутке мусхафа."],"announcement":{"version":353,"date":"2026-10-18","changes":["Мусхаф: выбор чтеца, подсветка текущего аята и автоматическое перелистывание страниц.","Кнопки «Коран» и «Aa» всегда доступны при прокрутке мусхафа."]}};
+const RELEASE={"version":354,"date":"2026-10-18","changes":["Мусхаф: цветной таджвид по умолчанию и объяснение обозначений.","Три быстрые кнопки: слушать, светлый/тёмный фон и цвета таджвида."],"announcement":{"version":354,"date":"2026-10-18","changes":["Мусхаф: цветной таджвид по умолчанию и объяснение обозначений.","Три быстрые кнопки: слушать, светлый/тёмный фон и цвета таджвида."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
