@@ -50,7 +50,7 @@ function personalValue(key,value){
  }else if((key==='quran-mushaf-bookmarks'||key==='quran-mushaf-tajweed-bookmarks')){
   if(!Array.isArray(value)||value.length>604||value.some(p=>!Number.isInteger(p)||p<1||p>604)||new Set(value).size!==value.length)fail('Некорректные закладки мусхафа.');
  }else if(key==='quran-mushaf-preferences'){
-  exactKeys(value,['size','theme','edition'],key);if(![26,30,34,40,46].includes(value.size)||!['paper','night'].includes(value.theme)||(Object.hasOwn(value,'edition')&&!['madani','tajweed'].includes(value.edition)))fail('Некорректные настройки мусхафа.');
+  exactKeys(value,['size','theme','edition','follow'],key);if(![26,30,34,40,46].includes(value.size)||!['paper','night'].includes(value.theme)||(Object.hasOwn(value,'edition')&&!['madani','tajweed'].includes(value.edition))||(Object.hasOwn(value,'follow')&&typeof value.follow!=='boolean'))fail('Некорректные настройки мусхафа.');
  }else if(key==='learning-progress'){
   exactKeys(value,['kind','index','complete','returnTo'],key);
   if(!validLesson(value)||typeof value.complete!=='boolean')fail('Некорректный прогресс обучения.');

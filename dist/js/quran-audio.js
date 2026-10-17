@@ -8,7 +8,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
  let startOffset=0,next=null,durationTable=null,durationTask=null,durationStatus=whole?'ready':'loading';const durationController=new AbortController();
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
- let watchdog=null,watchedPosition=0,useFallback=false;
+ let watchdog=null,watchedPosition=0,useFallback=false,preparedTimings=null;
  const sourceUrl=index=>useFallback&&!offlineOnly?downloadAudioUrl(surah.verses[index].number,reciter,surah.number):audioUrl(surah.verses[index].number,reciter,surah.number);
  function clearWatchdog(){if(watchdog!==null){clearTimer(watchdog);watchdog=null;}}
  function watch(id){
@@ -75,12 +75,26 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    audio.onended=()=>{if(disposed||id!==token)return;clearWatchdog();if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);else{status='ended';emit()}};
    if(whole&&timed){
     const controller=new AbortController();timingController=controller;
-    Promise.resolve().then(()=>loadTimings(surah,reciter,{signal:controller.signal,...(offlineOnly?{fetcher:async()=>{throw Error('Offline')}}:{})})).then(table=>{if(disposed||id!==token||!audio)return;timings=table;timingStatus=table?'ready':'unavailable';sync(id,true)}).catch(()=>{if(disposed||id!==token||!audio)return;timingStatus='unavailable';sync(id,true)});
+    const supplied=preparedTimings;preparedTimings=null;
+    Promise.resolve().then(()=>supplied||loadTimings(surah,reciter,{signal:controller.signal,...(offlineOnly?{fetcher:async()=>{throw Error('Offline')}}:{})})).then(table=>{if(disposed||id!==token||!audio)return;timings=table;timingStatus=table?'ready':'unavailable';sync(id,true)}).catch(()=>{if(disposed||id!==token||!audio)return;timingStatus='unavailable';sync(id,true)});
    }
    if(!autoplay){status='paused';startDurations();emit();return;}
    await audio.play();if(disposed||id!==token||status==='paused')return;status='playing';sync(id);prepareNext();emit();
    startDurations();
   }catch(error){recover(id,error)}
+ }
+ async function playFromAyah(number){
+  if(disposed||!Number.isInteger(number)||number<1||number>surah.verses.length)return false;
+  if(!whole||number===1){await play(number-1,true);return !disposed;}
+  const id=++token;clearNext();release();current=0;ayah=null;status='loading';timingStatus=timed?'loading':'unavailable';emit();
+  if(!timed){status='error';emit();return false;}
+  const controller=new AbortController();timingController=controller;
+  try{const table=await loadTimings(surah,reciter,{signal:controller.signal,...(offlineOnly?{fetcher:async()=>{throw Error('Offline')}}:{})});
+   if(disposed||id!==token||controller.signal.aborted)return false;
+   const point=table?.find(row=>row.ayah===number);
+   if(!point){timingStatus='unavailable';status='error';emit();return false;}
+   preparedTimings=table;await play(0,true,point.start);return !disposed;
+  }catch{if(!disposed&&id===token){timingStatus='unavailable';status='error';emit();}return false;}
  }
  function fail(id){if(disposed||id!==token)return;token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
  function pause(){if(disposed)return;clearWatchdog();clearNext();if(status==='loading'){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
@@ -88,5 +102,5 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy(){disposed=true;durationController.abort();token++;clearNext();release()}
  function seek(seconds){if(disposed||!audio||!Number.isFinite(seconds))return;if(!whole&&durationTable){const point=timelinePosition(durationTable,seconds);if(point.index!==current){void play(point.index,continuous,point.seconds,status==='playing');return;}seconds=point.seconds;}try{audio.currentTime=Math.max(0,Math.min(seconds,Number.isFinite(audio.duration)?Math.max(0,audio.duration-.01):86400));sync(token,true);}catch{}}
- return{play,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationStatus,durationSeconds:whole?(Number.isFinite(audio?.duration)?audio.duration:0):(durationTable?.total||0),trackPositionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset,positionSeconds:(durationTable?.starts[current]||0)+(Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset)}}}
+ return{play,playFromAyah,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationStatus,durationSeconds:whole?(Number.isFinite(audio?.duration)?audio.duration:0):(durationTable?.total||0),trackPositionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset,positionSeconds:(durationTable?.starts[current]||0)+(Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset)}}}
 }

@@ -16,11 +16,11 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
  const snapshot=()=>({...view,durationStatus:player?.state?.durationStatus||'loading',durationSeconds:player?.state?.durationSeconds||0,positionSeconds:player?.state?.positionSeconds??view.positionSeconds??0,trackPositionSeconds:player?.state?.trackPositionSeconds??player?.state?.positionSeconds??view.positionSeconds??0,offlineOnly,playlistBuilding,playlist:playlist.length?{id:playlistId,index:playlistIndex,tracks:playlist.slice()}:null,canPrevious:adjacent(-1)!==null,canNext:adjacent(1)!==null});
  const emit=()=>{if(['loading','playing'].includes(view.status))claim();const s=snapshot(),r=view.reciter?reciterInfo(view.reciter):null;media.update(view.surah?{status:view.status,title:view.meta?.name||'Коран',artist:r?.name||'SALAH',artwork:r?.portrait?new URL(r.portrait,globalThis.location?.href||'https://skodytunez-maker.github.io/salah/').href:null,duration:s.durationSeconds,position:s.positionSeconds}:null,{play:()=>{if(!['playing','loading'].includes(view.status))toggle();},pause,stop,seekto:e=>player?.seek?.(e.seekTime),seekbackward:e=>player?.seek?.(snapshot().positionSeconds-(e.seekOffset||10)),seekforward:e=>player?.seek?.(snapshot().positionSeconds+(e.seekOffset||10)),previoustrack:()=>changeSurah(-1),nexttrack:()=>changeSurah(1)});setForegroundAudio(audioOwner,['loading','playing'].includes(view.status));for(const listener of listeners)listener(snapshot())};
  function stop(){offlineOnly=false;savedSurahs=new Set();playlist=[];playlistIndex=-1;playlistBuilding=false;request++;player?.destroy();player=null;view={status:'stopped',surah:null,meta:null,reciter:null,index:0,ayah:null,timingStatus:'unavailable'};emit()}
- async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0,preferContinuous=true,keepPlaylist=false){
+ async function start(surah,reciter,index=0,autoplay=true,offline=false,seconds=0,preferContinuous=true,keepPlaylist=false,fromAyah=false){
   reciterInfo(reciter);if(preferContinuous&&!offline&&autoplay&&index===0&&seconds===0&&reciterInfo(reciter).continuousReciter)reciter=reciterInfo(reciter).continuousReciter;if(!reciterHasSurah(reciter,surah?.number))return;
   if(!surah?.verses?.length||!Number.isInteger(index)||index<0||index>=surah.verses.length)return;
   if(!keepPlaylist){playlist=[];playlistIndex=-1;playlistBuilding=false;}
-  if(player&&view.surah.number===surah.number&&view.reciter===reciter&&offlineOnly===offline){player.play(index,true,seconds);emit();return}
+  if(player&&view.surah.number===surah.number&&view.reciter===reciter&&offlineOnly===offline){if(fromAyah)await player.playFromAyah(index+1);else player.play(index,true,seconds);emit();return}
   const id=++request;player?.destroy();player=null;offlineOnly=offline;savedSurahs=new Set();
   view={surah,meta:{number:surah.number,name:'Сура '+surah.number},reciter,index,positionSeconds:seconds,ayah:reciterInfo(reciter).format==='verse'?surah.verses[index].ayah:null,timingStatus:reciterInfo(reciter).format==='verse'?'ready':'idle',status:'loading'};emit();
   try{
@@ -29,7 +29,7 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
    if(offlineOnly){const saved=await loadSaved(reciter);if(id!==request)return;savedSurahs=new Set(saved.map(record=>record.surah));if(!savedSurahs.has(surah.number))throw Error('Сура не скачана');}
    if(!autoplay){view.status='paused';emit();return}
    player=createPlayer({surah,reciter,offlineOnly,onState:state=>{if(id!==request)return;view={...view,index:state.index,status:state.status,ayah:state.ayah,timingStatus:state.timingStatus};emit();if(state.status==='ended'&&id===request&&adjacent(1)!==null)void changeSurah(1)},onVerse:()=>{},onError:()=>{}});
-   player.play(index,true,seconds);
+   if(fromAyah)await player.playFromAyah(index+1);else player.play(index,true,seconds);
   }catch{if(id===request){view.status='error';emit()}}
  }
  async function changeSurah(delta){
@@ -73,6 +73,6 @@ export function createQuranSession({load=loadSurah,loadCatalog=loadIndex,createP
    load(number).then(surah=>{if(id===request)start(surah,reciter,0,true,offlineOnly)}).catch(()=>{if(id===request){view.status='error';emit()}});
   }
  }
- return{seek:seconds=>player?.seek?.(seconds),start,startPlaylist,playPlaylistEntry,changeSurah,changeReciter,toggle,pause,stop,requestOutput:()=>player?.requestOutput?.()||Promise.resolve({status:'no-media'}),get state(){return snapshot()},subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener)}};
+ return{startFromAyah:(surah,reciter,ayah)=>start(surah,reciter,ayah-1,true,false,0,false,false,true),seek:seconds=>player?.seek?.(seconds),start,startPlaylist,playPlaylistEntry,changeSurah,changeReciter,toggle,pause,stop,requestOutput:()=>player?.requestOutput?.()||Promise.resolve({status:'no-media'}),get state(){return snapshot()},subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener)}};
 }
 const quranOwner={};export const quranPlayback=createQuranSession({claim:()=>claimPlayback(quranOwner)});registerPlayback(quranOwner,()=>quranPlayback.pause());
