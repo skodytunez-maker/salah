@@ -2302,14 +2302,14 @@
       "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
     },
     {
-      "path": "dist/assets/reciters/raadalkurdi-v349.jpg",
-      "gitBlobSha": "78299360092e4530bf5499e31913d319e9f85960",
-      "bytes": 30641,
-      "kind": "raster",
+      "path": "dist/assets/reciters/raadalkurdi-v349.png",
+      "gitBlobSha": "34263858dac1fcf3983d1d6c73029a9d119ec524",
+      "bytes": 2024732,
+      "kind": "reciter-portrait",
       "rightsReviewStatus": "needs-review",
-      "sourceUrl": "https://tvquran.com/uploads/authors/images/%D8%B1%D8%B9%D8%AF%20%D8%A7%D9%84%D9%83%D8%B1%D8%AF%D9%8A.jpg",
-      "sourcePage": "https://www.tvquran.com/en/scholar/224/profile/raad-al-kurdi",
-      "note": "Different named-profile portrait selected to replace the previous catalog image at the user request. Original image bytes visually inspected and bundled unchanged; reuse permission not independently established."
+      "note": "Derived from the previous user-supplied and selected portrait. Built-in imagegen edit: tighter square crop with larger face and subtle lighting/contrast correction. User approved the edited preview on 2026-10-17. Identity approval is not evidence of third-party reuse licensing; rights status inherited as needs-review.",
+      "sourceAsset": "dist/assets/reciters/raadalkurdi-approved.jpg",
+      "rightsEvidence": "docs/reciter-discovery-20261017.json"
     }
   ],
   "wallpaperSets": [

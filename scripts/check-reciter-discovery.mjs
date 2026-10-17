@@ -32,5 +32,5 @@ cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'new');assert.equal(cards(
 host.querySelector('#reciter-search').focus();clock=lastAdded+RECITER_PROMOTION_MS;for(const fn of [...timers.values()])fn();assert.equal(host.querySelectorAll('.reciter-new-badge').length,13,'Focused search defers catalog remount');host.querySelector('#reciter-search').blur();for(const fn of [...timers.values()])fn();assert.equal(host.querySelectorAll('.reciter-new-badge').length,0);assert.equal(cards().length,13);
 clock=lastAdded+RECITER_RECENT_MS;for(const fn of [...timers.values()])fn();assert.equal(cards().length,0);assert.ok(host.textContent.includes('новых чтецов нет'));assert.ok(host.textContent.includes('Новые 0'));cleanup();assert.equal(timers.size,0);
 cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'favorites');assert.deepEqual(cards().map(cardId),saved);cleanup();
-assert.equal(reciterInfo('ar.raadalkurdi').portrait,'assets/reciters/raadalkurdi-v349.jpg');
+assert.equal(reciterInfo('ar.raadalkurdi').portrait,'assets/reciters/raadalkurdi-v349.png');
 console.log('PASS: 72-hour promotion, 30-day filter, UTC boundaries, favorites priority, stable old order, actual catalog DOM, search, expiry refresh, empty state and cleanup.');await w.happyDOM.abort();

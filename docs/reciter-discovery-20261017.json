@@ -14,9 +14,10 @@
   "portrait": {
     "id": "ar.raadalkurdi",
     "name": "Мухаммад аль-Курди",
-    "path": "assets/reciters/raadalkurdi-v349.jpg",
-    "sourcePage": "https://www.tvquran.com/en/scholar/224/profile/raad-al-kurdi",
-    "sourceUrl": "https://tvquran.com/uploads/authors/images/%D8%B1%D8%B9%D8%AF%20%D8%A7%D9%84%D9%83%D8%B1%D8%AF%D9%8A.jpg",
-    "transformation": "none; original downloaded bytes"
+    "path": "assets/reciters/raadalkurdi-v349.png",
+    "sourceAsset": "dist/assets/reciters/raadalkurdi-approved.jpg",
+    "sourceEvidence": "docs/reciter-expansion-20261009.json",
+    "transformation": "Built-in imagegen edit: tighter square head-and-shoulders framing, larger face, subtle exposure, white balance and contrast correction; same source portrait, no intentional change to identity. User approved preview on 2026-10-17.",
+    "rightsReviewStatus": "needs-review"
   }
 }
