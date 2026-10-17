@@ -29,7 +29,7 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  function scrollToAyah(key,force=false){
   if(!key||(!force&&key===lastScrolled)||(host.querySelector('.mushaf-options')?.open||host.querySelector('#mushaf-colors-dialog')?.open))return;
   const word=paper.querySelector('[data-verse="'+key+'"]');if(!word)return;
-  lastScrolled=key;const rect=word.getBoundingClientRect(),top=host.querySelector('.mushaf-top')?.getBoundingClientRect().bottom||60,dock=document.getElementById('quran-global-player'),bottom=dock&&!dock.hidden?dock.getBoundingClientRect().top:innerHeight-20;
+  lastScrolled=key;const rect=word.getBoundingClientRect(),top=Math.max(host.querySelector('.mushaf-top')?.getBoundingClientRect().bottom||60,host.querySelector('.mushaf-actions')?.getBoundingClientRect().bottom||0),dock=document.getElementById('quran-global-player'),bottom=dock&&!dock.hidden?dock.getBoundingClientRect().top:innerHeight-20;
   if(force||rect.top<top+12||rect.bottom>bottom-16)word.scrollIntoView?.({block:'center',inline:'nearest',behavior:globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
  }
  function draw(state){
@@ -78,6 +78,8 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  reader.onclick=()=>{host.querySelector('.mushaf-options').open=true;select.focus();};
  check.onchange=()=>{setFollow(check.checked);if(check.checked)follower.resume();else follower.suspend();draw(playback.state);};
  resume.onclick=()=>{setFollow(true);follower.resume();lastScrolled=null;const point=mushafAudioPosition(playback.state);if(point&&!pageKeys().includes(point.key)){const target=printedPageForPosition(point.surah,point.ayah,getEdition());if(target&&target!==page){arrival={page:target,edition:getEdition(),automatic:true,until:Date.now()+10000};navigate(target);return;}}draw(playback.state);if(point)scrollToAyah(point.key,true);};
+ // Let only the action row stick, without changing its place above playback details.
+ const toolbar=panel.querySelector('.mushaf-actions');panel.before(toolbar);
  const unsubscribe=playback.subscribe(draw);
  return{
   updateTheme:drawTheme,
@@ -88,6 +90,6 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
    draw(playback.state);
   },
   manualNavigation(target){follower.suspend();arrival={page:target,edition:getEdition(),automatic:false,until:Date.now()+10000};},
-  dispose(){closed=true;starting++;unsubscribe();panel.remove();}
+  dispose(){closed=true;starting++;unsubscribe();toolbar.remove();panel.remove();}
  };
 }
