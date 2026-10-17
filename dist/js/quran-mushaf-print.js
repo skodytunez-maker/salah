@@ -52,6 +52,6 @@ export function fitPrintedPage(paper,size=30){
  const sheet=paper.querySelector('.mushaf-print-page');if(!sheet)return;
  const scroll=paper.querySelector('.mushaf-print-scroll'),width=scroll.clientWidth||paper.clientWidth;
  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');if(!ctx||!width)return;
- let max=1;for(const line of sheet.querySelectorAll('[data-print-type=text]')){const words=[...line.querySelectorAll('.mushaf-print-word')];let sum=0;for(const word of words){ctx.font='40px "'+word.style.fontFamily.replaceAll('"','')+'"';sum+=ctx.measureText(word.textContent).width;}max=Math.max(max,sum+Math.max(0,words.length-1)*2);}
+ let max=1;for(const line of sheet.querySelectorAll('[data-print-type=text]')){const words=[...line.querySelectorAll('.mushaf-print-word')];let sum=0;for(const word of words){ctx.font='40px "'+word.style.fontFamily.replaceAll('"','')+'"';sum+=ctx.measureText(word.textContent).width;}max=Math.max(max,sum+Math.max(0,words.length-1)*(line.classList.contains('mushaf-print-centered')?8.8:2));}
  const zoom=Math.max(.8,Math.min(1.55,size/30)),fit=printedFitSize(width-6,max,zoom);sheet.style.width=(Math.max(1,zoom)*100)+'%';sheet.style.setProperty('--mushaf-print-size',fit+'px');sheet.dataset.fit=String(fit);
 }
