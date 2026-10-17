@@ -284,8 +284,7 @@ header.quran-section-title{height:auto}
 .competition-card .competition-person{min-height:40px}
 .competition-card .competition-time{margin-top:auto;min-height:1.5em;display:block;max-width:100%;white-space:nowrap;font-size:clamp(10px,2.8vw,12px);line-height:1.5;letter-spacing:0}
 
-/* Four catalog filters stay readable on narrow phones. */
-.reciter-catalog-filter-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-.reciter-catalog-filter-tabs a{min-width:0;padding:7px 9px;white-space:normal;text-align:center}
-@media(min-width:600px){.reciter-catalog-filter-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* Override the older three-column library rule: four filters share one row. */
+.reciter-filter-tabs.reciter-catalog-filter-tabs{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr) minmax(0,1.45fr) minmax(0,.85fr);gap:4px}
+.reciter-filter-tabs.reciter-catalog-filter-tabs a{min-width:0;min-height:44px;padding:8px 4px;white-space:nowrap;text-align:center;font-size:clamp(11px,3.2vw,13px);line-height:1.35}
 .reciter-new-badge{position:absolute;top:20px;left:18px;display:inline-flex;align-items:center;border:1px solid #dac59488;border-radius:8px;background:#101d30ed;color:#ead09b;font-size:10px;line-height:1.2;font-weight:600;padding:5px 6px}
