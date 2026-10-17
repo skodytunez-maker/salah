@@ -8,7 +8,7 @@ export function normalizeStandaloneLaunch({locationObject,historyObject,isStanda
  const hash=locationObject.hash||'',route=hash.split('?')[0],query=new URLSearchParams(locationObject.search||''),details=new URLSearchParams(hash.split('?')[1]||'');
  if(route&&!ordinary.has(route))return false;
  // Intentional shortcuts, authentication callbacks and shared item/message links stay at their destination.
- if(query.get('entry')==='shortcut'||['code','token_hash','error','notification'].some(k=>query.has(k))||['surah','ayah','item','request','qr','thread','room','conversation'].some(k=>details.has(k)))return false;
+ if(details.get('view')==='mushaf'||query.get('entry')==='shortcut'||['code','token_hash','error','notification'].some(k=>query.has(k))||['surah','ayah','item','request','qr','thread','room','conversation'].some(k=>details.has(k)))return false;
  const target=resumable(warm?.hash)?warm.hash:'#home';if(hash===target)return false;
  if(typeof historyObject?.replaceState!=='function')return false;
  try{historyObject.replaceState(historyObject.state,'',locationObject.pathname+locationObject.search+target);return true;}catch{return false;}
