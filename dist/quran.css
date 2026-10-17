@@ -389,3 +389,11 @@ header.quran-section-title{height:auto}
 .mushaf-actions .action-icon{width:18px;height:18px;flex:none;display:block}
 .mushaf-listening{margin-top:0}
 @media(max-width:350px){.mushaf-shell>.mushaf-actions{margin-inline:2px}}
+
+/* The ordinary ayah reader shares the printed mushaf word glyphs and palettes. */
+.quran-arabic[data-medina-edition]{padding-inline:.55em;line-height:2.15;white-space:normal;overflow-wrap:normal;word-break:normal}
+.quran-medina-word{display:inline-block;white-space:nowrap;vertical-align:baseline;font-weight:400;letter-spacing:0}
+.quran-medina-basmala{display:block;text-align:center;margin-bottom:8px}
+.quran-medina-accessible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.quran-script-fallback-guide{margin-top:14px}.quran-light .mushaf-color-rules p{color:var(--reader-muted)}
+.quran-light .mushaf-color-swatch[data-rule=mad-2]{background:#e8af00}.quran-light .mushaf-color-swatch[data-rule=mad-2-4-6]{background:#f60}.quran-light .mushaf-color-swatch[data-rule=mad-4-5]{background:#f00000}.quran-light .mushaf-color-swatch[data-rule=mad-6]{background:#b50000}.quran-light .mushaf-color-swatch[data-rule=qalqala]{background:#00a8cf}
