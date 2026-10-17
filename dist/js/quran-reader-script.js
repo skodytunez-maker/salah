@@ -17,7 +17,7 @@ export const readerHasBasmala=(surah,verse)=>surah!==1&&surah!==9&&verse.ayah===
 export function readerVerseMarkup(words,surah,verse,edition){
  const suffix=edition==='madani'?'Madani':'';
  const word=(page,glyph)=>'<span class="quran-medina-word" data-font-page="'+page+'" style="font-family:SALAHMushaf'+page+suffix+'" aria-hidden="true">'+escape(glyph)+'</span>';
- const basmala=readerHasBasmala(surah,verse)?'<span class="quran-medina-basmala" aria-hidden="true">'+word(1,'ﱁ ﱂ ﱃ ﱄ')+'</span>':'';
+ const basmala=readerHasBasmala(surah,verse)?'<span class="quran-medina-basmala" aria-hidden="true">'+['ﱁ','ﱂ','ﱃ','ﱄ'].map(glyph=>word(1,glyph)).join(' ')+'</span>':'';
  return '<span class="quran-medina-accessible">'+escape(verse.arabic)+'</span>'+basmala+words.map(w=>word(w.page,w.glyph)).join(' ');
 }
 export function readerScriptGuide(){

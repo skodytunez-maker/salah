@@ -38,7 +38,7 @@ function preferences(){
 function positionUrl(surah,ayah=1){return '#quran?surah='+surah+'&ayah='+ayah}
 function bookmarks(){const saved=read('quran-bookmarks',[]);return Array.isArray(saved)?saved.filter(v=>validPosition(index,v)):[]}
 function savePosition(){clearTimeout(saveTimer);if(lastPosition&&index&&validPosition(index,lastPosition)){if(!write('quran-last-position',lastPosition))toast('Не удалось сохранить место чтения')}lastPosition=null}
-export function stopQuran(){readerScript?.dispose();readerScript=null;minimizeQuranBroadcast();unmountMushaf?.();unmountMushaf=null;closeDailyAyah();unmountListeningShare?.();unmountListeningShare=null;unmountReciters?.();unmountReciters=null;unmountDownloads?.();unmountDownloads=null;generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;audioDownload?.abort();audioDownload=null;document.body.classList.remove('quran-focus')}
+export function stopQuran(){minimizeQuranBroadcast();readerScript?.dispose();readerScript=null;unmountMushaf?.();unmountMushaf=null;closeDailyAyah();unmountListeningShare?.();unmountListeningShare=null;unmountReciters?.();unmountReciters=null;unmountDownloads?.();unmountDownloads=null;generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;audioDownload?.abort();audioDownload=null;document.body.classList.remove('quran-focus')}
 export async function showQuran(container){
  stopQuran();host=container;const token=generation;
  host.innerHTML='<section class="panel section"><h2>Коран</h2><p class="muted">Открываем библиотеку…</p></section>';

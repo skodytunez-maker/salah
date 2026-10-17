@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":355,"date":"2026-10-18","changes":["Мусхаф: кнопки «Слушать», фона и «Цвета» остаются на своём месте и закрепляются при прокрутке."],"announcement":{"version":355,"date":"2026-10-18","changes":["Мусхаф: кнопки «Слушать», фона и «Цвета» остаются на своём месте и закрепляются при прокрутке."]}};
+const RELEASE={"version":356,"date":"2026-10-18","changes":["Коран: мединское начертание и цветной таджвид в карточках аятов — как в мусхафе."],"announcement":{"version":356,"date":"2026-10-18","changes":["Коран: мединское начертание и цветной таджвид в карточках аятов — как в мусхафе."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
