@@ -319,8 +319,8 @@ header.quran-section-title{height:auto}
 .mushaf-shell[data-theme=paper]{--paper-bg:#fffdf5;--paper-ink:#181a20;--paper-line:#777668;--mushaf-rule:#817c6555}
 .mushaf-print-meta{display:grid;grid-template-columns:.7fr 1.3fr;gap:12px;align-items:center;padding:7px 4px 9px;color:var(--paper-ink);font-size:14px;text-align:center}.mushaf-print-meta>span,.mushaf-print-meta>strong{padding:8px 5px;border-block:1px solid var(--paper-line);font-weight:500}
 .mushaf-print-number{display:flex;align-items:center;justify-content:center;gap:12px;min-height:34px;font-family:Georgia,serif;font-size:24px;font-variant-numeric:tabular-nums;color:var(--paper-ink)}.mushaf-print-number:before,.mushaf-print-number:after{content:"";flex:1;border-top:1px solid var(--paper-line)}.mushaf-print-number-bottom{margin-top:7px}
-.mushaf-print-scroll{width:100%;overflow:auto;overscroll-behavior:contain}
-.mushaf-print-page{--mushaf-print-size:25px;width:100%;padding:0 3px}
+.mushaf-print-scroll{width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior:contain}
+.mushaf-print-page{--mushaf-print-size:25px;width:100%;padding:.15em 3px .5em}
 .mushaf-print-line{display:flex;direction:rtl;align-items:baseline;justify-content:space-between;gap:0;min-height:calc(var(--mushaf-print-size)*1.78);line-height:1.78;border-bottom:1px solid var(--mushaf-rule);font-size:var(--mushaf-print-size);font-weight:400;white-space:nowrap;overflow:visible}
 .mushaf-print-glyph{white-space:pre;line-height:1.78;letter-spacing:0;word-spacing:0;font-weight:400;font-synthesis:none}
 .mushaf-print-word{display:inline-block;flex:0 0 auto}
