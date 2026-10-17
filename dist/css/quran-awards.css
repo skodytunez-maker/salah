@@ -78,3 +78,6 @@
 .release-new-readers figure{margin:0;min-width:0;display:grid;justify-items:center;gap:6px}
 .release-new-art .release-new-readers .release-reader-portrait{width:64px;height:64px;border-color:#d8be8870}
 .release-new-readers figcaption{font-size:11px;line-height:1.35;text-align:center;color:#d5deec;overflow-wrap:anywhere}
+
+.release-new-readers.release-reader-quartet{grid-template-columns:repeat(2,minmax(0,1fr));width:min(100%,280px);gap:14px 12px}
+.release-new-art .release-reader-quartet .release-reader-portrait{width:76px;height:76px}

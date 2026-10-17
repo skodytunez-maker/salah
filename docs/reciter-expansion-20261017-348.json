@@ -1,0 +1,172 @@
+{
+  "version": 348,
+  "date": "2026-10-17",
+  "catalogCount": 46,
+  "reciters": [
+    {
+      "id": "ar.ahmadalnufais",
+      "name": "Ахмад ан-Нуфайс",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/ahmad-nufais/r1/",
+      "timingRead": 259,
+      "timingServer": "https://cdn.mp3quran.net/audio/ahmad-nufais/r1/",
+      "portrait": "assets/reciters/ahmadalnufais.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=259",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.khalidaljalil",
+      "name": "Халид аль-Джалиль",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/khalid-jalil/r1/",
+      "timingRead": 20,
+      "timingServer": "https://cdn.mp3quran.net/audio/khalid-jalil/r1/",
+      "portrait": "assets/reciters/khalidaljalil.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=20",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.wadeealyamani",
+      "name": "Вади аль-Ямани",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/wadee-yamani/r1/",
+      "timingRead": 219,
+      "timingServer": "https://cdn.mp3quran.net/audio/wadee-yamani/r1/",
+      "portrait": "assets/reciters/wadeealyamani.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=219",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.abdullahkamel",
+      "name": "Абдуллах Камиль",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/abdullah-kamel/r1/",
+      "portrait": "assets/reciters/abdullahkamel.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=267",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.haniarrifai",
+      "name": "Хани ар-Рифаи",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/hani-rifai/r1/",
+      "timingRead": 89,
+      "timingServer": "https://cdn.mp3quran.net/audio/hani-rifai/r1/",
+      "portrait": "assets/reciters/haniarrifai.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=89",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.alijaber",
+      "name": "Али Джабир",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/ali-jaber/r1/",
+      "timingRead": 76,
+      "timingServer": "https://cdn.mp3quran.net/audio/ali-jaber/r1/",
+      "portrait": "assets/reciters/alijaber.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=76",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.muhammadayyub",
+      "name": "Мухаммад Айюб",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/muhammad-ayyub/r1/",
+      "timingRead": 109,
+      "timingServer": "https://cdn.mp3quran.net/audio/muhammad-ayyub/r1/",
+      "portrait": "assets/reciters/muhammadayyub.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=109",
+      "verifiedOn": "2026-10-17"
+    },
+    {
+      "id": "ar.salahbukhatir",
+      "name": "Салах Бухатир",
+      "format": "surah",
+      "server": "https://cdn.mp3quran.net/audio/salah-bukhatir/r1/",
+      "timingRead": 46,
+      "timingServer": "https://cdn.mp3quran.net/audio/salah-bukhatir/r1/",
+      "portrait": "assets/reciters/salahbukhatir.jpg",
+      "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=46",
+      "verifiedOn": "2026-10-17"
+    }
+  ],
+  "portraits": [
+    {
+      "id": "ar.ahmadalnufais",
+      "sourcePage": "https://way2quran.com/en/reciters/ahmed-al-nafis",
+      "sourceUrl": "https://media.way2quran.com/imgs/ahmed-al-nafis.jpg?v=1780253901128",
+      "sourceName": "Ahmed Al Nafis",
+      "sourceArabicName": "أحمد النفيس",
+      "path": "assets/reciters/ahmadalnufais.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.khalidaljalil",
+      "sourcePage": "https://way2quran.com/en/reciters/khalid-al-galilee",
+      "sourceUrl": "https://media.way2quran.com/imgs/khalid-al-galilee.jpg?v=1783802751592",
+      "sourceName": "Khalid Al Galilee",
+      "sourceArabicName": "خالد الجليل",
+      "path": "assets/reciters/khalidaljalil.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.wadeealyamani",
+      "sourcePage": "https://way2quran.com/en/reciters/wadih-al-yamani",
+      "sourceUrl": "https://media.way2quran.com/imgs/wadih-al-yamani.jpg",
+      "sourceName": "Wadih Al Yamani",
+      "sourceArabicName": "وديع اليمني",
+      "path": "assets/reciters/wadeealyamani.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.abdullahkamel",
+      "sourcePage": "https://way2quran.com/en/reciters/abdullah-kamel",
+      "sourceUrl": "https://media.way2quran.com/imgs/abdullah-kamel.jpg",
+      "sourceName": "Abdullah Kamel",
+      "sourceArabicName": "عبد الله كامل",
+      "path": "assets/reciters/abdullahkamel.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.haniarrifai",
+      "sourcePage": "https://way2quran.com/en/reciters/hani-al-rifai",
+      "sourceUrl": "https://media.way2quran.com/imgs/hani-al-rifai.jpg",
+      "sourceName": "Hani Al Rifai",
+      "sourceArabicName": "هاني الرفاعي",
+      "path": "assets/reciters/haniarrifai.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.alijaber",
+      "sourcePage": "https://way2quran.com/en/reciters/ali-jaber",
+      "sourceUrl": "https://media.way2quran.com/imgs/ali-jaber.jpg?v=1781384766420",
+      "sourceName": "Ali Jaber",
+      "sourceArabicName": "علي جابر",
+      "path": "assets/reciters/alijaber.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.muhammadayyub",
+      "sourcePage": "https://way2quran.com/en/reciters/mohamed-ayoub",
+      "sourceUrl": "https://media.way2quran.com/imgs/mohamed-ayoub.jpg?v=1778816324619",
+      "sourceName": "Mohamed Ayoub",
+      "sourceArabicName": "محمد أيوب",
+      "path": "assets/reciters/muhammadayyub.jpg",
+      "transformation": "none; original image bytes"
+    },
+    {
+      "id": "ar.salahbukhatir",
+      "sourcePage": "https://way2quran.com/en/reciters/salah-boukhatir",
+      "sourceUrl": "https://media.way2quran.com/imgs/salah-boukhatir.jpg?v=1780235037871",
+      "sourceName": "Salah Boukhatir",
+      "sourceArabicName": "صلاح بوخاطر",
+      "path": "assets/reciters/salahbukhatir.jpg",
+      "transformation": "none; original image bytes"
+    }
+  ],
+  "validation": {
+    "audioEndpoints": 24,
+    "timingSamples": 14,
+    "untimed": "ar.abdullahkamel"
+  }
+}
