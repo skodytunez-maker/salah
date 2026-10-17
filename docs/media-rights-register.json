@@ -2220,6 +2220,86 @@
       "sourceUrl": "https://media.way2quran.com/imgs/fares-abbad.jpg?v=1780253464799",
       "sourcePage": "https://way2quran.com/en/reciters/fares-abbad",
       "note": "Named reciter profile associates this portrait with the reciter; visually inspected. Original image bytes bundled without image edits; source may be retouched. Reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/ahmadalnufais.jpg",
+      "gitBlobSha": "80e82a24c2c0c89fa56ef1ebd2f690047db2c116",
+      "bytes": 30285,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/ahmed-al-nafis.jpg?v=1780253901128",
+      "sourcePage": "https://way2quran.com/en/reciters/ahmed-al-nafis",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/khalidaljalil.jpg",
+      "gitBlobSha": "0cd8025d3232e5bb5c2d5d9a36e1ce11b9b8220d",
+      "bytes": 138669,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/khalid-al-galilee.jpg?v=1783802751592",
+      "sourcePage": "https://way2quran.com/en/reciters/khalid-al-galilee",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/wadeealyamani.jpg",
+      "gitBlobSha": "f6b57e8a25db9dd6348d22ee6e11d49aac1cab82",
+      "bytes": 24848,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/wadih-al-yamani.jpg",
+      "sourcePage": "https://way2quran.com/en/reciters/wadih-al-yamani",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/abdullahkamel.jpg",
+      "gitBlobSha": "3259b35cb556af017fc64e3e0ff43cfcd6166e7a",
+      "bytes": 34386,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/abdullah-kamel.jpg",
+      "sourcePage": "https://way2quran.com/en/reciters/abdullah-kamel",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/haniarrifai.jpg",
+      "gitBlobSha": "62eaab4ab52b5a8ecbd47ae3c7e542ef51717848",
+      "bytes": 60324,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/hani-al-rifai.jpg",
+      "sourcePage": "https://way2quran.com/en/reciters/hani-al-rifai",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/alijaber.jpg",
+      "gitBlobSha": "8bb0c979af68b0701abc51683ba310d59219ff5f",
+      "bytes": 90625,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/ali-jaber.jpg?v=1781384766420",
+      "sourcePage": "https://way2quran.com/en/reciters/ali-jaber",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/muhammadayyub.jpg",
+      "gitBlobSha": "5af6ebdb7f434606c749b1d67d6df59eef44ce66",
+      "bytes": 51432,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/mohamed-ayoub.jpg?v=1778816324619",
+      "sourcePage": "https://way2quran.com/en/reciters/mohamed-ayoub",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/salahbukhatir.jpg",
+      "gitBlobSha": "4a294160a902bb7c7faf2e97b10a46e932a1d25c",
+      "bytes": 207665,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/salah-boukhatir.jpg?v=1780235037871",
+      "sourcePage": "https://way2quran.com/en/reciters/salah-boukhatir",
+      "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
     }
   ],
   "wallpaperSets": [
