@@ -35,10 +35,11 @@ export const printedNeedsBasmala=lines=>lines.some(line=>line[1]==='basmala');
 export function printedPageMarkup(lines,page,index,surahs,escape,basmalaGlyphs){
  const keys=printedVerseKeys(lines),first=keys[0]?.split(':').map(Number),meta=first&&index.surahs[first[0]-1],juz=first&&surahs.get(first[0])?.verses[first[1]-1]?.juz;
  const header='<div class="mushaf-print-meta"><span>Джуз '+(juz||'')+'</span><strong>'+escape(meta?.name||'Мусхаф')+'</strong></div><div class="mushaf-print-number">'+page+'</div>';
- const rows=lines.map(([number,type,surah,words])=>{
+ const rows=lines.map(([number,type,surah,words],lineIndex)=>{
   if(type==='surah-header')return '<div class="mushaf-print-line mushaf-print-heading" data-print-line="'+number+'" data-print-type="'+type+'"><span lang="ar" dir="rtl">'+escape(index.surahs[surah-1].arabicName)+'</span></div>';
   if(type==='basmala')return '<div class="mushaf-print-line mushaf-print-basmala" data-print-line="'+number+'" data-print-type="'+type+'"><span class="mushaf-print-glyph" data-font-page="1" style="font-family:SALAHMushaf1" lang="ar" dir="rtl" aria-label="'+escape(surahs.get(1)?.verses[0].arabic||'')+'">'+escape(basmalaGlyphs)+'</span></div>';
-  return '<div class="mushaf-print-line" data-print-line="'+number+'" data-print-type="text" dir="rtl" lang="ar">'+words.map(([s,a,w,glyph])=>'<span class="mushaf-print-word mushaf-print-glyph" data-font-page="'+page+'" data-verse="'+s+':'+a+'" aria-hidden="true" style="font-family:SALAHMushaf'+page+'">'+escape(glyph)+'</span>').join('')+'</div>';
+  const centered=page<=2||lines[lineIndex+1]?.[1]==='surah-header'||(page===604&&lineIndex===lines.length-1);
+  return '<div class="mushaf-print-line'+(centered?' mushaf-print-centered':'')+'" data-print-line="'+number+'" data-print-type="text" dir="rtl" lang="ar">'+words.map(([s,a,w,glyph])=>'<span class="mushaf-print-word mushaf-print-glyph" data-font-page="'+page+'" data-verse="'+s+':'+a+'" aria-hidden="true" style="font-family:SALAHMushaf'+page+'">'+escape(glyph)+'</span>').join('')+'</div>';
  }).join('');
  const accessible='<div class="mushaf-accessible">'+keys.map(key=>{const [s,a]=key.split(':').map(Number),verse=surahs.get(s)?.verses[a-1];return '<span class="mushaf-ayah-text" lang="ar" dir="rtl">'+escape(verse?.arabic||'')+'</span>';}).join(' ')+'</div>';
  return header+'<div class="mushaf-print-scroll"><div class="mushaf-print-page" data-print-page="'+page+'">'+rows+'</div></div><div class="mushaf-print-number mushaf-print-number-bottom">'+page+'</div>'+accessible;

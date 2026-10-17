@@ -324,6 +324,7 @@ header.quran-section-title{height:auto}
 .mushaf-print-line{display:flex;direction:rtl;align-items:baseline;justify-content:space-between;gap:0;min-height:calc(var(--mushaf-print-size)*1.78);line-height:1.78;border-bottom:1px solid var(--mushaf-rule);font-size:var(--mushaf-print-size);font-weight:400;white-space:nowrap;overflow:visible}
 .mushaf-print-glyph{white-space:pre;line-height:1.78;letter-spacing:0;word-spacing:0;font-weight:400;font-synthesis:none}
 .mushaf-print-word{display:inline-block;flex:0 0 auto}
+.mushaf-print-centered{justify-content:center;column-gap:.22em}
 .mushaf-print-heading{justify-content:center;align-items:center;color:var(--paper-ink);font:400 calc(var(--mushaf-print-size)*.95)/1.8 'Amiri Quran','Traditional Arabic',serif}
 .mushaf-print-heading>span{padding:0 12px}.mushaf-print-basmala{justify-content:center}
 .mushaf-accessible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
