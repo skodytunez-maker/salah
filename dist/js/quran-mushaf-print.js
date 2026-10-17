@@ -16,7 +16,7 @@ export async function loadPrintedPage(page,edition='tajweed'){
 function fontPalette(page,family){
  if(document.getElementById('mushaf-palette-'+page))return;
  const style=document.createElement('style');style.id='mushaf-palette-'+page;
- style.textContent='@font-palette-values --mushaf-light-'+page+'{font-family:"'+family+'";base-palette:0}@font-palette-values --mushaf-dark-'+page+'{font-family:"'+family+'";base-palette:1}.mushaf-shell[data-theme=paper] [data-font-page="'+page+'"]{font-palette:--mushaf-light-'+page+'}.mushaf-shell[data-theme=night] [data-font-page="'+page+'"]{font-palette:--mushaf-dark-'+page+'}';
+ style.textContent='@font-palette-values --mushaf-light-'+page+'{font-family:"'+family+'";base-palette:0}@font-palette-values --mushaf-dark-'+page+'{font-family:"'+family+'";base-palette:1}.quran-reader.quran-light [data-font-page="'+page+'"],.mushaf-shell[data-theme=paper] [data-font-page="'+page+'"]{font-palette:--mushaf-light-'+page+'}.quran-reader:not(.quran-light) [data-font-page="'+page+'"],.mushaf-shell[data-theme=night] [data-font-page="'+page+'"]{font-palette:--mushaf-dark-'+page+'}';
  document.head.append(style);
 }
 export async function ensurePrintedFont(page,edition='tajweed'){
