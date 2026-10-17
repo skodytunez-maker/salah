@@ -1,0 +1,30 @@
+{
+  "version": 354,
+  "date": "2026-10-18",
+  "controls": [
+    "Listen/pause",
+    "Toggle light/dark paper",
+    "Open Tajweed color guide"
+  ],
+  "defaultEdition": "QCF V4 color Tajweed",
+  "editionMigration": "Legacy Madani defaults switch to color; later explicit Madani choices persist with editionChosen=true. Both editions remain available in Aa.",
+  "colorGuide": {
+    "source": "https://github.com/quran/quran.com-frontend-next/blob/aff1a035b09b66f28047b3216edcae4c5c949a49/src/components/QuranReader/TajweedBar/TajweedBar.tsx",
+    "paletteSource": "https://github.com/quran/quran.com-frontend-next/blob/aff1a035b09b66f28047b3216edcae4c5c949a49/src/components/QuranReader/TajweedBar/TajweedBar.module.scss",
+    "rules": 8,
+    "durations": "harakat (beats), not seconds"
+  },
+  "integrity": {
+    "arabicFilesModified": 0,
+    "layoutFilesModified": 0,
+    "upstreamArabicCompared": 6236,
+    "upstreamArabicDifferences": 0,
+    "printedPagesComparedPerEdition": 604,
+    "sourceGlyphDifferences": 0
+  },
+  "tests": [
+    "check-quran-mushaf.mjs",
+    "check-mushaf-listening.mjs",
+    "check-mushaf-print.mjs"
+  ]
+}

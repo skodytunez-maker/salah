@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{mushafThemeButton}from '../dist/js/quran-mushaf-controls.js';
 import{createMushafFollower,mushafAudioPosition}from '../dist/js/quran-mushaf-follow.js';
 import{printedVerseKeys,printedPageForPosition}from '../dist/js/quran-mushaf-print.js';
 import{createQuranPlayer}from '../dist/js/quran-audio.js';
@@ -37,11 +38,12 @@ const w=new Window({url:'https://fixture.invalid/#quran?view=mushaf&page=1'}),do
 const saved=new Map(),listeners=new Set(),navigations=[],starts=[];let current={status:'stopped',surah:null,ayah:null,timingStatus:'unavailable'},enabled=true,lines=[[1,'text',0,[[1,1,1,'x'],[1,7,1,'y']]]];
 const playback={get state(){return current;},subscribe(fn){listeners.add(fn);fn(current);return()=>listeners.delete(fn);},pause(){current={...current,status:'paused'};emit();},toggle(){current={...current,status:'playing'};emit();},async startFromAyah(s,r,a){starts.push([s.number,r,a]);current={...state(s,a),reciter:r};emit();},async start(s,r){starts.push([s.number,r,0]);current={...state(s,null),reciter:r,timingStatus:'unavailable'};emit();}};
 function emit(){for(const fn of listeners)fn(current);}
-const ctx=vm.createContext({document:doc,innerHeight:853,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,actionIcon,quranPlayback:playback,loadSurah:async()=>first,read:(k,d)=>saved.get(k)??d,write:(k,v)=>{saved.set(k,v);return true;},toast:()=>{},console});
+const ctx=vm.createContext({mushafThemeButton,document:doc,innerHeight:853,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,actionIcon,quranPlayback:playback,loadSurah:async()=>first,read:(k,d)=>saved.get(k)??d,write:(k,v)=>{saved.set(k,v);return true;},toast:()=>{},console});
 const source=await fs.readFile(new URL('../dist/js/quran-mushaf-listening.js',import.meta.url),'utf8'),api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mushafListeningOptions,mountMushafListening});',ctx);
 host.innerHTML='<div class="mushaf-top"></div><details class="mushaf-options"><summary>Aa</summary>'+api.mushafListeningOptions()+'</details><div class="mushaf-tools"></div><article class="mushaf-paper"><span class="mushaf-print-word" data-verse="1:1"></span><span class="mushaf-print-word" data-verse="1:7"></span></article>';
-const ui=api.mountMushafListening(host,{page:1,index:{surahs:[{name:'Аль-Фатиха'},{name:'Аль-Бакара'}]},getEdition:()=> 'madani',getLines:()=>lines,getFollow:()=>enabled,setFollow:v=>enabled=v,navigate:p=>navigations.push(p),playback,load:async()=>first});
-ui.refresh();host.querySelector('#mushaf-listen').click();await flush();assert.equal(starts[0][2],1);assert.equal(host.querySelector('.is-playing-ayah').dataset.verse,'1:1');
+let quickTheme='night',legendOpens=0;
+const ui=api.mountMushafListening(host,{page:1,index:{surahs:[{name:'Аль-Фатиха'},{name:'Аль-Бакара'}]},getEdition:()=> 'madani',getTheme:()=>quickTheme,setTheme:v=>quickTheme=v,openColors:()=>legendOpens++,getLines:()=>lines,getFollow:()=>enabled,setFollow:v=>enabled=v,navigate:p=>navigations.push(p),playback,load:async()=>first});
+ui.refresh();assert.equal(host.querySelectorAll('.mushaf-actions>button').length,3);host.querySelector('#mushaf-theme-toggle').click();assert.equal(quickTheme,'paper');assert.match(host.querySelector('#mushaf-theme-toggle').textContent,/Тёмный/);host.querySelector('#mushaf-colors').click();assert.equal(legendOpens,1);assert.equal(starts.length,0,'Appearance controls never start audio');quickTheme='night';ui.updateTheme();assert.match(host.querySelector('#mushaf-theme-toggle').textContent,/Светлый/);host.querySelector('#mushaf-listen').click();await flush();assert.equal(starts[0][2],1);assert.equal(host.querySelector('.is-playing-ayah').dataset.verse,'1:1');
 current=state(first,7);emit();assert.equal(host.querySelector('.is-playing-ayah').dataset.verse,'1:7');current=state(second,1);emit();assert.equal(navigations.at(-1),2);assert.equal(starts.length,1,'A page turn does not restart playback');
 ui.manualNavigation(2);current=state(second,10);emit();assert.equal(navigations.length,1,'Manual browsing suspends auto-follow');
 host.querySelector('#mushaf-follow-current').click();assert.equal(navigations.length,2);

@@ -1,5 +1,5 @@
 import{printedPageForPosition}from './quran-mushaf-print.js';
-import{mushafUrl}from './quran-mushaf-core.js';
+import{mushafUrl,mushafPreferences}from './quran-mushaf-core.js';
 import{reciterImageUrl}from './approved-catalog.js';
 import{ruqyahPlayback}from './ruqyah-session.js';
 import{ruqyahDuration}from './ruqyah-catalog.js';
@@ -52,7 +52,7 @@ export function mountQuranPlayer(){
   if(record){const r=reciterInfo(record.reciter);link.href='#quran?view=reciters&reciter='+encodeURIComponent(record.reciter);link.setAttribute('aria-label','Открыть чтеца рукъи');link.querySelector('strong').textContent=record.title;link.querySelector('small').textContent=r.name+' · '+panel.dataset.elapsed+' / '+panel.dataset.duration+({paused:' · На паузе',loading:' · Загрузка…',ended:' · Запись завершена',error:' · Повторить'}[ruqyah.status]||'');link.querySelector('img').src=reciterImageUrl(r.portrait);const active=['playing','loading'].includes(ruqyah.status);toggle.innerHTML=active?pause:play;toggle.setAttribute('aria-label',active?'Пауза рукъи':'Воспроизвести рукъю');prevButton.disabled=nextButton.disabled=false;return;}
   link.setAttribute('aria-label','Открыть звучащую суру');
   const inMushaf=route==='quran'&&new URLSearchParams(location.hash.split('?')[1]||'').get('view')==='mushaf';
-  link.href=inMushaf?mushafUrl(printedPageForPosition(state.surah.number,state.ayah||1,read('quran-mushaf-preferences',{}).edition)):'#quran?surah='+state.surah.number+'&ayah='+(state.ayah||1)+(state.offlineOnly||state.playlist?'&reciter='+encodeURIComponent(state.reciter)+(state.offlineOnly?'&offline=1':''):'');
+  link.href=inMushaf?mushafUrl(printedPageForPosition(state.surah.number,state.ayah||1,mushafPreferences(read('quran-mushaf-preferences',{})).edition)):'#quran?surah='+state.surah.number+'&ayah='+(state.ayah||1)+(state.offlineOnly||state.playlist?'&reciter='+encodeURIComponent(state.reciter)+(state.offlineOnly?'&offline=1':''):'');
   link.querySelector('strong').textContent=state.meta.name;
   const favorites=read(RECITER_FAVORITES_KEY,[]),portrait=link.querySelector('.quran-playing-portrait');portrait.src=reciterImageUrl(reciterInfo(state.reciter).portrait);const catalogKey=state.surah.number+'|'+state.reciter+'|'+JSON.stringify(favorites);if(reciterSelect.dataset.catalog!==catalogKey){reciterSelect.dataset.catalog=catalogKey;reciterSelect.replaceChildren(...groupedReciters(favorites).map(group=>{const optgroup=document.createElement('optgroup');optgroup.label=group.name;for(const r of group.reciters){const option=document.createElement('option');option.value=r.id;option.disabled=!reciterHasSurah(r.id,state.surah.number);option.textContent=r.name+(option.disabled?' · нет записи':'');option.selected=r.id===state.reciter;optgroup.append(option);}return optgroup;}))}
   panel.querySelector('[data-share]').disabled=!['playing','paused'].includes(state.status);
