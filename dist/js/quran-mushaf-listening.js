@@ -78,6 +78,11 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  reader.onclick=()=>{host.querySelector('.mushaf-options').open=true;select.focus();};
  check.onchange=()=>{setFollow(check.checked);if(check.checked)follower.resume();else follower.suspend();draw(playback.state);};
  resume.onclick=()=>{setFollow(true);follower.resume();lastScrolled=null;const point=mushafAudioPosition(playback.state);if(point&&!pageKeys().includes(point.key)){const target=printedPageForPosition(point.surah,point.ayah,getEdition());if(target&&target!==page){arrival={page:target,edition:getEdition(),automatic:true,until:Date.now()+10000};navigate(target);return;}}draw(playback.state);if(point)scrollToAyah(point.key,true);};
+ // Keep the same controls and listeners in the fixed header, above the page.
+ const toolbar=panel.querySelector('.mushaf-actions'),top=host.querySelector('.mushaf-top'),shell=host.querySelector('.mushaf-shell');
+ top.append(toolbar);
+ const syncHeader=()=>{const height=top.getBoundingClientRect().height;if(height>0)shell?.style.setProperty('--mushaf-top-height',height+'px');};
+ syncHeader();const headerObserver=globalThis.ResizeObserver?new ResizeObserver(syncHeader):null;headerObserver?.observe(top);
  const unsubscribe=playback.subscribe(draw);
  return{
   updateTheme:drawTheme,
@@ -88,6 +93,6 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
    draw(playback.state);
   },
   manualNavigation(target){follower.suspend();arrival={page:target,edition:getEdition(),automatic:false,until:Date.now()+10000};},
-  dispose(){closed=true;starting++;unsubscribe();panel.remove();}
+  dispose(){closed=true;starting++;unsubscribe();headerObserver?.disconnect();toolbar.remove();shell?.style.removeProperty('--mushaf-top-height');panel.remove();}
  };
 }
