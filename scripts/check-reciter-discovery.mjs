@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import {RECITERS,reciterInfo,reciterHasSurah} from '../dist/js/quran-reciters.js';
+import {normalizeReciterFavorites,toggleReciterFavorite,RECITER_FAVORITES_KEY} from '../dist/js/quran-reciter-favorites.js';
+import {RECITER_ADDED_AT,RECITER_PROMOTION_MS,RECITER_RECENT_MS,reciterIsPromoted,recentReciters,orderReciterCatalog,reciterFilterTabs} from '../dist/js/quran-reciter-discovery.js';
+const now=Date.parse('2026-10-18T12:00:00Z'),ids=Object.keys(RECITER_ADDED_AT),lastAdded=Math.max(...Object.values(RECITER_ADDED_AT).map(Date.parse));
+assert.equal(ids.length,13);assert.equal(recentReciters(RECITERS,now).length,13);
+const r=reciterInfo('ar.ahmadalnufais'),start=Date.parse(RECITER_ADDED_AT[r.id]);
+assert.equal(reciterIsPromoted(r,start-1),false);assert.equal(reciterIsPromoted(r,start),true);assert.equal(reciterIsPromoted(r,start+RECITER_PROMOTION_MS-1),true);assert.equal(reciterIsPromoted(r,start+RECITER_PROMOTION_MS),false);
+assert.equal(recentReciters([r],start+RECITER_RECENT_MS-1).length,1);assert.equal(recentReciters([r],start+RECITER_RECENT_MS).length,0);
+assert.equal(reciterIsPromoted({id:'fixture',addedAt:'2026-02-30T00:00:00.000Z'},now),false);assert.equal(reciterIsPromoted({id:'fixture',addedAt:'invalid'},now),false);assert.equal(reciterIsPromoted({id:'fixture',addedAt:now},now),false);
+const before=RECITERS.map(r=>r.id),saved=['ar.husary','ar.islamsobhi'],ordered=orderReciterCatalog(RECITERS,saved,now);
+assert.deepEqual(ordered.slice(0,2).map(r=>r.id),saved);assert.equal(ordered[2].id,'ar.ahmadalnufais');assert.equal(new Set(ordered.map(r=>r.id)).size,46);assert.equal(ordered.length,46);assert.deepEqual(RECITERS.map(r=>r.id),before);
+assert.deepEqual(orderReciterCatalog(RECITERS,[],lastAdded+RECITER_PROMOTION_MS).map(r=>r.id),RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
+assert.ok(!recentReciters([{...r,variantOf:'other'}],now).length);
+const w=new Window({url:'https://fixture.invalid/#quran?view=reciters'}),doc=w.document,host=doc.createElement('div');doc.body.append(host);Object.defineProperty(doc,'hidden',{value:false,configurable:true});
+let clock=now;class Clock extends Date{static now(){return clock;}};
+const store=new Map([[RECITER_FAVORITES_KEY,saved]]),timers=new Map();let timerId=0;
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const playback={state:{status:'stopped'},subscribe(fn){fn(this.state);return()=>{};}},queue={state:{},subscribe(){return()=>{};}};
+const ctx=vm.createContext({RECITERS,reciterInfo,reciterHasSurah,RECITER_FAVORITES_KEY,normalizeReciterFavorites,toggleReciterFavorite,reciterIsPromoted,recentReciters,orderReciterCatalog,reciterFilterTabs,reciterImageUrl:p=>'./'+p,
+read:(k,f)=>store.get(k)??f,write:(k,v)=>{store.set(k,v);return true;},esc,toast(){},actionIcon:()=>'',actionLabel:(_,label)=>label,ruqyahFor:()=>[],ruqyahMarkup:()=>'',bindRuqyah:()=>()=>{},bindPopularConsent(){},showListeningScanner(){},quranPlayback:playback,quranDownloadQueue:queue,offlineAudioStore:{listRecordings:async()=>[]},listeningDayKey:t=>new Date(t).toISOString().slice(0,10),window:w,document:doc,Event:w.Event,Date:Clock,Intl,Set,Map,
+setInterval:fn=>{const id=++timerId;timers.set(id,fn);return id;},clearInterval:id=>timers.delete(id)});
+const source=await fs.readFile(new URL('../dist/js/quran-reciter-library.js',import.meta.url),'utf8');const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountReciterLibrary});',ctx);
+const cards=()=>[...host.querySelectorAll('.reciter-card')],cardId=c=>new URL(c.querySelector('a').href).hash.split('reciter=')[1];
+let cleanup=api.mountReciterLibrary(host,{surahs:[]},null,null);
+assert.equal(cards().length,46);assert.deepEqual(cards().slice(0,3).map(cardId),['ar.husary','ar.islamsobhi','ar.ahmadalnufais']);assert.equal(host.querySelectorAll('.reciter-new-badge').length,13);assert.equal(host.querySelectorAll('.reciter-filter-tabs a').length,4);assert.match(host.querySelector('a[href$="filter=new"]').textContent,/Новые 13/);
+const input=host.querySelector('#reciter-search');input.value='Нуфайс';input.oninput();assert.equal(cards().filter(c=>!c.hidden).length,1);cleanup();assert.equal(timers.size,0);
+cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'new');assert.equal(cards().length,13);assert.ok(cards().every(c=>ids.includes(cardId(c))));assert.equal(host.querySelector('.reciter-filter-tabs a[aria-current="page"]').getAttribute('href'),'#quran?view=reciters&filter=new');
+host.querySelector('#reciter-search').focus();clock=lastAdded+RECITER_PROMOTION_MS;for(const fn of [...timers.values()])fn();assert.equal(host.querySelectorAll('.reciter-new-badge').length,13,'Focused search defers catalog remount');host.querySelector('#reciter-search').blur();for(const fn of [...timers.values()])fn();assert.equal(host.querySelectorAll('.reciter-new-badge').length,0);assert.equal(cards().length,13);
+clock=lastAdded+RECITER_RECENT_MS;for(const fn of [...timers.values()])fn();assert.equal(cards().length,0);assert.ok(host.textContent.includes('новых чтецов нет'));assert.ok(host.textContent.includes('Новые 0'));cleanup();assert.equal(timers.size,0);
+cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'favorites');assert.deepEqual(cards().map(cardId),saved);cleanup();
+assert.equal(reciterInfo('ar.raadalkurdi').portrait,'assets/reciters/raadalkurdi-v349.png');
+console.log('PASS: 72-hour promotion, 30-day filter, UTC boundaries, favorites priority, stable old order, actual catalog DOM, search, expiry refresh, empty state and cleanup.');await w.happyDOM.abort();

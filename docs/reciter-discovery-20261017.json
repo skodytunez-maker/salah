@@ -1,0 +1,23 @@
+{
+  "version": 349,
+  "date": "2026-10-17",
+  "promotion": {
+    "hours": 72,
+    "startsAt": "First public delivery timestamp, not app update or verifiedOn date",
+    "favoritePriority": true,
+    "restoresStableOrder": true
+  },
+  "newFilter": {
+    "days": 30,
+    "registeredReciters": 13
+  },
+  "portrait": {
+    "id": "ar.raadalkurdi",
+    "name": "Мухаммад аль-Курди",
+    "path": "assets/reciters/raadalkurdi-v349.png",
+    "sourceAsset": "dist/assets/reciters/raadalkurdi-approved.jpg",
+    "sourceEvidence": "docs/reciter-expansion-20261009.json",
+    "transformation": "Built-in imagegen edit: tighter square head-and-shoulders framing, larger face, subtle exposure, white balance and contrast correction; same source portrait, no intentional change to identity. User approved preview on 2026-10-17.",
+    "rightsReviewStatus": "needs-review"
+  }
+}

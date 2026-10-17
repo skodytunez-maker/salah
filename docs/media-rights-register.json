@@ -2300,6 +2300,16 @@
       "sourceUrl": "https://media.way2quran.com/imgs/salah-boukhatir.jpg?v=1780235037871",
       "sourcePage": "https://way2quran.com/en/reciters/salah-boukhatir",
       "note": "Named source profile associates portrait with the reciter; original bytes visually inspected and bundled without image edits. Source may be retouched; reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/raadalkurdi-v349.png",
+      "gitBlobSha": "34263858dac1fcf3983d1d6c73029a9d119ec524",
+      "bytes": 2024732,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "note": "Derived from the previous user-supplied and selected portrait. Built-in imagegen edit: tighter square crop with larger face and subtle lighting/contrast correction. User approved the edited preview on 2026-10-17. Identity approval is not evidence of third-party reuse licensing; rights status inherited as needs-review.",
+      "sourceAsset": "dist/assets/reciters/raadalkurdi-approved.jpg",
+      "rightsEvidence": "docs/reciter-discovery-20261017.json"
     }
   ],
   "wallpaperSets": [

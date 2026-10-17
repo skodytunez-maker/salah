@@ -81,3 +81,11 @@
 
 .release-new-readers.release-reader-quartet{grid-template-columns:repeat(2,minmax(0,1fr));width:min(100%,280px);gap:14px 12px}
 .release-new-art .release-reader-quartet .release-reader-portrait{width:76px;height:76px}
+
+.release-discovery-preview{display:grid;grid-template-columns:minmax(0,1fr)76px;gap:12px;align-items:center;width:min(100%,300px)}
+.release-filter-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.release-filter-preview span{border:1px solid #adc8ec44;border-radius:9px;padding:10px 5px;font-size:11px;text-align:center;color:#bdcbe0}
+.release-filter-preview .selected{border-color:#d8be88;background:#d8be8818;color:#e7d39f}
+.release-discovery-preview figure{margin:0;display:grid;justify-items:center;gap:6px}
+.release-discovery-preview figcaption{font-size:9px;line-height:1.3;text-align:center;color:#c5d0df}
+.release-new-art .release-discovery-preview .release-reader-portrait{width:70px;height:88px;border-radius:12px;object-position:center 28%}

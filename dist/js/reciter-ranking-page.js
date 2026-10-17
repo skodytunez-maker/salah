@@ -1,3 +1,4 @@
+import{reciterFilterTabs,recentReciters}from './quran-reciter-discovery.js';
 import{listeningSummaryMarkup,updateListeningSummary}from './listening-summary.js';
 import{mountCompetition}from './competition-page.js';
 import{sharedPersonalTotals,refreshCompetitionOwn}from './competition-client.js';
@@ -16,12 +17,12 @@ export function mountReciterRanking(host,filter,heading){
  const draw=()=>{
   if(closed)return;renderedDay=new Date().toDateString();
   const commonTotals=sharedPersonalTotals(personalListening(period).totals,period),personalIds=Object.entries(commonTotals).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);
-  const currentKey=JSON.stringify({period,query,saved:read(RECITER_FAVORITES_KEY,[]),ranks:rankListening(personalIds.map(id=>({id,seconds:commonTotals[id]}))).map(({id,rank})=>({id,rank})),day:renderedDay});
+  const currentKey=JSON.stringify({period,query,newCount:recentReciters(RECITERS).length,saved:read(RECITER_FAVORITES_KEY,[]),ranks:rankListening(personalIds.map(id=>({id,seconds:commonTotals[id]}))).map(({id,rank})=>({id,rank})),day:renderedDay});
   if(!global&&currentKey===personalRenderKey){updatePersonalRankingTimes(host,personalIds,id=>commonTotals[id]||0);updateListeningSummary(host,Math.floor(Object.values(commonTotals).reduce((a,b)=>a+b,0)));return;}personalRenderKey=currentKey;
   const saved=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS),count=RECITERS.filter(r=>!r.variantOf).length;
   let html='<section class="quran-library quran-reciters-library rank-page">'+heading();
   html+='<label class="field"><input type="search" id="reciter-search" aria-label="Найти чтеца" placeholder="Найти чтеца" autocomplete="off"></label>';
-  html+='<nav class="reciter-filter-tabs" aria-label="Каталог чтецов"><a href="#quran?view=reciters">Все '+count+'</a><a href="#quran?view=reciters&filter=favorites">Избранные '+saved.length+'</a><a href="#quran?view=reciters&filter=ruqyah">Рукъя</a></nav>';
+  html+=''+reciterFilterTabs(null,saved.length,RECITERS)+'';
   html+='<nav class="reciter-top-tabs" aria-label="Топы чтецов"><a class="reciter-top-tab reciter-top-personal" href="#quran?view=reciters&filter=my-top" aria-current="'+(!global?'page':'false')+'"><span class="reciter-top-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 12h3v7H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2Zm16 0h-3v7h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2Z"/></svg></span><span><strong>Мой топ</strong><small>Ваше время</small></span></a><a class="reciter-top-tab reciter-top-global" href="#quran?view=reciters&filter=salah-top" aria-current="'+(global?'page':'false')+'"><span class="reciter-top-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h8v6a4 4 0 0 1-8 0V3Zm0 2H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 1v5m-4 3h8m-7-3h6"/></svg></span><span><strong>Топ SALAH</strong><small>Общий рейтинг</small></span></a></nav>';
   const active=global?globalRankingPeriod():period,options=global?[['day','День'],['week','Неделя'],['month','Месяц']]:[['day','День'],['week','Неделя'],['month','Месяц'],['all','Всё время']];
   const leaders={day:'Лидер дня',week:'Лидер недели',month:'Лидер месяца',all:'Ваш лидер'};
