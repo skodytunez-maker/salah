@@ -1,0 +1,54 @@
+{
+  "version": 352,
+  "date": "2026-10-17",
+  "reference": "User screenshot, Al-Maida 5:96–103, supplied 2026-10-17",
+  "scope": "Printed Arabic text format, fixed lines and embedded ayah markers; SALAH colors and existing reading controls retained.",
+  "layout": {
+    "source": "QUL qpc-v4-tajweed-15-lines, qpc-v4",
+    "package": "https://github.com/NedaaDevs/quran-image-generator/releases/download/assets/v4.zip",
+    "packageSha256": "932ccce754504dbea5068d8b5847bbf9b6c6204880c79192e1ab102aadee8b94",
+    "path": "dist/data/mushaf-print/layout.json",
+    "sha256": "a6472d1098e3b99a3bbd9a8e3eacd920f38ae1301f996627393f58ceedb5c399",
+    "pages": 604,
+    "headings": 114,
+    "basmalas": 112,
+    "verses": 6236,
+    "wordCells": 77432
+  },
+  "fonts": {
+    "provider": "Quran Foundation",
+    "source": "https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/",
+    "url": "https://verses.quran.foundation/fonts/quran/hafs/v4/colrv1/woff2/p{page}.woff2",
+    "runtimeOnly": true,
+    "bundledFontFiles": 0,
+    "appManagedFontDiskCache": false,
+    "palettes": {
+      "light": 0,
+      "dark": 1
+    },
+    "maxRegisteredFonts": 8
+  },
+  "safety": {
+    "sourceArabicFilesModified": false,
+    "networkFontFailure": "Show retry, never show glyph codes in fallback fonts",
+    "pinchAndScroll": "Zoomed page pans without triggering page navigation"
+  },
+  "tests": [
+    "scripts/check-mushaf-print.mjs",
+    "scripts/check-quran-mushaf.mjs"
+  ],
+  "visualQa": "design-qa.md",
+  "madani": {
+    "source": "QUL KFGQPC V2 layout (1421H print), QCF V2 glyphs",
+    "sourceUrl": "https://qul.tarteel.ai/resources/mushaf-layout/10",
+    "package": "https://github.com/NedaaDevs/quran-image-generator/releases/download/assets/v2.zip",
+    "packageSha256": "90f0ff89515e149a56a9774574324ac9fcf1296f615def6ab0f15f61dfe7a4d5",
+    "path": "dist/data/mushaf-print/madani-layout.json",
+    "sha256": "61f89883d4f13f2a722baa5403c3fe2a05b357daaa7a4c0eada9dcfe50895f88",
+    "pages": 604,
+    "wordCells": 78005,
+    "verses": 6236,
+    "defaultEdition": true,
+    "fontUrl": "https://verses.quran.foundation/fonts/quran/hafs/v2/woff2/p{page}.woff2"
+  }
+}

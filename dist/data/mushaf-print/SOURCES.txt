@@ -1,0 +1,21 @@
+SALAH Mushaf print layout
+
+Page/line/word layout: QUL (Quranic Universal Library), qpc-v4-tajweed-15-lines and qpc-v4 glyph codes.
+https://qul.tarteel.ai/
+Packaged SQLite data: NedaaDevs/quran-image-generator, assets release, v4.zip.
+https://github.com/NedaaDevs/quran-image-generator
+https://github.com/NedaaDevs/quran-image-generator/releases/tag/assets
+
+Quran fonts provided by Quran Foundation. Fonts are requested at runtime from the documented Quran Foundation CDN and are NOT redistributed in this app package.
+https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/
+https://verses.quran.foundation/fonts/quran/hafs/v4/colrv1/woff2/p{PAGE}.woff2
+
+Arabic text for accessible reading: the existing verified Tanzil/Uthmani corpus included in SALAH.
+https://tanzil.net
+
+The layout metadata contains source glyph codes and positions. The existing Quran text files are unchanged.
+
+Default edition: Madinah Mushaf, Hafs an Asim, QCF V2 / KFGQPC V2 (1421H print), 604 pages.
+Layout data: QUL, packaged as v2.zip in the same NedaaDevs release.
+Runtime fonts: https://verses.quran.foundation/fonts/quran/hafs/v2/woff2/p{PAGE}.woff2
+Color Tajweed remains a separate QCF V4 edition; the two datasets and fonts are never mixed.
