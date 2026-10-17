@@ -26,7 +26,8 @@ strip.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}
 const novemberNews=illustratedReleaseMarkup(342);root.innerHTML=novemberNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Ноябрь в календаре Тюмени'));assert.ok(root.textContent.includes('таблицы 2025 года'));assert.equal(root.querySelectorAll('svg').length,1);
 const geoNews=illustratedReleaseMarkup(343);root.innerHTML=geoNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Первое место — выше'));assert.ok(root.textContent.includes('обновления приложения через Google Play'));
 root.innerHTML=illustratedReleaseMarkup(346);assert.equal(root.querySelectorAll('.release-feature').length,1);assert.ok(root.textContent.includes('резервный источник'));assert.equal(root.querySelectorAll('svg').length,1);
-const future=illustratedReleaseMarkup(347,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
+root.innerHTML=illustratedReleaseMarkup(347);assert.equal(root.querySelectorAll('.release-feature').length,1);assert.equal(root.querySelector('h3').textContent,'Новые чтецы');assert.equal(root.querySelectorAll('.release-new-readers img').length,5);assert.ok(root.textContent.includes('109 сур'));for(const img of root.querySelectorAll('.release-new-readers img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
+const future=illustratedReleaseMarkup(348,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 const profile=doc.createElement('div');doc.body.append(profile);let dismissed=0;profile.onclick=()=>dismissed++;
