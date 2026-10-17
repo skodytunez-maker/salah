@@ -344,3 +344,21 @@ header.quran-section-title{height:auto}
 .mushaf-print-heading{color:var(--paper-ink)}.mushaf-shell[data-theme=night] .mushaf-print-heading{color:#ddc591}
 .mushaf-pagination button{border-color:#c9b47f55;background:#182238;color:#ddc591;border-radius:14px}.mushaf-tools button{border-color:#c9b47f55;color:#ddc591}
 .mushaf-edition{font-size:10px;text-align:center;letter-spacing:.2px;color:#aebbd0;margin:8px 0 0;line-height:1.5}
+
+/* Reader controls stay reachable while the long printed page scrolls. */
+.mushaf-shell{padding-top:calc(58px + env(safe-area-inset-top,0px))}
+.mushaf-top{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(720px,calc(100% - 24px));z-index:100;padding-top:calc(6px + env(safe-area-inset-top,0px));padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px));box-shadow:0 5px 14px #03081555}
+.mushaf-options-panel{top:calc(100% + 6px);max-height:calc(100dvh - 88px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.mushaf-listening{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin:8px 5px 10px;min-width:0}
+.mushaf-listening>button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 10px;border:1px solid #c9b47f66;border-radius:12px;color:#ddc591;background:#182238;font-size:12px;white-space:nowrap}
+.mushaf-listening>button:disabled{opacity:.5}.mushaf-listening>button[hidden]{display:none}
+.mushaf-listening .action-icon{width:18px;height:18px;flex:none;display:block}
+.mushaf-listening-copy{min-width:0}.mushaf-listening-copy>button{display:block;max-width:100%;min-height:30px;padding:2px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;color:#ddc591;font-size:12px}
+.mushaf-listening-copy small{display:block;line-height:1.5;color:#aebbd0;font-size:10px}
+.mushaf-options-panel .mushaf-follow-setting{display:flex;align-items:center;gap:10px}
+.mushaf-follow-setting input{width:20px;height:20px;min-height:20px;flex:0 0 20px;padding:0;accent-color:#ddc591}
+.mushaf-listening-help{font-size:11px;line-height:1.7;color:#aebbd0}
+.mushaf-print-word.is-playing-ayah{background:#ddc59130;border-radius:4px;box-shadow:0 2px 0 #ddc591b3}
+.mushaf-shell[data-theme=paper] .mushaf-print-word.is-playing-ayah{background:#c89b3533;box-shadow:0 2px 0 #9d7326}
+@media(max-width:480px){.mushaf-top{width:calc(100% - 10px)}}
+@media(max-width:350px){.mushaf-listening{gap:6px;margin-inline:2px}.mushaf-listening>button{padding:8px;font-size:11px}.mushaf-listening-copy>button{font-size:11px}}
