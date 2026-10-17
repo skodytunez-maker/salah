@@ -4,6 +4,8 @@ import crypto from 'node:crypto';
 import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import*as core from '../dist/js/quran-mushaf-core.js';
+import*as print from '../dist/js/quran-mushaf-print.js';
+const printData=JSON.parse(await fs.readFile(new URL('../dist/data/mushaf-print/layout.json',import.meta.url),'utf8')); 
 import{MUSHAF_PAGES}from '../dist/js/quran-mushaf-pages.js';
 import{normalizeStandaloneLaunch}from '../dist/js/app-start.js';
 import{createBackup,validateBackup}from '../dist/js/backup.js';
@@ -27,7 +29,7 @@ assert.equal(core.mushafSwipe({x:200,y:200},{x:100,y:205}),1);assert.equal(core.
 await assert.rejects(()=>core.loadMushafPage(0,async n=>surahs.get(n)));
 await assert.rejects(()=>core.loadMushafPage(1,async()=>({...surahs.get(1),verses:surahs.get(1).verses.map(v=>({...v,page:2}))})));
 const storage=new Map([['quran-preferences',{translation:true,transliteration:true}],['quran-mushaf-last-page',42]]),toasts=[];let canSave=true,loader=async n=>surahs.get(n),frames=[];
-const ctx=vm.createContext({...core,read:(k,d)=>storage.has(k)?storage.get(k):d,write:(k,v)=>{if(!canSave)return false;storage.set(k,v);return true;},esc,toast:s=>toasts.push(s),loadSurah:n=>loader(n),document:doc,window:w,location:w.location,requestAnimationFrame:f=>frames.push(f)});
+const ctx=vm.createContext({...core,...print,loadPrintedPage:async p=>printData.pages[p-1],ensurePrintedFont:async p=>'SALAHMushaf'+p,trimPrintedFonts:()=>{},fitPrintedPage:()=>{},read:(k,d)=>storage.has(k)?storage.get(k):d,write:(k,v)=>{if(!canSave)return false;storage.set(k,v);return true;},esc,toast:s=>toasts.push(s),loadSurah:n=>loader(n),document:doc,window:w,location:w.location,requestAnimationFrame:f=>frames.push(f)});
 const source=await fs.readFile(new URL('../dist/js/quran-mushaf.js',import.meta.url),'utf8');
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountMushaf,mushafEntry});',ctx),flush=async()=>{await new Promise(r=>setTimeout(r,0));};
 assert.match(api.mushafEntry(),/page=42/);let cleanup=api.mountMushaf(host,index,null);await flush();assert.equal(host.querySelectorAll('.mushaf-ayah-text').length,surahs.get(2).verses.filter(v=>v.page===42).length);assert.equal(storage.get(core.MUSHAF_LAST_KEY),42);
@@ -39,7 +41,7 @@ host.querySelector('#mushaf-next').click();assert.equal(w.location.hash,core.mus
 const jump=host.querySelector('#mushaf-page-input');jump.value='604';host.querySelector('#mushaf-page-jump').dispatchEvent(new w.Event('submit',{cancelable:true}));assert.equal(w.location.hash,core.mushafUrl(604));
 const surahSelect=host.querySelector('#mushaf-surah-select');surahSelect.value='1';surahSelect.dispatchEvent(new w.Event('change'));assert.equal(w.location.hash,core.mushafUrl(1));
 const juzSelect=host.querySelector('#mushaf-juz-select');juzSelect.value='30';juzSelect.dispatchEvent(new w.Event('change'));assert.equal(w.location.hash,core.mushafUrl(core.mushafPageForPosition(index.juz[29].start.surah,index.juz[29].start.ayah)));
-const paper=host.querySelector('.mushaf-paper'),touch=(type,points)=>{const e=new w.Event(type);Object.defineProperty(e,type==='touchend'?'changedTouches':'touches',{value:points.map(([clientX,clientY])=>({clientX,clientY}))});paper.dispatchEvent(e);};
+size.value='30';size.dispatchEvent(new w.Event('change'));const paper=host.querySelector('.mushaf-paper'),touch=(type,points)=>{const e=new w.Event(type);Object.defineProperty(e,type==='touchend'?'changedTouches':'touches',{value:points.map(([clientX,clientY])=>({clientX,clientY}))});paper.dispatchEvent(e);};
 touch('touchstart',[[200,200]]);touch('touchend',[[100,205]]);assert.equal(w.location.hash,core.mushafUrl(43));const hash=w.location.hash;touch('touchstart',[[200,200]]);touch('touchmove',[[190,210],[200,220]]);touch('touchend',[[100,205]]);assert.equal(w.location.hash,hash);touch('touchstart',[[200,200]]);touch('touchend',[[180,400]]);assert.equal(w.location.hash,hash);
 cleanup();assert.ok(!doc.body.classList.contains('quran-focus'));for(const f of frames.splice(0))f();
 cleanup=api.mountMushaf(host,index,'604');await flush();assert.equal(host.querySelector('.mushaf-shell').dataset.theme,'paper');const nightSelect=host.querySelector('#mushaf-theme');nightSelect.value='night';nightSelect.dispatchEvent(new w.Event('change'));assert.equal(host.querySelector('.mushaf-shell').dataset.theme,'night');assert.equal(storage.get(core.MUSHAF_PREFERENCES_KEY).theme,'night');assert.ok(host.querySelector('#mushaf-next').disabled);assert.ok(!host.querySelector('#mushaf-prev').disabled);cleanup();

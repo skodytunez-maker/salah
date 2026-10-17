@@ -311,3 +311,22 @@ header.quran-section-title{height:auto}
 .mushaf-loading,.mushaf-error{direction:ltr;font-size:14px;line-height:1.8;color:var(--paper-ink)}.mushaf-error h2{font-family:inherit;font-size:18px}
 .mushaf-pagination{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:18px 0 0;font-size:12px}.mushaf-pagination button{min-width:0;min-height:46px;padding:9px 8px;border:1px solid #b9c7e54a;border-radius:12px;background:#101929;color:#e0ca95;font-size:12px}.mushaf-pagination button:disabled{opacity:.4;cursor:default}.mushaf-pagination>span{font-variant-numeric:tabular-nums;color:#bbc2cd}.mushaf-swipe-note{margin:12px 0;color:#9ca8bc;text-align:center;font-size:11px;line-height:1.7}
 @media(max-width:480px){body.quran-focus:has(.mushaf-shell) .workspace{padding-inline:12px}.mushaf-paper{padding:18px 16px 26px}.mushaf-surah{font-size:25px}.mushaf-options-panel{padding:16px}.mushaf-tools{font-size:10px}}
+
+/* Print-faithful Mushaf: fixed source lines and word glyphs, scaled as one page. */
+.mushaf-shell{max-width:720px}
+.mushaf-paper{padding:8px 10px 12px;min-height:0;border-radius:3px;box-shadow:none;border-color:var(--paper-line)}
+.mushaf-shell[data-theme=night]{--paper-bg:#142130;--paper-ink:#eee9df;--paper-line:#8d9b9e;--mushaf-rule:#a8b4bd55}
+.mushaf-shell[data-theme=paper]{--paper-bg:#fffdf5;--paper-ink:#181a20;--paper-line:#777668;--mushaf-rule:#817c6555}
+.mushaf-print-meta{display:grid;grid-template-columns:.7fr 1.3fr;gap:12px;align-items:center;padding:7px 4px 9px;color:var(--paper-ink);font-size:14px;text-align:center}.mushaf-print-meta>span,.mushaf-print-meta>strong{padding:8px 5px;border-block:1px solid var(--paper-line);font-weight:500}
+.mushaf-print-number{display:flex;align-items:center;justify-content:center;gap:12px;min-height:34px;font-family:Georgia,serif;font-size:24px;font-variant-numeric:tabular-nums;color:var(--paper-ink)}.mushaf-print-number:before,.mushaf-print-number:after{content:"";flex:1;border-top:1px solid var(--paper-line)}.mushaf-print-number-bottom{margin-top:7px}
+.mushaf-print-scroll{width:100%;overflow:auto;overscroll-behavior:contain}
+.mushaf-print-page{--mushaf-print-size:25px;width:100%;padding:0 3px}
+.mushaf-print-line{display:flex;direction:rtl;align-items:baseline;justify-content:space-between;gap:0;min-height:calc(var(--mushaf-print-size)*1.78);line-height:1.78;border-bottom:1px solid var(--mushaf-rule);font-size:var(--mushaf-print-size);font-weight:400;white-space:nowrap;overflow:visible}
+.mushaf-print-glyph{white-space:pre;line-height:1.78;letter-spacing:0;word-spacing:0;font-weight:400;font-synthesis:none}
+.mushaf-print-word{display:inline-block;flex:0 0 auto}
+.mushaf-print-heading{justify-content:center;align-items:center;color:var(--paper-ink);font:400 calc(var(--mushaf-print-size)*.95)/1.8 'Amiri Quran','Traditional Arabic',serif}
+.mushaf-print-heading>span{padding:0 12px}.mushaf-print-basmala{justify-content:center}
+.mushaf-accessible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.mushaf-tools{margin:6px 0}.mushaf-top{min-height:56px;padding:6px 0}.mushaf-pagination{margin-top:10px}
+@supports not(font-palette:--mushaf-test){.mushaf-shell[data-theme=night] .mushaf-print-glyph{filter:invert(1) hue-rotate(180deg)}}
+@media(max-width:480px){body.quran-focus:has(.mushaf-shell) .workspace{padding-inline:5px}.mushaf-paper{padding:5px 6px 9px}.mushaf-print-meta{font-size:12px;gap:9px;padding-top:4px}.mushaf-print-number{font-size:21px;min-height:30px}.mushaf-top{padding-inline:6px}.mushaf-tools{padding-inline:6px}.mushaf-pagination{padding-inline:5px}.mushaf-shell{padding-bottom:85px}}
