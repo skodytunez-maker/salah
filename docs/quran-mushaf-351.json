@@ -1,0 +1,40 @@
+{
+  "version": 351,
+  "date": "2026-10-17",
+  "feature": "Arabic-only adaptive Mushaf book reader",
+  "userTheme": "SALAH dark theme by default; optional paper theme",
+  "source": {
+    "index": "dist/data/quran-index.json",
+    "arabicEdition": "quran-uthmani",
+    "source": "https://alquran.cloud/api",
+    "verifiedOn": "2026-10-01"
+  },
+  "textIntegrity": {
+    "verifiedSurahHashes": 114,
+    "verses": 6236,
+    "pages": 604,
+    "modifiedSourceFiles": 0,
+    "note": "Page metadata derived from the existing verified page fields. All verse strings, including original source bismillah prefixes, are rendered unchanged. No generated Quran text, translation or transliteration is used in the page content."
+  },
+  "layout": "Reflowable Arabic text grouped by the existing 604-page division; not a reproduction of printed line breaks.",
+  "navigation": [
+    "previous/next page",
+    "horizontal swipe; ignore vertical scroll and multitouch",
+    "keyboard arrows on page",
+    "page number",
+    "surah",
+    "juz"
+  ],
+  "storage": {
+    "lastPage": "quran-mushaf-last-page",
+    "bookmarks": "quran-mushaf-bookmarks",
+    "preferences": "quran-mushaf-preferences",
+    "includedInBackup": true
+  },
+  "verification": {
+    "script": "scripts/check-quran-mushaf.mjs",
+    "nativeDeepLink": true,
+    "cleanup": true,
+    "offline": "Uses existing verified surah cache. No new text network source."
+  }
+}
