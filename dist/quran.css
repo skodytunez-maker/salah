@@ -384,9 +384,8 @@ header.quran-section-title{height:auto}
 .mushaf-colors-dialog[data-theme=paper] [data-rule=edgham]{background:#a5a5a5}.mushaf-colors-dialog[data-theme=paper] [data-rule=mad-2]{background:#ce9e00}.mushaf-colors-dialog[data-theme=paper] [data-rule=mad-2-4-6]{background:#ff7b00}.mushaf-colors-dialog[data-theme=paper] [data-rule=mad-4-5]{background:#f40000}.mushaf-colors-dialog[data-theme=paper] [data-rule=mad-6]{background:#b50000}.mushaf-colors-dialog[data-theme=paper] [data-rule=ekhfa]{background:#09b000}.mushaf-colors-dialog[data-theme=paper] [data-rule=qalqala]{background:#2fadff}.mushaf-colors-dialog[data-theme=paper] [data-rule=tafkhim]{background:#3f48e6}
 @media(max-width:350px){.mushaf-actions>button{font-size:11px;gap:4px;padding-inline:4px}.mushaf-listening{margin-inline:2px}.mushaf-colors-dialog{padding-inline:14px}}
 
-/* Keep the three reader actions in the fixed header at every scroll position. */
-.mushaf-shell{padding-top:calc(var(--mushaf-top-height,calc(110px + env(safe-area-inset-top,0px))) + 6px)}
-.mushaf-top{row-gap:6px}
-.mushaf-top>.mushaf-actions{grid-column:1/-1;width:100%;margin:0}
+/* Preserve the action row's position; stick it only after it reaches the header. */
+.mushaf-shell>.mushaf-actions{position:sticky;top:calc(62px + env(safe-area-inset-top,0px));z-index:90;margin:8px 5px 0;background:#0b1120;border-radius:12px;box-shadow:0 0 0 6px #0b1120,0 9px 12px #03081555}
 .mushaf-actions .action-icon{width:18px;height:18px;flex:none;display:block}
-.mushaf-options-panel{max-height:calc(100dvh - var(--mushaf-top-height,calc(110px + env(safe-area-inset-top,0px))) - 20px - env(safe-area-inset-bottom,0px))}
+.mushaf-listening{margin-top:0}
+@media(max-width:350px){.mushaf-shell>.mushaf-actions{margin-inline:2px}}

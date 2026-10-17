@@ -152,7 +152,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":355,"date":"2026-10-18","changes":["Мусхаф: кнопки «Слушать», переключения фона и «Цвета» закреплены сверху при прокрутке."],"announcement":{"version":355,"date":"2026-10-18","changes":["Мусхаф: кнопки «Слушать», переключения фона и «Цвета» закреплены сверху при прокрутке."]}};
+const RELEASE={"version":355,"date":"2026-10-18","changes":["Мусхаф: кнопки «Слушать», фона и «Цвета» остаются на своём месте и закрепляются при прокрутке."],"announcement":{"version":355,"date":"2026-10-18","changes":["Мусхаф: кнопки «Слушать», фона и «Цвета» остаются на своём месте и закрепляются при прокрутке."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
