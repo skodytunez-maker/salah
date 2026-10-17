@@ -1,7 +1,7 @@
 import{quranPlayback}from './quran-session.js';
 import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from './quran-reciters.js';
 import{timingUrl}from './quran-timing.js';
-import{printedVerseKeys}from './quran-mushaf-print.js';
+import{printedVerseKeys,printedPageForPosition}from './quran-mushaf-print.js';
 import{createMushafFollower,mushafAudioPosition}from './quran-mushaf-follow.js';
 import{loadSurah}from './quran-data.js';
 import{read,write}from './storage.js';
@@ -72,7 +72,7 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  };
  reader.onclick=()=>{host.querySelector('.mushaf-options').open=true;select.focus();};
  check.onchange=()=>{setFollow(check.checked);if(check.checked)follower.resume();else follower.suspend();draw(playback.state);};
- resume.onclick=()=>{setFollow(true);follower.resume();lastScrolled=null;draw(playback.state);const point=mushafAudioPosition(playback.state);if(point)scrollToAyah(point.key,true);};
+ resume.onclick=()=>{setFollow(true);follower.resume();lastScrolled=null;const point=mushafAudioPosition(playback.state);if(point&&!pageKeys().includes(point.key)){const target=printedPageForPosition(point.surah,point.ayah,getEdition());if(target&&target!==page){arrival={page:target,edition:getEdition(),automatic:true,until:Date.now()+10000};navigate(target);return;}}draw(playback.state);if(point)scrollToAyah(point.key,true);};
  const unsubscribe=playback.subscribe(draw);
  return{
   refresh(){
