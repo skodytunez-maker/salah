@@ -71,3 +71,10 @@
 .release-support-preview>strong{font:400 31px/1.5 'Prata',Georgia,serif;color:#d9c693}
 .release-instagram-preview svg{width:64px;height:64px}.release-instagram-preview>span{font:400 18px/1.4 Georgia,serif}
 .release-feature .release-feature-note{font-size:11px;color:#8f9db7}
+
+/* New reciters keep their catalog portraits and short names in release news. */
+.release-new-art:has(.release-new-readers){height:auto;min-height:218px;padding:8px 0}
+.release-new-readers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px;width:min(100%,330px);align-items:start}
+.release-new-readers figure{margin:0;min-width:0;display:grid;justify-items:center;gap:6px}
+.release-new-art .release-new-readers .release-reader-portrait{width:64px;height:64px;border-color:#d8be8870}
+.release-new-readers figcaption{font-size:11px;line-height:1.35;text-align:center;color:#d5deec;overflow-wrap:anywhere}

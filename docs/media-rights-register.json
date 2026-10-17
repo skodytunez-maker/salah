@@ -2170,6 +2170,56 @@
       "kind": "raster",
       "rightsReviewStatus": "needs-review",
       "note": "User supplied a monthly prayer timetable; original source image retained with printed year 2025. No license clearance asserted."
+    },
+    {
+      "path": "dist/assets/reciters/islamsobhi.jpg",
+      "gitBlobSha": "e04bfda1d33ee9b9c556e2832b2fa97c05fc8487",
+      "bytes": 37831,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/islam-sobhi.jpg?v=1780520860886",
+      "sourcePage": "https://way2quran.com/en/reciters/islam-sobhi",
+      "note": "Named reciter profile associates this portrait with the reciter; visually inspected. Original image bytes bundled without image edits; source may be retouched. Reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/abdulrahmanalawsi.jpg",
+      "gitBlobSha": "9ca2789ce1759d2071c7218fe370440da4de42ab",
+      "bytes": 50577,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/abdul-rahman-al-awsi.jpg?v=1780249816541",
+      "sourcePage": "https://way2quran.com/en/reciters/abdul-rahman-al-awsi",
+      "note": "Named reciter profile associates this portrait with the reciter; visually inspected. Original image bytes bundled without image edits; source may be retouched. Reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/saadalghamdi.jpg",
+      "gitBlobSha": "1f64abbf4be1f713571424015884342333d04bc6",
+      "bytes": 120690,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/saad-al-ghamdi.jpg",
+      "sourcePage": "https://way2quran.com/en/reciters/saad-al-ghamdi",
+      "note": "Named reciter profile associates this portrait with the reciter; visually inspected. Original image bytes bundled without image edits; source may be retouched. Reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/ahmadalajmi.jpg",
+      "gitBlobSha": "12fd53bd49f6d7aeb241fc15f349d2125bb3e8d4",
+      "bytes": 104019,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/ahmed-al-agamy.jpg?v=1777824725922",
+      "sourcePage": "https://way2quran.com/en/reciters/ahmed-al-agamy",
+      "note": "Named reciter profile associates this portrait with the reciter; visually inspected. Original image bytes bundled without image edits; source may be retouched. Reuse permission not independently established."
+    },
+    {
+      "path": "dist/assets/reciters/faresabbad.jpg",
+      "gitBlobSha": "bfa1417c2a282a666a46d555f8127a4462ab34bb",
+      "bytes": 29614,
+      "kind": "raster",
+      "rightsReviewStatus": "needs-review",
+      "sourceUrl": "https://media.way2quran.com/imgs/fares-abbad.jpg?v=1780253464799",
+      "sourcePage": "https://way2quran.com/en/reciters/fares-abbad",
+      "note": "Named reciter profile associates this portrait with the reciter; visually inspected. Original image bytes bundled without image edits; source may be retouched. Reuse permission not independently established."
     }
   ],
   "wallpaperSets": [
