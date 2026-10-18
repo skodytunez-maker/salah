@@ -33,7 +33,7 @@ export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(f
 async function callOwner(session,query='',{binary=false}={}){
  if(!session?.access_token)throw Error('Войдите в аккаунт владельца.');
  let response;
- try{response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});}
+ try{for(let attempt=0;attempt<2;attempt++){try{response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});if(![502,504].includes(response.status)||attempt)break;}catch(error){if(attempt)throw error;}await new Promise(resolve=>setTimeout(resolve,400));}}
  catch{revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
  if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Error('Вход истёк. Войдите снова.');if(response.status===403){const denied=Error('Этот аккаунт не имеет доступа к кабинету.');denied.status=403;throw denied;}if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
  return binary?response.blob():response.json();
