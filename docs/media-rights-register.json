@@ -2418,8 +2418,8 @@
     },
     {
       "path": "dist/assets/updates/tafsir-369.png",
-      "gitBlobSha": "92847a9e55ef14aa3144503fac9c07e0b2b03a53",
-      "bytes": 25522,
+      "gitBlobSha": "9f299cce35499fdbbcc0b2d3254b384404e8bd0e",
+      "bytes": 41971,
       "kind": "screenshot",
       "rightsReviewStatus": "needs-review",
       "note": "Actual SALAH tafsir reader screenshot. Interface provenance is project-local; embedded Russian tafsir text retains QUL source attribution and resource-specific evidence is recorded in docs/quran-tafsir.md."
