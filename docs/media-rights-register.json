@@ -2310,6 +2310,34 @@
       "note": "Derived from the previous user-supplied and selected portrait. Built-in imagegen edit: tighter square crop with larger face and subtle lighting/contrast correction. User approved the edited preview on 2026-10-17. Identity approval is not evidence of third-party reuse licensing; rights status inherited as needs-review.",
       "sourceAsset": "dist/assets/reciters/raadalkurdi-approved.jpg",
       "rightsEvidence": "docs/reciter-discovery-20261017.json"
+    },
+    {
+      "path": "dist/assets/updates/mushaf-357.png",
+      "gitBlobSha": "21c40bd67b44370f374d9c0eb586a72bda3452c8",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Captured from the SALAH application preview maintained by this repository on 2026-10-18. Screens contain public app interface and existing source-attributed Quran/adhkar text; no private account data. Quran Foundation font documentation: https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/ .",
+      "note": "Feature screenshot for the October 18 public release roundup; capture and verification notes are in outputs/salah-audio-download-20261018."
+    },
+    {
+      "path": "dist/assets/updates/quran-reader-357.png",
+      "gitBlobSha": "92847a9e55ef14aa3144503fac9c07e0b2b03a53",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Captured from the SALAH application preview maintained by this repository on 2026-10-18. Screens contain public app interface and existing source-attributed Quran/adhkar text; no private account data. Quran Foundation font documentation: https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/ .",
+      "note": "Feature screenshot for the October 18 public release roundup; capture and verification notes are in outputs/salah-audio-download-20261018."
+    },
+    {
+      "path": "dist/assets/updates/download-357.png",
+      "gitBlobSha": "0f263583755b62f8be2df3619aa21a31ce37a209",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Captured from the SALAH application preview maintained by this repository on 2026-10-18. Screens contain public app interface and existing source-attributed Quran/adhkar text; no private account data. Quran Foundation font documentation: https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/ .",
+      "note": "Feature screenshot for the October 18 public release roundup; capture and verification notes are in outputs/salah-audio-download-20261018."
+    },
+    {
+      "path": "dist/assets/updates/adhkar-357.png",
+      "gitBlobSha": "873dea83e152b0e22ffae9a9e182609a1899cac7",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Captured from the SALAH application preview maintained by this repository on 2026-10-18. Screens contain public app interface and existing source-attributed Quran/adhkar text; no private account data. Quran Foundation font documentation: https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/ .",
+      "note": "Feature screenshot for the October 18 public release roundup; capture and verification notes are in outputs/salah-audio-download-20261018."
     }
   ],
   "wallpaperSets": [
