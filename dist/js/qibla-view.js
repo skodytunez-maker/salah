@@ -56,7 +56,7 @@ export function renderQiblaView({ cityName = '', bearing, hasCity = false } = {}
   const angle = Number.isFinite(bearing) ? `${Math.round((bearing % 360 + 360) % 360) % 360}°` : '—';
   return `<section class="qibla-page" aria-labelledby="qibla-title">
     <div class="qibla-head"><div><h1 id="qibla-title">Кибла</h1><p class="qibla-location">${hasCity ? esc(cityName) : 'Выберите город, чтобы рассчитать направление'}</p></div></div>
-    <div class="qibla-card">
+    <div class="qibla-card" id="qibla-compass-panel">
       <div id="qibla-stage" class="qibla-stage" style="--qibla-rotation:0deg;--compass-rotation:0deg;--qibla-light:0" aria-hidden="true">
         <span class="qibla-phone-axis"></span>
         <div class="qibla-compass"><div class="qibla-ticks"></div><span class="qibla-north">N</span><span class="qibla-east">E</span><span class="qibla-south">S</span><span class="qibla-west">W</span></div>
@@ -69,5 +69,7 @@ export function renderQiblaView({ cityName = '', bearing, hasCity = false } = {}
       ${hasCity ? '' : '<button class="button qibla-enable" id="qibla-city">Выбрать город</button>'}
       <p class="qibla-signature"><span>SALAH</span><small>by Saadi Kobilov</small></p>
     </div>
+    <div class="qibla-map-panel" id="qibla-map-panel" hidden></div>
+    <button type="button" class="qibla-map-toggle" id="qibla-map-toggle" aria-label="Открыть карту Киблы" aria-pressed="false" data-mode="compass"><svg class="qibla-map-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15"/></svg><svg class="qibla-compass-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span>Карта</span></button>
   </section>`;
 }

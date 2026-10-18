@@ -1,3 +1,4 @@
+import{mountQiblaMap}from './qibla-map.js';
 import { normalizeAngle, createCompassPresentation, createDirectionTracker } from './qibla-math.js';
 import { renderQiblaView } from './qibla-view.js';
 import { bearing as qiblaBearing } from './prayers.js';
@@ -180,13 +181,16 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
   const declination=hasCity?magneticDeclination(city.latitude,city.longitude):null;
   container.innerHTML=renderQiblaView({cityName:city?.name,bearing,hasCity});
   container.querySelector('#qibla-city')?.addEventListener('click',onChooseCity||(()=>{}));
-  if(!hasCity)return {destroy(){}};
+  let controller=null,mapHandle=null,disposed=false;const mapToggle=container.querySelector('#qibla-map-toggle'),compassPanel=container.querySelector('#qibla-compass-panel'),mapPanel=container.querySelector('#qibla-map-panel');
+  if(mapToggle)mapToggle.onclick=()=>{if(disposed)return;const show=mapPanel.hidden;mapPanel.hidden=!show;compassPanel.hidden=show;mapToggle.dataset.mode=show?'map':'compass';mapToggle.setAttribute('aria-pressed',String(show));mapToggle.setAttribute('aria-label',show?'Вернуться к компасу':'Открыть карту Киблы');mapToggle.querySelector('span').textContent=show?'Компас':'Карта';if(show){controller?.stop();mapHandle=mountQiblaMap(mapPanel,{city});}else{mapHandle?.destroy();mapHandle=null;controller?.enable({retry:true});}};
+  const destroy=()=>{disposed=true;mapHandle?.destroy();controller?.destroy();};
+  if(!hasCity)return {destroy};
   const stage=container.querySelector('#qibla-stage'),instruction=container.querySelector('#qibla-instruction');
   const check=container.querySelector('#qibla-check'),error=container.querySelector('#qibla-error');
   const status=container.querySelector('#sensor-state');
   const presentation=createCompassPresentation();
   let retryAvailable=false;
-  const controller=createCompassController({bearing,declination,environment,onHaptic:()=>{
+  controller=createCompassController({bearing,declination,environment,onHaptic:()=>{
     if(haptics()&&typeof navigator.vibrate==='function'){try{navigator.vibrate(12);}catch{}}
   },onState:state=>{
     stage.classList.toggle('has-heading',state.hasHeading);
@@ -211,5 +215,5 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
   stage.addEventListener('click',retry);
   stage.addEventListener('keydown',event=>{if(retryAvailable&&['Enter',' '].includes(event.key)){event.preventDefault();retry();}});
   controller.enable();
-  return {destroy:()=>controller.destroy(),controller};
+  return {destroy,controller};
 }

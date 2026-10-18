@@ -3,7 +3,7 @@ import{quranDownloadQueue}from './quran-downloads.js';
 import{quranPlayback}from './quran-session.js';
 import{modal,closeModal,toast}from './ui.js';
 // Only reproducible public downloads: never the app shell, account caches or personal storage.
-export const CLEARABLE_CACHES=Object.freeze(['salah-quran-text-v1','salah-quran-timing-v1','salah-landmarks-v1','salah-builtin-wallpapers-v1']);
+export const CLEARABLE_CACHES=Object.freeze(['salah-quran-text-v1','salah-quran-timing-v1','salah-quran-recognition-v1','salah-landmarks-v1','salah-builtin-wallpapers-v1']);
 export async function clearAppCache({audioStore=offlineAudioStore,cacheStorage=globalThis.caches,downloads=quranDownloadQueue,playback=quranPlayback}={}){
  await downloads.pause();playback.stop();
  const tasks=[Promise.resolve().then(()=>audioStore.clearAll()),...CLEARABLE_CACHES.map(name=>Promise.resolve().then(()=>cacheStorage?.delete(name)))];

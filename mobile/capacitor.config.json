@@ -1,5 +1,6 @@
 {
   "appId": "com.saadikobilov.salah",
   "appName": "SALAH",
-  "webDir": "www"
+  "webDir": "www",
+  "appendUserAgent": " SALAH (+https://skodytunez-maker.github.io/salah/)"
 }

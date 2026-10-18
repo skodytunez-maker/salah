@@ -140,6 +140,19 @@
       "paths": [
         "dist/js/vendor/jsQR.js"
       ]
+    },
+    {
+      "id": "leaflet",
+      "status": "license-recorded",
+      "name": "Leaflet 1.9.4",
+      "license": "BSD-2-Clause",
+      "licenseFile": "dist/js/vendor/leaflet/LICENSE",
+      "licenseGitBlobSha": "bcb3ba1aca095155857556d96e3193a50fe1bd11",
+      "paths": [
+        "dist/js/vendor/leaflet/leaflet.js",
+        "dist/js/vendor/leaflet/leaflet.css"
+      ],
+      "conditions": "Preserve upstream copyright notice, BSD-2-Clause conditions and disclaimer. OpenStreetMap map tiles are a separate runtime service with visible attribution, HTTP caching and no bulk download."
     }
   ],
   "content": [

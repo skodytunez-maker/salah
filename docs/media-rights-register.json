@@ -2338,6 +2338,41 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Captured from the SALAH application preview maintained by this repository on 2026-10-18. Screens contain public app interface and existing source-attributed Quran/adhkar text; no private account data. Quran Foundation font documentation: https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/ .",
       "note": "Feature screenshot for the October 18 public release roundup; capture and verification notes are in outputs/salah-audio-download-20261018."
+    },
+    {
+      "path": "dist/js/vendor/leaflet/images/layers-2x.png",
+      "gitBlobSha": "200c333dca9652ac4cba004d609e5af4eee168c1",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "Leaflet 1.9.4 official npm package, npm SHA-512 integrity verified. Upstream BSD-2-Clause license retained at dist/js/vendor/leaflet/LICENSE; https://www.npmjs.com/package/leaflet/v/1.9.4 .",
+      "note": "Unmodified map control and marker assets distributed with Leaflet; visible map attribution remains OpenStreetMap contributors."
+    },
+    {
+      "path": "dist/js/vendor/leaflet/images/layers.png",
+      "gitBlobSha": "1a72e5784b2b456eac5d7670738db80697af3377",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "Leaflet 1.9.4 official npm package, npm SHA-512 integrity verified. Upstream BSD-2-Clause license retained at dist/js/vendor/leaflet/LICENSE; https://www.npmjs.com/package/leaflet/v/1.9.4 .",
+      "note": "Unmodified map control and marker assets distributed with Leaflet; visible map attribution remains OpenStreetMap contributors."
+    },
+    {
+      "path": "dist/js/vendor/leaflet/images/marker-icon-2x.png",
+      "gitBlobSha": "88f9e501888c9c6cb29ad340d9a888627dd1b6d8",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "Leaflet 1.9.4 official npm package, npm SHA-512 integrity verified. Upstream BSD-2-Clause license retained at dist/js/vendor/leaflet/LICENSE; https://www.npmjs.com/package/leaflet/v/1.9.4 .",
+      "note": "Unmodified map control and marker assets distributed with Leaflet; visible map attribution remains OpenStreetMap contributors."
+    },
+    {
+      "path": "dist/js/vendor/leaflet/images/marker-icon.png",
+      "gitBlobSha": "950edf24677ded147df13b26f91baa2b0fa70513",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "Leaflet 1.9.4 official npm package, npm SHA-512 integrity verified. Upstream BSD-2-Clause license retained at dist/js/vendor/leaflet/LICENSE; https://www.npmjs.com/package/leaflet/v/1.9.4 .",
+      "note": "Unmodified map control and marker assets distributed with Leaflet; visible map attribution remains OpenStreetMap contributors."
+    },
+    {
+      "path": "dist/js/vendor/leaflet/images/marker-shadow.png",
+      "gitBlobSha": "9fd2979532a19a15b824ce763c76e04a8dafadfb",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "Leaflet 1.9.4 official npm package, npm SHA-512 integrity verified. Upstream BSD-2-Clause license retained at dist/js/vendor/leaflet/LICENSE; https://www.npmjs.com/package/leaflet/v/1.9.4 .",
+      "note": "Unmodified map control and marker assets distributed with Leaflet; visible map attribution remains OpenStreetMap contributors."
     }
   ],
   "wallpaperSets": [
