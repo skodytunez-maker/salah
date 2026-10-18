@@ -269,6 +269,7 @@ button.owner-user-avatar{padding:0;border:1px solid var(--line);cursor:zoom-in;f
 
 .travel-home{width:min(100%,340px);margin:8px auto 14px}.travel-places{display:grid;grid-template-columns:1fr 1fr;gap:8px}.travel-places button{min-width:0;min-height:54px;border:1px solid var(--border,#546075);border-radius:15px;background:rgba(16,26,45,.75);color:#d9dfeb;padding:7px 10px;text-align:start}.travel-places small{display:block;font-size:10px;opacity:.8;margin-bottom:3px}.travel-places span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.travel-places [aria-pressed=true]{border-color:#d7bd80;color:#eed9a1;background:rgba(215,189,128,.13)}.travel-home p{font-size:10px;text-align:center;line-height:1.4;margin:7px 0 0;opacity:.82}.travel-settings summary{font-weight:600}.travel-settings .button{margin-top:8px}
 
+body:has(.quran-recognition) .author-footer{display:none}
 .quran-recognition{max-width:520px;margin:0 auto;padding:18px 22px 124px;color:var(--text);isolation:isolate}
 .recognition-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .recognition-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#c8cbd3;text-decoration:none;font-size:14px}
