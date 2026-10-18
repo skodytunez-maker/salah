@@ -68,13 +68,13 @@ updateSettings({tyumenTimeSource:'al-hakk',city:{name:'Москва',latitude:55
 assert.ok(cacheKey().includes('calculated'),'Other cities keep calculated schedules');
 // Exercise the actual settings renderer and change handler, not a copy of them.
 updateSettings({city,tyumenTimeSource:'auto',school:0});
-const appSource=await readFile(new URL('dist/js/app.js',root),'utf8'),elements=new Map();let refreshes=0,resets=0;
+const appSource=await readFile(new URL('dist/js/app.js',root),'utf8'),elements=new Map();let refreshes=0,resets=0,cacheMounts=0;
 const element=id=>{if(!elements.has(id))elements.set(id,{value:'',checked:false,validity:{valid:true},querySelector:()=>({remove(){}})});return elements.get(id)};
 const rootElement={innerHTML:'',querySelectorAll:()=>[]};
-const context=vm.createContext({personalDataAllowed,mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
+const context=vm.createContext({personalDataAllowed,mountCacheSettings:el=>{assert.equal(el,element('cache-storage-settings'));cacheMounts++;},mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
 vm.runInContext(appSource.slice(appSource.indexOf('const settingsIconPaths='),appSource.indexOf('let historyPeriod=')),context);
 vm.runInContext(appSource.split('\n').filter(line=>/^function (tyumenSourceSettings|tyumenSourceNote|settingsPage)\(/.test(line)).join('\n'),context);
-context.settingsPage();
+context.settingsPage();assert.equal(cacheMounts,1);
 assert.match(rootElement.innerHTML,/id="tyumen-time-source"/);assert.match(rootElement.innerHTML,/Календарь Тюмени/);assert.match(rootElement.innerHTML,/Сайт «Аль-Хакк»/);
 element('tyumen-time-source').onchange({target:{value:'al-hakk'}});
 assert.equal(settings.tyumenTimeSource,'al-hakk');assert.equal(settings.school,0);assert.equal(refreshes,1);assert.equal(resets,1);
