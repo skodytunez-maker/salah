@@ -12,7 +12,7 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
- {id:'support',match:/поддержк|отмен.{0,18}подписк/iu,title:'Управление поддержкой SALAH',art:()=>screenshot('support',372),where:'Поддержать SALAH. Приём платежей ещё готовится.'},
+ {id:'about',match:/О приложении|знак SK|логотип SK/iu,title:'О приложении',art:()=>'<img class="release-reader-portrait" src="./assets/brand/saadi-kobilov-mark.png" alt="">',where:'Меню → О приложении.'},
  {id:'tafsir',match:/тафсир|толкован/iu,title:'Тафсиры ас-Саади и Ибн Касира',art:()=>screenshot('tafsir',369),where:'Коран → сура → ⋯ у аята → Тафсир.'},
  {id:'news',match:/что нового|иллюстрац|карточк.{0,30}обновлен|обновлен.{0,30}картин/iu,title:'Новые возможности — в картинках',art:()=>'<div class="release-update-pictures">'+screenshot('qibla-map',368)+screenshot('recognition',368)+'</div>',where:'Меню → Настройки → Приложение и обновления → Что нового.'},
  {id:'recognition',match:/распозна|микрофон|шазам/iu,title:'Узнать чтение',art:()=>screenshot('recognition',368),where:'Коран → значок микрофона.'},
@@ -26,6 +26,7 @@ const changeFeatures=[
  {id:'reciters',match:/чтец|чтец[аоы]|голос/iu,title:'Новые голоса Корана',art:()=>readerFigures([['islamsobhi.jpg','Ислам Субхи'],['yasseraldossari.jpg','Ясир ад-Даусари']]),where:'Коран → Чтецы.'},
  {id:'quran',match:/Коран|аят|перевод|тафсир|плеер|прослушив|аудио/iu,title:'Коран в SALAH',art:()=>screenshot('quran-reader'),where:'Раздел Коран.'}
 ];
+export function isPublicReleaseChange(value){return typeof value==='string'&&value.trim()&&value.length<=240&&!/владел|админ|owner|admin|подписк|поддержк|оплат|плат[её]ж|списани|ю[кk](?:асс|ass)|yookassa/iu.test(value);}
 export function releaseFeatureForChange(text){return typeof text==='string'?changeFeatures.find(feature=>feature.match.test(text))?.id||null:null;}
 function changeCard(text){const feature=changeFeatures.find(item=>item.match.test(text))||changeFeatures[0];return card(feature.art(),feature.title,text,feature.where,feature.id==='reciters'?'release-reciter-art':'release-screen-art');}
 function majorReleaseCards(){return [
@@ -74,7 +75,7 @@ export function releaseIllustrations(version,changes=[]){
 
  if(![339,340,341].includes(version)){
   if(!Number.isSafeInteger(version)||version<=341||!Array.isArray(changes))return '';
-  const safe=changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8);
+  const safe=changes.filter(isPublicReleaseChange).slice(0,8);
   return safe.length?gallery(safe.map(changeCard)):'';
  }
  const cards=[
@@ -85,7 +86,6 @@ export function releaseIllustrations(version,changes=[]){
  if(version>=340)cards.push(card('<div class="release-city-pair"><figure><img src="./assets/updates/kaspiysk-v1.webp" alt="" loading="lazy"><figcaption>Каспийск</figcaption></figure><figure><img src="./assets/updates/kazan-v1.webp" alt="" loading="lazy"><figcaption>Казань</figcaption></figure></div>','Новые городские обои','Каспийск и Казань: дневной свет, вечернее освещение и плавный переход к ночи.','Настройки → Оформление и атмосфера → Обои.'));
  cards.push(
   card('<div class="release-play-preview">'+actionIcon('play')+'<span>Google Play</span><small>ЗАКРЫТЫЙ ТЕСТ</small></div>','SALAH в Google Play','Закрытая тестовая версия одобрена и опубликована для приглашённых тестировщиков.','Общий выпуск для всех пользователей готовится.'),
-  card('<div class="release-support-preview"><span>Поддержать SALAH</span><strong>от 150 ₽</strong><small>в месяц · добровольно</small></div>','Готовим добровольную поддержку','Скоро появится возможность поддержать развитие SALAH ежемесячной подпиской.','Оплата пока отключена. Все функции приложения остаются бесплатными.'),
   card('<div class="release-instagram-preview"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="13" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="32" r="11" stroke="currentColor" stroke-width="2.5"/><circle cx="46" cy="18" r="3" fill="currentColor"/></svg><span>SALAH · Saadi</span></div>','Мы в Instagram','В приложении появились ссылки на Instagram SALAH и страницу основателя Saadi.','Ищите их в разделе «О приложении».')
  );
  return gallery(cards);

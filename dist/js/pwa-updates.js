@@ -1,4 +1,5 @@
 import{illustratedReleaseMarkup,bindIllustratedRelease}from './release-gallery.js';
+import{isPublicReleaseChange}from './release-illustrations.js';
 import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from './app-release.js';
 import {esc,modal} from './ui.js';
 let manualCheck=null;
@@ -12,7 +13,7 @@ try{restoreTransition=sessionStorage.getItem(SOFT_RELOAD_KEY)==='1';if(restoreTr
 export function finishAppUpdateTransition(){if(!restoreTransition)return;restoreTransition=false;if(restoreTransitionTimer!==null){clearTimeout(restoreTransitionTimer);restoreTransitionTimer=null;}const root=document.documentElement;const reveal=()=>{root.classList.add('salah-update-restoring-done');setTimeout(()=>root.classList.remove('salah-update-restoring','salah-update-restoring-done'),360);};if(typeof requestAnimationFrame==='function')requestAnimationFrame(reveal);else reveal();}
 async function reloadAfterUpdate(){if(!document.documentElement?.classList||typeof requestAnimationFrame!=='function'){location.reload();return}const root=document.documentElement;root.classList.add('salah-update-leaving');requestAnimationFrame(()=>root.classList.add('salah-update-leaving-active'));await new Promise(resolve=>setTimeout(resolve,360));try{sessionStorage.setItem(SOFT_RELOAD_KEY,'1')}catch{}location.reload();}
 
-export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8):[];}
+export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(isPublicReleaseChange).slice(0,8):[];}
 const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES),announcement:APP_ANNOUNCEMENT};
 export function releaseDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(value)).replace(/ г\.$/,''):'';}
 export function validatedRelease(value){

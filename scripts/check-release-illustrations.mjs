@@ -12,10 +12,10 @@ const w=new Window({url:'https://example.invalid/'}),doc=w.document;
 Object.assign(globalThis,{window:w,document:doc,localStorage:w.localStorage,Event:w.Event});
 globalThis.matchMedia=()=>({matches:true});
 const root=doc.createElement('div');doc.body.append(root);root.innerHTML=illustratedReleaseMarkup(341);
-const cards=[...root.querySelectorAll('.release-feature')];assert.equal(cards.length,7);
+const cards=[...root.querySelectorAll('.release-feature')];assert.equal(cards.length,6);
 assert.equal(cards[0].querySelector('h3').textContent,'Новые награды');
 assert.ok(!/ч[её]тк|мутн/i.test(root.textContent));
-assert.ok(root.textContent.includes('Оплата пока отключена')&&root.textContent.includes('Все функции приложения остаются бесплатными'));
+assert.doesNotMatch(root.textContent,/подписк|поддержк|оплат|списани/iu);
 assert.ok(root.textContent.includes('приглашённых тестировщиков')&&root.textContent.includes('Общий выпуск'));
 assert.ok(!root.textContent.includes('владельца'));
 for(const img of root.querySelectorAll('img')){
@@ -26,14 +26,21 @@ assert.equal(root.querySelectorAll('.release-city-pair img[src^="./assets/update
 const strip=root.querySelector('.release-gallery-strip');Object.defineProperty(strip,'clientWidth',{value:320});strip.scrollTo=({left})=>{strip.scrollLeft=left;};
 bindIllustratedRelease(root);
 assert.equal(cards.filter(x=>!x.inert).length,1);
-root.querySelector('[data-release-next]').click();assert.equal(root.querySelector('[data-release-page]').textContent,'2/7');assert.equal(cards[0].inert,true);assert.equal(cards[1].inert,false);
-strip.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(root.querySelector('[data-release-page]').textContent,'1/7');assert.equal(root.querySelector('[data-release-prev]').disabled,true);
+root.querySelector('[data-release-next]').click();assert.equal(root.querySelector('[data-release-page]').textContent,'2/6');assert.equal(cards[0].inert,true);assert.equal(cards[1].inert,false);
+strip.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(root.querySelector('[data-release-page]').textContent,'1/6');assert.equal(root.querySelector('[data-release-prev]').disabled,true);
 const novemberNews=illustratedReleaseMarkup(342);root.innerHTML=novemberNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Ноябрь в календаре Тюмени'));assert.ok(root.textContent.includes('таблицы 2025 года'));assert.equal(root.querySelectorAll('svg').length,1);
 const geoNews=illustratedReleaseMarkup(343);root.innerHTML=geoNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Первое место — выше'));assert.ok(root.textContent.includes('обновления приложения через Google Play'));
 root.innerHTML=illustratedReleaseMarkup(346);assert.equal(root.querySelectorAll('.release-feature').length,1);assert.ok(root.textContent.includes('резервный источник'));assert.equal(root.querySelectorAll('svg').length,1);
 root.innerHTML=illustratedReleaseMarkup(347);assert.equal(root.querySelectorAll('.release-feature').length,1);assert.equal(root.querySelector('h3').textContent,'Новые чтецы');assert.equal(root.querySelectorAll('.release-new-readers img').length,5);assert.ok(root.textContent.includes('109 сур'));for(const img of root.querySelectorAll('.release-new-readers img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 root.innerHTML=illustratedReleaseMarkup(348);assert.equal(root.querySelectorAll('.release-feature').length,3);assert.equal(root.querySelectorAll('.release-new-readers img').length,13);assert.equal(root.querySelectorAll('.release-reader-quartet').length,2);assert.ok(root.textContent.includes('46 чтецов'));for(const img of root.querySelectorAll('.release-new-readers img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 root.innerHTML=illustratedReleaseMarkup(349);assert.equal(root.querySelectorAll('.release-feature').length,4);assert.equal(root.querySelectorAll('.release-new-readers img').length,13);assert.ok(root.textContent.includes('Первые три дня'));assert.ok(root.textContent.includes('30 дней'));assert.equal(root.querySelectorAll('img[src="./assets/reciters/raadalkurdi-v349.png"]').length,1);
+
+// Payment and provider-review work is not a public announcement yet.
+for(const version of [335,339,340,341,372,999]){root.innerHTML=illustratedReleaseMarkup(version,['Поддержка SALAH: кнопка отмены подписки. Приём платежей пока выключен.']);assert.doesNotMatch(root.textContent,/подписк|поддержк|оплат|плат[её]ж|списани|yookassa/iu);}
+const {publicReleaseChanges,validatedRelease}=await import('../dist/js/pwa-updates.js');
+assert.deepEqual(publicReleaseChanges(['Улучшен мусхаф','Подписка SALAH','Кнопка отмены и отвязки способа оплаты','ЮKassa: проверка','owner private']),['Улучшен мусхаф']);
+assert.equal(validatedRelease({version:372,date:'2026-10-18',changes:['Поддержка SALAH: кнопка отмены подписки']}),null);
+
 const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
