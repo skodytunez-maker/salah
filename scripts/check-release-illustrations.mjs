@@ -5,8 +5,10 @@ import{illustratedReleaseMarkup,bindIllustratedRelease}from '../dist/js/release-
 import{ownerUserCard,bindOwnerAvatarPreview}from '../dist/js/owner-user-card.js';
 import{APP_ANNOUNCEMENT,APP_NEWS_UNTIL}from '../dist/js/app-release.js';
 import{releaseHighlightActive,releaseHighlightMarkup,bindReleaseHighlight}from '../dist/js/release-highlight.js';
+import{showAppRelease}from '../dist/js/pwa-updates.js';
 
 const w=new Window({url:'https://example.invalid/'}),doc=w.document;
+Object.assign(globalThis,{window:w,document:doc,localStorage:w.localStorage,Event:w.Event});
 globalThis.matchMedia=()=>({matches:true});
 const root=doc.createElement('div');doc.body.append(root);root.innerHTML=illustratedReleaseMarkup(341);
 const cards=[...root.querySelectorAll('.release-feature')];assert.equal(cards.length,7);
@@ -41,6 +43,17 @@ for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature
 for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 const deadline=Date.parse(APP_NEWS_UNTIL);assert.ok(releaseHighlightActive(deadline-1));assert.equal(releaseHighlightActive(deadline),false);assert.equal(releaseHighlightActive(deadline+86400000),false);assert.equal(releaseHighlightMarkup(deadline),'');
 root.innerHTML=releaseHighlightMarkup(deadline-1000);assert.ok(root.querySelector('[data-release-highlight]'));let opened=0;const realNow=Date.now;try{Date.now=()=>deadline-1000;bindReleaseHighlight(root,()=>opened++);root.querySelector('[data-release-highlight]')?.click();assert.equal(opened,1,'Seen news remains accessible throughout the three-day window');}finally{Date.now=realNow;root.replaceChildren();bindReleaseHighlight(root);}
+
+const releaseModal=doc.createElement('dialog');releaseModal.id='modal';releaseModal.innerHTML='<div id="modal-content"></div>';doc.body.append(releaseModal);
+try{
+ Date.now=()=>deadline-1000;root.innerHTML=releaseHighlightMarkup(undefined,{home:true});bindReleaseHighlight(root);
+ assert.ok(root.querySelector('[data-release-home]'),'Unread news appears on Home');
+ root.querySelector('[data-release-highlight]').click();assert.equal(releaseModal.open,true);assert.ok(root.querySelector('[data-release-home]'),'Home stays stable behind the open modal');
+ releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);assert.equal(root.querySelector('[data-release-home]'),null,'Понятно removes Home news immediately');
+ assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Seen version keeps Home clear on the next render');
+ root.innerHTML=releaseHighlightMarkup();bindReleaseHighlight(root);assert.ok(root.querySelector('[data-release-highlight]'),'Menu still offers read news');
+ root.querySelector('[data-release-highlight]').click();assert.equal(releaseModal.open,true,'Menu reopens the roundup');releaseModal.querySelector('[data-close]').click();
+}finally{Date.now=realNow;root.replaceChildren();bindReleaseHighlight(root);releaseModal.remove();}
 
 const profile=doc.createElement('div');doc.body.append(profile);let dismissed=0;profile.onclick=()=>dismissed++;
 profile.innerHTML=ownerUserCard({nickname:'Пользователь'},{avatarUrl:'blob:private-photo'});bindOwnerAvatarPreview(profile);

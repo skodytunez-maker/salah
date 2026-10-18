@@ -28,7 +28,7 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
  modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2 tabindex="-1" autofocus>'+(available?'Что изменится':'Что нового')+'</h2>'+(illustratedReleaseMarkup(safe.version,safe.changes)||'<ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'<button class="button secondary" type="button" data-close>Понятно</button></div>');
  bindIllustratedRelease(document.querySelector('.release-dialog'));
  if(typeof onClose==='function'){const dialog=document.getElementById('modal'),closed=()=>onClose();dialog.addEventListener('close',closed,{once:true});}
- if(!available&&acknowledgeAnnouncement)acknowledge(safe);
+ if(!available&&acknowledgeAnnouncement){acknowledge(safe);document.querySelector('.release-dialog [data-close]')?.addEventListener('click',()=>window.dispatchEvent(new Event('salah:release-dismissed')),{once:true});}
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
 export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,showRelease=showAppRelease}={}) {
