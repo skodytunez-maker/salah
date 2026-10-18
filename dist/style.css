@@ -281,7 +281,7 @@ body:has(.quran-recognition) .author-footer{display:none}
 .recognition-listen{padding:36px 0 0;text-align:center}
 .recognition-record{display:flex;align-items:center;flex-direction:column;gap:24px;max-width:260px;width:100%;margin:0 auto;padding:0;border:0;border-radius:24px;color:#e8ce94;background:none;box-shadow:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .recognition-record-symbol{position:relative;display:grid;place-items:center;width:176px;height:176px;flex:none;border:1px solid #d9bf8470;border-radius:50%;background:radial-gradient(circle at 38% 28%,#e2c58722,#1b2942 52%,#101b2d 100%);box-shadow:inset 0 0 25px #e5c78c0a,0 0 0 10px #d5ba8005,0 0 0 11px #d5ba8018,0 0 0 23px #d5ba8003,0 0 0 24px #d5ba800c,0 16px 42px #00000030;transition:background .2s,box-shadow .2s,transform .2s}
-.recognition-record-symbol svg{display:block;width:64px;height:64px;transform:translateX(3px);filter:drop-shadow(0 0 12px #e8ce9440)}
+.recognition-record-symbol svg{display:block;width:64px;height:64px;transform:none;filter:drop-shadow(0 0 12px #e8ce9440)}
 .recognition-record strong{font-size:16px;font-weight:600;line-height:1.4}
 .recognition-record:hover:not(:disabled) .recognition-record-symbol{box-shadow:inset 0 0 25px #e5c78c12,0 0 0 11px #d5ba8020,0 0 0 24px #d5ba8010,0 16px 42px #00000030}
 .recognition-record:active:not(:disabled) .recognition-record-symbol{transform:scale(.97)}
