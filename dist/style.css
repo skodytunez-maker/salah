@@ -260,3 +260,9 @@ button.owner-user-avatar{padding:0;border:1px solid var(--line);cursor:zoom-in;f
 .owner-avatar-preview::backdrop{background:#030813dc;backdrop-filter:blur(8px)}
 .owner-avatar-preview>img{display:block;width:auto;max-width:min(640px,calc(100vw - 28px));height:auto;max-height:calc(100dvh - 28px);object-fit:contain}
 .owner-avatar-close{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:40px;height:40px;border:1px solid #ffffff40;border-radius:50%;background:#10192acc;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:1}
+
+/* Madinah-style Unicode lettering for supplications; original text stays untouched. */
+@font-face{font-family:'SALAH Madinah Unicode';src:url('https://verses.quran.foundation/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+.adhkar-shell .arabic{font-family:'SALAH Madinah Unicode','Amiri Quran','Traditional Arabic',serif;font-weight:400;line-height:2.2;font-synthesis:none;letter-spacing:0}
+.adhkar-shell .adhkar-settings>summary{display:flex;align-items:center;gap:10px;min-height:46px;width:fit-content;max-width:100%;box-sizing:border-box;padding:10px 14px;list-style:none;border:1px solid #c9b47f99;border-radius:12px;background:linear-gradient(135deg,#283653,#17243c);color:#f3e3be;font:600 14px/1.4 'Manrope','Segoe UI',sans-serif;box-shadow:0 3px 12px #03081530}
+.adhkar-shell .adhkar-settings>summary::-webkit-details-marker{display:none}.adhkar-shell .adhkar-settings>summary:before{content:'Aa';font:600 18px/1 Georgia,serif;color:#e6ce91}.adhkar-shell .adhkar-settings>summary:after{content:'⌄';font-size:18px;margin-inline-start:4px}.adhkar-shell .adhkar-settings[open]>summary:after{content:'⌃'}.adhkar-shell .adhkar-settings>summary:focus-visible{outline:3px solid #e6ce91;outline-offset:3px}

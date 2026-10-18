@@ -1,16 +1,31 @@
 import{esc}from './ui.js';
 import{actionIcon}from './action-icons.js';
 import{awardArtwork}from './quran-awards-core.js';
+import{APP_ANNOUNCEMENT}from './app-release.js';
 
 const gallery=cards=>'<div class="release-gallery"><div class="release-gallery-strip" tabindex="0" aria-label="Новые возможности SALAH">'+cards.join('')+'</div><div class="release-gallery-controls"><button type="button" data-release-prev aria-label="Предыдущая карточка"><img src="./assets/arrow-left.svg" alt=""></button><span data-release-page aria-live="polite">1/'+cards.length+'</span><button type="button" data-release-next aria-label="Следующая карточка"><img src="./assets/arrow-left.svg" alt=""></button></div></div>';
 const card=(art,title,text,note='',artClass='')=>'<article class="release-feature"><div class="release-new-art'+(artClass?' '+esc(artClass):'')+'" aria-hidden="true">'+art+'</div><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p>'+(note?'<p class="release-feature-note">'+esc(note)+'</p>':'')+'</article>';
 const portrait=(src)=>'<img class="release-reader-portrait" src="./assets/reciters/'+src+'" alt="">';
 const artwork=kind=>'<img src="./'+awardArtwork(kind)+'" alt="">';
-const spark=()=>'<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d="M40 12c0 18-10 28-28 28 18 0 28 10 28 28 0-18 10-28 28-28-18 0-28-10-28-28Z" stroke="currentColor" stroke-width="1.5"/><circle cx="65" cy="15" r="3" fill="currentColor"/></svg>';
+const screenshot=name=>'<img class="release-screen-picture" src="./assets/updates/'+name+'-357.png" alt="">';
+const readerFigures=readers=>'<div class="release-new-readers release-roundup-readers">'+readers.map(([image,name])=>'<figure>'+portrait(image)+'<figcaption>'+esc(name)+'</figcaption></figure>').join('')+'</div>';
+function majorReleaseCards(){return [
+ card(readerFigures([['islamsobhi.jpg','Ислам Субхи'],['abdulrahmanalawsi.jpg','Абдуррахман аль-Ауси'],['saadalghamdi.jpg','Саад аль-Гамиди'],['ahmadalajmi.jpg','Ахмад аль-Аджми'],['faresabbad.jpg','Фарис Аббад']]),'13 новых чтецов','Ислам Субхи, Абдуррахман аль-Ауси, Саад аль-Гамиди, Ахмад аль-Аджми и Фарис Аббад.','Коран → Чтецы → Новые. Ещё восемь голосов — на следующей карточке.','release-reciter-art'),
+ card(readerFigures([['ahmadalnufais.jpg','Ахмад ан-Нуфайс'],['khalidaljalil.jpg','Халид аль-Джалиль'],['wadeealyamani.jpg','Вади аль-Ямани'],['abdullahkamel.jpg','Абдуллах Камиль'],['haniarrifai.jpg','Хани ар-Рифаи'],['alijaber.jpg','Али Джабир'],['muhammadayyub.jpg','Мухаммад Айюб'],['salahbukhatir.jpg','Салах Бухатир']]),'Ещё восемь голосов','В каталоге 46 чтецов. Избранные остаются под рукой; для недавних добавлений есть фильтр «Новые».','','release-reciter-art'),
+ card(screenshot('mushaf'),'Мединский мусхаф','Печатные страницы Корана, цветной таджвид, тёмный и светлый фон.','Включите чтеца: текущий аят подсвечивается, страницы перелистываются по записи с разметкой.','release-screen-art'),
+ card(screenshot('quran-reader'),'Привычный Коран — новое начертание','В карточках аятов — мединское начертание, как в мусхафе. Перевод и настройки размера сохранены.','','release-screen-art'),
+ card(screenshot('download'),'Аудио без интернета','Скачивание показывает объём загруженного аудио. Длинные суры не прерываются через прежние 45 секунд, пока данные поступают.','Коран → сура → Aa → Скачать аудио. Запись сохраняется в SALAH; оставьте приложение открытым до окончания.','release-screen-art'),
+ card('<div class="release-shuffle-preview"><div>'+portrait('alafasy.webp')+'<span>'+actionIcon('shuffle')+'</span>'+portrait('yasseraldossari.jpg')+'</div><strong>'+actionIcon('shuffle')+' Перемешать</strong><small>Суры и чтецы · один плейлист</small></div>','Перемешивание чтецов','Случайный плейлист объединяет разные голоса и суры. Следующая запись включается автоматически.','Откройте развёрнутый плеер и нажмите «Перемешать».'),
+ card('<div class="release-hours-medals">'+['hours25','hours100','hours1000'].map(artwork).join('')+'</div>','Награды и топы','Награды за часы прослушивания и постоянство. Личные результаты и общий топ — за день, неделю, месяц и всё время.','Подиум сохраняет ровные ступени на разных экранах.'),
+ card(screenshot('adhkar'),'Азкары читать удобнее','Настройки чтения стали заметнее. Арабский текст получил мединское начертание; размер и состав текста выбираете вы.','','release-screen-art'),
+ card('<div class="release-tafsir-preview">'+screenshot('mushaf')+'<span>ГОТОВИТСЯ</span><strong>Тафсир ас-Саади<br>Тафсир Ибн Касира</strong></div>','Тафсиры — в подготовке','Планируем добавить толкования ас-Саади и Ибн Касира и дополнительные переводы.','Эти тексты пока недоступны в SALAH: сначала проверяем источники и издания.','release-screen-art')
+ ];}
 
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
+ if(version>=357&&version<=APP_ANNOUNCEMENT.version)return gallery(majorReleaseCards());
+ if(version>=351&&version<=356)return gallery([card(screenshot(version===356?'quran-reader':'mushaf'),version===356?'Коран в мединском начертании':'Мусхаф в SALAH',changes[0]||'Печатные страницы Корана в стиле SALAH.','','release-screen-art')]);
  if(version===348||version===349){
  const cards=[
   card('<div class="release-new-readers release-reader-quartet"><figure>'+portrait('ahmadalnufais.jpg')+'<figcaption>Ахмад ан-Нуфайс</figcaption></figure><figure>'+portrait('khalidaljalil.jpg')+'<figcaption>Халид аль-Джалиль</figcaption></figure><figure>'+portrait('wadeealyamani.jpg')+'<figcaption>Вади аль-Ямани</figcaption></figure><figure>'+portrait('abdullahkamel.jpg')+'<figcaption>Абдуллах Камиль</figcaption></figure></div>','Новые чтецы',"Ахмад ан-Нуфайс, Халид аль-Джалиль, Вади аль-Ямани, Абдуллах Камиль.","В каталоге теперь 46 чтецов. Коран → Чтецы.",'release-reciter-art'),
@@ -36,7 +51,7 @@ export function releaseIllustrations(version,changes=[]){
  if(![339,340,341].includes(version)){
   if(!Number.isSafeInteger(version)||version<=341||!Array.isArray(changes))return '';
   const safe=changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8);
-  return safe.length?gallery(safe.map((text,i)=>card(spark(),'Обновление '+(i+1),text))):'';
+  return safe.length?gallery(safe.map(text=>card(actionIcon(/чтец|аудио|плеер/iu.test(text)?'play':'book'),'Что изменилось',text))):'';
  }
  const cards=[
   card('<div class="release-hours-medals">'+['hours25','hours100','hours1000'].map(artwork).join('')+'</div>','Новые награды','За 25, 50, 100, 250, 500, 1 000 и 5 000 часов прослушивания Корана.','Полученные награды остаются в вашем аккаунте.'),

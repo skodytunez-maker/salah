@@ -31,6 +31,16 @@ const quota=Object.assign(Error('quota'),{name:'QuotaExceededError'});
 await assert.rejects(downloadAudioFiles({urls:['https://audio.test/quota.mp3'],store:{getAudio:async()=>null,putAudio:async()=>{throw quota;}},fetcher}),{name:'QuotaExceededError'});
 const aborted=new AbortController();aborted.abort();await assert.rejects(downloadAudioFiles({urls,store,fetcher,signal:aborted.signal}),{name:'AbortError'});
 
+// A long response remains valid while bytes continue arriving. The deadline is idle time.
+const chunks=[],streamStore={getAudio:async()=>null,putAudio:async(url,blob)=>{chunks.push(blob);}},updates=[];let part=0;
+const slow=()=>new Response(new ReadableStream({async pull(output){await new Promise(resolve=>setTimeout(resolve,35));if(part===5){output.close();return;}part++;output.enqueue(new Uint8Array([part]));}}),{headers:{'Content-Type':'audio/mpeg','Content-Length':'5'}});
+assert.equal(await downloadAudioFiles({urls:['https://audio.test/long.mp3'],store:streamStore,fetcher:slow,idleTimeoutMs:130,onProgress:(done,bytes,details)=>updates.push({done,bytes,phase:details.phase})}),5);
+assert.ok(updates.some(v=>v.done===0&&v.bytes>0&&v.phase==='downloading'),'Show bytes before the first complete file');assert.ok(updates.some(v=>v.phase==='saving'));assert.equal(chunks.length,1);assert.equal(chunks[0].size,5,'Only the complete recording is saved');
+await assert.rejects(downloadAudioFiles({urls:['https://audio.test/stalled.mp3'],store:streamStore,idleTimeoutMs:15,fetcher:(url,{signal})=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(new DOMException('aborted','AbortError')),{once:true}))}),{name:'TimeoutError'},'A connection timeout is an error, not a silent user cancellation');
+const userCancel=new AbortController();let readerStarted;
+const userTransfer=downloadAudioFiles({urls:['https://audio.test/cancel.mp3'],store:streamStore,signal:userCancel.signal,fetcher:(url,{signal})=>Promise.resolve(new Response(new ReadableStream({start(output){output.enqueue(new Uint8Array([1]));readerStarted=true;signal.addEventListener('abort',()=>output.error(new DOMException('aborted','AbortError')),{once:true});}}),{headers:{'Content-Type':'audio/mpeg'}}))});
+while(!readerStarted)await Promise.resolve();userCancel.abort();await assert.rejects(userTransfer,{name:'AbortError'});assert.equal(chunks.length,1,'Cancellation never saves a partial stream');
+
 // An in-flight worker that ignores cancellation cannot write after its peer fails.
 let resolveSecond,started=0;
 const race=downloadAudioFiles({urls:['https://audio.test/race-a.mp3','https://audio.test/race-b.mp3'],store,fetcher:url=>{started++;return url.endsWith('a.mp3')?Promise.resolve(new Response('error',{status:500})):new Promise(resolve=>{resolveSecond=resolve;});}});
