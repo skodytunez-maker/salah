@@ -397,3 +397,6 @@ header.quran-section-title{height:auto}
 .quran-medina-accessible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .quran-script-fallback-guide{margin-top:14px}.quran-light .mushaf-color-rules p{color:var(--reader-muted)}
 .quran-light .mushaf-color-swatch[data-rule=mad-2]{background:#e8af00}.quran-light .mushaf-color-swatch[data-rule=mad-2-4-6]{background:#f60}.quran-light .mushaf-color-swatch[data-rule=mad-4-5]{background:#f00000}.quran-light .mushaf-color-swatch[data-rule=mad-6]{background:#b50000}.quran-light .mushaf-color-swatch[data-rule=qalqala]{background:#00a8cf}
+
+.quran-reading-resume{display:flex;align-items:center;gap:12px;padding:14px 16px;margin:0 0 16px;border:1px solid #d2bc8650;border-radius:16px;background:linear-gradient(120deg,#d2bc8610,#15213980);color:var(--text);text-decoration:none;min-width:0}
+.quran-reading-resume>span{display:grid;gap:4px;min-width:0;flex:1}.quran-reading-resume strong{font-size:14px;font-weight:600;color:var(--gold)}.quran-reading-resume small{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.quran-reading-resume>.action-icon{width:22px;height:22px;flex:none;color:var(--gold)}.quran-reading-resume>.action-icon:last-child{width:18px;height:18px}.quran-reading-resume:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
