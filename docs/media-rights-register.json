@@ -2431,6 +2431,15 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Screenshot of the public SALAH support interface maintained in this repository, captured 2026-10-14. No personal account data, card data or external photographs are included.",
       "note": "Existing support page capture reused as feature-specific artwork for release 372; original capture outputs/salah-yookassa-readiness-20261014/published-support.png. This is an interface image, not evidence of an active payment or payment-provider approval."
+    },
+    {
+      "path": "dist/assets/brand/saadi-kobilov-mark.png",
+      "gitBlobSha": "1904b6475809c90441457345189c5163d2ac234a",
+      "bytes": 27698,
+      "kind": "raster",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/author-signature-evidence.md",
+      "note": "Transparent SK author mark created from the project owner's supplied personal-brand reference. The owner explicitly requested its use in SALAH and SAHABA; exclusive copyright is not asserted."
     }
   ],
   "wallpaperSets": [

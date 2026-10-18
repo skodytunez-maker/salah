@@ -3818,6 +3818,11 @@
       "path": "dist/assets/tyumen-november-source-2025.jpg",
       "gitBlobSha": "23edda6c984d337ada980788a2accd193c561328",
       "bytes": 142373
+    },
+    {
+      "path": "dist/assets/brand/saadi-kobilov-mark.png",
+      "gitBlobSha": "1904b6475809c90441457345189c5163d2ac234a",
+      "bytes": 27698
     }
   ],
   "incrementalEvidence": [
