@@ -2397,7 +2397,7 @@
     },
     {
       "path": "dist/assets/updates/holy-cities-368.png",
-      "gitBlobSha": "e01adce4d52ba3d973459b40e1dc94da6d243944",
+      "gitBlobSha": "cc2ef5d9c5b3a70772558fff415fbcc0ebba62b6",
       "rightsReviewStatus": "needs-review",
       "rightsEvidence": "SALAH interface screenshot with Esri World Imagery and OpenFreeMap building data. Provider attribution remains inside the image. This records provenance, not blanket clearance of third-party imagery.",
       "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
@@ -2411,7 +2411,7 @@
     },
     {
       "path": "dist/assets/updates/recognition-368.png",
-      "gitBlobSha": "e07fefc816961d205261bebde27816752026d4eb",
+      "gitBlobSha": "27afb2dbf1d8d279e0ba453d62a8792d97d61796",
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Screenshot of the SALAH public application interface maintained in this repository. No private account data, device location or uploaded recordings are present.",
       "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
