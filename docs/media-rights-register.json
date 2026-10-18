@@ -2440,6 +2440,16 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/author-signature-evidence.md",
       "note": "Transparent SK author mark created from the project owner's supplied personal-brand reference. The owner explicitly requested its use in SALAH and SAHABA; exclusive copyright is not asserted."
+    },
+    {
+      "path": "dist/assets/chevron-left.svg",
+      "gitBlobSha": "5bcc1bb5e5add086376c165850dc1e29d3c61f6a",
+      "bytes": 288,
+      "kind": "vector",
+      "rightsReviewStatus": "license-recorded",
+      "license": "MIT",
+      "note": "Exact Bootstrap Icons chevron-left from reference commit8d88686c03c3768a2d82ba4f20c3c4e1b100fa29; existing bundled MIT notice applies.",
+      "rightsEvidence": "docs/about-layout-evidence.md"
     }
   ],
   "wallpaperSets": [
