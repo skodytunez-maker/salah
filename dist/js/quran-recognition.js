@@ -5,7 +5,7 @@ import{quranPlayback}from './quran-session.js';
 import{loadRecognitionData,validRecognitionCatalog}from './quran-recognition-data.js';
 import{resampleRecognition}from './quran-recognition-core.js';
 import{setForegroundAudio}from './audio-focus.js';
-export function recognitionEntry(){return '<a class="quran-recognition-entry" href="#quran?view=recognize"><span aria-hidden="true">◉</span><span><strong>Распознать чтение</strong><small>Сура, аят и чтец · бета</small></span><span aria-hidden="true">→</span></a>';}
+export function recognitionEntry(){return '<a class="quran-recognition-entry" href="#quran?view=recognize" aria-label="Распознать чтение" title="Распознать чтение · сура, аят и чтец"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11v1a6 6 0 0 0 12 0v-1m-6 7v3m-3 0h6M3 8v5m18-5v5"/></svg></a>';}
 export function mountRecognition(host,index){
  let closed=false,ticket=0,busy=false,stream=null,recorder=null,clock=null,timeout=null,worker=null,abort=null,cancelWork=null,coverageAbort=new AbortController(),catalog=null,recordingAt=0;
  const owner='quran-recognition';
