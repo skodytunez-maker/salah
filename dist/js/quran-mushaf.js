@@ -49,7 +49,7 @@ export function mountMushaf(host,index,requestedPage=null){
   const surahs=new Map(sources.map(s=>[s.number,s]));
   return{lines,hasBasmala,html:printedPageMarkup(lines,target,index,surahs,esc,hasBasmala?'ﱁ ﱂ ﱃ ﱄ':'',edition)};
  },{ready:(value,target,edition)=>hasPrintedFont(target,edition)&&(!value.hasBasmala||hasPrintedFont(1,edition))});
- const retainFonts=()=>trimPrintedFonts([1,page,requested,...[-2,-1,1,2].map(n=>requested+n)].filter(validMushafPage),prefs.edition);
+ const retainFonts=()=>{if(closed)return;trimPrintedFonts([1,page,requested,...[-2,-1,1,2].map(n=>requested+n)].filter(validMushafPage),prefs.edition);};
  const commit=(value,target,edition,ticket)=>{
   if(closed||!shell.isConnected||ticket!==generation||edition!==prefs.edition)return;
   page=target;requested=target;paper.innerHTML=value.html;paper.setAttribute('aria-busy','false');paper.setAttribute('aria-label','Арабский текст, страница '+page);mark.disabled=false;printLines=value.lines;
@@ -75,7 +75,7 @@ export function mountMushaf(host,index,requestedPage=null){
    if(!printLines){paper.innerHTML='<div class="mushaf-error"><h2>Страница недоступна</h2><p>Не удалось загрузить страницу или книжный шрифт. Проверьте интернет и повторите.</p><button type="button" id="mushaf-retry">Повторить</button></div>';host.querySelector('#mushaf-retry').onclick=retry;}
   }).finally(retainFonts);
  };
- host.querySelector('#mushaf-edition').onchange=e=>{const anchor=printLines&&printedVerseKeys(printLines)[0]?.split(':').map(Number);prefs=mushafPreferences({...prefs,edition:e.target.value,editionChosen:true});apply();if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить настройки чтения');const target=anchor&&printedPageForPosition(anchor[0],anchor[1],prefs.edition);if(target&&target!==page){navigate(target);return;}drawBookmarks();printLines=null;listening?.refresh();openPage();};
+ host.querySelector('#mushaf-edition').onchange=e=>{const anchor=printLines&&printedVerseKeys(printLines)[0]?.split(':').map(Number);prefs=mushafPreferences({...prefs,edition:e.target.value,editionChosen:true});apply();if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить настройки чтения');const target=anchor&&printedPageForPosition(anchor[0],anchor[1],prefs.edition)||page;drawBookmarks();if(target!==requested){navigate(target);return;}openPage(target);};
  listening=mountMushafListening(host,{page,index,getEdition:()=>prefs.edition,getTheme:()=>prefs.theme,setTheme:theme=>{prefs=mushafPreferences({...prefs,theme});host.querySelector('#mushaf-theme').value=prefs.theme;apply();if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить фон');},openColors:()=>{host.querySelector('.mushaf-options').open=false;colors.showModal();},getLines:()=>printLines,getFollow:()=>prefs.follow,setFollow:value=>{prefs=mushafPreferences({...prefs,follow:value});if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить настройки чтения');},navigate:p=>navigate(p,true)});
  openPage();
  const resize=()=>{if(!closed&&printLines)fitPrintedPage(paper,prefs.size);};

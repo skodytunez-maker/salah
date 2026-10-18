@@ -47,7 +47,7 @@ export async function showQuran(container){
  stopQuran();host=container;const token=generation;
  host.innerHTML='<section class="panel section"><h2>Коран</h2><p class="muted">Открываем библиотеку…</p></section>';
  try{
-  const results=await Promise.all([loadIndex(),applyApprovedReciters(RECITERS,{updateExisting:!['playing','loading'].includes(quranPlayback.state.status)})]);index=results[0];if(token!==generation)return;
+  const results=await Promise.all([loadIndex(),['mushaf','recognize'].includes(destination.get('view'))?Promise.resolve():applyApprovedReciters(RECITERS,{updateExisting:!['playing','loading'].includes(quranPlayback.state.status)})]);index=results[0];if(token!==generation)return;
   const params=new URLSearchParams(location.hash.split('?')[1]||''),surah=Number(params.get('surah')),ayah=params.has('ayah')?Number(params.get('ayah')):1;
   if(params.has('listen')){unmountListeningShare=mountListeningShare(host,index,location.hash);return;}
   if(params.get('view')==='recognize'){unmountRecognition=mountRecognition(host,index);return;}
