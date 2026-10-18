@@ -1,5 +1,6 @@
 import {title,esc} from './ui.js';
 import {mountSupportSubscription} from './support-subscription.js';
+import{mountSupportCancellationPreview}from './support-cancellation-preview.js';
 export const MONTHLY_SUPPORT_AMOUNTS=Object.freeze([150,300,500]);
 export const CUSTOM_SUPPORT_MIN=150;
 let selectedAmount=300,customSelected=false,customValue='150';
@@ -29,6 +30,8 @@ export function monthlySupportMarkup(amount=300,{custom=false,value='150'}={}){
  '<div class="financial-support-free"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4c3-1 6-1 9 1 3-2 6-2 9-1v15c-3-1-6-1-9 1-3-2-6-2-9-1V4Zm9 1v15"/></svg><p>Все функции SALAH остаются бесплатными.<br>Поддержка — только по вашему желанию.</p></div></section>';
 }
 export function mountFinancialSupport(host,subscriptionOptions={}){
+ if(subscriptionOptions.previewCancellation){mountSupportCancellationPreview(host);return;}
+ if(host.querySelector('[data-support-cancellation-preview]')){host._supportCancellationCleanup?.();host.innerHTML='';}
  if(!host.querySelector('.financial-support'))host.innerHTML=monthlySupportMarkup(selectedAmount,{custom:customSelected,value:customValue});
  const total=host.querySelector('[data-monthly-support-total]'),custom=host.querySelector('.financial-support-custom'),amount=host.querySelector('#monthly-support-custom-amount'),error=host.querySelector('#monthly-support-custom-error');
  const updateCustom=()=>{

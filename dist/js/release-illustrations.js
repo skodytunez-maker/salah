@@ -12,6 +12,7 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'support',match:/поддержк|отмен.{0,18}подписк/iu,title:'Управление поддержкой SALAH',art:()=>screenshot('support',372),where:'Поддержать SALAH. Приём платежей ещё готовится.'},
  {id:'tafsir',match:/тафсир|толкован/iu,title:'Тафсиры ас-Саади и Ибн Касира',art:()=>screenshot('tafsir',369),where:'Коран → сура → ⋯ у аята → Тафсир.'},
  {id:'news',match:/что нового|иллюстрац|карточк.{0,30}обновлен|обновлен.{0,30}картин/iu,title:'Новые возможности — в картинках',art:()=>'<div class="release-update-pictures">'+screenshot('qibla-map',368)+screenshot('recognition',368)+'</div>',where:'Меню → Настройки → Приложение и обновления → Что нового.'},
  {id:'recognition',match:/распозна|микрофон|шазам/iu,title:'Узнать чтение',art:()=>screenshot('recognition',368),where:'Коран → значок микрофона.'},

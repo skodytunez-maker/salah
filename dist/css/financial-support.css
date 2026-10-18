@@ -56,3 +56,5 @@
 .support-unlink-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}.support-unlink-actions .button{width:100%;min-height:48px}.support-unlink-dialog [role=alert]{color:#e7b1b7}
 .account-support-link{display:flex;align-items:center;justify-content:space-between;min-height:52px;margin:18px 0;padding:14px 17px;border:1px solid var(--line);border-radius:16px;background:#111a2b;color:var(--ivory);text-decoration:none;gap:12px}
 @media(max-width:380px){.support-subscription{padding:20px 16px}.support-subscription dl>div{gap:8px;font-size:12px}}
+
+.support-preview-note{padding:14px 16px;border:1px solid #c9b47f66;border-radius:14px;background:#c9b47f0c;color:var(--muted);font-size:13px;line-height:1.7}.support-preview-note strong{color:var(--gold)}.support-cancellation-preview>[data-support-preview-reset]{margin-top:18px;width:100%}
