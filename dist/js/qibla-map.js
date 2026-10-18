@@ -1,5 +1,5 @@
 import{bearing}from './prayers.js';
-import{mapPoint,qiblaMapRay}from './qibla-map-core.js';
+import{mapPoint,qiblaMapRay,fitQiblaMapRay}from './qibla-map-core.js';
 import{getDevicePosition}from './city-location.js';
 import{mapStyle,styleSalahMap,MAP_PLACES,MAP_ATTRIBUTION}from './qibla-map-style.js';
 let library;
@@ -16,7 +16,7 @@ export function mountQiblaMap(host,{city,loadLibrary=mapLibre,getPosition=getDev
   if(point){const centre=[point.longitude,point.latitude],kaaba=new api.LngLat(39.826206,21.422487),distance=kaaba.distanceTo(new api.LngLat(...centre)),heading=bearing(point.latitude,point.longitude),near=distance<40;
    features.push({type:'Feature',properties:{kind:'point'},geometry:{type:'Point',coordinates:centre}});
    if(accuracy>0){const ring=[];for(let a=0;a<360;a+=10)ring.push(qiblaMapRay(point.latitude,point.longitude,a,accuracy).at(-1).slice().reverse());ring.push(ring[0]);features.push({type:'Feature',properties:{kind:'accuracy'},geometry:{type:'Polygon',coordinates:[ring]}});}
-   if(!near&&Number.isFinite(heading)){const bounds=map.getBounds(),radius=Math.max(20,Math.min(3000000,distance*.9,map.getCenter().distanceTo(new api.LngLat(bounds.getEast(),bounds.getNorth()))*.8)),ray=qiblaMapRay(point.latitude,point.longitude,heading,radius),end=ray.at(-1);features.push({type:'Feature',properties:{kind:'ray'},geometry:{type:'LineString',coordinates:ray.map(p=>[p[1],p[0]])}});
+   if(!near&&Number.isFinite(heading)){const bounds=map.getBounds(),radius=Math.max(20,Math.min(3000000,distance*.9,map.getCenter().distanceTo(new api.LngLat(bounds.getEast(),bounds.getNorth()))*.8)),ray=fitQiblaMapRay(point.latitude,point.longitude,heading,radius,{project:p=>map.project(p),width:map.getCanvas().clientWidth,height:map.getCanvas().clientHeight}),end=ray.at(-1);features.push({type:'Feature',properties:{kind:'ray'},geometry:{type:'LineString',coordinates:ray.map(p=>[p[1],p[0]])}});
     if(!arrow){const element=doc.createElement('div');element.className='qibla-map-arrow';element.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27 27 16 22 5 27Z" fill="#dcc58e" stroke="#142039" stroke-width="2" stroke-linejoin="round"/><path d="M16 7v13" stroke="#fff3cc" stroke-width="1.3"/></svg>';arrow=new api.Marker({element,rotationAlignment:'map',pitchAlignment:'map'}).setLngLat([end[1],end[0]]).addTo(map);}arrow.setLngLat([end[1],end[0]]).setRotation(bearing(end[0],end[1]));
    }else{arrow?.remove();arrow=null;}
    status.textContent=label+' · '+(near?'Кааба в выбранной точке':Math.round(heading)%360+'° от севера');
