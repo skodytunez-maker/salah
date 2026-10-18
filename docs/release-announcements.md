@@ -12,3 +12,9 @@ Owner-only profiles must not appear as a public feature in announcements.
 
 City art is optional and lazy-loaded. News uses small thumbnails, not full pairs.
 Keep source, author, transformation notes and derivative license in credits.json.
+
+## Permanent illustration requirement (18 October 2026)
+
+This applies to current release notes as well as the large roundup, including the owner update dialog and Settings → What is new. A generic book/star/play icon is not acceptable artwork for a new feature. Select a feature screenshot or a feature-specific visual composition and explain the feature briefly. The build checks that every APP_CHANGES entry has an artwork category, so a new feature cannot silently fall back to an icon.
+
+The map/reading additions belong to announcement 367. Version 368 is a visual correction of those additions; later cosmetic versions must keep that announcement id. The roundup now preserves its earlier cards and includes holy-city map views and regular Quran reading resume. Keep the existing October 21 expiry and dismissal behaviour.

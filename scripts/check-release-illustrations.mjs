@@ -3,7 +3,8 @@ import fs from 'node:fs/promises';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{illustratedReleaseMarkup,bindIllustratedRelease}from '../dist/js/release-gallery.js';
 import{ownerUserCard,bindOwnerAvatarPreview}from '../dist/js/owner-user-card.js';
-import{APP_ANNOUNCEMENT,APP_NEWS_UNTIL}from '../dist/js/app-release.js';
+import{APP_VERSION,APP_CHANGES,APP_ANNOUNCEMENT,APP_NEWS_UNTIL}from '../dist/js/app-release.js';
+import{releaseFeatureForChange}from '../dist/js/release-illustrations.js';
 import{releaseHighlightActive,releaseHighlightMarkup,bindReleaseHighlight}from '../dist/js/release-highlight.js';
 import{showAppRelease}from '../dist/js/pwa-updates.js';
 
@@ -37,10 +38,12 @@ const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Из�
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(root.querySelectorAll('.release-feature').length,12);assert.equal(root.querySelectorAll('.release-roundup-readers img').length,13);
+assert.equal(root.querySelectorAll('.release-feature').length,14);assert.equal(root.querySelectorAll('.release-roundup-readers img').length,13);
 for(const title of ['Режим путника','Кибла на карте','Узнать чтение · бета','69 конкретных записей'])assert.ok(root.textContent.includes(title));assert.ok(root.textContent.includes('Мединский мусхаф'));assert.ok(root.textContent.includes('Перемешивание чтецов'));assert.ok(root.textContent.includes('Тафсиры — в подготовке'));assert.ok(root.textContent.includes('пока недоступны'));
 for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');
 for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
+for(const change of APP_CHANGES)assert.ok(releaseFeatureForChange(change),'Assign feature-specific artwork before publishing: '+change);
+root.innerHTML=illustratedReleaseMarkup(APP_VERSION,APP_CHANGES);assert.equal(root.querySelectorAll('.release-feature').length,APP_CHANGES.length);for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('.release-new-art img'),'Current release notes need pictures, not generic book icons');for(const img of root.querySelectorAll('.release-new-art img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 const deadline=Date.parse(APP_NEWS_UNTIL);assert.ok(releaseHighlightActive(deadline-1));assert.equal(releaseHighlightActive(deadline),false);assert.equal(releaseHighlightActive(deadline+86400000),false);assert.equal(releaseHighlightMarkup(deadline),'');
 root.innerHTML=releaseHighlightMarkup(deadline-1000);assert.ok(root.querySelector('[data-release-highlight]'));let opened=0;const realNow=Date.now;try{Date.now=()=>deadline-1000;bindReleaseHighlight(root,()=>opened++);root.querySelector('[data-release-highlight]')?.click();assert.equal(opened,1,'Seen news remains accessible throughout the three-day window');}finally{Date.now=realNow;root.replaceChildren();bindReleaseHighlight(root);}
 

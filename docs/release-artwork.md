@@ -9,3 +9,7 @@ For small fixes, update APP_VERSION/APP_CHANGES and keep this APP_ANNOUNCEMENT a
 Arabic adhkar font: documented Quran Foundation Unicode Uthmanic Hafs, runtime CDN only. Documentation: https://api-docs.quran.foundation/docs/tutorials/fonts/font-rendering/ . The page-specific QCF fonts cannot encode arbitrary supplications; original Unicode strings remain unchanged. No font file is redistributed by this release.
 
 The Unicode Hafs face is scoped to Arabic letters and vowel signs with unicode-range. Arabic punctuation keeps the normal Arabic fallback: this Quran font maps punctuation such as U+060C to Quran-specific ornaments, which must not appear in supplications.
+
+## Follow-up corrections
+
+The current roundup identifier is 367 (the earlier reference to 357 describes the first roundup). Version 368 adds actual feature screenshots for the ordinary map, holy-city satellite views, recognition screen and reading resume. The generic future-release book-icon template has been removed. Publication must pass the artwork-category check for APP_CHANGES. Map image attribution remains visible in screenshots; screenshots use public city centres and contain no account data or device GPS.
