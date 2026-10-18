@@ -1,0 +1,59 @@
+import{esc}from './ui.js';
+import{reciterImageUrl}from './approved-catalog.js';
+import{RECITERS,reciterInfo}from './quran-reciters.js';
+import{quranPlayback}from './quran-session.js';
+import{loadRecognitionData,validRecognitionCatalog}from './quran-recognition-data.js';
+import{resampleRecognition}from './quran-recognition-core.js';
+import{setForegroundAudio}from './audio-focus.js';
+export function recognitionEntry(){return '<a class="quran-recognition-entry" href="#quran?view=recognize"><span aria-hidden="true">◉</span><span><strong>Распознать чтение</strong><small>Сура, аят и чтец · бета</small></span><span aria-hidden="true">→</span></a>';}
+export function mountRecognition(host,index){
+ let closed=false,ticket=0,busy=false,stream=null,recorder=null,clock=null,timeout=null,worker=null,abort=null,cancelWork=null,coverageAbort=new AbortController(),catalog=null,recordingAt=0;
+ const owner='quran-recognition';
+ host.innerHTML='<section class="quran-recognition panel section"><a class="text-button" href="#quran">← Коран</a><span class="eyebrow">SALAH · БЕТА</span><h1>Узнать чтение</h1><p>Поднесите телефон к звучащей записи или выберите короткий аудиофрагмент.</p><button type="button" class="recognition-record" id="recognition-record" aria-label="Начать распознавание через микрофон"><span aria-hidden="true">◉</span><strong>Слушать 12 секунд</strong></button><p id="recognition-status" role="status" aria-live="polite">Сура, аят и чтец из базы SALAH.</p><button type="button" class="button secondary" id="recognition-file-button">Выбрать аудиофайл · до 30 секунд</button><input type="file" accept="audio/*" id="recognition-file" hidden><button type="button" class="text-button" id="recognition-cancel" hidden>Отмена</button><div id="recognition-result"></div><p class="recognition-privacy">Голос и аудиофайл обрабатываются на этом устройстве и никуда не отправляются. Для первой проверки загружается база записей — около 4 МБ.</p><details class="recognition-coverage"><summary>Какие записи узнаёт бета</summary><div id="recognition-coverage">Загружаем список записей…</div><p>Определяется совпадение с конкретной записью. Другая запись того же чтеца, живое чтение, сильные помехи или изменённая скорость могут не распознаться.</p></details></section>';
+ const record=host.querySelector('#recognition-record'),status=host.querySelector('#recognition-status'),fileButton=host.querySelector('#recognition-file-button'),input=host.querySelector('#recognition-file'),cancel=host.querySelector('#recognition-cancel'),result=host.querySelector('#recognition-result');
+ const alive=id=>!closed&&id===ticket&&host.querySelector('.quran-recognition')?.isConnected;
+ function drawCoverage(value){catalog=value;host.querySelector('#recognition-coverage').innerHTML='<p>'+value.tracks.length+' записей · '+new Set(value.tracks.map(t=>t.reciter)).size+' чтецов.</p><ul>'+[...new Set(value.tracks.map(t=>t.reciter))].map(id=>'<li><strong>'+esc(reciterInfo(id).name)+'</strong>: '+value.tracks.filter(t=>t.reciter===id).map(t=>esc(index.surahs[t.surah-1].name)).join(', ')+'</li>').join('')+'</ul>';}
+ fetch(new URL('../data/recognition/catalog-v1.json',import.meta.url),{signal:coverageAbort.signal,credentials:'omit'}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(value=>{if(!closed&&validRecognitionCatalog(value,index))drawCoverage(value);else throw Error();}).catch(()=>{if(!closed)host.querySelector('#recognition-coverage').textContent='Список пока недоступен. Для проверки понадобится соединение.';});
+ function stopMedia(){clearInterval(clock);clearTimeout(timeout);clock=null;timeout=null;if(recorder&&recorder.state!=='inactive'){recorder.onstop=null;try{recorder.stop();}catch{}}recorder=null;for(const track of stream?.getTracks()||[])track.stop();stream=null;}
+ function release(){const stop=cancelWork;cancelWork=null;stop?.();stopMedia();abort?.abort();abort=null;worker?.terminate();worker=null;setForegroundAudio(owner,false);}
+ function idle(message){if(closed)return;busy=false;record.disabled=false;record.querySelector('strong').textContent='Слушать 12 секунд';record.setAttribute('aria-label','Начать распознавание через микрофон');record.removeAttribute('data-recording');fileButton.disabled=false;cancel.hidden=true;status.textContent=message;}
+ function begin(message){ticket++;release();busy=true;result.innerHTML='';record.disabled=true;fileButton.disabled=true;cancel.hidden=false;status.textContent=message;setForegroundAudio(owner,true);abort=new AbortController();return ticket;}
+ function failure(error,id){if(!alive(id))return;release();const denied=['NotAllowedError','PermissionDeniedError','NotFoundError'].includes(error?.name);idle(denied?'Микрофон недоступен. Разрешите доступ в настройках устройства или выберите аудиофайл. В старой Android-сборке для микрофона может потребоваться обновление через Google Play.':error?.name==='TypeError'?'Не удалось загрузить базу или открыть аудио. Проверьте соединение и повторите.':error?.name==='AbortError'?'Загрузка базы прервана. Проверьте соединение и попробуйте снова.':error?.message||'Не удалось обработать запись. Попробуйте ещё раз.');}
+ function showResult(found){
+  if(!found){idle('Совпадение не найдено. Попробуйте более чёткий фрагмент из записей, перечисленных ниже.');return;}
+  const reader=reciterInfo(found.reciter),surah=index.surahs[found.surah-1];idle('Найдено совпадение с записью.');
+  result.innerHTML='<article class="recognition-match">'+(reader.portrait?'<img src="'+esc(reciterImageUrl(reader.portrait))+'" alt="'+esc(reader.name)+'">':'')+'<span class="eyebrow">ЗАПИСЬ НАЙДЕНА</span><h2>'+esc(surah.name)+' · аят '+found.ayah+'</h2><p>'+esc(reader.name)+'</p><a class="button" href="#quran?surah='+found.surah+'&ayah='+found.ayah+'&reciter='+encodeURIComponent(found.reciter)+'">Открыть аят</a><p class="muted">Аят в середине фрагмента. При сомнении прослушайте аят для проверки.</p></article>';
+ }
+ async function decode(blob){
+  const Context=globalThis.AudioContext||globalThis.webkitAudioContext;if(!Context)throw Error('Этот браузер не поддерживает обработку аудио.');const context=new Context();
+  try{const data=await context.decodeAudioData(await blob.arrayBuffer());if(data.duration<2||data.duration>31)throw Error('Выберите фрагмент длительностью от 2 до 30 секунд.');const channels=Array.from({length:Math.min(data.numberOfChannels,2)},(_,i)=>data.getChannelData(i));return resampleRecognition(channels,data.sampleRate);}finally{void context.close().catch(()=>{});}
+ }
+ function fileDuration(file,signal){return new Promise((resolve,reject)=>{const audio=document.createElement('audio'),url=URL.createObjectURL(file);let timer,settled=false;const done=(error)=>{if(settled)return;settled=true;audio.onloadedmetadata=null;audio.onerror=null;clearTimeout(timer);signal.removeEventListener('abort',cancelled);audio.removeAttribute('src');audio.load();URL.revokeObjectURL(url);error?reject(error):resolve();};const cancelled=()=>done(Error('Отменено'));audio.preload='metadata';audio.onloadedmetadata=()=>{const duration=audio.duration;audio.onloadedmetadata=null;done(Number.isFinite(duration)&&duration>=2&&duration<=30?null:Error('Выберите фрагмент длительностью от 2 до 30 секунд.'));};audio.onerror=()=>{audio.onerror=null;done(Error('Этот аудиоформат не удалось открыть. Используйте MP3, M4A или WAV.'));};timer=setTimeout(()=>done(Error('Не удалось прочитать длительность аудио. Выберите другой файл.')),8000);signal.addEventListener('abort',cancelled,{once:true});audio.src=url;});}
+ async function analyze(blob,id){
+  if(!alive(id))return;record.disabled=true;status.textContent='Проверяем фрагмент и загружаем базу…';
+  try{
+   const [samples,data]=await Promise.all([decode(blob),loadRecognitionData(index,{signal:abort.signal,onCatalog:value=>{if(alive(id))drawCoverage(value);}})]);if(!alive(id))return;
+   status.textContent='Ищем совпадение на устройстве…';worker=new Worker(new URL('./quran-recognition-worker.js',import.meta.url),{type:'module'});
+   const found=await new Promise((resolve,reject)=>{cancelWork=()=>{clearTimeout(timer);reject(Error('Отменено'));};const timer=setTimeout(()=>reject(Error('Распознавание заняло слишком много времени. Повторите.')),20000);worker.onerror=()=>{clearTimeout(timer);reject(Error('Не удалось запустить распознавание в этом браузере.'));};worker.onmessage=e=>{if(!alive(id)){clearTimeout(timer);return;}if(e.data.type==='ready'){worker.postMessage({id,type:'match',samples:samples.buffer},[samples.buffer]);}else if(e.data.type==='result'){clearTimeout(timer);resolve(e.data.result);}else if(e.data.type==='error'){clearTimeout(timer);reject(Error('Не удалось распознать фрагмент.'));}};worker.postMessage({id,type:'index',catalog:data.catalog,bytes:data.bytes},[data.bytes]);});
+   if(!alive(id))return;cancelWork=null;release();showResult(found);
+  }catch(error){failure(error,id);}
+ }
+ function finishRecording(){if(!recorder||recorder.state==='inactive')return;clearInterval(clock);clearTimeout(timeout);record.disabled=true;status.textContent='Обрабатываем запись…';try{recorder.stop();}catch(error){failure(error,ticket);}for(const track of stream?.getTracks()||[])track.stop();stream=null;}
+ record.onclick=async()=>{
+  if(recorder&&recorder.state==='recording'){finishRecording();return;}if(busy)return;
+  if(!navigator.mediaDevices?.getUserMedia||!globalThis.MediaRecorder){idle('Микрофон недоступен в этом браузере. Выберите аудиофайл или откройте SALAH в актуальном Safari/Chrome.');return;}
+  const id=begin('Разрешите микрофон для записи короткого фрагмента.');quranPlayback.pause();
+  try{
+   const media=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});if(!alive(id)){media.getTracks().forEach(t=>t.stop());return;}stream=media;
+   const mime=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(m=>MediaRecorder.isTypeSupported?.(m)),chunks=[];let bytes=0;recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);recordingAt=Date.now();
+   recorder.ondataavailable=e=>{if(!alive(id)||!e.data.size)return;bytes+=e.data.size;if(bytes>6*1024*1024){failure(Error('Запись слишком большая. Попробуйте ещё раз.'),id);return;}chunks.push(e.data);};
+   recorder.onerror=()=>failure(Error('Не удалось записать звук. Проверьте микрофон.'),id);
+   recorder.onstop=()=>{const type=recorder?.mimeType||mime||'audio/mp4';stopMedia();if(!alive(id))return;if(Date.now()-recordingAt<2000){release();idle('Запишите хотя бы 2 секунды; лучше 8–12 секунд.');return;}void analyze(new Blob(chunks,{type}),id);};
+   recorder.start(500);record.disabled=false;record.dataset.recording='true';record.setAttribute('aria-label','Остановить запись и распознать');record.querySelector('strong').textContent='Остановить и распознать';status.textContent='Слушаем · 12 секунд';clock=setInterval(()=>{if(alive(id))status.textContent='Слушаем · '+Math.max(0,12-Math.floor((Date.now()-recordingAt)/1000))+' секунд';},500);timeout=setTimeout(finishRecording,12000);
+  }catch(error){failure(error,id);}
+ };
+ fileButton.onclick=()=>input.click();input.onchange=async()=>{const file=input.files?.[0];input.value='';if(!file||busy)return;const id=begin('Проверяем аудиофайл…');if(file.size>6*1024*1024){failure(Error('Выберите фрагмент до 30 секунд и не больше 6 МБ.'),id);return;}try{await fileDuration(file,abort.signal);if(alive(id))await analyze(file,id);}catch(error){failure(error,id);}};
+ cancel.onclick=()=>{ticket++;release();idle('Распознавание отменено. Можно попробовать другой фрагмент.');};
+ const hidden=()=>{if(document.hidden&&busy){ticket++;release();idle('Распознавание остановлено при сворачивании приложения.');}};document.addEventListener('visibilitychange',hidden);
+ return()=>{closed=true;ticket++;coverageAbort.abort();release();document.removeEventListener('visibilitychange',hidden);};
+}

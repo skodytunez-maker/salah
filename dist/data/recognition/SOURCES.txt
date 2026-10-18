@@ -1,0 +1,5 @@
+SALAH recording recognition beta, 2026-10-18
+Original acoustic-landmark implementation. Sources and SHA-256 of every reference audio recording and timing response are recorded in catalog-v1.json. The reference MP3 files are not distributed. Only non-reconstructive landmark pairs and validated timing boundaries are bundled.
+69 indexed recordings by five reciters; surahs 1, 36, 55, 67, 78, 93, 94, 97, 99, 103, 108, 112, 113 and 114. Idris Abkar: surah 36 excluded because source duration disagrees with timing metadata. Huthaifi references excluded because complete timing tables were unavailable.
+The matcher identifies a recording, not a speaker in arbitrary live speech. Query audio is processed in a local web worker and is never uploaded.
+Calibration: 85/87 accepted test outcomes (clean excerpts and simulated room echo/noise, silence/tones and one unindexed recording); 2 no-matches, zero incorrect matches in this fixture. This is not a real-device microphone accuracy claim.

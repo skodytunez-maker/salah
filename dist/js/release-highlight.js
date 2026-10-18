@@ -4,7 +4,7 @@ let expiryTimer=null,dismissListener=null;
 export const releaseHighlightActive=(now=Date.now())=>Number.isFinite(now)&&now<Date.parse(APP_NEWS_UNTIL);
 export function releaseHighlightMarkup(now=Date.now(),{home=false}={}){
  if(!releaseHighlightActive(now)||home&&hasSeenAnnouncement())return '';
- return '<button type="button" class="release-highlight" data-release-highlight'+(home?' data-release-home':'')+'><span class="release-highlight-images" aria-hidden="true"><img src="./assets/reciters/islamsobhi.jpg" alt=""><img src="./assets/updates/mushaf-357.png" alt=""></span><span><strong>Большое обновление SALAH</strong><small>Новые чтецы, мусхаф, скачивание и другие возможности</small><span class="release-highlight-action">Посмотреть все карточки →</span></span></button>';
+ return '<button type="button" class="release-highlight" data-release-highlight'+(home?' data-release-home':'')+'><span class="release-highlight-images" aria-hidden="true"><img src="./assets/reciters/islamsobhi.jpg" alt=""><img src="./assets/updates/mushaf-357.png" alt=""></span><span><strong>Большое обновление SALAH</strong><small>Мусхаф, чтецы, скачивание, карта и распознавание</small><span class="release-highlight-action">Посмотреть все карточки →</span></span></button>';
 }
 export function bindReleaseHighlight(root,open=showAppRelease){
  clearTimeout(expiryTimer);if(dismissListener){window.removeEventListener('salah:release-dismissed',dismissListener);dismissListener=null;}const button=root.querySelector('[data-release-highlight]');if(!button)return;

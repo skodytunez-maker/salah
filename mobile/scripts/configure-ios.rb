@@ -104,6 +104,7 @@ Xcodeproj::Plist.write_to_path(
 app_plist_path = File.join(project_dir, 'App', 'Info.plist')
 app_plist = Xcodeproj::Plist.read_from_path(app_plist_path)
 app_plist['SALAHAppGroup'] = app_group
+app_plist['NSMicrophoneUsageDescription'] = 'Микрофон нужен, чтобы распознать суру, аят и чтеца по короткому фрагменту. Звук обрабатывается на устройстве.'
 app_plist['NSCameraUsageDescription'] = 'Камера нужна для сканирования QR входа и передачи прослушивания в SALAH.'
 Xcodeproj::Plist.write_to_path(app_plist, app_plist_path)
 
