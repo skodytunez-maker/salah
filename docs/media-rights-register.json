@@ -2415,6 +2415,14 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Screenshot of the SALAH public application interface maintained in this repository. No private account data, device location or uploaded recordings are present.",
       "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
+    },
+    {
+      "path": "dist/assets/updates/tafsir-369.png",
+      "gitBlobSha": "92847a9e55ef14aa3144503fac9c07e0b2b03a53",
+      "bytes": 25522,
+      "kind": "screenshot",
+      "rightsReviewStatus": "needs-review",
+      "note": "Actual SALAH tafsir reader screenshot. Interface provenance is project-local; embedded Russian tafsir text retains QUL source attribution and resource-specific evidence is recorded in docs/quran-tafsir.md."
     }
   ],
   "wallpaperSets": [

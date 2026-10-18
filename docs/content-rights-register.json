@@ -153,6 +153,17 @@
         "dist/js/vendor/leaflet/leaflet.css"
       ],
       "conditions": "Preserve upstream copyright notice, BSD-2-Clause conditions and disclaimer. OpenStreetMap map tiles are a separate runtime service with visible attribution, HTTP caching and no bulk download."
+    },
+    {
+      "id": "russian-tafsirs-runtime",
+      "status": "needs-review",
+      "name": "Russian tafsirs of as-Saadi and Ibn Kathir",
+      "paths": [
+        "dist/js/quran-tafsir.js"
+      ],
+      "source": "https://qul.tarteel.ai/resources/tafsir/307",
+      "mirror": "https://github.com/spa5k/tafsir_api/tree/eb82bb6294efe30ad5c135c03b1864afaa70e855/tafsir",
+      "note": "Runtime public resource API; no full edition redistributed in the app repository. Source text is displayed unchanged as text, without generated paraphrase or translation. QUL describes developer use but resource-specific publisher/translator rights evidence is not supplied by this integration. Do not infer that the mirror code license covers the Russian translations."
     }
   ],
   "content": [

@@ -13,3 +13,5 @@ The Unicode Hafs face is scoped to Arabic letters and vowel signs with unicode-r
 ## Follow-up corrections
 
 The current roundup identifier is 367 (the earlier reference to 357 describes the first roundup). Version 368 adds actual feature screenshots for the ordinary map, holy-city satellite views, recognition screen and reading resume. The generic future-release book-icon template has been removed. Publication must pass the artwork-category check for APP_CHANGES. Map image attribution remains visible in screenshots; screenshots use public city centres and contain no account data or device GPS.
+
+Version 369 replaces the planned tafsir card with a real reader screenshot and source/author overview. Recognition coverage copy must state specific recordings and the absence of ayah labels where timing data is unavailable.
