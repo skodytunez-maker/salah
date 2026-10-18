@@ -3823,6 +3823,11 @@
       "path": "dist/assets/brand/saadi-kobilov-mark.png",
       "gitBlobSha": "1904b6475809c90441457345189c5163d2ac234a",
       "bytes": 27698
+    },
+    {
+      "path": "dist/assets/chevron-left.svg",
+      "gitBlobSha": "5bcc1bb5e5add086376c165850dc1e29d3c61f6a",
+      "bytes": 288
     }
   ],
   "incrementalEvidence": [
