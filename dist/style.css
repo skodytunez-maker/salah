@@ -269,7 +269,61 @@ button.owner-user-avatar{padding:0;border:1px solid var(--line);cursor:zoom-in;f
 
 .travel-home{width:min(100%,340px);margin:8px auto 14px}.travel-places{display:grid;grid-template-columns:1fr 1fr;gap:8px}.travel-places button{min-width:0;min-height:54px;border:1px solid var(--border,#546075);border-radius:15px;background:rgba(16,26,45,.75);color:#d9dfeb;padding:7px 10px;text-align:start}.travel-places small{display:block;font-size:10px;opacity:.8;margin-bottom:3px}.travel-places span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.travel-places [aria-pressed=true]{border-color:#d7bd80;color:#eed9a1;background:rgba(215,189,128,.13)}.travel-home p{font-size:10px;text-align:center;line-height:1.4;margin:7px 0 0;opacity:.82}.travel-settings summary{font-weight:600}.travel-settings .button{margin-top:8px}
 
-.quran-recognition{max-width:620px;margin:auto;padding-bottom:130px}.quran-recognition>.eyebrow{display:block;margin:22px 0 8px}.quran-recognition h1{margin:0 0 12px}.recognition-record{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;width:190px;height:190px;border-radius:50%;margin:28px auto;background:radial-gradient(circle at 35% 25%,#e4cb8a33,#152139 70%);border:2px solid #cbb57b;color:var(--gold);box-shadow:0 0 38px #cbb57b19}.recognition-record>span{font-size:54px;line-height:1}.recognition-record strong{font-size:14px;max-width:150px}.recognition-record[data-recording]{border-color:#df9793;color:#f1c0b2;box-shadow:0 0 35px #df979333}.recognition-record:disabled{opacity:.6}.quran-recognition #recognition-status{text-align:center;min-height:3.5em;line-height:1.5}.recognition-privacy{font-size:12px;line-height:1.6;opacity:.75;margin:22px 0}.recognition-coverage{margin-top:16px;border-top:1px solid #66748b44;padding-top:14px;font-size:13px;line-height:1.65}.recognition-coverage li{margin:10px 0}.recognition-coverage ul{padding-inline-start:20px}.recognition-match{text-align:center;border:1px solid #cbb57b66;border-radius:22px;padding:24px 16px;margin-top:22px;background:#17233888}.recognition-match img{width:108px;height:108px;object-fit:cover;border-radius:50%;border:2px solid #cbb57b;display:block;margin:0 auto 18px}.recognition-match h2{font-size:22px}.recognition-match .button{margin-top:12px}.recognition-match .muted{font-size:12px}
+body:has(.quran-recognition) .author-footer{display:none}
+.quran-recognition{max-width:520px;margin:0 auto;padding:18px 22px 124px;color:var(--text);isolation:isolate}
+.recognition-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.recognition-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#c8cbd3;text-decoration:none;font-size:14px}
+.recognition-back svg{width:20px;height:20px}
+.recognition-beta{font-size:11px;letter-spacing:.08em;color:#d7c08b;border:1px solid #d7c08b30;background:#d7c08b09;border-radius:20px;padding:5px 10px}
+.recognition-intro{text-align:center;margin:30px 0 0}
+.quran-recognition h1{margin:0;font-size:clamp(27px,6.5vw,34px);line-height:1.2;letter-spacing:-.02em}
+.recognition-intro p{margin:10px 0 0;color:#a6afc0;font-size:14px;letter-spacing:.03em}
+.recognition-listen{padding:36px 0 0;text-align:center}
+.recognition-record{display:flex;align-items:center;flex-direction:column;gap:24px;max-width:260px;width:100%;margin:0 auto;padding:0;border:0;border-radius:24px;color:#e8ce94;background:none;box-shadow:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.recognition-record-symbol{position:relative;display:grid;place-items:center;width:176px;height:176px;flex:none;border:1px solid #d9bf8470;border-radius:50%;background:radial-gradient(circle at 38% 28%,#e2c58722,#1b2942 52%,#101b2d 100%);box-shadow:inset 0 0 25px #e5c78c0a,0 0 0 10px #d5ba8005,0 0 0 11px #d5ba8018,0 0 0 23px #d5ba8003,0 0 0 24px #d5ba800c,0 16px 42px #00000030;transition:background .2s,box-shadow .2s,transform .2s}
+.recognition-record-symbol svg{display:block;width:64px;height:64px;filter:drop-shadow(0 0 12px #e8ce9440)}
+.recognition-record strong{font-size:16px;font-weight:600;line-height:1.4}
+.recognition-record:hover:not(:disabled) .recognition-record-symbol{box-shadow:inset 0 0 25px #e5c78c12,0 0 0 11px #d5ba8020,0 0 0 24px #d5ba8010,0 16px 42px #00000030}
+.recognition-record:active:not(:disabled) .recognition-record-symbol{transform:scale(.97)}
+.recognition-record:disabled{cursor:wait}
+.recognition-record:disabled strong{color:#a6afc0}
+.quran-recognition #recognition-status{max-width:350px;margin:12px auto 0;min-height:40px;font-size:13px;line-height:1.55;color:#a6afc0;text-align:center;overflow-wrap:anywhere}
+.quran-recognition #recognition-status:empty{display:none}
+.recognition-actions{display:flex;align-items:center;flex-direction:column;gap:10px;margin:18px 0 0}
+.recognition-file{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:44px;border:1px solid #b6c6df24;border-radius:14px;padding:10px 18px;background:#b6c6df05;box-shadow:none;color:#b9c3d4;font-size:13px;line-height:1.4;cursor:pointer}
+.recognition-file svg{width:19px;height:19px;flex:none}
+.recognition-file:disabled{opacity:.45;cursor:wait}
+.recognition-cancel{min-height:44px;color:#c8cbd3}
+.recognition-coverage{margin:24px auto 0;max-width:440px;border-top:1px solid #b6c6df18;font-size:13px;line-height:1.65;color:#a6afc0}
+.recognition-coverage>summary{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;list-style:none;cursor:pointer;font-size:12px;color:#95a1b5}
+.recognition-coverage>summary::-webkit-details-marker{display:none}
+.recognition-coverage>summary:after{content:'+';font-size:17px;font-weight:300;color:#bca876}
+.recognition-coverage[open]>summary:after{content:'−'}
+.recognition-about{padding:4px 0 12px}
+.recognition-about p{margin:0 0 16px}
+.recognition-about h2{font-family:inherit;font-size:14px;color:#c9d0dd;margin:22px 0 8px}
+.recognition-coverage li{margin:10px 0}
+.recognition-coverage ul{padding-inline-start:18px}
+.recognition-match{text-align:center;border:1px solid #d7c08b45;border-radius:24px;padding:26px 18px 20px;margin:26px 0 0;background:linear-gradient(150deg,#d3b77710,#14223980);box-shadow:0 14px 30px #00000014}
+.recognition-match img{width:86px;height:86px;object-fit:cover;border-radius:50%;border:2px solid #d7c08b99;display:block;margin:0 auto 18px;box-shadow:0 0 0 6px #d7c08b08}
+.recognition-match .eyebrow{font-size:10px;letter-spacing:.15em;color:#d7c08b}
+.recognition-match h2{font-size:25px;line-height:1.3;margin:10px 0}
+.recognition-match p{font-size:14px;color:#bcc5d4;margin:8px 0}
+.recognition-match .button{margin-top:14px;min-height:44px}
+.recognition-match p.muted{font-size:11px;line-height:1.5;margin-top:16px;color:#8996ac}
+.quran-recognition[data-state=found] .recognition-record-symbol{display:none}
+.quran-recognition[data-state=found] .recognition-listen{padding-top:20px}
+.quran-recognition[data-state=found] .recognition-actions{margin-top:12px}
+.quran-recognition[data-state=listening] .recognition-record-symbol{animation:recognition-breathe 1.6s ease-in-out infinite}
+.quran-recognition[data-state=listening] .recognition-wave{animation:recognition-wave 1s ease-in-out infinite;transform-origin:center}
+.quran-recognition[data-state=working] .recognition-record-symbol:after{content:'';position:absolute;inset:8px;border:1px solid transparent;border-top-color:#e8ce94;border-radius:50%;animation:recognition-turn 1.4s linear infinite}
+.recognition-back:focus-visible,.recognition-record:focus-visible,.recognition-file:focus-visible,.recognition-coverage>summary:focus-visible{outline:2px solid #e8ce94;outline-offset:5px}
+@keyframes recognition-breathe{50%{box-shadow:inset 0 0 25px #e5c78c18,0 0 0 14px #d5ba8018,0 0 0 29px #d5ba8009,0 16px 42px #00000030}}
+@keyframes recognition-wave{50%{transform:scaleY(.6);opacity:.55}}
+@keyframes recognition-turn{to{transform:rotate(360deg)}}
+@media(max-width:360px){.quran-recognition{padding-inline:14px}.recognition-intro{margin-top:20px}.recognition-listen{padding-top:30px}.recognition-record-symbol{width:156px;height:156px}.recognition-record{gap:22px}}
+@media(prefers-reduced-motion:reduce){.quran-recognition .recognition-record-symbol,.quran-recognition .recognition-wave,.quran-recognition .recognition-record-symbol:after{animation:none!important;transition:none!important}}
+
 
 .qibla-map-toggle{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(106px + env(safe-area-inset-bottom));z-index:410;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:62px;height:62px;border-radius:20px;border:1px solid #d5bd8099;background:#101b30ee;color:#e5c98d;box-shadow:0 6px 22px #0007;backdrop-filter:blur(12px);font-size:10px}.qibla-map-toggle[data-mode=compass] .qibla-compass-icon,.qibla-map-toggle[data-mode=map] .qibla-map-icon{display:none}.qibla-map-panel{max-width:760px;margin:0 auto;padding:12px 0 140px}.qibla-map-heading{display:flex;justify-content:space-between;align-items:center}.qibla-map-heading>span{color:#dbbd7c;font-size:13px}.qibla-map-help,.qibla-map-privacy{font-size:12px;line-height:1.6;color:var(--muted,#bac3d4)}.qibla-map-canvas{height:min(58dvh,560px);min-height:300px;border:1px solid #a3977666;border-radius:20px;overflow:hidden;background:#b5b9b7;isolation:isolate;z-index:0}.qibla-map-actions{display:flex;gap:8px;margin-top:12px}.qibla-map-actions .button{flex:1;font-size:12px;padding:10px 8px;min-width:0}.qibla-map-direction{background:none;border:0}.qibla-map-direction>span{display:block;line-height:34px;text-align:center;font-size:34px;font-weight:800;color:#9d6b10;text-shadow:0 0 2px #fff,0 0 3px #fff;transform-origin:center}.qibla-map-canvas .leaflet-control-attribution{font-size:9px;color:#223;background:#ffffffe8}.qibla-map-canvas .leaflet-control-attribution a{color:#254c72}.qibla-map-canvas .leaflet-control-zoom a{color:#172033;background:#fff}.qibla-map-panel #qibla-map-status{font-size:13px;line-height:1.6;min-height:3em}.qibla-map-panel[hidden],#qibla-compass-panel[hidden]{display:none!important}@media(min-width:900px){.qibla-map-toggle{right:28px;bottom:30px}}
 
