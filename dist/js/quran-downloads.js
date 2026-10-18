@@ -55,7 +55,7 @@ export function mountQuranDownloads(host,index){
  };
  remove.onclick=()=>{
   modal('<h2>Удалить скачанные записи?</h2><p class="muted">Записи всех чтецов можно скачать снова.</p><div class="button-row"><button type="button" class="button" id="quran-confirm-remove">Удалить записи</button><button type="button" class="button secondary" data-close>Отмена</button></div>');
-  document.querySelector('#quran-confirm-remove').onclick=async()=>{if(quranDownloadQueue.busy)return;closeModal();try{await offlineAudioStore.clearAll();void recordings();toast('Скачанные записи удалены');}catch{toast('Не удалось удалить записи');}};
+  document.querySelector('#quran-confirm-remove').onclick=async()=>{if(quranDownloadQueue.busy)return;closeModal();try{await offlineAudioStore.clearAll();quranDownloadQueue.reset();void recordings();toast('Скачанные записи удалены');}catch{toast('Не удалось удалить записи');}};
  };
  void recordings();
  return()=>{active=false;version++;listVersion++;unsubscribe();};
