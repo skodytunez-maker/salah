@@ -65,7 +65,7 @@ export async function saveAllTexts(index,onProgress){
 export function audioUrl(number,reciter,surahNumber){if(!Number.isInteger(number)||number<1||number>6236)throw Error('Неизвестная аудиозапись');const r=reciterInfo(reciter);if(r.format==='surah'){if(!Number.isInteger(surahNumber)||surahNumber<1||surahNumber>114||!reciterHasSurah(reciter,surahNumber))throw Error('Неизвестная сура');return r.server+String(surahNumber).padStart(3,'0')+'.mp3'}if(r.folder){const s=numberToPosition(number);return 'https://everyayah.com/data/'+r.folder+'/'+String(s.surah).padStart(3,'0')+String(s.ayah).padStart(3,'0')+'.mp3'}return 'https://cdn.islamic.network/quran/audio/128/'+reciter+'/'+number+'.mp3'}
 export function downloadAudioUrl(number,reciter,surahNumber){
  const folders={'ar.alafasy':'Alafasy_128kbps','ar.husary':'Husary_128kbps','ar.minshawi':'Minshawy_Murattal_128kbps'};
- const original=audioUrl(number,reciter,surahNumber);if(!folders[reciter])return original;
+ const original=audioUrl(number,reciter,surahNumber);if(reciter==='ar.yasseraldossaricontinuous')return 'https://cdn.mp3quran.net/audio/yasser-dosari/r1/'+String(surahNumber).padStart(3,'0')+'.mp3';if(!folders[reciter])return original;
  const position=numberToPosition(number);return 'https://everyayah.com/data/'+folders[reciter]+'/'+String(position.surah).padStart(3,'0')+String(position.ayah).padStart(3,'0')+'.mp3';
 }
 function numberToPosition(number){if(!audioPositions)throw Error('Библиотека не загружена');return audioPositions[number]}

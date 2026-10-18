@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{illustratedReleaseMarkup,bindIllustratedRelease}from '../dist/js/release-gallery.js';
 import{ownerUserCard,bindOwnerAvatarPreview}from '../dist/js/owner-user-card.js';
+import{APP_ANNOUNCEMENT,APP_NEWS_UNTIL}from '../dist/js/app-release.js';
+import{releaseHighlightActive,releaseHighlightMarkup,bindReleaseHighlight}from '../dist/js/release-highlight.js';
 
 const w=new Window({url:'https://example.invalid/'}),doc=w.document;
 globalThis.matchMedia=()=>({matches:true});
@@ -31,6 +33,14 @@ root.innerHTML=illustratedReleaseMarkup(348);assert.equal(root.querySelectorAll(
 root.innerHTML=illustratedReleaseMarkup(349);assert.equal(root.querySelectorAll('.release-feature').length,4);assert.equal(root.querySelectorAll('.release-new-readers img').length,13);assert.ok(root.textContent.includes('Первые три дня'));assert.ok(root.textContent.includes('30 дней'));assert.equal(root.querySelectorAll('img[src="./assets/reciters/raadalkurdi-v349.png"]').length,1);
 const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
+
+root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
+assert.equal(root.querySelectorAll('.release-feature').length,9);assert.equal(root.querySelectorAll('.release-roundup-readers img').length,13);
+assert.ok(root.textContent.includes('Мединский мусхаф'));assert.ok(root.textContent.includes('Перемешивание чтецов'));assert.ok(root.textContent.includes('Тафсиры — в подготовке'));assert.ok(root.textContent.includes('пока недоступны'));
+for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');
+for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
+const deadline=Date.parse(APP_NEWS_UNTIL);assert.ok(releaseHighlightActive(deadline-1));assert.equal(releaseHighlightActive(deadline),false);assert.equal(releaseHighlightActive(deadline+86400000),false);assert.equal(releaseHighlightMarkup(deadline),'');
+root.innerHTML=releaseHighlightMarkup(deadline-1000);assert.ok(root.querySelector('[data-release-highlight]'));let opened=0;const realNow=Date.now;try{Date.now=()=>deadline-1000;bindReleaseHighlight(root,()=>opened++);root.querySelector('[data-release-highlight]')?.click();assert.equal(opened,1,'Seen news remains accessible throughout the three-day window');}finally{Date.now=realNow;root.replaceChildren();bindReleaseHighlight(root);}
 
 const profile=doc.createElement('div');doc.body.append(profile);let dismissed=0;profile.onclick=()=>dismissed++;
 profile.innerHTML=ownerUserCard({nickname:'Пользователь'},{avatarUrl:'blob:private-photo'});bindOwnerAvatarPreview(profile);
