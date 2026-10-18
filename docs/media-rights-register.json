@@ -2387,6 +2387,34 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Screenshot of the SALAH app preview on 2026-10-18 with public Tyumen city-centre map. Map data © OpenStreetMap contributors, ODbL: https://www.openstreetmap.org/copyright . Attribution is retained within the screenshot and the public release card. No personal house or device position shown.",
       "note": "Actual feature screenshot for the cumulative October 18 release roundup."
+    },
+    {
+      "path": "dist/assets/updates/qibla-map-368.png",
+      "gitBlobSha": "1250a202f201ac9da14e35731d7ef89e796513f0",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "SALAH interface screenshot of the public Tyumen city centre. OpenFreeMap / OpenMapTiles / © OpenStreetMap attribution is retained in the image. https://www.openstreetmap.org/copyright",
+      "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
+    },
+    {
+      "path": "dist/assets/updates/holy-cities-368.png",
+      "gitBlobSha": "e01adce4d52ba3d973459b40e1dc94da6d243944",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "SALAH interface screenshot with Esri World Imagery and OpenFreeMap building data. Provider attribution remains inside the image. This records provenance, not blanket clearance of third-party imagery.",
+      "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
+    },
+    {
+      "path": "dist/assets/updates/reading-position-368.png",
+      "gitBlobSha": "cd983f4066a5880be08a9db802daf3a5b8f4a574",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Screenshot of the SALAH public application interface maintained in this repository. No private account data, device location or uploaded recordings are present.",
+      "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
+    },
+    {
+      "path": "dist/assets/updates/recognition-368.png",
+      "gitBlobSha": "e07fefc816961d205261bebde27816752026d4eb",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Screenshot of the SALAH public application interface maintained in this repository. No private account data, device location or uploaded recordings are present.",
+      "note": "Feature-specific illustration for release 368 and the cumulative announcement. Captured from SALAH preview on 2026-10-18; no personal GPS point or account data."
     }
   ],
   "wallpaperSets": [
