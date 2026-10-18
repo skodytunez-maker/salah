@@ -2423,6 +2423,14 @@
       "kind": "screenshot",
       "rightsReviewStatus": "needs-review",
       "note": "Actual SALAH tafsir reader screenshot. Interface provenance is project-local; embedded Russian tafsir text retains QUL source attribution and resource-specific evidence is recorded in docs/quran-tafsir.md."
+    },
+    {
+      "path": "dist/assets/updates/support-372.png",
+      "gitBlobSha": "8a32503fd64558f4fe7951e6cf53f403b73e8486",
+      "kind": "screenshot",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Screenshot of the public SALAH support interface maintained in this repository, captured 2026-10-14. No personal account data, card data or external photographs are included.",
+      "note": "Existing support page capture reused as feature-specific artwork for release 372; original capture outputs/salah-yookassa-readiness-20261014/published-support.png. This is an interface image, not evidence of an active payment or payment-provider approval."
     }
   ],
   "wallpaperSets": [
