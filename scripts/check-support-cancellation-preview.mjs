@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{mountFinancialSupport}from '../dist/js/financial-support.js';
+import{subscriptionMarkup,supportUnlinkMarkup}from '../dist/js/support-subscription.js';
+const w=new Window({url:'https://skodytunez-maker.github.io/salah/#support-salah?review=cancellation'}),doc=w.document;
+let network=0,auth=0;const originals={window:globalThis.window,document:globalThis.document,location:globalThis.location,fetch:globalThis.fetch};
+Object.assign(globalThis,{window:w,document:doc,location:w.location,fetch:()=>{network++;throw Error('Preview must never call billing');}});
+doc.body.innerHTML='<main></main><dialog id="modal"><div id="modal-content"></div></dialog>';
+const host=doc.querySelector('main'),dialog=doc.querySelector('dialog');
+const previewOptions={previewCancellation:true,account:()=>{auth++;throw Error('No account access in review');},client:()=>{auth++;throw Error('No client access in review');}};
+try{
+ mountFinancialSupport(host,previewOptions);
+ assert.ok(host.querySelector('[data-support-cancellation-preview]'));
+ assert.match(host.textContent,/Проверка интерфейса · тестовые данные/);
+ const expected=doc.createElement('section');expected.innerHTML=subscriptionMarkup({status:'active',amount:150,method:{type:'bank_card',last4:'1234'},nextChargeAt:'2026-11-18T10:00:00Z'});assert.equal(host.querySelector('[data-support-preview-state]').innerHTML,expected.innerHTML,'Review uses the real subscription renderer');
+ const cancel=host.querySelector('[data-support-unlink]');assert.equal(cancel.textContent,'Отключить поддержку и отвязать');
+ mountFinancialSupport(host,previewOptions);assert.equal(cancel,host.querySelector('[data-support-unlink]'),'Refresh retains the current preview state');
+ cancel.click();assert.equal(dialog.open,true);assert.match(dialog.textContent,/тестовые данные/);assert.equal(doc.activeElement,dialog.querySelector('[data-close]'));
+ assert.equal(dialog.querySelector('[data-support-confirm]').textContent,'Отключить и отвязать');
+ dialog.querySelector('[data-close]').click();assert.equal(dialog.open,false);assert.ok(host.querySelector('[data-support-unlink]'),'Leaving confirmation never cancels');
+ cancel.click();dialog.querySelector('[data-support-confirm]').click();assert.equal(dialog.open,false);assert.match(host.textContent,/поддержка отключена/);assert.equal(host.querySelector('[data-support-unlink]'),null);
+ host.querySelector('[data-support-preview-reset]').click();assert.ok(host.querySelector('[data-support-unlink]'));
+ assert.equal(auth,0);assert.equal(network,0);assert.equal(w.localStorage.length,0);
+ host.querySelector('[data-support-unlink]').click();assert.equal(dialog.open,true);
+ w.location.hash='#support-salah';w.dispatchEvent(new w.Event('hashchange'));assert.equal(dialog.open,false);assert.equal(host._supportCancellationCleanup,null);
+ mountFinancialSupport(host,{account:()=>({signedIn:false}),client:()=>{throw Error('Signed-out view must not request a session');}});
+ assert.equal(host.querySelector('[data-support-cancellation-preview]'),null);assert.equal(host.querySelector('[data-support-unlink]'),null);assert.match(host.textContent,/Войдите/);assert.equal(host.querySelector('.financial-support-unavailable').disabled,true);
+ const app=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');assert.ok(app.includes("previewCancellation:location.hash==='#support-salah?review=cancellation'"));
+ assert.ok(supportUnlinkMarkup({method:{type:'bank_card',last4:'1234'}}).includes('data-support-confirm'));
+ assert.equal(network,0);console.log('PASS: public same-app review link immediately shows real cancellation controls; confirm/back/reset, clear test-data labels, zero account/billing/network/storage access, route cleanup and untouched normal support view.');
+}finally{host.querySelector('[data-support-subscription]')?._subscriptionCleanup?.();Object.assign(globalThis,originals);await w.happyDOM.close();}

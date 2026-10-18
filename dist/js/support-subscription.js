@@ -11,6 +11,9 @@ export function subscriptionMarkup(state){
  if(state.status==='cancelled')return head+'<p class="support-subscription-success" role="status">Ежемесячная поддержка отключена</p><p>Способ оплаты отвязан от SALAH. Повторных списаний не будет.</p><p class="muted">Все функции приложения остаются доступны.</p>';
  return head+'<span class="support-subscription-badge">'+(state.status==='active'?'Подключена':'Ожидает подтверждения')+'</span><strong class="support-subscription-amount">'+esc(new Intl.NumberFormat('ru-RU').format(state.amount))+' ₽ <small>/ месяц</small></strong><dl><div><dt>Следующее списание</dt><dd>'+esc(date(state.nextChargeAt))+'</dd></div><div><dt>Способ оплаты</dt><dd>'+esc(state.method?methodName(state.method):'Ещё не привязан')+'</dd></div></dl><button class="button support-subscription-unlink" type="button" data-support-unlink>Отключить поддержку и отвязать</button><p class="muted">Вы можете отключить повторные списания самостоятельно.</p>';
 }
+export function supportUnlinkMarkup(state){
+ return '<section class="support-unlink-dialog"><h2>Отключить поддержку?</h2><p>Способ оплаты будет отвязан от SALAH. Повторные списания прекратятся.</p><p class="muted">Все функции приложения останутся доступны.</p><p class="support-unlink-method">'+esc(state.method?methodName(state.method):'Ежемесячная поддержка')+'</p><p data-support-unlink-error role="alert" hidden></p><div class="support-unlink-actions"><button class="button support-subscription-unlink" type="button" data-support-confirm>Отключить и отвязать</button><button class="button secondary" type="button" data-close>Оставить поддержку</button></div></section>';
+}
 export function createSubscriptionRequest({account,client,fetcher=fetch}){
  return async(action=null)=>{
   const id=account().signedIn?account().userId:null;if(!id)throw Error('sign_in_required');
@@ -40,7 +43,7 @@ export function mountSupportSubscription(host,{account,client,fetcher=fetch}){
  }
  function confirmUnlink(state){
   const id=account().userId;if(!active()||!id)return;
-  modal('<section class="support-unlink-dialog"><h2>Отключить поддержку?</h2><p>Способ оплаты будет отвязан от SALAH. Повторные списания прекратятся.</p><p class="muted">Все функции приложения останутся доступны.</p><p class="support-unlink-method">'+esc(state.method?methodName(state.method):'Ежемесячная поддержка')+'</p><p data-support-unlink-error role="alert" hidden></p><div class="support-unlink-actions"><button class="button support-subscription-unlink" type="button" data-support-confirm>Отключить и отвязать</button><button class="button secondary" type="button" data-close>Оставить поддержку</button></div></section>');
+  modal(supportUnlinkMarkup(state));
   const dialog=document.querySelector('.support-unlink-dialog');opened=dialog;dialog.querySelector('[data-close]').focus({preventScroll:true});
   dialog.querySelector('[data-support-confirm]').onclick=async()=>{
    if(busy||!active()||account().userId!==id)return;busy=true;
