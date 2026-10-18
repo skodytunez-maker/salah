@@ -9,6 +9,22 @@ const portrait=(src)=>'<img class="release-reader-portrait" src="./assets/recite
 const artwork=kind=>'<img src="./'+awardArtwork(kind)+'" alt="">';
 const screenshot=(name,version=357)=>'<img class="release-screen-picture" src="./assets/updates/'+name+'-'+version+'.png" alt="">';
 const readerFigures=readers=>'<div class="release-new-readers release-roundup-readers">'+readers.map(([image,name])=>'<figure>'+portrait(image)+'<figcaption>'+esc(name)+'</figcaption></figure>').join('')+'</div>';
+// Public notes must use a feature picture. New categories require artwork before publishing.
+const changeFeatures=[
+ {id:'news',match:/что нового|иллюстрац|карточк.{0,30}обновлен|обновлен.{0,30}картин/iu,title:'Новые возможности — в картинках',art:()=>'<div class="release-update-pictures">'+screenshot('qibla-map',368)+screenshot('recognition',368)+'</div>',where:'Меню → Настройки → Приложение и обновления → Что нового.'},
+ {id:'recognition',match:/распозна|микрофон|шазам/iu,title:'Узнать чтение',art:()=>screenshot('recognition',368),where:'Коран → значок микрофона.'},
+ {id:'holy-cities',match:/Мекк|Медин.{0,18}(?:Кибл|карт)|Кааб|3D|тр[её]хмер|спутник/iu,title:'Мекка и Медина на карте',art:()=>screenshot('holy-cities',368),where:'Кибла → Карта → Мекка или Медина.'},
+ {id:'qibla-map',match:/Кибл|рельеф|поворот.{0,20}карт|карт.{0,30}SALAH/iu,title:'Карта в стиле SALAH',art:()=>screenshot('qibla-map',368),where:'Кибла → Карта.'},
+ {id:'reading-position',match:/мест.{0,20}чтени|прочитан|сохранен.{0,24}аят|границ.{0,12}аят|2:9/iu,title:'Продолжить чтение с нужного аята',art:()=>screenshot('reading-position',368),where:'Коран → Продолжить чтение.'},
+ {id:'mushaf',match:/мусхаф|таджвид|перелист/iu,title:'Мединский мусхаф',art:()=>screenshot('mushaf'),where:'Коран → Мусхаф.'},
+ {id:'download',match:/скачив|скачан|загруз.{0,20}аудио|кэш/iu,title:'Аудио без интернета',art:()=>screenshot('download'),where:'Коран → сура → Настройки чтения → Скачать аудио.'},
+ {id:'travel',match:/путник|таблиц.{0,24}местност/iu,title:'Режим путника',art:()=>screenshot('travel',363),where:'Настройки → Город и время намаза.'},
+ {id:'adhkar',match:/азкар|зикр/iu,title:'Азкары читать удобнее',art:()=>screenshot('adhkar'),where:'Азкары → Настройки чтения.'},
+ {id:'reciters',match:/чтец|чтец[аоы]|голос/iu,title:'Новые голоса Корана',art:()=>readerFigures([['islamsobhi.jpg','Ислам Субхи'],['yasseraldossari.jpg','Ясир ад-Даусари']]),where:'Коран → Чтецы.'},
+ {id:'quran',match:/Коран|аят|перевод|тафсир|плеер|прослушив|аудио/iu,title:'Коран в SALAH',art:()=>screenshot('quran-reader'),where:'Раздел Коран.'}
+];
+export function releaseFeatureForChange(text){return typeof text==='string'?changeFeatures.find(feature=>feature.match.test(text))?.id||null:null;}
+function changeCard(text){const feature=changeFeatures.find(item=>item.match.test(text))||changeFeatures[0];return card(feature.art(),feature.title,text,feature.where,feature.id==='reciters'?'release-reciter-art':'release-screen-art');}
 function majorReleaseCards(){return [
  card(readerFigures([['islamsobhi.jpg','Ислам Субхи'],['abdulrahmanalawsi.jpg','Абдуррахман аль-Ауси'],['saadalghamdi.jpg','Саад аль-Гамиди'],['ahmadalajmi.jpg','Ахмад аль-Аджми'],['faresabbad.jpg','Фарис Аббад']]),'13 новых чтецов','Ислам Субхи, Абдуррахман аль-Ауси, Саад аль-Гамиди, Ахмад аль-Аджми и Фарис Аббад.','Коран → Чтецы → Новые. Ещё восемь голосов — на следующей карточке.','release-reciter-art'),
  card(readerFigures([['ahmadalnufais.jpg','Ахмад ан-Нуфайс'],['khalidaljalil.jpg','Халид аль-Джалиль'],['wadeealyamani.jpg','Вади аль-Ямани'],['abdullahkamel.jpg','Абдуллах Камиль'],['haniarrifai.jpg','Хани ар-Рифаи'],['alijaber.jpg','Али Джабир'],['muhammadayyub.jpg','Мухаммад Айюб'],['salahbukhatir.jpg','Салах Бухатир']]),'Ещё восемь голосов','В каталоге 46 чтецов. Избранные остаются под рукой; для недавних добавлений есть фильтр «Новые».','','release-reciter-art'),
@@ -19,8 +35,10 @@ function majorReleaseCards(){return [
  card('<div class="release-hours-medals">'+['hours25','hours100','hours1000'].map(artwork).join('')+'</div>','Награды и топы','Награды за часы прослушивания и постоянство. Личные результаты и общий топ — за день, неделю, месяц и всё время.','Подиум сохраняет ровные ступени на разных экранах.'),
  card(screenshot('adhkar'),'Азкары читать удобнее','Настройки чтения стали заметнее. Арабский текст получил мединское начертание; размер и состав текста выбираете вы.','','release-screen-art'),
  card(screenshot('travel',363),'Режим путника','Домашний город и местность в пути — две таблицы на главной. Переключайте их свайпом или кнопками.','Азан, уведомления и виджет следуют выбранной таблице. Настройки → Город и время намаза → Режим путника.','release-screen-art'),
- card(screenshot('qibla-map',363),'Кибла на карте','Приблизьте дом, выберите точку или определите своё место. Золотая линия покажет направление на Каабу.','Значок карты находится внизу справа на экране Киблы. Карта: © OpenStreetMap contributors · openstreetmap.org/copyright.','release-screen-art'),
+ card(screenshot('qibla-map',368),'Кибла на карте','Карта в цветах SALAH, сплошная золотая линия, поворот, спутниковые снимки и рельеф. Выберите дом или определите своё место.','Значок карты находится внизу справа на экране Киблы. Карта: © OpenStreetMap contributors · openstreetmap.org/copyright.','release-screen-art'),
  card(readerFigures([['yasseraldossari.jpg','Ясир ад-Даусари'],['abdurrahmanalsudais.jpg','Абдуррахман ас-Судайс'],['saudalshuraim.jpg','Сауд аш-Шурайм'],['idrisabkar.png','Идрис Абкар'],['abdulmuhsinalqasim.jpg','Абдульмухсин аль-Касим']]).replace('release-roundup-readers','release-recognition-readers'),'Узнать чтение · бета','Короткий фрагмент помогает найти суру, аят и чтеца. Проверка выполняется на устройстве, без отправки голоса.','Первая база: 69 конкретных записей пяти чтецов. Список доступных сур и ограничения — на экране распознавания.','release-reciter-art'),
+ card(screenshot('holy-cities',368),'Мекка и Медина','Спутниковая подложка и наклон карты показывают реальные детали местности. У Каабы — мягкое свечение, вокруг — объёмные здания тёплого оттенка.','Кибла → Карта → Мекка или Медина. Упрощённые объёмы мечетей убраны, чтобы не закрывать снимки.','release-screen-art'),
+ card(screenshot('reading-position',368),'Коран помнит место чтения','Обычный раздел Корана сохраняет последний прочитанный аят каждой суры. Продолжение чтения работает отдельно от прослушивания.','Коран → Продолжить чтение. Исправлен переход с выбранного аята 2:9 к предыдущему.','release-screen-art'),
  card('<div class="release-tafsir-preview">'+screenshot('mushaf')+'<span>ГОТОВИТСЯ</span><strong>Тафсир ас-Саади<br>Тафсир Ибн Касира</strong></div>','Тафсиры — в подготовке','Планируем добавить толкования ас-Саади и Ибн Касира и дополнительные переводы.','Эти тексты пока недоступны в SALAH: сначала проверяем источники и издания.','release-screen-art')
  ];}
 
@@ -54,7 +72,7 @@ export function releaseIllustrations(version,changes=[]){
  if(![339,340,341].includes(version)){
   if(!Number.isSafeInteger(version)||version<=341||!Array.isArray(changes))return '';
   const safe=changes.filter(x=>typeof x==='string'&&x.trim()&&x.length<=240&&!/владел|админ|owner|admin/iu.test(x)).slice(0,8);
-  return safe.length?gallery(safe.map(text=>card(actionIcon(/чтец|аудио|плеер/iu.test(text)?'play':'book'),'Что изменилось',text))):'';
+  return safe.length?gallery(safe.map(changeCard)):'';
  }
  const cards=[
   card('<div class="release-hours-medals">'+['hours25','hours100','hours1000'].map(artwork).join('')+'</div>','Новые награды','За 25, 50, 100, 250, 500, 1 000 и 5 000 часов прослушивания Корана.','Полученные награды остаются в вашем аккаунте.'),
