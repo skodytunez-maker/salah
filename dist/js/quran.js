@@ -41,6 +41,8 @@ function bookmarks(){const saved=read('quran-bookmarks',[]);return Array.isArray
 function savePosition(){clearTimeout(saveTimer);if(lastPosition&&index&&validPosition(index,lastPosition)){if(!write('quran-last-position',lastPosition))toast('Не удалось сохранить место чтения')}lastPosition=null}
 export function stopQuran(){minimizeQuranBroadcast();readerScript?.dispose();readerScript=null;unmountMushaf?.();unmountMushaf=null;closeDailyAyah();unmountListeningShare?.();unmountListeningShare=null;unmountReciters?.();unmountReciters=null;unmountDownloads?.();unmountDownloads=null;generation++;searchGeneration++;clearTimeout(searchTimer);savePosition();observer?.disconnect();observer=null;unsubscribePlayback?.();unsubscribePlayback=null;readerDownload?.dispose();readerDownload=null;document.body.classList.remove('quran-focus')}
 export async function showQuran(container){
+ const destination=new URLSearchParams(location.hash.split('?')[1]||'');
+ if(container===host&&destination.get('view')==='mushaf'&&!destination.has('listen')&&unmountMushaf?.navigateTo?.(destination.get('page')))return;
  stopQuran();host=container;const token=generation;
  host.innerHTML='<section class="panel section"><h2>Коран</h2><p class="muted">Открываем библиотеку…</p></section>';
  try{

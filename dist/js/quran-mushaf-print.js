@@ -31,6 +31,7 @@ export async function ensurePrintedFont(page,edition='tajweed'){
  })().finally(()=>pendingFonts.delete(key)));
  return pendingFonts.get(key);
 }
+export function hasPrintedFont(page,edition='tajweed'){return fonts.has((edition==='madani'?'madani:':'tajweed:')+page);}
 export function trimPrintedFonts(retained=[],edition='tajweed'){const keep=new Set(retained.map(page=>(edition==='madani'?'madani:':'tajweed:')+page));for(const [page,face]of fonts){if(fonts.size<=8)break;if(!keep.has(page)){document.fonts.delete(face);fonts.delete(page);}}}
 export const printedVerseKeys=lines=>[...new Set(lines.flatMap(line=>line[3].map(w=>w[0]+':'+w[1])))];
 export const printedNeedsBasmala=lines=>lines.some(line=>line[1]==='basmala');

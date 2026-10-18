@@ -83,6 +83,11 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  const unsubscribe=playback.subscribe(draw);
  return{
   updateTheme:drawTheme,
+  setPage(target){
+   if(closed||target===page&&edition===getEdition())return;page=target;edition=getEdition();loaded=false;lastHighlighted=null;lastScrolled=null;
+   const handed=arrival?.page===page&&arrival.edition===edition&&Date.now()<=arrival.until?arrival:null;arrival=null;
+   follower=createMushafFollower({page,edition,automatic:handed?.automatic,manual:handed?.automatic===false});
+  },
   refresh(){
    if(closed)return;const lines=getLines();loaded=!!lines;lastHighlighted=null;lastScrolled=null;
    if(edition!==getEdition()){edition=getEdition();follower=createMushafFollower({page,edition});}
