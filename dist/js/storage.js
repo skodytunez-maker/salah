@@ -40,9 +40,9 @@ export function read(key,fallback){
 export function write(key,value){
  try{localStorage.setItem('salah:'+key,JSON.stringify(value));return true}catch{storageProblem('Не удалось сохранить данные. Проверьте свободное место и доступ к хранилищу.');return false}
 }
-export const defaults={tyumenTimeSource:'auto',madhhab:'general',city:null,method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
+export const defaults={tyumenTimeSource:'auto',madhhab:'general',city:null,travelEnabled:false,travelHomeCity:null,travelCity:null,travelActive:'home',method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
 const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-const BOOLEAN_FIELDS=['weather','weatherAnimation','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
+const BOOLEAN_FIELDS=['travelEnabled','weather','weatherAnimation','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
 const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders','colorTheme']);
 const validTime=value=>typeof value==='string'&&(value===''||personalTime(value)!=='');
 export function normalizeSettings(value,{strict=false,warnings=[]}={}){
@@ -74,17 +74,19 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
  if(Object.hasOwn(value,'ambientVolume')){if(Number.isInteger(value.ambientVolume)&&value.ambientVolume>=0&&value.ambientVolume<=60)result.ambientVolume=value.ambientVolume;else bad('Некорректная громкость атмосферы.')}
  result.wallpaper=wallpaperChoice(value.wallpaper);
  result.backgroundMode=backgroundMode(value.backgroundMode,result.dynamic);result.dynamic=result.backgroundMode==='auto';
- if(Object.hasOwn(value,'city')&&value.city!==null){
+ if(Object.hasOwn(value,'travelActive')){if(['home','away'].includes(value.travelActive))result.travelActive=value.travelActive;else bad('Некорректная местность режима путника.');}
+ for(const cityKey of ['city','travelHomeCity','travelCity'])if(Object.hasOwn(value,cityKey)&&value[cityKey]!==null){
   try{
-   const city=value.city;
+   const city=value[cityKey];
    if(!isRecord(city)||Object.keys(city).some(k=>!['name','country','latitude','longitude','timezone'].includes(k)))throw Error();
    if(typeof city.name!=='string'||!city.name.trim()||city.name.length>160||Object.hasOwn(city,'country')&&(typeof city.country!=='string'||city.country.length>160))throw Error();
    if(!Number.isFinite(city.latitude)||Math.abs(city.latitude)>90||!Number.isFinite(city.longitude)||Math.abs(city.longitude)>180)throw Error();
    if(typeof city.timezone!=='string'||city.timezone.length>80)throw Error();
    new Intl.DateTimeFormat('ru',{timeZone:city.timezone}).format(0);
-   result.city={name:city.name.trim(),country:city.country??'',latitude:city.latitude,longitude:city.longitude,timezone:city.timezone};
+   result[cityKey]={name:city.name.trim(),country:city.country??'',latitude:city.latitude,longitude:city.longitude,timezone:city.timezone};
   }catch{bad('Некорректный город, координаты или часовой пояс.')}
  }
+ if(result.travelEnabled){result.travelHomeCity=result.travelHomeCity||result.city;if(result.travelActive==='away'&&!result.travelCity)result.travelActive='home';result.city=result.travelActive==='away'?result.travelCity:result.travelHomeCity;}else result.travelActive='home';
  for(const key of ['offsets','tableOffsets','mosqueTimes'])if(Object.hasOwn(value,key)){
   if(!isRecord(value[key])){bad('Некорректные данные «'+key+'».');continue}
   for(const [prayer,item]of Object.entries(value[key])){
