@@ -2373,6 +2373,20 @@
       "rightsReviewStatus": "license-recorded",
       "rightsEvidence": "Leaflet 1.9.4 official npm package, npm SHA-512 integrity verified. Upstream BSD-2-Clause license retained at dist/js/vendor/leaflet/LICENSE; https://www.npmjs.com/package/leaflet/v/1.9.4 .",
       "note": "Unmodified map control and marker assets distributed with Leaflet; visible map attribution remains OpenStreetMap contributors."
+    },
+    {
+      "path": "dist/assets/updates/travel-363.png",
+      "gitBlobSha": "d13d1fb8f711ccf088fb1b998b1274745c8bc83d",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Screenshot of the SALAH app preview maintained by this repository on 2026-10-18, using public example cities Tyumen and Medina. No private account data.",
+      "note": "Actual feature screenshot for the cumulative October 18 release roundup."
+    },
+    {
+      "path": "dist/assets/updates/qibla-map-363.png",
+      "gitBlobSha": "bbb502874b17faa1f91bb312b8675318223b0ea3",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Screenshot of the SALAH app preview on 2026-10-18 with public Tyumen city-centre map. Map data © OpenStreetMap contributors, ODbL: https://www.openstreetmap.org/copyright . Attribution is retained within the screenshot and the public release card. No personal house or device position shown.",
+      "note": "Actual feature screenshot for the cumulative October 18 release roundup."
     }
   ],
   "wallpaperSets": [

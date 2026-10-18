@@ -37,8 +37,8 @@ const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Из�
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(root.querySelectorAll('.release-feature').length,9);assert.equal(root.querySelectorAll('.release-roundup-readers img').length,13);
-assert.ok(root.textContent.includes('Мединский мусхаф'));assert.ok(root.textContent.includes('Перемешивание чтецов'));assert.ok(root.textContent.includes('Тафсиры — в подготовке'));assert.ok(root.textContent.includes('пока недоступны'));
+assert.equal(root.querySelectorAll('.release-feature').length,12);assert.equal(root.querySelectorAll('.release-roundup-readers img').length,13);
+for(const title of ['Режим путника','Кибла на карте','Узнать чтение · бета','69 конкретных записей'])assert.ok(root.textContent.includes(title));assert.ok(root.textContent.includes('Мединский мусхаф'));assert.ok(root.textContent.includes('Перемешивание чтецов'));assert.ok(root.textContent.includes('Тафсиры — в подготовке'));assert.ok(root.textContent.includes('пока недоступны'));
 for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');
 for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 const deadline=Date.parse(APP_NEWS_UNTIL);assert.ok(releaseHighlightActive(deadline-1));assert.equal(releaseHighlightActive(deadline),false);assert.equal(releaseHighlightActive(deadline+86400000),false);assert.equal(releaseHighlightMarkup(deadline),'');
