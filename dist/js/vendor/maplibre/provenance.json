@@ -1,0 +1,12 @@
+{
+  "version": "6.11.2",
+  "upstream": "https://github.com/maplibre/maplibre-gl-js/tree/v6.11.2",
+  "source": "https://github.com/droidgren/TopoScout/tree/main/vendor",
+  "verification": "CI compares every runtime file byte-for-byte against the integrity-checked official npm archive before merge.",
+  "files": {
+    "maplibre-gl.mjs": "3f55566295583644617fe17d008a36c580414b8c71dd2e1fcff1309de6fdee5d",
+    "maplibre-gl-shared.mjs": "76b5f55bdee928c65d592684aaff2b913d50b6b17b0ec6334e88b09b6aa47960",
+    "maplibre-gl-worker.mjs": "01ad197aa7f4cec258a890febd71b7515e96309881b036a7095befc01a45296e",
+    "maplibre-gl.css": "d8617d8421930e3fc6185365400e788c374c1a5d9fbe87999998c0bc14a202d3"
+  }
+}
