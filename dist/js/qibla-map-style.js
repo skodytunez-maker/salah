@@ -8,7 +8,7 @@ export function mapStyle(mode){
 export function styleSalahMap(map,mode,threeD){
  const layers=map.getStyle().layers||[];
  if(mode==='map')for(const layer of layers){const id=layer.id.toLowerCase();if(layer.type==='background')map.setPaintProperty(layer.id,'background-color','#0d1629');if(layer.type==='raster')map.setLayoutProperty(layer.id,'visibility','none');
- if(layer.type==='fill'){map.setPaintProperty(layer.id,'fill-color',/water/.test(id)?'#122b40':/park|wood|forest|grass/.test(id)?'#203b38':/building/.test(id)?'#34435b':'#18243a');if(layer.paint?.['fill-outline-color'])map.setPaintProperty(layer.id,'fill-outline-color','#46516a');}
+ if(layer.type==='fill'){if(layer['source-layer']==='building')map.setLayoutProperty(layer.id,'visibility',threeD?'none':'visible');map.setPaintProperty(layer.id,'fill-color',/water/.test(id)?'#122b40':/park|wood|forest|grass/.test(id)?'#203b38':/building/.test(id)?'#34435b':'#18243a');if(layer.paint?.['fill-outline-color'])map.setPaintProperty(layer.id,'fill-outline-color','#46516a');}
  if(layer.type==='line')map.setPaintProperty(layer.id,'line-color',/water/.test(id)?'#2b4b63':/motorway|trunk|primary/.test(id)?'#82755f':/boundary/.test(id)?'#6b6d83':'#3c4b63');
  if(layer.type==='symbol'&&layer.layout?.['text-field']){map.setPaintProperty(layer.id,'text-color',/place|city|country/.test(id)?'#e0c994':'#c2cada');map.setPaintProperty(layer.id,'text-halo-color','#101a2c');map.setPaintProperty(layer.id,'text-halo-width',1.5);}
  if(layer.type==='fill-extrusion')map.setLayoutProperty(layer.id,'visibility','none');}
