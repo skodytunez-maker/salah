@@ -3,7 +3,7 @@ export const AUDIO_DATABASE='salah-quran-offline-v1';
 const goodBlob=blob=>blob&&blob.size>0&&typeof blob.type==='string'&&blob.type.startsWith('audio/');
 export function completeAudioResponse(response){return response?.status===200&&response.type!=='opaque'&&!response.headers.has('Content-Range')&&response.headers.get('Content-Type')?.toLowerCase().startsWith('audio/');}
 export function createOfflineAudioStore({idb=typeof indexedDB==='undefined'?null:indexedDB,cacheStorage=typeof caches==='undefined'?null:caches,baseUrl=typeof location==='undefined'?'https://salah.invalid/':location.href}={}){
- let connection=null;
+ let connection=null,databaseFailure=null;
  const metadataUrl=new URL('./__quran_offline_recordings__.json',baseUrl).href;
  async function database(){
   if(!idb)return null;
@@ -13,7 +13,7 @@ export function createOfflineAudioStore({idb=typeof indexedDB==='undefined'?null
    request.onsuccess=()=>{const db=request.result;db.onversionchange=()=>{db.close();connection=null;};resolve(db);};
    request.onerror=()=>reject(request.error||Error('Офлайн-хранилище недоступно'));
    request.onblocked=()=>reject(Error('Закройте другие вкладки SALAH и повторите'));
-  }).catch(()=>{connection=null;return null;});
+  }).catch(error=>{connection=null;databaseFailure=error;return null;});
   return connection;
  }
  async function cache(){if(!cacheStorage)return null;try{return await cacheStorage.open(AUDIO_CACHE);}catch{return null;}}
@@ -41,7 +41,7 @@ export function createOfflineAudioStore({idb=typeof indexedDB==='undefined'?null
    const db=await database(),records=db?await readRequest(db,'recordings','getAll'):await cacheRecords(),keys=await audioKeys();
    return records.filter(value=>validRecord(value)&&(!reciter||value.reciter===reciter)&&value.urls.every(url=>keys.has(url))).sort((a,b)=>a.surah-b.surah);
   },
-  async clearAll(){const db=await database();if(db)await writeTransaction(db,['audio','recordings'],tx=>{tx.objectStore('audio').clear();tx.objectStore('recordings').clear();});if(cacheStorage)try{await cacheStorage.delete(AUDIO_CACHE);}catch{}},
+  async clearAll(){const db=await database();if(idb&&!db)throw databaseFailure||Error('Офлайн-хранилище недоступно');if(db)await writeTransaction(db,['audio','recordings'],tx=>{tx.objectStore('audio').clear();tx.objectStore('recordings').clear();});if(cacheStorage)await cacheStorage.delete(AUDIO_CACHE);},
   async removeRecording(record){
    if(!validRecord(record))throw Error('Неизвестная запись');
    const db=await database();if(db)await writeTransaction(db,['audio','recordings'],tx=>{for(const url of record.urls)tx.objectStore('audio').delete(url);tx.objectStore('recordings').delete(record.id);});

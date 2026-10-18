@@ -42,7 +42,8 @@ export function createQuranDownloadQueue({loadSurah,saveSurah,hasSurah=()=>true}
   get state(){return {...state};},
   get busy(){return !!task;},
   subscribe(listener){listeners.add(listener);listener({...state});return()=>listeners.delete(listener);},
-  pause(){if(task){state.status='pausing';emit();controller.abort();}},
+  pause(){if(task){state.status='pausing';emit();controller.abort();}return task||Promise.resolve({...state});},
+  reset(){if(task)return false;state={status:'idle',reciter:null,total:0,done:0,bytes:0,surah:null,verse:0,error:null};emit();return true;},
   start(reciter,numbers){
    if(task)return task;
    const selected=[...new Set(numbers)].filter(n=>Number.isInteger(n)&&n>=1&&n<=114&&hasSurah(reciter,n));if(!selected.length)return Promise.reject(Error('Нет доступных сур'));
