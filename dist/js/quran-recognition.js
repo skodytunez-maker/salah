@@ -1,4 +1,5 @@
 import{esc}from './ui.js';
+import{reciterImageUrl}from './approved-catalog.js';
 import{RECITERS,reciterInfo}from './quran-reciters.js';
 import{quranPlayback}from './quran-session.js';
 import{loadRecognitionData,validRecognitionCatalog}from './quran-recognition-data.js';
@@ -21,7 +22,7 @@ export function mountRecognition(host,index){
  function showResult(found){
   if(!found){idle('Совпадение не найдено. Попробуйте более чёткий фрагмент из записей, перечисленных ниже.');return;}
   const reader=reciterInfo(found.reciter),surah=index.surahs[found.surah-1];idle('Найдено совпадение с записью.');
-  result.innerHTML='<article class="recognition-match">'+(reader.portrait?'<img src="./'+esc(reader.portrait)+'" alt="'+esc(reader.name)+'">':'')+'<span class="eyebrow">ЗАПИСЬ НАЙДЕНА</span><h2>'+esc(surah.name)+' · аят '+found.ayah+'</h2><p>'+esc(reader.name)+'</p><a class="button" href="#quran?surah='+found.surah+'&ayah='+found.ayah+'&reciter='+encodeURIComponent(found.reciter)+'">Открыть аят</a><p class="muted">Аят в середине фрагмента. При сомнении прослушайте аят для проверки.</p></article>';
+  result.innerHTML='<article class="recognition-match">'+(reader.portrait?'<img src="'+esc(reciterImageUrl(reader.portrait))+'" alt="'+esc(reader.name)+'">':'')+'<span class="eyebrow">ЗАПИСЬ НАЙДЕНА</span><h2>'+esc(surah.name)+' · аят '+found.ayah+'</h2><p>'+esc(reader.name)+'</p><a class="button" href="#quran?surah='+found.surah+'&ayah='+found.ayah+'&reciter='+encodeURIComponent(found.reciter)+'">Открыть аят</a><p class="muted">Аят в середине фрагмента. При сомнении прослушайте аят для проверки.</p></article>';
  }
  async function decode(blob){
   const Context=globalThis.AudioContext||globalThis.webkitAudioContext;if(!Context)throw Error('Этот браузер не поддерживает обработку аудио.');const context=new Context();
