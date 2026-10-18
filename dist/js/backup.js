@@ -6,7 +6,7 @@ import{validPosition as validLesson}from './learning-state.js';
 import{validUmrahProgress}from './umrah-content.js';
 
 const MAX_BYTES=5*1024*1024;
-const PERSONAL_KEYS=new Set(['quran-preferences','quran-bookmarks','quran-last-position','quran-reading-positions','quran-mushaf-last-page','quran-mushaf-bookmarks','quran-mushaf-tajweed-bookmarks','quran-mushaf-preferences','learning-progress','umrah-progress','arabic-alphabet-progress','learning-font-size','adhkar-progress-v2','adhkar-favorites','adhkar-selected','adhkar-font-size','adhkar-arabic','adhkar-translit','adhkar-translation','adhkar-focus','adhkar-design','dhikr-free']);
+const PERSONAL_KEYS=new Set(['quran-tafsir-edition','quran-preferences','quran-bookmarks','quran-last-position','quran-reading-positions','quran-mushaf-last-page','quran-mushaf-bookmarks','quran-mushaf-tajweed-bookmarks','quran-mushaf-preferences','learning-progress','umrah-progress','arabic-alphabet-progress','learning-font-size','adhkar-progress-v2','adhkar-favorites','adhkar-selected','adhkar-font-size','adhkar-arabic','adhkar-translit','adhkar-translation','adhkar-focus','adhkar-design','dhikr-free']);
 const GROUPS=['morning','evening','all','favorites'];
 const AYAH_COUNTS=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const preparedBackups=new WeakMap();
@@ -34,7 +34,8 @@ function legacyKey(key){const match=/^adhkar:(\d{4}-\d{2}-\d{2}):(morning|evenin
 function allowedKey(key){return PERSONAL_KEYS.has(key)||!!legacyKey(key)}
 function personalValue(key,value){
  if(!allowedKey(key))fail('Неизвестные личные данные «'+key+'».');
- if(key==='quran-preferences'){
+ if(key==='quran-tafsir-edition'){if(!['saadi','ibn-kathir'].includes(value))fail('Неизвестный тафсир.');
+ }else if(key==='quran-preferences'){
   const fields=['transcriptionEdition','hints','arabic','translation','transliteration','numbers','arabicSize','textSize','theme','reciter'];
   exactKeys(value,fields,key);
   for(const field of ['hints','arabic','translation','transliteration','numbers'])if(Object.hasOwn(value,field)&&typeof value[field]!=='boolean')fail('Некорректная настройка чтения.');

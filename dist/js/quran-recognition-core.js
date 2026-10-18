@@ -8,7 +8,7 @@ function spectrum(samples,start,re,im){
  for(let size=2;size<=N;size*=2){const half=size/2,angle=-2*Math.PI/size;for(let first=0;first<N;first+=size){let wr=1,wi=0;const cr=Math.cos(angle),ci=Math.sin(angle);for(let j=0;j<half;j++){const a=first+j,b=a+half,tr=wr*re[b]-wi*im[b],ti=wr*im[b]+wi*re[b];re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;const next=wr*cr-wi*ci;wi=wr*ci+wi*cr;wr=next;}}}
  const row=new Float32Array(400);for(let f=16;f<400;f++)row[f]=10*Math.log10(1e-12+re[f]*re[f]+im[f]*im[f]);return row;
 }
-export function acousticLandmarks(samples){
+export function acousticLandmarks(samples,{sparse=false}={}){
  if(!(samples instanceof Float32Array)||samples.length<RECOGNITION_RATE*2)return [];
  const frames=Math.floor((samples.length-N)/RECOGNITION_HOP)+1,re=new Float64Array(N),im=new Float64Array(N),rows=[],peaks=[];
  for(let t=0;t<frames;t++)rows.push(spectrum(samples,t*RECOGNITION_HOP,re,im));
@@ -24,7 +24,7 @@ export function acousticLandmarks(samples){
  }
  const marks=[],seen=new Set();
  for(let i=0;i<peaks.length;i++){
-  const p=peaks[i];if(p.t%2)continue;let count=0;
+  const p=peaks[i];if(sparse&&p.t%2)continue;let count=0;
   for(let j=i+1;j<peaks.length;j++){const q=peaks[j],dt=q.t-p.t;if(dt>64)break;if(dt<4)continue;const hash=((p.f>>1)<<14)|((q.f>>1)<<6)|(dt>>1),key=hash+':'+p.t;if(seen.has(key))continue;seen.add(key);marks.push([hash,p.t]);if(++count===5)break;}
  }
  return marks;
@@ -45,6 +45,6 @@ export function matchAcousticLandmarks(query,pairs,tracks){
  const runner=candidates.find(v=>v.track!==best.track),score=best.times.size,times=[...best.times.keys()].sort((a,b)=>a-b),span=(times.at(-1)-times[0])*RECOGNITION_HOP/RECOGNITION_RATE;
  if(score<12||span<1.5||runner&&(score<runner.times.size*1.5||score-runner.times.size<5))return null;
  const offsets=[...best.times.values()].sort((a,b)=>a-b),offset=offsets[Math.floor(offsets.length/2)],center=times[Math.floor(times.length/2)],at=(offset+center)*RECOGNITION_HOP/RECOGNITION_RATE,track=tracks[best.track];if(!track||at<0||at>track.duration)return null;
- const row=track.timings.find(r=>at>=r.start&&at<r.end);if(!row?.ayah)return null;
- return{reciter:track.reciter,surah:track.surah,ayah:row.ayah,at,queryAt:center*RECOGNITION_HOP/RECOGNITION_RATE,matchedAnchors:score,span};
+ const row=track.timings.find(r=>at>=r.start&&at<r.end);if(!row?.ayah&&track.ayahTiming!==false)return null;
+ return{reciter:track.reciter,surah:track.surah,ayah:row?.ayah||null,at,queryAt:center*RECOGNITION_HOP/RECOGNITION_RATE,matchedAnchors:score,span};
 }

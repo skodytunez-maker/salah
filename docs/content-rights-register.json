@@ -263,6 +263,20 @@
       ],
       "findings": "Resolved inventories and compiled notice checks passed: 99 npm packages, 46 Android runtime components, two iOS frameworks and seven non-default build gems.",
       "nextAction": "Maintain evidence when dependencies change; device signing and SDK terms are separate."
+    },
+    {
+      "id": "russian-tafsirs-runtime",
+      "selectors": [
+        "dist/js/quran-tafsir.js"
+      ],
+      "status": "needs-review",
+      "evidence": [
+        "docs/quran-tafsir.md",
+        "https://qul.tarteel.ai/resources/tafsir/307",
+        "https://github.com/spa5k/tafsir_api/tree/eb82bb6294efe30ad5c135c03b1864afaa70e855/tafsir"
+      ],
+      "findings": "Runtime public resource API; no full edition redistributed in the app repository. Source text is displayed unchanged as text, without generated paraphrase or translation. QUL describes developer use but resource-specific publisher/translator rights evidence is not supplied by this integration. Do not infer that the mirror code license covers the Russian translations.",
+      "nextAction": "Retain resource/source/version attribution and cache contents without rewriting; obtain any resource-specific publisher/translator permission required for redistribution."
     }
   ]
 }

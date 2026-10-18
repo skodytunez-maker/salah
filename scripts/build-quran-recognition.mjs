@@ -16,7 +16,7 @@ for(const source of sources){
  if(decoded.status!==0||decoded.stderr?.length||decoded.stdout.length%4)throw Error('Audio could not be decoded completely');
  const audio=new Float32Array(decoded.stdout.buffer.slice(decoded.stdout.byteOffset,decoded.stdout.byteOffset+decoded.stdout.byteLength)),duration=audio.length/RECOGNITION_RATE;
  if(duration<3||duration>40*60||timings.at(-1).end>duration+1.5||duration-timings.at(-1).end>20)throw Error('Audio duration disagrees with timing table');
- const marks=acousticLandmarks(audio),id=tracks.length;if(id>=256)throw Error('Track limit');
+ const marks=acousticLandmarks(audio,{sparse:true}),id=tracks.length;if(id>=256)throw Error('Track limit');
  if(marks.length<20)throw Error('Not enough landmarks');
  tracks.push({reciter:source.reciter,surah:source.surah,duration,timings,audio:source.audio,timing:source.timing,audioSha256:crypto.createHash('sha256').update(bytes).digest('hex'),timingSha256:crypto.createHash('sha256').update(raw).digest('hex')});
  for(const [hash,time]of marks)pairs.push([hash,((id<<24)|time)>>>0]);
