@@ -11,7 +11,7 @@ const RESTORE_FAILSAFE_MS=1800;
 let restoreTransition=false,restoreTransitionTimer=null;
 try{restoreTransition=sessionStorage.getItem(SOFT_RELOAD_KEY)==='1';if(restoreTransition){sessionStorage.removeItem(SOFT_RELOAD_KEY);document.documentElement.classList.add('salah-update-restoring');restoreTransitionTimer=setTimeout(()=>finishAppUpdateTransition(),RESTORE_FAILSAFE_MS);}}catch{}
 export function finishAppUpdateTransition(){if(!restoreTransition)return;restoreTransition=false;if(restoreTransitionTimer!==null){clearTimeout(restoreTransitionTimer);restoreTransitionTimer=null;}const root=document.documentElement;const reveal=()=>{root.classList.add('salah-update-restoring-done');setTimeout(()=>root.classList.remove('salah-update-restoring','salah-update-restoring-done'),360);};if(typeof requestAnimationFrame==='function')requestAnimationFrame(reveal);else reveal();}
-async function reloadAfterUpdate(){if(!document.documentElement?.classList||typeof requestAnimationFrame!=='function'){location.reload();return}const root=document.documentElement;root.classList.add('salah-update-leaving');requestAnimationFrame(()=>root.classList.add('salah-update-leaving-active'));await new Promise(resolve=>setTimeout(resolve,360));try{sessionStorage.setItem(SOFT_RELOAD_KEY,'1')}catch{}location.reload();}
+async function reloadAfterUpdate(canReload=()=>true){if(!canReload())return false;if(!document.documentElement?.classList||typeof requestAnimationFrame!=='function'){location.reload();return true}const root=document.documentElement;root.classList.add('salah-update-leaving');requestAnimationFrame(()=>root.classList.add('salah-update-leaving-active'));await new Promise(resolve=>setTimeout(resolve,360));if(!canReload()){root.classList.remove('salah-update-leaving','salah-update-leaving-active');return false;}try{sessionStorage.setItem(SOFT_RELOAD_KEY,'1')}catch{}location.reload();return true;}
 
 export function publicReleaseChanges(changes){return Array.isArray(changes)?changes.filter(isPublicReleaseChange).slice(0,8):[];}
 const currentRelease={version:APP_VERSION,date:APP_UPDATED_AT,changes:publicReleaseChanges(APP_CHANGES),announcement:APP_ANNOUNCEMENT};
@@ -32,7 +32,7 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
  if(!available&&acknowledgeAnnouncement){acknowledge(safe);document.querySelector('.release-dialog [data-close]')?.addEventListener('click',()=>window.dispatchEvent(new Event('salah:release-dismissed')),{once:true});}
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
-export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,showRelease=showAppRelease}={}) {
+export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,canApplyUpdate=canAutoUpdate,showRelease=showAppRelease}={}) {
  const nativeUpdater=globalThis.Capacitor?.Plugins?.SalahLiveUpdate;
  if(nativeUpdater){
   manualCheck=async(force=false)=>{
@@ -50,7 +50,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  }
  if(!('serviceWorker' in navigator))return;
  manualCheck=null;
- let requested=false,reloaded=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
+ let requested=false,reloaded=false,applyQueued=false,reloadPending=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
  const startedAt=Date.now();let startupUntouched=true,lastInteraction=-Infinity;
  const cancelStartup=()=>{startupUntouched=false;lastInteraction=Date.now()};
  const inputs=['pointerdown','touchstart','keydown'];
@@ -59,12 +59,16 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  const finishStartup=()=>{startupUntouched=false};
  const watched=new WeakSet();
  const clearBanner=()=>{banner?.remove();banner=null;};
+ const blocked=()=>document.documentElement?.dataset?.qrLogin==='active'||document.documentElement?.dataset?.quranDownload==='active'||!canApplyUpdate();
+ const finishReload=async()=>{if(!reloadPending||reloaded||blocked())return;reloaded=true;if(!await reloadAfterUpdate(()=>!blocked()))reloaded=false;};
+ const requestApply=()=>{if(blocked()){applyQueued=true;return false;}applyQueued=false;requested=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else{reloadPending=true;void finishReload();}return true;};
+ let registration;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-  if(requested&&!reloaded){reloaded=true;void reloadAfterUpdate();}
+  if(requested&&!reloaded){reloadPending=true;void finishReload();}
   else if(offerWorker){const announced=Boolean(banner);clearBanner();offerWorker=null;if(announced)toast('Обновление установлено.');}
  });
  try {
-  const registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+  registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
   function makeBanner({release=currentRelease,available=false}={}){
    clearBanner();banner=document.createElement('aside');banner.className='app-update';banner.setAttribute('role','status');banner.setAttribute('aria-label',available?'Обновление SALAH':'SALAH обновлён');
    const copy=document.createElement('div');copy.className='app-update-copy';
@@ -72,7 +76,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    const detail=document.createElement('button');detail.type='button';detail.className='app-update-details';detail.textContent=releaseDate(release.date)?releaseDate(release.date)+' · Что нового':'Посмотреть изменения';
    detail.onclick=()=>{showAppRelease(release,{available});if(!available)clearBanner();};copy.append(title,detail);
    const actions=document.createElement('div');actions.className='app-update-actions';
-   if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{requested=true;button.disabled=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else void reloadAfterUpdate();};actions.append(button);}
+   if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{button.disabled=true;if(!requestApply()){button.textContent='После прослушивания';toast('Обновление установится после остановки аудио. Чтение продолжается.');}};actions.append(button);}
    const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление об обновлении');close.onclick=()=>{if(available)dismissedWorker=registration.waiting;acknowledge(release.announcement||release);clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
   }
   async function offer(force=false){
@@ -91,7 +95,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    makeBanner({release:(!force?release.announcement:release)||{version:APP_VERSION+1,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']},available:true});
   }
   function applyAutomatically(){
-   if(document.documentElement?.dataset?.qrLogin==='active'||document.documentElement?.dataset?.quranDownload==='active'||requested||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open],.founder-welcome,.series-celebration')||!canAutoUpdate())return false;
+   if(blocked()||requested||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open],.founder-welcome,.series-celebration')||!canAutoUpdate())return false;
    try{requested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});return true;}catch{requested=false;return false;}
   }
   function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&!applyAutomatically())void offer();});if(worker.state==='installed'&&!applyAutomatically())void offer();}
@@ -116,7 +120,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    try{return await checking;}finally{checking=null;}
   }
   manualCheck=check;
-  const resume=()=>{if(checkTimer!==null)clearInterval(checkTimer);checkTimer=null;if(document.visibilityState!=='visible')return;void check().catch(()=>{});checkTimer=setInterval(()=>{if(!applyAutomatically())void check().catch(()=>{});},5000);};
+  const resume=()=>{if(checkTimer!==null)clearInterval(checkTimer);checkTimer=null;if(document.visibilityState!=='visible')return;void check().catch(()=>{});checkTimer=setInterval(()=>{if(reloadPending){void finishReload();return;}if(applyQueued){requestApply();return;}if(!applyAutomatically())void check().catch(()=>{});},5000);};
   document.addEventListener('visibilitychange',resume);window.addEventListener('online',resume);resume();return registration;
  }catch{toast('Офлайн-режим пока недоступен.');}finally{finishStartup()}
 }

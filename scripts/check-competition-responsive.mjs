@@ -38,3 +38,6 @@ const response=await serve(new Request('https://fixture.invalid?boards=1&day='+t
 const legacy=await serve(new Request('https://fixture.invalid?period=week&day='+testDay));assert.equal((await legacy.json()).period,'week','Existing clients retain their original response');
 assert.equal(reciterHasSurah('ar.siratulloraupov',1),true);assert.equal(reciterHasSurah('ar.siratulloraupov',2),false);assert.equal(adjacentReciterSurah('ar.siratulloraupov',1,1),16);assert.equal(reciterHasSurah('ar.siratulloraupov',114),true);
 console.log('PASS: one four-period transport, cache/abort/privacy, delayed-result coalescing, instant warm switches, stale-period rejection, live seconds without duplicate credit or invented ranks, legacy Edge compatibility and verified Raupov availability.');
+
+client.clearCompetitionCache();let retryCalls=0;clientContext.fetch=async()=>{retryCalls++;if(retryCalls===1)return{ok:false,status:502};return{ok:true,status:200,json:async()=>({day:testDay,boards:Object.fromEntries(['all','day','week','month'].map(p=>[p,{items:[person]}]))})};};assert.equal((await client.loadCompetition('all'))[0].seconds,100);assert.equal(retryCalls,2,'One temporary gateway failure recovers before showing unavailable');
+console.log('PASS: shared leaderboard request retries a temporary gateway failure once.');

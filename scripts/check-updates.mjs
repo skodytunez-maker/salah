@@ -86,6 +86,17 @@ intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore+1,'A late d
 const reloadBefore=reloads;workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(reloads,reloadBefore+1);
 assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);Date.now=realNow;
 console.log('PASS: automatic late updates respect foreground, idle input, safe screens and dialogs; personal storage and single activation preserved.');
+// Manual activation must not interrupt a live or newly started recitation.
+registration.waiting=waiting;serviceWorker.register=async()=>{docEvents.pointerdown();return registration;};
+let playbackBusy=true;const manualStart=automaticMessages,manualReloads=reloads;
+await registerAppWorker({canApplyUpdate:()=>!playbackBusy});await checkAppUpdate();await new Promise(r=>setTimeout(r,20));
+const queuedButton=elements.at(-1).children[1].children[0];queuedButton.onclick();
+assert.equal(automaticMessages,manualStart);assert.equal(reloads,manualReloads);assert.equal(queuedButton.textContent,'После прослушивания');
+intervals.at(-1).fn();assert.equal(automaticMessages,manualStart,'Playback keeps the queued update inactive');
+playbackBusy=false;intervals.at(-1).fn();assert.equal(automaticMessages,manualStart+1);
+playbackBusy=true;workerEvents.controllerchange();assert.equal(reloads,manualReloads,'Playback starting during activation blocks reload too');
+playbackBusy=false;intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);
+console.log('PASS: manual updates wait for playback, recheck at controller activation and reload once after audio ends.');
 const events={};const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://example.test/salah/'},location:{origin:'https://example.test'},addEventListener:(k,f)=>events[k]=f}});
 vm.runInContext(await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),context);
 let release;events.message({data:{type:'SALAH_RELEASE_INFO'},ports:[{postMessage:v=>release=JSON.parse(JSON.stringify(v))}]});
@@ -115,6 +126,6 @@ for(const selector of ['.adhkar-shell','.dhikr-list-shell','.lesson-complete','.
 reader=null;assert.equal(updateGate.canAutoUpdate(),true,'The collection menu still updates automatically');
 gateScope.currentRoute='support';assert.equal(updateGate.canAutoUpdate(),false);
 gateScope.currentRoute='home';sync='saving';assert.equal(updateGate.canAutoUpdate(),false);
-sync='saved';audio=true;assert.equal(updateGate.canAutoUpdate(),false);
+sync='saved';audio=true;assert.equal(updateGate.canAutoUpdate(),false);assert.equal(updateGate.canApplyUpdate(),false);
 audio=false;assert.equal(updateGate.canAutoUpdate(),true);
 console.log('PASS: actual app gate protects reading daily counters, Quran, lessons and support without disabling resting-screen updates.');
