@@ -12,6 +12,7 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'leader-badge',match:/значк.{0,16}лидер/iu,title:'Награды под ником',art:()=>'<div class="release-hours-medals">'+artwork('week')+artwork('month')+'</div>',where:'Коран → Чтецы → Топ SALAH.'},
  {id:'account',match:/личн.{0,12}профил|ошибк.{0,12}связ|сбрасыва.{0,12}вход/iu,title:'Вход в профиль без лишнего ожидания',art:()=>'<img class="release-screen-picture" src="./assets/updates/account-375.svg" alt="">',where:'Меню → Мой аккаунт.'},
  {id:'about',match:/О приложении|знак SK|логотип SK/iu,title:'О приложении',art:()=>'<img class="release-reader-portrait" src="./assets/brand/saadi-kobilov-mark.png" alt="">',where:'Меню → О приложении.'},
  {id:'tafsir',match:/тафсир|толкован/iu,title:'Тафсиры ас-Саади и Ибн Касира',art:()=>screenshot('tafsir',369),where:'Коран → сура → ⋯ у аята → Тафсир.'},

@@ -28,3 +28,7 @@ At the user’s request, keep subscriptions, monthly financial support and YooKa
 ## Version 375 — personal account continuity (19 October 2026)
 
 Profile identity checks no longer wait for counter uploads. Fresh login invalidates older pending checks, and unclassified network/gateway refusals preserve the local session. Confirmed Auth revocation still closes it. The minor-fix card uses the original SALAH account illustration; keep announcement 369, its expiry and dismissal state.
+
+## Version 376 — readable leader badges (19 October 2026)
+
+Move the weekly/monthly winner medallions below the nickname in the podium and ranking list. Increase them from 12 to 32 CSS pixels, preserving each person button and the existing ranking order. The minor-fix card reuses the matching week/month medallion artwork. Preserve announcement 369, its expiry and acknowledgement.
