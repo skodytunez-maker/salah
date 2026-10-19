@@ -1,10 +1,9 @@
 {
   "provider": "Азкар.ру",
-  "checkedAt": "2026-10-19",
-  "review": "Provider-published Arabic paired with each file. Display changes are limited to the two user-reviewed adhkar and Al-Ikhlas, with ua for the conjunction. Other original readings and all Arabic formulas are preserved. User checked tahlil stops at la-h, al-hamd and qadir. Full phonetic listening review is not yet complete.",
+  "checkedAt": "2026-10-20",
+  "review": "14 provider-published Arabic formulas match the displayed readings. The user-selected raditu presentation includes salawat in Arabic, Cyrillic and translation; its recording is now enabled. Original catalogue, IDs and repetitions are unchanged. Full phonetic listening certification is not claimed.",
   "variants": {
     "sayyid": "В записи — «ва абуу’у бизанбии», без повторного «ляка».",
-    "raditu": "В записи после имени Пророка ﷺ произносится салават.",
     "bikaEvening": "В записи — вариант без слов «ва бика асбахнаа»."
   },
   "recordings": [
@@ -100,11 +99,12 @@
     {
       "id": "raditu",
       "title": "Радыйту билляхи раббан",
-      "url": null,
+      "url": "https://azkar.ru/storage/audio/01KQWQXKB4Y562J55WTVPJJ6RT.mp3",
       "source": "https://azkar.ru/category/morning#azkar-12",
       "sourceArabic": "رَضِيتُ بِاللَّهِ رَبًّا ، وَ بِالْإسْلَامِ دِيناً وَ بِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا",
-      "unavailableReason": "В записи после имени Пророка ﷺ произносится салават.",
-      "canonicalArabic": "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ نَبِيّـاً"
+      "canonicalArabic": "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ نَبِيّـاً",
+      "displayArabic": "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيّـاً",
+      "presentationNote": "User-selected salawat, also present in the corresponding recording."
     },
     {
       "id": "hayy",

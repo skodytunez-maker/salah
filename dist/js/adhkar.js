@@ -109,7 +109,10 @@ registerPlayback(dhikrAudioOwner,pauseDhikrAudio);
 function bindDhikrAudio(item){
  const button=host.querySelector('#dhikr-play'),recording=adhkarRecording(item);if(!button||!recording)return;
  const status=host.querySelector('#dhikr-audio-status');
- button.onclick=()=>{
+ button.onclick=event=>{
+  // Replacing the SVG detaches the original click target before it bubbles.
+  // Consume it here so a play/pause tap cannot also open the card explanation.
+  event?.stopPropagation?.();
   if(dhikrAudio&&!dhikrAudio.paused){pauseDhikrAudio();return;}
   if(!dhikrAudio){dhikrAudio=new Audio(recording.url);dhikrAudio.preload='none';}
   const current=dhikrAudio,version=dhikrAudioToken,valid=()=>current===dhikrAudio&&version===dhikrAudioToken;
