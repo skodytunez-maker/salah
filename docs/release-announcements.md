@@ -36,3 +36,7 @@ Move the weekly/monthly winner medallions below the nickname in the podium and r
 ## Version 377 — visible leader award artwork (19 October 2026)
 
 The podium now groups avatar and nickname on one aligned row, then centres a large trophy and readable award caption below it. CSS viewports remove the existing PNGs’ transparent margins without modifying the supplied artwork. List rows use the same hierarchy at a compact size. Keep announcement 369, its expiry and acknowledgement.
+
+## Version 378 — balanced leader award size (19 October 2026)
+
+Reduce podium trophies from 88 to 72 CSS pixels and list trophies from 64 to 56, retaining the artwork crop and readable captions. Reduce the podium identity area to 90 pixels to match. Preserve announcement 369, expiry and acknowledgement.
