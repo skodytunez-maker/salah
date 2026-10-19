@@ -5,6 +5,11 @@
   "capturedAt": "2026-10-07",
   "entries": [
     {
+      "path": "dist/assets/updates/account-375.svg",
+      "gitBlobSha": "371bf9dcfc7f337b6303966d952c940e5801c8d5",
+      "bytes": 1651
+    },
+    {
       "path": ".gitattributes",
       "gitBlobSha": "fa1385d99a319b43c06f5309d1aae9fdd3adea46",
       "bytes": 8

@@ -12,6 +12,15 @@
   },
   "assets": [
     {
+      "path": "dist/assets/updates/account-375.svg",
+      "gitBlobSha": "371bf9dcfc7f337b6303966d952c940e5801c8d5",
+      "bytes": 1651,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "note": "SALAH-authored vector account illustration, 19 October 2026; no external imagery or fonts embedded.",
+      "rightsEvidence": "docs/release-announcements.md"
+    },
+    {
       "path": "dist/assets/amiri-quran.ttf",
       "gitBlobSha": "22f94bad26d4d537814011b1bec57a0ea4d8ba99",
       "bytes": 130184,

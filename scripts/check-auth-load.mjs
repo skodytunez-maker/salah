@@ -50,4 +50,4 @@ let current={access_token:'old',user:{id:'fixture-user'}},release;
 const guard=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{session:current}}),getUser:()=>new Promise(done=>release=done)}),now:()=>1000});
 const pending=guard({force:true});for(let i=0;!release&&i<10;i++)await Promise.resolve();
 current={access_token:'newer',user:{id:'fixture-user'}};guard.acceptRefresh(current);release({data:{user:{id:'fixture-user'}}});
-assert.equal((await pending).session.access_token,'newer');assert.equal((await guard()).session.access_token,'newer');
+assert.equal((await pending).state,'changed');assert.equal((await guard()).session.access_token,'newer');

@@ -33,12 +33,35 @@ function getEngine(){return engine||(engine=createCounterSync({storage:localStor
  const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/adhkar-sync',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify(component),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
  const result=await response.json();if(!response.ok)throw Error(result.error||'storage_unavailable');return result;
 }}));}
+// Profile access checks identity independently of the counter upload queue.
+async function refreshAccountSession({verifySession=false}={}){
+ try{
+  let checked;
+  for(let attempt=0;attempt<3;attempt++){
+   checked=await checkAccountSession({force:verifySession&&attempt===0});
+   if(checked.state!=='changed')break;
+  }
+  if(checked.state==='unavailable'||checked.state==='changed')throw Error('auth_unavailable');
+  const next=checked.session,uid=next?.user?.id||null;
+  session=next;await getEngine().activate(uid);
+  if(!uid){status='local';reason=checked.state==='revoked'?'session_expired':'';notice();return false;}
+  return true;
+ }catch(error){status='pending';reason=error?.message==='auth_unavailable'?'auth_unavailable':'storage_unavailable';notice();return false;}
+}
 export async function synchronizeCounters({verifySession=false}={}){
- if(busy){schedule(verifySession);return busy;}
+ if(busy){if(verifySession){await busy;return synchronizeCounters({verifySession:true});}schedule();return busy;}
  const wasSignedIn=counterSyncStatus().signedIn;
- busy=(async()=>{try{const checked=await checkAccountSession({force:verifySession});if(checked.state==='unavailable'||checked.state==='changed')throw Error('auth_unavailable');const next=checked.session;const uid=next?.user?.id||null;session=next;await getEngine().activate(uid);if(!uid){status='local';reason=checked.state==='revoked'?'session_expired':'';notice();return{ok:false,reason:'signed_out'};}status='saving';notice();const result=await getEngine().sync();status=result.ok?'saved':'pending';reason=result.reason||'';notice();return result;}catch(error){status='pending';reason=error?.message==='auth_unavailable'?'auth_unavailable':'storage_unavailable';notice();return{ok:false,reason};}})();let result;try{result=await busy;}finally{busy=null;}
+ busy=(async()=>{
+  if(!await refreshAccountSession({verifySession}))return{ok:false,reason:reason||'signed_out'};
+  const userId=session.user.id;status='saving';notice();
+  try{
+   const result=await getEngine().sync();
+   if(session?.user?.id!==userId)return{ok:false,reason:'account_changed'};
+   status=result.ok?'saved':'pending';reason=result.reason||'';notice();return result;
+  }catch{if(session?.user?.id===userId){status='pending';reason='storage_unavailable';notice();}return{ok:false,reason:'storage_unavailable'};}
+ })();let result;try{result=await busy;}finally{busy=null;}
  if(wasSignedIn&&!counterSyncStatus().signedIn&&host&&location.hash.split('?')[0]==='#account'&&host.querySelector('#account-form-area')===accountArea)await showCounterAccount(host,'Вход завершён. Войдите снова с новым паролем или кодом из письма.',true);
- if(counterSyncStatus().signedIn&&host&&location.hash.split('?')[0]==='#account'&&host.querySelector('#account-form-area')===accountArea&&accountArea.querySelector('#account-session-retry'))await showCounterAccount(host,'',true);
+ if(counterSyncStatus().signedIn&&host&&location.hash.split('?')[0]==='#account'&&host.querySelector('#account-form-area')===accountArea&&(accountArea.querySelector('#account-session-retry')||!wasSignedIn&&accountArea.querySelector('#counter-account-email-form')))await showCounterAccount(host,'',true);
  return result;
 }
 let pendingSessionCheck=false;
@@ -71,7 +94,8 @@ export async function showCounterAccount(container,message='',force=false,mode='
    if(!current.error&&qrSession?.user?.email_confirmed_at&&!qrSession.user.is_anonymous){await mountQrApproval(area,qrSession,()=>showCounterAccount(container,'',true));return;}
   }catch{}
  }
- await synchronizeCounters();if(!active())return;
+ const accountReady=await refreshAccountSession();if(!active())return;
+ if(accountReady)void synchronizeCounters();
  if(!counterSyncStatus().signedIn&&reason==='auth_unavailable'){
   container.querySelector('#counter-account-heading').textContent='Мой аккаунт';
   report('Не удалось проверить вход. Проверьте соединение и попробуйте снова.');
