@@ -268,5 +268,9 @@ await sound.select('#dhikr-play').click();const staleError=firstSound.onerror;fi
 await sound.select('#dhikr-play').click();const secondSound=sound.audio.at(-1);assert.notEqual(secondSound,firstSound);staleError();assert.equal(secondSound.paused,false);assert.equal(sound.audioBusy,true);
 secondSound.onended();assert.equal(sound.audioBusy,false);assert.equal(secondSound.src,'');assert.equal(sound.select('#dhikr-play').attributes['aria-label'],'Прослушать азкар');
 assert.equal(sound.storage.getItem('salah:adhkar-progress-v2'),progressBefore,'Listening does not count repetitions');
-for(const id of ['sayyid','raditu','bikaEvening']){const silent=browser({hash:'#adhkar?group=all&view=card&item='+id});await silent.open();assert.equal(silent.container.querySelector('#dhikr-play'),null);assert.ok(silent.container.querySelector('.dhikr-audio-pending'));}
+for(const id of ['sayyid','bikaEvening']){const silent=browser({hash:'#adhkar?group=all&view=card&item='+id});await silent.open();assert.equal(silent.container.querySelector('#dhikr-play'),null);assert.ok(silent.container.querySelector('.dhikr-audio-pending'));}
+const raditu=browser({hash:'#adhkar?group=morning&view=card&item=raditu'});await raditu.open();
+assert.match(raditu.container.querySelector('.transliteration').textContent,/^Радыйту би-Лляхи Рабба,.*сал-ля-Ллаху 'аляй-хи уа салляма набиййа$/);
+assert.match(raditu.container.querySelector('.dhikr-arabic').textContent,/صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ/);
+await raditu.select('#dhikr-play').click();assert.equal(raditu.audio[0].paused,false);assert.equal(cardId(raditu),'raditu');
 console.log('PASS: compact speaker/pause control, actual provider mapping, external playback interruption, stale errors, retry, end cleanup and unchanged counters.');

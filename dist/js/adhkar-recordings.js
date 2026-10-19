@@ -82,10 +82,9 @@ const entries=[
   {
     "id": "raditu",
     "expectedArabic": "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ نَبِيّـاً",
-    "url": null,
+    "url": "https://azkar.ru/storage/audio/01KQWQXKB4Y562J55WTVPJJ6RT.mp3",
     "source": "https://azkar.ru/category/morning#azkar-12",
-    "sourceArabic": "رَضِيتُ بِاللَّهِ رَبًّا ، وَ بِالْإسْلَامِ دِيناً وَ بِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا",
-    "unavailableReason": "В записи после имени Пророка ﷺ произносится салават."
+    "sourceArabic": "رَضِيتُ بِاللَّهِ رَبًّا ، وَ بِالْإسْلَامِ دِيناً وَ بِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا"
   },
   {
     "id": "hayy",
@@ -120,17 +119,26 @@ const entries=[
 export const normalizeAdhkarArabic=text=>String(text||'').normalize('NFKC').replace(/ٱ/g,'ا').replace(/[\u064b-\u065f\u0670\u06d6-\u06ed\u0640]/g,'').replace(/ى/g,'ي').replace(/[^\u0621-\u064a]/g,'');
 const key=item=>normalizeAdhkarArabic(item?.arabic||item?.verses?.map(v=>v.arabic).join(' '));
 const entryFor=item=>item&&entries.find(r=>r.id===item.id&&normalizeAdhkarArabic(r.expectedArabic)===key(item));
-export function adhkarRecording(item){const r=entryFor(item);return r?.url?r:null;}
-// Only the two reviewed adhkar and Al-Ikhlas receive display spelling edits.
+export function adhkarRecording(item){const r=entryFor(item);return r?.url&&normalizeAdhkarArabic(r.sourceArabic)===key(adhkarPresentation(item))?r:null;}
+// Only the user-reviewed adhkar and Al-Ikhlas receive display spelling edits.
 // Keep every other original reading, Arabic formula and counter unchanged.
 const ikhlasReading=['Куль хува-Ллаху ахад.','Аллаху-ссамад.','Лям ялид уа лям юляд.','Уа лям якулляху куфуван ахад.'];
 // User-reviewed spelling for this dhikr; keep its pause endings and word breaks.
 const tahlilReading="Ля иляха илля-Ллаху уахда-ху ля шарикя лях. Ля-ху-ль-мульку уа ля-ху-ль-хамд, уа хува 'аля кулли шайин кадир.";
 const sayyidReading='Аллахумма, Анта Рабби, ля иляха илля Ант. Халякта-ни уа ана ‘абдук. Уа ана ‘аля ‘ахди-кя уа уа‘ди-кя ма-стата‘т. А‘узу би-кя мин шарри ма сана‘т. Абу’у ля-кя би-ни‘мати-кя ‘аляйй, уа абу’у ля-кя би-занби. Фа-гфир ли, фа-инна-ху ля йагфиру-з-зунуба илля Ант.';
+const alimReading='Аллахумма, ‘Алималь-гайби уа-ш-шахадати, Фатырас-самауати уаль-ард. Рабба кулли шайин уа Маликах. Ашхаду алля иляха илля Ант. А‘узу би-кя мин шарри нафси, уа мин шарри-ш-шайтани уа ширких. Уа ан актарифа ‘аля нафси су’ан ау аджурра-ху иля муслим.';
+// Exact user-supplied spelling, including the salawat; do not normalize it.
+const radituReading="Радыйту би-Лляхи Рабба, уа би-ль-ислями диина уа би-Мухаммадин сал-ля-Ллаху 'аляй-хи уа салляма набиййа";
+const hayyReading="Йа Хаййу, йа Кайюм, би-рахмати-кя астагис, аслих ли ша'ни куллях уа ля такиль-ни иля нафсии торфата 'айн";
+const hasbiReading="Хасбия-Ллаху, ля иляха илля ху-уа, 'аляй-хи таваккяльту уа ху-уа Раббу-ль-'арши-ль-'азым";
 export function adhkarPresentation(item){
  if(!entryFor(item))return item;
  if(item.id==='tahlil')return {...item,transliteration:tahlilReading};
  if(item.id==='sayyid')return {...item,transliteration:sayyidReading};
+ if(item.id==='alim')return {...item,transliteration:alimReading};
+ if(item.id==='raditu')return {...item,arabic:item.arabic.replace(' نَبِيّـاً',' صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيّـاً'),translation:item.translation.replace('Мухаммадом как пророком','Мухаммадом (да благословит его Аллах и приветствует) как пророком'),transliteration:radituReading};
+ if(item.id==='hayy')return {...item,transliteration:hayyReading};
+ if(item.id==='hasbi')return {...item,transliteration:hasbiReading};
  if(item.id==='surah112'&&item.verses?.length===4)return {...item,title:'Аль-Ихляс',verses:item.verses.map((verse,index)=>({...verse,transliteration:(index===0?'Бисмилляахир-рахмаанир-рахиим. ':'')+ikhlasReading[index]}))};
  return item;
 }
