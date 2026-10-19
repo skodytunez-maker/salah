@@ -28,6 +28,7 @@ for(const id of ['ar.alafasy','ar.mahermuaiqly']){
  assert.equal(session.state.surah.number,113);assert.equal(session.state.status,'playing');
  assert.equal(elements.length,1,'Next chapter reuses the already permitted media element');
  assert.ok(element.src.endsWith('/113.mp3'));
+ element.onpause();assert.equal(session.state.status,'playing','A queued pause event from the previous source must not pause the current track');
  assert.equal(session.state.surah.verses[0].number,6226,'Chapter advance builds correct global ayah positions without a text download');
  session.pause();assert.equal(session.state.status,'paused');session.toggle();await flush();assert.equal(session.state.status,'playing');
  element.onended();await flush();assert.equal(session.state.surah.number,114);assert.equal(session.state.status,'playing');
