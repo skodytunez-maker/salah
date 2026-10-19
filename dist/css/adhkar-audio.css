@@ -1,0 +1,19 @@
+/* Keep the original adhkar surfaces and spacing; readable transcription is display-only.
+   Apply Mushaf lettering only to the three short Quran surahs. */
+.adhkar-shell .dhikr-passage[data-mushaf-surah] .dhikr-arabic{font-family:'SALAH Madinah Unicode','Amiri Quran','Traditional Arabic',serif;font-weight:400;font-synthesis:none;font-feature-settings:'liga' 1,'calt' 1;font-size:var(--arabic-size,36px);line-height:2.2;letter-spacing:0;word-spacing:0;direction:rtl;overflow:visible}
+.dhikr-audio-message{font-size:11px;line-height:1.5;color:#aab4cb}.dhikr-audio-message:empty{display:none}
+.dhikr-audio-pending{font-size:13px;line-height:1.5;text-align:center}
+.dhikr-audio-inline{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 0;min-width:0}
+.dhikr-audio-toggle{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:10px;border:1px solid #c9b47f66;border-radius:50%;background:#182238;color:#ddc591;cursor:pointer}
+.dhikr-audio-toggle .dhikr-audio-icon{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linejoin:round;stroke-linecap:round}
+.dhikr-audio-toggle:focus-visible{outline:2px solid #ddc591;outline-offset:3px}.dhikr-audio-toggle[aria-pressed=true]{background:#293044;border-color:#c9b47f}.dhikr-audio-toggle[aria-busy=true]{opacity:.65}
+.dhikr-audio-inline .dhikr-audio-message{margin:0;max-width:230px;text-align:left;font-size:11px;line-height:1.5}
+
+.dhikr-audio-toggle:not([aria-pressed=true]) .dhikr-audio-icon{fill:currentColor;stroke-width:1.25}
+
+.dhikr-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:6px 0 0}
+.adhkar-shell .dhikr-footer .lesson-author{order:2;flex:1;margin:0;text-align:right;line-height:1.4}
+.dhikr-footer .dhikr-audio-inline{order:1;justify-content:flex-start;margin:0;gap:8px}
+.dhikr-footer .dhikr-audio-toggle{flex-basis:38px;width:38px;height:38px;min-height:38px;padding:9px}
+.dhikr-footer .dhikr-audio-toggle .dhikr-audio-icon{width:18px;height:18px}
+.dhikr-footer .dhikr-audio-pending{order:3;flex-basis:100%;margin:4px 0 0}

@@ -2459,6 +2459,15 @@
       "license": "MIT",
       "note": "Exact Bootstrap Icons chevron-left from reference commit8d88686c03c3768a2d82ba4f20c3c4e1b100fa29; existing bundled MIT notice applies.",
       "rightsEvidence": "docs/about-layout-evidence.md"
+    },
+    {
+      "path": "dist/assets/updates/adhkar-audio-380.svg",
+      "gitBlobSha": "2ea74f8b45ba71d66c1d2ea3142e6e65eaf93d03",
+      "bytes": 1918,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "note": "SALAH-authored adhkar reading/player illustration, 19 October 2026; no third-party images or embedded fonts.",
+      "rightsEvidence": "docs/release-announcements.md"
     }
   ],
   "wallpaperSets": [

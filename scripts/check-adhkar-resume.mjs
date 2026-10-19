@@ -6,6 +6,7 @@ import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
 import {createFreeCounterStore} from '../dist/js/free-counter.js';
 import {createAdhkarProgressStore} from '../dist/js/adhkar-progress.js';
+import {adhkarPresentation,adhkarRecording} from '../dist/js/adhkar-recordings.js';
 
 // Exercise the actual screen module with its real progress store. The small DOM
 // below supplies browser primitives only; routes and navigation come from the
@@ -35,6 +36,7 @@ class Element {
   set textContent(value){this.text=String(value);this.children=[]}
   get textContent(){return this.text+this.children.map(child=>child.textContent).join('')}
   setAttribute(name,value){this.attributes[name]=String(value)}
+  removeAttribute(name){delete this.attributes[name]}
   get isConnected(){return true}
   getClientRects(){return this.hidden?[]:[{}]}
   closest(selector){for(let node=this;node;node=node.parent)if(node.matches(selector))return node;return null}
@@ -64,18 +66,19 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     back(){if(historyIndex>0){historyIndex--;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}},
     forward(){if(historyIndex<entries.length-1){historyIndex++;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}}
    },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},clearTimeout,scrollTo(_x,y){scroll=y}};
+  let audioBusy=false,pauseRegistered=null;
   const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
     bindNativeCardSwipe:()=>()=>{},
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},
     read:(key,fallback)=>{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)},write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},settings:{haptic:false},
     esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),toast:notice=>notices.push(notice),modal(){},closeModal(){},dateKey:()=>currentDay,createAdhkarProgressStore,createFreeCounterStore,stopDailyDuas(){},showDailyDuas(){},
-    recordingFor:(_kind,id)=>({url:'https://test.invalid/'+id+'.mp3'}),
-    Audio:class {constructor(url){this.src=url;this.paused=true;this.pauseCalls=0;audio.push(this)}play(){this.paused=false;return Promise.resolve()}pause(){this.paused=true;this.pauseCalls++}},
+    adhkarPresentation,adhkarRecording,claimPlayback(){},registerPlayback(_owner,pause){pauseRegistered=pause;},setForegroundAudio(_owner,active){audioBusy=active;},
+    Audio:class {constructor(url){this.src=url;this.paused=true;this.duration=60;this.currentTime=0;this.pauseCalls=0;audio.push(this)}play(){if(this.fail)return Promise.reject(Error('blocked'));this.paused=false;this.onplay?.();return Promise.resolve()}pause(){this.paused=true;this.pauseCalls++;this.onpause?.();}},
     fetch:async()=>{fetches++;return {ok:true,json:async()=>structuredClone(items)}}
   });
   const module=new Script(executable,{filename:'adhkar.js'}).runInContext(context);
-  return {module,container,location,storage,audio,notices,window,get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning',{resumeEvening})},open:()=>module.showAdhkar(container,'morning',{resumeEvening}),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,setEveningContext:value=>{resumeEvening=value;module.updateAdhkarPeriod('evening',{resumeEvening})},deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
+  return {module,container,location,storage,audio,notices,window,get audioBusy(){return audioBusy},interruptPlayback:()=>pauseRegistered?.(),get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning',{resumeEvening})},open:()=>module.showAdhkar(container,'morning',{resumeEvening}),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,setEveningContext:value=>{resumeEvening=value;module.updateAdhkarPeriod('evening',{resumeEvening})},deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
 }
 const params=page=>new URLSearchParams(page.location.hash.split('?')[1]||'');
 const cardId=page=>page.select('#adhkar-count').dataset.dhikrId;
@@ -180,8 +183,8 @@ for(const group of ['morning','evening']){
   const passage=cardPage.select('.dhikr-passage');
   assert.doesNotMatch(passage.textContent,/Бисмилляахир|بِسْمِ/);
   assert.match(cardPage.select('.dhikr-arabic').textContent,/^قُلْ/);
-  assert.match(cardPage.select('.transliteration').textContent,/^Қуль/);
-  if(id==='surah112')assert.match(passage.textContent,/якулляху куфууан Ахад/);
+  assert.match(cardPage.select('.transliteration').textContent,id==='surah112'?/^Куль хува-Ллаху ахад\./:/^Қуль/);
+  if(id==='surah112')assert.match(passage.textContent,/якулляху куфуван ахад/);
   assert.equal(cardId(cardPage),id);assert.match(cardPage.select('#adhkar-count').textContent,/0 \/ 3/);
   await cardPage.select('#adhkar-count').click();assert.match(cardPage.select('#adhkar-count').textContent,/1 \/ 3/);
   await assertUnchanged(cardPage);
@@ -252,3 +255,18 @@ for(const date of ['2026-10-05','2026-10-09','garbage']){
  await invalid.open();assert.equal(params(invalid).get('day'),null);assert.match(invalid.select('#adhkar-count').textContent,/0 \/ 100/);
 }
 console.log('PASS: saved evening 50/100 resumes after midnight/reload, pending taps and undo target its own day, totals are not guessed, current-day work wins and the next evening starts separately.');
+
+// Compact speaker button: pause/error/retry must not alter prayer counts.
+const sound=browser({hash:'#adhkar?group=morning&view=card&item=tahlil'});await sound.open();
+const progressBefore=sound.storage.getItem('salah:adhkar-progress-v2');
+await sound.select('#dhikr-play').click();const firstSound=sound.audio.at(-1);assert.equal(sound.audioBusy,true);
+assert.equal(sound.container.querySelector('#dhikr-audio-seek'),null);assert.doesNotMatch(sound.container.textContent,/Произношение|Азкар\.ру/);firstSound.currentTime=30;
+await sound.select('#dhikr-play').click();assert.equal(firstSound.paused,true);assert.equal(sound.audioBusy,false);
+await sound.select('#dhikr-play').click();assert.equal(sound.audio.at(-1),firstSound);assert.equal(firstSound.currentTime,30);assert.equal(sound.audioBusy,true);
+sound.interruptPlayback();assert.equal(firstSound.paused,true);assert.equal(sound.audioBusy,false);
+await sound.select('#dhikr-play').click();const staleError=firstSound.onerror;firstSound.onerror();assert.equal(sound.audioBusy,false);assert.match(sound.select('#dhikr-audio-status').textContent,/Не удалось/);
+await sound.select('#dhikr-play').click();const secondSound=sound.audio.at(-1);assert.notEqual(secondSound,firstSound);staleError();assert.equal(secondSound.paused,false);assert.equal(sound.audioBusy,true);
+secondSound.onended();assert.equal(sound.audioBusy,false);assert.equal(secondSound.src,'');assert.equal(sound.select('#dhikr-play').attributes['aria-label'],'Прослушать азкар');
+assert.equal(sound.storage.getItem('salah:adhkar-progress-v2'),progressBefore,'Listening does not count repetitions');
+for(const id of ['sayyid','raditu','bikaEvening']){const silent=browser({hash:'#adhkar?group=all&view=card&item='+id});await silent.open();assert.equal(silent.container.querySelector('#dhikr-play'),null);assert.ok(silent.container.querySelector('.dhikr-audio-pending'));}
+console.log('PASS: compact speaker/pause control, actual provider mapping, external playback interruption, stale errors, retry, end cleanup and unchanged counters.');
