@@ -32,3 +32,7 @@ Profile identity checks no longer wait for counter uploads. Fresh login invalida
 ## Version 376 — readable leader badges (19 October 2026)
 
 Move the weekly/monthly winner medallions below the nickname in the podium and ranking list. Increase them from 12 to 32 CSS pixels, preserving each person button and the existing ranking order. The minor-fix card reuses the matching week/month medallion artwork. Preserve announcement 369, its expiry and acknowledgement.
+
+## Version 377 — visible leader award artwork (19 October 2026)
+
+The podium now groups avatar and nickname on one aligned row, then centres a large trophy and readable award caption below it. CSS viewports remove the existing PNGs’ transparent margins without modifying the supplied artwork. List rows use the same hierarchy at a compact size. Keep announcement 369, its expiry and acknowledgement.
