@@ -272,5 +272,6 @@ for(const id of ['sayyid','bikaEvening']){const silent=browser({hash:'#adhkar?gr
 const raditu=browser({hash:'#adhkar?group=morning&view=card&item=raditu'});await raditu.open();
 assert.match(raditu.container.querySelector('.transliteration').textContent,/^Радыйту би-Лляхи Рабба,.*сал-ля-Ллаху 'аляй-хи уа салляма набиййа$/);
 assert.match(raditu.container.querySelector('.dhikr-arabic').textContent,/صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ/);
-await raditu.select('#dhikr-play').click();assert.equal(raditu.audio[0].paused,false);assert.equal(cardId(raditu),'raditu');
+let playTapConsumed=false;await raditu.select('#dhikr-play').onclick({stopPropagation(){playTapConsumed=true;}});
+assert.equal(playTapConsumed,true,'Replacing the play SVG must not bubble the detached target to the explanation');assert.equal(raditu.audio[0].paused,false);assert.equal(cardId(raditu),'raditu');
 console.log('PASS: compact speaker/pause control, actual provider mapping, external playback interruption, stale errors, retry, end cleanup and unchanged counters.');
