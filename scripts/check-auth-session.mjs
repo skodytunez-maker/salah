@@ -22,3 +22,21 @@ for(const recoveryError of [{status:503},{code:'refresh_token_already_used',stat
  const result=await retryGuard({force:true});assert.equal(rotations,1);assert.equal(refusals,recoveryError?1:2);assert.equal(result.state,recoveryError?.status===503?'unavailable':'revoked');assert.equal(closed,recoveryError?.status===503?0:1);
 }
 console.log('PASS: expired-JWT recovery never loops; transient recovery failure preserves the session; confirmed refusal ends only the current local session.');
+
+// An intermediary 401/403 without an Auth error code is not session revocation.
+for(const status of [401,403]){
+ let ended=0,active={access_token:'network-fixture',user:{id:'fixture-user'}};
+ const networkGuard=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{session:active}}),getUser:async()=>({error:{status}}),signOut:async()=>{ended++;active=null;return{};}})});
+ assert.equal((await networkGuard({force:true})).state,'unavailable');assert.equal(ended,0);assert.ok(active);
+}
+// A pending signed-out result cannot mask a successful fresh login.
+let finishRead,firstRead=true,live=null;
+const readGate=new Promise(resolve=>finishRead=resolve);
+const eventGuard=createSessionGuard({getAuth:()=>({getSession:async()=>{if(firstRead){firstRead=false;const old=live;await readGate;return{data:{session:old}};}return{data:{session:live}};},getUser:async()=>({data:{user:live.user}})})});
+const oldRead=eventGuard();
+live={access_token:'signed-in-fixture',user:{id:'fixture-user'}};
+eventGuard.acceptRefresh(live);
+assert.equal((await eventGuard()).state,'valid');
+finishRead();assert.equal((await oldRead).state,'changed');
+assert.equal((await eventGuard()).state,'valid');
+console.log('PASS: intermediary refusals preserve login; stale pre-login work cannot hide a fresh signed-in session.');

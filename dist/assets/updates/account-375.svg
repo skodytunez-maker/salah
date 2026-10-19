@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#1c2941"/><stop offset="1" stop-color="#090f1c"/></linearGradient><linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff0ca"/><stop offset="1" stop-color="#be9853"/></linearGradient></defs>
+<rect width="900" height="600" rx="40" fill="#090f1c"/><circle cx="700" cy="120" r="200" fill="#d7b66e" opacity=".035"/>
+<rect x="180" y="75" width="540" height="450" rx="36" fill="url(#bg)" stroke="#33425c" stroke-width="2"/>
+<text x="450" y="132" text-anchor="middle" font-family="Georgia,serif" font-size="32" letter-spacing="8" fill="#edcf92">SALAH</text>
+<circle cx="450" cy="235" r="64" fill="#23324b" stroke="url(#gold)" stroke-width="3"/>
+<circle cx="450" cy="218" r="21" fill="none" stroke="#ead09a" stroke-width="4"/><path d="M413 270v-8c0-29 74-29 74 0v8" fill="none" stroke="#ead09a" stroke-width="4" stroke-linecap="round"/>
+<circle cx="506" cy="274" r="23" fill="#b9d6bb" stroke="#132133" stroke-width="5"/><path d="m496 274 7 7 12-15" fill="none" stroke="#163b29" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="450" y="350" text-anchor="middle" font-family="Arial,sans-serif" font-size="32" fill="#f4eee0">Мой аккаунт</text>
+<rect x="240" y="386" width="420" height="64" rx="17" fill="#101b2c" stroke="#33425c"/>
+<circle cx="276" cy="418" r="10" fill="#b9d6bb"/><text x="311" y="425" font-family="Arial,sans-serif" font-size="23" fill="#c9d1e2">Вход сохраняется</text>
+<path d="M265 483h370" stroke="#33425c" stroke-width="2"/>
+</svg>

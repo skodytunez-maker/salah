@@ -24,3 +24,7 @@ Version 369 activates Russian tafsirs of as-Saadi and Ibn Kathir via the verse m
 ## Hold subscription news (19 October 2026)
 
 At the user’s request, keep subscriptions, monthly financial support and YooKassa cancellation review out of public news until explicitly approved for announcement. Filter both installed/waiting release copy and legacy cards. Keep the current major roundup, acknowledgement and expiry. The support page and direct cancellation-review route stay available.
+
+## Version 375 — personal account continuity (19 October 2026)
+
+Profile identity checks no longer wait for counter uploads. Fresh login invalidates older pending checks, and unclassified network/gateway refusals preserve the local session. Confirmed Auth revocation still closes it. The minor-fix card uses the original SALAH account illustration; keep announcement 369, its expiry and dismissal state.

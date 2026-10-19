@@ -17,7 +17,8 @@ function authClient(){
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});
   client.auth.onAuthStateChange((event,session)=>{
    const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&verified;
-   if(event==='TOKEN_REFRESHED')checkAccountSession.acceptRefresh(session);
+   if(['TOKEN_REFRESHED','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))checkAccountSession.acceptRefresh(session);
+   else if(event==='SIGNED_OUT')checkAccountSession.invalidate();
    revision++;if(!sameOwner)revoke();
    // A routine renewal must not collapse the already verified cabinet. Its
    // existing 60-second grant still expires; every data request checks the server.
