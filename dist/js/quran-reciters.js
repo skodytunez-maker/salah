@@ -1,10 +1,12 @@
 import{normalizeReciterFavorites}from './quran-reciter-favorites.js';
 export const RECITERS=[
-{id:'ar.alafasy',name:'Мишари аль-Афаси',format:'verse'},
+{id:'ar.alafasy',name:'Мишари аль-Афаси',format:'verse',continuousReciter:'ar.alafasycontinuous'},
+{id:'ar.alafasycontinuous',variantOf:'ar.alafasy',name:'Мишари аль-Афаси · сура целиком',format:'surah',server:'https://cdn.mp3quran.net/audio/mishary-alafasy/r1/',timingRead:123,timingServer:'https://cdn.mp3quran.net/audio/mishary-alafasy/r1/',portrait:'assets/reciters/alafasy.webp',sourceApi:'https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=123',verifiedOn:'2026-10-19'},
 {id:'ar.husary',name:'Махмуд Халиль аль-Хусари',format:'verse'},
 {id:'ar.minshawi',name:'Мухаммад Сиддик аль-Миншави',format:'verse'},
 {id:'ar.yasseraldossari',group:'makkah',variantOf:'ar.yasseraldossaricontinuous',continuousReciter:'ar.yasseraldossaricontinuous',name:'Ясир ад-Даусари · по аятам',format:'verse',folder:'Yasser_Ad-Dussary_128kbps'},
-{id:'ar.mahermuaiqly',group:'makkah',name:'Махер аль-Мувайкли',format:'verse',folder:'MaherAlMuaiqly128kbps'},
+{id:'ar.mahermuaiqly',group:'makkah',name:'Махер аль-Мувайкли',format:'verse',folder:'MaherAlMuaiqly128kbps',continuousReciter:'ar.mahermuaiqlycontinuous'},
+{id:'ar.mahermuaiqlycontinuous',variantOf:'ar.mahermuaiqly',group:'makkah',name:'Махер аль-Мувайкли · сура целиком',format:'surah',server:'https://cdn.mp3quran.net/audio/maher-muaiqly/r1/',portrait:'assets/reciters/mahermuaiqly.png',sourceApi:'https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=102',verifiedOn:'2026-10-19'},
 {id:'ar.badralturki',group:'makkah',name:'Бадр ат-Турки',format:'surah',server:'https://server10.mp3quran.net/bader/Rewayat-Hafs-A-n-Assem/'},
 {"id":"ar.muhammadalluhaidan","name":"Мухаммад Люхайдан","format":"surah","server":"https://server8.mp3quran.net/lhdan/","source":"https://www.mp3quran.net/eng/lhdan","sourceApi":"https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=107","verifiedOn":"2026-10-02"},
 {"id":"ar.tariqmuhammad","name":"Тарик Мухаммад","format":"surah","server":"https://ia601507.us.archive.org/5/items/Tareq-Mohammad/","availableSurahs":[1,2,12,13,14,15,18,19,20,23,25,29,31,32,36,38,44,45,47,49,50,51,52,53,55,56,60,61,62,63,64,67,68,72,73,75,76,78,79,80,81,82,83,84,85,86],"source":"https://surahquran.com/quran-mp3-qari-23.html","verifiedOn":"2026-10-02"}
