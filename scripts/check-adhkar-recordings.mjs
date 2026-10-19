@@ -22,10 +22,10 @@ for(const item of data.items){
  if(item.id!=='surah112')assert.equal(shown.title,item.title,'Keep our own dhikr titles');
  const reading=shown.transliteration||shown.verses.map(v=>v.transliteration.replace(/^Бисмилляахир-рахмаанир-рахиим\.\s+/u,'')).join(' ');
  assert.doesNotMatch(reading,/(^|[^\p{L}])[Вв][Аа](?=$|[^\p{L}])/u,'Use ua for the conjunction without altering letters inside words');
- if(!['sayyid','tahlil','alim','raditu','hayy','hasbi','surah112'].includes(item.id))assert.equal(shown,item,'Every other original reading is preserved');
+ if(!['sayyid','tahlil','alim','raditu','hayy','hasbi','asbahna','surah112'].includes(item.id))assert.equal(shown,item,'Every other original reading is preserved');
 }
 const shown=id=>adhkarPresentation(data.items.find(item=>item.id===id)).transliteration;
-assert.equal(shown('raditu'),"Радыйту би-Лляхи Рабба, уа би-ль-ислями диина уа би-Мухаммадин сал-ля-Ллаху 'аляй-хи уа салляма набиййа",'Preserve the user-supplied draft verbatim');
+assert.equal(shown('raditu'),"Радыйту би-Лляхи Рабба, уа би-ль-ислями диина уа би-Мухаммадин салляЛлаху 'аляй-хи уа салляма набиййа",'Preserve the user-supplied draft verbatim');
 assert.equal(shown('tahlil'),"Ля иляха илля-Ллаху уахда-ху ля шарикя лях. Ля-ху-ль-мульку уа ля-ху-ль-хамд, уа хува 'аля кулли шайин кадир.",'Keep the user-reviewed spelling, word breaks and pause endings');
 assert.match(shown('sayyid'),/‘аляйй, уа абу’у ля-кя би-занби\./,'Retain the repeated la-ka that is absent from the provider variant');
 assert.match(shown('sayyid'),/Уа ана ‘аля ‘ахди-кя уа уа‘ди-кя ма-стата‘т\. А‘узу/,'User spelling with corrected ala and a clear stop');

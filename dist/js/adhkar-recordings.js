@@ -128,9 +128,10 @@ const tahlilReading="Ля иляха илля-Ллаху уахда-ху ля ш
 const sayyidReading='Аллахумма, Анта Рабби, ля иляха илля Ант. Халякта-ни уа ана ‘абдук. Уа ана ‘аля ‘ахди-кя уа уа‘ди-кя ма-стата‘т. А‘узу би-кя мин шарри ма сана‘т. Абу’у ля-кя би-ни‘мати-кя ‘аляйй, уа абу’у ля-кя би-занби. Фа-гфир ли, фа-инна-ху ля йагфиру-з-зунуба илля Ант.';
 const alimReading='Аллахумма, ‘Алималь-гайби уа-ш-шахадати, Фатырас-самауати уаль-ард. Рабба кулли шайин уа Маликах. Ашхаду алля иляха илля Ант. А‘узу би-кя мин шарри нафси, уа мин шарри-ш-шайтани уа ширких. Уа ан актарифа ‘аля нафси су’ан ау аджурра-ху иля муслим.';
 // Exact user-supplied spelling, including the salawat; do not normalize it.
-const radituReading="Радыйту би-Лляхи Рабба, уа би-ль-ислями диина уа би-Мухаммадин сал-ля-Ллаху 'аляй-хи уа салляма набиййа";
+const radituReading="Радыйту би-Лляхи Рабба, уа би-ль-ислями диина уа би-Мухаммадин салляЛлаху 'аляй-хи уа салляма набиййа";
 const hayyReading="Йа Хаййу, йа Кайюм, би-рахмати-кя астагис, аслих ли ша'ни куллях уа ля такиль-ни иля нафсии торфата 'айн";
 const hasbiReading="Хасбия-Ллаху, ля иляха илля ху-уа, 'аляй-хи таваккяльту уа ху-уа Раббу-ль-'арши-ль-'азым";
+const asbahnaReading="Асбахнаа уа асбаха-ль-мульку ли-Ллях, уа-ль-хамду ли-Ллях, ля иляха илля Ллаху уахда-ху ля шарикя лях, ля-ху-ль-мульку уа ля-ху-ль-хамд уа хуа аляя кулли шай'ин кадир. Рабби, ас'алю-кя хайра ма фи хаза-ль-йауми уа хайра ма ба'дах уа а'узу би-кя мин шарри ма фи хаза-ль-йауми уа шарри ма ба'дах, Рабби а'узу би-кя мин аль-касаль уа сууи-ль-кибар, Рабби, а'узу би-кя мин 'азабин фи-н-нар уа 'азабин фи-ль-кабр";
 export function adhkarPresentation(item){
  if(!entryFor(item))return item;
  if(item.id==='tahlil')return {...item,transliteration:tahlilReading};
@@ -139,6 +140,7 @@ export function adhkarPresentation(item){
  if(item.id==='raditu')return {...item,arabic:item.arabic.replace(' نَبِيّـاً',' صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيّـاً'),translation:item.translation.replace('Мухаммадом как пророком','Мухаммадом (да благословит его Аллах и приветствует) как пророком'),transliteration:radituReading};
  if(item.id==='hayy')return {...item,transliteration:hayyReading};
  if(item.id==='hasbi')return {...item,transliteration:hasbiReading};
+ if(item.id==='asbahna')return {...item,transliteration:asbahnaReading};
  if(item.id==='surah112'&&item.verses?.length===4)return {...item,title:'Аль-Ихляс',verses:item.verses.map((verse,index)=>({...verse,transliteration:(index===0?'Бисмилляахир-рахмаанир-рахиим. ':'')+ikhlasReading[index]}))};
  return item;
 }
