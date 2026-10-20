@@ -11,4 +11,5 @@ assert.match(entry,/accountAuthClient\(\)/);assert.doesNotMatch(entry,/createCli
 assert.match(entry,/location\.replace\('\.\/'\+route\)/,'Sign-in/menu return to actual app');
 const url=new URL(RETURN_URL);assert.equal(url.origin,'https://skodytunez-maker.github.io');assert.equal(url.pathname,'/salah/billing-sandbox.html');assert.equal(url.hash,'#support-salah?billing=test');
 const main=await fs.readFile(new URL('index.html',root),'utf8');assert.doesNotMatch(main,/billing-sandbox/,'No public entry or announcement');
+const sw=await fs.readFile(new URL('sw.js',root),'utf8');assert.doesNotMatch(sw,/billing-sandbox|support-billing-test/,'Sandbox must not enter the installed offline app shell');
 console.log('PASS: isolated same-origin test page, noindex, CSP, existing account/age protections, return URL and relative assets.');
