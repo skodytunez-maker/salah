@@ -5,6 +5,11 @@
   "capturedAt": "2026-10-07",
   "entries": [
     {
+      "path": "dist/assets/updates/friend-invite-384.svg",
+      "gitBlobSha": "76ddccbeb3c91febaea7769bf73182d5ead44320",
+      "bytes": 1557
+    },
+    {
       "path": "dist/assets/updates/account-375.svg",
       "gitBlobSha": "371bf9dcfc7f337b6303966d952c940e5801c8d5",
       "bytes": 1651
