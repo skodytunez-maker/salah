@@ -1,7 +1,7 @@
 import{hasFounderWelcomeSeen}from '../dist/js/founder-welcome-core.js';
 import{accountProfileMarkup}from '../dist/js/account-summary-core.js';
 
-import{bindAppSharing}from '../dist/js/app-sharing.js';
+import{bindAppSharing,appSharingMarkup}from '../dist/js/app-sharing.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
@@ -52,7 +52,7 @@ function browser(){
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
  return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
 }
-function menu(b){const app=new Element(),context=createContext({releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},syncAvatarSession(){},app,window:b.window,currentRoute:'more',counterSyncStatus:b.counterSyncStatus,esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),ownerVerified:()=>false,settingsIcon:()=>'<svg aria-hidden="true"></svg>',ownerReleaseCard:{refresh(){}},title:()=>'',bindAppSharing});const screen=new Script(menuExecutable).runInContext(context);context.render=()=>screen.more();screen.more();return{app,...screen};}
+function menu(b){const app=new Element(),context=createContext({releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},syncAvatarSession(){},app,window:b.window,currentRoute:'more',counterSyncStatus:b.counterSyncStatus,esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),ownerVerified:()=>false,settingsIcon:()=>'<svg aria-hidden="true"></svg>',ownerReleaseCard:{refresh(){}},title:()=>'',bindAppSharing,appSharingMarkup});const screen=new Script(menuExecutable).runInContext(context);context.render=()=>screen.more();screen.more();return{app,...screen};}
 async function open(b){await b.showCounterAccount(b.app);assert.equal(b.select('#counter-account-heading').textContent,'Вход и регистрация');assert.ok(b.select('#counter-account-nickname'));assert.ok(b.select('#counter-account-email'));assert.match(b.app.textContent,/Подтвердите почту кодом из письма/);assert.doesNotMatch(b.app.textContent,/сч[её]т|азкар|подписк|Какие данные сохраняются/i);}
 async function requestCode(b){const form=b.select('#counter-account-email-form');form.querySelector('#counter-account-nickname').value='  Fixture Nick  ';form.querySelector('input[type=email]').value=' fixture@example.test ';await form.submit();return form;}
 async function confirm(b,token='123456'){const form=b.select('#counter-account-email-form');form.querySelector('input').value=token;await form.submit();}
