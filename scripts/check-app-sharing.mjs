@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import{createAppSharing,PUBLIC_APP_URL,PUBLIC_SHARE_URL}from '../dist/js/app-sharing.js';
+import{createAppSharing,createFriendInvite,appSharingMarkup,APP_INVITE_TEXT,PUBLIC_APP_URL,PUBLIC_SHARE_URL}from '../dist/js/app-sharing.js';
 const messages=[],links=[],sent=[];
 const notify=message=>messages.push(message),fallback=url=>links.push(url);
 let copied=[];
@@ -23,3 +23,28 @@ assert.equal(shareHtml,rootHtml.replace('<link rel="canonical" href="'+PUBLIC_AP
 assert.ok(shareHtml.includes('<meta property="og:image" content="https://skodytunez-maker.github.io/salah/assets/salah-social-cover-v1.jpg">'));
 assert.ok(shareHtml.includes('<script type="module" src="./js/app.js"></script>'));
 assert.doesNotMatch(shareHtml,/http-equiv="refresh"/i);
+
+// Only the invitation appears automatically: sharing still needs a deliberate tap.
+const {Window}=await import('../tests/staff/node_modules/happy-dom/lib/index.js');
+const w=new Window({url:PUBLIC_APP_URL}),doc=w.document;doc.body.innerHTML='<dialog id="modal"><div id="modal-content"></div></dialog>';
+const dialog=doc.getElementById('modal'),host=doc.getElementById('modal-content');
+let at=1000000,shared=0,copies=0,safe=true,hidden=false,opened=0,queued=null,unsubscribed=0;const actions={share:()=>shared++,copy:()=>copies++};
+Object.defineProperty(doc,'hidden',{get:()=>hidden});
+const show=html=>{opened++;host.innerHTML=html;dialog.open=true;host.querySelector('[data-close]').onclick=()=>{dialog.open=false;dialog.dispatchEvent(new w.Event('close'));};};
+const options={storage:w.localStorage,now:()=>at,actions,doc,win:w,show,canShow:()=>safe,schedule:(fn,ms)=>{assert.equal(ms,8000);queued=fn;return 1;},cancel:()=>queued=null,playback:{subscribe:()=>()=>unsubscribed++}};
+const invite=createFriendInvite(options);invite.start();assert.equal(opened,0);assert.equal(shared,0);assert.equal(copies,0);assert.ok(queued);
+safe=false;queued();assert.equal(opened,0,'Leaving Home, starting playback, restricted audience or an open celebration blocks the delayed invitation');
+safe=true;dialog.open=true;assert.equal(invite.offer(),false,'Existing dialogs are never replaced');dialog.open=false;
+hidden=true;assert.equal(invite.offer(),false,'Background tabs never open the invitation');hidden=false;
+w.dispatchEvent(new w.Event('hashchange'));assert.ok(queued);queued();assert.equal(opened,1);assert.equal(shared,0);assert.equal(copies,0);
+assert.equal(host.querySelectorAll('#share-app').length,1);assert.equal(host.querySelector('#show-app-qr'),null);
+host.querySelector('#share-app').click();host.querySelector('#copy-app-link').click();assert.equal(shared,1);assert.equal(copies,1);
+host.querySelector('[data-close]').click();assert.equal(dialog.open,false);assert.equal(invite.offer(),false);
+const reloaded=createFriendInvite(options);assert.equal(reloaded.offer(),false,'One-week cooldown survives navigation, reload and Escape');
+at+=7*86400000;assert.equal(reloaded.offer(),true);assert.equal(opened,2);dialog.open=false;
+const blocked=createFriendInvite({...options,storage:{getItem(){throw Error()},setItem(){throw Error()}}});assert.equal(blocked.offer(),true);dialog.open=false;assert.equal(blocked.offer(),false,'In-memory cooldown survives blocked storage');
+invite.stop();assert.equal(unsubscribed,1);queued=null;w.dispatchEvent(new w.Event('hashchange'));assert.equal(queued,null,'Disposal removes page listeners');
+host.innerHTML=appSharingMarkup();assert.ok(host.querySelector('#show-app-qr'));assert.equal(host.querySelector('[data-close]'),null,'Menu sharing remains permanently available');
+const payloads=[];await createAppSharing({navigator:{share:async p=>payloads.push(p)},text:APP_INVITE_TEXT}).share();assert.deepEqual(payloads,[{title:'SALAH',text:APP_INVITE_TEXT,url:PUBLIC_SHARE_URL}]);
+assert.equal(payloads[0].url.includes('#'),false);assert.equal(payloads[0].url.includes('?'),false,'No private screen or tracking identifier is shared');await w.happyDOM.close();
+console.log('PASS: news-style friend invitation, safe idle delay, dialog/audio/route/privacy/background guards, explicit sharing, one-week cooldown across navigation/reload, blocked storage and cleanup.');
