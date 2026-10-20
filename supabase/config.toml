@@ -43,3 +43,8 @@ verify_jwt = false
 [functions.support-billing]
 # Auth getUser + cryptographic getClaims, confirmed user and active session are required in the handler.
 verify_jwt = false
+
+[functions.support-billing-test]
+# Sandbox user routes validate live Auth session + confirmed user + allowlist.
+# Webhook re-fetches payment state; renewal runner requires its own server secret.
+verify_jwt = false

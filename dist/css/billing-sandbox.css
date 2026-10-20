@@ -1,0 +1,9 @@
+body{margin:0;min-height:100dvh;background:#070b16;color:#f3f4f8}
+#billing-sandbox{box-sizing:border-box;width:min(100%,588px);margin:0 auto;padding:24px 18px max(36px,env(safe-area-inset-bottom))}
+#billing-sandbox .financial-support-card{padding:24px 20px}
+#billing-sandbox input[type=number]{display:block;box-sizing:border-box;width:100%;margin-top:10px;min-height:48px;padding:10px 14px;font:inherit;border:1px solid var(--line);border-radius:12px;background:#0c1424;color:inherit}
+#billing-sandbox input[type=checkbox]{flex:none;width:21px;height:21px;margin:3px 0 0;accent-color:var(--gold)}
+#billing-sandbox form label{font-size:14px;line-height:1.6}
+#billing-sandbox .button{box-sizing:border-box;white-space:normal;min-height:46px}
+#billing-sandbox [data-test-refresh],#billing-sandbox [data-test-unlink],#billing-sandbox [data-test-pay]{width:100%}
+#billing-sandbox [data-test-error]{margin:18px 0 0;color:#f2ba9f;line-height:1.6}
