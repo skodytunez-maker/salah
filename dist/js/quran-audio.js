@@ -4,7 +4,7 @@ import{reciterInfo}from './quran-reciters.js';
 import{audioUrl,downloadAudioUrl}from './quran-data.js';
 import{offlineAudioStore}from './quran-offline-store.js';
 import{loadAyahTimings,ayahAtTime,timingUrl}from './quran-timing.js';
-export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings,getAudio=url=>offlineAudioStore.getAudio(url),loadDurations=loadSurahDurations,setTimer=setTimeout,clearTimer=clearTimeout}){
+export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings,getAudio=url=>offlineAudioStore.getAudio(url),initialAudio=undefined,loadDurations=loadSurahDurations,setTimer=setTimeout,clearTimer=clearTimeout}){
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
  let startOffset=0,next=null,durationTable=null,durationTask=null,durationStatus=whole?'ready':'loading';const durationController=new AbortController();
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
@@ -62,7 +62,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   try{
    if(prepared){audio=prepared.audio;objectUrl=prepared.objectUrl;}else{
     const remoteUrl=sourceUrl(index),cacheUrl=audioUrl(surah.verses[index].number,reciter,surah.number);let url=remoteUrl,blob=null;
-    if(!retrying)try{blob=await getAudio(cacheUrl);}catch{}
+    if(!retrying){if(initialAudio!==undefined){blob=initialAudio;initialAudio=undefined;}else try{blob=await getAudio(cacheUrl);}catch{}}
     if(blob){if(disposed||id!==token)return;objectUrl=URL.createObjectURL(blob);url=objectUrl}
     if(disposed||id!==token)return;
     if(offlineOnly&&!blob)throw Error('Сура не скачана');

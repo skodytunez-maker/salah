@@ -382,3 +382,6 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 
 /* Keep the profile portrait prominent and its actions compact. */
 #account-avatar-editor{position:relative;display:flex;flex-direction:column;align-items:center;gap:0;padding:14px 0 22px;border:0;background:none}.account-avatar-circle{width:160px;height:160px;min-height:160px;flex:0 0 160px}.account-avatar-image{width:160px;height:160px;border:2px solid #dbc08e55;box-shadow:0 8px 26px #00000035}.account-avatar-image>svg{width:64px;height:64px}.account-avatar-camera{width:40px;height:40px;right:0;bottom:0;border-width:3px}.account-avatar-camera svg{width:22px;height:22px}.account-avatar-controls{flex:none;width:100%;text-align:center}.account-avatar-remove{position:absolute;left:calc(50% - 82px);top:132px;display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:10px!important;margin:0!important;border:2px solid #182239;border-radius:50%;background:#162239;color:#cfbf9f}.account-avatar-remove svg{width:21px;height:21px}.account-avatar-circle:focus-visible,.account-avatar-remove:focus-visible{outline:2px solid var(--gold);outline-offset:4px}.account-avatar-controls p{font-size:12px;margin:14px auto 0;max-width:260px}
+
+/* Keep the Home canvas steady at scroll boundaries without blocking long content. */
+html:has(body.home-page),body.home-page{overscroll-behavior-y:none}
