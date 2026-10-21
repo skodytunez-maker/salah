@@ -10,13 +10,13 @@ class Audio {
  play(){this.playCalls++;this.paused=false;this.ended=false;return Promise.resolve();}
  pause(){this.paused=true;}
 }
-for(const offline of [false,true]){
+for(const {offline,pendingCache} of [{offline:false},{offline:true},{offline:false,pendingCache:true}]){
  let blocked=false,audio,cacheReads=0,metadataReads=0;
  const session=createQuranSession({
   loadCatalog:async()=>{metadataReads++;assert.equal(blocked,false,'No catalog wait at the chapter boundary');return catalog;},
   load:async n=>{metadataReads++;assert.equal(blocked,false,'No recording lookup at the chapter boundary');return reciterRecording(catalog,n);},
   loadSaved:async()=>[{surah:7},{surah:8}],
-  getAudio:async()=>{cacheReads++;assert.equal(blocked,false,'Next cache lookup happens while audio is running');return offline?new Blob(['test']):null;},
+  getAudio:async()=>{cacheReads++;assert.equal(blocked,false,'Next cache lookup happens while audio is running');return pendingCache?new Promise(()=>{}):offline?new Blob(['test']):null;},
   createAudio:src=>(audio=new Audio(src)),
   createPlayer:opts=>createQuranPlayer({...opts,loadTimings:async()=>null,getAudio:async()=>{cacheReads++;assert.equal(blocked,false,'No IndexedDB wait after ended');return offline?new Blob(['test']):null;}})
  });

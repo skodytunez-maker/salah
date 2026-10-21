@@ -49,7 +49,7 @@ export function createQuranSession({loadCatalog=loadIndex,load=async number=>rec
    view.meta=catalog.surahs[surah.number-1];
    if(offlineOnly){const saved=prepared?[...prepared.saved].map(surah=>({surah})):await loadSaved(reciter);if(id!==request)return;savedSurahs=new Set(saved.map(record=>record.surah));if(!savedSurahs.has(surah.number))throw Error('Сура не скачана');}
    if(!autoplay){view.status='paused';emit();return}
-   player=createPlayer({surah,reciter,offlineOnly,...(prepared?.audioReady&&prepared.audioReciter===reciter?{initialAudio:prepared.blob}:{}),...(reciterInfo(reciter).format==='surah'?{createAudio:createChapterAudio}:{}),onState:state=>{if(id!==request)return;view={...view,index:state.index,status:state.status,ayah:state.ayah,timingStatus:state.timingStatus};if(state.status==='playing')prepareContinuation(id);emit();if(state.status==='ended'&&id===request&&adjacent(1)!==null)void changeSurah(1,true)},onVerse:()=>{},onError:()=>{}});
+   player=createPlayer({surah,reciter,offlineOnly,...(prepared&&prepared.audioReciter===reciter&&(prepared.audioReady||!offlineOnly)?{initialAudio:prepared.blob}:{}),...(reciterInfo(reciter).format==='surah'?{createAudio:createChapterAudio}:{}),onState:state=>{if(id!==request)return;view={...view,index:state.index,status:state.status,ayah:state.ayah,timingStatus:state.timingStatus};if(state.status==='playing')prepareContinuation(id);emit();if(state.status==='ended'&&id===request&&adjacent(1)!==null)void changeSurah(1,true)},onVerse:()=>{},onError:()=>{}});
    if(fromAyah)await player.playFromAyah(index+1);else player.play(index,true,seconds);
   }catch{if(id===request){view.status='error';emit()}}
  }
