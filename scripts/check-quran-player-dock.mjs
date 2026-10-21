@@ -1,3 +1,6 @@
 import assert from 'node:assert/strict';
 import{playerDockOffset}from '../dist/js/quran-player-bar.js';
 assert.equal(playerDockOffset(844,{top:758,height:74,visible:true}),94);assert.equal(playerDockOffset(740,{top:654,height:74,visible:true}),94);assert.equal(playerDockOffset(844,{top:0,height:0,visible:false}),12);assert.equal(playerDockOffset(844,{top:776,height:60,visible:true}),76);assert.equal(844-playerDockOffset(844,{top:758,height:74,visible:true}),750);console.log('PASS: dock stays 8px above visible navigation, adapts to the home nav and rests at the screen edge in focused reading.');
+
+assert.equal(playerDockOffset(844,{top:600,height:74,bottom:12,visible:true}),94,'Elastic scrolling must not move the dock into the menu');
+assert.equal(playerDockOffset(844,{top:820,height:74,bottom:12,visible:true}),94,'Use the menu layout inset, even when its screen rectangle bounces');
