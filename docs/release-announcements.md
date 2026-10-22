@@ -100,3 +100,8 @@ Position the compact player from the navigation bar's layout bottom inset and he
 ## Version 387 — confirmed shared listening motion (22 October 2026)
 
 The existing shared SQL total sums eligible listeners across reciters. Smooth confirmed remote additions over their observed reporting interval while keeping real local progress immediate. Never infer seconds from online counts or multiply listening time. Drain only an already confirmed backlog; reset on account, period, date, privacy changes, missing totals and downward corrections. Ranks, awards and stored scores stay authoritative. Update text in place, suspend animation while hidden and dispose the timer on exit. Reuse Quran artwork and preserve announcement 369, expiry and acknowledgement.
+
+
+## Version 388 — shared mobile viewport (22 October 2026)
+
+Use one top-anchored dynamic-height mobile container for navigation and the compact Quran player. Preserve the safe inset, eight-pixel gap, natural scrolling and full-player dialog. Desktop and About retain their layouts. Physical iPhone floating-dock and locked-screen verification remain required. Reuse Quran artwork; preserve announcement 369, expiry and acknowledgement.
