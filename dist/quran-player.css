@@ -152,3 +152,14 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 .quran-section-heading .quran-recognition-entry:focus-visible{outline:2px solid #ead09b;outline-offset:3px}
 .quran-section-heading .quran-recognition-entry:active{background:#23344a}
 @media(max-width:360px){.quran-section-title .quran-section-heading{gap:4px}.quran-section-title .quran-section-heading>a{font-size:21px;padding:9px 4px}.quran-heading-tools{gap:4px}}
+
+/* One top-anchored viewport owns both mobile controls. WebKit can retain a
+   stale bottom-fixed layer after keyboard/background transitions. Children
+   use this dynamic-height box; no page scroll or focus is reset. */
+#app-bottom-dock{display:contents}
+@media(max-width:850px){
+ body:not(.about-screen) #app-bottom-dock{display:block;position:fixed;top:0;left:0;width:100%;height:100%;height:100dvh;z-index:40;pointer-events:none}
+ body:not(.about-screen) #app-bottom-dock>#mobile-nav,
+ body:not(.about-screen) #app-bottom-dock>.quran-global-player{position:absolute;pointer-events:auto}
+ body:not(.about-screen) #app-bottom-dock>.quran-global-player{left:0;right:0;margin-left:auto;margin-right:auto;transform:none}
+}
