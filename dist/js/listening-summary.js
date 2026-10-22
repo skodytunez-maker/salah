@@ -15,6 +15,22 @@ export function createLiveListeningTotal(){
   return Number.isSafeInteger(Math.floor(shown))?Math.floor(shown):server;
  }};
 }
+// Animate only an already confirmed backlog; a clock never creates listening time.
+export function createSharedListeningMotion({now=()=>globalThis.performance?.now?.()??Date.now()}={}){
+ let state=null;
+ const valid=value=>Number.isSafeInteger(value)&&value>=0;
+ const advance=time=>{if(!state)return null;const elapsed=Math.max(0,time-state.at);state.value=Math.min(state.target,state.value+elapsed*state.rate/1000);state.at=time;return Math.floor(state.value+1e-7);};
+ return{reset(){state=null;},tick(){return advance(now());},sample(target,{key,server}={}){
+  const time=now();
+  if(!valid(target)||!valid(server)||!key){state=null;return null;}
+  if(!state||state.key!==key||time<state.at||server<state.server||target<state.target){state={key,server,target,value:target,at:time,serverAt:time,rate:0};return target;}
+  advance(time);const increase=target-state.target;
+  if(server===state.server)state.value=Math.min(target,state.value+increase);
+  else{if(increase>0)state.rate=(target-state.value)*1000/Math.max(1000,Math.min(15000,time-state.serverAt));state.serverAt=time;}
+  state.target=target;state.server=server;
+  return Math.floor(state.value+1e-7);
+ }};
+}
 export function listeningSummaryMarkup(seconds,{personal=false}={}){
  const value=Number.isSafeInteger(seconds)&&seconds>=0?formatListeningTime(seconds):'…';
  return '<div class="listening-summary'+(personal?' reciter-personal-total':'')+'" data-listening-summary><span>'+(personal?'Всего прослушано':'Вместе прослушали')+'</span><strong data-listening-total aria-live="off">'+esc(value)+'</strong></div>';
