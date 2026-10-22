@@ -1,14 +1,17 @@
+import{createPlaybackAudioSession}from './playback-audio-session.js';
 import{loadSurahDurations,timelinePosition}from './quran-duration.js';
 import{requestMediaOutput,prepareMediaOutput,clearMediaOutputSources}from './media-output-core.js';
 import{reciterInfo}from './quran-reciters.js';
 import{audioUrl,downloadAudioUrl}from './quran-data.js';
 import{offlineAudioStore}from './quran-offline-store.js';
 import{loadAyahTimings,ayahAtTime,timingUrl}from './quran-timing.js';
-export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings,getAudio=url=>offlineAudioStore.getAudio(url),initialAudio=undefined,loadDurations=loadSurahDurations,setTimer=setTimeout,clearTimer=clearTimeout}){
+export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVerse,onError,createAudio=url=>new Audio(url),loadTimings=loadAyahTimings,getAudio=url=>offlineAudioStore.getAudio(url),initialAudio=undefined,loadDurations=loadSurahDurations,setTimer=setTimeout,clearTimer=clearTimeout,audioNavigator=globalThis.navigator}){
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
  let startOffset=0,next=null,durationTable=null,durationTask=null,durationStatus=whole?'ready':'loading';const durationController=new AbortController();
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
  let watchdog=null,watchedPosition=0,useFallback=false,preparedTimings=null;
+ const audioSession=createPlaybackAudioSession({nav:audioNavigator,canResume:()=>!disposed&&status==='paused'&&!!audio?.paused&&!audio.ended,resume:resumeInterrupted});
+ function resumeInterrupted(){const id=token,track=audio;if(disposed||!track||!track.paused||track.ended||status!=='paused')return;status='loading';watch(id);emit();return Promise.resolve(track.play()).then(()=>{if(!disposed&&id===token&&track===audio&&status!=='paused'&&!track.paused){status='playing';sync(id);prepareNext();emit();}}).catch(()=>{if(!disposed&&id===token&&track===audio){clearWatchdog();status='paused';emit();}});}
  const sourceUrl=index=>useFallback&&!offlineOnly?downloadAudioUrl(surah.verses[index].number,reciter,surah.number):audioUrl(surah.verses[index].number,reciter,surah.number);
  function clearWatchdog(){if(watchdog!==null){clearTimer(watchdog);watchdog=null;}}
  function watch(id){
@@ -58,7 +61,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   const prepared=!whole&&all&&next?.index===index?next.resource:null;if(prepared)next.resource=null;clearNext();
   const id=++token;release();startOffset=Number.isFinite(seconds)&&seconds>=0&&seconds<=86400?seconds:0;current=index;continuous=all;status='loading';ayah=whole?null:surah.verses[index].ayah;timingStatus=whole?(timed?'loading':'unavailable'):'ready';emit();if(!whole)onVerse(ayah);
   if(disposed||id!==token){if(prepared)discardPrepared(prepared);return;}
-  if(autoplay)watch(id);
+  audioSession.setIntent(autoplay);if(autoplay)watch(id);
   try{
    if(prepared){audio=prepared.audio;objectUrl=prepared.objectUrl;}else{
     const remoteUrl=sourceUrl(index),cacheUrl=audioUrl(surah.verses[index].number,reciter,surah.number);let url=remoteUrl,blob=null;
@@ -69,10 +72,10 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
     audio=createAudio(url);prepareMediaOutput(audio,remoteUrl,{networkAllowed:!offlineOnly});
    }
    audio.onerror=()=>recover(id);
-   audio.onplay=()=>{if(!disposed&&id===token&&!audio.paused){status='playing';emit();}};audio.onpause=()=>{if(!disposed&&id===token&&status==='playing'&&audio.paused&&!audio.ended){clearWatchdog();status='paused';emit();}};
+   audio.onplay=()=>{if(!disposed&&id===token&&!audio.paused){status='playing';watch(id);emit();}};audio.onpause=()=>{if(!disposed&&id===token&&status==='playing'&&audio.paused&&!audio.ended){clearWatchdog();status='paused';emit();}};
    audio.ontimeupdate=audio.onseeked=()=>{if(disposed||id!==token)return;if(['loading','playing'].includes(status)&&audio.currentTime>watchedPosition+.01)watch(id);sync(id);emit();};
    const seekStart=()=>{if(disposed||id!==token||!audio)return;if(startOffset>0){try{audio.currentTime=Number.isFinite(audio.duration)&&audio.duration>0?Math.min(startOffset,Math.max(0,audio.duration-.1)):startOffset;}catch{}}sync(id,true)};audio.onloadedmetadata=seekStart;if(audio.readyState>=1)seekStart();
-   audio.onended=()=>{if(disposed||id!==token)return;clearWatchdog();if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);else{status='ended';emit()}};
+   audio.onended=()=>{if(disposed||id!==token)return;clearWatchdog();if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);else{audioSession.setIntent(false);status='ended';emit()}};
    if(whole&&timed){
     const controller=new AbortController();timingController=controller;
     const supplied=preparedTimings;preparedTimings=null;
@@ -96,11 +99,11 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    preparedTimings=table;await play(0,true,point.start);return !disposed;
   }catch{if(!disposed&&id===token){timingStatus='unavailable';status='error';emit();}return false;}
  }
- function fail(id){if(disposed||id!==token)return;token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
- function pause(){if(disposed)return;clearWatchdog();clearNext();if(status==='loading'){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
- function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){const id=token;status='loading';watch(id);audio.play().then(()=>{if(!disposed&&id===token&&status!=='paused'){status='playing';sync(id);prepareNext();startDurations();emit()}}).catch(error=>recover(id,error))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
+ function fail(id){if(disposed||id!==token)return;audioSession.setIntent(false);token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
+ function pause(){if(disposed)return;audioSession.setIntent(false);clearWatchdog();clearNext();if(status==='loading'){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
+ function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){audioSession.setIntent(true);const id=token;status='loading';watch(id);audio.play().then(()=>{if(!disposed&&id===token&&status!=='paused'){status='playing';sync(id);prepareNext();startDurations();emit()}}).catch(error=>recover(id,error))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
- function destroy(){disposed=true;durationController.abort();token++;clearNext();release()}
+ function destroy(){audioSession.destroy();disposed=true;durationController.abort();token++;clearNext();release()}
  function seek(seconds){if(disposed||!audio||!Number.isFinite(seconds))return;if(!whole&&durationTable){const point=timelinePosition(durationTable,seconds);if(point.index!==current){void play(point.index,continuous,point.seconds,status==='playing');return;}seconds=point.seconds;}try{audio.currentTime=Math.max(0,Math.min(seconds,Number.isFinite(audio.duration)?Math.max(0,audio.duration-.01):86400));sync(token,true);}catch{}}
  return{play,playFromAyah,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationStatus,durationSeconds:whole?(Number.isFinite(audio?.duration)?audio.duration:0):(durationTable?.total||0),trackPositionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset,positionSeconds:(durationTable?.starts[current]||0)+(Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset)}}}
 }
