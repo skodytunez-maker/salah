@@ -105,3 +105,12 @@ The existing shared SQL total sums eligible listeners across reciters. Smooth co
 ## Version 388 — shared mobile viewport (22 October 2026)
 
 Use one top-anchored dynamic-height mobile container for navigation and the compact Quran player. Preserve the safe inset, eight-pixel gap, natural scrolling and full-player dialog. Desktop and About retain their layouts. Physical iPhone floating-dock and locked-screen verification remain required. Reuse Quran artwork; preserve announcement 369, expiry and acknowledgement.
+
+
+## Version 389 — guarded iOS audio interruption handling (23 October 2026)
+
+The user reports that force-closing the separate Sahaba home-screen web app also stops Quran playback in SALAH. Source inspection found no cross-app pause channel. Treat shared WebKit/system audio-session interruption as a hypothesis, not a reproduced root cause.
+
+Request the playback audio-session category only while Quran playback is intended. After an explicit OS interrupted → active transition, recover the same media element and position once if it remains paused. Manual pause, stop, track disposal and replacement cancel recovery. Generic pause, visibility changes and page lifecycle events never initiate playback; do not steal focus while another app or a phone call still interrupts the session. Unsupported APIs degrade to existing HTML audio.
+
+Reuse existing Quran feature artwork. Preserve announcement 369, expiry and acknowledgement. Private video lessons are excluded from this release. Physical iPhone reproduction (both apps installed through Add to Home Screen, close Sahaba while SALAH is playing) remains required. JavaScript cannot recover after iOS terminates the SALAH process itself.
