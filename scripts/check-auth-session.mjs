@@ -40,3 +40,18 @@ assert.equal((await eventGuard()).state,'valid');
 finishRead();assert.equal((await oldRead).state,'changed');
 assert.equal((await eventGuard()).state,'valid');
 console.log('PASS: intermediary refusals preserve login; stale pre-login work cannot hide a fresh signed-in session.');
+
+// The final SDK read can settle after an explicit new sign-in or refresh.
+for(const revoked of [true,false]){
+ let live={access_token:'old-fixture',user:{id:'old-user'}},reads=0,outs=0,release,entered;
+ const gate=new Promise(r=>release=r),pendingRead=new Promise(r=>entered=r);
+ const guard=createSessionGuard({getAuth:()=>({getSession:async()=>{const snap=live;if(++reads===2){entered();await gate;}return{data:{session:snap}};},getUser:async()=>revoked?{error:{code:'session_not_found'}}:{data:{user:live.user}},signOut:async()=>{outs++;live=null;return{};}})});
+ const stale=guard({force:true});await pendingRead;
+ live={access_token:'new-fixture',user:{id:'new-user'}};guard.acceptRefresh(live);release();
+ const result=await stale;
+ console.log(JSON.stringify({case:revoked?'revoked-final-read':'valid-final-read',result:result.state,signOutCalls:outs,remainingUser:live?.user.id}));
+ assert.equal(outs,0,'A stale final session read must never sign out the new account');
+ assert.equal(result.state,'changed','A stale final read must never return the old account as current');
+}
+
+console.log('PASS: stale final session reads cannot sign out or replace a newly accepted account.');

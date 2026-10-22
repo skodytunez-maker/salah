@@ -6,6 +6,8 @@ const style=await readFile(new URL('../dist/style.css',import.meta.url),'utf8');
 
 assert.match(learning,/id="lesson-prev"/);
 assert.match(learning,/id="lesson-next"/);
+assert.match(learning,/id="lesson-prev" aria-label="Предыдущий шаг"/);
+assert.match(learning,/id="lesson-next" aria-label=".*Завершить.*Следующий шаг/);
 assert.match(learning,/Завершить/);
 assert.match(learning,/host\.querySelector\('#lesson-prev'\).*moveLesson\(-1\)/);
 assert.match(learning,/host\.querySelector\('#lesson-next'\).*moveLesson\(1\)/);
