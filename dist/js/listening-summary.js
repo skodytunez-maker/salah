@@ -47,8 +47,36 @@ export function createSharedListeningMotion({now=()=>globalThis.performance?.now
   return Math.floor(state.value+1e-7);
  }};
 }
-export function listeningSummaryMarkup(seconds,{personal=false}={}){
- const value=Number.isSafeInteger(seconds)&&seconds>=0?formatListeningTime(seconds):'…';
- return '<div class="listening-summary'+(personal?' reciter-personal-total':'')+'" data-listening-summary><span>'+(personal?'Всего прослушано':'Вместе прослушали')+'</span><strong data-listening-total aria-live="off">'+esc(value)+'</strong></div>';
+const validSeconds=seconds=>Number.isSafeInteger(seconds)&&seconds>=0;
+const summaryValue=seconds=>validSeconds(seconds)?formatListeningTime(seconds):'…';
+function sharedTimeMarkup(seconds){
+ // Preserve the original text and spacing; animate digits and slightly reduce unit labels.
+ return summaryValue(seconds).replace(/(\d+)(?= (ч|мин|с))/g,(part,number,unit)=>[...part].map((digit,place)=>'<span class="listening-digit" data-listening-place="'+unit+'-'+(part.length-place-1)+'"><span>'+digit+'</span></span>').join('')).replace(/ (ч|мин|с)(?= |$)/g,' <span class="listening-time-unit">$1</span>');
 }
-export function updateListeningSummary(host,seconds){const element=host.querySelector('[data-listening-total]');if(!element)return;const value=Number.isSafeInteger(seconds)&&seconds>=0?formatListeningTime(seconds):'…';if(element.textContent!==value)element.textContent=value;}
+export function listeningSummaryMarkup(seconds,{personal=false}={}){
+ const value=summaryValue(seconds);
+ return '<div class="listening-summary'+(personal?' reciter-personal-total':'')+'" data-listening-summary><span>'+(personal?'Всего прослушано':'Вместе прослушали')+'</span><strong data-listening-total aria-live="off"'+(personal?'':' data-listening-animated data-listening-seconds="'+(validSeconds(seconds)?seconds:'')+'" aria-label="'+esc(value)+'"')+'>'+(personal?esc(value):'<span class="listening-time-visual" aria-hidden="true">'+sharedTimeMarkup(seconds)+'</span>')+'</strong></div>';
+}
+export function updateListeningSummary(host,seconds){
+ const element=host.querySelector('[data-listening-total]');if(!element)return;
+ if(!element.hasAttribute('data-listening-animated')){const value=validSeconds(seconds)?formatListeningTime(seconds):'…';if(element.textContent!==value)element.textContent=value;return;}
+ const value=summaryValue(seconds),previous=element.dataset.listeningSeconds;
+ if(value===element.getAttribute('aria-label'))return;
+ const visual=element.querySelector('.listening-time-visual'),next=sharedTimeMarkup(seconds),template=element.ownerDocument.createElement('span');template.innerHTML=next;
+ const oldDigits=[...visual.querySelectorAll('[data-listening-place]')],oldValues=new Map(oldDigits.map(digit=>[digit.dataset.listeningPlace,digit.textContent]));
+ // Corrections, scope changes and a fresh snapshot replace the number quietly.
+ // Only small forward steps animate, using the already measured total above.
+ const animate=previous!==''&&validSeconds(seconds)&&seconds>Number(previous)&&seconds-Number(previous)<=10;
+ if(!animate)visual.innerHTML=next;
+ else{
+  if(visual.textContent.replace(/\d/g,'#')!==value.replace(/\d/g,'#'))visual.innerHTML=next;
+  element.style.setProperty('--listening-step',seconds-Number(previous)>1?'180ms':'280ms');
+  const nextValues=new Map([...template.querySelectorAll('[data-listening-place]')].map(digit=>[digit.dataset.listeningPlace,digit.textContent]));
+  for(const digit of visual.querySelectorAll('[data-listening-place]')){const glyph=digit.firstElementChild,old=oldValues.get(digit.dataset.listeningPlace),nextDigit=nextValues.get(digit.dataset.listeningPlace);
+   if(old===nextDigit)continue;
+   digit.dataset.previous=old||'';glyph.textContent=nextDigit;
+   digit.classList.toggle('listening-step-a');digit.classList.toggle('listening-step-b',!digit.classList.contains('listening-step-a'));
+  }
+ }
+ element.dataset.listeningSeconds=validSeconds(seconds)?String(seconds):'';element.setAttribute('aria-label',value);
+}
