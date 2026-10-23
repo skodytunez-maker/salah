@@ -12,6 +12,7 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'update-choice',match:/Обновления SALAH/iu,title:'Обновление в удобный момент',art:()=>'<img class="release-screen-picture" src="./assets/updates/update-choice-393.svg" alt="">',where:'Обновление скачивается во время чтения, а устанавливается после его остановки на спокойном экране.'},
  {id:'shared-listening',match:/общий счётчик/iu,title:'Вместе прослушали',art:()=>'<img class="release-screen-picture" src="./assets/updates/shared-listening-392.svg" alt="">',where:'Коран → Чтецы → Топ SALAH. Складывается реальное время слушателей.'},
  {id:'allah-names',match:/имен.{0,20}Аллах/iu,title:'Прекрасные имена Аллаха',art:()=>'<img class="release-screen-picture" src="./assets/updates/allah-names-391.svg" alt="">',where:'Знания → Имена Аллаха. Изучайте карточки и проходите тест из пяти вопросов.'},
  {id:'learning',match:/обучени.{0,12}намаз/iu,title:'Обучение намазу',art:()=>'<img class="release-screen-picture" src="./assets/prayer-poses.png" alt="">',where:'Знания → Основы намаза или Намаз шаг за шагом.'},

@@ -385,3 +385,6 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 
 /* Keep the Home canvas steady at scroll boundaries without blocking long content. */
 html:has(body.home-page),body.home-page{overscroll-behavior-y:none}
+
+/* Keep both update choices readable on narrow phones. */
+.app-update:has(.app-update-later){flex-wrap:wrap}.app-update:has(.app-update-later) .app-update-copy{flex-basis:100%}.app-update:has(.app-update-later) .app-update-actions{width:100%;justify-content:flex-end}.app-update .app-update-later{background:transparent;color:#e0d2b4;border:1px solid rgba(209,189,146,.45)}

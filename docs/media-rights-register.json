@@ -12,6 +12,15 @@
   },
   "assets": [
     {
+      "path": "dist/assets/updates/update-choice-393.svg",
+      "gitBlobSha": "4273f286cf42fcc336210d28c8d804d44deda8cc",
+      "bytes": 1465,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "note": "Original SALAH vector of the update banner and uninterrupted reading state, 24 October 2026; no external images or embedded font files.",
+      "rightsEvidence": "docs/release-announcements.md"
+    },
+    {
       "path": "dist/assets/updates/shared-listening-392.svg",
       "gitBlobSha": "3d09c83ea44d0d60086ae85a32862dfd7d230dd5",
       "bytes": 1484,

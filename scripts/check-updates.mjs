@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import{setForegroundAudio}from '../dist/js/audio-focus.js';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from '../dist/js/app-release.js';
@@ -41,7 +42,7 @@ const banner=elements.find(x=>x.attributes['aria-label']==='Обновление
 assert.equal(banner.children[0].children[1].textContent,'4 октября 2026 · Что нового','Waiting worker supplies its own release date');
 assert.deepEqual([...values],before,'Update detection cannot modify prayer settings or counters');
 assert.equal(await checkAppUpdate(),'available');
-banner.children[1].children[0].onclick();assert.equal(automaticMessages,1);
+await banner.children[1].children[0].onclick();assert.equal(automaticMessages,1);
 workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(reloads,1,'Apply reloads only once');
 document.visibilityState='hidden';docEvents.visibilitychange();assert.ok(intervals.at(-1).cleared,'No periodic checks in background');
 registration.waiting=null;document.visibilityState='visible';docEvents.visibilitychange();await checkAppUpdate();assert.equal(updates,1);
@@ -86,17 +87,57 @@ intervals.at(-1).fn();assert.equal(automaticMessages,automaticBefore+1,'A late d
 const reloadBefore=reloads;workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(reloads,reloadBefore+1);
 assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);Date.now=realNow;
 console.log('PASS: automatic late updates respect foreground, idle input, safe screens and dialogs; personal storage and single activation preserved.');
-// Manual activation must not interrupt a live or newly started recitation.
+// Background download/explicit checks never offer a popup or pause audio.
 registration.waiting=waiting;serviceWorker.register=async()=>{docEvents.pointerdown();return registration;};
-let playbackBusy=true;const manualStart=automaticMessages,manualReloads=reloads;
-await registerAppWorker({canApplyUpdate:()=>!playbackBusy});await checkAppUpdate();await new Promise(r=>setTimeout(r,20));
-const queuedButton=elements.at(-1).children[1].children[0];queuedButton.onclick();
-assert.equal(automaticMessages,manualStart);assert.equal(reloads,manualReloads);assert.equal(queuedButton.textContent,'После прослушивания');
-intervals.at(-1).fn();assert.equal(automaticMessages,manualStart,'Playback keeps the queued update inactive');
-playbackBusy=false;intervals.at(-1).fn();assert.equal(automaticMessages,manualStart+1);
+let playbackBusy=true;const manualStart=automaticMessages,manualReloads=reloads,offersBefore=elements.length;
+await registerAppWorker({canApplyUpdate:()=>!playbackBusy});
+assert.equal(await checkAppUpdate(),'deferred');await new Promise(r=>setTimeout(r,20));
+assert.equal(elements.length,offersBefore,'No update popup while listening');
+assert.equal(automaticMessages,manualStart);assert.equal(reloads,manualReloads);
+playbackBusy=false;await checkAppUpdate();await new Promise(r=>setTimeout(r,20));
+let choices=elements.at(-1).children[1];assert.equal(choices.children[0].textContent,'Сейчас');assert.equal(choices.children[1].textContent,'Позже');
+// A recording starting after the offer must still be protected.
+playbackBusy=true;await choices.children[0].onclick();
+assert.equal(automaticMessages,manualStart);assert.equal(reloads,manualReloads);
+assert.equal(choices.children[0].disabled,false,'Now remains usable while an update is queued');
+choices.children[1].onclick();playbackBusy=false;intervals.at(-1).fn();
+assert.equal(automaticMessages,manualStart,'Later cancels the queue and automatic application for this worker');
+await checkAppUpdate();await new Promise(r=>setTimeout(r,20));choices=elements.at(-1).children[1];
+await choices.children[0].onclick();await choices.children[0].onclick();
+assert.equal(automaticMessages,manualStart+1,'Apply exactly once when playback is idle');
 playbackBusy=true;workerEvents.controllerchange();assert.equal(reloads,manualReloads,'Playback starting during activation blocks reload too');
-playbackBusy=false;intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);
-console.log('PASS: manual updates wait for playback, recheck at controller activation and reload once after audio ends.');
+playbackBusy=false;intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);
+console.log('PASS: silent background download, no listening popup, Now/Later, deferred cancellation and playback race protection.');
+// An already-visible banner hides when playback starts; no dismissal is invented.
+playbackBusy=false;await registerAppWorker({canAutoUpdate:()=>false,canApplyUpdate:()=>!playbackBusy});
+await checkAppUpdate();await new Promise(r=>setTimeout(r,20));const idleBanner=elements.at(-1);
+playbackBusy=true;const realAudioOwner={};setForegroundAudio(realAudioOwner,true);assert.equal(idleBanner.removed,true,'Actual playback hides the banner immediately');setForegroundAudio(realAudioOwner,false);await checkAppUpdate();await new Promise(r=>setTimeout(r,20));assert.equal(idleBanner.removed,true);
+assert.equal(automaticMessages,manualStart+1);
+playbackBusy=false;await checkAppUpdate();await new Promise(r=>setTimeout(r,20));choices=elements.at(-1).children[1];
+// QR login/download retain their protections; Later cancels waiting work.
+for(const protectedKey of ['qrLogin','quranDownload']){
+ document.documentElement={dataset:{[protectedKey]:'active'}};
+ const count=automaticMessages;await choices.children[0].onclick();assert.equal(automaticMessages,count);
+ assert.equal(choices.children[0].disabled,false);choices.children[1].onclick();
+ delete document.documentElement.dataset[protectedKey];intervals.at(-1).fn();assert.equal(automaticMessages,count);
+ await checkAppUpdate();await new Promise(r=>setTimeout(r,20));choices=elements.at(-1).children[1];
+}
+// Playback may begin while release metadata is in flight.
+choices.children[1].onclick();const lateOfferStart=elements.length;const resolvingCheck=checkAppUpdate();playbackBusy=true;
+await resolvingCheck;await new Promise(r=>setTimeout(r,20));
+assert.equal(elements.length,lateOfferStart,'Late metadata cannot show an offer over newly started audio');
+assert.equal(reloads,manualReloads+1);
+// Installation/download can continue with a busy player, without reload or popup.
+registration.waiting=null;registration.installing={state:'installing',addEventListener(){}};
+assert.equal(await checkAppUpdate(),'loading');assert.equal(reloads,manualReloads+1);
+registration.installing=null;registration.waiting=waiting;playbackBusy=false;
+console.log('PASS: visible offer hides for playback; protected login/download queues stay cancellable.');
+// A failed worker message must not leave the Now button disabled forever.
+await registerAppWorker({canAutoUpdate:()=>false,canApplyUpdate:()=>!playbackBusy});await checkAppUpdate();await new Promise(r=>setTimeout(r,20));
+const retryNow=elements.at(-1).children[1].children[0],sendNormally=waiting.postMessage,retryStart=automaticMessages;
+waiting.postMessage=(message,ports)=>{if(message.type==='SALAH_APPLY_UPDATE')throw Error('worker unavailable');return sendNormally(message,ports);};
+await retryNow.onclick();assert.equal(retryNow.disabled,false);assert.equal(retryNow.textContent,'Сейчас');assert.equal(automaticMessages,retryStart);
+waiting.postMessage=sendNormally;await retryNow.onclick();assert.equal(automaticMessages,retryStart+1,'A failed application can be retried');
 const events={};const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://example.test/salah/'},location:{origin:'https://example.test'},addEventListener:(k,f)=>events[k]=f}});
 vm.runInContext(await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),context);
 let release;events.message({data:{type:'SALAH_RELEASE_INFO'},ports:[{postMessage:v=>release=JSON.parse(JSON.stringify(v))}]});
