@@ -148,3 +148,11 @@ background playback across closing another PWA is not guaranteed. The exact
 physical-iPhone scenario remains pending. No SAHABA code or private lessons
 are published. This minor fix preserves announcement 391, its artwork/gallery
 and acknowledgement/expiry.
+
+The shared listening counter now drains confirmed remote seconds over the actual
+observed response interval, including delays longer than 15 seconds. Separate
+local batches replay at 1x; ordinary single-second samples stay immediate.
+Foreground return seeds the fresh total instead of replaying hidden time. Stored
+scores, eligibility, ranks, awards and server SQL are unchanged; no seconds are
+extrapolated. New original vector artwork shows two measured totals and their
+sum. Keep announcement 391, all earlier roundup cards and private lessons.

@@ -41,5 +41,21 @@ w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(l
 server=601;w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(label.textContent,formatListeningTime(601));
 motionClock=10000;server=621;w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(label.textContent,formatListeningTime(601),'Remote confirmed contributions begin without a jump');motionClock=11000;motionTick();assert.equal(label.textContent,formatListeningTime(603),'The mounted page animates two confirmed seconds per second');assert.equal(host.querySelector('[data-rank]'),rank,'Animation does not remount the podium');motionClock=50000;motionTick();assert.equal(label.textContent,formatListeningTime(621),'Animation caps at the confirmed total');server=601;w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(label.textContent,formatListeningTime(601),'A server correction cancels the backlog immediately');
 own={...own,mode:'hidden'};localSeconds=30;w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(host.querySelector('[data-listening-total]').textContent,formatListeningTime(601));
-stop();const final=host.innerHTML;localSeconds=50;w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(host.innerHTML,final,'Leaving the page removes live updates');await w.happyDOM.close();
+// Returning after a hidden interval rebases from the new snapshot once,
+// rather than racing through missed minutes or clearing the label to an ellipsis.
+Object.defineProperty(w.document,'hidden',{value:true,configurable:true});
+w.document.dispatchEvent(new w.Event('visibilitychange'));motionClock=180000;
+server=1801;motionTick();assert.equal(host.querySelector('[data-listening-total]').textContent,formatListeningTime(601),'Hidden timer does not repaint');
+Object.defineProperty(w.document,'hidden',{value:false,configurable:true});
+w.document.dispatchEvent(new w.Event('visibilitychange'));
+motionTick();assert.equal(host.querySelector('[data-listening-total]').textContent,formatListeningTime(601),'Awaiting foreground refresh preserves the last value');
+for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));
+assert.equal(host.querySelector('[data-listening-total]').textContent,formatListeningTime(1801),'Foreground refresh shows its current snapshot directly');
+motionClock=181000;motionTick();assert.equal(host.querySelector('[data-listening-total]').textContent,formatListeningTime(1801),'No replay of hidden-time backlog');
+stop();const final=host.innerHTML;localSeconds=50;w.dispatchEvent(new w.Event('salah:personal-listening-progress'));assert.equal(host.innerHTML,final,'Leaving the page removes live updates');
+server=2000;context.loadCompetition=async()=>{server=2500;return rows;};
+const stopFresh=page.mountCompetition(host,()=>'<h1>Коран</h1>');
+for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));
+assert.equal(host.querySelector('[data-listening-total]').textContent,formatListeningTime(2500),'Fresh initial response replaces an old cached total without a catch-up burst');
+stopFresh();await w.happyDOM.close();
 console.log('PASS: live shared total from real audio only; pause/seek, duplicate renders, server acknowledgement/corrections, privacy, account/date/period changes, fractional progress, stable DOM and cleanup.');
