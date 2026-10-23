@@ -5,6 +5,11 @@
   "capturedAt": "2026-10-07",
   "entries": [
     {
+      "path": "dist/assets/updates/allah-names-391.svg",
+      "gitBlobSha": "685a08655700943216df0b9a6e971692526be8af",
+      "bytes": 1756
+    },
+    {
       "path": "dist/assets/updates/friend-invite-384.svg",
       "gitBlobSha": "76ddccbeb3c91febaea7769bf73182d5ead44320",
       "bytes": 1557

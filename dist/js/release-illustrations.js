@@ -12,6 +12,7 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'allah-names',match:/имен.{0,20}Аллах/iu,title:'Прекрасные имена Аллаха',art:()=>'<img class="release-screen-picture" src="./assets/updates/allah-names-391.svg" alt="">',where:'Знания → Имена Аллаха. Изучайте карточки и проходите тест из пяти вопросов.'},
  {id:'learning',match:/обучени.{0,12}намаз/iu,title:'Обучение намазу',art:()=>'<img class="release-screen-picture" src="./assets/prayer-poses.png" alt="">',where:'Знания → Основы намаза или Намаз шаг за шагом.'},
  {id:'friend-invite',match:/пригла[сш]|поделиться SALAH|ссылк.{0,12}SALAH/iu,title:'Пригласить друзей в SALAH',art:()=>'<img class="release-screen-picture" src="./assets/updates/friend-invite-384.svg" alt="">',where:'Приглашение появляется на главной в спокойный момент. В меню можно поделиться в любое время.'},
  {id:'continuous-audio',match:/Мишари|Мувайкли|аудиоэлемент/iu,title:'Чтение без лишних пауз',art:()=>readerFigures([['alafasy.webp','Мишари аль-Афаси'],['mahermuaiqly.png','Махер аль-Мувайкли']]),where:'Коран → выберите чтеца → Слушать.'},
@@ -54,7 +55,8 @@ function majorReleaseCards(){return [
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
- if(version>=357&&version<=APP_ANNOUNCEMENT.version)return gallery(majorReleaseCards());
+ if(version===APP_ANNOUNCEMENT.version&&version>=391)return gallery([changeCard('Имена Аллаха: 99 карточек с арабским написанием, значениями, поиском и коротким тестом.'),...majorReleaseCards()]);
+ if(version>=357&&version<=369)return gallery(majorReleaseCards());
  if(version>=351&&version<=356)return gallery([card(screenshot(version===356?'quran-reader':'mushaf'),version===356?'Коран в мединском начертании':'Мусхаф в SALAH',changes[0]||'Печатные страницы Корана в стиле SALAH.','','release-screen-art')]);
  if(version===348||version===349){
  const cards=[

@@ -12,6 +12,15 @@
   },
   "assets": [
     {
+      "path": "dist/assets/updates/allah-names-391.svg",
+      "gitBlobSha": "685a08655700943216df0b9a6e971692526be8af",
+      "bytes": 1756,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "note": "Original SALAH vector composition of the names learning cards and five-question practice, 23 October 2026; no external imagery or font files embedded.",
+      "rightsEvidence": "docs/allah-names-sources.md"
+    },
+    {
       "path": "dist/assets/updates/friend-invite-384.svg",
       "gitBlobSha": "76ddccbeb3c91febaea7769bf73182d5ead44320",
       "bytes": 1557,
