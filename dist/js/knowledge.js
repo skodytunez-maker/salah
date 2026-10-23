@@ -1,8 +1,10 @@
 import{showArabicAlphabet}from './arabic-alphabet.js';
+import{showAllahNames}from './allah-names.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
 const entries = [
+  {kind:'names',icon:'book',title:'Имена Аллаха',description:'Арабское написание, краткие значения и тест для повторения.',detail:'99 имён',action:'Изучать имена',href:'#knowledge?view=names'},
   {kind:'alphabet',icon:'book',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
   {kind:'umrah',icon:'landmark',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
   {
@@ -32,7 +34,10 @@ const entries = [
 ];
 
 export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'' } = {}) {
-  if(new URLSearchParams(hash.split('?')[1]||'').get('view')==='alphabet'){if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
+  const view=new URLSearchParams(hash.split('?')[1]||'').get('view');
+  if(view!=='names')delete container.dataset.namesHash;
+  if(view==='names'){delete container.dataset.alphabetHash;if(container.dataset.namesHash!==hash||!container.querySelector('.names-page')){showAllahNames(container,{hash});container.dataset.namesHash=hash;}return;}
+  if(view==='alphabet'){if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
   delete container.dataset.alphabetHash;
   const saved=savedLesson(read('learning-progress',null));
   container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title">

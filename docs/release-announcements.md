@@ -121,3 +121,11 @@ Reuse existing Quran feature artwork. Preserve announcement 369, expiry and ackn
 Prevent stale final Auth session reads from signing out a freshly accepted login or returning an old identity. Preserve both fixed Quran edition identifiers in validated backups, while rejecting unsupported editions and unknown fields. Add accessible previous/next step names to existing prayer learning; localize fallback map zoom buttons and Quran ayah-count plurals.
 
 Use existing account, Quran, prayer-pose and Qibla feature artwork. Preserve announcement 369, its expiry and acknowledgement. Private video lessons are excluded. Device-specific iOS background audio, hardware permissions, real push delivery and Google Play upgrade delivery remain separately unverified; the browser audit must not claim them as passed.
+
+## Version 391 — names of Allah (23 October 2026)
+
+Add the names study and five-question practice in Knowledge. Its own Arabic
+card illustration opens the roundup; preserve all 14 earlier cards. This is a
+new feature announcement, so advance its identifier to 391 and the three-day
+window to October 26. Keep lessons private and payment news excluded.
+See allah-names-sources.md for the editorial policy and sources.
