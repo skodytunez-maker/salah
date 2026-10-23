@@ -5,6 +5,11 @@
   "capturedAt": "2026-10-07",
   "entries": [
     {
+      "path": "dist/assets/updates/update-choice-393.svg",
+      "gitBlobSha": "4273f286cf42fcc336210d28c8d804d44deda8cc",
+      "bytes": 1465
+    },
+    {
       "path": "dist/assets/updates/shared-listening-392.svg",
       "gitBlobSha": "3d09c83ea44d0d60086ae85a32862dfd7d230dd5",
       "bytes": 1484

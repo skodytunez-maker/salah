@@ -1,4 +1,5 @@
 import{illustratedReleaseMarkup,bindIllustratedRelease}from './release-gallery.js';
+import{subscribeForegroundAudio}from './audio-focus.js';
 import{isPublicReleaseChange}from './release-illustrations.js';
 import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from './app-release.js';
 import {esc,modal} from './ui.js';
@@ -59,6 +60,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  const finishStartup=()=>{startupUntouched=false};
  const watched=new WeakSet();
  const clearBanner=()=>{banner?.remove();banner=null;};
+ subscribeForegroundAudio(active=>{if(active)clearBanner();});
  const blocked=()=>document.documentElement?.dataset?.qrLogin==='active'||document.documentElement?.dataset?.quranDownload==='active'||!canApplyUpdate();
  const finishReload=async()=>{if(!reloadPending||reloaded||blocked())return;reloaded=true;if(!await reloadAfterUpdate(()=>!blocked()))reloaded=false;};
  const requestApply=()=>{if(blocked()){applyQueued=true;return false;}applyQueued=false;requested=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else{reloadPending=true;void finishReload();}return true;};
@@ -76,11 +78,20 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    const detail=document.createElement('button');detail.type='button';detail.className='app-update-details';detail.textContent=releaseDate(release.date)?releaseDate(release.date)+' · Что нового':'Посмотреть изменения';
    detail.onclick=()=>{showAppRelease(release,{available});if(!available)clearBanner();};copy.append(title,detail);
    const actions=document.createElement('div');actions.className='app-update-actions';
-   if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{button.disabled=true;if(!requestApply()){button.textContent='После прослушивания';toast('Обновление установится после остановки аудио. Чтение продолжается.');}};actions.append(button);}
-   const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление об обновлении');close.onclick=()=>{if(available)dismissedWorker=registration.waiting;acknowledge(release.announcement||release);clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
+   if(available){
+    const button=document.createElement('button');button.type='button';button.textContent='Сейчас';button.setAttribute('aria-label','Обновить сейчас');
+    button.onclick=()=>{if(requested||button.disabled)return;button.disabled=true;button.textContent='Обновляем…';try{
+     if(!requestApply()){toast('Обновление ожидает завершения текущего действия. Можно выбрать «Позже».');}
+    }catch{requested=false;applyQueued=false;toast('Не удалось запустить обновление. Попробуйте ещё раз.');}
+    finally{if(!requested){button.disabled=false;button.textContent='Сейчас';}}};
+    const later=document.createElement('button');later.type='button';later.className='app-update-later';later.textContent='Позже';later.onclick=()=>{if(requested)return;applyQueued=false;dismissedWorker=registration.waiting;clearBanner();};
+    actions.append(button,later);
+   }
+   const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление об обновлении');close.onclick=()=>{if(available){if(requested)return;applyQueued=false;dismissedWorker=registration.waiting;}acknowledge(release.announcement||release);clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
   }
   async function offer(force=false){
    const worker=registration.waiting;
+   if(!canApplyUpdate()){clearBanner();return;}
    if(requested||!worker||!navigator.serviceWorker.controller||(!force&&dismissedWorker===worker)||offerWorker===worker&&banner)return;
    offerWorker=worker;
    // Ask the waiting worker: an older offline shell must not label a new release with its own date.
@@ -90,12 +101,13 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
     const timer=setTimeout(()=>done(null),1500);
     try{channel=new MessageChannel();channel.port1.onmessage=event=>done(event.data);worker.postMessage({type:'SALAH_RELEASE_INFO'},[channel.port2]);}catch{done(null);}
    });
+   if(!canApplyUpdate())return;
    if(registration.waiting!==worker||requested||dismissedWorker===worker&&!force||offerWorker===worker&&banner)return;
    if(!force&&(!release?.announcement||hasSeenAnnouncement(release.announcement)))return;
    makeBanner({release:(!force?release.announcement:release)||{version:APP_VERSION+1,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']},available:true});
   }
   function applyAutomatically(){
-   if(blocked()||requested||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open],.founder-welcome,.series-celebration')||!canAutoUpdate())return false;
+   if(blocked()||requested||banner||dismissedWorker===registration.waiting||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open],.founder-welcome,.series-celebration')||!canAutoUpdate())return false;
    try{requested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});return true;}catch{requested=false;return false;}
   }
   function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&!applyAutomatically())void offer();});if(worker.state==='installed'&&!applyAutomatically())void offer();}
@@ -109,14 +121,15 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
   }}
   registration.addEventListener('updatefound',()=>watch(registration.installing));
   async function check(force=false){
+   if(force)dismissedWorker=null;
    if(!force&&applyAutomatically())return 'loading';
    void offer(force);
-   if(registration.waiting&&navigator.serviceWorker.controller)return 'available';
+   if(registration.waiting&&navigator.serviceWorker.controller)return canApplyUpdate()?'available':'deferred';
    if(registration.installing){watch(registration.installing);return 'loading';}
    if(checking)return checking;
    if(navigator.onLine===false)return 'offline';
    const gap=Date.now()-lastCheck;if(!force&&gap>=0&&gap<CHECK_INTERVAL)return 'current';lastCheck=Date.now();
-   checking=(async()=>{await registration.update();watch(registration.installing);void offer(force);return registration.waiting&&navigator.serviceWorker.controller?'available':registration.installing?'loading':'current';})();
+   checking=(async()=>{await registration.update();watch(registration.installing);void offer(force);return registration.waiting&&navigator.serviceWorker.controller?(canApplyUpdate()?'available':'deferred'):registration.installing?'loading':'current';})();
    try{return await checking;}finally{checking=null;}
   }
   manualCheck=check;

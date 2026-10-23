@@ -156,3 +156,18 @@ Foreground return seeds the fresh total instead of replaying hidden time. Stored
 scores, eligibility, ranks, awards and server SQL are unchanged; no seconds are
 extrapolated. New original vector artwork shows two measured totals and their
 sum. Keep announcement 391, all earlier roundup cards and private lessons.
+
+## Version 393 — unobtrusive update choices (24 October 2026)
+
+Download updates in the background while audio continues. Do not show the
+waiting-update banner during foreground audio; recheck after asynchronous worker
+metadata arrives and hide an earlier offer if playback starts. A manual check
+explains that installation is deferred. Keep all activation/reload playback
+guards, idle-screen/input/dialog restrictions and QR/download protections.
+
+Offer Now and Later when idle. Now never pauses playback: a recording starting
+after the offer queues the update instead, with the button remaining usable.
+Later cancels that queue and prevents automatic application of the same worker
+for the current session; an explicit update check may reopen it. Keep announcement
+391, its expiry, acknowledgement and all earlier cards. Add original banner
+artwork. Private lessons and payment news remain excluded.
