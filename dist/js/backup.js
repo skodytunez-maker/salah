@@ -36,10 +36,10 @@ function personalValue(key,value){
  if(!allowedKey(key))fail('Неизвестные личные данные «'+key+'».');
  if(key==='quran-tafsir-edition'){if(!['saadi','ibn-kathir'].includes(value))fail('Неизвестный тафсир.');
  }else if(key==='quran-preferences'){
-  const fields=['transcriptionEdition','hints','arabic','translation','transliteration','numbers','arabicSize','textSize','theme','reciter'];
+  const fields=['translationEdition','arabicEdition','transcriptionEdition','hints','arabic','translation','transliteration','numbers','arabicSize','textSize','theme','reciter'];
   exactKeys(value,fields,key);
   for(const field of ['hints','arabic','translation','transliteration','numbers'])if(Object.hasOwn(value,field)&&typeof value[field]!=='boolean')fail('Некорректная настройка чтения.');
-  for(const [field,allowed]of [['transcriptionEdition',['source','salah-preview']],['arabicSize',[28,34,40,48]],['textSize',[18,20,24,28]],['theme',['light','dark','system']]])if(Object.hasOwn(value,field)&&!allowed.includes(value[field]))fail('Некорректная настройка чтения.');
+  for(const [field,allowed]of [['translationEdition',['ru.kuliev']],['arabicEdition',['quran-uthmani']],['transcriptionEdition',['source','salah-preview']],['arabicSize',[28,34,40,48]],['textSize',[18,20,24,28]],['theme',['light','dark','system']]])if(Object.hasOwn(value,field)&&!allowed.includes(value[field]))fail('Некорректная настройка чтения.');
   if(Object.hasOwn(value,'reciter')&&!RECITERS.some(r=>r.id===value.reciter))fail('Неизвестный чтец.');
  }else if(key==='quran-bookmarks'){
   if(!Array.isArray(value)||value.length>20000)fail('Некорректные закладки Корана.');

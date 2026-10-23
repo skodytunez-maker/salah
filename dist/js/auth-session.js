@@ -35,6 +35,7 @@ export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
     if(!revoked)return{state:'unavailable'};
     // A stale refusal cannot clear a newly signed-in account or renewed session.
     let latest;try{latest=await auth.getSession();}catch{return{state:'unavailable'};}
+    if(started!==generation)return{state:'changed'};
     if(latest.error)return{state:'unavailable'};
     if(latest.data?.session&&latest.data.session.access_token!==current.access_token)return{state:'changed'};
     if(latest.data?.session){try{const result=await auth.signOut({scope:'local'});if(result.error)return{state:'unavailable'};}catch{return{state:'unavailable'};}}
@@ -42,6 +43,7 @@ export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
    }
    if(!verified.data?.user?.id||verified.data.user.id!==current.user?.id)return{state:'unavailable'};
    let latest;try{latest=await auth.getSession();}catch{return{state:'unavailable'};}
+   if(started!==generation)return{state:'changed'};
    if(latest.error)return{state:'unavailable'};
    const session=latest.data?.session;if(!session){checkedToken=null;return{state:'signed_out',session:null};}
    if(session.access_token!==current.access_token){
