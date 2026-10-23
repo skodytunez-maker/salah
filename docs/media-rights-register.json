@@ -12,6 +12,15 @@
   },
   "assets": [
     {
+      "path": "dist/assets/updates/shared-listening-392.svg",
+      "gitBlobSha": "3d09c83ea44d0d60086ae85a32862dfd7d230dd5",
+      "bytes": 1484,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "note": "Original SALAH vector composition illustrating two measured listening totals and their sum, 23 October 2026; no external images or embedded fonts.",
+      "rightsEvidence": "docs/release-announcements.md"
+    },
+    {
       "path": "dist/assets/updates/allah-names-391.svg",
       "gitBlobSha": "685a08655700943216df0b9a6e971692526be8af",
       "bytes": 1756,

@@ -19,14 +19,30 @@ export function createLiveListeningTotal(){
 export function createSharedListeningMotion({now=()=>globalThis.performance?.now?.()??Date.now()}={}){
  let state=null;
  const valid=value=>Number.isSafeInteger(value)&&value>=0;
- const advance=time=>{if(!state)return null;const elapsed=Math.max(0,time-state.at);state.value=Math.min(state.target,state.value+elapsed*state.rate/1000);state.at=time;return Math.floor(state.value+1e-7);};
+ const advance=time=>{
+  if(!state)return null;
+  const elapsed=Math.max(0,time-state.at)/1000;
+  const local=Math.min(state.localPending,elapsed),remote=Math.min(state.remotePending,elapsed*state.remoteRate);
+  state.localPending=Math.max(0,state.localPending-local);state.remotePending=Math.max(0,state.remotePending-remote);
+  state.value=Math.min(state.target,state.value+local+remote);state.at=time;
+  return Math.floor(state.value+1e-7);
+ };
  return{reset(){state=null;},tick(){return advance(now());},sample(target,{key,server}={}){
   const time=now();
   if(!valid(target)||!valid(server)||!key){state=null;return null;}
-  if(!state||state.key!==key||time<state.at||server<state.server||target<state.target){state={key,server,target,value:target,at:time,serverAt:time,rate:0};return target;}
+  if(!state||state.key!==key||time<state.at||server<state.server||target<state.target){
+   state={key,server,target,value:target,at:time,serverAt:time,localPending:0,remotePending:0,remoteRate:0};return target;
+  }
   advance(time);const increase=target-state.target;
-  if(server===state.server)state.value=Math.min(target,state.value+increase);
-  else{if(increase>0)state.rate=(target-state.value)*1000/Math.max(1000,Math.min(15000,time-state.serverAt));state.serverAt=time;}
+  if(server===state.server){
+   // A normal measured second remains immediate. A delayed batch gets one
+   // immediate second and replays the rest at 1x, never as a large jump.
+   const immediate=state.localPending===0?Math.min(1,increase):0;
+   state.value+=immediate;state.localPending+=increase-immediate;
+  }else{
+   if(increase>0){state.remotePending+=increase;state.remoteRate=increase*1000/Math.max(1000,time-state.serverAt);}
+   state.serverAt=time;
+  }
   state.target=target;state.server=server;
   return Math.floor(state.value+1e-7);
  }};

@@ -129,3 +129,30 @@ card illustration opens the roundup; preserve all 14 earlier cards. This is a
 new feature announcement, so advance its identifier to 391 and the three-day
 window to October 26. Keep lessons private and payment news excluded.
 See allah-names-sources.md for the editorial policy and sources.
+
+## Version 392 — Safari standalone foreground audio recovery (23 October 2026)
+
+Version 389 relied on AudioSession.state/statechange, absent from shipping Safari
+according to MDN BCD api/AudioSession.json; WebKit DOMAudioSession.idl gates them
+behind DOMAudioSessionFullEnabled. Keep playback category, add a one-shot
+foreground/focus return recovery only for standalone pages whose intended
+playback paused during a background transition. Resume the existing element
+and position; never retry generically, while hidden, or after explicit UI or
+MediaSession pause/stop, owner replacement or destruction. Full API support
+also handles an active event delivered before the media pause.
+
+Sources: https://github.com/mdn/browser-compat-data/blob/main/api/AudioSession.json
+and https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/audiosession/DOMAudioSession.idl.
+An OS-frozen/terminated PWA cannot run this recovery until it returns; continuous
+background playback across closing another PWA is not guaranteed. The exact
+physical-iPhone scenario remains pending. No SAHABA code or private lessons
+are published. This minor fix preserves announcement 391, its artwork/gallery
+and acknowledgement/expiry.
+
+The shared listening counter now drains confirmed remote seconds over the actual
+observed response interval, including delays longer than 15 seconds. Separate
+local batches replay at 1x; ordinary single-second samples stay immediate.
+Foreground return seeds the fresh total instead of replaying hidden time. Stored
+scores, eligibility, ranks, awards and server SQL are unchanged; no seconds are
+extrapolated. New original vector artwork shows two measured totals and their
+sum. Keep announcement 391, all earlier roundup cards and private lessons.
