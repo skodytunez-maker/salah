@@ -156,3 +156,19 @@ Foreground return seeds the fresh total instead of replaying hidden time. Stored
 scores, eligibility, ranks, awards and server SQL are unchanged; no seconds are
 extrapolated. New original vector artwork shows two measured totals and their
 sum. Keep announcement 391, all earlier roundup cards and private lessons.
+
+## Version 394 — shared-counter digit transitions (24 October 2026)
+
+Only the shared total in Top SALAH changes: animate changing digits with a small
+vertical fade, preserve the original text/spacing, and keep all count/rank logic.
+Use the existing Prata family locally for lining figures on one baseline, with
+equal-width digit slots. Per user feedback, unit labels are 80% of digit size.
+Personal totals and the rest of the screen retain their existing appearance.
+Respect reduced motion; expose one current accessible value, without duplicate
+old glyphs. Pauses, snapshot corrections and unknown values never invent seconds.
+Keep announcement 391, its expiry and acknowledgement. Reuse the existing
+shared-listening-392.svg illustration. Pending update-choice PR 254, the private
+update channel, lessons and payment announcements are excluded.
+
+Remove the large roundup banner from Menu at the user's explicit request;
+keep Home behaviour, announcement acknowledgement and Settings → What is new.

@@ -12,6 +12,16 @@
   },
   "assets": [
     {
+      "path": "dist/assets/fonts/prata-counter-regular.ttf",
+      "gitBlobSha": "afe3059e1f7f4b92792fd3312b85e350fa1520f0",
+      "bytes": 96016,
+      "kind": "font",
+      "rightsReviewStatus": "license-recorded",
+      "license": "SIL-OFL-1.1",
+      "rightsEvidence": "dist/assets/fonts/prata-OFL.txt",
+      "note": "Unmodified Prata Regular from Google Fonts (fonts.gstatic.com/s/prata/v22/6xKhdSpbNNCT-vWI.ttf), used only by the existing SALAH shared counter. SIL OFL notice bundled."
+    },
+    {
       "path": "dist/assets/updates/shared-listening-392.svg",
       "gitBlobSha": "3d09c83ea44d0d60086ae85a32862dfd7d230dd5",
       "bytes": 1484,

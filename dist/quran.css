@@ -268,6 +268,22 @@ header.quran-section-title{height:auto}
 .rank-page .listening-summary{display:grid;justify-items:center;gap:8px;min-width:0;margin:20px 0 24px;padding:0;border:0;border-radius:0;background:none;text-align:center}
 .listening-summary>span{font-size:11px;font-weight:500;line-height:1.6;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
 .rank-page .listening-summary strong{max-width:100%;font-family:'Prata',Georgia,serif;font-size:clamp(24px,6.6vw,36px);font-weight:400;line-height:1.45;color:#adc8ec;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+/* Animate individual changing digits; the label and the podium stay still. */
+@font-face{font-family:'SALAH Counter Prata';font-style:normal;font-weight:400;font-display:swap;src:url('./assets/fonts/prata-counter-regular.ttf') format('truetype')}
+.rank-page .listening-summary:not(.reciter-personal-total) strong{font-family:'SALAH Counter Prata','Prata',Georgia,serif;font-variant-numeric:lining-nums tabular-nums}
+.listening-time-unit{font-size:.8em}
+.listening-digit{display:inline-grid;position:relative;overflow:clip;vertical-align:baseline;width:.68em;text-align:center}
+.listening-digit>span{grid-area:1/1}
+.listening-digit::before{content:attr(data-previous);position:absolute;inset:0;opacity:0;pointer-events:none}
+.listening-step-a>span{animation:listening-in-a var(--listening-step,280ms) cubic-bezier(.22,.7,.25,1) both}
+.listening-step-b>span{animation:listening-in-b var(--listening-step,280ms) cubic-bezier(.22,.7,.25,1) both}
+.listening-step-a::before{animation:listening-out-a var(--listening-step,280ms) cubic-bezier(.22,.7,.25,1) both}
+.listening-step-b::before{animation:listening-out-b var(--listening-step,280ms) cubic-bezier(.22,.7,.25,1) both}
+@keyframes listening-in-a{from{opacity:0;transform:translateY(42%)}to{opacity:1;transform:translateY(0)}}
+@keyframes listening-in-b{from{opacity:0;transform:translateY(42%)}to{opacity:1;transform:translateY(0)}}
+@keyframes listening-out-a{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-42%)}}
+@keyframes listening-out-b{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-42%)}}
+@media(prefers-reduced-motion:reduce){.listening-digit>span,.listening-digit::before{animation:none!important}.listening-digit::before{display:none}}
 /* Compact phone total leaves the existing podium above the fixed navigation. */
 @media(max-width:600px){
  .rank-page .listening-summary{margin:8px 0 12px;gap:3px}
