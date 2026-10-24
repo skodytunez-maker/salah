@@ -156,3 +156,10 @@
 .knowledge-resume-track{display:block;height:3px;background:rgba(200,188,156,.15);border-radius:3px;margin-top:18px;overflow:hidden}
 .knowledge-resume-track>span{display:block;height:100%;background:var(--gold);border-radius:3px}
 .knowledge-resume:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+
+/* Announced features have a real disabled control and no launch link. */
+.knowledge-page .knowledge-coming-title{margin:18px 0 0;font-size:18px;font-weight:500;color:#b6c0d3}
+.knowledge-page .knowledge-coming-button:disabled,.release-coming-button:disabled{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:112px;margin-top:18px;padding:10px 20px;border:1px solid #667084;border-radius:12px;background:#293140;color:#c4cad4;box-shadow:none;opacity:1;cursor:default;font-size:13px;font-weight:600;line-height:1.5}
+.knowledge-page .knowledge-card-coming:hover,.knowledge-page .knowledge-card-coming:active{border-color:rgba(145,166,202,.22);background:#111a2f}
+.release-coming-button:disabled{margin-top:14px}
+

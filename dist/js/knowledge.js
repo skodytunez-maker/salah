@@ -1,15 +1,16 @@
+import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{showArabicAlphabet}from './arabic-alphabet.js';
 import{showAllahNames}from './allah-names.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
 const entries = [
-  {kind:'names',icon:'book',title:'Имена Аллаха',description:'Арабское написание, краткие значения и тест для повторения.',detail:'99 имён',action:'Изучать имена',href:'#knowledge?view=names'},
-  {kind:'alphabet',icon:'book',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
-  {kind:'umrah',icon:'landmark',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
+  {kind:'names',icon:'knowledge-names',title:'Имена Аллаха',description:'Арабское написание, краткие значения и тест для повторения.',detail:'99 имён',action:'Изучать имена',href:'#knowledge?view=names'},
+  {kind:'alphabet',icon:'knowledge-alphabet',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
+  {kind:'umrah',icon:'knowledge-umrah',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
   {
     kind: 'basic',
-    icon: 'book',
+    icon: 'knowledge-prayer',
     title: 'Основы намаза',
     description: 'Порядок, движения и тексты.',
     detail: '17 шагов',
@@ -17,7 +18,7 @@ const entries = [
   },
   {
     kind: 'wudu',
-    icon: 'list-ul',
+    icon: 'knowledge-wudu',
     title: 'Омовение',
     description: 'Последовательность действий перед намазом.',
     detail: '10 шагов',
@@ -25,7 +26,7 @@ const entries = [
   },
   {
     kind: 'guide',
-    icon: 'person',
+    icon: 'knowledge-prayer-steps',
     title: 'Намаз шаг за шагом',
     description: 'Выберите одну из пяти обязательных молитв.',
     detail: '5 молитв',
@@ -59,6 +60,14 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
         <p>${entry.description}</p>
         <span class="knowledge-action">${entry.action}${actionIcon('next')}</span>
       </a>`).join('')}
+      <h2 class="knowledge-coming-title">Скоро в SALAH</h2>
+      ${UPCOMING_KNOWLEDGE.map(entry => `<article class="knowledge-card knowledge-card-coming" data-upcoming="${entry.id}" aria-labelledby="upcoming-${entry.id}">
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><img src="./assets/${entry.icon}.svg" alt="" width="24" height="24"></span><span class="knowledge-detail">Готовим для вас</span></div>
+        <h2 id="upcoming-${entry.id}">${entry.title}</h2><p id="upcoming-${entry.id}-description">${entry.description}</p>
+        <button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>
+      </article>`).join('')}
+
+
     </div>
   </section>`;
   if (typeof onStart === 'function') {
