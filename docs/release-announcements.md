@@ -187,3 +187,5 @@ The public availability is «Скоро», not a claim that lessons, broadcasts 
 
 
 The user also requested pictures of the existing names of Allah, Arabic letters, and downloadable alphabet options. The roundup starts with names and the new alphabet PDF composition. The alphabet now offers a one-page letters/names PDF and the two-page contextual-forms PDF. Both omit the technical footer, as requested. Audio remains outside this public release.
+
+At the user’s request, each Knowledge section has a distinct thematic icon rather than repeated books: names, letters, Kaaba, prayer, washing, steps, classroom, vowel study and broadcast. These are original vectors, with actual Amiri outlines for Arabic glyphs.

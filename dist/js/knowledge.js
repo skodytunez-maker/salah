@@ -5,12 +5,12 @@ import{actionIcon,actionLabel}from './action-icons.js';
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
 const entries = [
-  {kind:'names',icon:'book',title:'Имена Аллаха',description:'Арабское написание, краткие значения и тест для повторения.',detail:'99 имён',action:'Изучать имена',href:'#knowledge?view=names'},
-  {kind:'alphabet',icon:'book',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
-  {kind:'umrah',icon:'landmark',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
+  {kind:'names',icon:'knowledge-names',title:'Имена Аллаха',description:'Арабское написание, краткие значения и тест для повторения.',detail:'99 имён',action:'Изучать имена',href:'#knowledge?view=names'},
+  {kind:'alphabet',icon:'knowledge-alphabet',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
+  {kind:'umrah',icon:'knowledge-umrah',title:'Умра',description:'История, порядок обрядов и памятка паломника.',detail:'10 шагов',action:'Изучить Умру',href:'#umrah'},
   {
     kind: 'basic',
-    icon: 'book',
+    icon: 'knowledge-prayer',
     title: 'Основы намаза',
     description: 'Порядок, движения и тексты.',
     detail: '17 шагов',
@@ -18,7 +18,7 @@ const entries = [
   },
   {
     kind: 'wudu',
-    icon: 'list-ul',
+    icon: 'knowledge-wudu',
     title: 'Омовение',
     description: 'Последовательность действий перед намазом.',
     detail: '10 шагов',
@@ -26,7 +26,7 @@ const entries = [
   },
   {
     kind: 'guide',
-    icon: 'person',
+    icon: 'knowledge-prayer-steps',
     title: 'Намаз шаг за шагом',
     description: 'Выберите одну из пяти обязательных молитв.',
     detail: '5 молитв',

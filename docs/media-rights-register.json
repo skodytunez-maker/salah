@@ -2508,12 +2508,12 @@
     },
     {
       "path": "dist/assets/video.svg",
-      "gitBlobSha": "d128b55457f62db09c9208c75052a2455d3c1335",
-      "bytes": 238,
+      "gitBlobSha": "9cc7758e9847df67b918040fe531dc54e8f7abee",
+      "bytes": 364,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "docs/release-announcements.md — Version 395 original SALAH feature compositions; Amiri embedding notice in dist/assets/amiri-regular-OFL.txt.",
-      "note": "Original SALAH SVG composition. Letter examples are real Amiri glyph outlines, shaped with HarfBuzz, where present. No third-party photographs or publisher book pages."
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
     },
     {
       "path": "dist/assets/broadcast.svg",
@@ -2559,6 +2559,69 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/release-announcements.md — Version 395 original SALAH feature compositions; Amiri embedding notice in dist/assets/amiri-regular-OFL.txt.",
       "note": "Original SALAH SVG composition. Letter examples are real Amiri glyph outlines, shaped with HarfBuzz, where present. No third-party photographs or publisher book pages."
+    },
+    {
+      "path": "dist/assets/knowledge-names.svg",
+      "gitBlobSha": "7aceaef890a95c1d9ab00a11175ed6becbc5682f",
+      "bytes": 1915,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+    },
+    {
+      "path": "dist/assets/knowledge-alphabet.svg",
+      "gitBlobSha": "6c06f94c453dffa8be4e30bd2e9b3954722b228c",
+      "bytes": 1347,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+    },
+    {
+      "path": "dist/assets/knowledge-muallim.svg",
+      "gitBlobSha": "39609d9126a71263dab7fadb7f84670e164e9a20",
+      "bytes": 1011,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+    },
+    {
+      "path": "dist/assets/knowledge-umrah.svg",
+      "gitBlobSha": "78d2c81347733bba7014778e811380101868d2a4",
+      "bytes": 233,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+    },
+    {
+      "path": "dist/assets/knowledge-prayer.svg",
+      "gitBlobSha": "88e886e9636009f6933c66ab0a4474ff4568c63c",
+      "bytes": 234,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+    },
+    {
+      "path": "dist/assets/knowledge-wudu.svg",
+      "gitBlobSha": "303bbdcdb66706eebf2d1c95769ee0d1350d383e",
+      "bytes": 361,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+    },
+    {
+      "path": "dist/assets/knowledge-prayer-steps.svg",
+      "gitBlobSha": "7cf8f137dfa1ab1e450bece25b391675fd45c337",
+      "bytes": 259,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
+      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
     }
   ],
   "wallpaperSets": [
