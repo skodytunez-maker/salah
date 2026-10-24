@@ -278,5 +278,17 @@
       "findings": "Runtime public resource API; no full edition redistributed in the app repository. Source text is displayed unchanged as text, without generated paraphrase or translation. QUL describes developer use but resource-specific publisher/translator rights evidence is not supplied by this integration. Do not infer that the mirror code license covers the Russian translations.",
       "nextAction": "Retain resource/source/version attribution and cache contents without rewriting; obtain any resource-specific publisher/translator permission required for redistribution."
     }
+  ],
+  "originalLearningDocuments": [
+    {
+      "path": "dist/assets/salah-arabic-alphabet.pdf",
+      "gitBlobSha": "00534dda0691a9d4126734deaf87ff99e90927e3",
+      "note": "Original SALAH alphabet layout and user-approved letter labels, generated from the canonical 28-letter dataset. Unmodified Amiri font embedded under SIL OFL. No commercial Muallim Sani edition reproduced."
+    },
+    {
+      "path": "dist/assets/salah-arabic-letters.pdf",
+      "gitBlobSha": "c9afc27e67ed6ca381f1a906ded082d8c68a1ea8",
+      "note": "Original SALAH alphabet layout and user-approved letter labels, generated from the canonical 28-letter dataset. Unmodified Amiri font embedded under SIL OFL. No commercial Muallim Sani edition reproduced."
+    }
   ]
 }

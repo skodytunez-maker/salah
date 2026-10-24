@@ -3858,6 +3858,46 @@
       "path": "dist/assets/chevron-left.svg",
       "gitBlobSha": "5bcc1bb5e5add086376c165850dc1e29d3c61f6a",
       "bytes": 288
+    },
+    {
+      "path": "dist/assets/video.svg",
+      "gitBlobSha": "d128b55457f62db09c9208c75052a2455d3c1335",
+      "bytes": 238
+    },
+    {
+      "path": "dist/assets/broadcast.svg",
+      "gitBlobSha": "2cd93daa48060633e5d2f4e3709501549041c8de",
+      "bytes": 284
+    },
+    {
+      "path": "dist/assets/updates/online-lessons-coming-395.svg",
+      "gitBlobSha": "468df8115bdebc60bf057de16be92768bff0251c",
+      "bytes": 1465
+    },
+    {
+      "path": "dist/assets/updates/muallim-coming-395.svg",
+      "gitBlobSha": "6b21e235b856657708a1f195dddd7f96f4a63de1",
+      "bytes": 3907
+    },
+    {
+      "path": "dist/assets/updates/live-stream-coming-395.svg",
+      "gitBlobSha": "1f4d52909b5489d5d67526ee17198b07557de6d5",
+      "bytes": 1635
+    },
+    {
+      "path": "dist/assets/updates/alphabet-pdf-395.svg",
+      "gitBlobSha": "21ba9795ec7feb2c40730f0ba8141644e0525670",
+      "bytes": 15678
+    },
+    {
+      "path": "dist/assets/salah-arabic-alphabet.pdf",
+      "gitBlobSha": "00534dda0691a9d4126734deaf87ff99e90927e3",
+      "bytes": 113713
+    },
+    {
+      "path": "dist/assets/salah-arabic-letters.pdf",
+      "gitBlobSha": "c9afc27e67ed6ca381f1a906ded082d8c68a1ea8",
+      "bytes": 104421
     }
   ],
   "incrementalEvidence": [

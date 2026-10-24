@@ -1,3 +1,4 @@
+import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{showArabicAlphabet}from './arabic-alphabet.js';
 import{showAllahNames}from './allah-names.js';
 import{actionIcon,actionLabel}from './action-icons.js';
@@ -59,6 +60,14 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
         <p>${entry.description}</p>
         <span class="knowledge-action">${entry.action}${actionIcon('next')}</span>
       </a>`).join('')}
+      <h2 class="knowledge-coming-title">Скоро в SALAH</h2>
+      ${UPCOMING_KNOWLEDGE.map(entry => `<article class="knowledge-card knowledge-card-coming" data-upcoming="${entry.id}" aria-labelledby="upcoming-${entry.id}">
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><img src="./assets/${entry.icon}.svg" alt="" width="24" height="24"></span><span class="knowledge-detail">Готовим для вас</span></div>
+        <h2 id="upcoming-${entry.id}">${entry.title}</h2><p id="upcoming-${entry.id}-description">${entry.description}</p>
+        <button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>
+      </article>`).join('')}
+
+
     </div>
   </section>`;
   if (typeof onStart === 'function') {

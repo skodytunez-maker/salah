@@ -1,3 +1,4 @@
+import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{esc}from './ui.js';
 import{actionIcon}from './action-icons.js';
 import{awardArtwork}from './quran-awards-core.js';
@@ -12,6 +13,10 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'alphabet-pdf',match:/арабский алфавит|алфавит.{0,30}PDF/iu,title:'Алфавит для скачивания',art:()=>'<img class="release-screen-picture" src="./assets/updates/alphabet-pdf-395.svg" alt="">',where:'Знания → Арабский алфавит → Скачать алфавит · PDF.'},
+
+ ...UPCOMING_KNOWLEDGE.map(entry=>({id:entry.id,match:new RegExp(entry.title,'iu'),title:entry.title,art:()=>'<img class="release-screen-picture" src="./assets/updates/'+entry.art+'" alt="">',where:'Скоро в разделе «Знания». Запуск пока недоступен.'})),
+
  {id:'shared-listening',match:/общий счётчик/iu,title:'Вместе прослушали',art:()=>'<img class="release-screen-picture" src="./assets/updates/shared-listening-392.svg" alt="">',where:'Коран → Чтецы → Топ SALAH. Складывается реальное время слушателей.'},
  {id:'allah-names',match:/имен.{0,20}Аллах/iu,title:'Прекрасные имена Аллаха',art:()=>'<img class="release-screen-picture" src="./assets/updates/allah-names-391.svg" alt="">',where:'Знания → Имена Аллаха. Изучайте карточки и проходите тест из пяти вопросов.'},
  {id:'learning',match:/обучени.{0,12}намаз/iu,title:'Обучение намазу',art:()=>'<img class="release-screen-picture" src="./assets/prayer-poses.png" alt="">',where:'Знания → Основы намаза или Намаз шаг за шагом.'},
@@ -56,6 +61,7 @@ function majorReleaseCards(){return [
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
+ if(version===APP_ANNOUNCEMENT.version&&version>=395)return gallery([changeCard('Имена Аллаха: 99 карточек с арабским написанием, значениями, поиском и коротким тестом.'),changeCard('Арабский алфавит: скачайте PDF с буквами и названиями на одной странице или таблицу форм в слове на двух страницах.'),...UPCOMING_KNOWLEDGE.map(entry=>card('<img class="release-screen-picture" src="./assets/updates/'+entry.art+'" alt="">',entry.title+' · скоро',entry.news,'Запуск пока недоступен.','release-screen-art').replace('</article>','<button class="button release-coming-button" type="button" disabled aria-label="'+entry.title+' — скоро">Скоро</button></article>')),...majorReleaseCards()]);
  if(version===APP_ANNOUNCEMENT.version&&version>=391)return gallery([changeCard('Имена Аллаха: 99 карточек с арабским написанием, значениями, поиском и коротким тестом.'),...majorReleaseCards()]);
  if(version>=357&&version<=369)return gallery(majorReleaseCards());
  if(version>=351&&version<=356)return gallery([card(screenshot(version===356?'quran-reader':'mushaf'),version===356?'Коран в мединском начертании':'Мусхаф в SALAH',changes[0]||'Печатные страницы Корана в стиле SALAH.','','release-screen-art')]);
@@ -98,3 +104,5 @@ export function releaseIllustrations(version,changes=[]){
  );
  return gallery(cards);
 }
+
+

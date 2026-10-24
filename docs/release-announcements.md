@@ -172,3 +172,18 @@ update channel, lessons and payment announcements are excluded.
 
 Remove the large roundup banner from Menu at the user's explicit request;
 keep Home behaviour, announcement acknowledgement and Settings → What is new.
+
+## Version 395 — upcoming learning formats (25 October 2026)
+At the user's request, publish announcements for «Онлайн-занятия», «Муаллим Сани» and «Прямой эфир».
+Show three static cards at the end of Knowledge, preserving all existing study links.
+Each uses a real disabled gray button labelled «Скоро», with no launcher, URL, token or API call.
+Online lessons cover tajwid, Arabic and future teacher-selected subjects; the name describes live classes rather than prerecorded videos.
+Publish only feature-specific original illustrations of a classroom, course and broadcast presentation.
+The existing roundup keeps its fifteen cards and adds the alphabet PDF card and three future-format cards.
+Advance the announcement identifier to 395 and its three-day window to October 28 because the user explicitly requested new public news.
+Keep the large Menu banner removed.
+No private video-room client, LiveKit configuration, invitation, full Muallim course, private update prototype or alphabet audio draft is included.
+The public availability is «Скоро», not a claim that lessons, broadcasts or the course are launched.
+
+
+The user also requested pictures of the existing names of Allah, Arabic letters, and downloadable alphabet options. The roundup starts with names and the new alphabet PDF composition. The alphabet now offers a one-page letters/names PDF and the two-page contextual-forms PDF. Both omit the technical footer, as requested. Audio remains outside this public release.
