@@ -59,15 +59,18 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(201, 180, 127, .09);
+  background: rgba(200, 188, 156, .07);
+  border: 1px solid rgba(200, 188, 156, .10);
   flex-shrink: 0;
 }
 
-.knowledge-page .knowledge-icon img {
+.knowledge-page .knowledge-symbol {
   display: block;
-  width: 21px;
-  height: 21px;
-  filter: invert(86%) sepia(18%) saturate(826%) hue-rotate(350deg);
+  width: 28px;
+  height: 28px;
+  background-color: var(--gold, #c8bc9c);
+  -webkit-mask: var(--knowledge-symbol) center / contain no-repeat;
+  mask: var(--knowledge-symbol) center / contain no-repeat;
 }
 
 .knowledge-page .knowledge-detail {
@@ -163,3 +166,16 @@
 .knowledge-page .knowledge-card-coming:hover,.knowledge-page .knowledge-card-coming:active{border-color:rgba(145,166,202,.22);background:#111a2f}
 .release-coming-button:disabled{margin-top:14px}
 
+
+/* Themed symbols retain the original 36px book tile and use the exact SALAH theme colour. */
+.knowledge-symbol-knowledge-names { --knowledge-symbol: url("./assets/knowledge-names.svg"); }
+.knowledge-symbol-knowledge-alphabet { --knowledge-symbol: url("./assets/knowledge-alphabet.svg"); }
+.knowledge-symbol-knowledge-umrah { --knowledge-symbol: url("./assets/knowledge-umrah.svg"); }
+.knowledge-symbol-knowledge-prayer { --knowledge-symbol: url("./assets/knowledge-prayer.svg"); }
+.knowledge-symbol-knowledge-wudu { --knowledge-symbol: url("./assets/knowledge-wudu.svg"); }
+.knowledge-symbol-knowledge-prayer-steps { --knowledge-symbol: url("./assets/knowledge-prayer-steps.svg"); }
+.knowledge-symbol-knowledge-online { --knowledge-symbol: url("./assets/knowledge-online.svg"); }
+.knowledge-symbol-knowledge-muallim { --knowledge-symbol: url("./assets/knowledge-muallim.svg"); }
+.knowledge-symbol-knowledge-live { --knowledge-symbol: url("./assets/knowledge-live.svg"); }
+
+.knowledge-page .knowledge-owner-preview{margin-top:18px;min-height:44px;font-size:13px}

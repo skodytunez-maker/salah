@@ -9,7 +9,7 @@ let client=null,verified=false,verifiedAt=0,verifiedUserId=null,pending=null,rev
 const listeners=new Set();
 function publish(){for(const fn of listeners)fn();}
 function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;if(changed)publish();}
-const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support'].includes(location.hash.split('?')[0]);
+const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support'].includes(location.hash.split('?')[0])||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash));
 function authClient(){
  if(!personalDataAllowed())throw Error('Личные данные защищены: аккаунт в этом режиме недоступен.');
  if(!client){

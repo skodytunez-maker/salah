@@ -61,7 +61,13 @@ function majorReleaseCards(){return [
 // Known editions have feature-specific pictures. Future public release notes
 // retain illustrated cards automatically instead of reverting to a text list.
 export function releaseIllustrations(version,changes=[]){
- if(version===APP_ANNOUNCEMENT.version&&version>=395)return gallery([changeCard('Имена Аллаха: 99 карточек с арабским написанием, значениями, поиском и коротким тестом.'),changeCard('Арабский алфавит: скачайте PDF с буквами и названиями на одной странице или таблицу форм в слове на двух страницах.'),...UPCOMING_KNOWLEDGE.map(entry=>card('<img class="release-screen-picture" src="./assets/updates/'+entry.art+'" alt="">',entry.title+' · скоро',entry.news,'Запуск пока недоступен.','release-screen-art').replace('</article>','<button class="button release-coming-button" type="button" disabled aria-label="'+entry.title+' — скоро">Скоро</button></article>')),...majorReleaseCards()]);
+ if(version===APP_ANNOUNCEMENT.version&&version>=395){
+  const current=changes.filter(isPublicReleaseChange).slice(0,8);
+  return current.length?gallery(current.map(text=>{
+   const upcoming=UPCOMING_KNOWLEDGE.find(entry=>releaseFeatureForChange(text)===entry.id);
+   return upcoming?card('<img class="release-screen-picture" src="./assets/updates/'+upcoming.art+'" alt="">',upcoming.title+' · скоро',upcoming.news,'Запуск пока недоступен.','release-screen-art').replace('</article>','<button class="button release-coming-button" type="button" disabled aria-label="'+upcoming.title+' — скоро">Скоро</button></article>'):changeCard(text);
+  })):'';
+ }
  if(version===APP_ANNOUNCEMENT.version&&version>=391)return gallery([changeCard('Имена Аллаха: 99 карточек с арабским написанием, значениями, поиском и коротким тестом.'),...majorReleaseCards()]);
  if(version>=357&&version<=369)return gallery(majorReleaseCards());
  if(version>=351&&version<=356)return gallery([card(screenshot(version===356?'quran-reader':'mushaf'),version===356?'Коран в мединском начертании':'Мусхаф в SALAH',changes[0]||'Печатные страницы Корана в стиле SALAH.','','release-screen-art')]);
