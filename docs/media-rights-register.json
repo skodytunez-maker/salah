@@ -2634,8 +2634,8 @@
     },
     {
       "path": "dist/assets/knowledge-live.svg",
-      "gitBlobSha": "ce2ec1524f634a33e634ded5c497638763071b2d",
-      "bytes": 311,
+      "gitBlobSha": "16e3ab2e8065114075eb9851431e1810cab17c06",
+      "bytes": 313,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
