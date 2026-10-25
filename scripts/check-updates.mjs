@@ -127,7 +127,7 @@ const gateCall=appSource.slice(gateStart,appSource.indexOf('});',gateStart)+3);
 let updateGate,reader=null,sync='saved',audio=false;
 const gateScope={settings:{onboarded:true},currentRoute:'adhkar',toast(){},registerAppWorker:options=>updateGate=options,
  app:{querySelector:selector=>reader&&selector.split(',').includes(reader)?{}:null},
- counterSyncStatus:()=>({status:sync}),foregroundAudioBusy:()=>audio};
+ counterSyncStatus:()=>({status:sync}),ownerLearningBusy:()=>false,foregroundAudioBusy:()=>audio};
 vm.runInNewContext(gateCall,gateScope);
 for(const selector of ['.adhkar-shell','.dhikr-list-shell','.lesson-complete','.dua-reader','.quran-reader','.lesson-content','.alphabet-page']){
  reader=selector;assert.equal(updateGate.canAutoUpdate(),false,'A downloaded update must wait while reading '+selector);
@@ -138,3 +138,7 @@ gateScope.currentRoute='home';sync='saving';assert.equal(updateGate.canAutoUpdat
 sync='saved';audio=true;assert.equal(updateGate.canAutoUpdate(),false);assert.equal(updateGate.canApplyUpdate(),false);
 audio=false;assert.equal(updateGate.canAutoUpdate(),true);
 console.log('PASS: actual app gate protects reading daily counters, Quran, lessons and support without disabling resting-screen updates.');
+
+gateScope.ownerLearningBusy=()=>true;
+assert.equal(updateGate.canApplyUpdate(),false,'Manual update waits for a lesson held in the private frame');
+assert.equal(updateGate.canAutoUpdate(),false,'Automatic update waits for the same lesson');

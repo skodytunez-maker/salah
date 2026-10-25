@@ -37,8 +37,8 @@ showKnowledge(host,{hash:'#knowledge',ownerAccess:true});
 assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,3);
 assert.equal(host.querySelectorAll('.knowledge-coming-button').length,0);
 for(const link of host.querySelectorAll('.knowledge-owner-preview')){
- assert.equal(new URL(link.href).origin,'https://desktop-jecm5lt.taila4556d.ts.net');
- assert.equal(link.target,'_blank');assert.ok(link.rel.includes('noopener'));
+ assert.equal(new URL(link.href).origin,'https://example.invalid');assert.ok(link.hash.startsWith('#knowledge?preview='));
+ assert.equal(link.target,'');
 }
 assert.equal(host.querySelector('[data-upcoming="live-stream"] a').textContent,'Открыть макет');
 showKnowledge(host,{hash:'#knowledge',ownerAccess:false});
