@@ -5,6 +5,7 @@ Object.assign(globalThis,{window:w,document:doc,location:w.location,localStorage
 const probe={verified:false,claims:0,token:async()=>'test-access-token',revalidate:async()=>probe.verified,authChanged:null};globalThis.__ownerFrameProbe=probe;
 let code=await fs.readFile(new URL('../dist/js/owner-learning-frame.js',import.meta.url),'utf8');
 code=code.replace(/import\{ownerVerified,ownerPreviewAccessToken,verifyOwner,onOwnerChange\}from '[^']+';/,"const ownerVerified=()=>globalThis.__ownerFrameProbe.verified,ownerPreviewAccessToken=()=>globalThis.__ownerFrameProbe.token(),verifyOwner=()=>globalThis.__ownerFrameProbe.revalidate(),onOwnerChange=fn=>{globalThis.__ownerFrameProbe.authChanged=fn;return()=>globalThis.__ownerFrameProbe.authChanged=null;};");
+code=code.replace("from './owner-native-progress.js'","from '"+new URL('../dist/js/owner-native-progress.js',import.meta.url).href+"'");
 code=code.replace("from './owner-frame-viewport.js'","from '"+new URL('../dist/js/owner-frame-viewport.js',import.meta.url).href+"'");
 code=code.replace(/import\{claimPlayback\}from '[^']+';/,"const claimPlayback=()=>globalThis.__ownerFrameProbe.claims++;");
 const{mountOwnerLearningPreview:mount,stopOwnerLearningPreview:stop,ownerLearningBusy:busy,validOwnerCourseProgress:valid,validOwnerBookProgress:validBook}=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
@@ -48,6 +49,11 @@ message({type:'salah:owner-preview-ready',nonce:backgroundNonce});await new Prom
 assert.equal(revalidated,1);assert.equal(sent.at(-1).data.token,'renewed-token');
 message({type:'salah:owner-preview-book-progress',nonce:backgroundNonce,value:book});
 assert.deepEqual(JSON.parse(localStorage.getItem('salah:muallim-book-progress')),book);
+const native={version:1,bookId:'muallim-sani-2010-3f6c0514',last:'letter-mim',completed:['letter-ra']};
+message({type:'salah:owner-preview-native-progress',nonce:backgroundNonce,value:{...native,completed:['role-owner']}});assert.equal(localStorage.getItem('salah:muallim-native-progress'),null);
+message({type:'salah:owner-preview-native-progress',nonce:backgroundNonce,value:native},{from:'https://attacker.invalid'});assert.equal(localStorage.getItem('salah:muallim-native-progress'),null);
+message({type:'salah:owner-preview-native-progress',nonce:backgroundNonce,value:native});assert.deepEqual(JSON.parse(localStorage.getItem('salah:muallim-native-progress')),native);
+message({type:'salah:owner-preview-ready',nonce:backgroundNonce});await new Promise(r=>setTimeout(r,0));assert.deepEqual(sent.at(-1).data.nativeProgress,native);
 probe.verified=false;probe.authChanged();assert.ok(!backgroundFrame.isConnected&&!busy(),'Explicit revocation closes the preview immediately');
 stop();await w.happyDOM.close();
 console.log('PASS: internal owner frame, strict origin/source/nonce handshake, token privacy, revocation, validated progress and audio/update state.');

@@ -204,3 +204,7 @@ The new course view in the private client checks the teacher session. Broadcast 
 397: verified owner checks open inside SALAH through a restricted frame and existing server-side owner authorization. Public launch buttons remain disabled. New course content and private video transport remain outside the public bundle. Announcement 395, expiry and seen state retained.
 
 398: cross-origin lesson input focus now drives a scoped iPhone visual viewport layout, preserving the same frame and draft, hiding the dock/footer while typing and restoring them afterward. Closed lesson camera decoration uses a separate layout slot. A foreground owner grant is revalidated after suspension instead of treating UI-cache age as revocation. Explicit sign-out still closes the preview. Book cursor bridge is restricted to validated owner messages. Public announcement395/acknowledgement and disabled launches remain unchanged.
+
+
+### 399 · 26 October 2026 · closed course persistence
+The owner-only Muallim course is now adapted into SALAH lessons. Only its bounded progress validator and origin/nonce-protected first-party progress bridge are in the public wrapper; the teaching content and source pages remain private. Existing announcement395, acknowledgement and expiry stay unchanged. Public users continue to see Soon.
