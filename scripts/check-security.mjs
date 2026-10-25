@@ -23,7 +23,7 @@ for(const directive of ['media-src','connect-src'])assert.ok(policy.split(';').f
 assert.doesNotMatch(policy,/script-src[^;]*akamaized/,'Live streams cannot supply application scripts');
 const hls=await readFile(new URL('dist/js/vendor/hls-light.min.js',root));assert.equal(createHash('sha256').update(hls).digest('hex'),'0251332c00a216a35d7d6919044d60da82b78beb3bd50ac6c662ae74a2f5474b');
 const connectSources=policy.split(';').find(x=>x.trim().startsWith('connect-src '));assert.ok(connectSources.trim().split(/\s+/).includes('https://www.mp3quran.net'));
-const frameSources=policy.split(';').find(x=>x.trim().startsWith('frame-src ')).trim().split(/\s+/).slice(1);assert.deepEqual(frameSources.sort(),['https://salah-saadi.goatcounter.com','https://www.youtube-nocookie.com'].sort());
+const frameSources=policy.split(';').find(x=>x.trim().startsWith('frame-src ')).trim().split(/\s+/).slice(1);assert.deepEqual(frameSources.sort(),['https://desktop-jecm5lt.taila4556d.ts.net','https://salah-saadi.goatcounter.com','https://www.youtube-nocookie.com'].sort());
 const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
 assert.equal(createHash('sha256').update(sdk).digest('hex'),'59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd');
 const events={};
