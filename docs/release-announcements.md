@@ -200,3 +200,5 @@ Links contain no secret, token or invitation. The private gateway retains its se
 The new course view in the private client checks the teacher session. Broadcast preview is explicitly a layout/description and does not claim working live-broadcast controls.
 
 2026-10-25 user revision: current news includes only this release’s four changes, without appended older reciter/Qibla/travel cards. Keep announcement 395, expiry and acknowledgement unchanged. Knowledge symbols retain 36px tiles, use 28px thematic masks in the existing gold theme, with no orange filter. Queuing an update hides its banner and preserves audio until safe activation.
+
+397: verified owner checks open inside SALAH through a restricted frame and existing server-side owner authorization. Public launch buttons remain disabled. New course content and private video transport remain outside the public bundle. Announcement 395, expiry and seen state retained.

@@ -136,3 +136,10 @@ export async function ownerUserAvatar(id){
 }
 
 export async function ownerReleases(){const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');return callOwner(data.session,'?mode=releases');}
+
+export async function ownerPreviewAccessToken(){
+ if(!ownerVerified())throw Error('Подтвердите вход владельца.');
+ const {data,error}=await authClient().auth.getSession(),session=data?.session;
+ if(error||!session?.access_token||session.user?.id!==verifiedOwnerId())throw Error('Подтвердите вход владельца.');
+ return session.access_token;
+}

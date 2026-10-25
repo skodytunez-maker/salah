@@ -179,3 +179,5 @@
 .knowledge-symbol-knowledge-live { --knowledge-symbol: url("./assets/knowledge-live.svg"); }
 
 .knowledge-page .knowledge-owner-preview{margin-top:18px;min-height:44px;font-size:13px}
+
+.owner-learning-shell{max-width:900px;margin:18px auto 0}.owner-learning-shell>.knowledge-eyebrow{display:block;margin:10px 0;color:var(--gold);font-size:10px;letter-spacing:1.2px}.owner-learning-shell>h1{font-size:26px;margin:8px 0 16px}.owner-learning-status{font-size:12px;line-height:1.6;color:var(--muted)}.owner-learning-frame{display:block;width:100%;height:max(560px,calc(100dvh - 220px));border:1px solid #ffffff20;border-radius:18px;background:#0d1326}.owner-learning-shell [hidden]{display:none!important}
