@@ -1,4 +1,4 @@
-import{mountOwnerLearningPreview,stopOwnerLearningPreview}from './owner-learning-frame.js';
+import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview}from './owner-learning-frame.js';
 import{ownerVerified}from './owner-auth.js';
 import{ownerLearningPreview}from './owner-learning-links.js';
 import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
@@ -39,7 +39,7 @@ const entries = [
 
 export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified() } = {}) {
   const preview=new URLSearchParams(hash.split('?')[1]||'').get('preview');
-  if(preview&&ownerAccess&&mountOwnerLearningPreview(container,preview))return;
+  if(preview&&(ownerAccess||canContinueOwnerPreview())&&mountOwnerLearningPreview(container,preview))return;
   stopOwnerLearningPreview();
   const view=new URLSearchParams(hash.split('?')[1]||'').get('view');
   if(view!=='names')delete container.dataset.namesHash;

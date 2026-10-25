@@ -208,3 +208,7 @@ The new course view in the private client checks the teacher session. Broadcast 
 
 ### 399 · 26 October 2026 · closed course persistence
 The owner-only Muallim course is now adapted into SALAH lessons. Only its bounded progress validator and origin/nonce-protected first-party progress bridge are in the public wrapper; the teaching content and source pages remain private. Existing announcement395, acknowledgement and expiry stay unchanged. Public users continue to see Soon.
+
+
+###400 ·26October · closed inline learning navigation
+Muallim and live preparation render in the app like alphabet and Umrah. Only public rendering code is bundled; owner-only teaching data use a narrow authenticated GET API with exact-origin CORS and in-memory reuse. Original pages remain an explicit reference. Other users retain disabled Soon controls; announcement395 is unchanged. The local preview missing-import defect and legacy lesson routes are corrected.

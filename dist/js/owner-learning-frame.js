@@ -1,3 +1,4 @@
+import{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive}from './owner-learning-native.js';
 import{validNativeProgress}from './owner-native-progress.js';
 import{createOwnerFrameViewport}from './owner-frame-viewport.js';
 import{ownerVerified,ownerPreviewAccessToken,verifyOwner,onOwnerChange}from './owner-auth.js';
@@ -19,13 +20,19 @@ const nativeProgressKey='salah:muallim-native-progress';
 const readNativeProgress=()=>{try{const v=JSON.parse(localStorage.getItem(nativeProgressKey));return validNativeProgress(v)?v:null;}catch{return null;}};
 let active=null;
 export const ownerLearningBusy=()=>Boolean(active?.busy&&active.frame.isConnected);
-export function stopOwnerLearningPreview(){
+export const canContinueOwnerPreview=()=>ownerNativeActive()||Boolean(active?.frame.isConnected);
+export function stopOwnerLearningPreview(){stopOwnerNativePreview();stopOwnerFramePreview();}
+function stopOwnerFramePreview(){
  if(!active)return;
  const previous=active;active=null;clearInterval(previous.timer);clearTimeout(previous.timeout);previous.stopAuth?.();previous.viewport?.dispose();window.removeEventListener('message',previous.listen);
  try{previous.frame.contentWindow?.postMessage({type:'salah:owner-preview-leave',nonce:previous.nonce},origin);}catch{}
  previous.frame.remove();
 }
 export function mountOwnerLearningPreview(host,feature){
+ const params=new URLSearchParams(location.hash.split('?')[1]||'');
+ const sourceMode=feature==='muallim'&&(params.has('bookPage')||params.get('source')==='1'||params.get('practice')==='1');
+ if(['muallim','live-stream'].includes(feature)&&!sourceMode){stopOwnerFramePreview();return mountOwnerNativePreview(host,feature);}
+ stopOwnerNativePreview();
  const entry=Object.hasOwn(entries,feature)?entries[feature]:null;
  if(!entry||!ownerVerified()){stopOwnerLearningPreview();return false;}
  if(active?.feature===feature&&active.frame.isConnected)return true;
@@ -39,7 +46,8 @@ export function mountOwnerLearningPreview(host,feature){
  frame.setAttribute('allow','camera; microphone; display-capture; fullscreen; clipboard-write; autoplay');
  frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-presentation allow-popups allow-popups-to-escape-sandbox');
  frame.referrerPolicy='no-referrer';
- frame.src=origin+'/embed#nonce='+nonce+'&view='+entry.view;
+ const sourceParams=new URLSearchParams();if(sourceMode){for(const key of ['bookPage','source','practice'])if(params.has(key))sourceParams.set(key,params.get(key));}
+ frame.src=origin+'/embed#nonce='+nonce+'&view='+entry.view+(sourceParams.size?'&'+sourceParams:'');
  const retry=document.createElement('button');retry.type='button';retry.className='button secondary';retry.textContent='Повторить подключение';retry.hidden=true;retry.onclick=()=>{stopOwnerLearningPreview();mountOwnerLearningPreview(host,feature);};
  const context={frame,nonce,feature,busy:false,ready:false,tokenSending:false,timer:null,listen:null};active=context;
  context.stopAuth=onOwnerChange(()=>{if(active===context&&!ownerVerified())stopOwnerLearningPreview();});
@@ -78,7 +86,7 @@ export function mountOwnerLearningPreview(host,feature){
    try{localStorage.setItem(nativeProgressKey,JSON.stringify(value.value));}catch{frame.contentWindow.postMessage({type:'salah:owner-preview-storage-error',nonce},origin);}
   }
   else if(value.type==='salah:owner-preview-error'){status.hidden=false;status.textContent='Не удалось открыть закрытый раздел. Проверьте вход владельца и подключение.';}
-  else if(value.type==='salah:owner-preview-navigate'&&['#knowledge','#knowledge?view=alphabet'].includes(value.hash)){location.hash=value.hash;}
+  else if(value.type==='salah:owner-preview-navigate'&&['#knowledge','#knowledge?view=alphabet','#knowledge?preview=muallim'].includes(value.hash)){location.hash=value.hash;}
  };
  window.addEventListener('message',context.listen);
  context.timer=setInterval(()=>{if(!document.hidden&&context.ready)void token();},20000);
