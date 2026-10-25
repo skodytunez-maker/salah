@@ -189,3 +189,14 @@ The public availability is «Скоро», not a claim that lessons, broadcasts 
 The user also requested pictures of the existing names of Allah, Arabic letters, and downloadable alphabet options. The roundup starts with names and the new alphabet PDF composition. The alphabet now offers a one-page letters/names PDF and the two-page contextual-forms PDF. Both omit the technical footer, as requested. Audio remains outside this public release.
 
 At the user’s request, each Knowledge section has a distinct thematic icon rather than repeated books: names, letters, Kaaba, prayer, washing, steps, classroom, vowel study and broadcast. These are original vectors, with actual Amiri outlines for Arabic glyphs.
+
+
+## Version 396 — closed owner previews (25 October 2026)
+Keep announcement 395, all public copy, its expiry and acknowledgement.
+The verified owner sees private test links for online classes and Muallim Sani, and a clearly labelled layout preview for the not-yet-launched broadcast mode.
+Ordinary users retain disabled gray Soon buttons. The owner status comes from the existing server-verified owner-access check, not a query parameter or storage flag.
+Knowledge refreshes after owner verification/revocation. Alphabet and names readers do not add owner polling.
+Links contain no secret, token or invitation. The private gateway retains its separate authenticated classroom session; full course and chat remain outside the public bundle.
+The new course view in the private client checks the teacher session. Broadcast preview is explicitly a layout/description and does not claim working live-broadcast controls.
+
+2026-10-25 user revision: current news includes only this release’s four changes, without appended older reciter/Qibla/travel cards. Keep announcement 395, expiry and acknowledgement unchanged. Knowledge symbols retain 36px tiles, use 28px thematic masks in the existing gold theme, with no orange filter. Queuing an update hides its banner and preserves audio until safe activation.

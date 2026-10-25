@@ -1,3 +1,5 @@
+import{ownerVerified}from './owner-auth.js';
+import{ownerLearningPreview}from './owner-learning-links.js';
 import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{showArabicAlphabet}from './arabic-alphabet.js';
 import{showAllahNames}from './allah-names.js';
@@ -34,7 +36,7 @@ const entries = [
   }
 ];
 
-export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'' } = {}) {
+export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified() } = {}) {
   const view=new URLSearchParams(hash.split('?')[1]||'').get('view');
   if(view!=='names')delete container.dataset.namesHash;
   if(view==='names'){delete container.dataset.alphabetHash;if(container.dataset.namesHash!==hash||!container.querySelector('.names-page')){showAllahNames(container,{hash});container.dataset.namesHash=hash;}return;}
@@ -53,7 +55,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
     <div class="knowledge-cards">
       ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'}>
         <div class="knowledge-card-top">
-          <span class="knowledge-icon" aria-hidden="true"><img src="./assets/${entry.icon}.svg" alt="" width="24" height="24"></span>
+          <span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span>
           <span class="knowledge-detail">${entry.detail}</span>
         </div>
         <h2>${entry.title}</h2>
@@ -62,9 +64,9 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
       </a>`).join('')}
       <h2 class="knowledge-coming-title">Скоро в SALAH</h2>
       ${UPCOMING_KNOWLEDGE.map(entry => `<article class="knowledge-card knowledge-card-coming" data-upcoming="${entry.id}" aria-labelledby="upcoming-${entry.id}">
-        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><img src="./assets/${entry.icon}.svg" alt="" width="24" height="24"></span><span class="knowledge-detail">Готовим для вас</span></div>
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">${ownerAccess?'Закрытая проверка':'Готовим для вас'}</span></div>
         <h2 id="upcoming-${entry.id}">${entry.title}</h2><p id="upcoming-${entry.id}-description">${entry.description}</p>
-        <button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>
+        ${ownerLearningPreview(entry.id,ownerAccess)?`<a class="button secondary knowledge-owner-preview" href="${ownerLearningPreview(entry.id,ownerAccess).href}" target="_blank" rel="noopener noreferrer">${ownerLearningPreview(entry.id,ownerAccess).label}</a>`:`<button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>`}
       </article>`).join('')}
 
 

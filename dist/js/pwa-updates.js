@@ -76,12 +76,12 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    const detail=document.createElement('button');detail.type='button';detail.className='app-update-details';detail.textContent=releaseDate(release.date)?releaseDate(release.date)+' · Что нового':'Посмотреть изменения';
    detail.onclick=()=>{showAppRelease(release,{available});if(!available)clearBanner();};copy.append(title,detail);
    const actions=document.createElement('div');actions.className='app-update-actions';
-   if(available){const button=document.createElement('button');button.type='button';button.textContent='Обновить';button.onclick=()=>{button.disabled=true;if(!requestApply()){button.textContent='После прослушивания';toast('Обновление установится после остановки аудио. Чтение продолжается.');}};actions.append(button);}
+   if(available){const button=document.createElement('button');button.type='button';button.textContent=blocked()?'После прослушивания':'Обновить';button.onclick=()=>{if(button.disabled)return;button.disabled=true;const applied=requestApply();if(!applied)dismissedWorker=registration.waiting;clearBanner();if(!applied)toast('Обновление установится после остановки аудио. Чтение продолжается.');};actions.append(button);}
    const close=document.createElement('button');close.type='button';close.className='app-update-dismiss';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление об обновлении');close.onclick=()=>{if(available)dismissedWorker=registration.waiting;acknowledge(release.announcement||release);clearBanner();};actions.append(close);banner.append(copy,actions);document.body.append(banner);
   }
   async function offer(force=false){
    const worker=registration.waiting;
-   if(requested||!worker||!navigator.serviceWorker.controller||(!force&&dismissedWorker===worker)||offerWorker===worker&&banner)return;
+   if(requested||applyQueued&&!force||!worker||!navigator.serviceWorker.controller||(!force&&dismissedWorker===worker)||offerWorker===worker&&banner)return;
    offerWorker=worker;
    // Ask the waiting worker: an older offline shell must not label a new release with its own date.
    const release=await new Promise(resolve=>{
@@ -90,7 +90,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
     const timer=setTimeout(()=>done(null),1500);
     try{channel=new MessageChannel();channel.port1.onmessage=event=>done(event.data);worker.postMessage({type:'SALAH_RELEASE_INFO'},[channel.port2]);}catch{done(null);}
    });
-   if(registration.waiting!==worker||requested||dismissedWorker===worker&&!force||offerWorker===worker&&banner)return;
+   if(registration.waiting!==worker||requested||applyQueued&&!force||dismissedWorker===worker&&!force||offerWorker===worker&&banner)return;
    if(!force&&(!release?.announcement||hasSeenAnnouncement(release.announcement)))return;
    makeBanner({release:(!force?release.announcement:release)||{version:APP_VERSION+1,date:'',changes:['Улучшения SALAH. Подробности появятся после обновления.']},available:true});
   }

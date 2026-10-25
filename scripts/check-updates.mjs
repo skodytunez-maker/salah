@@ -90,7 +90,16 @@ console.log('PASS: automatic late updates respect foreground, idle input, safe s
 registration.waiting=waiting;serviceWorker.register=async()=>{docEvents.pointerdown();return registration;};
 let playbackBusy=true;const manualStart=automaticMessages,manualReloads=reloads;
 await registerAppWorker({canApplyUpdate:()=>!playbackBusy});await checkAppUpdate();await new Promise(r=>setTimeout(r,20));
-const queuedButton=elements.at(-1).children[1].children[0];queuedButton.onclick();
+const queuedBanner=elements.at(-1),queuedButton=queuedBanner.children[1].children[0];
+assert.equal(queuedButton.textContent,'После прослушивания');
+assert.ok(!queuedButton.disabled,'The action remains available while audio plays');
+const seenBeforeQueue=JSON.stringify([...values]);
+queuedButton.onclick();assert.equal(JSON.stringify([...values]),seenBeforeQueue,'Queueing cannot acknowledge news or change personal data');assert.equal(queuedBanner.removed,true,'Queue action hides the banner immediately');
+const queuedElementCount=elements.length;
+winEvents.online();docEvents.visibilitychange();await new Promise(r=>setTimeout(r,20));
+assert.equal(elements.length,queuedElementCount,'Background checks cannot resurrect a queued banner');
+assert.equal(hasSeenAnnouncement(APP_ANNOUNCEMENT),true);
+queuedButton.onclick();assert.equal(elements.length,queuedElementCount,'Repeated taps do not add another banner');
 assert.equal(automaticMessages,manualStart);assert.equal(reloads,manualReloads);assert.equal(queuedButton.textContent,'После прослушивания');
 intervals.at(-1).fn();assert.equal(automaticMessages,manualStart,'Playback keeps the queued update inactive');
 playbackBusy=false;intervals.at(-1).fn();assert.equal(automaticMessages,manualStart+1);

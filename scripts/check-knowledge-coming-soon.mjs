@@ -23,7 +23,7 @@ for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=onlin
  const links=host.querySelectorAll('[data-learning-entry]');assert.equal(links.length,3);links[0].click();assert.equal(started,1);started=0;
 }
 host.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(host.querySelectorAll('.release-feature').length,19,'Keep the previous fifteen feature cards and add the alphabet PDF and three announcements');
+assert.equal(host.querySelectorAll('.release-feature').length,4,'Current edition contains only the PDF and three upcoming features');
 assert.equal(host.querySelectorAll('.release-coming-button:disabled').length,3,'News also clearly disables future features');
 for(const feature of UPCOMING_KNOWLEDGE){
  const card=[...host.querySelectorAll('.release-feature')].find(c=>c.querySelector('h3').textContent===feature.title+' · скоро');
@@ -31,11 +31,23 @@ for(const feature of UPCOMING_KNOWLEDGE){
  const src=card.querySelector('img').getAttribute('src');await fs.access(new URL('../dist/'+src.replace(/^\.\//,''),import.meta.url));
 }
 for(const change of APP_CHANGES){assert.ok(releaseFeatureForChange(change),'Each change uses its own feature illustration');if(releaseFeatureForChange(change)!=='alphabet-pdf')assert.match(change,/Скоро|готовим/iu);}
-assert.equal(APP_VERSION,395);
+assert.ok(APP_VERSION>=395);
+// Verified owner access reveals only navigation to the private checks.
+showKnowledge(host,{hash:'#knowledge',ownerAccess:true});
+assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,3);
+assert.equal(host.querySelectorAll('.knowledge-coming-button').length,0);
+for(const link of host.querySelectorAll('.knowledge-owner-preview')){
+ assert.equal(new URL(link.href).origin,'https://desktop-jecm5lt.taila4556d.ts.net');
+ assert.equal(link.target,'_blank');assert.ok(link.rel.includes('noopener'));
+}
+assert.equal(host.querySelector('[data-upcoming="live-stream"] a').textContent,'Открыть макет');
+showKnowledge(host,{hash:'#knowledge',ownerAccess:false});
+assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,0);
+assert.equal(host.querySelectorAll('.knowledge-coming-button:disabled').length,3);
 const source=await fs.readFile(new URL('../dist/js/knowledge-upcoming.js',import.meta.url),'utf8');
 assert.doesNotMatch(source,/(?:https?|wss?):\/\/|livekit|ts\.net|\/api\/|import\(/iu,'Public announcements contain no private endpoint or dynamic launcher');
 const sw=await fs.readFile(new URL('../dist/sw.js',import.meta.url),'utf8');
-assert.ok(sw.includes('./js/knowledge-upcoming.js'));assert.match(sw,/salah-shell-v395/);
+assert.ok(sw.includes('./js/knowledge-upcoming.js'));assert.ok(sw.includes('salah-shell-v'+APP_VERSION));
 for(const feature of UPCOMING_KNOWLEDGE)assert.ok(sw.includes('./assets/updates/'+feature.art));
 for(const file of ['js/muallim-sani.js','private/lessons.js','lessons-service.mjs'])await assert.rejects(fs.access(new URL('../dist/'+file,import.meta.url)),'Private launch code is not distributed');
 await w.happyDOM.close();console.log('PASS: three disabled announcements, direct-hash/click/keyboard guards, preserved study links, illustrated news and private-code exclusion.');

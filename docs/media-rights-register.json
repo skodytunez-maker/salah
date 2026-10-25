@@ -2566,8 +2566,8 @@
       "bytes": 1915,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
       "path": "dist/assets/knowledge-alphabet.svg",
@@ -2575,53 +2575,71 @@
       "bytes": 1347,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
       "path": "dist/assets/knowledge-muallim.svg",
-      "gitBlobSha": "39609d9126a71263dab7fadb7f84670e164e9a20",
-      "bytes": 1011,
+      "gitBlobSha": "1fa9ce58598fe1d76b1b092d0d030b571e598bac",
+      "bytes": 1113,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
       "path": "dist/assets/knowledge-umrah.svg",
-      "gitBlobSha": "78d2c81347733bba7014778e811380101868d2a4",
-      "bytes": 233,
+      "gitBlobSha": "86368b68e0f0f9e6433ced8313537b4a674622ac",
+      "bytes": 295,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
       "path": "dist/assets/knowledge-prayer.svg",
-      "gitBlobSha": "88e886e9636009f6933c66ab0a4474ff4568c63c",
-      "bytes": 234,
+      "gitBlobSha": "35092bf8a23ec42759d75833c409da3cd705f0bb",
+      "bytes": 314,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
       "path": "dist/assets/knowledge-wudu.svg",
-      "gitBlobSha": "303bbdcdb66706eebf2d1c95769ee0d1350d383e",
-      "bytes": 361,
+      "gitBlobSha": "4a2b45f2c82f2eeacfa24b9fbe0e84fb285678cb",
+      "bytes": 330,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
       "path": "dist/assets/knowledge-prayer-steps.svg",
-      "gitBlobSha": "7cf8f137dfa1ab1e450bece25b391675fd45c337",
-      "bytes": 259,
+      "gitBlobSha": "43623ccf665e0d61a4b3c1be1ceea28490502a6b",
+      "bytes": 263,
       "kind": "icon",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "Original SALAH thematic vector icons. Arabic outlines use the bundled unmodified Amiri font under SIL OFL; see dist/assets/amiri-regular-OFL.txt.",
-      "note": "Subject-specific Knowledge icon: actual Arabic letters, Kaaba, prayer, washing, steps or classroom. No external photographs."
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
+    },
+    {
+      "path": "dist/assets/knowledge-online.svg",
+      "gitBlobSha": "e84902535512279fe8c29a496de517d5f5189117",
+      "bytes": 348,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
+    },
+    {
+      "path": "dist/assets/knowledge-live.svg",
+      "gitBlobSha": "ce2ec1524f634a33e634ded5c497638763071b2d",
+      "bytes": 311,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
+      "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     }
   ],
   "wallpaperSets": [
