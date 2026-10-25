@@ -1,3 +1,4 @@
+import{validNativeProgress}from './owner-native-progress.js';
 import{createOwnerFrameViewport}from './owner-frame-viewport.js';
 import{ownerVerified,ownerPreviewAccessToken,verifyOwner,onOwnerChange}from './owner-auth.js';
 import{claimPlayback}from './media-playback-focus.js';
@@ -14,6 +15,8 @@ const readProgress=()=>{try{const v=JSON.parse(localStorage.getItem(progressKey)
 const bookProgressKey='salah:muallim-book-progress';
 export function validOwnerBookProgress(v){return Boolean(v&&typeof v==='object'&&!Array.isArray(v)&&v.version===1&&Object.keys(v).length===3&&Object.keys(v).every(k=>['version','bookId','page'].includes(k))&&typeof v.bookId==='string'&&/^[a-z0-9-]{8,64}$/.test(v.bookId)&&Number.isInteger(v.page)&&v.page>=1&&v.page<=88);}
 const readBookProgress=()=>{try{const v=JSON.parse(localStorage.getItem(bookProgressKey));return validOwnerBookProgress(v)?v:null;}catch{return null;}};
+const nativeProgressKey='salah:muallim-native-progress';
+const readNativeProgress=()=>{try{const v=JSON.parse(localStorage.getItem(nativeProgressKey));return validNativeProgress(v)?v:null;}catch{return null;}};
 let active=null;
 export const ownerLearningBusy=()=>Boolean(active?.busy&&active.frame.isConnected);
 export function stopOwnerLearningPreview(){
@@ -53,7 +56,7 @@ export function mountOwnerLearningPreview(host,feature){
    if(active!==context||!ownerVerified())return;
    const access=await ownerPreviewAccessToken();
    if(active!==context||!frame.isConnected||!ownerVerified())return;
-   frame.contentWindow.postMessage({type:'salah:owner-preview-token',nonce,token:access,progress:readProgress(),bookProgress:readBookProgress()},origin);
+   frame.contentWindow.postMessage({type:'salah:owner-preview-token',nonce,token:access,progress:readProgress(),bookProgress:readBookProgress(),nativeProgress:readNativeProgress()},origin);
   }catch{
    if(active===context){status.textContent='Подтвердите вход в аккаунт владельца и откройте раздел ещё раз.';stopOwnerLearningPreview();}
   }finally{context.tokenSending=false;}
@@ -70,6 +73,9 @@ export function mountOwnerLearningPreview(host,feature){
   else if(value.type==='salah:owner-preview-focus'&&typeof value.focused==='boolean'){context.viewport.focus(value.focused);}
   else if(value.type==='salah:owner-preview-book-progress'&&validOwnerBookProgress(value.value)){
    try{localStorage.setItem(bookProgressKey,JSON.stringify(value.value));}catch{frame.contentWindow.postMessage({type:'salah:owner-preview-storage-error',nonce},origin);}
+  }
+  else if(value.type==='salah:owner-preview-native-progress'&&validNativeProgress(value.value)){
+   try{localStorage.setItem(nativeProgressKey,JSON.stringify(value.value));}catch{frame.contentWindow.postMessage({type:'salah:owner-preview-storage-error',nonce},origin);}
   }
   else if(value.type==='salah:owner-preview-error'){status.hidden=false;status.textContent='Не удалось открыть закрытый раздел. Проверьте вход владельца и подключение.';}
   else if(value.type==='salah:owner-preview-navigate'&&['#knowledge','#knowledge?view=alphabet'].includes(value.hash)){location.hash=value.hash;}
