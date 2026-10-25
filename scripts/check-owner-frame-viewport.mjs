@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import{createOwnerFrameViewport}from '../dist/js/owner-frame-viewport.js';
+const classes=new Set(),styles=new Map(),events=new Map(),vvEvents=new Map(),raf=new Map();let sequence=0,notifications=0,scrolls=0;
+const root={classList:{add:k=>classes.add(k),remove:k=>classes.delete(k),contains:k=>classes.has(k)},style:{setProperty:(k,v)=>styles.set(k,v),removeProperty:k=>styles.delete(k)}};
+const viewport={height:844,offsetTop:0,addEventListener:(k,f)=>vvEvents.set(k,f),removeEventListener:k=>vvEvents.delete(k)};
+const win={innerHeight:844,innerWidth:390,scrollY:160,visualViewport:viewport,addEventListener:(k,f)=>events.set(k,f),removeEventListener:k=>events.delete(k),scrollTo:()=>scrolls++,requestAnimationFrame:f=>{raf.set(++sequence,f);return sequence;},cancelAnimationFrame:id=>raf.delete(id)};
+const flush=()=>{const callbacks=[...raf.values()];raf.clear();callbacks.forEach(fn=>fn());};
+const layout=createOwnerFrameViewport({win,root,notify:()=>notifications++});
+assert.ok(classes.has('owner-preview-open'));
+layout.focus(true);assert.ok(!layout.isRaised(),'A desktop/hardware keyboard focus does not hide navigation');
+viewport.height=390;vvEvents.get('resize')();flush();
+assert.ok(layout.isRaised()&&classes.has('owner-preview-editing'));assert.equal(styles.get('--owner-preview-visual-height'),'390px');assert.equal(notifications,1);
+viewport.offsetTop=24;vvEvents.get('scroll')();flush();assert.equal(styles.get('--owner-preview-visual-top'),'24px');
+layout.focus(false);assert.ok(!layout.isRaised());assert.equal(styles.size,0);assert.equal(scrolls,1);
+win.innerHeight=390;viewport.height=390;vvEvents.get('resize')();layout.focus(true);flush();assert.ok(layout.isRaised(),'Late cross-frame focus still detects an already visible iPhone keyboard');
+win.innerWidth=844;win.innerHeight=390;viewport.height=200;events.get('orientationchange')();flush();assert.ok(layout.isRaised());assert.equal(styles.get('--owner-preview-visual-height'),'200px');
+viewport.height=390;vvEvents.get('resize')();assert.ok(!layout.isRaised(),'Keyboard dismissal after rotation restores normal layout');
+layout.dispose();assert.equal(events.size,0);assert.equal(vvEvents.size,0);assert.ok(!classes.has('owner-preview-open'));assert.equal(styles.size,0);
+console.log('PASS: iPhone keyboard resizing, late iframe focus, offsets, rotation, restoration and listener cleanup preserve the embedded form.');
+
