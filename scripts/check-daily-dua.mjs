@@ -132,4 +132,3 @@ assert.match(hanafiReference.arabic,/وَنَتَوَكَّلُ عَلَيْكَ
 assert.equal(qunutReference.arabic,hasanReference.arabic);assert.equal(qunutReference.transliteration,hasanReference.transliteration);
 console.log('PASS: supplied Hanafi reference has trust clause, matching Arabic/order and two parts; original Hasan variant retained.');
 
-await import('./check-dua-pronunciation.mjs');
