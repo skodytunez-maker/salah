@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import{readFile,stat}from 'node:fs/promises';
+import{runInNewContext}from 'node:vm';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{staffIcon}from '../dist/js/staff-markup.js';
+const source=await readFile(new URL('../dist/js/owner-workspace.js',import.meta.url),'utf8');
+assert.doesNotMatch(source,/teacher-admin|owner-classroom/,'This cabinet release cannot call unpublished teacher APIs');
+const w=new Window({url:'https://fixture.invalid/#admin'}),d=w.document,app=d.createElement('main');d.body.append(app);app.innerHTML='<section class="admin-intro"><nav class="owner-sections"><button data-view="overview">Обзор</button><button data-view="users">Пользователи</button><button data-view="activity">Посещения</button></nav><div id="owner-panel-overview"></div><div id="owner-panel-users"></div><div id="owner-panel-activity"></div></section>';let navigations=0;
+const api=runInNewContext(source.replace(/^import.*$/gm,'').replaceAll('export ','')+';({mountOwnerWorkspace});',{window:w,location:w.location,URLSearchParams,Event:w.Event,staffIcon});
+const workspace=api.mountOwnerWorkspace(app,{onSelect:()=>navigations++});const tile=app.querySelector('[data-owner-go="teachers"]');assert.equal(tile.disabled,true);assert.equal(tile.getAttribute('aria-disabled'),'true');assert.ok(tile.textContent.includes('Скоро'));tile.click();assert.equal(navigations,0);assert.equal(workspace.navigate('teachers'),false);assert.equal(navigations,0);assert.equal(app.querySelector('#owner-tab-teachers').disabled,true);workspace.select('teachers');assert.ok(app.querySelector('#owner-panel-teachers').textContent.includes('пока закрыты'));workspace.dispose();
+for(const name of ['dist/js/teacher-admin.js','dist/js/owner-classroom.js','dist/css/learning-cabinets.css'])await assert.rejects(stat(new URL('../'+name,import.meta.url)),e=>e.code==='ENOENT');
+const sw=await readFile(new URL('../dist/sw.js',import.meta.url),'utf8');assert.doesNotMatch(sw,/teacher-admin|owner-classroom|learning-cabinets/);
+await w.happyDOM.close();console.log('PASS: teacher tile and tab disabled, typed navigation cannot launch it, no unpublished role API or learning-cabinet assets in this release.');
