@@ -2,3 +2,32 @@
 @container(min-width:600px){.staff-cabinet .staff-chat.staff-messenger{grid-template-columns:220px minmax(0,1fr)}.staff-cabinet .staff-messenger[data-messenger-view=chat] .staff-chat-side{display:flex}.staff-cabinet .staff-messenger[data-messenger-view=list] .staff-conversation{display:flex}.staff-cabinet .staff-messenger .staff-chat-side{max-height:var(--staff-conversation-height,min(70dvh,680px));overflow:auto;border-right:1px solid #28354a}.staff-messenger [data-messenger-back]{display:none}.staff-cabinet .staff-messenger .staff-room-copy strong{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.staff-messenger *{scroll-behavior:auto!important;transition:none!important}}
 @container(max-width:460px){.staff-cabinet .staff-messenger .staff-composer-row{display:grid;grid-template-columns:36px 36px minmax(0,1fr) 44px;gap:8px;align-items:center}.staff-cabinet .staff-messenger .staff-composer textarea{grid-column:1/-1;grid-row:1;width:100%;height:54px;min-height:54px;resize:none}.staff-cabinet .staff-messenger [data-smile]{grid-column:1;grid-row:2}.staff-cabinet .staff-messenger [data-attach]{grid-column:2;grid-row:2}.staff-cabinet .staff-messenger .staff-send{grid-column:4;grid-row:2}}
+
+/* A conversation owns the mobile viewport; it is never another inset card. */
+.staff-messenger .staff-conversation-window{position:static;inset:auto;width:100%;max-width:none;height:auto;max-height:none;padding:0;margin:0;border:0;color:inherit;background:#0c1625;overflow:hidden;min-width:0;box-shadow:none}
+.staff-messenger .staff-conversation-window:not([open]){display:none}
+.staff-messenger .staff-conversation-window[open]{display:block}
+.staff-messenger[data-messenger-view=list] .staff-conversation-window.is-mobile{display:none}
+.staff-messenger .staff-conversation-window.is-mobile{position:fixed;inset:var(--staff-chat-viewport-top,0px) 0 auto;margin:0;width:100vw;max-width:100vw;height:var(--staff-chat-viewport-height,100dvh);max-height:var(--staff-chat-viewport-height,100dvh);border-radius:0;overflow:hidden;padding:0}
+.staff-messenger .staff-conversation-window::backdrop{background:#080f1b}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-conversation{display:flex;height:100%;min-height:0;padding-top:env(safe-area-inset-top);box-sizing:border-box}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-chat-heading{padding:10px 14px;min-height:64px;box-sizing:border-box}
+.staff-cabinet .staff-messenger .staff-chat-messages{min-height:0}
+.staff-cabinet .staff-messenger .staff-composer-row{display:flex;gap:4px;align-items:flex-end}
+.staff-cabinet .staff-messenger .staff-composer textarea{width:0;flex:1;min-width:0;height:46px;min-height:46px;max-height:124px;font-size:16px;line-height:22px;resize:none;padding:11px 10px}
+.staff-cabinet .staff-messenger .staff-composer .staff-icon-button{width:36px;min-width:36px;min-height:46px;padding:8px}
+.staff-cabinet .staff-messenger .staff-composer .staff-send{width:44px;min-width:44px}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-composer{padding:8px 8px max(8px,env(safe-area-inset-bottom))}
+.staff-cabinet .staff-messenger .staff-inbox-heading{gap:8px;min-height:44px;margin-bottom:12px}
+.staff-inbox-heading h2{flex:1}.staff-inbox-heading [data-new-message]{width:44px;min-width:44px;min-height:44px;padding:10px;border:0;background:transparent;color:#dcc895}
+.staff-cabinet .staff-messenger .staff-chat-side{padding:12px}
+.staff-cabinet .staff-messenger .staff-chat-room{min-height:70px;padding:10px 0}
+.staff-messenger [hidden]{display:none!important}
+.staff-conversation-status{margin:0;padding:8px 14px;color:#e1c58f;font-size:13px;flex:none}
+body.staff-messenger-open{overflow:hidden}
+body.staff-messenger-open #mobile-nav{display:none!important}
+@media(max-width:719px){.staff-content{container-type:normal}.staff-cabinet .staff-chat.staff-messenger{border:0;border-radius:0}.staff-cabinet .staff-messenger .staff-chat-side{padding:0}.staff-messenger [data-messenger-back]{display:flex}}
+
+.staff-cabinet .staff-messenger [hidden]{display:none!important}
+
+.staff-cabinet .staff-messenger .staff-inbox-heading{height:auto;border-bottom:0}.staff-cabinet .staff-messenger .staff-chat-heading{height:auto}

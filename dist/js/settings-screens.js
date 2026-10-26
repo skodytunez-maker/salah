@@ -1,0 +1,10 @@
+// Keep the existing controls, form values and handlers while navigating settings.
+export function mountSettingsScreens(app,{win=window}={}){
+ const doc=app.ownerDocument,form=app.querySelector('#settings-form');if(!form)return()=>{};
+ const groups=[...form.querySelectorAll('.settings-grid>.settings-group')],keys=['city','appearance','reminders','data','application'],heading=app.querySelector('.page-head h1,.page-title,h1'),save=form.querySelector('.settings-save');let disposed=false;
+ const back=doc.createElement('a');back.href='#settings';back.className='settings-screen-back';back.textContent='‹ Настройки';back.hidden=true;form.before(back);
+ const titles=groups.map(group=>group.querySelector('summary').textContent.trim());
+ function paint(){if(disposed)return;const key=new URLSearchParams(win.location.hash.split('?')[1]||'').get('section'),index=keys.indexOf(key);app.classList.toggle('settings-section-open',index>=0);back.hidden=index<0;if(heading)heading.textContent=index>=0?titles[index]:'Настройки';groups.forEach((group,i)=>{group.hidden=index>=0&&i!==index;group.open=index===i;group.classList.toggle('is-settings-screen',index===i);});if(save)save.hidden=index<0;}
+ const clicks=groups.map((group,i)=>{const summary=group.querySelector('summary'),handler=e=>{e.preventDefault();const hash='#settings?section='+keys[i];if(win.location.hash!==hash){win.history.pushState(win.history.state,'',hash);win.dispatchEvent(new win.Event('salah:route-history'));}paint();win.scrollTo?.({top:0,left:0,behavior:'instant'});if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}};summary.addEventListener('click',handler);return[summary,handler];});
+ const handleRoute=hash=>{if(disposed||!form.isConnected||hash.split('?')[0]!=='#settings')return false;paint();return true;};app.settingsHandleRoute=handleRoute;win.addEventListener('popstate',paint);paint();return()=>{if(app.settingsHandleRoute===handleRoute)delete app.settingsHandleRoute;disposed=true;win.removeEventListener('popstate',paint);for(const [summary,handler]of clicks)summary.removeEventListener('click',handler);app.classList.remove('settings-section-open');back.remove();};
+}

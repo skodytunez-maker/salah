@@ -15,38 +15,8 @@ export function createLiveListeningTotal(){
   return Number.isSafeInteger(Math.floor(shown))?Math.floor(shown):server;
  }};
 }
-// Animate only an already confirmed backlog; a clock never creates listening time.
-export function createSharedListeningMotion({now=()=>globalThis.performance?.now?.()??Date.now()}={}){
- let state=null;
- const valid=value=>Number.isSafeInteger(value)&&value>=0;
- const advance=time=>{
-  if(!state)return null;
-  const elapsed=Math.max(0,time-state.at)/1000;
-  const local=Math.min(state.localPending,elapsed),remote=Math.min(state.remotePending,elapsed*state.remoteRate);
-  state.localPending=Math.max(0,state.localPending-local);state.remotePending=Math.max(0,state.remotePending-remote);
-  state.value=Math.min(state.target,state.value+local+remote);state.at=time;
-  return Math.floor(state.value+1e-7);
- };
- return{reset(){state=null;},tick(){return advance(now());},sample(target,{key,server}={}){
-  const time=now();
-  if(!valid(target)||!valid(server)||!key){state=null;return null;}
-  if(!state||state.key!==key||time<state.at||server<state.server||target<state.target){
-   state={key,server,target,value:target,at:time,serverAt:time,localPending:0,remotePending:0,remoteRate:0};return target;
-  }
-  advance(time);const increase=target-state.target;
-  if(server===state.server){
-   // A normal measured second remains immediate. A delayed batch gets one
-   // immediate second and replays the rest at 1x, never as a large jump.
-   const immediate=state.localPending===0?Math.min(1,increase):0;
-   state.value+=immediate;state.localPending+=increase-immediate;
-  }else{
-   if(increase>0){state.remotePending+=increase;state.remoteRate=increase*1000/Math.max(1000,time-state.serverAt);}
-   state.serverAt=time;
-  }
-  state.target=target;state.server=server;
-  return Math.floor(state.value+1e-7);
- }};
-}
+// Only the glyph transition animates. Never replay a backlog of seconds.
+export function createSharedListeningMotion(){let value=null;return{reset(){value=null;},tick(){return value;},sample(target,{key,server}={}){value=Number.isSafeInteger(target)&&target>=0&&Number.isSafeInteger(server)&&server>=0&&key?target:null;return value;}};}
 const validSeconds=seconds=>Number.isSafeInteger(seconds)&&seconds>=0;
 const summaryValue=seconds=>validSeconds(seconds)?formatListeningTime(seconds):'…';
 function sharedTimeMarkup(seconds){
@@ -70,7 +40,7 @@ export function updateListeningSummary(host,seconds){
  if(!animate)visual.innerHTML=next;
  else{
   if(visual.textContent.replace(/\d/g,'#')!==value.replace(/\d/g,'#'))visual.innerHTML=next;
-  element.style.setProperty('--listening-step',seconds-Number(previous)>1?'180ms':'280ms');
+  element.style.setProperty('--listening-step','280ms');
   const nextValues=new Map([...template.querySelectorAll('[data-listening-place]')].map(digit=>[digit.dataset.listeningPlace,digit.textContent]));
   for(const digit of visual.querySelectorAll('[data-listening-place]')){const glyph=digit.firstElementChild,old=oldValues.get(digit.dataset.listeningPlace),nextDigit=nextValues.get(digit.dataset.listeningPlace);
    if(old===nextDigit)continue;

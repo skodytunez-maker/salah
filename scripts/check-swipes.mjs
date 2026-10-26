@@ -57,5 +57,5 @@ selection='Текст';swipe([180,150]);selection='';assert.equal(opened,1);
 listeners.get('pointerdown')(pointer(180,250));listeners.get('pointercancel')();listeners.get('pointerup')(pointer(180,150,{timeStamp:400}));assert.equal(opened,1);
 let clickBlocked=false;listeners.get('click')({preventDefault(){clickBlocked=true},stopImmediatePropagation(){}});assert.equal(clickBlocked,true,'Qibla gesture must not also open the clock');
 let closed=0;const detail={};bindOwnerCardNavigation(detail,{dismiss:()=>closed++,isOpen:()=>true,win:{getSelection:()=>({toString:()=>''})}});
-detail.onpointerdown(pointer(200,100,{button:2}));detail.onpointerup(pointer(80,100));assert.equal(closed,0);
+assert.equal(detail.onpointerdown,null);assert.equal(detail.onpointerup,null);assert.equal(detail.onclick,null);assert.equal(closed,0,'Profile content no longer dismisses by tap or swipe');detail.onkeydown({key:'Escape',preventDefault(){}});assert.equal(closed,1);
 console.log('PASS: all four swipe surfaces keep intended directions and reject scrolling, cancelled/mismatched pointers, selection, controls and duplicate clicks.');
