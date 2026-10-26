@@ -11,7 +11,7 @@ export const reminderDefaults = {
   enabled:false, voice:'mansour', browserNotifications:false,
   prayers:Object.fromEntries(PRAYER_KEYS.map(key=>[key,{atTime:true,beforeMinutes:0,adhan:false}])),
   adhkar:{morning:{enabled:false,mode:'prayer',time:'07:00'},evening:{enabled:false,mode:'prayer',time:'18:00'}},
-  jumuah:{enabled:false,time:'09:00'},
+  jumuah:{enabled:false,time:'10:00'},
   tahajjud:{enabled:false},dhikr:normalizeDhikrReminder(null)
 };
 
@@ -30,7 +30,7 @@ export function normalizeReminders(value){
     const mode=row.mode==='prayer'?'prayer':row.mode==='time'||validLocalTime(row.time)?'time':'prayer';
     return [key,{enabled:row.enabled===true,mode,time:validLocalTime(row.time)?row.time:reminderDefaults.adhkar[key].time}];
   }));
-  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'09:00'},tahajjud:{enabled:saved.tahajjud?.enabled===true},dhikr:normalizeDhikrReminder(saved.dhikr)};
+  return {enabled:saved.enabled===true,voice:saved.voice==='mishary'?'mishary':'mansour',browserNotifications:saved.browserNotifications===true,prayers,adhkar,jumuah:{enabled:saved.jumuah?.enabled===true,time:'10:00'},tahajjud:{enabled:saved.tahajjud?.enabled===true},dhikr:normalizeDhikrReminder(saved.dhikr)};
 }
 
 export function shiftDay(day,amount){

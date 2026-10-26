@@ -198,7 +198,7 @@ export function createReminders({getSettings,updateSettings,getContext,toast=()=
   function drawJumuah(){
     if(!jumuahMounted?.isConnected||destroyed)return;
     const p=preferences(),focused=jumuahMounted.contains(document.activeElement);
-    jumuahMounted.innerHTML='<label class="switch-row" for="jumuah-enabled"><span>Каждую пятницу, 09:00</span><input id="jumuah-enabled" type="checkbox" aria-label="Напоминать о Джума"'+checked(p.jumuah.enabled)+disabled(!p.enabled)+'></label><p class="reminder-voice-note">По времени выбранного города.</p>'+(!p.enabled?'<p class="reminder-notice">Включите напоминания в разделе «Азан и напоминания».</p>':'');
+    jumuahMounted.innerHTML='<label class="switch-row" for="jumuah-enabled"><span>Каждую пятницу, 10:00</span><input id="jumuah-enabled" type="checkbox" aria-label="Напоминать о Джума"'+checked(p.jumuah.enabled)+disabled(!p.enabled)+'></label><p class="reminder-voice-note">По времени выбранного города.</p>'+(!p.enabled?'<p class="reminder-notice">Включите напоминания в разделе «Азан и напоминания».</p>':'');
     const control=jumuahMounted.querySelector('input');
     control.onchange=()=>{const next=preferences();next.jumuah.enabled=control.checked;save(next);};
     if(focused)control.focus({preventScroll:true});

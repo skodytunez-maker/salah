@@ -8,7 +8,7 @@ const plan=buildNativeReminderPlan(prefs,context,{now});
 assert.ok(plan.events.length>35);assert.equal(new Set(plan.events.map(e=>e.id)).size,plan.events.length);
 assert.ok(plan.events.every(e=>e.at>now&&e.at<localTimestamp(shiftDay(today,7),'00:00',zone)));
 assert.equal(plan.events.filter(e=>e.kind==='jumuah').length,1);
-assert.equal(plan.events.find(e=>e.kind==='jumuah').at,localTimestamp('2026-10-09','09:00',zone));
+assert.equal(plan.events.find(e=>e.kind==='jumuah').at,localTimestamp('2026-10-09','10:00',zone));
 assert.ok(plan.events.filter(e=>e.adhan).every(e=>e.key==='Fajr'&&e.voice==='mishary'));
 assert.equal(plan.events.find(e=>e.key==='Fajr'&&e.at===localTimestamp(today,'04:50',zone)).adhan,false);
 const limited=buildNativeReminderPlan(prefs,context,{now,limit:2});assert.equal(limited.events.length,2);assert.equal(limited.nextUnscheduledAt,plan.events[2].at);

@@ -79,19 +79,21 @@ console.log('PASS: Asr variants, city timezone, personal offsets, freshness, no 
 
 // Friday is determined in the selected city's timezone, independently of prayer data.
 const jumPrefs=preferences({...settings,reminders:{enabled:true,jumuah:{enabled:true,time:'02:00'}}});
-assert.equal(jumPrefs.reminders.jumuah.time,'09:00','Friday notice has the requested fixed local time');
+assert.equal(jumPrefs.reminders.jumuah.time,'10:00','Friday notice has the requested fixed local time');
+assert.equal(preferences({...settings,reminders:{enabled:true,jumuah:{enabled:true,time:'09:00'}}}).reminders.jumuah.time,'10:00','Previously saved Friday settings migrate to the new time');
 assert.equal(preferences(settings).reminders.jumuah.enabled,false,'Existing users are not subscribed without choosing it');
-const fridayAt=Date.parse('2026-10-02T09:00:00+05:00');
+const fridayAt=Date.parse('2026-10-02T10:00:00+05:00');
 const friday=eventsFor(jumPrefs,{},fridayAt).filter(e=>e.kind==='jumuah');
 assert.equal(friday.length,1);assert.equal(friday[0].at,fridayAt);assert.equal(friday[0].message,'Сегодня Джума');assert.equal(friday[0].adhan,false);
+assert.equal(dueEvents(friday,fridayAt-3600000).length,0,'No delivery at the former 09:00 time');
 assert.equal(dueEvents(friday,fridayAt-1).length,0);assert.equal(dueEvents(friday,fridayAt+90000).length,0);
-assert.equal(eventsFor(jumPrefs,{},Date.parse('2026-10-06T09:00:00+05:00')).filter(e=>e.kind==='jumuah').length,0,'No weekday notice');
-const utcThursday=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'Pacific/Auckland'}},{},Date.parse('2026-10-01T20:00:20Z')).filter(e=>e.kind==='jumuah');
-assert.equal(utcThursday[0].day,'2026-10-02');assert.equal(utcThursday[0].at,Date.parse('2026-10-01T20:00:00Z'));
-const nyFriday=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'America/New_York'}},{},Date.parse('2026-10-02T13:00:20Z')).filter(e=>e.kind==='jumuah');
-assert.equal(nyFriday[0].at,Date.parse('2026-10-02T13:00:00Z'));
-const nyWinter=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'America/New_York'}},{},Date.parse('2026-12-04T14:00:20Z')).filter(e=>e.kind==='jumuah');
-assert.equal(nyWinter[0].at,Date.parse('2026-12-04T14:00:00Z'),'Seasonal timezone offsets are respected');
+assert.equal(eventsFor(jumPrefs,{},Date.parse('2026-10-06T10:00:00+05:00')).filter(e=>e.kind==='jumuah').length,0,'No weekday notice');
+const utcThursday=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'Pacific/Auckland'}},{},Date.parse('2026-10-01T21:00:20Z')).filter(e=>e.kind==='jumuah');
+assert.equal(utcThursday[0].day,'2026-10-02');assert.equal(utcThursday[0].at,Date.parse('2026-10-01T21:00:00Z'));
+const nyFriday=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'America/New_York'}},{},Date.parse('2026-10-02T14:00:20Z')).filter(e=>e.kind==='jumuah');
+assert.equal(nyFriday[0].at,Date.parse('2026-10-02T14:00:00Z'));
+const nyWinter=eventsFor({...jumPrefs,city:{...jumPrefs.city,timezone:'America/New_York'}},{},Date.parse('2026-12-04T15:00:20Z')).filter(e=>e.kind==='jumuah');
+assert.equal(nyWinter[0].at,Date.parse('2026-12-04T15:00:00Z'),'Seasonal timezone offsets are respected');
 assert.equal(eventsFor({...jumPrefs,reminders:{...jumPrefs.reminders,enabled:false}},{},fridayAt).length,0);
 assert.equal(eventsFor({...jumPrefs,reminders:{...jumPrefs.reminders,jumuah:{enabled:false}}},{},fridayAt).filter(e=>e.kind==='jumuah').length,0);
 now=fridayAt+20000;f=fixture({scheduleUnavailable:true});
@@ -100,4 +102,4 @@ result=await f.call('dispatch',{}, {'X-Salah-Cron':'test-cron-secret'});
 assert.equal(result.status,200);assert.equal((await result.json()).delivered,1,'Jumuah works even when a prayer provider is unavailable');
 assert.equal(f.sent[0].body.body,'Сегодня Джума');assert.equal(f.sent[0].body.url,'#home');
 result=await f.call('dispatch',{}, {'X-Salah-Cron':'test-cron-secret'});assert.equal((await result.json()).delivered,0,'Minute retries do not repeat Friday notice');
-console.log('PASS: opt-in Friday 09:00 city-local delivery, timezones and DST, no stale/repeated notice, master-off, and unavailable prayer provider.');
+console.log('PASS: opt-in Friday 10:00 city-local delivery, timezones and DST, no stale/repeated notice, master-off, and unavailable prayer provider.');
