@@ -1,17 +1,19 @@
+import{duaRecording}from '../dist/js/daily-dua-recordings.js';
+import{duaAudioMarkup,mountDuaPronunciation}from '../dist/js/dua-pronunciation.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
 import {validateDuaCatalogue,safeDuaSource,cleanDuaFavorites,filterDuas,duaRoute,duaPassage} from '../dist/js/daily-dua-core.js';
 
 const catalogue=validateDuaCatalogue(JSON.parse(await readFile(new URL('../dist/data/daily-dua.json',import.meta.url),'utf8')));
-assert.equal(catalogue.items.length,32);
+assert.equal(catalogue.items.length,61);
 assert.equal(catalogue.categories.length,11);
 assert.deepEqual(filterDuas(catalogue,{query:'перед близостью'}).map(i=>i.id),['before-intimacy']);
 assert.deepEqual(filterDuas(catalogue,{query:'перед едой'}).map(i=>i.id),['before-meal','forgot-before-meal']);
-assert.equal(filterDuas(catalogue,{category:'food'}).length,3);
+assert.equal(filterDuas(catalogue,{category:'food'}).length,8);
 assert.deepEqual(filterDuas(catalogue,{query:'кунут'}).map(i=>i.id),['dua-qunut']);
 assert.deepEqual(filterDuas(catalogue,{query:'истихара'}).map(i=>i.id),['dua-istikhara']);
-assert.equal(filterDuas(catalogue,{category:'prayer'}).length,4);
+assert.equal(filterDuas(catalogue,{category:'prayer'}).length,5);
 const qunut=catalogue.items.find(item=>item.id==='dua-qunut');
 assert.deepEqual(qunut.variants.map(value=>value.id),['hasan','hanafi']);
 assert.equal(duaPassage(qunut).transliteration,qunut.transliteration,'The existing wording remains the default');
@@ -36,6 +38,7 @@ const fixture=await readFile(new URL('./check-adhkar-resume.mjs',import.meta.url
 const helpers=fixture.slice(fixture.indexOf('const decode='),fixture.indexOf('function browser('));
 const {Storage,Element}=new Script(helpers+'\n;({Storage,Element});').runInNewContext();
 const source=await readFile(new URL('../dist/js/daily-dua.js',import.meta.url),'utf8');
+assert.doesNotMatch(source,/class="dua-source"|summary>Источник/,'source links stay internal');
 const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showDailyDuas,stopDailyDuas});';
 const adhkarSource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 const adhkarHistorySource=adhkarSource.slice(adhkarSource.indexOf("const adhkarParentKey="),adhkarSource.indexOf('function rememberView('));
@@ -44,7 +47,7 @@ function browser(hash='#adhkar?view=duas',storage=new Storage(),fetchImpl=async(
  const location={get hash(){return entries[at].hash},set hash(hash){entries[at].hash=hash}};
  const win={addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},scrollTo(){}};
  win.history={get state(){return entries[at].state},replaceState(state,_title,url){entries[at]={hash:url??location.hash,state}},pushState(state,_title,url){entries.splice(at+1);entries.push({hash:url,state});at++},back(){if(at){at--;win.dispatchEvent(new Event('popstate'));win.dispatchEvent(new Event('hashchange'))}},forward(){if(at<entries.length-1){at++;win.dispatchEvent(new Event('popstate'));win.dispatchEvent(new Event('hashchange'))}}};
- const context=createContext({document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Event,window:win,
+ const context=createContext({duaRecording,duaAudioMarkup,mountDuaPronunciation,document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Event,window:win,
   read:(key,fallback)=>{try{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)}catch{return fallback}},
   write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},
   esc:value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),toast:value=>notices.push(value),
@@ -73,7 +76,7 @@ let release;const gate=new Promise(resolve=>release=resolve);
 page=browser('#adhkar?view=duas',new Storage(),async()=>{await gate;return {ok:true,json:async()=>structuredClone(catalogue)}});
 const pending=page.open();page.module.stopDailyDuas();page.host.innerHTML='<p>Другой раздел</p>';release();await pending;assert.equal(page.host.textContent,'Другой раздел','A late load cannot overwrite a newer screen');
 page=browser('#adhkar?view=duas',new Storage(),async()=>{throw Error('offline')});await page.open();assert.ok(page.host.querySelector('#dua-retry'));assert.ok(page.host.querySelector('#dua-back'));
-console.log('PASS: 32 sourced duas, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
+console.log('PASS: 61 duas with internally checked references, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
 
 const savedProgress=JSON.stringify({version:2,totals:{tasbih:300},days:{'2026-10-06':{evening:{tasbih:50}}}});
 const qunutStorage=new Storage();qunutStorage.setItem('salah:adhkar-progress-v2',savedProgress);
@@ -85,7 +88,7 @@ assert.equal(page.host.writes,writes,'Changing wording does not rebuild the read
 assert.equal(page.select('[data-dua-passage="arabic"]').textContent,qunut.variants[1].arabic);
 assert.equal(page.select('[data-dua-passage="transliteration"]').textContent,qunut.variants[1].transliteration);
 assert.equal(page.select('.dua-meaning p').textContent,qunut.variants[1].translation);
-assert.equal(page.select('.dua-source a').href,qunut.variants[1].source.url);
+assert.equal(page.host?.querySelector?.('.dua-source a')??null,null);
 assert.equal(page.select('[data-dua-variant="hanafi"]').attributes['aria-pressed'],'true');
 assert.equal(page.select('[data-dua-variant="hasan"]').attributes['aria-pressed'],'false');
 assert.match(page.location.hash,/variant=hanafi/);
@@ -128,3 +131,5 @@ assert.match(hanafiReference.transliteration,/натаваккалю ‘аляй
 assert.match(hanafiReference.arabic,/وَنَتَوَكَّلُ عَلَيْكَ/);assert.ok(!hanafiReference.arabic.includes('الْجِدَّ'));assert.equal(hanafiReference.transliteration.split('\n\n').length,2);
 assert.equal(qunutReference.arabic,hasanReference.arabic);assert.equal(qunutReference.transliteration,hasanReference.transliteration);
 console.log('PASS: supplied Hanafi reference has trust clause, matching Arabic/order and two parts; original Hasan variant retained.');
+
+await import('./check-dua-pronunciation.mjs');

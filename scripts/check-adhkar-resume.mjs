@@ -1,4 +1,5 @@
 
+import {createDhikrCompletionGate} from '../dist/js/adhkar-completion.js';
 import {markDhikrActivity} from '../dist/js/dhikr-reminder.js';
 import assert from 'node:assert/strict';
 import {resolveBackAction} from '../dist/js/edge-back.js';
@@ -55,9 +56,10 @@ class Element {
   querySelector(selector){return this.querySelectorAll(selector)[0]??null}
   checkValidity(){return true}reportValidity(){}
 }
-function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026-10-02',resumeEvening=null}={}){
+function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026-10-02',resumeEvening=null,clock=Date.now}={}){
   const entries=[{hash,state:null}];let historyIndex=0;
   const location={get hash(){return entries[historyIndex].hash},set hash(value){const next=value.startsWith('#')?value:'#'+value;if(next===this.hash)return;entries.splice(historyIndex+1);entries.push({hash:next,state:null});historyIndex++}};
+  const counterTimers=new Map();let timerSequence=0;
   const body=new Element('body'),container=new Element(),events=new Map(),audio=[],notices=[];let scroll=0,fetches=0,currentDay=day,deferredLock=null;
   const window={history:{
     get state(){return entries[historyIndex].state},
@@ -65,10 +67,10 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     pushState(state,_title,url){entries.splice(historyIndex+1);entries.push({hash:url??location.hash,state});historyIndex++},
     back(){if(historyIndex>0){historyIndex--;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}},
     forward(){if(historyIndex<entries.length-1){historyIndex++;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}}
-   },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},clearTimeout,scrollTo(_x,y){scroll=y}};
+   },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},setTimeout:(fn,ms)=>{counterTimers.set(++timerSequence,fn);return timerSequence;},clearTimeout:id=>counterTimers.delete(id),scrollTo(_x,y){scroll=y}};
   let audioBusy=false,pauseRegistered=null;
   const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
-    bindNativeCardSwipe:()=>()=>{},
+    bindNativeCardSwipe:()=>()=>{},createDhikrCompletionGate:()=>createDhikrCompletionGate({now:clock}),
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},
     read:(key,fallback)=>{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)},write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},settings:{haptic:false},
@@ -78,7 +80,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     fetch:async()=>{fetches++;return {ok:true,json:async()=>structuredClone(items)}}
   });
   const module=new Script(executable,{filename:'adhkar.js'}).runInContext(context);
-  return {module,container,location,storage,audio,notices,window,get audioBusy(){return audioBusy},interruptPlayback:()=>pauseRegistered?.(),get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning',{resumeEvening})},open:()=>module.showAdhkar(container,'morning',{resumeEvening}),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,setEveningContext:value=>{resumeEvening=value;module.updateAdhkarPeriod('evening',{resumeEvening})},deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
+  return {flushCounterTimers:()=>{const pending=[...counterTimers.values()];counterTimers.clear();pending.forEach(fn=>fn());},module,container,location,storage,audio,notices,window,get audioBusy(){return audioBusy},interruptPlayback:()=>pauseRegistered?.(),get historyEntries(){return entries.map(x=>x.hash)},get historyIndex(){return historyIndex},nativeBack:async()=>{window.history.back();await module.showAdhkar(container,'morning',{resumeEvening})},open:()=>module.showAdhkar(container,'morning',{resumeEvening}),select:selector=>{const node=container.querySelector(selector);assert.ok(node,'Expected control '+selector);return node},get fetches(){return fetches},get scroll(){return scroll},set scroll(value){scroll=value},setDay:value=>currentDay=value,setEveningContext:value=>{resumeEvening=value;module.updateAdhkarPeriod('evening',{resumeEvening})},deferTap:()=>{let release;deferredLock=new Promise(resolve=>release=resolve);return release}};
 }
 const params=page=>new URLSearchParams(page.location.hash.split('?')[1]||'');
 const cardId=page=>page.select('#adhkar-count').dataset.dhikrId;
@@ -275,3 +277,7 @@ assert.match(raditu.container.querySelector('.dhikr-arabic').textContent,/صَل
 let playTapConsumed=false;await raditu.select('#dhikr-play').onclick({stopPropagation(){playTapConsumed=true;}});
 assert.equal(playTapConsumed,true,'Replacing the play SVG must not bubble the detached target to the explanation');assert.equal(raditu.audio[0].paused,false);assert.equal(cardId(raditu),'raditu');
 console.log('PASS: compact speaker/pause control, actual provider mapping, external playback interruption, stale errors, retry, end cleanup and unchanged counters.');
+
+// Actual prescribed counter UI, including the pause and consent tap.
+let completionClock=0;const completion=browser({hash:'#adhkar?group=morning&view=card&item=surah112',clock:()=>completionClock});await completion.open();for(let i=0;i<3;i++)await completion.select('#adhkar-count').click();assert.equal(completion.select('#adhkar-count').disabled,true);assert.match(completion.select('#adhkar-count').textContent,/Выполнил/);const prescribedTotal=JSON.parse(completion.storage.getItem('salah:adhkar-progress-v2')).totals.surah112;completionClock=1200;completion.flushCounterTimers();assert.equal(completion.select('#adhkar-count').disabled,false);await completion.select('#adhkar-count').click();assert.match(completion.select('#adhkar-count').textContent,/0 дополнительно/);assert.equal(JSON.parse(completion.storage.getItem('salah:adhkar-progress-v2')).totals.surah112,prescribedTotal);completionClock=1700;completion.flushCounterTimers();await completion.select('#adhkar-count').click();const afterExtra=JSON.parse(completion.storage.getItem('salah:adhkar-progress-v2'));assert.equal(afterExtra.days['2026-10-02'].morning.counts.surah112,3);assert.equal(afterExtra.days['2026-10-02'].morning.extraCounts.surah112,1);assert.equal(afterExtra.totals.surah112,prescribedTotal+1);completion.module.stopAdhkar();console.log('PASS: deliberate completion screen preserves base, does not count the unlock tap and shows extra repetitions separately.');
+await import('./check-adhkar-completion.mjs');

@@ -2640,6 +2640,24 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Original SALAH thematic vectors; Arabic glyph outlines from bundled Amiri under SIL OFL. See dist/assets/amiri-regular-OFL.txt.",
       "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
+    },
+    {
+      "path": "dist/assets/updates/dua-pronunciation-402.svg",
+      "gitBlobSha": "48c6eff9c2164a79b7b0de3615898c3c4da27a93",
+      "bytes": 1794,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH feature-specific SVG composition authored for402; docs/release-announcements.md.",
+      "note": "Incremental illustration after the original audit baseline. Original vector interface composition; no external photographs or publisher scans."
+    },
+    {
+      "path": "dist/assets/updates/dhikr-completion-402.svg",
+      "gitBlobSha": "bb3cf280473924bd6656d3bc46da69073625169a",
+      "bytes": 1889,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH feature-specific SVG composition authored for402; docs/release-announcements.md.",
+      "note": "Incremental illustration after the original audit baseline. Original vector interface composition; no external photographs or publisher scans."
     }
   ],
   "wallpaperSets": [

@@ -75,6 +75,11 @@ const validated=validateBackup(document);restoreBackup(validated,{confirmed:true
 assert.equal(JSON.parse(values.get('salah:adhkar-progress-v2')).totals.tasbih,27);
 values.set('salah-owner-session-v1','private-session-test-value');
 assert.ok(!JSON.stringify(createBackup({storage:localStorage,settings:defaults,history:{}})).includes('private-session-test-value'));
+const extraDocument={...document,personal:{'adhkar-progress-v2':{version:2,totals:{tasbih:40},days:{'2026-10-26':{morning:{cursor:0,counts:{tasbih:33},extraCounts:{tasbih:7}}}}}}};
+restoreBackup(validateBackup(extraDocument),{confirmed:true});
+assert.equal(JSON.parse(values.get('salah:adhkar-progress-v2')).days['2026-10-26'].morning.extraCounts.tasbih,7);
+assert.equal(createBackup({storage:localStorage,settings:defaults,history:{}}).personal['adhkar-progress-v2'].days['2026-10-26'].morning.extraCounts.tasbih,7);
+restoreBackup(validateBackup(document),{confirmed:true});
 console.log('PASS: CSP restrictions, private requests bypass offline cache, malicious/mutated backups rejected, cumulative counts preserved.');
 
 values.set('salah:counter-active-account','account-test');const oldBackup=validateBackup({...document,personal:{'adhkar-progress-v2':{version:2,totals:{tasbih:5},days:{}}}});restoreBackup(oldBackup,{confirmed:true});assert.equal(JSON.parse(values.get('salah:adhkar-progress-v2')).totals.tasbih,27);console.log('PASS: restoring an older backup cannot subtract cloud-account lifetime totals.');

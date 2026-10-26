@@ -11,7 +11,7 @@ class Node{
  setAttribute(){}
  removeAttribute(){}
  querySelectorAll(){return[{getAttribute:()=> 'preview-audio',removeAttribute:()=>this.idsRemoved=true,setAttribute:()=>this.idsRestored=true}]}
- getBoundingClientRect(){return{height:this.height}}
+ getBoundingClientRect(){return{height:this.height,top:this.top||0}}
  scrollTo({left}){this.scrollLeft=left;this.snapped=left}
 }
 function harness({previous=true,next=true,surface=false}={}){
@@ -31,7 +31,7 @@ h=harness();h.row.scrollLeft=0;h.row.emit('scrollend');assert.deepEqual(h.moves,
 h=harness();h.row.scrollLeft=430;h.row.emit('scrollend');assert.equal(h.row.snapped,360,'an incomplete swipe returns to the current card');h.row.emit('scrollend');assert.deepEqual(h.moves,[]);h.dispose();
 h=harness();h.row.emit('touchstart');h.row.scrollLeft=720;h.row.emit('touchcancel');h.flush();assert.equal(h.row.scrollLeft,360);assert.deepEqual(h.moves,[]);h.dispose();
 h=harness();h.row.clientWidth=420;h.resize();assert.equal(h.row.scrollLeft,420,'rotation retains the current card');h.passage.height=800;h.resize();assert.equal(h.row.style.height,'800px','long translations remain vertically reachable');h.dispose();
-h=harness();h.row.children[2].height=800;h.row.scrollLeft=540;h.row.emit('scroll');assert.equal(h.row.style.height,'650px','height follows the incoming card during the drag');h.dispose();
+h=harness();h.row.children[2].height=800;h.row.scrollLeft=540;h.row.emit('scroll');assert.equal(h.row.style.height,'800px','incoming content fits without shrinking the outgoing reading surface');h.dispose();
 h=harness({previous:false});assert.equal(h.row.scrollLeft,0);h.row.emit('scrollend');assert.deepEqual(h.moves,[]);h.row.scrollLeft=360;h.row.emit('scrollend');assert.deepEqual(h.moves,[-1]);h.dispose();
 const touch=(x,y=100)=>({touches:[{identifier:1,clientX:x,clientY:y}],preventDefault(){this.prevented=true}});
 h=harness();h.row.emit('touchstart',touch(250));const move=touch(30);h.row.emit('touchmove',move);assert(move.prevented);assert.equal(h.row.scrollLeft,580);h.row.emit('touchend',{touches:[]});assert.deepEqual(h.moves,[]);h.flush();assert.deepEqual(h.moves,[-1]);assert.equal(h.row.scrollLeft,720);h.dispose();
@@ -44,3 +44,6 @@ h=harness({surface:true});h.parent.emit('touchstart',touch(250));h.parent.emit('
 h=harness({surface:true});const control=touch(250);control.target={closest:()=>true};h.parent.emit('touchstart',control);h.parent.emit('touchmove',touch(30));h.parent.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.moves,[],'counter and buttons retain taps');h.dispose();
 h=harness({previous:false,surface:true});h.parent.emit('touchstart',touch(30));h.parent.emit('touchmove',touch(250));h.parent.emit('touchend',{touches:[]});h.flush();assert.deepEqual(h.back,[true]);assert.deepEqual(h.moves,[]);h.dispose();
 console.log('PASS: blank-area card gestures, first-card return, unaffected controls and cleanup.');
+
+h=harness();h.passage.height=1600;h.row.children[2].height=220;h.row.top=-700;h.row.scrollLeft=540;h.row.emit('scroll');assert.equal(h.row.style.height,'1600px','long-to-short keeps the document tall until commit');assert.equal(h.row.children[2].style.transform,'translateY(700px)','a short incoming passage stays visible at the current reading offset');h.row.scrollLeft=720;h.row.emit('scrollend');assert.equal(h.incoming[0].style.transform,'','commit cannot leave a translated incoming card');h.dispose();
+console.log('PASS: long-to-short swipe preserves document height, visible incoming text and clean commit geometry.');

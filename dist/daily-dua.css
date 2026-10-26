@@ -7,3 +7,5 @@
 .dua-quick-search{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.dua-quick-search button{min-height:42px;border:1px solid var(--line,#303a52);border-radius:18px;padding:8px 14px;background:transparent;color:inherit;font:inherit;font-size:14px}
 
 [data-dua-passage="transliteration"]{white-space:pre-line}
+
+.dua-audio{display:flex;align-items:center;gap:12px;margin:18px 0 12px;flex-wrap:wrap}.dua-audio-button{display:inline-flex;align-items:center;gap:9px;min-height:44px;border:1px solid #c8bc9c55;border-radius:14px;padding:10px 15px;background:#c8bc9c0c;color:var(--gold,#c8bc9c);font:500 13px/1.5 Manrope,sans-serif}.dua-audio-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dua-audio-status,.dua-audio-pending{color:var(--muted,#9ba9bf);font-size:12px;line-height:1.7}.dua-audio-pending{margin:18px 0}.dua-audio-button:focus-visible{outline:2px solid var(--gold,#c8bc9c);outline-offset:3px}

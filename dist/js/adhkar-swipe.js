@@ -23,7 +23,12 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},ge
   if(nextWidth&&nextWidth!==width){width=nextWidth;row.scrollLeft=activeIndex*width;}
   const offset=width?Math.max(0,Math.min(pages.length-1,row.scrollLeft/width)):activeIndex;
   const left=Math.floor(offset),right=Math.ceil(offset),fraction=offset-left;
-  row.style.height=(pages[left].getBoundingClientRect().height*(1-fraction)+pages[right].getBoundingClientRect().height*fraction)+'px';
+  // Keep the outgoing reading height until commit: shrinking mid-gesture makes
+  // Safari clamp the document scroll position and pulls a short card off screen.
+  const moving=Math.abs(offset-activeIndex)>.001,shift=moving?Math.max(0,-(row.getBoundingClientRect().top||0)):0;
+  for(const page of pages)if(page!==passage)page.style.transform=shift?'translateY('+shift+'px)':'';
+  const height=moving?Math.max(passage.getBoundingClientRect().height,pages[left].getBoundingClientRect().height+(left===activeIndex?0:shift),pages[right].getBoundingClientRect().height+(right===activeIndex?0:shift)):passage.getBoundingClientRect().height;
+  if(row.style.height!==height+'px')row.style.height=height+'px';
  }
  function settle(){
   win.clearTimeout(timer);timer=0;
@@ -33,7 +38,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},ge
   if(Math.abs(row.scrollLeft-index*width)>2){row.scrollTo({left:index*width,behavior:'smooth'});return;}
   if(index===activeIndex)return;
   const incoming=pages[index];previewIds.get(incoming)?.forEach(([n,id])=>n.setAttribute('id',id));
-  incoming.inert=false;incoming.removeAttribute('aria-hidden');incoming.classList.remove('adhkar-carousel-preview');incoming.classList.add('dhikr-passage');
+  incoming.style.transform='';incoming.inert=false;incoming.removeAttribute('aria-hidden');incoming.classList.remove('adhkar-carousel-preview');incoming.classList.add('dhikr-passage');
   committed=true;suppress();commit(index>activeIndex?-1:1,incoming);
  }
  const schedule=()=>{win.clearTimeout(timer);timer=win.setTimeout(settle,160);};
@@ -76,7 +81,7 @@ export function bindNativeCardSwipe(passage,{preview,commit,onSuppress=()=>{},ge
  size();
  const frame=win.requestAnimationFrame(()=>{size();row.scrollLeft=activeIndex*width;initializing=false;});
  const observer=win.ResizeObserver?new win.ResizeObserver(size):null;
- observer?.observe(row);observer?.observe(passage);
+ observer?.observe(row);pages.forEach(page=>observer?.observe(page));
  return()=>{
   disposed=true;win.clearTimeout(timer);win.cancelAnimationFrame(frame);win.cancelAnimationFrame(animation);observer?.disconnect();removers.forEach(remove=>remove());
   if(row.parentNode){row.parentNode.insertBefore(passage,row);row.remove();}

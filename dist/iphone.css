@@ -385,3 +385,7 @@ body.adhkar-reading .adhkar-shell{touch-action:auto}
 
 /* Keep the Home canvas steady at scroll boundaries without blocking long content. */
 html:has(body.home-page),body.home-page{overscroll-behavior-y:none}
+
+.adhkar-card-carousel{overflow-anchor:none}
+.dhikr-continue-hint{max-width:30ch;margin:10px auto 0;text-align:center;color:var(--muted);font-size:12px;line-height:1.5}
+.dhikr-counter[data-extra="true"] .count-number small{display:block;font-size:12px;line-height:1.5}

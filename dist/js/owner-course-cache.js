@@ -1,5 +1,5 @@
 import{NATIVE_BOOK_ID,NATIVE_UNIT_IDS}from './owner-native-progress.js';
-const key='salah:owner-native-course-cache-v1',stamp='muallim-native-401';
+const key='salah:owner-native-course-cache-v1',stamp='muallim-native-402';
 const str=(v,max=2000)=>typeof v==='string'&&v.length>0&&v.length<=max;
 const keys=(v,allowed)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).every(k=>allowed.includes(k));
 const strings=(v,count,max=2000)=>Array.isArray(v)&&v.length<=count&&v.every(x=>str(x,max));

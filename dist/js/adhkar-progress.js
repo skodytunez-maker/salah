@@ -14,7 +14,7 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
     const counts={};
     for(const [id,target] of targets)if(value?.counts&&Object.hasOwn(value.counts,id))
       counts[id]=Math.min(target,cleanCount(value.counts[id]));
-    return {cursor:cleanCount(value?.cursor),counts};
+    const extraCounts={};for(const[id,target]of targets){const extra=cleanCount(value?.extraCounts?.[id]);if(counts[id]===target&&extra)extraCounts[id]=extra;}return {cursor:cleanCount(value?.cursor),counts,...(Object.keys(extraCounts).length?{extraCounts}:{})};
   }
   function normalizeDocument(value){
     const doc=empty();
@@ -56,25 +56,26 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
     return {_day:date,...normalizeProgress(doc.days[date]?.[group])};
   }
   function valid(group){return GROUPS.has(group)}
-  function mutate(group,id,delta,date){
+  function mutate(group,id,delta,date,extra=false){
     const loaded=load();
     if(!loaded||!validDay(date)||!valid(group)||!targets.has(id))return {ok:false,changed:false};
     const {doc}=loaded,p=snapshot(doc,date,group),amount=p.counts[id]||0,target=targets.get(id);
-    if(delta>0&&(amount>=target||(doc.totals[id]||0)>=Number.MAX_SAFE_INTEGER)||delta<0&&amount===0)
+    const extras=p.extraCounts?.[id]||0,useExtra=extra||delta<0&&extras>0;
+    if(delta>0&&((useExtra?amount<target:amount>=target)||(doc.totals[id]||0)>=Number.MAX_SAFE_INTEGER)||delta<0&&amount===0&&extras===0)
       return {ok:true,changed:false,progress:p,total:doc.totals[id]||0};
-    p.counts[id]=amount+delta;
+    if(useExtra){p.extraCounts={...p.extraCounts,[id]:extras+delta};}else p.counts[id]=amount+delta;
     if(!doc.days[date])doc.days[date]={};
     doc.days[date][group]=normalizeProgress(p);
     doc.totals[id]=delta>0?add(doc.totals[id]||0,1):Math.max(0,(doc.totals[id]||0)-1);
     if(!commit(loaded))return {ok:false,changed:false};
     return {ok:true,changed:true,progress:p,total:doc.totals[id]};
   }
-  async function change(group,id,delta,date=day()){
+  async function change(group,id,delta,date=day(),extra=false){
     let manager;try{manager=locks()}catch{}
     if(manager?.request){
-      try{return await manager.request(KEY,()=>mutate(group,id,delta,date))}catch{return {ok:false,changed:false}}
+      try{return await manager.request(KEY,()=>mutate(group,id,delta,date,extra))}catch{return {ok:false,changed:false}}
     }
-    return mutate(group,id,delta,date);
+    return mutate(group,id,delta,date,extra);
   }
   return {
     configure(items){
@@ -98,6 +99,7 @@ export function createAdhkarProgressStore({storage,day,locks=()=>null}){
       loaded.doc.days[date][group]=normalizeProgress(progress);return commit(loaded);
     },
     increment:(group,id,date)=>change(group,id,1,date),
+    incrementExtra:(group,id,date)=>change(group,id,1,date,true),
     undo:(group,id,date)=>change(group,id,-1,date)
   };
 }
