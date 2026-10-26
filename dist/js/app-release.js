@@ -1,4 +1,4 @@
-export const APP_VERSION=405;
+export const APP_VERSION=406;
 export const APP_UPDATED_AT='2026-10-27';
 export const APP_CHANGES=['Повседневные дуа: тематические подборки с иллюстрациями. Находите дуа для дома, еды, мечети и других ситуаций.'];
 export const APP_ANNOUNCEMENT={version:404,date:'2026-10-27',changes:APP_CHANGES};

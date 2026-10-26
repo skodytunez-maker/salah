@@ -22,7 +22,7 @@
 
 body.settings-page #app{box-sizing:border-box}.settings-screen-back{display:inline-flex;align-items:center;min-height:44px;color:var(--gold);text-decoration:none;margin-bottom:18px}.settings-screen-back[hidden],.settings-grid>.settings-group[hidden],.settings-save[hidden]{display:none!important}
 .settings-section-open .settings-grid{display:block}.settings-section-open .settings-group.is-settings-screen{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}.is-settings-screen>summary{display:none!important}.is-settings-screen>.settings-group-body{padding:0;margin:0}.settings-section-open .settings-group-body>.field{width:100%;box-sizing:border-box}
-@media(max-width:759px){body.settings-page #app{width:100%;max-width:none;padding-left:16px;padding-right:16px}body.menu-page #app>.panel.section{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}body.menu-page .list-button{padding:18px 16px;border:1px solid var(--border);border-radius:18px;background:var(--panel);margin:0 0 12px;min-width:0}body.menu-page .menu-item-label{min-width:0}body.menu-page .list-button small{font-size:12px;white-space:normal;text-align:right}.settings-grid>.settings-group{padding:18px 16px}.settings-grid>.settings-group.is-settings-screen{padding:0}}
+@media(max-width:759px){body.settings-page #app{width:100%;max-width:none;padding-left:16px;padding-right:16px}body.menu-page #app>.panel.section{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}body.menu-page .list-button{padding:18px 16px;margin:0 0 12px;min-width:0}body.menu-page .menu-item-label{min-width:0}body.menu-page .list-button small{font-size:12px;white-space:normal;text-align:right}.settings-grid>.settings-group{padding:18px 16px}.settings-grid>.settings-group.is-settings-screen{padding:0}}
 
 .owner-team-embed .staff-publication-tabs[aria-label="Тип сообщений"]{display:none}.owner-team-embed .staff-inbox-heading{justify-content:flex-end}.owner-team-embed .staff-inbox-count{margin-left:auto}
 
@@ -52,3 +52,9 @@ body.owner-profile-page .workspace{margin-left:auto;margin-right:auto;max-width:
 @media(min-width:760px){.owner-profile-screen .owner-profile-identity{padding:26px 0 32px}.owner-profile-screen .owner-profile-panel{padding:26px}.owner-profile-screen .owner-profile-awards ul{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 .owner-menu-tile:disabled{opacity:.5;cursor:default;background:#121b29;border-color:#303c50}.owner-menu-tile:disabled strong,.owner-menu-tile:disabled small{color:#8c99ae}
+
+/* Menu destinations keep a visible surface without nesting the whole screen. */
+body.menu-page .list-button:not(.account-entry){border:1px solid rgba(158,178,209,.22);border-radius:18px;background:rgba(20,30,49,.88);box-shadow:inset 0 1px 0 rgba(240,245,255,.035);margin-bottom:12px;padding:18px 16px;line-height:1.45}
+body.menu-page .list-button:not(.account-entry):active{background:#1c2940;border-color:rgba(214,196,158,.44)}
+body.menu-page .menu-item-label{min-width:0;overflow-wrap:anywhere}
+@media(max-width:759px){body.menu-page .workspace,body.account-page .workspace{padding-left:0;padding-right:0}body.account-page #app>.owner-login:has(#counter-account-out){width:100%;max-width:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}}

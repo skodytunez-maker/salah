@@ -389,3 +389,7 @@ html:has(body.home-page),body.home-page{overscroll-behavior-y:none}
 .adhkar-card-carousel{overflow-anchor:none}
 .dhikr-continue-hint{max-width:30ch;margin:10px auto 0;text-align:center;color:var(--muted);font-size:12px;line-height:1.5}
 .dhikr-counter[data-extra="true"] .count-number small{display:block;font-size:12px;line-height:1.5}
+
+/* Match the Knowledge heading: the same white sans-serif title scale. */
+.adhkar-hybrid .hybrid-heading h1{font-family:'Manrope','Segoe UI',sans-serif;font-size:32px;font-weight:600;line-height:1.25;letter-spacing:-1px;color:var(--ivory,#f4f0e5)}
+@media(max-width:600px){.adhkar-hybrid .hybrid-heading h1{font-size:29px}}
