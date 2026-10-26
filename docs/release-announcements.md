@@ -212,3 +212,6 @@ The owner-only Muallim course is now adapted into SALAH lessons. Only its bounde
 
 ###400 ·26October · closed inline learning navigation
 Muallim and live preparation render in the app like alphabet and Umrah. Only public rendering code is bundled; owner-only teaching data use a narrow authenticated GET API with exact-origin CORS and in-memory reuse. Original pages remain an explicit reference. Other users retain disabled Soon controls; announcement395 is unchanged. The local preview missing-import defect and legacy lesson routes are corrected.
+
+###401 ·26October · closed section loading
+Verified owners reuse a validated first-party course package across app launches; Knowledge prefetches it once. Sign-out/revocation clears the course cache and no bearer is stored or backed up. The separate private lesson service uses a lazy media bundle, one authenticated list bootstrap and compressed, ETag-validated static assets. Media is prepared on prejoin so the Join tap retains its audio gesture. Other users retain Soon; announcement395, expiry and acknowledgement remain unchanged.

@@ -4,7 +4,7 @@ const w=new Window({url:'https://skodytunez-maker.github.io/salah/#knowledge',se
 Object.assign(globalThis,{window:w,document:doc,location:w.location,localStorage:w.localStorage});
 const probe={verified:false,claims:0,token:async()=>'test-access-token',revalidate:async()=>probe.verified,authChanged:null};globalThis.__ownerFrameProbe=probe;
 let code=await fs.readFile(new URL('../dist/js/owner-learning-frame.js',import.meta.url),'utf8');
-code=code.replace(/import\{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive\}from '[^']+';/,"const mountOwnerNativePreview=()=>false,stopOwnerNativePreview=()=>{},ownerNativeActive=()=>false;");
+code=code.replace(/import\{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive,preloadOwnerCourse\}from '[^']+';/,"const mountOwnerNativePreview=()=>false,stopOwnerNativePreview=()=>{},ownerNativeActive=()=>false,preloadOwnerCourse=()=>{};");
 code=code.replace(/import\{ownerVerified,ownerPreviewAccessToken,verifyOwner,onOwnerChange\}from '[^']+';/,"const ownerVerified=()=>globalThis.__ownerFrameProbe.verified,ownerPreviewAccessToken=()=>globalThis.__ownerFrameProbe.token(),verifyOwner=()=>globalThis.__ownerFrameProbe.revalidate(),onOwnerChange=fn=>{globalThis.__ownerFrameProbe.authChanged=fn;return()=>globalThis.__ownerFrameProbe.authChanged=null;};");
 code=code.replace("from './owner-native-progress.js'","from '"+new URL('../dist/js/owner-native-progress.js',import.meta.url).href+"'");
 code=code.replace("from './owner-frame-viewport.js'","from '"+new URL('../dist/js/owner-frame-viewport.js',import.meta.url).href+"'");

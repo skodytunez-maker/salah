@@ -1,4 +1,4 @@
-import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview}from './owner-learning-frame.js';
+import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview,preloadOwnerLearning}from './owner-learning-frame.js';
 import{ownerVerified}from './owner-auth.js';
 import{ownerLearningPreview}from './owner-learning-links.js';
 import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
@@ -41,6 +41,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   const preview=new URLSearchParams(hash.split('?')[1]||'').get('preview');
   if(preview&&(ownerAccess||canContinueOwnerPreview())&&mountOwnerLearningPreview(container,preview))return;
   stopOwnerLearningPreview();
+  if(ownerAccess)preloadOwnerLearning();
   const view=new URLSearchParams(hash.split('?')[1]||'').get('view');
   if(view!=='names')delete container.dataset.namesHash;
   if(view==='names'){delete container.dataset.alphabetHash;if(container.dataset.namesHash!==hash||!container.querySelector('.names-page')){showAllahNames(container,{hash});container.dataset.namesHash=hash;}return;}

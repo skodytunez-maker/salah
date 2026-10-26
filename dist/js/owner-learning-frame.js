@@ -1,8 +1,9 @@
-import{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive}from './owner-learning-native.js';
+import{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive,preloadOwnerCourse}from './owner-learning-native.js';
 import{validNativeProgress}from './owner-native-progress.js';
 import{createOwnerFrameViewport}from './owner-frame-viewport.js';
 import{ownerVerified,ownerPreviewAccessToken,verifyOwner,onOwnerChange}from './owner-auth.js';
 import{claimPlayback}from './media-playback-focus.js';
+export const preloadOwnerLearning=()=>preloadOwnerCourse();
 const origin='https://desktop-jecm5lt.taila4556d.ts.net';
 const entries=Object.freeze({
  'online-lessons':{title:'Онлайн-занятия',view:'lessons'},
