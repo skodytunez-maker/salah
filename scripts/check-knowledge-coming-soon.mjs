@@ -23,14 +23,11 @@ for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=onlin
  const links=host.querySelectorAll('[data-learning-entry]');assert.equal(links.length,3);links[0].click();assert.equal(started,1);started=0;
 }
 host.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(host.querySelectorAll('.release-feature').length,4,'Current edition contains only the PDF and three upcoming features');
-assert.equal(host.querySelectorAll('.release-coming-button:disabled').length,3,'News also clearly disables future features');
-for(const feature of UPCOMING_KNOWLEDGE){
- const card=[...host.querySelectorAll('.release-feature')].find(c=>c.querySelector('h3').textContent===feature.title+' · скоро');
- assert.ok(card);assert.ok(card.querySelector('button:disabled'));assert.equal(card.querySelector('a,[href]'),null);
- const src=card.querySelector('img').getAttribute('src');await fs.access(new URL('../dist/'+src.replace(/^\.\//,''),import.meta.url));
-}
-for(const change of APP_CHANGES){assert.ok(releaseFeatureForChange(change),'Each change uses its own feature illustration');if(releaseFeatureForChange(change)!=='alphabet-pdf')assert.match(change,/Скоро|готовим/iu);}
+assert.equal(host.querySelectorAll('.release-feature').length,2,'Current news contains only the new counter and dua changes');
+assert.equal(host.querySelectorAll('.release-coming-button').length,0,'Closed features are not re-announced as new');
+for(const feature of UPCOMING_KNOWLEDGE)assert.ok(![...host.querySelectorAll('.release-feature h3')].some(h=>h.textContent===feature.title+' · скоро'));
+assert.deepEqual(APP_CHANGES.map(releaseFeatureForChange),['dhikr-completion','dua-pronunciation']);
+for(const img of host.querySelectorAll('.release-feature img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 assert.ok(APP_VERSION>=395);
 // Verified owner access reveals only navigation to the private checks.
 showKnowledge(host,{hash:'#knowledge',ownerAccess:true});

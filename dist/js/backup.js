@@ -27,7 +27,8 @@ function counts(value,label){
  if(!isRecord(value)||Object.entries(value).some(([key,n])=>!id(key)||!count(n)))fail('Некорректные счётчики «'+label+'».');
 }
 function progress(value,label){
- exactKeys(value,['cursor','counts','_day'],label);
+ exactKeys(value,['cursor','counts','extraCounts','_day'],label);
+ if(value.extraCounts!==undefined)counts(value.extraCounts,label);
  if(!count(value.cursor)||!isRecord(value.counts)||Object.hasOwn(value,'_day')&&!validDay(value._day))fail('Некорректный прогресс азкаров.');
  counts(value.counts,label);
 }

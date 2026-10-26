@@ -13,6 +13,8 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'dhikr-completion',match:/Выполнил|дополнительные повторения/iu,title:'Зикр в своём темпе',art:()=>'<img class="release-screen-picture" src="./assets/updates/dhikr-completion-402.svg" alt="">',where:'Азкары → откройте карточку и завершите основное количество.'},
+ {id:'dua-pronunciation',match:/Повседневные дуа|произношение для/iu,title:'Дуа со звуком',art:()=>'<img class="release-screen-picture" src="./assets/updates/dua-pronunciation-402.svg" alt="">',where:'Азкары → Повседневные дуа. Слушайте, ставьте на паузу и повторяйте.'},
  {id:'alphabet-pdf',match:/арабский алфавит|алфавит.{0,30}PDF/iu,title:'Алфавит для скачивания',art:()=>'<img class="release-screen-picture" src="./assets/updates/alphabet-pdf-395.svg" alt="">',where:'Знания → Арабский алфавит → Скачать алфавит · PDF.'},
 
  ...UPCOMING_KNOWLEDGE.map(entry=>({id:entry.id,match:new RegExp(entry.title,'iu'),title:entry.title,art:()=>'<img class="release-screen-picture" src="./assets/updates/'+entry.art+'" alt="">',where:'Скоро в разделе «Знания». Запуск пока недоступен.'})),

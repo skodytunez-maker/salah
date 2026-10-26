@@ -1,0 +1,654 @@
+{
+  "version": 1,
+  "provider": "Hisn al-Muslim",
+  "website": "https://www.hisnmuslim.com/",
+  "checked": "2026-10-26T08:40:43.444Z",
+  "verification": "Exact lexical Arabic match plus HTTPS availability and audio/mpeg metadata. Teacher phonetic review is separate.",
+  "entries": [
+    {
+      "key": "before-sleep",
+      "itemId": "before-sleep",
+      "variant": null,
+      "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+      "providerArabic": "((بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/105.mp3",
+      "chapter": 28,
+      "number": 105,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 215252
+      }
+    },
+    {
+      "key": "after-waking",
+      "itemId": "after-waking",
+      "variant": null,
+      "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+      "providerArabic": "( الْحَمْدُ للَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ )",
+      "url": "https://www.hisnmuslim.com/audio/ar/1.mp3",
+      "chapter": 1,
+      "number": 1,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 255770
+      }
+    },
+    {
+      "key": "wearing-clothes",
+      "itemId": "wearing-clothes",
+      "variant": null,
+      "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+      "providerArabic": "(الْحَمْدُ للَّهِ الَّذِي كَسَانِي هَذَا (الثَّوْبَ) وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلاَ قُوَّة...)",
+      "url": "https://www.hisnmuslim.com/audio/ar/5.mp3",
+      "chapter": 2,
+      "number": 5,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 267054
+      }
+    },
+    {
+      "key": "before-meal",
+      "itemId": "before-meal",
+      "variant": null,
+      "arabic": "بِسْمِ اللَّهِ",
+      "providerArabic": "(بِسْمِ اللَّهِ).",
+      "url": "https://www.hisnmuslim.com/audio/ar/9.mp3",
+      "chapter": 5,
+      "number": 9,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 219246
+      }
+    },
+    {
+      "key": "after-meal",
+      "itemId": "after-meal",
+      "variant": null,
+      "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+      "providerArabic": " ((الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا، وَرَزَقَنِيهِ، مِنْ غَيْرِ حَوْلٍ مِنِّي وَلاَ قُوَّةٍ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/180.mp3",
+      "chapter": 70,
+      "number": 180,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 412529
+      }
+    },
+    {
+      "key": "after-toilet",
+      "itemId": "after-toilet",
+      "variant": null,
+      "arabic": "غُفْرَانَكَ",
+      "providerArabic": "(غُفْرَانَكَ).",
+      "url": "https://www.hisnmuslim.com/audio/ar/11.mp3",
+      "chapter": 7,
+      "number": 11,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 206382
+      }
+    },
+    {
+      "key": "after-wudu",
+      "itemId": "after-wudu",
+      "variant": null,
+      "arabic": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+      "providerArabic": "(أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ وَرَسُولُهُ..).",
+      "url": "https://www.hisnmuslim.com/audio/ar/13.mp3",
+      "chapter": 9,
+      "number": 13,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 425486
+      }
+    },
+    {
+      "key": "after-rain",
+      "itemId": "after-rain",
+      "variant": null,
+      "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
+      "providerArabic": "((مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/173.mp3",
+      "chapter": 65,
+      "number": 173,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 225582
+      }
+    },
+    {
+      "key": "when-angry",
+      "itemId": "when-angry",
+      "variant": null,
+      "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+      "providerArabic": "((أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/193.mp3",
+      "chapter": 82,
+      "number": 193,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 225390
+      }
+    },
+    {
+      "key": "thanking-someone",
+      "itemId": "thanking-someone",
+      "variant": null,
+      "arabic": "جَزَاكَ اللَّهُ خَيْرًا",
+      "providerArabic": "((جَزَاكَ اللَّهُ خَيْراً)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/198.mp3",
+      "chapter": 87,
+      "number": 198,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 225198
+      }
+    },
+    {
+      "key": "leaving-gathering",
+      "itemId": "leaving-gathering",
+      "variant": null,
+      "arabic": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
+      "providerArabic": "(سُبْحانَكَ اللَّهُمَّ وَبِحَمْدِكَ، أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ أَنْتَ، أَسْتَغْفِرُكَ وَأَتوبُ إِلَيْكَ).",
+      "url": "https://www.hisnmuslim.com/audio/ar/15.mp3",
+      "chapter": 9,
+      "number": 15,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 360284
+      }
+    },
+    {
+      "key": "before-intimacy",
+      "itemId": "before-intimacy",
+      "variant": null,
+      "arabic": "بِسْمِ اللَّهِ اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا",
+      "providerArabic": "((بِسْمِ اللَّهِ، اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ، وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/192.mp3",
+      "chapter": 81,
+      "number": 192,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 261870
+      }
+    },
+    {
+      "key": "stopping-on-journey",
+      "itemId": "stopping-on-journey",
+      "variant": null,
+      "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+      "providerArabic": "((أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/216.mp3",
+      "chapter": 104,
+      "number": 216,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 256302
+      }
+    },
+    {
+      "key": "help-in-worship",
+      "itemId": "help-in-worship",
+      "variant": null,
+      "arabic": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ",
+      "providerArabic": "((اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ، وَشُكْرِكَ، وَحُسْنِ عِبادَتِكَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/59.mp3",
+      "chapter": 24,
+      "number": 59,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 247435
+      }
+    },
+    {
+      "key": "new-garment",
+      "itemId": "new-garment",
+      "variant": null,
+      "arabic": "اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ كَسَوْتَنِيهِ، أَسْأَلُكَ مِنْ خَيْرِهِ وَخَيْرِ مَا صُنِعَ لَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّهِ وَشَرِّ مَا صُنِعَ لَهُ",
+      "providerArabic": "( اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ كَسَوْتَنِيهِ، أَسْأَلُكَ مِنْ خَيْرِهِ وَخَيْرِ مَا صُنِعَ لَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّهِ وَشَرِّ مَا صُنِعَ لَهُ).",
+      "url": "https://www.hisnmuslim.com/audio/ar/6.mp3",
+      "chapter": 3,
+      "number": 6,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 313902
+      }
+    },
+    {
+      "key": "removing-clothes",
+      "itemId": "removing-clothes",
+      "variant": null,
+      "arabic": "بِسْمِ اللَّهِ",
+      "providerArabic": "(بِسْمِ اللَّهِ).",
+      "url": "https://www.hisnmuslim.com/audio/ar/9.mp3",
+      "chapter": 5,
+      "number": 9,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 219246
+      }
+    },
+    {
+      "key": "turning-at-night",
+      "itemId": "turning-at-night",
+      "variant": null,
+      "arabic": "لاَ إِلَهَ إِلاَّ اللَّهُ الْوَاحِدُ الْقَهّارُ، رَبُّ السَّمَوَاتِ وَالْأَرْضِ وَمَا بَيْنَهُمَا الْعَزيزُ الْغَفَّارُ",
+      "providerArabic": "((لاَ إِلَهَ إِلاَّ اللَّهُ الْوَاحِدُ الْقَهّارُ، رَبُّ السَّمَوَاتِ وَالْأَرْضِ وَمَا بَيْنَهُمَا الْعَزيزُ الْغَفَّارُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/112.mp3",
+      "chapter": 29,
+      "number": 112,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 306606
+      }
+    },
+    {
+      "key": "fear-at-night",
+      "itemId": "fear-at-night",
+      "variant": null,
+      "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ غَضَبِهِ وَعِقَابِهِ، وَشَرِّ عِبَادِهِ، وَمِنْ هَمَزَاتِ الشَّياطِينِ وَأَنْ يَحْضُرُونِ",
+      "providerArabic": "((أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ غَضَبِهِ وَعِقَابِهِ، وَشَرِّ عِبَادِهِ، وَمِنْ هَمَزَاتِ الشَّياطِينِ وَأَنْ يَحْضُرُونِ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/113.mp3",
+      "chapter": 30,
+      "number": 113,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 332718
+      }
+    },
+    {
+      "key": "severe-distress",
+      "itemId": "severe-distress",
+      "variant": null,
+      "arabic": "لاَ إِلَهَ إِلاَّ اللَّهُ الْعَظِيمُ الْحَلِيمُ، لاَ إِلَهَ إِلاَّ اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لاَ إِلَهَ إِلاَّ اللَّهُ رَبُّ السَّمَوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ",
+      "providerArabic": "((لاَ إِلَهَ إِلاَّ اللَّهُ الْعَظِيمُ الْحَلِيمُ، لاَ إِلَهَ إِلاَّ اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لاَ إِلَهَ إِلاَّ اللَّهُ رَبُّ السَّمَوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/122.mp3",
+      "chapter": 35,
+      "number": 122,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 582220
+      }
+    },
+    {
+      "key": "hope-for-mercy",
+      "itemId": "hope-for-mercy",
+      "variant": null,
+      "arabic": "اللَّهُمَّ رَحْمَتَكَ أَرْجُو، فَلاَ تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ، وَأَصْلِحْ لِي شَأْنِي كُلَّهُ، لاَ إِلَهَ إِلاَّ أَنْتَ",
+      "providerArabic": "((اللَّهُمَّ رَحْمَتَكَ أَرْجُو، فَلاَ تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ، وَأَصْلِحْ لِي شَأْنِي كُلَّهُ، لاَ إِلَهَ إِلاَّ أَنْتَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/123.mp3",
+      "chapter": 35,
+      "number": 123,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 357358
+      }
+    },
+    {
+      "key": "dua-of-yunus",
+      "itemId": "dua-of-yunus",
+      "variant": null,
+      "arabic": "لاَ إِلَهَ إِلاَّ أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظّالِمِينَ",
+      "providerArabic": "((لاَ إِلَهَ إِلاَّ أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظّالِمِينَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/124.mp3",
+      "chapter": 35,
+      "number": 124,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 262900
+      }
+    },
+    {
+      "key": "reliance-in-distress",
+      "itemId": "reliance-in-distress",
+      "variant": null,
+      "arabic": "اللَّهُ اللَّهُ رَبِّي لاَ أُشْرِكُ بِهِ شَيْئاً",
+      "providerArabic": "((اللَّهُ اللَّهُ رَبِّي لاَ أُشْرِكُ بِهِ شَيْئاً)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/125.mp3",
+      "chapter": 35,
+      "number": 125,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 259138
+      }
+    },
+    {
+      "key": "paying-debt",
+      "itemId": "paying-debt",
+      "variant": null,
+      "arabic": "اللَّهُمَّ اكْفِنِي بِحَلاَلِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+      "providerArabic": "((اللَّهُمَّ اكْفِنِي بِحَلاَلِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكِ عَمَّنْ سِوَاكَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/136.mp3",
+      "chapter": 41,
+      "number": 136,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 374913
+      }
+    },
+    {
+      "key": "difficult-task",
+      "itemId": "difficult-task",
+      "variant": null,
+      "arabic": "اللَّهُمَّ لاَ سَهْلَ إِلاَّ مَا جَعَلْتَهُ سَهْلاً، وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلاً",
+      "providerArabic": "((اللَّهُمَّ لاَ سَهْلَ إِلاَّ مَا جَعَلْتَهُ سَهْلاً، وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلاً)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/139.mp3",
+      "chapter": 43,
+      "number": 139,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 286830
+      }
+    },
+    {
+      "key": "visiting-sick",
+      "itemId": "visiting-sick",
+      "variant": null,
+      "arabic": "لاَ بأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
+      "providerArabic": "((لاَ بأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/147.mp3",
+      "chapter": 49,
+      "number": 147,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 321414
+      }
+    },
+    {
+      "key": "when-calamity-strikes",
+      "itemId": "when-calamity-strikes",
+      "variant": null,
+      "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي، وَأَخْلِفْ لِي خَيْرَاً مِنْهَا",
+      "providerArabic": "((إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي، وَأَخْلِفْ لِي خَيْرَاً مِنْهَا)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/154.mp3",
+      "chapter": 53,
+      "number": 154,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 306606
+      }
+    },
+    {
+      "key": "strong-wind",
+      "itemId": "strong-wind",
+      "variant": null,
+      "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا، وَخَيْرَ مَا فِيهَا، وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا، وَشَرِّ مَا فِيهَا، وَشَرِّ مَا أُرْسِلَتْ بِهِ",
+      "providerArabic": "((اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا، وَخَيْرَ مَا فِيهَا، وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا، وَشَرِّ مَا فِيهَا، وَشَرِّ مَا أُرْسِلَتْ بِهِ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/167.mp3",
+      "chapter": 61,
+      "number": 167,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 407096
+      }
+    },
+    {
+      "key": "asking-for-rain",
+      "itemId": "asking-for-rain",
+      "variant": null,
+      "arabic": "اللَّهُمَّ أَغِثْنَا، اللَّهُمَّ أَغِثْنَا، اللَّهُمَّ أَغِثْنَا",
+      "providerArabic": "((اللَّهُمَّ أَغِثْنَا، اللَّهُمَّ أَغِثْنَا، اللَّهُمَّ أَغِثْنَا)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/170.mp3",
+      "chapter": 63,
+      "number": 170,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 295082
+      }
+    },
+    {
+      "key": "heavy-rain",
+      "itemId": "heavy-rain",
+      "variant": null,
+      "arabic": "اللَّهُمَّ حَوَالَيْنَا وَلاَ عَلَيْنَا، اللَّهُمَّ عَلَى الآكَامِ وَالظِّرَابِ، وَبُطُونِ الْأَوْدِيَةِ، وَمَنَابِتِ الشَّجَرِ",
+      "providerArabic": "((اللَّهُمَّ حَوَالَيْنَا وَلاَ عَلَيْنَا، اللَّهُمَّ عَلَى الآكَامِ وَالظِّرَابِ، وَبُطُونِ الْأَوْدِيَةِ، وَمَنَابِتِ الشَّجَرِ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/174.mp3",
+      "chapter": 66,
+      "number": 174,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 282798
+      }
+    },
+    {
+      "key": "breaking-fast",
+      "itemId": "breaking-fast",
+      "variant": null,
+      "arabic": "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ العُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ",
+      "providerArabic": "((ذَهَبَ الظَّمَأُ وَابْتَلَّتِ العُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/176.mp3",
+      "chapter": 68,
+      "number": 176,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 359448
+      }
+    },
+    {
+      "key": "for-host",
+      "itemId": "for-host",
+      "variant": null,
+      "arabic": "اللَّهُمَّ بَارِكْ لَهُمْ فِيمَا رَزَقْتَهُم، وَاغْفِرْ لَهُمْ وَارْحَمْهُمْ",
+      "providerArabic": " ((اللَّهُمَّ بَارِكْ لَهُمْ فِيمَا رَزَقْتَهُم، وَاغْفِرْ لَهُمْ وَارْحَمْهُمْ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/182.mp3",
+      "chapter": 71,
+      "number": 182,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 264750
+      }
+    },
+    {
+      "key": "for-one-who-fed",
+      "itemId": "for-one-who-fed",
+      "variant": null,
+      "arabic": "اللَّهُمَّ أَطْعِمْ مَنْ أَطْعَمَنِي، وَاسْقِ مَنْ سَقَانِي",
+      "providerArabic": "((اللَّهُمَّ أَطْعِمْ مَنْ أَطْعَمَنِي، وَاسْقِ مَنْ سَقَانِي)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/183.mp3",
+      "chapter": 72,
+      "number": 183,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 257070
+      }
+    },
+    {
+      "key": "breaking-fast-with-hosts",
+      "itemId": "breaking-fast-with-hosts",
+      "variant": null,
+      "arabic": "أَفْطَرَ عِنْدَكُمُ الصَّائِمُونَ، وَأَكَلَ طَعَامَكُمُ الْأَبْرَارُ، وَصَلَّتْ عَلَيْكُمُ الْمَلاَئِكَةُ",
+      "providerArabic": " ((أَفْطَرَ عِنْدَكُمُ الصَّائِمُونَ، وَأَكَلَ طَعَامَكُمُ الْأَبْرَارُ، وَصَلَّتْ عَلَيْكُمُ الْمَلاَئِكَةُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/184.mp3",
+      "chapter": 73,
+      "number": 184,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 282606
+      }
+    },
+    {
+      "key": "fasting-and-insult",
+      "itemId": "fasting-and-insult",
+      "variant": null,
+      "arabic": "إِنِّي صَائِمٌ، إِنِّي صَائِمٌ",
+      "providerArabic": "((إِنِّي صَائِمٌ، إِنِّي صَائِمٌ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/186.mp3",
+      "chapter": 75,
+      "number": 186,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 235566
+      }
+    },
+    {
+      "key": "first-fruit",
+      "itemId": "first-fruit",
+      "variant": null,
+      "arabic": "اللَّهُمَّ بَارِكْ لَنَا فِي ثَمَرِنَا، وَبَارِكْ لَنَا فِي مَدِينَتِنَا، وَبَارِكْ لَنَا فِي صَاعِنَا، وَبَارِكْ لَنَا فِي مُدِّنَا",
+      "providerArabic": "((اللَّهُمَّ بَارِكْ لَنَا فِي ثَمَرِنَا، وَبَارِكْ لَنَا فِي مَدِينَتِنَا، وَبَارِكْ لَنَا فِي صَاعِنَا، وَبَارِكْ لَنَا فِي مُدِّنَا)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/187.mp3",
+      "chapter": 76,
+      "number": 187,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 327534
+      }
+    },
+    {
+      "key": "for-newlyweds",
+      "itemId": "for-newlyweds",
+      "variant": null,
+      "arabic": "بَارَكَ اللَّهُ لَكَ، وَبَارَكَ عَلَيْكَ، وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ",
+      "providerArabic": "((بَارَكَ اللَّهُ لَكَ، وَبَارَكَ عَلَيْكَ، وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/190.mp3",
+      "chapter": 79,
+      "number": 190,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 264174
+      }
+    },
+    {
+      "key": "love-for-allah",
+      "itemId": "love-for-allah",
+      "variant": null,
+      "arabic": "أَحَبَّكَ الَّذِي أَحْبَبْتَنِي لَهُ",
+      "providerArabic": "((أَحَبَّكَ الَّذِي أَحْبَبْتَنِي لَهُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/200.mp3",
+      "chapter": 89,
+      "number": 200,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 232302
+      }
+    },
+    {
+      "key": "offered-help",
+      "itemId": "offered-help",
+      "variant": null,
+      "arabic": "بَارَكَ اللَّهُ لَكَ فِي أَهْلِكَ وَمَالِكَ",
+      "providerArabic": "((بَارَكَ اللَّهُ لَكَ فِي أَهْلِكَ وَمَالِكَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/201.mp3",
+      "chapter": 90,
+      "number": 201,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 226158
+      }
+    },
+    {
+      "key": "returning-debt",
+      "itemId": "returning-debt",
+      "variant": null,
+      "arabic": "بارَكَ اللَّهُ لَكَ فِي أَهْلِكَ وَمَالِكَ، إِنَّمَا جَزَاءُ السَّلَفِ الْحَمْدُ وَالأَدَاءُ",
+      "providerArabic": "((بارَكَ اللَّهُ لَكَ فِي أَهْلِكَ وَمَالِكَ، إِنَّمَا جَزَاءُ السَّلَفِ الْحَمْدُ وَالأَدَاءُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/202.mp3",
+      "chapter": 91,
+      "number": 202,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 266286
+      }
+    },
+    {
+      "key": "protection-from-shirk",
+      "itemId": "protection-from-shirk",
+      "variant": null,
+      "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ أَنْ أُشْرِكَ بِكَ وَأَنَا أَعْلَمُ، وَأَسْتَغْفِرُكَ لِمَا لاَ أَعْلَمُ",
+      "providerArabic": "((اللَّهُمَّ إِنِّي أَعُوذُ بِكَ أَنْ أُشْرِكَ بِكَ وَأَنَا أَعْلَمُ، وَأَسْتَغْفِرُكَ لِمَا لاَ أَعْلَمُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/203.mp3",
+      "chapter": 92,
+      "number": 203,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 269166
+      }
+    },
+    {
+      "key": "traveler-to-those-staying",
+      "itemId": "traveler-to-those-staying",
+      "variant": null,
+      "arabic": "أَسْتَوْدِعُكُمُ اللَّهَ الَّذِي لاَ تَضِيعُ وَدَائِعُهُ",
+      "providerArabic": "((أَسْتَوْدِعُكُمُ اللَّهَ الَّذِي لاَ تَضِيعُ وَدَائِعُهُ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/211.mp3",
+      "chapter": 100,
+      "number": 211,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 238830
+      }
+    },
+    {
+      "key": "seeing-traveler-off",
+      "itemId": "seeing-traveler-off",
+      "variant": null,
+      "arabic": "أَسْتَوْدِعُ اللَّهَ دِينَكَ، وَأَمَانَتَكَ، وَخَوَاتِيمَ عَمَلِكَ",
+      "providerArabic": "(( أَسْتَوْدِعُ اللَّهَ دِينَكَ، وَأَمَانَتَكَ، وَخَوَاتِيمَ عَمَلِكَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/212.mp3",
+      "chapter": 101,
+      "number": 212,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 330191
+      }
+    },
+    {
+      "key": "blessing-traveler",
+      "itemId": "blessing-traveler",
+      "variant": null,
+      "arabic": "زَوَّدَكَ اللَّهُ التَّقْوَى، وَغَفَرَ ذَنْبَكَ، وَيَسَّرَ لَكَ الخَيْرَ حَيْثُ ما كُنْتَ",
+      "providerArabic": "((زَوَّدَكَ اللَّهُ التَّقْوَى، وَغَفَرَ ذَنْبَكَ، وَيَسَّرَ لَكَ الخَيْرَ حَيْثُ ما كُنْتَ)).",
+      "url": "https://www.hisnmuslim.com/audio/ar/213.mp3",
+      "chapter": 101,
+      "number": 213,
+      "check": {
+        "status": 200,
+        "type": "audio/mpeg",
+        "bytes": 315562
+      }
+    }
+  ]
+}

@@ -215,3 +215,7 @@ Muallim and live preparation render in the app like alphabet and Umrah. Only pub
 
 ###401 ·26October · closed section loading
 Verified owners reuse a validated first-party course package across app launches; Knowledge prefetches it once. Sign-out/revocation clears the course cache and no bearer is stored or backed up. The separate private lesson service uses a lazy media bundle, one authenticated list bootstrap and compressed, ETag-validated static assets. Media is prepared on prejoin so the Join tap retains its audio gesture. Other users retain Soon; announcement395, expiry and acknowledgement remain unchanged.
+
+###402 ·26October · dhikr completion and everyday dua pronunciation
+Only new public changes appear: deliberate continuation after the prescribed dhikr count and61 everyday duas with43 exact-formula audio mappings. Two original feature compositions accompany this announcement. No old reciter/Qibla cards are appended.
+Closed teaching-room improvements and source-checked additional reading rows remain owner-only. Visible source citations have been removed from dua/course cards at the user’s request; internal references remain available for text/audio checks.

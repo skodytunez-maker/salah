@@ -45,11 +45,12 @@ const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Из�
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(root.querySelectorAll('.release-feature').length,4);
+assert.equal(root.querySelectorAll('.release-feature').length,2);
 assert.equal(root.querySelectorAll('.release-roundup-readers img').length,0);
 for(const title of ['13 новых чтецов','Кибла на карте','Узнать чтение · бета','Мединский мусхаф','Режим путника','Тафсиры ас-Саади и Ибн Касира'])assert.ok(!root.textContent.includes(title),'Current news does not repeat '+title);
-for(const title of ['Алфавит для скачивания','Онлайн-занятия','Муаллим Сани','Прямой эфир'])assert.ok(root.textContent.includes(title));
-assert.equal(root.querySelectorAll('.release-coming-button:disabled').length,3);
+for(const title of ['Зикр в своём темпе','Дуа со звуком'])assert.ok(root.textContent.includes(title));
+for(const title of ['Алфавит для скачивания','Онлайн-занятия','Муаллим Сани','Прямой эфир'])assert.ok(!root.textContent.includes(title),'Closed or older features do not repeat in402');
+assert.equal(root.querySelectorAll('.release-coming-button:disabled').length,0);
 for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');
 for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 for(const change of APP_CHANGES)assert.ok(releaseFeatureForChange(change),'Assign feature-specific artwork before publishing: '+change);
