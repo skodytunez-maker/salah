@@ -1,4 +1,4 @@
--- Applied migration:20261026114530_private_classroom_schedule.sql
+-- Applied migrations:20261026114530 and 20261026120131
 create schema if not exists salah_classroom_private;
 revoke all on schema salah_classroom_private from public,anon,authenticated;
 create table if not exists salah_classroom_private.lessons(
@@ -25,3 +25,4 @@ create index if not exists classroom_reminder_due on salah_classroom_private.les
 create index if not exists classroom_enrolled_user on salah_classroom_private.enrollments(user_id);
 
 create index if not exists classroom_owner_schedule on salah_classroom_private.lessons(owner_id,starts_at);
+create index if not exists classroom_active_reminder_due on salah_classroom_private.lessons(reminder_at) where state in('planned','live');
