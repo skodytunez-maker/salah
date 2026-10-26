@@ -1,4 +1,4 @@
--- Proposed private classroom schema. Production activation requires explicit approval.
+-- Applied migration:20261026114530_private_classroom_schedule.sql
 create schema if not exists salah_classroom_private;
 revoke all on schema salah_classroom_private from public,anon,authenticated;
 create table if not exists salah_classroom_private.lessons(

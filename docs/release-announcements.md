@@ -219,3 +219,7 @@ Verified owners reuse a validated first-party course package across app launches
 ###402 ·26October · dhikr completion and everyday dua pronunciation
 Only new public changes appear: deliberate continuation after the prescribed dhikr count and61 everyday duas with43 exact-formula audio mappings. Two original feature compositions accompany this announcement. No old reciter/Qibla cards are appended.
 Closed teaching-room improvements and source-checked additional reading rows remain owner-only. Visible source citations have been removed from dua/course cards at the user’s request; internal references remain available for text/audio checks.
+
+## 403 — closed account lessons, 2026-10-26
+
+Version403 adds invitation-only account enrollment and the private teacher schedule. Public knowledge cards remain Soon. The public announcement stays402with its existing acknowledgement and expiry; no old feature cards are re-announced. Schema20261026114530is applied with private tables and no direct browser-role access. Lesson reminders use the browser/PWA delivery path; Android native lesson push remains a later phase. Actual authenticated lesson enrollment and closed-app delivery require the private device check.
