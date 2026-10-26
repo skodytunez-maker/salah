@@ -2658,6 +2658,105 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Original SALAH feature-specific SVG composition authored for402; docs/release-announcements.md.",
       "note": "Incremental illustration after the original audit baseline. Original vector interface composition; no external photographs or publisher scans."
+    },
+    {
+      "path": "dist/assets/dua-themes/cleanliness.webp",
+      "gitBlobSha": "9a6fd7908ea85aa4d99232dd797dcd2d49b87163",
+      "bytes": 22920,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/distress.webp",
+      "gitBlobSha": "53fb35636fa5f4e15b95cfc301b29258e140f531",
+      "bytes": 42220,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/everyday.webp",
+      "gitBlobSha": "9a36be97306b688ef5f8aa4c4ee68faadfb9703e",
+      "bytes": 72360,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/family.webp",
+      "gitBlobSha": "4938bec52a16ecddfd9ac304ee50ac79e2a6b22a",
+      "bytes": 27976,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/food.webp",
+      "gitBlobSha": "5c827f30a3f470bcc1f3f8f4ded345324f4b6750",
+      "bytes": 39420,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/health.webp",
+      "gitBlobSha": "7cd9a6bd389fb4a628d49985ee2d26156fc17f99",
+      "bytes": 29470,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/home.webp",
+      "gitBlobSha": "989406234352e6e885f37aa302e4de7ab2b13a3f",
+      "bytes": 37902,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/mosque.webp",
+      "gitBlobSha": "1596a538193f617af0ac9c7a4f8f5ee473cc5b38",
+      "bytes": 39254,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/prayer.webp",
+      "gitBlobSha": "035365de5c7297331f8915bf59d0372c2ce61d23",
+      "bytes": 47010,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/sleep.webp",
+      "gitBlobSha": "9c2bea0debe39cb806f9435badbba74c8386fdb0",
+      "bytes": 23018,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/dua-themes/travel.webp",
+      "gitBlobSha": "513d2c80b6cb0c9102c0b1de688604bd1dfb1fd3",
+      "bytes": 40264,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/dua-theme-artwork.md",
+      "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
     }
   ],
   "wallpaperSets": [

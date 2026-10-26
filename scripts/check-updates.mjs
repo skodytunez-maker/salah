@@ -125,7 +125,7 @@ const gateStart=appSource.indexOf('registerAppWorker({toast');
 assert.ok(gateStart>=0);
 const gateCall=appSource.slice(gateStart,appSource.indexOf('});',gateStart)+3);
 let updateGate,reader=null,sync='saved',audio=false;
-const gateScope={settings:{onboarded:true},currentRoute:'adhkar',toast(){},registerAppWorker:options=>updateGate=options,
+const gateScope={staffCabinetBusy:()=>false,settings:{onboarded:true},currentRoute:'adhkar',toast(){},registerAppWorker:options=>updateGate=options,
  app:{querySelector:selector=>reader&&selector.split(',').includes(reader)?{}:null},
  counterSyncStatus:()=>({status:sync}),ownerLearningBusy:()=>false,foregroundAudioBusy:()=>audio};
 vm.runInNewContext(gateCall,gateScope);

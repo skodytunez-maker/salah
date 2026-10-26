@@ -1,6 +1,6 @@
-export const APP_VERSION=403;
-export const APP_UPDATED_AT='2026-10-26';
-export const APP_CHANGES=["Азкары: счётчик задерживается на «Выполнил». Продолжить можно отдельным нажатием; дополнительные повторения считаются отдельно.","Повседневные дуа: 61 дуа для разных ситуаций и произношение для 43 карточек. Арабский текст, транскрипция, перевод и аудио в одной карточке."];
-export const APP_ANNOUNCEMENT={"version":402,"date":"2026-10-26","changes":["Азкары: счётчик задерживается на «Выполнил». Продолжить можно отдельным нажатием; дополнительные повторения считаются отдельно.","Повседневные дуа: 61 дуа для разных ситуаций и произношение для 43 карточек. Арабский текст, транскрипция, перевод и аудио в одной карточке."]};
-export const APP_NEWS_UNTIL='2026-10-29T00:30:00Z';
+export const APP_VERSION=404;
+export const APP_UPDATED_AT='2026-10-27';
+export const APP_CHANGES=['Повседневные дуа: тематические подборки с иллюстрациями. Находите дуа для дома, еды, мечети и других ситуаций.'];
+export const APP_ANNOUNCEMENT={version:404,date:'2026-10-27',changes:APP_CHANGES};
+export const APP_NEWS_UNTIL='2026-10-30T00:30:00Z';
 export const APP_UPDATE_DATE=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(APP_UPDATED_AT)).replace(/ г\.$/,'');

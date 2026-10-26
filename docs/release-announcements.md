@@ -223,3 +223,7 @@ Closed teaching-room improvements and source-checked additional reading rows rem
 ## 403 — closed account lessons, 2026-10-26
 
 Version403 adds invitation-only account enrollment and the private teacher schedule. Public knowledge cards remain Soon. The public announcement stays402with its existing acknowledgement and expiry; no old feature cards are re-announced. Schema20261026114530is applied with private tables and no direct browser-role access. Lesson reminders use the browser/PWA delivery path; Android native lesson push remains a later phase. Actual authenticated lesson enrollment and closed-app delivery require the private device check.
+
+## 404 · 27 октября 2026
+
+Только новые тематические подборки повседневных дуа с иллюстрированными обложками. Ранее показанные карточки не повторяются. Кабинет команды доступен только сотрудникам по прежним серверным правам и не анонсируется публично.

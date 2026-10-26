@@ -24,7 +24,7 @@ export function createStaffMessageStatus({getUserId,request=staffRequest,documen
   const open=documentRef?.querySelector('[data-staff-open-room="'+latest.room+'"]');if(open?.querySelector('[data-message="'+latest.id+'"]'))return;
   removeNotice();if(!documentRef?.body)return;
   const banner=documentRef.createElement('aside');banner.dataset.staffMessageNotice='';banner.className='support-message-notice staff-message-notice';banner.setAttribute('role','status');
-  const link=documentRef.createElement('a');link.href='#staff?room='+latest.room;link.textContent='Новое сообщение команды';link.onclick=e=>{banner.remove();if(windowRef?.location?.hash?.split('?')[0]==='#staff'){e.preventDefault();windowRef.dispatchEvent(new CustomEvent('salah:staff-message-open',{detail:{room:latest.room}}));}};
+  const link=documentRef.createElement('a');link.href=(documentRef?.querySelector('.owner-workspace')?'#admin?view=team&room=':'#staff?room=')+latest.room;link.textContent='Новое сообщение команды';link.onclick=e=>{banner.remove();if(['#staff','#admin'].includes(windowRef?.location?.hash?.split('?')[0])){e.preventDefault();windowRef.dispatchEvent(new CustomEvent('salah:staff-message-open',{detail:{room:latest.room}}));}};
   const close=documentRef.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление о сообщении команды');close.onclick=()=>banner.remove();banner.append(link,close);documentRef.body.append(banner);
   noticeTimer=setTimeout(()=>{banner.remove();noticeTimer=null;},12000);
  }

@@ -1,3 +1,4 @@
+import{duaThemeGrid}from '../dist/js/daily-dua-themes.js';
 import{duaRecording}from '../dist/js/daily-dua-recordings.js';
 import{duaAudioMarkup,mountDuaPronunciation}from '../dist/js/dua-pronunciation.js';
 import assert from 'node:assert/strict';
@@ -47,7 +48,7 @@ function browser(hash='#adhkar?view=duas',storage=new Storage(),fetchImpl=async(
  const location={get hash(){return entries[at].hash},set hash(hash){entries[at].hash=hash}};
  const win={addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},scrollTo(){}};
  win.history={get state(){return entries[at].state},replaceState(state,_title,url){entries[at]={hash:url??location.hash,state}},pushState(state,_title,url){entries.splice(at+1);entries.push({hash:url,state});at++},back(){if(at){at--;win.dispatchEvent(new Event('popstate'));win.dispatchEvent(new Event('hashchange'))}},forward(){if(at<entries.length-1){at++;win.dispatchEvent(new Event('popstate'));win.dispatchEvent(new Event('hashchange'))}}};
- const context=createContext({duaRecording,duaAudioMarkup,mountDuaPronunciation,document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Event,window:win,
+ const context=createContext({duaThemeGrid,duaRecording,duaAudioMarkup,mountDuaPronunciation,document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Event,window:win,
   read:(key,fallback)=>{try{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)}catch{return fallback}},
   write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},
   esc:value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),toast:value=>notices.push(value),
@@ -59,7 +60,7 @@ function browser(hash='#adhkar?view=duas',storage=new Storage(),fetchImpl=async(
  win.addEventListener('hashchange',()=>{if(location.hash.includes('view=duas'))open();else{module.stopDailyDuas();host.innerHTML='<h1>Азкары</h1>'}});
  return {host,location,storage,notices,module,window:win,open,nativeBack:()=>win.history.back(),nativeForward:()=>win.history.forward(),get entries(){return entries.map(e=>e.hash)},get at(){return at},select:selector=>{const el=host.querySelector(selector);assert.ok(el,selector);return el}};
 }
-let page=browser();await page.open();assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.length);
+let page=browser();await page.open();assert.equal(page.host.querySelectorAll('[data-dua-theme]').length,catalogue.categories.length);
 const search=page.select('#dua-search');search.value='близостью';search.oninput({target:search});assert.equal(page.host.querySelectorAll('[data-dua-open]').length,1);
 await page.select('[data-dua-favorite="before-intimacy"]').click();assert.deepEqual(JSON.parse(page.storage.getItem('salah:daily-dua-favorites')),['before-intimacy']);
 await page.select('[data-dua-open="before-intimacy"]').click();assert.match(page.location.hash,/item=before-intimacy/);assert.match(page.host.textContent,/разақтанаа/);assert.equal(page.host.querySelector('#adhkar-count'),null);
@@ -112,7 +113,7 @@ for(const item of ['dua-istikhara','dua-qunut','before-intimacy']){
  assert.equal(page.window.history.state.salahDuaParent,true);const depth=page.entries.length;
  await page.open();assert.equal(page.entries.length,depth,'Refreshing a reader does not duplicate history');
  if(item==='dua-qunut'){await page.select('[data-dua-variant="hanafi"]').click();assert.equal(page.entries.length,depth,'Wording changes stay in one reader entry')}
- page.nativeBack();assert.equal(page.location.hash,'#adhkar?view=duas');assert.equal(page.host.querySelectorAll('[data-dua-open]').length,catalogue.items.length,'Native swipe returns to the dua library');
+ page.nativeBack();assert.equal(page.location.hash,'#adhkar?view=duas');assert.equal(page.host.querySelectorAll('[data-dua-theme]').length,catalogue.categories.length,'Native swipe returns to the themed dua library');
  page.nativeForward();assert.match(page.location.hash,new RegExp('item='+item));assert.ok(page.host.querySelector('.dua-reader'));
  await page.select('#dua-list').click();assert.equal(page.location.hash,'#adhkar?view=duas','The edge-swipe button action uses the same library parent');
  page.nativeBack();assert.equal(page.location.hash,'#adhkar','Only the next Back returns to morning/evening collections');

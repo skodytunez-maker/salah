@@ -9,3 +9,17 @@
 [data-dua-passage="transliteration"]{white-space:pre-line}
 
 .dua-audio{display:flex;align-items:center;gap:12px;margin:18px 0 12px;flex-wrap:wrap}.dua-audio-button{display:inline-flex;align-items:center;gap:9px;min-height:44px;border:1px solid #c8bc9c55;border-radius:14px;padding:10px 15px;background:#c8bc9c0c;color:var(--gold,#c8bc9c);font:500 13px/1.5 Manrope,sans-serif}.dua-audio-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dua-audio-status,.dua-audio-pending{color:var(--muted,#9ba9bf);font-size:12px;line-height:1.7}.dua-audio-pending{margin:18px 0}.dua-audio-button:focus-visible{outline:2px solid var(--gold,#c8bc9c);outline-offset:3px}
+
+/* Illustrated category library; imagery never replaces the readable title. */
+.dua-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:8px 0 28px}
+.dua-theme-card{display:flex;flex-direction:column;min-width:0;padding:0;overflow:hidden;border:1px solid var(--line,#354157);border-radius:22px;background:var(--panel,#131e30);color:var(--text,#e8e8ee);text-align:left;cursor:pointer;box-shadow:0 7px 18px #0002}
+.dua-theme-card img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;background:#17263b}
+.dua-theme-card>span{display:grid;gap:5px;padding:14px 14px 16px;flex:1;align-content:start}
+.dua-theme-card strong{font-size:17px;line-height:1.35;overflow-wrap:anywhere;font-weight:600}
+.dua-theme-card small{font-size:12px;color:var(--muted,#aab4c7);line-height:1.5}
+.dua-theme-card:hover{border-color:var(--gold,#d8c496)}.dua-theme-card:focus-visible{outline:2px solid var(--gold,#d8c496);outline-offset:4px}
+.dua-hub-filters>label{display:none}.dua-hub-filters{justify-content:flex-end}.dua-all-themes{margin:0 0 16px}
+@media(min-width:740px){.dua-theme-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}}
+@media(max-width:370px){.dua-theme-grid{gap:10px}.dua-theme-card{border-radius:17px}.dua-theme-card>span{padding:11px}.dua-theme-card strong{font-size:15px}}
+
+.dua-quick-search[hidden]{display:none}
