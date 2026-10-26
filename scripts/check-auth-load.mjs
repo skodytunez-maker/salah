@@ -7,9 +7,9 @@ import {createSessionGuard} from '../dist/js/auth-session.js';
 // Three tabs share SDK refresh events. Fixtures never contact Auth or use real tokens.
 const source=await readFile(new URL('../dist/js/owner-auth.js',import.meta.url),'utf8');
 const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\n;({verifyOwner,accountAuthClient,ownerVerified,initOwnerAccess});';
-const callbacks=[],queue=[],tabs=[],routes=[],storageListeners=[];
+const lessonMarkers=[];const callbacks=[],queue=[],tabs=[],routes=[],storageListeners=[];
 let now=1000,refreshes=0,userChecks=0,gates=0,allow=true;
-let session={access_token:'fixture-0',user:{id:'11111111-1111-4111-8111-111111111111'}};
+let session={access_token:'fixture-0',user:{id:'11111111-1111-4111-8111-111111111111',email_confirmed_at:'2026-10-02'}};
 for(let i=0;i<3;i++){
  const auth={
   onAuthStateChange:fn=>{callbacks.push(fn);},
@@ -19,7 +19,7 @@ for(let i=0;i<3;i++){
   signOut:async()=>({error:null})
  };
  const location={hash:'#account'};routes.push(location);
- const context=createContext({personalDataAllowed,location,Date:{now:()=>now},createSessionGuard,createAuthTransport:()=>()=>{},localStorage:{getItem:()=>session?JSON.stringify(session):null},document:{addEventListener(){}},setInterval:()=>0,window:{supabase:{createClient:()=>({auth})},addEventListener:(type,fn)=>{if(type==='storage')storageListeners.push(fn);}},setTimeout:fn=>{queue.push(fn);return queue.length;},fetch:async()=>{gates++;return allow?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});},AbortSignal,Error,URLSearchParams});
+ const context=createContext({syncLessonNotificationAccount:value=>lessonMarkers.push(value),personalDataAllowed,location,Date:{now:()=>now},createSessionGuard,createAuthTransport:()=>()=>{},localStorage:{getItem:()=>session?JSON.stringify(session):null},document:{addEventListener(){}},setInterval:()=>0,window:{supabase:{createClient:()=>({auth})},addEventListener:(type,fn)=>{if(type==='storage')storageListeners.push(fn);}},setTimeout:fn=>{queue.push(fn);return queue.length;},fetch:async()=>{gates++;return allow?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});},AbortSignal,Error,URLSearchParams});
  const tab=new Script(executable).runInContext(context);tab.accountAuthClient();tab.initOwnerAccess(()=>{});tabs.push(tab);
 }
 await tabs[0].verifyOwner({verifySession:true});
@@ -33,7 +33,7 @@ else{
  assert.ok(gates<=6,'Server owner checks remain bounded');
  assert.ok(tabs.every(tab=>tab.ownerVerified()));
  // Routine renewal of the same verified owner does not collapse the cabinet.
- session={...session,access_token:'fixture-next'};for(const fn of callbacks)fn('TOKEN_REFRESHED',session);
+ session={...session,access_token:'fixture-next'};for(const fn of callbacks)fn('TOKEN_REFRESHED',session);assert.ok(lessonMarkers.slice(-3).every(value=>value===session.user.id),'Only the confirmed account ID is sent to the lesson notification marker');
  assert.ok(tabs.every(tab=>tab.ownerVerified()));
  while(queue.length){const task=queue.splice(0);for(const fn of task)fn();for(let i=0;i<25;i++)await Promise.resolve();}
  for(const route of routes)route.hash='#home';
@@ -51,3 +51,5 @@ const guard=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{sessio
 const pending=guard({force:true});for(let i=0;!release&&i<10;i++)await Promise.resolve();
 current={access_token:'newer',user:{id:'fixture-user'}};guard.acceptRefresh(current);release({data:{user:{id:'fixture-user'}}});
 assert.equal((await pending).state,'changed');assert.equal((await guard()).session.access_token,'newer');
+
+for(const fn of callbacks)fn('SIGNED_OUT',null);assert.ok(lessonMarkers.slice(-3).every(value=>value===null),'Lesson notification identity clears on sign-out');
