@@ -1,3 +1,4 @@
+import{dispatchClassroomPush}from './classroom-push.mjs';
 import{dispatchCompetitionPush}from './competition-push.mjs';
 import{dispatchStaffPush}from './staff-push.mjs';
 import {dispatchNativeSupportPush} from './native-support-dispatch.mjs';
@@ -98,7 +99,7 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
  async function send(device,event){
@@ -134,6 +135,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
     if(!await db.lease(clock()))return reply({busy:true});
     let delivered=0;
     try{
+     try{delivered+=await dispatchClassroomPush({db,send,clock});}catch{console.warn('classroom_reminders_unavailable');}
      delivered+=await dispatchCompetitionPush({db,send,clock});
      delivered+=await dispatchSupportPush({db,send,clock});
      delivered+=await dispatchNativeSupportPush({db,sender:firebaseSender,clock});
