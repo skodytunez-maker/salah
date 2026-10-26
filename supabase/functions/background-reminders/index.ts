@@ -277,6 +277,23 @@ async function dispatchStaffPush({db,send,sender,clock}){
  }}));return results.sent;
 }
 
+const CLASSROOM_ID=/^[\w-]{32}$/;
+function classroomPushEvent(row,now){
+ const at=Number(row?.at),startsAt=Number(row?.starts_at);
+ if(!/^[0-9a-f-]{36}$/i.test(row?.user_id||'')||!CLASSROOM_ID.test(row?.lesson_id||'')||!Number.isFinite(at)||!Number.isFinite(startsAt)||at>now||now-at>=300000||startsAt<=now||typeof row.title!=='string'||row.title.length>100||!Number.isInteger(row.revision))return null;
+ let time;try{time=new Intl.DateTimeFormat('ru-RU',{timeZone:row.time_zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(startsAt);}catch{return null;}
+ return{kind:'classroom',user:row.user_id,hash:'classroom-'+Array.from(row.lesson_id,c=>c.charCodeAt(0).toString(16)).join('')+'-'+at.toString(16),at,startsAt,lessonId:row.lesson_id,revision:row.revision,message:'Сегодня в '+time+' занятие: '+row.title};
+}
+async function dispatchClassroomPush({db,send,clock}){
+ if(!db.classroomEvents||!db.classroomActive)return 0;
+ let sent=0,cursor=0;const started=clock(),rows=await db.classroomEvents(started);
+ await Promise.all(Array.from({length:Math.min(8,rows.length)},async()=>{while(cursor<rows.length&&clock()-started<15000){const row=rows[cursor++],event=classroomPushEvent(row,clock());if(!event||!await db.classroomActive(row.id,event.lessonId,event.revision))continue;
+  if(!await db.claim(row.id,event.hash,event.at,clock()))continue;
+  if(!await db.classroomActive(row.id,event.lessonId,event.revision)){await db.complete(row.id,event.hash,'retry');continue;}
+  const result=await send(row,event);await db.complete(row.id,event.hash,result);if(result==='sent')sent++;
+ }}));return sent;
+}
+
 const SUPPORT_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function supportPushEvent(row,now){
  const at=Number(row?.at);
@@ -437,7 +454,7 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
  async function send(device,event){
@@ -473,6 +490,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
     if(!await db.lease(clock()))return reply({busy:true});
     let delivered=0;
     try{
+     try{delivered+=await dispatchClassroomPush({db,send,clock});}catch{console.warn('classroom_reminders_unavailable');}
      delivered+=await dispatchCompetitionPush({db,send,clock});
      delivered+=await dispatchSupportPush({db,send,clock});
      delivered+=await dispatchNativeSupportPush({db,sender:firebaseSender,clock});
@@ -553,6 +571,8 @@ const db={
 
  async config(){const [row]=await sql`select vapid,cron_secret from salah_push_private.config where id=1`;return row;},
  async ensureConfig(generate){let row=await this.config();if(!row)throw Error('migration-required');if(!row.vapid){const keys=generate();await sql`update salah_push_private.config set vapid=${sql.json(keys)} where id=1 and vapid is null`;row=await this.config();}return row;},
+ async classroomEvents(now){return sql`select distinct on(l.id,d.id) l.id as lesson_id,l.revision,l.details->>'title' as title,l.details->>'timeZone' as time_zone,extract(epoch from l.reminder_at)*1000 as at,extract(epoch from l.starts_at)*1000 as starts_at,e.user_id,d.id,d.subscription from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id and e.reminders_enabled join auth.users u on u.id=e.user_id and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and(u.banned_until is null or u.banned_until<=now()) join public.app_notification_status n on n.user_id=e.user_id and n.permission='granted' join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id and d.subscription is not null where l.state='planned' and l.reminder_at<=to_timestamp(${now}/1000.0) and l.reminder_at>to_timestamp(${now}/1000.0)-interval '5 minutes' and l.starts_at>to_timestamp(${now}/1000.0) and d.updated_at>to_timestamp(${now}/1000.0)-interval '90 days' and n.checked_at>to_timestamp(${now}/1000.0)-interval '30 days' and not exists(select 1 from public.app_notification_status newer where newer.push_device_id=d.id and newer.user_id<>e.user_id and newer.checked_at>=n.checked_at) order by l.id,d.id limit 100`;},
+ async classroomActive(device,id,revision){const[r]=await sql`select exists(select 1 from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id and e.reminders_enabled join auth.users u on u.id=e.user_id and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and(u.banned_until is null or u.banned_until<=now()) join public.app_notification_status n on n.user_id=e.user_id and n.permission='granted' join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id where l.id=${id} and l.revision=${revision} and d.id=${device}::uuid and d.subscription is not null and l.state='planned' and l.reminder_at<=now() and l.reminder_at>now()-interval '5 minutes' and l.starts_at>now() and n.checked_at>now()-interval '30 days' and not exists(select 1 from public.app_notification_status newer where newer.push_device_id=d.id and newer.user_id<>e.user_id and newer.checked_at>=n.checked_at)) as active`;return r?.active===true;},
  async get(id){const [row]=await sql`select id,token_hash,subscription,preferences from salah_push_private.devices where id=${id}::uuid`;return row;},
  async count(){const [row]=await sql`select count(*)::int as n from salah_push_private.devices`;return row.n;},
  async upsert(d){await sql`insert into salah_push_private.devices(id,token_hash,endpoint_hash,subscription,preferences,updated_at,enabled) values(${d.id}::uuid,${d.token_hash},${d.endpoint_hash},${sql.json(d.subscription)},${sql.json(d.preferences)},to_timestamp(${d.now}/1000.0),${d.preferences.reminders.enabled}) on conflict(id) do update set endpoint_hash=excluded.endpoint_hash,subscription=excluded.subscription,preferences=excluded.preferences,updated_at=excluded.updated_at,enabled=excluded.enabled where salah_push_private.devices.token_hash=excluded.token_hash`;},

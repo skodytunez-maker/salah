@@ -1,3 +1,4 @@
+import{syncLessonNotificationAccount}from './lesson-notification-account.js';
 import{personalDataAllowed}from './audience.js';
 import{createAuthTransport}from './auth-transport.js';
 import{createSessionGuard}from './auth-session.js';
@@ -16,6 +17,7 @@ function authClient(){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});
   client.auth.onAuthStateChange((event,session)=>{
+   syncLessonNotificationAccount(session?.user?.email_confirmed_at&&!session.user.is_anonymous?session.user.id:null);
    const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&verified;
    if(['TOKEN_REFRESHED','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))checkAccountSession.acceptRefresh(session);
    else if(event==='SIGNED_OUT')checkAccountSession.invalidate();
