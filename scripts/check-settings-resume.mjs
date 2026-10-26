@@ -16,7 +16,7 @@ const location={hash:'#settings'},window={addEventListener:(name,fn)=>handlers.s
 const fakeDate=class extends Date {static now(){return now}};
 const noop=()=>{};
 const settings={city:{name:'Медина',timezone:'Asia/Riyadh'},weather:false};
-const model=createContext({personalDataAllowed,document,app,location,window,Date:fakeDate,navigator:{onLine:true},settings,
+const model=createContext({staffCabinetBusy:()=>false,committedRouteHash:location.hash,personalDataAllowed,document,app,location,window,Date:fakeDate,navigator:{onLine:true},settings,
  days:{},currentDay:day,currentRoute:'',refreshId:0,error:'',loading:false,lastTick:now,lastWeatherCheck:now,weatherBusy:false,weather:null,quranRenderedHash:null,learningEntry:null,umrahModule:null,umrahImport:null,umrahRenderedHash:null,
  ownerReleaseCard:{mount(){}},ownerSupportStatus:{refresh:noop},userSupportStatus:{refresh:noop},staffMessageStatus:{refresh:noop},topHeader:{append(){}},locationControl:{},settingsControl:{},storageAvailable:true,storageWarnings:[],
  setInterval:()=>1,clearInterval:noop,nav:noop,stopCompass:noop,stopStudentLesson:noop,showLessonInvitation:noop,stopOwnerLearningPreview:noop,stopLearning:noop,stopQuran:noop,stopAdhkar:noop,stopStaffCabinet:()=>{},stopSupport:noop,showSupport:noop,home:noop,prayerPage:noop,showKnowledge:noop,more:noop,showQuran:noop,showAdhkar:noop,showLearning:noop,qibla:noop,historyPage:noop,calendarPage:noop,sourcesPage:noop,about:noop,showCounterAccount:noop,showAdmin:noop,

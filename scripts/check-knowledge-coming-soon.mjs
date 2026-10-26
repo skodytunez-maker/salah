@@ -23,10 +23,10 @@ for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=onlin
  const links=host.querySelectorAll('[data-learning-entry]');assert.equal(links.length,3);links[0].click();assert.equal(started,1);started=0;
 }
 host.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(host.querySelectorAll('.release-feature').length,2,'Current news contains only the new counter and dua changes');
+assert.equal(host.querySelectorAll('.release-feature').length,1,'Current news contains only the new themed dua library');
 assert.equal(host.querySelectorAll('.release-coming-button').length,0,'Closed features are not re-announced as new');
 for(const feature of UPCOMING_KNOWLEDGE)assert.ok(![...host.querySelectorAll('.release-feature h3')].some(h=>h.textContent===feature.title+' · скоро'));
-assert.deepEqual(APP_CHANGES.map(releaseFeatureForChange),['dhikr-completion','dua-pronunciation']);
+assert.deepEqual(APP_CHANGES.map(releaseFeatureForChange),['dua-themes']);
 for(const img of host.querySelectorAll('.release-feature img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 assert.ok(APP_VERSION>=395);
 // Verified owner access reveals only navigation to the private checks.

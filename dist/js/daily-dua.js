@@ -1,3 +1,4 @@
+import{duaThemeGrid}from './daily-dua-themes.js';
 import{duaRecording}from './daily-dua-recordings.js';
 import{duaAudioMarkup,mountDuaPronunciation}from './dua-pronunciation.js';
 import{read,write}from './storage.js';
@@ -10,6 +11,7 @@ let catalogue=null,host=null,generation=0,controller=null,timer=null,state=null,
 const sizes=[16,18,20,22,24,28];
 const prefKeys={arabic:'adhkar-arabic',transliteration:'adhkar-translit',translation:'adhkar-translation'};
 const duaParentKey='salahDuaParent';
+const themeParentKey='salahDuaThemeParent';
 const icon=name=>'<img src="./assets/'+name+'.svg" alt="">';
 const favorites=()=>cleanDuaFavorites(read('daily-dua-favorites',[]),catalogue);
 const selected=()=>filterDuas(catalogue,state,favorites());
@@ -80,12 +82,19 @@ function library(){stopPronunciation();
  host.querySelector('#dua-favorites-only').onclick=e=>{state.favoritesOnly=!state.favoritesOnly;e.currentTarget.setAttribute('aria-pressed',String(state.favoritesOnly));remember();results()};
  results();
 }
+function openTheme(id){
+ const parent={...window.history.state};delete parent[duaParentKey];delete parent[themeParentKey];
+ try{window.history.replaceState(parent,'','#adhkar?view=duas');window.history.pushState({...parent,[themeParentKey]:true},'','#adhkar?view=duas&category='+encodeURIComponent(id));window.dispatchEvent(new Event('salah:route-history'));}catch{}
+ state.category=id;state.query='';state.favoritesOnly=false;library();window.scrollTo(0,0);
+}
 function results(){
- const items=selected();host.querySelector('#dua-result-count').textContent='Дуа: '+items.length;
- host.querySelector('#dua-results').innerHTML=items.length?items.map(item=>'<article class="dua-list-card"><button type="button" class="dua-open" data-dua-open="'+item.id+'"><small>'+esc(categoryName(item.category))+'</small><strong>'+esc(item.title)+'</strong><span>'+esc(item.occasion)+'</span></button>'+favoriteButton(item)+'</article>').join(''):'<div class="dua-empty"><p>'+(state.favoritesOnly?'В этой подборке пока нет избранных дуа.':'Не нашли дуа по этому запросу.')+'</p><button type="button" class="text-button" id="dua-clear">Показать все дуа</button></div>';
- host.querySelectorAll('[data-dua-open]').forEach(button=>button.onclick=()=>{readingIds=items.map(item=>item.id);state.item=button.dataset.duaOpen;reader();window.scrollTo(0,0)});
- const clear=host.querySelector('#dua-clear');if(clear)clear.onclick=()=>{state.category='';state.query='';state.favoritesOnly=false;library()};
- bindFavorites();
+ const themed=!state.category&&!state.query.trim()&&!state.favoritesOnly,items=selected(),area=host.querySelector('#dua-results'),count=host.querySelector('#dua-result-count');
+ const filters=host.querySelector('.dua-filters');filters.classList.toggle('dua-hub-filters',themed);host.querySelector('.dua-quick-search').hidden=themed;
+ count.textContent=themed?'Выберите тему · '+catalogue.items.length+' дуа':(state.category?categoryName(state.category)+' · ':'')+'Дуа: '+items.length;
+ if(themed){area.innerHTML=duaThemeGrid(catalogue);area.querySelectorAll('[data-dua-theme]').forEach(button=>button.onclick=()=>openTheme(button.dataset.duaTheme));return;}
+ area.innerHTML='<button type="button" class="text-button dua-all-themes" id="dua-themes-back">Все темы</button>'+(items.length?items.map(item=>'<article class="dua-list-card"><button type="button" class="dua-open" data-dua-open="'+item.id+'"><small>'+esc(categoryName(item.category))+'</small><strong>'+esc(item.title)+'</strong><span>'+esc(item.occasion)+'</span></button>'+favoriteButton(item)+'</article>').join(''):'<div class="dua-empty"><p>'+(state.favoritesOnly?'В этой подборке пока нет избранных дуа.':'Не нашли дуа по этому запросу.')+'</p></div>');
+ area.querySelector('#dua-themes-back').onclick=()=>{if(window.history.state?.[themeParentKey]&&!state.query&&!state.favoritesOnly){window.history.back();return;}state.category='';state.query='';state.favoritesOnly=false;library();window.scrollTo(0,0);};
+ area.querySelectorAll('[data-dua-open]').forEach(button=>button.onclick=()=>{readingIds=items.map(item=>item.id);state.item=button.dataset.duaOpen;reader();window.scrollTo(0,0)});bindFavorites();
 }
 function variantButtons(item,passage){
  return item.variants?'<div class="dua-variants" role="group" aria-label="Вариант дуа Кунут">'+item.variants.map(value=>'<button type="button" data-dua-variant="'+value.id+'" aria-pressed="'+(value.id===passage.id)+'">'+esc(value.label)+'</button>').join('')+'</div>':'';
