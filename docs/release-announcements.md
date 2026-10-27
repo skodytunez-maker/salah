@@ -286,3 +286,8 @@ Menu title now starts 24px below the safe content inset. Its rows share the avai
 Restore large phone Menu rows: at least52px, account60px. Their explicit flex basis cannot shrink. Reduce empty heading and inter-row gaps on short phones; keep title24px below the safe inset and the author signature in normal flow. Announcement410 and closed learning sections remain unchanged.
 
 The Menu section explicitly spans the available width and receives the remaining viewport height after the safe title, footer and dock reserves. This prevents auto side margins from narrowing the buttons and removes the marked empty area below the signature by growing the buttons.
+
+
+## 415 — Menu hierarchy and SAHABA
+
+SAHABA moves from Menu to a regular Knowledge card, retaining its existing destination and external-link protections. Support SALAH remains a separate visible Menu action. Menu recovers unused footer and heading space for its eight rows; personal account has a72px minimum, larger42px portrait,18px name and stronger gold surface. Author signature remains in normal flow,8px clear of the bottom dock on standard phone sizes. Announcement410 and private learning gates remain unchanged.
