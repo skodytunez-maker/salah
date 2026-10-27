@@ -1,3 +1,4 @@
+import{listenerPresencePacket,createListenerPresenceDb}from './listener-presence.mjs';
 import postgres from 'npm:postgres@3.4.9';
 import{createListeningTotalsLoader}from './listening-totals.mjs';
 const loadListeningTotals=createListeningTotalsLoader();
@@ -6,6 +7,7 @@ import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDa
 import{publicListenerRows}from './listener-labels.mjs';
 const url=Deno.env.get('SUPABASE_URL')!,key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL')!,{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
+const presenceDb=createListenerPresenceDb(sql);
 const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Content-Type':'application/json','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'};
 const reply=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers});
 async function verified(req:Request){
@@ -26,13 +28,14 @@ async function ensure(user:any,initialEnabled=true){const hash=await hashFor(use
 });}
 async function publicBoard(period:string,day:string){
  const rows=await sql`select b.reciter,b.seconds,b.place,v.public_id as id,v.mode,
+ case when v.mode='profile' and (u.banned_until is null or u.banned_until<=now()) then coalesce(least(45,greatest(0,ceil(extract(epoch from(live.latest+interval '45 seconds'-statement_timestamp())))))::int,0) else 0 end active_for_seconds,
  exists(select 1 from salah_competition_private.awards a where a.user_id=b.user_id and a.kind='week')won_week,exists(select 1 from salah_competition_private.awards a where a.user_id=b.user_id and a.kind='month')won_month,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
  case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
  case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
- from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id order by b.place,v.public_id limit 1000`;
- const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],seconds:Number(r.seconds),rank:Number(r.place),awards:[...(r.won_week?['week']:[]),...(r.won_month?['month']:[])]})),limited:rows.length===1000};
+ from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id left join lateral(select max(lp.reported_at) latest from salah_competition_private.listener_presence lp join auth.sessions s on s.id=lp.session_id and s.user_id=lp.user_id where lp.user_id=b.user_id and lp.playing and lp.reported_at>statement_timestamp()-interval '45 seconds' and (s.not_after is null or s.not_after>now())) live on true order by b.place,v.public_id limit 1000`;
+ const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],activeForSeconds:r.mode==='profile'?Number(r.active_for_seconds)||0:0,seconds:Number(r.seconds),rank:Number(r.place),awards:[...(r.won_week?['week']:[]),...(r.won_month?['month']:[])]})),limited:rows.length===1000};
 }
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
@@ -58,7 +61,9 @@ Deno.serve(async req=>{
   const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));const totals:any={};for(const period of COMPETITION_PERIODS){const rows=await sql`select reciter,seconds from public.competition_scores(${period},${day}::date)where user_id=${user.id}::uuid`;totals[period]=Object.fromEntries(rows.map(r=>[r.reciter,Number(r.seconds)]));}return reply({...pref,totals,awards:await ownAwards(sql,user)});
  }
  if(req.method!=='POST')return reply({error:'method'},405);
- if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}await ensure(user);
+ if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}
+ if(body?.action==='presence'){let packet;try{packet=listenerPresencePacket(body);}catch{return reply({error:'invalid_presence'},400);}const result=await presenceDb.update(user,packet);return result.retry?reply({error:'retry'},429):reply(result);}
+ await ensure(user);
  if(body?.action==='snapshot'){
   let snapshot;try{const approved=await sql`SELECT entity_id FROM salah_staff_private.catalog WHERE kind='reciter'`;snapshot=competitionSnapshot(body,Date.now(),[...COMPETITION_RECITERS,...approved.map(x=>x.entity_id)]);}catch{return reply({error:'invalid_snapshot'},400);}
   await sql.begin(async tx=>{
@@ -84,5 +89,5 @@ Deno.serve(async req=>{
   await sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(28520261011)`;await tx`update salah_competition_private.preferences set enabled=coalesce(${body.enabled??null},enabled),notify=coalesce(${body.notify??null},notify),period=coalesce(${body.period??null},period),updated_at=now()where user_id=${user.id}::uuid`;if(body.enabled===true)await tx`update public.reciter_listener_visibility set mode='initial',public_id=gen_random_uuid(),updated_at=now()where user_id=${user.id}::uuid and mode='hidden'`;await tx`delete from salah_competition_private.rank_state where user_id=${user.id}::uuid`;await tx`delete from salah_competition_private.events where user_id=${user.id}::uuid`;await tx`select public.competition_refresh()`;});return reply({ok:true});
  }
  return reply({error:'invalid_action'},400);
- }catch(e){const reason=String(e?.message||'');return reply({error:['disabled','devices_limit','invalid_growth'].includes(reason)?reason:reason==='retry'?'retry':'temporarily_unavailable'},reason==='retry'?429:['disabled','devices_limit','invalid_growth'].includes(reason)?400:503);}
+ }catch(e){if(e?.status===401)return reply({error:'sign_in_required'},401);const reason=String(e?.message||'');return reply({error:['disabled','devices_limit','invalid_growth'].includes(reason)?reason:reason==='retry'?'retry':'temporarily_unavailable'},reason==='retry'?429:['disabled','devices_limit','invalid_growth'].includes(reason)?400:503);}
 });
