@@ -34,7 +34,8 @@ const entries = [
     description: 'Выберите одну из пяти обязательных молитв.',
     detail: '5 молитв',
     action: 'Выбрать молитву'
-  }
+  },
+  {kind:'sahaba',icon:'knowledge-sahaba',title:'SAHABA',description:'Истории сподвижников Пророка ﷺ.',detail:'Истории',action:'Читать истории',href:'https://sahaba-learning.skodytunez.chatgpt.site',external:true}
 ];
 
 export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified() } = {}) {
@@ -60,7 +61,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
     </div>
     ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail">Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
     <div class="knowledge-cards">
-      ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'}>
+      ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'} ${entry.external?'target="_blank" rel="noopener noreferrer"':''}>
         <div class="knowledge-card-top">
           <span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span>
           <span class="knowledge-detail">${entry.detail}</span>
