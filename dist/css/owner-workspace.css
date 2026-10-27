@@ -234,7 +234,7 @@ body.menu-page #app{display:flex;flex:1 0 auto;flex-direction:column;margin-top:
 body.menu-page .page-head{flex:none;margin:0 0 12px}
 body.menu-page .page-head h1{line-height:1.25;margin-bottom:0;text-shadow:none;filter:none}
 body.menu-page .page-head .muted:empty{display:none}
-body.menu-page #app>.panel.section{display:flex;flex:1 0 auto;flex-direction:column;gap:8px;margin-top:0;margin-bottom:0}
+body.menu-page #app>.panel.section{display:flex;flex:1 0 auto;flex-direction:column;gap:8px;width:100%;min-height:calc(100svh - var(--salah-safe-top,0px) - max(12px,var(--salah-safe-bottom,0px)) - 195px);margin:0}
 body.menu-page #app>.panel.section>.list-button{flex:1 0 52px;margin:0;min-height:52px}
 body.menu-page #app>.panel.section>.account-entry{flex:1.1 0 60px;min-height:60px}
 body.menu-page #app>.panel.section>.app-share-row{flex:1 0 52px;min-height:52px;margin:0}
