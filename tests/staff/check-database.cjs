@@ -22,6 +22,7 @@ async function main(){
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011221126_staff_support_privacy.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012160940_staff_message_status.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012174334_staff_background_notifications.sql'),'utf8'));
+ await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/functions/staff-cabinet/chat-room-avatar.sql'),'utf8'));
  const sessions=new Map();
  for(const [user,nickname] of [[owner,'Владелец (тест)'],[admin,'Админ (тест)'],[mod,'Модератор (тест)'],[outsider,'Не сотрудник (тест)']]){
   const sid=crypto.randomUUID();sessions.set(user,sid);
@@ -57,7 +58,7 @@ async function main(){
  await rpc('support.reply',{id:support,messageId:crypto.randomUUID(),body:'Тестовый ответ'});await rpc('support.close',{id:support});await denied(()=>rpc('support.reply',{id:support,messageId:crypto.randomUUID(),body:'Закрыт'}),'22023');
  await as(owner);await rpc('support.share',{id:support,visible:false});await as(mod);yes((await rpc('support.list')).length===0);await denied(()=>rpc('support.read',{id:support}),'42501');yes((await db.query('select count(*) as n from support_threads')).rows[0].n===2);
  yes((await rpc('chat.contacts')).length===2);const team=(await rpc('chat.rooms'))[0];yes(team.kind==='team');
- const dm=await rpc('chat.open',{userId:admin});yes(dm.kind==='direct');await denied(()=>rpc('chat.open',{userId:outsider}),'42501');
+ const dm=await rpc('chat.open',{userId:admin});yes(dm.kind==='direct');yes((await rpc('chat.rooms')).find(r=>r.id===dm.id).peerId===admin);yes((await rpc('chat.rooms')).find(r=>r.kind==='team').peerId===null);await denied(()=>rpc('chat.open',{userId:outsider}),'42501');
  const file=crypto.randomUUID();await rpc('chat.file.register',{roomId:dm.id,fileId:file,path:`${mod}/${dm.id}/${file}/test.txt`,filename:'test.txt',mimeType:'text/plain',bytes:4,sha256:'1'.repeat(64)});
  const mid=crypto.randomUUID();await rpc('chat.send',{roomId:dm.id,messageId:mid,body:'Привет 🙂',files:[file]});await rpc('chat.send',{roomId:dm.id,messageId:mid,body:'Привет 🙂',files:[file]});
 

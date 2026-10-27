@@ -31,3 +31,6 @@ body.staff-messenger-open #mobile-nav{display:none!important}
 .staff-cabinet .staff-messenger [hidden]{display:none!important}
 
 .staff-cabinet .staff-messenger .staff-inbox-heading{height:auto;border-bottom:0}.staff-cabinet .staff-messenger .staff-chat-heading{height:auto}
+
+/* Each chat keeps a separate, reachable pin control. */
+.staff-room-item{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:stretch;border-bottom:1px solid rgba(176,196,225,.12)}.staff-room-item>.staff-chat-room{width:100%;min-width:0;border-bottom:0}.staff-room-pin{display:flex;align-items:center;justify-content:center;align-self:center;min-width:44px;min-height:44px;padding:10px;border:0;border-radius:12px;background:transparent;color:#78869c}.staff-room-pin svg{width:18px;height:18px}.staff-room-pin[aria-pressed="true"]{color:var(--gold,#d8c393)}.staff-room-pin:hover{background:rgba(216,195,147,.08)}.staff-room-pin:focus-visible{outline:2px solid var(--gold,#d8c393);outline-offset:-3px}

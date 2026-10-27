@@ -1,3 +1,4 @@
+import{TEACHER_ADMIN_ACTIONS,teacherAdmin}from './teacher-roles-core.mjs';
 import{localTimestamp,validLocalTime,shiftDay}from '../../../dist/js/reminder-events.js';
 export const CLASSROOM_OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 export const CLASSROOM_ORIGINS=new Set(['https://skodytunez-maker.github.io','https://desktop-jecm5lt.taila4556d.ts.net']);
@@ -31,12 +32,13 @@ export function createScheduleHandler({db,verifyAccount,now=Date.now}){
    const joined=new Uint8Array(bytes);let pos=0;for(const chunk of chunks){joined.set(chunk,pos);pos+=chunk.length;}
    let input;try{input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(joined));}catch{fail(400,'Неверный запрос.');}
    if(!input||typeof input!=='object'||Array.isArray(input))fail(400,'Неверный запрос.');
-   const action=input.action,ownerAction=['create','update','transition','owner-list'].includes(action);
-   if(!['create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences'].includes(action))fail(400,'Неизвестное действие.');
+   const action=input.action,adminAction=TEACHER_ADMIN_ACTIONS.includes(action),ownerAction=adminAction||['create','update','transition','owner-list'].includes(action);
+   if(![...TEACHER_ADMIN_ACTIONS,'create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences'].includes(action))fail(400,'Неизвестное действие.');
    const actor=await verifyAccount(bearer[1],{ownerRequired:ownerAction});
    if(!uuid.test(actor?.id||''))fail(401,'Войдите в аккаунт SALAH.');
    if(ownerAction&&(actor.id!==CLASSROOM_OWNER||actor.owner!==true))fail(403,'Закрытое расписание доступно владельцу SALAH.');
    if(!await db.rate(actor.id,now()))fail(429,'Подождите минуту и повторите.');
+   if(adminAction)return reply(200,await teacherAdmin({action,input,actor,db,ownerId:CLASSROOM_OWNER,fail}));
    if(action==='create'){
     if(!opaque.test(input.id||'')||!opaque.test(input.code||''))fail(400,'Недопустимое приглашение.');
     const schedule=lessonSchedule(input,now()),row={...schedule,id:input.id,ownerId:actor.id,inviteHash:await inviteDigest(input.code),state:'planned',revision:1};
