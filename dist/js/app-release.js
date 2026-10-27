@@ -1,4 +1,4 @@
-export const APP_VERSION=410;
+export const APP_VERSION=411;
 export const APP_UPDATED_AT='2026-10-27';
 export const APP_CHANGES=["Топ SALAH: значок наушников рядом с фото показывает, кто слушает Коран. Только значок — без подписи и подсказки."];
 export const APP_ANNOUNCEMENT={version:410,date:'2026-10-27',changes:APP_CHANGES};
