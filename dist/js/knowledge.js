@@ -38,7 +38,9 @@ const entries = [
 ];
 
 export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified() } = {}) {
-  const preview=new URLSearchParams(hash.split('?')[1]||'').get('preview');
+  const routeParams=new URLSearchParams(hash.split('?')[1]||'');
+  const featureView=routeParams.get('view');
+  const preview=routeParams.get('preview')||(['online-lessons','muallim','live-stream'].includes(featureView)?featureView:null);
   if(preview&&(ownerAccess||canContinueOwnerPreview())&&mountOwnerLearningPreview(container,preview))return;
   stopOwnerLearningPreview();
   if(ownerAccess)preloadOwnerLearning();
@@ -67,12 +69,16 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
         <p>${entry.description}</p>
         <span class="knowledge-action">${entry.action}${actionIcon('next')}</span>
       </a>`).join('')}
-      <h2 class="knowledge-coming-title">Скоро в SALAH</h2>
-      ${UPCOMING_KNOWLEDGE.map(entry => `<article class="knowledge-card knowledge-card-coming" data-upcoming="${entry.id}" aria-labelledby="upcoming-${entry.id}">
-        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">${ownerAccess?'Закрытая проверка':'Готовим для вас'}</span></div>
+      ${ownerAccess?'':'<h2 class="knowledge-coming-title">Скоро в SALAH</h2>'}
+      ${UPCOMING_KNOWLEDGE.map(entry => {const route=ownerLearningPreview(entry.id,ownerAccess);return route?`<a class="knowledge-card knowledge-owner-preview" data-upcoming="${entry.id}" href="${route.href}" aria-labelledby="upcoming-${entry.id}">
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">${route.detail}</span></div>
+        <h2 id="upcoming-${entry.id}">${entry.title}</h2><p>${entry.description}</p>
+        <span class="knowledge-action">${route.label}${actionIcon('next')}</span>
+      </a>`:`<article class="knowledge-card knowledge-card-coming" data-upcoming="${entry.id}" aria-labelledby="upcoming-${entry.id}">
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">Готовим для вас</span></div>
         <h2 id="upcoming-${entry.id}">${entry.title}</h2><p id="upcoming-${entry.id}-description">${entry.description}</p>
-        ${ownerLearningPreview(entry.id,ownerAccess)?`<a class="button secondary knowledge-owner-preview" href="${ownerLearningPreview(entry.id,ownerAccess).href}">${ownerLearningPreview(entry.id,ownerAccess).label}</a>`:`<button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>`}
-      </article>`).join('')}
+        <button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>
+      </article>`;}).join('')}
 
 
     </div>

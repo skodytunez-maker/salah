@@ -170,3 +170,56 @@ body.menu-page .page-head h1{font-size:26px}
 }
 
 @media(max-width:759px){body.owner-page .workspace,body.settings-page .workspace{padding-left:var(--salah-safe-left,0px);padding-right:var(--salah-safe-right,0px)}}
+
+/* Restore the author signature above the dock, outside the page flow. */
+@media(max-width:759px){
+body.menu-page .workspace>footer.author-footer,body.owner-page:not(.owner-profile-page) .workspace>footer.author-footer{display:flex;position:fixed;top:auto;left:16px;right:16px;bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 80px);height:22px;min-height:0;max-width:350px;margin:0 auto;padding:0;border:0;box-shadow:none;background:none;align-items:baseline;justify-content:center;gap:6px;z-index:41;pointer-events:none}
+body.menu-page .workspace>footer.author-footer .author-brand,body.owner-page .workspace>footer.author-footer .author-brand{font-size:14px;letter-spacing:2px}
+body.menu-page .workspace>footer.author-footer small,body.owner-page .workspace>footer.author-footer small{font-size:10px}
+body.owner-page:has(input:focus,textarea:focus,select:focus) .workspace>footer.author-footer{display:none}
+}
+
+/* Keep avatar overlays attached to the actual compact portrait. */
+@media(max-width:759px){
+body.account-page .owner-login:has(#counter-account-out) #account-avatar-editor{--account-portrait-size:128px}
+body.account-page .owner-login:has(#counter-account-out) .account-avatar-circle{width:var(--account-portrait-size);height:var(--account-portrait-size);min-height:var(--account-portrait-size);flex-basis:var(--account-portrait-size)}
+body.account-page .owner-login:has(#counter-account-out) .account-avatar-image{width:100%;height:100%}
+body.account-page .owner-login:has(#counter-account-out) .account-avatar-camera{right:0;bottom:0;width:36px;height:36px}
+body.account-page .owner-login:has(#counter-account-out) .account-avatar-camera svg{width:20px;height:20px}
+body.account-page .owner-login:has(#counter-account-out) .account-avatar-remove{left:calc(50% - var(--account-portrait-size)/2 - 4px);top:calc(10px + var(--account-portrait-size) - 32px)}
+body.account-page #app>.owner-login:has(#counter-account-out) .account-title-row h1{font-family:'Manrope','Segoe UI',sans-serif;font-size:24px;font-weight:600;line-height:1.25;letter-spacing:-.5px}
+body.account-page .workspace{padding-top:calc(var(--salah-safe-top,0px) + 24px)}
+body.owner-page .owner-screenbar{background:transparent}
+body.owner-page .owner-screenbar h1{font-family:'Manrope','Segoe UI',sans-serif;font-weight:600;letter-spacing:-.5px}
+body.owner-page .owner-menu-grid .owner-support-link{position:relative}
+body.owner-page .owner-menu-grid .owner-support-link>.support-state-dot{position:absolute;top:12px;right:12px;margin:0;flex:none}
+}
+
+/* A clearer portrait with compact, distinct profile sections. */
+.owner-profile-screen .owner-profile-hero .owner-user-avatar{width:96px;height:96px}
+.owner-profile-screen .owner-profile-panel{padding:18px}
+.owner-profile-screen .owner-profile-panel>h2{margin-bottom:14px}
+.owner-profile-screen .owner-profile-sections{gap:14px}
+.owner-profile-screen .owner-profile-total{padding-bottom:16px;gap:8px}
+.owner-profile-screen .owner-profile-periods{padding-top:12px;gap:10px}
+.owner-profile-screen .owner-profile-reciters li{padding-top:10px;padding-bottom:10px}
+.owner-profile-screen .owner-profile-awards li{padding:10px 8px;gap:8px}
+.owner-profile-screen .owner-profile-account>dl{gap:12px}
+@media(max-width:759px){
+.owner-profile-screen .owner-profile-hero .owner-user-avatar{width:88px;height:88px}
+.owner-profile-screen .owner-profile-hero{gap:10px;margin-bottom:14px}
+.owner-profile-screen .owner-profile-identity{padding-bottom:16px}
+.owner-profile-screen .owner-profile-panel{padding:16px}
+.owner-profile-screen .owner-profile-panel>h2{font-size:16px;margin-bottom:12px}
+.owner-profile-screen .owner-profile-sections{gap:12px}
+.owner-profile-screen .owner-profile-total{padding-bottom:12px}
+.owner-profile-screen .owner-profile-total>strong{font-size:26px}
+.owner-profile-screen .owner-profile-periods{padding-top:12px}
+.owner-profile-screen .owner-profile-awards li img{width:54px;height:54px}
+}
+
+/* About keeps its return link below the iPhone system area. */
+@media(max-width:759px){body.about-screen #app{padding-top:calc(var(--salah-safe-top,env(safe-area-inset-top,0px)) + 16px)}body.about-screen .about-page .about-back{display:inline-flex;align-items:center;min-height:44px;scroll-margin-top:calc(var(--salah-safe-top,0px) + 16px)}}
+
+/* Owner-only teacher appointments share the cabinet width and surfaces. */
+.teacher-admin{min-width:0}.teacher-admin>h2{font:600 20px/1.4 'Manrope',sans-serif;margin:0 0 10px}.teacher-admin>h3{font:600 17px/1.4 'Manrope',sans-serif;margin:24px 0 12px}.teacher-admin .cabinet-muted,.teacher-admin .cabinet-empty{color:#aebbd0;font-size:13px;line-height:1.65}.teacher-admin form{display:flex;align-items:end;gap:10px;margin:18px 0}.teacher-admin label{display:grid;gap:8px;flex:1;min-width:0;font-size:13px}.teacher-admin input{width:100%;box-sizing:border-box;min-height:46px;font-size:16px;padding:12px;border:1px solid #3c4862;border-radius:14px;background:#0d1526;color:#e7ebf3}.teacher-admin button{min-height:44px}.teacher-profile{border:1px solid rgba(176,196,225,.18);border-radius:18px;padding:16px;margin:12px 0;background:rgba(20,30,49,.7)}.teacher-profile-heading{display:flex;gap:12px;align-items:center;min-width:0}.teacher-profile-heading>div{min-width:0}.teacher-profile h3{font:600 16px/1.4 'Manrope',sans-serif;margin:0;overflow-wrap:anywhere}.teacher-email{font-size:12px;color:#aebbd0;margin:5px 0;overflow-wrap:anywhere}.cabinet-pupil-avatar{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:#24344b;flex:none}.teacher-state{display:inline-block;color:#aebbd0;font-size:12px;margin-top:12px}.teacher-state.is-active{color:#8ec9b5}.cabinet-card-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.teacher-revoke-note{width:100%;margin:0;font-size:13px;line-height:1.6}.teacher-admin [role=status]{font-size:13px;line-height:1.65}.teacher-admin [role=status]:empty{display:none}@media(max-width:430px){.teacher-admin form{flex-direction:column;align-items:stretch}.teacher-admin form label{flex:none}}

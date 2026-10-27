@@ -103,7 +103,7 @@ export async function showStaffCabinet(host,{request=staffRequest,demo=false,emb
   const [rooms,contacts]=await Promise.all([call('chat.rooms'),call('chat.contacts')]);if(!current())return;let selected=rooms.find(x=>x.id===requestedRoom)||rooms.find(x=>x.kind==='team'),pending=[],sending=false,uploading=false,readBusy=false,readVersion=0,snapshot='',before=null,beforeId=null,hasMore=false,roomSnapshot='',roomCheckedAt=0,sendAttempt=null,olderMessages=[],olderFiles=[],latestMessages=[],latestFiles=[];
   area.innerHTML=staffMessengerMarkup();
   const log=area.querySelector('[role=log]'),text=area.querySelector('textarea'),chatRoot=area.querySelector('.staff-chat');chatRoot.dataset.staffOpenRoom=selected?.id||'';
-  const messenger=mountStaffMessenger(chatRoot,{rooms,contacts,initialRoom:requestedRoom,onRoom:room=>void switchRoom(room),onContact:id=>void openContact(id),onRendered:()=>void paintChatAvatars()});
+  const messenger=mountStaffMessenger(chatRoot,{rooms,contacts,pinScope:actor.id,initialRoom:requestedRoom,onRoom:room=>void switchRoom(room),onContact:id=>void openContact(id),onRendered:()=>void paintChatAvatars()});
   stopChatLayout=()=>messenger.dispose();
   function roomButtons(){roomSnapshot=JSON.stringify(rooms.map(x=>({id:x.id,title:x.title,last_message:x.last_message,unread:x.unread})));messenger.renderRooms(rooms,selected);}
   async function paintChatAvatars(){if(!embedded||actor?.owner!==true)return;const{createStaffAvatarManager}=await import('./owner-team-avatars.js');if(!current())return;avatars??=createStaffAvatarManager({isActive:()=>alive&&tab==='messages'&&messageKind==='chat'&&isActive()});void avatars.hydrate(chatRoot);}

@@ -37,6 +37,46 @@ function localTimestamp(day,time,zone){
 }
 
 
+const TEACHER_ADMIN_ACTIONS=['teacher-list','teacher-lookup','teacher-assign','teacher-revoke'];
+async function teacherAdmin({action,input,actor,db,ownerId,fail}){
+ if(actor.id!==ownerId||actor.owner!==true)fail(403,'Назначать преподавателей может только владелец SALAH.');
+ if(action==='teacher-list')return{teachers:await db.teacherList()};
+ if(action==='teacher-lookup'){
+  const nickname=typeof input.nickname==='string'?input.nickname.trim().toLowerCase():'';
+  if(nickname.length<2||nickname.length>40||/[\x00-\x1f\x7f]/.test(nickname))fail(400,'Введите ник в SALAH: от 2 до 40 символов.');
+  const accounts=await db.teacherLookup(nickname);if(!accounts.length)fail(404,'Аккаунт с таким ником не найден. Проверьте ник и регистрацию в SALAH.');
+  return{accounts:accounts.slice(0,8),truncated:accounts.length>8};
+ }
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.userId||'')||input.userId===ownerId)fail(400,'Выберите другой аккаунт.');
+ if(!Number.isSafeInteger(input.expectedRevision)||input.expectedRevision<0||input.expectedRevision>=2147483647)fail(400,'Откройте профиль заново.');
+ const result=await db.teacherSet(actor.id,input.userId,action==='teacher-assign',input.expectedRevision);
+ if(!result)fail(409,'Профиль или доступ изменились. Обновите список и повторите.');
+ return{userId:input.userId,...result};
+}
+
+// Authority comes from this private table, never from editable profile metadata.
+function createTeacherRolesDb({sql,ownerId}){
+ const profile=row=>row?{id:row.id,emailHint:typeof row.email==='string'?row.email.slice(0,1)+'•••@'+row.email.split('@').at(-1):'',nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.trim().slice(0,40):'Участник SALAH',active:row.active===true,revision:row.revision||0,updatedAt:row.updated_at?Number(new Date(row.updated_at)):null}:null;
+ return{
+  async teacherRole(uid){if(uid===ownerId)return{active:true,revision:0};const[r]=await sql`select t.active,t.revision from salah_classroom_private.teachers t join auth.users u on u.id=t.user_id where t.user_id=${uid}::uuid and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=now())`;return r?{active:r.active,revision:r.revision}:{active:false,revision:0};},
+  async teacherLookup(nickname){return(await sql`select u.id,u.email,u.raw_user_meta_data->>'nickname' as nickname,t.active,t.revision,t.updated_at from auth.users u left join salah_classroom_private.teachers t on t.user_id=u.id where u.id<>${ownerId}::uuid and strpos(lower(trim(u.raw_user_meta_data->>'nickname')),${nickname})>0 and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=now()) order by (lower(trim(u.raw_user_meta_data->>'nickname'))=${nickname}) desc,u.id limit 9`).map(profile);},
+  async teacherList(){return(await sql`select u.id,u.email,u.raw_user_meta_data->>'nickname' as nickname,t.active,t.revision,t.updated_at from salah_classroom_private.teachers t join auth.users u on u.id=t.user_id order by t.active desc,t.updated_at desc limit 100`).map(profile);},
+  async teacherSet(actorId,targetId,active,expectedRevision){return sql.begin(async tx=>{
+   if(actorId!==ownerId||targetId===ownerId)return null;
+   // One bounded roster, serialized with concurrent owner tabs. Grant and audit commit together.
+   await tx`select pg_advisory_xact_lock(hashtextextended(${ownerId},404))`;
+   const[u]=await tx`select id from auth.users where id=${targetId}::uuid and (${!active} or (email_confirmed_at is not null and not coalesce(is_anonymous,false) and (banned_until is null or banned_until<=now()))) for share`;if(!u)return null;
+   const[prior]=await tx`select revision,active from salah_classroom_private.teachers where user_id=${targetId}::uuid for update`;
+   if((prior?.revision||0)!==expectedRevision||prior?.active===active||!prior&&!active)return null;
+   if(active&&!prior?.active){const[n]=await tx`select count(*)::int as n from salah_classroom_private.teachers where active`;if(n.n>=50)return null;}
+   const revision=expectedRevision+1;
+   await tx`insert into salah_classroom_private.teachers(user_id,active,revision,appointed_by)values(${targetId}::uuid,${active},${revision},${actorId}::uuid)on conflict(user_id)do update set active=excluded.active,revision=excluded.revision,appointed_by=excluded.appointed_by,updated_at=now()`;
+   await tx`insert into salah_classroom_private.teacher_role_audit(user_id,actor_id,active,revision)values(${targetId}::uuid,${actorId}::uuid,${active},${revision})`;
+   return{active,revision};
+  });}
+ };
+}
+
 const CLASSROOM_OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 const CLASSROOM_ORIGINS=new Set(['https://skodytunez-maker.github.io','https://desktop-jecm5lt.taila4556d.ts.net']);
 const opaque=/^[A-Za-z0-9_-]{32}$/,uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -69,12 +109,13 @@ function createScheduleHandler({db,verifyAccount,now=Date.now}){
    const joined=new Uint8Array(bytes);let pos=0;for(const chunk of chunks){joined.set(chunk,pos);pos+=chunk.length;}
    let input;try{input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(joined));}catch{fail(400,'Неверный запрос.');}
    if(!input||typeof input!=='object'||Array.isArray(input))fail(400,'Неверный запрос.');
-   const action=input.action,ownerAction=['create','update','transition','owner-list'].includes(action);
-   if(!['create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences'].includes(action))fail(400,'Неизвестное действие.');
+   const action=input.action,adminAction=TEACHER_ADMIN_ACTIONS.includes(action),ownerAction=adminAction||['create','update','transition','owner-list'].includes(action);
+   if(![...TEACHER_ADMIN_ACTIONS,'create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences'].includes(action))fail(400,'Неизвестное действие.');
    const actor=await verifyAccount(bearer[1],{ownerRequired:ownerAction});
    if(!uuid.test(actor?.id||''))fail(401,'Войдите в аккаунт SALAH.');
    if(ownerAction&&(actor.id!==CLASSROOM_OWNER||actor.owner!==true))fail(403,'Закрытое расписание доступно владельцу SALAH.');
    if(!await db.rate(actor.id,now()))fail(429,'Подождите минуту и повторите.');
+   if(adminAction)return reply(200,await teacherAdmin({action,input,actor,db,ownerId:CLASSROOM_OWNER,fail}));
    if(action==='create'){
     if(!opaque.test(input.id||'')||!opaque.test(input.code||''))fail(400,'Недопустимое приглашение.');
     const schedule=lessonSchedule(input,now()),row={...schedule,id:input.id,ownerId:actor.id,inviteHash:await inviteDigest(input.code),state:'planned',revision:1};
@@ -121,6 +162,7 @@ const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:2,prepare:false,idle_tim
 const auth=createClient(PROJECT,KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const fromRow=r=>r?{...r.details,id:r.id,ownerId:r.owner_id,inviteHash:r.invite_hash,state:r.state,revision:r.revision,startsAt:Number(r.starts_at.getTime()),endsAt:Number(r.ends_at.getTime()),reminderAt:Number(r.reminder_at.getTime())}:null;
 const db={
+ ...createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}),
  async rate(uid,now){await sql`delete from salah_classroom_private.limits where minute<${Math.floor(now/60000)-1440}`;const[r]=await sql`insert into salah_classroom_private.limits(user_id,minute)values(${uid}::uuid,${Math.floor(now/60000)})on conflict(user_id,minute)do update set attempts=salah_classroom_private.limits.attempts+1 returning attempts`;return r.attempts<=90;},
  async create(row){return sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(hashtextextended(${row.ownerId},403))`;const[n]=await tx`select count(*)::int as n from salah_classroom_private.lessons where owner_id=${row.ownerId}::uuid and state in('planned','live') and ends_at>now()`;if(n.n>=30)return false;const rows=await tx`insert into salah_classroom_private.lessons(id,owner_id,invite_hash,details,state,revision,starts_at,ends_at,reminder_at)values(${row.id},${row.ownerId}::uuid,${row.inviteHash},${tx.json(row)},${row.state},${row.revision},to_timestamp(${row.startsAt}/1000.0),to_timestamp(${row.endsAt}/1000.0),to_timestamp(${row.reminderAt}/1000.0))on conflict do nothing returning id`;return rows.length===1;});},
  async get(id){return fromRow((await sql`select * from salah_classroom_private.lessons where id=${id}`)[0]);},

@@ -7,7 +7,7 @@ doc.body.innerHTML='<main id="app"></main><div id="toast" hidden></div>';
 const{showKnowledge}=await import('../dist/js/knowledge.js'),{UPCOMING_KNOWLEDGE}=await import('../dist/js/knowledge-upcoming.js');
 const{illustratedReleaseMarkup}=await import('../dist/js/release-gallery.js'),{APP_VERSION,APP_CHANGES,APP_ANNOUNCEMENT}=await import('../dist/js/app-release.js'),{releaseFeatureForChange}=await import('../dist/js/release-illustrations.js');
 const host=doc.getElementById('app');let started=0;
-for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=online-lessons','#knowledge?view=live-stream']){
+for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=online-lessons','#knowledge?view=live-stream','#knowledge?preview=online-lessons','#knowledge?preview=muallim','#knowledge?preview=live-stream']){
  w.location.hash=hash;showKnowledge(host,{hash,onStart:()=>started++});
  const cards=[...host.querySelectorAll('[data-upcoming]')];assert.equal(cards.length,3);
  for(const feature of UPCOMING_KNOWLEDGE){
@@ -34,10 +34,15 @@ showKnowledge(host,{hash:'#knowledge',ownerAccess:true});
 assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,3);
 assert.equal(host.querySelectorAll('.knowledge-coming-button').length,0);
 for(const link of host.querySelectorAll('.knowledge-owner-preview')){
- assert.equal(new URL(link.href).origin,'https://example.invalid');assert.ok(link.hash.startsWith('#knowledge?preview='));
+ assert.equal(new URL(link.href).origin,'https://example.invalid');assert.ok(link.hash.startsWith('#knowledge?view='));
+ assert.ok(link.classList.contains('knowledge-card'));assert.ok(!link.classList.contains('knowledge-card-coming'));assert.equal(link.querySelector('button'),null);assert.ok(link.querySelector('.knowledge-action'));
+ assert.doesNotMatch(link.textContent,/Открыть проверку|Открыть макет|Закрытая проверка/);
+ assert.equal(new URL(link.href).pathname,'/salah/');
  assert.equal(link.target,'');
 }
-assert.equal(host.querySelector('[data-upcoming="live-stream"] a').textContent,'Открыть макет');
+assert.equal(host.querySelector('[data-upcoming="live-stream"] .knowledge-action').textContent.trim(),'Перейти к эфиру');
+assert.equal(host.querySelector('.knowledge-coming-title'),null,'Owner features are regular Knowledge cards, not Soon announcements');
+assert.deepEqual([...host.querySelectorAll('.knowledge-owner-preview')].map(link=>link.hash),['#knowledge?view=online-lessons','#knowledge?view=muallim','#knowledge?view=live-stream']);
 showKnowledge(host,{hash:'#knowledge',ownerAccess:false});
 assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,0);
 assert.equal(host.querySelectorAll('.knowledge-coming-button:disabled').length,3);
