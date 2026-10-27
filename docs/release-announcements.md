@@ -291,3 +291,8 @@ The Menu section explicitly spans the available width and receives the remaining
 ## 415 — Menu hierarchy and SAHABA
 
 SAHABA moves from Menu to a regular Knowledge card, retaining its existing destination and external-link protections. Support SALAH remains a separate visible Menu action. Menu recovers unused footer and heading space for its eight rows; personal account has a72px minimum, larger42px portrait,18px name and stronger gold surface. Author signature remains in normal flow,8px clear of the bottom dock on standard phone sizes. Announcement410 and private learning gates remain unchanged.
+
+
+## 416 — Menu button block offset
+
+Move the button block40px farther below the Menu heading, preserving its row minimums, emphasized personal account and visible support action. Use the current dynamic viewport height for the Menu height budget so the author signature aligns with the fixed navigation rather than leaving a smaller-viewport gap. Keep the8px signature clearance; existing SAHABA placement, announcement410 and closed learning gates remain unchanged.
