@@ -274,3 +274,8 @@ Version403 adds invitation-only account enrollment and the private teacher sched
 Сохранён размер авторской подписи17/12px. Уменьшены пустые промежутки около подписи и приглашения, нижний запас страницы согласован с навигацией и безопасной областью iPhone. Компактные отступы меню включаются также на экранах высотой до820px. В проверке390×844 и375×812 подпись видна при открытии меню, без прокрутки и перекрытия панелью. Объявление410, срок и прочтение сохранены.
 
 В412 также удалена устаревшая карточка «Большое обновление SALAH» с главной, включая старые изображения и текст о мусхафе, чтецах и карте. Она больше не зависит от отметки прочтения и не возвращается при обновлении. Актуальное «Что нового» остаётся доступным отдельной кнопкой в настройках приложения.
+
+
+## 413 — Menu spacing
+
+Menu title now starts 24px below the safe content inset. Its rows share the available phone height, leaving the normal-flow author signature 16px above the dock. Natural minimum row sizes and scrolling remain available for short screens and larger text. Announcement410 and its acknowledgement/expiry are unchanged.
