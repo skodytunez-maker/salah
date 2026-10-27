@@ -86,3 +86,87 @@ body.account-page .owner-login:has(#counter-account-out) #account-form-area>.acc
 }
 
 @media(max-width:759px){body.account-page .owner-login:has(#counter-account-out) .award-earned-carousel{gap:8px}body.account-page .owner-login:has(#counter-account-out) .award-earned-carousel .award-mini small{max-width:100%}}
+
+/* Compact mobile menu destinations without reducing touch targets or input text. */
+@media(max-width:759px){
+body.menu-page .page-head{margin-top:18px;margin-bottom:18px}
+body.menu-page .page-head h1{font-size:28px}
+body.menu-page .list-button:not(.account-entry){min-height:52px;padding:13px 15px;margin-bottom:10px;font-size:15px;border-radius:16px}
+body.menu-page .list-button.account-entry.account-entry-compact{min-height:56px;padding:12px 15px;margin-bottom:10px}
+body.menu-page .list-button.account-entry>.menu-item-label{font-size:17px}
+body.menu-page .list-button>.menu-item-label{gap:10px}
+body.menu-page .list-button .settings-icon{width:20px;height:20px;flex-basis:20px}
+body.menu-page .app-share-row{margin:8px 0 10px}
+body.menu-page .app-share-main{min-height:56px;padding-top:10px;padding-bottom:10px}
+body.menu-page .app-share-main>svg{width:22px;height:22px}
+body.menu-page .app-share-copy{min-height:44px}
+body.settings-page .settings-grid{gap:12px}
+body.settings-page .settings-grid>.settings-group{padding:0}
+body.settings-page .settings-group>summary{min-height:58px;padding:15px 16px;font-size:15px}
+body.settings-page .settings-group-body{padding:16px}
+body.settings-page .is-settings-screen>.settings-group-body{padding:0}
+body.owner-page .owner-menu-grid{gap:10px}
+body.owner-page .owner-menu-tile{min-height:128px;padding:16px 14px;gap:14px;border-radius:18px}
+body.owner-page .owner-menu-tile svg{width:28px;height:28px}
+body.owner-page .owner-team-embed .staff-member-add{padding:14px;margin-bottom:18px}
+body.owner-page .owner-team-embed .is-owner-member{padding:14px;gap:8px;margin:10px 0}
+}
+
+/* Short cabinet screens use their viewport budget; long lists still scroll normally. */
+@media(max-width:759px){
+body.menu-page .workspace>footer,body.owner-page .workspace>footer{display:none}
+body.owner-page #app[data-owner-view="home"] .owner-menu-tile{min-height:clamp(84px,calc((100svh - var(--salah-safe-top,0px) - var(--salah-safe-bottom,0px) - 212px)/5),128px);padding:12px;gap:10px}
+body.owner-page #app[data-owner-view="home"] .owner-menu-tile strong{font-size:15px}
+body.owner-page #app[data-owner-view="home"] .owner-menu-tile small{font-size:11px}
+body.owner-page #owner-panel-overview .owner-summary{gap:10px;margin:0 0 12px}
+body.owner-page #owner-panel-overview .owner-summary>div,body.owner-page #owner-panel-overview .owner-summary>button{padding:14px;gap:4px}
+body.owner-page #owner-panel-overview .owner-summary span{min-height:0;font-size:13px;line-height:1.4}
+body.owner-page #owner-panel-overview .owner-summary strong{font-size:30px;line-height:1.2;margin:4px 0}
+body.owner-page #owner-panel-overview .owner-summary small{font-size:11px;line-height:1.45}
+body.owner-page #owner-panel-overview #owner-periods{margin-bottom:12px}
+body.owner-page #owner-panel-overview .owner-periods button{min-height:44px}
+body.owner-page #owner-panel-overview #owner-metrics{margin:8px 0}
+body.owner-page #owner-panel-overview #owner-metrics>div{padding:8px 0}
+body.owner-page #owner-panel-overview #owner-overview-refresh{min-height:44px;padding:8px 0;font-size:13px}
+body.owner-page .owner-users .owner-user-row{min-height:74px;padding:12px;border:1px solid rgba(174,194,224,.18);border-radius:16px;background:#111b2d;margin-bottom:8px;gap:12px}
+body.owner-page .owner-users .owner-user-row>.owner-user-avatar{width:46px;height:46px}
+body.owner-page .owner-users .owner-user-row:hover{border-color:rgba(214,196,158,.4);background:#17243a}
+body.owner-page .owner-users .owner-user-row:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+}
+@media(max-width:759px) and (max-height:740px){body.menu-page .list-button:not(.account-entry){min-height:46px;padding-top:10px;padding-bottom:10px;margin-bottom:8px}body.menu-page .app-share-main{min-height:48px}body.menu-page .page-head{margin-top:12px;margin-bottom:14px}}
+
+/* A profile shares the app canvas instead of painting a dark rectangular sheet. */
+.owner-profile-screen{background:transparent}
+.owner-profile-navigation{background:#111b2d;border:1px solid rgba(176,196,225,.18);border-radius:16px;padding:8px 12px}
+
+@media(max-width:759px){
+body.owner-page #app[data-owner-view="home"]{height:calc(100svh - var(--salah-safe-top,0px) - var(--salah-safe-bottom,0px) - 128px);display:flex;flex-direction:column;gap:16px;padding-top:0;padding-bottom:0}
+body.owner-page #app[data-owner-view="home"]>.page-head{margin:0;flex:none}
+body.owner-page #app[data-owner-view="home"]>.admin-intro{flex:1;min-height:0;margin:0}
+body.owner-page #app[data-owner-view="home"] #owner-panel-home,body.owner-page #app[data-owner-view="home"] .owner-menu-grid{height:100%;min-height:0}
+body.owner-page #app[data-owner-view="home"] .owner-menu-grid{grid-template-rows:repeat(5,minmax(0,1fr))}
+body.owner-page #app[data-owner-view="home"] .owner-menu-tile{min-height:0;padding:10px;gap:8px}
+body.owner-page #app[data-owner-view="home"] .owner-menu-tile svg{width:26px;height:26px}
+}
+@media(max-width:759px) and (max-height:740px){body.owner-page #app[data-owner-view="home"] .owner-menu-tile{padding:8px;gap:6px}body.owner-page #app[data-owner-view="home"] .owner-menu-tile svg{width:22px;height:22px}body.owner-page #app[data-owner-view="home"] .owner-menu-tile small{font-size:10px}}
+
+/* Compact profile hierarchy, with readable details and full tap targets. */
+@media(max-width:759px){
+body.owner-page .owner-screenbar h1{font-size:24px}
+body.menu-page .page-head h1{font-size:26px}
+.owner-profile-screen .owner-profile-navigation{min-height:52px;margin-bottom:18px;padding-top:6px;padding-bottom:6px}
+.owner-profile-screen .owner-profile-identity{padding:8px 0 20px}
+.owner-profile-screen .owner-profile-hero{gap:12px;margin-bottom:16px}
+.owner-profile-screen .owner-profile-hero .owner-user-avatar{width:76px;height:76px}
+.owner-profile-screen .owner-profile-hero h1{font-size:24px;margin-bottom:6px}
+.owner-profile-screen .owner-user-write{min-height:44px}
+.owner-profile-screen .owner-profile-sections{gap:14px}
+.owner-profile-screen .owner-profile-panel{padding:18px;border-radius:20px}
+.owner-profile-screen .owner-profile-panel>h2{font-size:16px;margin-bottom:14px}
+.owner-profile-screen .owner-profile-total{gap:8px;padding-bottom:16px}
+.owner-profile-screen .owner-profile-total>strong{font-size:28px}
+.owner-profile-screen .owner-profile-awards li{padding:12px 8px;gap:10px}
+.owner-profile-screen .owner-profile-awards li img{width:58px;height:58px}
+}
+
+@media(max-width:759px){body.owner-page .workspace,body.settings-page .workspace{padding-left:var(--salah-safe-left,0px);padding-right:var(--salah-safe-right,0px)}}
