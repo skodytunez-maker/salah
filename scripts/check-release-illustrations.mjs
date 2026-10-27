@@ -56,18 +56,18 @@ for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'
 for(const change of APP_CHANGES)assert.ok(releaseFeatureForChange(change),'Assign feature-specific artwork before publishing: '+change);
 root.innerHTML=illustratedReleaseMarkup(APP_VERSION,APP_CHANGES);assert.equal(root.querySelectorAll('.release-feature').length,APP_CHANGES.length);for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('.release-new-art img'),'Current release notes need pictures, not generic book icons');for(const img of root.querySelectorAll('.release-new-art img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 const deadline=Date.parse(APP_NEWS_UNTIL);assert.ok(releaseHighlightActive(deadline-1));assert.equal(releaseHighlightActive(deadline),false);assert.equal(releaseHighlightActive(deadline+86400000),false);assert.equal(releaseHighlightMarkup(deadline),'');
-root.innerHTML=releaseHighlightMarkup(deadline-1000);assert.ok(root.querySelector('[data-release-highlight]'));let opened=0;const realNow=Date.now;try{Date.now=()=>deadline-1000;bindReleaseHighlight(root,()=>opened++);root.querySelector('[data-release-highlight]')?.click();assert.equal(opened,1,'Seen news remains accessible throughout the three-day window');}finally{Date.now=realNow;root.replaceChildren();bindReleaseHighlight(root);}
-
+const realNow=Date.now;
+for(const now of [deadline-1000,deadline,deadline+86400000])for(const home of [true,false])assert.equal(releaseHighlightMarkup(now,{home}),'','Obsolete promotion stays absent regardless of location, receipt or news deadline');
 const releaseModal=doc.createElement('dialog');releaseModal.id='modal';releaseModal.innerHTML='<div id="modal-content"></div>';doc.body.append(releaseModal);
 try{
- Date.now=()=>deadline-1000;root.innerHTML=releaseHighlightMarkup(undefined,{home:true});bindReleaseHighlight(root);
- assert.ok(root.querySelector('[data-release-home]'),'Unread news appears on Home');
- root.querySelector('[data-release-highlight]').click();assert.equal(releaseModal.open,true);assert.ok(root.querySelector('[data-release-home]'),'Home stays stable behind the open modal');
- releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);assert.equal(root.querySelector('[data-release-home]'),null,'Понятно removes Home news immediately');
- assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Seen version keeps Home clear on the next render');
- root.innerHTML=releaseHighlightMarkup();bindReleaseHighlight(root);assert.ok(root.querySelector('[data-release-highlight]'),'Menu still offers read news');
- root.querySelector('[data-release-highlight]').click();assert.equal(releaseModal.open,true,'Menu reopens the roundup');releaseModal.querySelector('[data-close]').click();
-}finally{Date.now=realNow;root.replaceChildren();bindReleaseHighlight(root);releaseModal.remove();}
+ Date.now=()=>deadline-1000;bindReleaseHighlight(root);
+ assert.equal(root.querySelector('[data-release-highlight]'),null,'No large update banner on Home');
+ showAppRelease();assert.equal(releaseModal.open,true,'Current news remains available through the explicit update action');
+ assert.ok(releaseModal.textContent.includes('Кто слушает Коран'));
+ assert.ok(!releaseModal.textContent.includes('Большое обновление SALAH'));
+ releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);
+ assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Home stays clear after acknowledgement');
+}finally{Date.now=realNow;root.replaceChildren();releaseModal.remove();}
 
 const profile=doc.createElement('div');doc.body.append(profile);let dismissed=0;profile.onclick=()=>dismissed++;
 profile.innerHTML=ownerUserCard({nickname:'Пользователь'},{avatarUrl:'blob:private-photo'});bindOwnerAvatarPreview(profile);
