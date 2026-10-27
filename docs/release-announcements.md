@@ -279,3 +279,10 @@ Version403 adds invitation-only account enrollment and the private teacher sched
 ## 413 — Menu spacing
 
 Menu title now starts 24px below the safe content inset. Its rows share the available phone height, leaving the normal-flow author signature 16px above the dock. Natural minimum row sizes and scrolling remain available for short screens and larger text. Announcement410 and its acknowledgement/expiry are unchanged.
+
+
+## 414 — Large Menu buttons
+
+Restore large phone Menu rows: at least52px, account60px. Their explicit flex basis cannot shrink. Reduce empty heading and inter-row gaps on short phones; keep title24px below the safe inset and the author signature in normal flow. Announcement410 and closed learning sections remain unchanged.
+
+The Menu section explicitly spans the available width and receives the remaining viewport height after the safe title, footer and dock reserves. This prevents auto side margins from narrowing the buttons and removes the marked empty area below the signature by growing the buttons.

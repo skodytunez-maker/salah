@@ -230,14 +230,16 @@ body.owner-page .owner-menu-grid .owner-support-link>.support-state-dot{position
 /* Give the Menu title clear space below the system edge; share spare height between rows. */
 @media(max-width:759px){
 body.menu-page .workspace{display:flex;flex-direction:column;min-height:100svh;padding-top:calc(var(--salah-safe-top,0px) + 24px);padding-bottom:calc(90px + max(12px,var(--salah-safe-bottom,0px)))}
-body.menu-page #app{display:flex;flex:1;flex-direction:column;margin-top:0;margin-bottom:4px;padding-top:0;padding-bottom:0}
-body.menu-page .page-head{flex:none;margin:0 0 22px}
-body.menu-page .page-head h1{line-height:1.25;text-shadow:none;filter:none}
+body.menu-page #app{display:flex;flex:1 0 auto;flex-direction:column;margin-top:0;margin-bottom:4px;padding-top:0;padding-bottom:0}
+body.menu-page .page-head{flex:none;margin:0 0 12px}
+body.menu-page .page-head h1{line-height:1.25;margin-bottom:0;text-shadow:none;filter:none}
 body.menu-page .page-head .muted:empty{display:none}
-body.menu-page #app>.panel.section{display:flex;flex:1;flex-direction:column;gap:9px;margin-top:0;margin-bottom:0}
-body.menu-page #app>.panel.section>.list-button{flex:1;margin:0;min-height:46px}
-body.menu-page #app>.panel.section>.account-entry{flex:1.1;min-height:56px}
-body.menu-page #app>.panel.section>.app-share-row{flex:1;min-height:48px;margin:0}
-body.menu-page .app-share-main{min-height:48px}
-body.menu-page .workspace>footer.author-footer{flex:none;padding-top:10px}
+body.menu-page #app>.panel.section{display:flex;flex:1 0 auto;flex-direction:column;gap:8px;width:100%;min-height:calc(100svh - var(--salah-safe-top,0px) - max(12px,var(--salah-safe-bottom,0px)) - 195px);margin:0}
+body.menu-page #app>.panel.section>.list-button{flex:1 0 52px;margin:0;min-height:52px}
+body.menu-page #app>.panel.section>.account-entry{flex:1.1 0 60px;min-height:60px}
+body.menu-page #app>.panel.section>.app-share-row{flex:1 0 52px;min-height:52px;margin:0}
+body.menu-page .app-share-main{min-height:52px}
+body.menu-page .workspace>footer.author-footer{flex:none;padding-top:6px}
 }
+/* On shorter phones recover space from gaps, keeping the same large buttons. */
+@media(max-width:759px) and (max-height:820px){body.menu-page #app>.panel.section{gap:6px}}
