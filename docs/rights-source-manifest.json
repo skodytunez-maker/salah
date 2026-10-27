@@ -3943,6 +3943,11 @@
       "path": "dist/assets/knowledge-live.svg",
       "gitBlobSha": "16e3ab2e8065114075eb9851431e1810cab17c06",
       "bytes": 313
+    },
+    {
+      "path": "dist/assets/updates/listener-presence-410.svg",
+      "gitBlobSha": "75c9e708a1efbd440f69f10adb8664dd62b7edac",
+      "bytes": 2175
     }
   ],
   "incrementalEvidence": [

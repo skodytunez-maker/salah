@@ -13,6 +13,7 @@ const readerFigures=readers=>'<div class="release-new-readers release-roundup-re
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'listener-presence',match:/значок наушников/iu,title:'Кто слушает Коран',art:()=>'<img class="release-screen-picture" src="./assets/updates/listener-presence-410.svg" alt="">',where:'Коран → Чтецы → Топ SALAH. Значок доступен для открытых профилей участников.'},
  {id:'dua-themes',match:/тематические подборки/iu,title:'Дуа по темам',art:()=>'<img class="release-screen-picture" src="./assets/dua-themes/mosque.webp" alt="">',where:'Азкары → Повседневные дуа → выберите тему.'},
  {id:'dhikr-completion',match:/Выполнил|дополнительные повторения/iu,title:'Зикр в своём темпе',art:()=>'<img class="release-screen-picture" src="./assets/updates/dhikr-completion-402.svg" alt="">',where:'Азкары → откройте карточку и завершите основное количество.'},
  {id:'dua-pronunciation',match:/Повседневные дуа|произношение для/iu,title:'Дуа со звуком',art:()=>'<img class="release-screen-picture" src="./assets/updates/dua-pronunciation-402.svg" alt="">',where:'Азкары → Повседневные дуа. Слушайте, ставьте на паузу и повторяйте.'},

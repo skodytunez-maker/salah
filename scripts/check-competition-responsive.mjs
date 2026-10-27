@@ -10,6 +10,7 @@ import{RECITERS,reciterHasSurah,adjacentReciterSurah}from '../dist/js/quran-reci
 import{safeListener,rankTime}from '../dist/js/reciter-ranking-core.js';
 import{listeningDayKey}from '../dist/js/reciter-popularity-core.js';
 import{COMPETITION_PERIODS,competitionDay}from '../supabase/functions/reciter-competition/core.mjs';
+import{listenerPresencePacket,createListenerPresenceDb}from '../supabase/functions/reciter-competition/listener-presence.mjs';
 import{publicListenerRows}from '../supabase/functions/reciter-competition/listener-labels.mjs';
 const id='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222',person={id,mode:'initial',initial:'A',reciter:'ar.alafasy',seconds:100,rank:1};
 const flush=async()=>{for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));};
@@ -31,7 +32,7 @@ buttons.find(b=>b.dataset.competitionPeriod==='week').onclick();buttons.find(b=>
 // Exercise the actual Edge handler with synthetic read-only SQL rows.
 const backend=await fs.readFile(new URL('../supabase/functions/reciter-competition/index.ts',import.meta.url),'utf8');let serve;const readPeriods=[];
 const sql=async(strings,...args)=>{if(strings.join('').includes('competition_scores'))return COMPETITION_PERIODS.map(period=>({period,seconds:'600'}));assert.ok(strings.join('').includes('competition_board'),'Public snapshots execute only read-only board and summary queries');readPeriods.push(args[0]);return[{...person,place:1,prefix:'AN',nickname:'PRIVATE-NEVER-PUBLISH',has_photo:false},{id:other,mode:'profile',initial:'A',prefix:'AL',nickname:'Public fixture',has_photo:false,reciter:'ar.alafasy',seconds:90,place:2}];};
-const edgeContext=vm.createContext({createListeningTotalsLoader,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
+const edgeContext=vm.createContext({listenerPresencePacket,createListenerPresenceDb,createListeningTotalsLoader,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edgeContext);
 const testDay=listeningDayKey(Date.now());
 const response=await serve(new Request('https://fixture.invalid?boards=1&day='+testDay));assert.equal(response.status,200);const body=await response.json();assert.deepEqual(Object.keys(body.boards).sort(),['all','day','month','week']);assert.equal(readPeriods.length,4);assert.equal(body.listeningTotals.all,600);assert.ok(!JSON.stringify(body).includes('PRIVATE-NEVER-PUBLISH'));assert.equal(body.boards.all.items[0].initial,'AN');

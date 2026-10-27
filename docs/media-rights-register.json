@@ -2757,6 +2757,15 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/dua-theme-artwork.md",
       "note": "Original imagegen artwork created for SALAH; WebP transcode of generated original. No third-party reference image."
+    },
+    {
+      "path": "dist/assets/updates/listener-presence-410.svg",
+      "gitBlobSha": "75c9e708a1efbd440f69f10adb8664dd62b7edac",
+      "bytes": 2175,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/listener-presence.md",
+      "note": "Original SVG drawn in code for SALAH. It depicts the ranking UI and headphones indicator; no external image or logo is embedded."
     }
   ],
   "wallpaperSets": [

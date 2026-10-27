@@ -48,7 +48,7 @@ root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMEN
 assert.equal(root.querySelectorAll('.release-feature').length,1);
 assert.equal(root.querySelectorAll('.release-roundup-readers img').length,0);
 for(const title of ['13 новых чтецов','Кибла на карте','Узнать чтение · бета','Мединский мусхаф','Режим путника','Тафсиры ас-Саади и Ибн Касира'])assert.ok(!root.textContent.includes(title),'Current news does not repeat '+title);
-assert.ok(root.textContent.includes('Дуа по темам'));for(const title of ['Зикр в своём темпе','Дуа со звуком'])assert.ok(!root.textContent.includes(title));
+assert.ok(root.textContent.includes('Кто слушает Коран'));assert.ok(!root.textContent.includes('Дуа по темам'));for(const title of ['Зикр в своём темпе','Дуа со звуком'])assert.ok(!root.textContent.includes(title));
 for(const title of ['Алфавит для скачивания','Онлайн-занятия','Муаллим Сани','Прямой эфир'])assert.ok(!root.textContent.includes(title),'Closed or older features do not repeat in402');
 assert.equal(root.querySelectorAll('.release-coming-button:disabled').length,0);
 for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');

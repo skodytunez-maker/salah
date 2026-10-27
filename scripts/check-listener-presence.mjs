@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import {createPlaybackPresenceReporter} from '../dist/js/listener-presence-core.js';
+import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import {reciterInfo} from '../dist/js/quran-reciters.js';
+import {awardArtwork} from '../dist/js/quran-awards-core.js';
+import {rankTime,listenerRing,assignListenerRings,medalForRank} from '../dist/js/reciter-ranking-core.js';
+import {safeListener} from '../dist/js/reciter-ranking-core.js';
+import {RECITERS} from '../dist/js/quran-reciters.js';
+import {listeningDayKey} from '../dist/js/reciter-popularity-core.js';
+const flush=async()=>{for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));};
+let time=100000,user='one',eligible=true,state={status:'paused',reciter:'ar.alafasy',surah:{number:1},trackPositionSeconds:0},calls=[],tab=0,hold=false;
+const reporter=createPlaybackPresenceReporter({getState:()=>state,getUserId:()=>user,isEligible:()=>eligible,now:()=>time,randomId:()=>String(++tab),schedule:()=>1,cancel(){},send:async(packet,options)=>{calls.push({packet,options});if(hold)await new Promise(()=>{});}});
+reporter.sample();await flush();assert.equal(calls.length,0,'Visiting a paused player never creates presence');
+state.status='playing';reporter.sample();await flush();assert.equal(calls.length,0,'Play without advancing audio does not count');
+time+=1000;state.trackPositionSeconds=1;reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,true);
+for(let i=0;i<14;i++){time+=1000;state.trackPositionSeconds++;reporter.sample();}await flush();assert.equal(calls.length,1,'Progress does not create a request storm');
+time+=1000;state.trackPositionSeconds++;reporter.sample();await flush();assert.equal(calls.length,2,'The heartbeat is sent every 15 seconds');
+state.status='paused';reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,false,'Pause immediately publishes a tombstone');
+state.status='playing';reporter.sample();time+=1000;state.trackPositionSeconds++;reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,true);
+time+=21000;reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,false,'Stalled audio expires even if status remains playing');
+time+=1000;state.trackPositionSeconds=1000;state.seekRevision=1;reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,false,'A seek is not playback');
+time+=1000;state.trackPositionSeconds++;reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,true);
+eligible=false;reporter.sample();await flush();assert.equal(calls.at(-1).packet.playing,false,'Privacy opt-out clears presence');
+eligible=true;hold=true;time+=1000;state.trackPositionSeconds++;reporter.sample();await flush();const pending=calls.at(-1);state.status='paused';reporter.sample();await flush();assert.equal(pending.options.signal.aborted,true);assert.equal(calls.at(-1).packet.playing,false);assert.ok(calls.at(-1).packet.sequence>pending.packet.sequence,'Pause wins over a delayed playing request');
+hold=false;user='two';reporter.sample();await flush();const before=calls.length;state.status='playing';reporter.sample();await flush();assert.equal(calls.length,before);time+=1000;state.trackPositionSeconds++;reporter.sample();await flush();assert.equal(calls.at(-1).packet.tab,'2','Account changes get a fresh page identity');
+reporter.stop({keepalive:true});await flush();assert.equal(calls.at(-1).options.keepalive,true);assert.equal(calls.at(-1).packet.playing,false);reporter.dispose();
+
+const win=new Window(),host=win.document.createElement('div');win.document.body.append(host);let clock=100000;
+const context=vm.createContext({read:(_key,fallback)=>fallback,write(){},esc:x=>String(x).replaceAll('"','&quot;'),rankTime,listenerRing,assignListenerRings,medalForRank,awardArtwork,reciterInfo,competitionAvatar:id=>'https://fixture.invalid/'+id,Date:class extends Date{static now(){return clock;}},document:win.document,window:win,performance:win.performance,requestAnimationFrame:()=>1,setTimeout,clearTimeout});
+const source=await fs.readFile(new URL('../dist/js/competition-view.js',import.meta.url),'utf8');
+vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+'\nglobalThis.api={competitionMarkup,updateCompetitionTimes};',context);
+const rows=[{id:'a',mode:'profile',nickname:'Fixture',photo:true,seconds:10,rank:1,reciter:'ar.alafasy',listeningUntil:clock+45000},{id:'b',mode:'initial',initial:'B',seconds:9,rank:2,reciter:'ar.alafasy',listeningUntil:clock+45000}];
+host.innerHTML=context.api.competitionMarkup(rows);const icons=[...host.querySelectorAll('.competition-listening')];assert.equal(icons.length,2);assert.equal(icons[0].hidden,false);assert.equal(icons[1].hidden,true,'Anonymous labels never expose presence');assert.equal(icons[0].textContent,'');assert.equal(icons[0].getAttribute('title'),null,'No tooltip or visible label');
+const card=host.firstElementChild;clock+=45001;context.api.updateCompetitionTimes(host,rows);assert.equal(icons[0].hidden,true);assert.equal(host.firstElementChild,card,'Expiry updates in place without rerendering the ranking');
+win.happyDOM.abort();
+// A slow response or a warm cache cannot restart the server's short lease.
+let requestClock=Date.parse('2026-10-27T08:00:00Z'),networkDelay=5000,active=45,mode='profile';
+const clientContext=vm.createContext({personalDataAllowed:()=>true,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',RECITERS,safeListener,listeningDayKey,read:(_k,d)=>d,write(){},Date:class extends Date{static now(){return requestClock;}},Intl,AbortController,AbortSignal,setTimeout,clearTimeout,fetch:async()=>{requestClock+=networkDelay;return{ok:true,json:async()=>({day:listeningDayKey(requestClock),boards:Object.fromEntries(['all','day','week','month'].map(p=>[p,{items:[{id:'11111111-1111-4111-8111-111111111111',nickname:'Fixture',initial:'F',mode,reciter:'ar.alafasy',seconds:120,rank:1,activeForSeconds:active}]}]))})};},window:{dispatchEvent(){}},Event:class{}});
+const clientSource=await fs.readFile(new URL('../dist/js/competition-client.js',import.meta.url),'utf8');vm.runInContext(clientSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+'\nglobalThis.api={loadCompetition,clearCompetitionCache,cachedCompetition};',clientContext);
+let began=requestClock;let loaded=await clientContext.api.loadCompetition('all');assert.equal(loaded[0].listeningUntil,began+45000);assert.equal(clientContext.api.cachedCompetition('all')[0].listeningUntil,began+45000,'Reading cache does not extend the status');
+for(const value of [46,-1,'45',null]){clientContext.api.clearCompetitionCache();active=value;assert.equal((await clientContext.api.loadCompetition('all'))[0].listeningUntil,0);}
+clientContext.api.clearCompetitionCache();active=45;mode='initial';assert.equal((await clientContext.api.loadCompetition('all'))[0].listeningUntil,0);
+clientContext.api.clearCompetitionCache();mode='profile';networkDelay=60000;loaded=await clientContext.api.loadCompetition('all');assert.ok(loaded[0].listeningUntil<requestClock,'Delayed data arrives already expired');
+console.log('PASS: real audio progress, pause, seek, stalls, privacy, throttling, late request cancellation, account isolation and expiring accessible headphones without visible labels or rerenders.');
