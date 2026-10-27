@@ -58,3 +58,31 @@ body.menu-page .list-button:not(.account-entry){border:1px solid rgba(158,178,20
 body.menu-page .list-button:not(.account-entry):active{background:#1c2940;border-color:rgba(214,196,158,.44)}
 body.menu-page .menu-item-label{min-width:0;overflow-wrap:anywhere}
 @media(max-width:759px){body.menu-page .workspace,body.account-page .workspace{padding-left:0;padding-right:0}body.account-page #app>.owner-login:has(#counter-account-out){width:100%;max-width:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}}
+
+/* Keep cabinet titles below the iPhone status edge on an opaque surface. */
+body.owner-page .owner-screenbar{position:relative;isolation:isolate;background:var(--bg,#070b16)}
+body.owner-page .owner-screenbar h1{text-shadow:none;opacity:1}
+@media(max-width:759px){body.owner-page .workspace,body.account-page .workspace{padding-top:calc(var(--salah-safe-top,0px) + 16px)}body.owner-page .owner-screenbar{padding-bottom:8px;min-height:52px}}
+
+/* A slightly more compact signed-in account, keeping full-size text and touch targets. */
+@media(max-width:759px){
+body.account-page #app>.owner-login:has(#counter-account-out) .account-title-row{margin-bottom:14px}
+body.account-page #app>.owner-login:has(#counter-account-out) .account-title-row h1{font-size:26px}
+body.account-page .owner-login:has(#counter-account-out) #account-form-area #account-avatar-editor{padding-top:10px;padding-bottom:8px;margin-bottom:6px}
+body.account-page .owner-login:has(#counter-account-out) .account-avatar-circle{width:128px;height:128px;min-height:128px;flex-basis:128px}
+body.account-page .owner-login:has(#counter-account-out) .account-profile-heading{margin:4px 0 8px}
+body.account-page .owner-login:has(#counter-account-out) .account-awards{padding:16px;margin:12px 0 16px;border-radius:20px}
+body.account-page .owner-login:has(#counter-account-out) .award-earned-carousel .award-mini{flex:0 0 calc((100% - 16px)/3)}
+body.account-page .owner-login:has(#counter-account-out) .award-earned-carousel .award-emblem-medallion{width:min(88px,100%);height:auto;aspect-ratio:1}
+body.account-page .owner-login:has(#counter-account-out) .owner-cabinet-launch{min-height:56px;padding:14px 18px;font-size:16px;margin-top:10px}
+}
+
+@media(max-width:759px){
+body.account-page .owner-login:has(#counter-account-out) #account-profile-edit{font-size:18px}
+body.account-page .owner-login:has(#counter-account-out) #account-awards .award-streak-head strong{font-size:28px}
+body.account-page .owner-login:has(#counter-account-out) #account-awards .award-section-head{margin-bottom:8px}
+body.account-page .owner-login:has(#counter-account-out) #account-awards .award-section-head:not(:first-child){margin-top:16px!important}
+body.account-page .owner-login:has(#counter-account-out) #account-form-area>.account-details>summary{min-height:60px;padding-top:12px;padding-bottom:12px}
+}
+
+@media(max-width:759px){body.account-page .owner-login:has(#counter-account-out) .award-earned-carousel{gap:8px}body.account-page .owner-login:has(#counter-account-out) .award-earned-carousel .award-mini small{max-width:100%}}
