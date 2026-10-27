@@ -173,6 +173,8 @@ body.menu-page .page-head h1{font-size:26px}
 
 /* Keep the author signature at the end of Menu, in normal page flow. */
 @media(max-width:759px){
+body.menu-page #app{margin-bottom:12px}
+body.menu-page #app>.panel.section{margin-bottom:0}
 body.menu-page .workspace>footer.author-footer{display:flex;position:static;inset:auto;width:auto;min-height:20px;max-width:none;margin:0 16px;padding:0;border:0;border-top:1px solid var(--line);background:none;box-shadow:none;justify-content:center;align-items:baseline;gap:6px}
 body.menu-page .workspace>footer.author-footer .author-brand{font-size:14px;line-height:1.4;letter-spacing:2px}
 body.menu-page .workspace>footer.author-footer small{font-size:10px}
