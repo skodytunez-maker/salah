@@ -48,12 +48,18 @@ async function upgrade(previousVersion,failInstall=false){
  const handlers={},cached=new Map(),deleted=[],navigated=[];let skipped=0,claimed=0,bundled=false;
  const cache={async addAll(requests){assert.ok(requests.length>400);if(failInstall)throw Error('network');bundled=true;},async put(key,response){cached.set(key,response);},async match(key){return cached.get(key)?.clone();},async delete(key){return cached.delete(key);}};
  const previous=previousVersion==null?null:{postMessage(message,ports){assert.equal(message.type,'SALAH_RELEASE_INFO');ports[0].postMessage({version:previousVersion});}};
- const windowFor=url=>({url,async navigate(target){assert.equal(target,url);assert.ok(bundled,'Cache the complete corrected app before reopening');navigated.push(target);}});
+ const windowFor=url=>({url,async navigate(target){
+  const original=new URL(url),next=new URL(target);
+  assert.equal(next.origin,original.origin);assert.equal(next.pathname,original.pathname);assert.equal(next.hash,original.hash);
+  assert.equal(next.searchParams.get('salah-repair'),'419','Force a new document rather than a fragment-only navigation');
+  for(const[key,value]of original.searchParams)assert.equal(next.searchParams.get(key),value);
+  assert.ok(bundled,'Cache the complete corrected app before reopening');navigated.push(target);
+ }});
  const scope='https://example.test/salah/';
  const self={registration:{scope,active:previous},location:{origin:'https://example.test'},addEventListener:(name,fn)=>handlers[name]=fn,
   skipWaiting:async()=>{assert.ok(bundled);skipped++;},
   clients:{claim:async()=>{claimed++;},matchAll:async()=>[
-   windowFor(scope+'#adhkar'),windowFor(scope+'index.html#more'),
+   windowFor(scope+'#adhkar'),windowFor(scope+'index.html?entry=shortcut#more'),
    windowFor(scope+'recover.html'),windowFor(scope+'owner.html'),
    windowFor('https://example.test/another-app/'),windowFor('https://other.test/salah/')
   ]}};
@@ -68,7 +74,7 @@ async function upgrade(previousVersion,failInstall=false){
  let activating;handlers.activate({waitUntil:promise=>activating=promise});await activating;
  assert.equal(claimed,1);assert.deepEqual(deleted,['salah-shell-v418'],'Keep Quran and personal/media caches');
  assert.equal(skipped,previousVersion===418?1:0);
- assert.deepEqual(navigated,previousVersion===418?[scope+'#adhkar',scope+'index.html#more']:[],
+ assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair=419#adhkar',scope+'index.html?entry=shortcut&salah-repair=419#more']:[],
   'Reopen existing broken app windows only; preserve their routes and leave recovery/owner/other apps alone');
 }
 await upgrade(418);await upgrade(416);await upgrade(null);await upgrade(418,true);
