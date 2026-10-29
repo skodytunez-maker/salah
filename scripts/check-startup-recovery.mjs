@@ -51,7 +51,7 @@ async function upgrade(previousVersion,failInstall=false){
  const windowFor=url=>({url,async navigate(target){
   const original=new URL(url),next=new URL(target);
   assert.equal(next.origin,original.origin);assert.equal(next.pathname,original.pathname);assert.equal(next.hash,original.hash);
-  assert.equal(next.searchParams.get('salah-repair'),'422','Force a new document rather than a fragment-only navigation');
+  assert.equal(next.searchParams.get('salah-repair'),'423','Force a new document rather than a fragment-only navigation');
   for(const[key,value]of original.searchParams)assert.equal(next.searchParams.get(key),value);
   assert.ok(bundled,'Cache the complete corrected app before reopening');navigated.push(target);
  }});
@@ -74,7 +74,7 @@ async function upgrade(previousVersion,failInstall=false){
  let activating;handlers.activate({waitUntil:promise=>activating=promise});await activating;
  assert.equal(claimed,1);assert.deepEqual(deleted,['salah-shell-v418'],'Keep Quran and personal/media caches');
  assert.equal(skipped,previousVersion===418?1:0);
- assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair=422#adhkar',scope+'index.html?entry=shortcut&salah-repair=422#more',scope+'owner.html?salah-repair=422#admin']:[],
+ assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair=423#adhkar',scope+'index.html?entry=shortcut&salah-repair=423#more',scope+'owner.html?salah-repair=423#admin']:[],
   'Reopen existing broken main and owner shortcuts; preserve routes and leave recovery/other apps alone');
 }
 await upgrade(418);await upgrade(416);await upgrade(null);await upgrade(418,true);
