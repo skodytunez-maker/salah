@@ -44,13 +44,13 @@ if(snapshot){
  const manifest=await read('docs/rights-source-manifest.json');
  assert.equal(manifest.sourceCommit,media.sourceCommit);assert.equal(content.sourceCommit,media.sourceCommit);
  sourceFiles=new Map(manifest.entries.map(entry=>[entry.path,entry]));
- inventory=new Map(manifest.entries.filter(entry=>/^dist\/.*\.(png|jpe?g|webp|svg|ttf|mp3)$/.test(entry.path)).map(entry=>[entry.path,entry]));
+ inventory=new Map(manifest.entries.filter(entry=>/^dist\/.*\.(png|jpe?g|webp|svg|ttf|woff2|mp3)$/.test(entry.path)).map(entry=>[entry.path,entry]));
 }else{
  inventory=new Map();
  async function scan(directory){
   for(const entry of await fs.readdir(directory,{withFileTypes:true})){
    const file=path.join(directory,entry.name);if(entry.isDirectory())await scan(file);
-   else if(/\.(png|jpe?g|webp|svg|ttf|mp3)$/i.test(entry.name))inventory.set(path.relative(root,file).split(path.sep).join('/'),{});
+   else if(/\.(png|jpe?g|webp|svg|ttf|woff2|mp3)$/i.test(entry.name))inventory.set(path.relative(root,file).split(path.sep).join('/'),{});
   }
  }
  await scan(path.join(root,'dist'));

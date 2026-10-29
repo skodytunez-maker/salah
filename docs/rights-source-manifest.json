@@ -4033,6 +4033,16 @@
       "path": "dist/assets/reciters/peshawaalkurdi-salah-420.jpg",
       "gitBlobSha": "a406e1435747f16acfcbcf39e42805d86717b3dc",
       "bytes": 100160
+    },
+    {
+      "path": "dist/assets/fonts/scheherazade-new-OFL.txt",
+      "gitBlobSha": "5681491c71182e5872d885886fc54935b74c6f08",
+      "bytes": 4495
+    },
+    {
+      "path": "dist/assets/fonts/scheherazade-new-regular-v4500.woff2",
+      "gitBlobSha": "f8ce40f6eebaf984f16d81cc668f862590461468",
+      "bytes": 124783
     }
   ],
   "incrementalEvidence": [

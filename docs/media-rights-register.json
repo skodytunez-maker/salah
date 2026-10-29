@@ -2865,6 +2865,16 @@
       "originUrl": "https://media.way2quran.com/imgs/bisha-al-kurdi.jpg",
       "rightsEvidence": "docs/peshawa-portrait-420.md",
       "note": "Derived from the named original portrait retained as peshawaalkurdi.jpg. User-requested AI-assisted charcoal background replacement; no claim of an unmodified photograph, ownership or additional license."
+    },
+    {
+      "path": "dist/assets/fonts/scheherazade-new-regular-v4500.woff2",
+      "gitBlobSha": "f8ce40f6eebaf984f16d81cc668f862590461468",
+      "bytes": 124783,
+      "kind": "font",
+      "rightsReviewStatus": "license-recorded",
+      "license": "SIL-OFL-1.1",
+      "rightsEvidence": "dist/assets/fonts/scheherazade-new-OFL.txt",
+      "note": "Unmodified Scheherazade New 4.500 webfont from the official SIL archive https://software.sil.org/downloads/r/scheherazade/ScheherazadeNew-4.500.zip. Used for optional private reading homework. Bundled SIL OFL notice."
     }
   ],
   "wallpaperSets": [

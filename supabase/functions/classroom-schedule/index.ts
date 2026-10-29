@@ -37,21 +37,170 @@ function localTimestamp(day,time,zone){
 }
 
 
-const TEACHER_ADMIN_ACTIONS=['teacher-list','teacher-lookup','teacher-assign','teacher-revoke'];
-async function teacherAdmin({action,input,actor,db,ownerId,fail}){
- if(actor.id!==ownerId||actor.owner!==true)fail(403,'Назначать преподавателей может только владелец SALAH.');
- if(action==='teacher-list')return{teachers:await db.teacherList()};
- if(action==='teacher-lookup'){
-  const nickname=typeof input.nickname==='string'?input.nickname.trim().toLowerCase():'';
-  if(nickname.length<2||nickname.length>40||/[\x00-\x1f\x7f]/.test(nickname))fail(400,'Введите ник в SALAH: от 2 до 40 символов.');
-  const accounts=await db.teacherLookup(nickname);if(!accounts.length)fail(404,'Аккаунт с таким ником не найден. Проверьте ник и регистрацию в SALAH.');
-  return{accounts:accounts.slice(0,8),truncated:accounts.length>8};
- }
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.userId||'')||input.userId===ownerId)fail(400,'Выберите другой аккаунт.');
- if(!Number.isSafeInteger(input.expectedRevision)||input.expectedRevision<0||input.expectedRevision>=2147483647)fail(400,'Откройте профиль заново.');
- const result=await db.teacherSet(actor.id,input.userId,action==='teacher-assign',input.expectedRevision);
- if(!result)fail(409,'Профиль или доступ изменились. Обновите список и повторите.');
- return{userId:input.userId,...result};
+// Short reading combinations. Assessment is performed by the teacher, never by speech recognition.
+const READING_CHECK_LETTERS=[['alif','ا','Алиф'],['ba','ب','Ба'],['ta','ت','Та'],['tha','ث','Са'],['jim','ج','Джим'],['ha','ح','Ха'],['kha','خ','Хо'],['dal','د','Даль'],['dhal','ذ','Заль'],['ra','ر','Ро'],['zay','ز','За'],['sin','س','Син'],['shin','ش','Шин'],['sad','ص','Сод'],['dad','ض','Дод'],['tta','ط','То'],['za','ظ','Зо'],['ayn','ع','Айн'],['ghayn','غ','Гойн'],['fa','ف','Фа'],['qaf','ق','Коф'],['kaf','ك','Каф'],['lam','ل','Лям'],['mim','م','Мим'],['nun','ن','Нун'],['heh','ه','Ха'],['waw','و','Уау'],['ya','ي','Йа']];
+const READING_REASONS={letter:'Буква',vowel:'Огласовка',joining:'Соединение букв',sukun:'Сукун',pace:'Темп чтения',other:'Другое'};
+const readingLetter=id=>READING_CHECK_LETTERS.find(row=>row[0]===id)||null;
+function readingExamples(letterId,count=10){const row=readingLetter(letterId);if(!row)return[];const c=row[1];if(letterId==='mim')return['أَمْ','إِمْ','أُمْ','أَمْرُ','أَمَرُ','مَ','مِ','مُ','أَمَ','إِمَ','أُمَ','أَمِ','أَمُ','مَرَ','رَمَ'].slice(0,count);if(letterId==='alif')return Array.from({length:count},(_,i)=>['أَ','إِ','أُ','ا'][i%4]);return[c+'َ',c+'ِ',c+'ُ','أَ'+c+'ْ','إِ'+c+'ْ','أُ'+c+'ْ','أَ'+c+'َ','إِ'+c+'َ','أُ'+c+'َ','أَ'+c+'ِ','إِ'+c+'ِ','أُ'+c+'ِ','أَ'+c+'ُ','إِ'+c+'ُ','أُ'+c+'ُ'].slice(0,count);}
+function normalizeReadingCheck(value){
+ if(value==null)return null;const row=readingLetter(value.letterId);if(!row||![10,15].includes(value.count)||!Array.isArray(value.prompts)||value.prompts.length!==value.count)throw Error('Выберите пройденную букву и 10 или 15 сочетаний.');
+ const prompts=value.prompts.map(text=>{if(typeof text!=='string')throw Error('Добавьте арабские сочетания.');const normalized=text.normalize('NFC').trim();if(!normalized||normalized.length>24||!(/^[\u0621-\u063A\u0641-\u0652\u0670\u0671 ]+$/u).test(normalized)||!(letterIdHas(normalized,row)))throw Error('В каждом сочетании нужны арабские буквы и огласовки с выбранной буквой.');return normalized;});
+ return{version:1,letterId:row[0],count:value.count,prompts,dueBeforeNextLesson:true};
+}
+function letterIdHas(text,row){return row[0]==='alif'?/[اأإآ]/u.test(text):text.includes(row[1]);}
+function normalizeReadingReview(value,check){if(!check)return null;const normalized=normalizeReadingCheck(check);if(!Array.isArray(value)||value.length!==normalized.count)throw Error('Отметьте чтение каждого сочетания.');const marks=value.map(mark=>{if(!mark||typeof mark.correct!=='boolean'||mark.reason!=null&&!Object.hasOwn(READING_REASONS,mark.reason))throw Error('Отметьте чтение каждого сочетания.');return{correct:mark.correct,reason:mark.correct?null:mark.reason||'other'};});const mistakes=marks.flatMap((mark,index)=>mark.correct?[]:[{index,prompt:normalized.prompts[index],reason:mark.reason}]);return{count:normalized.count,correctCount:normalized.count-mistakes.length,mistakeCount:mistakes.length,marks,difficulties:mistakes};}
+
+// Private homework exchange. Identities and lesson access are supplied by the verified scheduler.
+const WORK_OWNER_ACTIONS=['work-list','review-work'];
+const WORK_ACTIONS=['my-work','submit-work',...WORK_OWNER_ACTIONS,'prepare-work-file','finish-work-file','work-file','discard-work-file'];
+const WORK_FILE_LIMIT=6*1024*1024;
+const WORK_MIMES=Object.freeze({'image/jpeg':['photo','jpg'],'image/png':['photo','png'],'image/webp':['photo','webp'],'audio/mp4':['audio','m4a'],'audio/x-m4a':['audio','m4a'],'audio/mpeg':['audio','mp3'],'audio/webm':['audio','webm'],'audio/ogg':['audio','ogg'],'audio/wav':['audio','wav'],'audio/x-wav':['audio','wav']});
+const filePattern=/^[A-Za-z0-9_-]{32}$/;
+const ascii=(bytes,start,count)=>String.fromCharCode(...bytes.slice(start,start+count));
+function validWorkFileBytes(bytes,mime){
+ if(!(bytes instanceof Uint8Array)||bytes.length<12||bytes.length>WORK_FILE_LIMIT)return false;
+ if(mime==='image/jpeg')return bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
+ if(mime==='image/png')return Array.from(bytes.slice(0,8)).join(',')==='137,80,78,71,13,10,26,10';
+ if(mime==='image/webp')return ascii(bytes,0,4)==='RIFF'&&ascii(bytes,8,4)==='WEBP';
+ if(['audio/mp4','audio/x-m4a'].includes(mime))return ascii(bytes,4,4)==='ftyp';
+ if(mime==='audio/mpeg')return ascii(bytes,0,3)==='ID3'||bytes[0]===255&&(bytes[1]&224)===224;
+ if(mime==='audio/webm')return Array.from(bytes.slice(0,4)).join(',')==='26,69,223,163';
+ if(mime==='audio/ogg')return ascii(bytes,0,4)==='OggS';
+ if(['audio/wav','audio/x-wav'].includes(mime))return ascii(bytes,0,4)==='RIFF'&&ascii(bytes,8,4)==='WAVE';
+ return false;
+}
+const publicWorkFile=f=>({id:f.id,kind:f.kind,mime:f.mime,bytes:f.bytes});
+const publicWork=s=>s?{userId:s.userId,nickname:s.nickname,homeworkRevision:s.homeworkRevision,version:s.version,text:s.text||'',files:(s.files||[]).map(publicWorkFile),state:s.state,submittedAt:s.submittedAt,feedback:s.feedback||'',reviewedAt:s.reviewedAt||null,readingCheck:s.readingCheck||null,readingReview:s.readingReview||null}:null;
+function createHomeworkWorkService({db,storage,now=Date.now,fail}){
+ const content=(value,max,label,optional=true)=>{if(typeof value!=='string')fail(400,'Проверьте '+label+'.');const text=value.replace(/\r\n?/g,'\n').trim();if((!optional&&!text)||text.length>max||/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(text))fail(400,'Проверьте '+label+'.');return text;};
+ return async({action,input,actor,row,isOwner,enrollment})=>{
+  if(row.state==='cancelled')fail(410,'Занятие отменено.');
+  if(!isOwner&&!enrollment)fail(403,'Запишитесь на занятие под своим аккаунтом.');
+  const revision=Number(row.homeworkRevision)||0;
+  const current=()=>{if(!row.homework?.text||input.homeworkRevision!==revision)fail(409,'Задание изменилось. Откройте актуальное ДЗ.');};
+  const student=()=>{if(isOwner)fail(403,'Работу отправляет ученик из своего аккаунта.');};
+  const owner=()=>{if(!isOwner||actor.owner!==true&&actor.teacher!==true)fail(403,'Только преподаватель проверяет работы.');};
+  if(action==='work-list'){owner();return{works:(await db.listWorks(row.id)).map(publicWork)};}
+  if(action==='my-work'){student();const own=await db.getWork(row.id,actor.id,revision);return{work:publicWork(own),homeworkRevision:revision};}
+  if(action==='review-work'){
+   owner();if(!/^[0-9a-f-]{36}$/i.test(input.studentId||'')||!Number.isInteger(input.homeworkRevision)||input.homeworkRevision<1||!Number.isInteger(input.expectedVersion)||input.expectedVersion<1||!['accepted','needs_revision'].includes(input.state))fail(400,'Откройте работу заново.');
+   const submitted=await db.getWork(row.id,input.studentId,input.homeworkRevision);if(!submitted)fail(404,'Работа недоступна.');if(submitted.version!==input.expectedVersion)fail(409,'Работа уже изменилась. Откройте её заново.');let readingReview=null;try{readingReview=normalizeReadingReview(input.readingMarks,submitted.readingCheck);}catch(error){fail(400,error.message);}
+   const feedback=content(input.feedback??'',2000,'комментарий',input.state==='accepted'||Boolean(submitted.readingCheck));
+   const result=await db.reviewWork(row,actor.id,{userId:input.studentId,homeworkRevision:input.homeworkRevision,expectedVersion:input.expectedVersion,state:input.state,feedback,readingReview,now:now()});
+   if(!result)fail(409,'Ученик уже изменил работу. Откройте её заново.');return{work:publicWork(result)};
+  }
+  if(action==='prepare-work-file'){
+   student();current();const mime=typeof input.mime==='string'?input.mime.toLowerCase().split(';')[0].trim():'';
+   if(!WORK_MIMES[mime]||!Number.isInteger(input.bytes)||input.bytes<12||input.bytes>WORK_FILE_LIMIT)fail(400,'Прикрепите фото JPG, PNG, WebP или аудио до 6 МБ.');
+   try{for(const file of await db.orphanWorkFiles())if(await db.claimOrphanWorkFile(file.path))await storage.remove(file.path);}catch{}
+   const id=crypto.randomUUID().replaceAll('-',''),[kind,extension]=WORK_MIMES[mime],file={id,lessonId:row.id,userId:actor.id,homeworkRevision:revision,kind,mime,bytes:input.bytes,path:row.id+'/'+actor.id+'/'+revision+'/'+id+'.'+extension,createdAt:now(),state:'pending'};
+   if(!await db.reserveWorkFile(row,file))fail(429,'Достигнут лимит загрузок. Повторите позже.');
+   let uploadUrl;try{uploadUrl=await storage.signUpload(file.path);}catch{fail(503,'Не удалось подготовить загрузку. Повторите позже.');}
+   return{file:publicWorkFile(file),uploadUrl};
+  }
+  if(['finish-work-file','work-file','discard-work-file'].includes(action)){
+   if(!filePattern.test(input.fileId||''))fail(404,'Файл недоступен.');
+   const file=await db.getWorkFile(input.fileId);
+   if(!file||file.lessonId!==row.id||file.state==='deleted'||file.state==='invalid')fail(404,'Файл недоступен.');
+   if(action==='work-file'){
+    if(isOwner){owner();if(file.state!=='submitted')fail(403,'Ученик ещё не отправил этот файл.');}
+    else if(file.userId!==actor.id||!['ready','submitted'].includes(file.state))fail(403,'Нет доступа к файлу.');
+    return{url:await storage.signRead(file.path,300),expiresAt:now()+300000,file:publicWorkFile(file)};
+   }
+   student();current();if(file.userId!==actor.id||file.homeworkRevision!==revision)fail(403,'Нет доступа к файлу.');
+   if(action==='discard-work-file'){
+    if(file.state==='submitted')fail(409,'Отправленный файл сохраняется вместе с работой.');
+    if(await db.changeWorkFile(file,'deleted'))await storage.remove(file.path).catch(()=>{});return{removed:true};
+   }
+   if(['ready','submitted'].includes(file.state))return{file:publicWorkFile(file)};
+   if(file.state!=='pending'||now()-file.createdAt>2*3600000)fail(410,'Срок загрузки истёк. Прикрепите файл заново.');
+   let bytes;try{bytes=await storage.download(file.path);}catch{fail(409,'Загрузка ещё не завершена. Повторите.');}
+   if(bytes.length!==file.bytes||!validWorkFileBytes(bytes,file.mime)){
+    await db.changeWorkFile(file,'invalid');await storage.remove(file.path).catch(()=>{});fail(400,'Формат файла не совпадает с содержимым. Выберите другой файл.');
+   }
+   if(!await db.changeWorkFile(file,'ready'))fail(409,'Файл изменился. Повторите загрузку.');return{file:publicWorkFile(file)};
+  }
+  if(action==='submit-work'){
+   student();current();const text=content(input.text??'',2000,'текст ответа'),ids=input.fileIds??[];
+   if(!Array.isArray(ids)||ids.length>6||new Set(ids).size!==ids.length||ids.some(id=>!filePattern.test(id||''))||!Number.isSafeInteger(input.expectedVersion)||input.expectedVersion<0||input.expectedVersion>=2147483647)fail(400,'Проверьте прикреплённые файлы.');
+   if(!text&&!ids.length)fail(400,'Добавьте текст, голосовую запись или фото.');
+   const files=await Promise.all(ids.map(id=>db.getWorkFile(id)));
+   if(files.some(f=>!f||f.lessonId!==row.id||f.userId!==actor.id||f.homeworkRevision!==revision||!['ready','submitted'].includes(f.state)))fail(403,'Один из файлов недоступен. Прикрепите его заново.');
+   if(files.filter(f=>f.kind==='audio').length>1||files.filter(f=>f.kind==='photo').length>5)fail(400,'Можно отправить одну голосовую запись и до пяти фото.');
+   if(row.homework.readingCheck&&!files.some(file=>file.kind==='audio'))fail(400,'Запишите чтение сочетаний или прикрепите аудиофайл.');
+   const work={userId:actor.id,nickname:actor.nickname||'Ученик',homeworkRevision:revision,text,fileIds:ids,files:files.map(publicWorkFile),state:'submitted',submittedAt:now(),feedback:'',reviewedAt:null,readingCheck:row.homework.readingCheck?normalizeReadingCheck(row.homework.readingCheck):null,readingReview:null};
+   const result=await db.submitWork(row,actor.id,input.expectedVersion,work);
+   if(!result)fail(409,'Работа или задание изменились. Обновите ДЗ перед отправкой.');return{work:publicWork(result)};
+  }
+  fail(400,'Неизвестное действие с ДЗ.');
+ };
+}
+
+function createHomeworkDb({sql}){
+ const workRow=r=>r?{...r.details,userId:r.user_id,homeworkRevision:r.homework_revision,version:r.version}:null;
+ const fileRow=r=>r?{id:r.id,lessonId:r.lesson_id,userId:r.user_id,homeworkRevision:r.homework_revision,path:r.object_path,mime:r.mime,kind:r.kind,bytes:r.bytes,state:r.state,createdAt:r.created_at.getTime()}:null;
+ const current=(lesson,row)=>lesson&&lesson.state!=='cancelled'&&Number(lesson.details.homeworkRevision)===Number(row.homeworkRevision)&&Boolean(lesson.details.homework?.text);
+ return{
+  async getWork(id,uid,revision){return workRow((await sql`select * from salah_classroom_private.homework_submissions where lesson_id=${id} and user_id=${uid}::uuid and homework_revision=${revision}`)[0]);},
+  async listWorks(id){return(await sql`select * from salah_classroom_private.homework_submissions where lesson_id=${id} order by updated_at desc limit 300`).map(workRow);},
+  async getWorkFile(id){return fileRow((await sql`select * from salah_classroom_private.homework_files where id=${id}`)[0]);},
+  async reserveWorkFile(row,file){return sql.begin(async tx=>{
+   await tx`select pg_advisory_xact_lock(hashtextextended(${file.userId},404))`;
+   const[l]=await tx`select * from salah_classroom_private.lessons where id=${row.id} for update`;
+   if(!current(l,row))return false;
+   const[e]=await tx`select user_id from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${file.userId}::uuid`;if(!e||file.userId===l.owner_id)return false;
+   const[q]=await tx`select count(*)::int as count,coalesce(sum(bytes),0)::bigint as bytes from salah_classroom_private.homework_files where user_id=${file.userId}::uuid and created_at>now()-interval '24 hours'`;
+   if(q.count>=30||Number(q.bytes)+file.bytes>60*1024*1024)return false;
+   await tx`insert into salah_classroom_private.homework_files(id,lesson_id,user_id,homework_revision,object_path,mime,kind,bytes,state,created_at)values(${file.id},${row.id},${file.userId}::uuid,${file.homeworkRevision},${file.path},${file.mime},${file.kind},${file.bytes},'pending',to_timestamp(${file.createdAt}/1000.0))`;return true;
+  });},
+  async changeWorkFile(file,state){const rows=await sql`update salah_classroom_private.homework_files set state=${state} where id=${file.id} and user_id=${file.userId}::uuid and lesson_id=${file.lessonId} and state=${file.state} returning id`;return rows.length===1;},
+  async submitWork(row,uid,expected,work){return sql.begin(async tx=>{
+   const[l]=await tx`select * from salah_classroom_private.lessons where id=${row.id} for update`;if(!current(l,row))return null;
+   const[e]=await tx`select user_id from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${uid}::uuid`;if(!e||uid===l.owner_id)return null;
+   const[p]=await tx`select * from salah_classroom_private.homework_submissions where lesson_id=${row.id} and user_id=${uid}::uuid and homework_revision=${work.homeworkRevision} for update`;
+   if((p?.version||0)!==expected||(p?.details.attempts||0)>=20)return null;
+   const files=await tx`select * from salah_classroom_private.homework_files where id in(select jsonb_array_elements_text(${tx.json(work.fileIds)}::jsonb)) for update`;
+   if(files.length!==work.fileIds.length||files.some(f=>f.lesson_id!==row.id||f.user_id!==uid||f.homework_revision!==work.homeworkRevision||!['ready','submitted'].includes(f.state))||files.filter(f=>f.kind==='photo').length>5||files.filter(f=>f.kind==='audio').length>1)return null;
+   const history=p?[...(p.details.history||[]),{...p.details,history:undefined,version:p.version}].slice(-10):[];
+   const next={...work,files:work.fileIds.map(id=>fileRow(files.find(f=>f.id===id))).map(({id,mime,kind,bytes})=>({id,mime,kind,bytes})),attempts:(p?.details.attempts||0)+1,history};
+   const[r]=await tx`insert into salah_classroom_private.homework_submissions(lesson_id,user_id,homework_revision,version,details,updated_at)values(${row.id},${uid}::uuid,${work.homeworkRevision},${expected+1},${tx.json(next)},to_timestamp(${work.submittedAt}/1000.0))on conflict(lesson_id,user_id,homework_revision)do update set version=excluded.version,details=excluded.details,updated_at=excluded.updated_at returning *`;
+   await tx`update salah_classroom_private.homework_files set state='submitted' where id in(select jsonb_array_elements_text(${tx.json(work.fileIds)}::jsonb))`;return workRow(r);
+  });},
+  async reviewWork(row,owner,input){return sql.begin(async tx=>{
+   const[l]=await tx`select owner_id,state from salah_classroom_private.lessons where id=${row.id} for update`;if(!l||l.owner_id!==owner||l.state==='cancelled')return null;
+   const[p]=await tx`select * from salah_classroom_private.homework_submissions where lesson_id=${row.id} and user_id=${input.userId}::uuid and homework_revision=${input.homeworkRevision} for update`;if(!p||p.version!==input.expectedVersion)return null;
+   const details={...p.details,state:input.state,feedback:input.feedback,reviewedAt:input.now,readingReview:input.readingReview||null};
+   return workRow((await tx`update salah_classroom_private.homework_submissions set details=${tx.json(details)},version=version+1,updated_at=to_timestamp(${input.now}/1000.0) where lesson_id=${row.id} and user_id=${input.userId}::uuid and homework_revision=${input.homeworkRevision} and version=${input.expectedVersion} returning *`)[0]);
+  });},
+  async orphanWorkFiles(){return await sql`select o.name as path from storage.objects o left join salah_classroom_private.homework_files f on f.object_path=o.name where o.bucket_id='salah-homework-private' and o.created_at<now()-interval '48 hours' and (f.id is null or f.state in('pending','ready','invalid','deleted')) order by o.created_at limit 5`;},
+  async claimOrphanWorkFile(path){return sql.begin(async tx=>{const[f]=await tx`select * from salah_classroom_private.homework_files where object_path=${path} for update`;if(!f)return true;if(f.state==='submitted'||Date.now()-f.created_at.getTime()<48*3600000)return false;await tx`update salah_classroom_private.homework_files set state='deleted' where id=${f.id} and state<>'submitted'`;return true;});}
+ };
+}
+
+function createHomeworkStorage(client){
+ const bucket=()=>{if(!client)throw Error('Private homework storage unavailable');return client.storage.from('salah-homework-private');};
+ return{
+  async signUpload(path){const{data,error}=await bucket().createSignedUploadUrl(path,{upsert:false});if(error||!data?.signedUrl)throw Error('Upload unavailable');return data.signedUrl;},
+  async signRead(path,seconds){const{data,error}=await bucket().createSignedUrl(path,seconds);if(error||!data?.signedUrl)throw Error('File unavailable');return data.signedUrl;},
+  async download(path){const{data,error}=await bucket().download(path);if(error||!data||data.size>6291456)throw Error('Upload incomplete');return new Uint8Array(await data.arrayBuffer());},
+  async remove(path){const{error}=await bucket().remove([path]);if(error)throw Error('Remove unavailable');}
+ };
+}
+
+function createLearningPortalDb({sql}){
+ return{
+  async portalSummary(uid,teaching,ids){
+   if(!ids.length)return[];
+   if(teaching)return(await sql`select l.id as lesson_id,
+    (select count(*)::int from salah_classroom_private.enrollments e where e.lesson_id=l.id and e.user_id<>l.owner_id) as pupil_count,
+    (select count(*)::int from salah_classroom_private.homework_submissions w where w.lesson_id=l.id and w.homework_revision=coalesce((l.details->>'homeworkRevision')::int,0) and w.details->>'state'='submitted') as pending_count
+    from salah_classroom_private.lessons l where l.owner_id=${uid}::uuid and l.state<>'cancelled' and l.id in(select jsonb_array_elements_text(${sql.json(ids)}::jsonb))`).map(r=>({lessonId:r.lesson_id,pupilCount:r.pupil_count,pendingCount:r.pending_count}));
+   return(await sql`select w.lesson_id,w.version,w.details from salah_classroom_private.homework_submissions w join salah_classroom_private.lessons l on l.id=w.lesson_id join salah_classroom_private.enrollments e on e.lesson_id=w.lesson_id and e.user_id=w.user_id
+    where w.user_id=${uid}::uuid and l.state<>'cancelled' and w.homework_revision=coalesce((l.details->>'homeworkRevision')::int,0) and l.id in(select jsonb_array_elements_text(${sql.json(ids)}::jsonb))`).map(r=>({lessonId:r.lesson_id,work:{state:r.details.state,version:r.version,feedback:r.details.feedback||'',submittedAt:r.details.submittedAt,reviewedAt:r.details.reviewedAt||null,readingReview:r.details.readingReview||null}}));
+  },
+  async portalPupils(id,uid){return(await sql`select e.user_id,e.nickname,e.created_at,w.version,w.details->>'state' as work_state,w.details->'readingReview' as reading_review,w.details->'readingCheck' as reading_check from salah_classroom_private.enrollments e join salah_classroom_private.lessons l on l.id=e.lesson_id left join salah_classroom_private.homework_submissions w on w.lesson_id=e.lesson_id and w.user_id=e.user_id and w.homework_revision=coalesce((l.details->>'homeworkRevision')::int,0)
+   where e.lesson_id=${id} and l.owner_id=${uid}::uuid and l.state<>'cancelled' and e.user_id<>l.owner_id order by e.created_at,e.user_id limit 100`).map(r=>({id:r.user_id,nickname:r.nickname,enrolledAt:r.created_at.getTime(),workState:r.work_state||null,workVersion:r.version||null,readingReview:r.reading_review||null,readingCheck:r.reading_check?{letterId:r.reading_check.letterId,count:r.reading_check.count}:null}));}
+ };
 }
 
 // Authority comes from this private table, never from editable profile metadata.
@@ -77,6 +226,23 @@ function createTeacherRolesDb({sql,ownerId}){
  };
 }
 
+const TEACHER_ADMIN_ACTIONS=['teacher-list','teacher-lookup','teacher-assign','teacher-revoke'];
+async function teacherAdmin({action,input,actor,db,ownerId,fail}){
+ if(actor.id!==ownerId||actor.owner!==true)fail(403,'Назначать преподавателей может только владелец SALAH.');
+ if(action==='teacher-list')return{teachers:await db.teacherList()};
+ if(action==='teacher-lookup'){
+  const nickname=typeof input.nickname==='string'?input.nickname.trim().toLowerCase():'';
+  if(nickname.length<2||nickname.length>40||/[\x00-\x1f\x7f]/.test(nickname))fail(400,'Введите ник в SALAH: от 2 до 40 символов.');
+  const accounts=await db.teacherLookup(nickname);if(!accounts.length)fail(404,'Аккаунт с таким ником не найден. Проверьте ник и регистрацию в SALAH.');
+  return{accounts:accounts.slice(0,8),truncated:accounts.length>8};
+ }
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.userId||'')||input.userId===ownerId)fail(400,'Выберите другой аккаунт.');
+ if(!Number.isSafeInteger(input.expectedRevision)||input.expectedRevision<0||input.expectedRevision>=2147483647)fail(400,'Откройте профиль заново.');
+ const result=await db.teacherSet(actor.id,input.userId,action==='teacher-assign',input.expectedRevision);
+ if(!result)fail(409,'Профиль или доступ изменились. Обновите список и повторите.');
+ return{userId:input.userId,...result};
+}
+
 const CLASSROOM_OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 const CLASSROOM_ORIGINS=new Set(['https://skodytunez-maker.github.io','https://desktop-jecm5lt.taila4556d.ts.net']);
 const opaque=/^[A-Za-z0-9_-]{32}$/,uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -94,8 +260,20 @@ function lessonSchedule(input,now){
  if(reminderAt>=startsAt)fail(400,'Напоминание должно быть раньше начала урока.');
  return{title,teacherName,timeZone,date,time,reminderTime,minutes,maxParticipants,startsAt,endsAt:startsAt+minutes*60000,reminderAt};
 }
-const publicSchedule=l=>({id:l.id,title:l.title,teacherName:l.teacherName,timeZone:l.timeZone,date:l.date,time:l.time,reminderTime:l.reminderTime,minutes:l.minutes,maxParticipants:l.maxParticipants,startsAt:l.startsAt,endsAt:l.endsAt,reminderAt:l.reminderAt,state:l.state,revision:l.revision,accessMode:'account'});
-function createScheduleHandler({db,verifyAccount,now=Date.now}){
+function homeworkValue(value,lesson,now){
+ if(value===null)return null;
+ if(!value||typeof value!=='object'||Array.isArray(value)||typeof value.text!=='string')fail(400,'Добавьте текст домашнего задания.');
+ const content=value.text.replace(/\r\n?/g,'\n').trim();
+ if(!content){if(value.dueDate)fail(400,'Добавьте текст домашнего задания.');return null;}
+ if(content.length>2000||/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(content))fail(400,'Текст ДЗ: не больше 2000 символов.');
+ const dueDate=value.dueDate||null;if(dueDate!==null&&(!shiftDay(dueDate,0)||dueDate<lesson.date||dueDate>shiftDay(lesson.date,180)))fail(400,'Срок ДЗ: день занятия или следующие 180 дней.');
+ let readingCheck;try{readingCheck=normalizeReadingCheck(value.readingCheck);}catch(error){fail(400,error.message);}
+ return{text:content,dueDate,updatedAt:now,...(readingCheck?{readingCheck}:{})};
+}
+const homeworkRevision=l=>Number.isSafeInteger(l.homeworkRevision)&&l.homeworkRevision>=0?l.homeworkRevision:0;
+const publicSchedule=(l,includeHomework=true)=>({id:l.id,title:l.title,teacherName:l.teacherName,timeZone:l.timeZone,date:l.date,time:l.time,reminderTime:l.reminderTime,minutes:l.minutes,maxParticipants:l.maxParticipants,startsAt:l.startsAt,endsAt:l.endsAt,reminderAt:l.reminderAt,state:l.state,revision:l.revision,accessMode:'account',homework:includeHomework&&l.state!=='cancelled'&&typeof l.homework?.text==='string'?{text:l.homework.text,dueDate:l.homework.dueDate||null,updatedAt:l.homework.updatedAt,...(l.homework.readingCheck?{readingCheck:l.homework.readingCheck}:{})}:null,homeworkRevision:includeHomework?homeworkRevision(l):0});
+function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
+ const workService=createHomeworkWorkService({db,storage,now,fail});
  return async req=>{
   const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin'};
   if(CLASSROOM_ORIGINS.has(origin)){headers['Access-Control-Allow-Origin']=origin;headers['Access-Control-Allow-Headers']='Authorization, apikey, Content-Type';headers['Access-Control-Allow-Methods']='POST, OPTIONS';}
@@ -109,26 +287,54 @@ function createScheduleHandler({db,verifyAccount,now=Date.now}){
    const joined=new Uint8Array(bytes);let pos=0;for(const chunk of chunks){joined.set(chunk,pos);pos+=chunk.length;}
    let input;try{input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(joined));}catch{fail(400,'Неверный запрос.');}
    if(!input||typeof input!=='object'||Array.isArray(input))fail(400,'Неверный запрос.');
-   const action=input.action,adminAction=TEACHER_ADMIN_ACTIONS.includes(action),ownerAction=adminAction||['create','update','transition','owner-list'].includes(action);
-   if(![...TEACHER_ADMIN_ACTIONS,'create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences'].includes(action))fail(400,'Неизвестное действие.');
-   const actor=await verifyAccount(bearer[1],{ownerRequired:ownerAction});
+   const action=input.action,ownerAction=['create','update','transition','owner-list','set-homework'].includes(action)||WORK_OWNER_ACTIONS.includes(action)||action==='class-pupils'||action==='portal'&&input.view==='teacher';
+   const adminAction=TEACHER_ADMIN_ACTIONS.includes(action);
+   if(![...TEACHER_ADMIN_ACTIONS,'teacher-access','create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences','homework','set-homework','portal','class-pupils',...WORK_ACTIONS].includes(action))fail(400,'Неизвестное действие.');
+   let actor=await verifyAccount(bearer[1],{teacherRequired:ownerAction||action==='teacher-access',ownerRequired:adminAction});
    if(!uuid.test(actor?.id||''))fail(401,'Войдите в аккаунт SALAH.');
-   if(ownerAction&&(actor.id!==CLASSROOM_OWNER||actor.owner!==true))fail(403,'Закрытое расписание доступно владельцу SALAH.');
+   if(action==='work-file'&&(actor.teacher||actor.id===CLASSROOM_OWNER))actor=await verifyAccount(bearer[1],{teacherRequired:true});
+   if(ownerAction&&actor.teacher!==true&&actor.owner!==true)fail(403,'Доступ преподавателя не назначен или отозван.');
    if(!await db.rate(actor.id,now()))fail(429,'Подождите минуту и повторите.');
    if(adminAction)return reply(200,await teacherAdmin({action,input,actor,db,ownerId:CLASSROOM_OWNER,fail}));
+   if(action==='teacher-access'){if(!actor.teacher&&!actor.owner)fail(403,'Доступ преподавателя отозван.');return reply(200,{account:{id:actor.id,nickname:actor.nickname},canTeach:true,revision:actor.teacherRevision||0});}
    if(action==='create'){
     if(!opaque.test(input.id||'')||!opaque.test(input.code||''))fail(400,'Недопустимое приглашение.');
     const schedule=lessonSchedule(input,now()),row={...schedule,id:input.id,ownerId:actor.id,inviteHash:await inviteDigest(input.code),state:'planned',revision:1};
     if(!await db.create(row))fail(409,'Урок уже существует или достигнут лимит расписания.');
     return reply(201,{lesson:publicSchedule(row)});
    }
-   if(['mine','owner-list'].includes(action))return reply(200,{lessons:(await db.list(actor.id,action==='owner-list')).map(publicSchedule)});
-   let row;if(['preview','enroll'].includes(action)){if(!opaque.test(input.code||''))fail(404,'Приглашение недействительно.');row=await db.byInvite(await inviteDigest(input.code));}
+   if(action==='portal'){
+    if(!['student','teacher'].includes(input.view))fail(400,'Выберите кабинет.');
+    const teaching=input.view==='teacher',rows=await db.list(actor.id,teaching),summaries=await db.portalSummary(actor.id,teaching,rows.map(row=>row.id));
+    const byId=new Map(summaries.map(summary=>[summary.lessonId,summary]));
+    return reply(200,{view:input.view,account:{id:actor.id,nickname:actor.nickname||'Участник SALAH'},canTeach:actor.teacher===true||actor.owner===true,canManageTeachers:actor.id===CLASSROOM_OWNER,lessons:rows.map(row=>{const summary=byId.get(row.id)||{};return{...publicSchedule(row),...(teaching?{pupilCount:summary.pupilCount||0,pendingCount:summary.pendingCount||0}:{work:summary.work||null})};})});
+   }
+   if(['mine','owner-list'].includes(action))return reply(200,{lessons:(await db.list(actor.id,action==='owner-list')).map(l=>publicSchedule(l))});
+   let row;if(['preview','enroll'].includes(action)||action==='homework'&&input.code!==undefined){if(!opaque.test(input.code||''))fail(404,'Приглашение недействительно.');row=await db.byInvite(await inviteDigest(input.code));}
    else{if(!opaque.test(input.id||''))fail(404,'Урок не найден.');row=await db.get(input.id);}
    if(!row)fail(404,'Урок недоступен.');
    const isOwner=actor.id===row.ownerId,enrollment=await db.enrollment(row.id,actor.id);
+   if(isOwner&&!actor.teacher&&!actor.owner)fail(403,'Доступ преподавателя отозван.');
+   if(db.teacherRole&&['preview','enroll','access','preferences'].includes(action)&&!(await db.teacherRole(row.ownerId)).active)fail(403,'Доступ к занятию временно приостановлен.');
    if(ownerAction&&!isOwner)fail(403,'Нет доступа к этому уроку.');
    if(!['preview','enroll'].includes(action)&&!isOwner&&!enrollment)fail(403,'Войдите по приглашению преподавателя.');
+   if(action==='class-pupils'){
+    if(row.state==='cancelled')fail(410,'Занятие отменено.');
+    return reply(200,{lesson:publicSchedule(row),pupils:await db.portalPupils(row.id,actor.id)});
+   }
+   if(WORK_ACTIONS.includes(action))return reply(200,await workService({action,input,actor,row,isOwner,enrollment}));
+   if(action==='set-homework'){
+    if(row.state==='cancelled')fail(410,'Занятие отменено.');
+    const expected=input.expectedHomeworkRevision;if(!Number.isSafeInteger(expected)||expected<0||expected>=2147483647)fail(400,'Откройте задание заново.');
+    if(expected!==homeworkRevision(row))fail(409,'ДЗ уже изменилось. Откройте его заново.');
+    const next={...row,homework:homeworkValue(input.homework,row,now()),homeworkRevision:expected+1};
+    if(!await db.updateHomework(next,expected))fail(409,'Занятие или ДЗ изменилось. Откройте его заново.');
+    return reply(200,{lesson:publicSchedule(next)});
+   }
+   if(action==='homework'){
+    if(row.state==='cancelled')fail(410,'Занятие отменено.');
+    return reply(200,{lesson:publicSchedule(row),account:{id:actor.id,nickname:actor.nickname||'Ученик'},enrolled:Boolean(enrollment)||isOwner,remindersEnabled:enrollment?.remindersEnabled===true,owner:isOwner});
+   }
    if(action==='update'){
     if(row.state!=='planned')fail(409,'Расписание можно изменить до начала урока.');
     const next={...row,...lessonSchedule(input,now()),revision:row.revision+1};
@@ -152,7 +358,7 @@ function createScheduleHandler({db,verifyAccount,now=Date.now}){
     if(!registered)fail(409,'Все ученические места заняты.');
    }
    if(action==='access'&&!registered&&!isOwner)fail(403,'Сначала запишитесь по приглашению.');
-   return reply(200,{lesson:publicSchedule(row),account:{id:actor.id,nickname:actor.nickname||'Ученик'},enrolled:Boolean(registered)||isOwner,remindersEnabled:registered?.remindersEnabled===true,owner:isOwner});
+   return reply(200,{lesson:publicSchedule(row,Boolean(registered)||isOwner),account:{id:actor.id,nickname:actor.nickname||'Ученик'},enrolled:Boolean(registered)||isOwner,remindersEnabled:registered?.remindersEnabled===true,owner:isOwner});
   }catch(error){return reply(error instanceof ScheduleError?error.status:503,{error:error instanceof ScheduleError?error.message:'Не удалось проверить урок. Попробуйте ещё раз.'});}
  };
 }
@@ -162,24 +368,28 @@ const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:2,prepare:false,idle_tim
 const auth=createClient(PROJECT,KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const fromRow=r=>r?{...r.details,id:r.id,ownerId:r.owner_id,inviteHash:r.invite_hash,state:r.state,revision:r.revision,startsAt:Number(r.starts_at.getTime()),endsAt:Number(r.ends_at.getTime()),reminderAt:Number(r.reminder_at.getTime())}:null;
 const db={
- ...createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}),
  async rate(uid,now){await sql`delete from salah_classroom_private.limits where minute<${Math.floor(now/60000)-1440}`;const[r]=await sql`insert into salah_classroom_private.limits(user_id,minute)values(${uid}::uuid,${Math.floor(now/60000)})on conflict(user_id,minute)do update set attempts=salah_classroom_private.limits.attempts+1 returning attempts`;return r.attempts<=90;},
  async create(row){return sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(hashtextextended(${row.ownerId},403))`;const[n]=await tx`select count(*)::int as n from salah_classroom_private.lessons where owner_id=${row.ownerId}::uuid and state in('planned','live') and ends_at>now()`;if(n.n>=30)return false;const rows=await tx`insert into salah_classroom_private.lessons(id,owner_id,invite_hash,details,state,revision,starts_at,ends_at,reminder_at)values(${row.id},${row.ownerId}::uuid,${row.inviteHash},${tx.json(row)},${row.state},${row.revision},to_timestamp(${row.startsAt}/1000.0),to_timestamp(${row.endsAt}/1000.0),to_timestamp(${row.reminderAt}/1000.0))on conflict do nothing returning id`;return rows.length===1;});},
  async get(id){return fromRow((await sql`select * from salah_classroom_private.lessons where id=${id}`)[0]);},
  async byInvite(hash){return fromRow((await sql`select * from salah_classroom_private.lessons where invite_hash=${hash}`)[0]);},
  async enrollment(id,uid){const[r]=await sql`select reminders_enabled from salah_classroom_private.enrollments where lesson_id=${id} and user_id=${uid}::uuid`;return r?{remindersEnabled:r.reminders_enabled}:null;},
- async list(uid,owner){const rows=owner?await sql`select * from salah_classroom_private.lessons where owner_id=${uid}::uuid and ends_at>now()-interval '7 days' order by starts_at limit 50`:await sql`select l.* from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id where e.user_id=${uid}::uuid and l.ends_at>now()-interval '1 day' order by l.starts_at limit 50`;return rows.map(fromRow);},
- async update(row,revision){const rows=await sql`update salah_classroom_private.lessons set details=${sql.json(row)},state=${row.state},revision=${row.revision},starts_at=to_timestamp(${row.startsAt}/1000.0),ends_at=to_timestamp(${row.endsAt}/1000.0),reminder_at=to_timestamp(${row.reminderAt}/1000.0) where id=${row.id} and owner_id=${row.ownerId}::uuid and revision=${revision} returning id`;return rows.length===1;},
+ async list(uid,owner){const rows=owner?await sql`select * from salah_classroom_private.lessons where owner_id=${uid}::uuid and (ends_at>now()-interval '7 days' or (state<>'cancelled' and coalesce(length(details->'homework'->>'text'),0)>0)) order by starts_at limit 50`:await sql`select l.* from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id where e.user_id=${uid}::uuid and (l.ends_at>now()-interval '1 day' or (l.state<>'cancelled' and coalesce(length(l.details->'homework'->>'text'),0)>0)) order by l.starts_at desc limit 50`;return rows.map(fromRow);},
+ async update(row,revision){const rows=await sql`update salah_classroom_private.lessons set details=${sql.json(row)} || jsonb_build_object('homework',details->'homework','homeworkRevision',coalesce(details->'homeworkRevision','0'::jsonb)),state=${row.state},revision=${row.revision},starts_at=to_timestamp(${row.startsAt}/1000.0),ends_at=to_timestamp(${row.endsAt}/1000.0),reminder_at=to_timestamp(${row.reminderAt}/1000.0) where id=${row.id} and owner_id=${row.ownerId}::uuid and revision=${revision} returning id`;return rows.length===1;},
+ async updateHomework(row,expected){const rows=await sql`update salah_classroom_private.lessons set details=details || ${sql.json({homework:row.homework,homeworkRevision:row.homeworkRevision})} where id=${row.id} and owner_id=${row.ownerId}::uuid and state<>'cancelled' and revision=${row.revision} and coalesce((details->>'homeworkRevision')::int,0)=${expected} returning id`;return rows.length===1;},
  async enroll(row,uid,nickname,reminders){return sql.begin(async tx=>{const[l]=await tx`select * from salah_classroom_private.lessons where id=${row.id} for update`;if(!l||!['planned','live'].includes(l.state)||l.ends_at.getTime()<=Date.now())return null;const[prior]=await tx`select user_id from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${uid}::uuid`;if(!prior){const[n]=await tx`select count(*)::int as n from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id<>${l.owner_id}::uuid`;if(uid!==l.owner_id&&n.n>=l.details.maxParticipants-1)return null;}await tx`insert into salah_classroom_private.enrollments(lesson_id,user_id,nickname,reminders_enabled)values(${row.id},${uid}::uuid,${nickname},${reminders})on conflict(lesson_id,user_id)do update set nickname=excluded.nickname,reminders_enabled=excluded.reminders_enabled`;return{remindersEnabled:reminders};});},
  async removeEnrollment(id,uid){await sql`delete from salah_classroom_private.enrollments where lesson_id=${id} and user_id=${uid}::uuid`;}
 };
-async function verifyAccount(token,{ownerRequired}){
+async function verifyAccount(token,{ownerRequired=false,teacherRequired=false}={}){
  const [result,verified]=await Promise.all([auth.auth.getUser(token),auth.auth.getClaims(token)]),u=result.data?.user,c=verified.data?.claims;
  if(result.error||verified.error||!u?.id||u.is_anonymous||!u.email_confirmed_at||c?.sub!==u.id||c.iss!==PROJECT+'/auth/v1'||!/^[0-9a-f-]{36}$/i.test(c.session_id||''))throw new ScheduleError(401,'Войдите в аккаунт SALAH.');
  const[active]=await sql`select exists(select 1 from auth.sessions where id=${c.session_id}::uuid and user_id=${u.id}::uuid) as active`;if(active?.active!==true)throw new ScheduleError(401,'Войдите в аккаунт SALAH.');
- let owner=false;
- if(ownerRequired){if(u.id!==CLASSROOM_OWNER)throw new ScheduleError(403,'Закрытое расписание доступно владельцу SALAH.');const response=await fetch(PROJECT+'/functions/v1/owner-access?mode=gate',{headers:{apikey:KEY,Authorization:'Bearer '+token},signal:AbortSignal.timeout(10000),redirect:'error'});const value=await response.json().catch(()=>null);if(!response.ok||value?.owner!==true||value.mfaRequired===true)throw new ScheduleError(403,'Подтвердите защищённый вход владельца.');owner=true;}
+ const role=await db.teacherRole(u.id);let owner=false;
+ if(teacherRequired&&!role.active)throw new ScheduleError(403,'Доступ преподавателя не назначен или отозван.');
+ if(ownerRequired||teacherRequired&&u.id===CLASSROOM_OWNER){if(u.id!==CLASSROOM_OWNER)throw new ScheduleError(403,'Закрытое расписание доступно владельцу SALAH.');const response=await fetch(PROJECT+'/functions/v1/owner-access?mode=gate',{headers:{apikey:KEY,Authorization:'Bearer '+token},signal:AbortSignal.timeout(10000),redirect:'error'});const value=await response.json().catch(()=>null);if(!response.ok||value?.owner!==true||value.mfaRequired===true)throw new ScheduleError(403,'Подтвердите защищённый вход владельца.');owner=true;}
  const candidate=u.user_metadata?.nickname,nickname=typeof candidate==='string'&&candidate.trim().length>=2&&candidate.trim().length<=40&&!/[\x00-\x1f]/.test(candidate)?candidate.trim():'Ученик';
- return{id:u.id,nickname,owner};
+ return{id:u.id,nickname,owner,teacher:role.active,teacherRevision:role.revision};
 }
-Deno.serve(createScheduleHandler({db,verifyAccount}));
+Object.assign(db,createHomeworkDb({sql}),createLearningPortalDb({sql}),createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}));
+const storageSecret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const storage=createHomeworkStorage(storageSecret?createClient(PROJECT,storageSecret,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}):null);
+Deno.serve(createScheduleHandler({db,verifyAccount,storage}));

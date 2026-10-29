@@ -25,6 +25,8 @@ for(const name of await fs.readdir(dist)){
  }
 }
 assert.ok(entries.has(new URL('js/app.js',dist).href),'The actual app entry must be linked');
+// This private entry is lazy at runtime, but must still link before release.
+entries.add(new URL('js/lesson-invitation.js',dist).href);
 function load(url){
  assert.ok(url.startsWith(dist.href),'A browser module must stay inside dist: '+url);
  if(!modules.has(url))modules.set(url,fs.readFile(new URL(url),'utf8').then(source=>new vm.SourceTextModule(source,{identifier:url})));

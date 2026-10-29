@@ -1,3 +1,7 @@
+import{createTeacherRolesDb}from './teacher-roles-db.mjs';
+import{createLearningPortalDb}from './learning-portal-db.mjs';
+import{createHomeworkDb}from './homework-work-db.mjs';
+import{createHomeworkStorage}from './homework-work-storage.mjs';
 import{createClient}from 'npm:@supabase/supabase-js@2.117.2';
 import postgres from 'npm:postgres@3.4.9';
 const PROJECT='https://kbltwszfvphgbxdbczsb.supabase.co',KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
@@ -5,24 +9,28 @@ const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:2,prepare:false,idle_tim
 const auth=createClient(PROJECT,KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const fromRow=r=>r?{...r.details,id:r.id,ownerId:r.owner_id,inviteHash:r.invite_hash,state:r.state,revision:r.revision,startsAt:Number(r.starts_at.getTime()),endsAt:Number(r.ends_at.getTime()),reminderAt:Number(r.reminder_at.getTime())}:null;
 const db={
- ...createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}),
  async rate(uid,now){await sql`delete from salah_classroom_private.limits where minute<${Math.floor(now/60000)-1440}`;const[r]=await sql`insert into salah_classroom_private.limits(user_id,minute)values(${uid}::uuid,${Math.floor(now/60000)})on conflict(user_id,minute)do update set attempts=salah_classroom_private.limits.attempts+1 returning attempts`;return r.attempts<=90;},
  async create(row){return sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(hashtextextended(${row.ownerId},403))`;const[n]=await tx`select count(*)::int as n from salah_classroom_private.lessons where owner_id=${row.ownerId}::uuid and state in('planned','live') and ends_at>now()`;if(n.n>=30)return false;const rows=await tx`insert into salah_classroom_private.lessons(id,owner_id,invite_hash,details,state,revision,starts_at,ends_at,reminder_at)values(${row.id},${row.ownerId}::uuid,${row.inviteHash},${tx.json(row)},${row.state},${row.revision},to_timestamp(${row.startsAt}/1000.0),to_timestamp(${row.endsAt}/1000.0),to_timestamp(${row.reminderAt}/1000.0))on conflict do nothing returning id`;return rows.length===1;});},
  async get(id){return fromRow((await sql`select * from salah_classroom_private.lessons where id=${id}`)[0]);},
  async byInvite(hash){return fromRow((await sql`select * from salah_classroom_private.lessons where invite_hash=${hash}`)[0]);},
  async enrollment(id,uid){const[r]=await sql`select reminders_enabled from salah_classroom_private.enrollments where lesson_id=${id} and user_id=${uid}::uuid`;return r?{remindersEnabled:r.reminders_enabled}:null;},
- async list(uid,owner){const rows=owner?await sql`select * from salah_classroom_private.lessons where owner_id=${uid}::uuid and ends_at>now()-interval '7 days' order by starts_at limit 50`:await sql`select l.* from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id where e.user_id=${uid}::uuid and l.ends_at>now()-interval '1 day' order by l.starts_at limit 50`;return rows.map(fromRow);},
- async update(row,revision){const rows=await sql`update salah_classroom_private.lessons set details=${sql.json(row)},state=${row.state},revision=${row.revision},starts_at=to_timestamp(${row.startsAt}/1000.0),ends_at=to_timestamp(${row.endsAt}/1000.0),reminder_at=to_timestamp(${row.reminderAt}/1000.0) where id=${row.id} and owner_id=${row.ownerId}::uuid and revision=${revision} returning id`;return rows.length===1;},
+ async list(uid,owner){const rows=owner?await sql`select * from salah_classroom_private.lessons where owner_id=${uid}::uuid and (ends_at>now()-interval '7 days' or (state<>'cancelled' and coalesce(length(details->'homework'->>'text'),0)>0)) order by starts_at limit 50`:await sql`select l.* from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id where e.user_id=${uid}::uuid and (l.ends_at>now()-interval '1 day' or (l.state<>'cancelled' and coalesce(length(l.details->'homework'->>'text'),0)>0)) order by l.starts_at desc limit 50`;return rows.map(fromRow);},
+ async update(row,revision){const rows=await sql`update salah_classroom_private.lessons set details=${sql.json(row)} || jsonb_build_object('homework',details->'homework','homeworkRevision',coalesce(details->'homeworkRevision','0'::jsonb)),state=${row.state},revision=${row.revision},starts_at=to_timestamp(${row.startsAt}/1000.0),ends_at=to_timestamp(${row.endsAt}/1000.0),reminder_at=to_timestamp(${row.reminderAt}/1000.0) where id=${row.id} and owner_id=${row.ownerId}::uuid and revision=${revision} returning id`;return rows.length===1;},
+ async updateHomework(row,expected){const rows=await sql`update salah_classroom_private.lessons set details=details || ${sql.json({homework:row.homework,homeworkRevision:row.homeworkRevision})} where id=${row.id} and owner_id=${row.ownerId}::uuid and state<>'cancelled' and revision=${row.revision} and coalesce((details->>'homeworkRevision')::int,0)=${expected} returning id`;return rows.length===1;},
  async enroll(row,uid,nickname,reminders){return sql.begin(async tx=>{const[l]=await tx`select * from salah_classroom_private.lessons where id=${row.id} for update`;if(!l||!['planned','live'].includes(l.state)||l.ends_at.getTime()<=Date.now())return null;const[prior]=await tx`select user_id from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${uid}::uuid`;if(!prior){const[n]=await tx`select count(*)::int as n from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id<>${l.owner_id}::uuid`;if(uid!==l.owner_id&&n.n>=l.details.maxParticipants-1)return null;}await tx`insert into salah_classroom_private.enrollments(lesson_id,user_id,nickname,reminders_enabled)values(${row.id},${uid}::uuid,${nickname},${reminders})on conflict(lesson_id,user_id)do update set nickname=excluded.nickname,reminders_enabled=excluded.reminders_enabled`;return{remindersEnabled:reminders};});},
  async removeEnrollment(id,uid){await sql`delete from salah_classroom_private.enrollments where lesson_id=${id} and user_id=${uid}::uuid`;}
 };
-async function verifyAccount(token,{ownerRequired}){
+async function verifyAccount(token,{ownerRequired=false,teacherRequired=false}={}){
  const [result,verified]=await Promise.all([auth.auth.getUser(token),auth.auth.getClaims(token)]),u=result.data?.user,c=verified.data?.claims;
  if(result.error||verified.error||!u?.id||u.is_anonymous||!u.email_confirmed_at||c?.sub!==u.id||c.iss!==PROJECT+'/auth/v1'||!/^[0-9a-f-]{36}$/i.test(c.session_id||''))throw new ScheduleError(401,'Войдите в аккаунт SALAH.');
  const[active]=await sql`select exists(select 1 from auth.sessions where id=${c.session_id}::uuid and user_id=${u.id}::uuid) as active`;if(active?.active!==true)throw new ScheduleError(401,'Войдите в аккаунт SALAH.');
- let owner=false;
- if(ownerRequired){if(u.id!==CLASSROOM_OWNER)throw new ScheduleError(403,'Закрытое расписание доступно владельцу SALAH.');const response=await fetch(PROJECT+'/functions/v1/owner-access?mode=gate',{headers:{apikey:KEY,Authorization:'Bearer '+token},signal:AbortSignal.timeout(10000),redirect:'error'});const value=await response.json().catch(()=>null);if(!response.ok||value?.owner!==true||value.mfaRequired===true)throw new ScheduleError(403,'Подтвердите защищённый вход владельца.');owner=true;}
+ const role=await db.teacherRole(u.id);let owner=false;
+ if(teacherRequired&&!role.active)throw new ScheduleError(403,'Доступ преподавателя не назначен или отозван.');
+ if(ownerRequired||teacherRequired&&u.id===CLASSROOM_OWNER){if(u.id!==CLASSROOM_OWNER)throw new ScheduleError(403,'Закрытое расписание доступно владельцу SALAH.');const response=await fetch(PROJECT+'/functions/v1/owner-access?mode=gate',{headers:{apikey:KEY,Authorization:'Bearer '+token},signal:AbortSignal.timeout(10000),redirect:'error'});const value=await response.json().catch(()=>null);if(!response.ok||value?.owner!==true||value.mfaRequired===true)throw new ScheduleError(403,'Подтвердите защищённый вход владельца.');owner=true;}
  const candidate=u.user_metadata?.nickname,nickname=typeof candidate==='string'&&candidate.trim().length>=2&&candidate.trim().length<=40&&!/[\x00-\x1f]/.test(candidate)?candidate.trim():'Ученик';
- return{id:u.id,nickname,owner};
+ return{id:u.id,nickname,owner,teacher:role.active,teacherRevision:role.revision};
 }
-Deno.serve(createScheduleHandler({db,verifyAccount}));
+Object.assign(db,createHomeworkDb({sql}),createLearningPortalDb({sql}),createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}));
+const storageSecret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const storage=createHomeworkStorage(storageSecret?createClient(PROJECT,storageSecret,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}):null);
+Deno.serve(createScheduleHandler({db,verifyAccount,storage}));
