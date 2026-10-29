@@ -346,3 +346,7 @@ Added a second current-edition feature picture made from the eight actual recite
 ## 422 — Azkar reading palette
 
 Morning/evening lists, reading cards, counter dock, audio and reading settings use the same navy palette as the Azkar hub. Layout, count behavior and public access gates are unchanged. Minor visual fix: retain announcement 418, acknowledgement and expiry.
+
+## 423 — Menu bottom breathing room
+
+Move the phone Menu button stack and footer up16px by reducing the title-to-buttons gap and reserving the same extra bottom space. Keep large button dimensions, title position and existing closed access. Minor visual fix retains announcement418 and expiry.
