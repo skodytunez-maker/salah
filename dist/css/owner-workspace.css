@@ -245,3 +245,5 @@ body.menu-page .workspace>footer.author-footer{flex:none;padding-top:4px}
 }
 /* On shorter phones recover space from gaps, keeping the same large buttons. */
 @media(max-width:759px) and (max-height:820px){body.menu-page #app>.panel.section{gap:6px}}
+
+.owner-profile .owner-profile-activity{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px}.owner-profile-activity h2{font-size:17px;margin:0 0 3px}.owner-profile-activity span{font-size:12px;color:#9eacc2}.owner-profile-activity>strong{font-size:13px;font-weight:500;text-align:right;color:#aebacf}.owner-profile-activity>strong.is-active{color:#93c5ad}

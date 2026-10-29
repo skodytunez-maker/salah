@@ -4,6 +4,13 @@ export function cleanCounters(value,signed=false){
  if(!record(value)||Object.keys(value).length>256)throw Error('invalid_counts');
  const result={};for(const [id,n]of Object.entries(value)){if(!/^[\w-]{1,80}$/.test(id)||(Object.hasOwn(Object.prototype,id)||id==='prototype')||!Number.isSafeInteger(n)||Math.abs(n)>1000000000000||!signed&&n<0)throw Error('invalid_counts');result[id]=n;}return result;
 }
+export function cleanActivityDays(value,now=Date.now()){
+ if(value===undefined)return [];
+ if(!Array.isArray(value)||value.length>8||new Set(value).size!==value.length)throw Error('invalid_activity_days');
+ const today=Math.floor(now/86400000);
+ for(const day of value){const epoch=Date.parse(day+'T00:00:00Z');if(typeof day!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(day)||!Number.isFinite(epoch)||new Date(epoch).toISOString().slice(0,10)!==day||Math.floor(epoch/86400000)<today-7||Math.floor(epoch/86400000)>today+1)throw Error('invalid_activity_days');}
+ return [...value].sort();
+}
 export function cleanComponent(value){
  if(!record(value)||Object.keys(value).some(k=>!['device','sequence','seed','delta'].includes(k))||!UUID.test(value.device)||!Number.isSafeInteger(value.sequence)||value.sequence<1)throw Error('invalid_component');
  return {device:value.device,sequence:value.sequence,seed:cleanCounters(value.seed),delta:cleanCounters(value.delta,true)};
@@ -34,8 +41,8 @@ export function createCounterHandler({getUser,getClaims,db,isSessionActive=null}
  if(req.method==='GET')return reply(200,{totals:await db.read(user.id)});
  if(!(req.headers.get('Content-Type')||'').startsWith('application/json'))return reply(415,{error:'json_required'});
  const raw=await req.text();if(new TextEncoder().encode(raw).length>32768)return reply(413,{error:'too_large'});
- let component;try{component=cleanComponent(JSON.parse(raw));}catch{return reply(400,{error:'invalid_component'});}
- return reply(200,{totals:await db.merge(user.id,component)});
+ let component,activityDays;try{const input=JSON.parse(raw);if(!record(input))throw Error('invalid_component');activityDays=cleanActivityDays(input.activityDays);const {activityDays:ignored,...counts}=input;component=cleanComponent(counts);}catch{return reply(400,{error:'invalid_component'});}
+ return reply(200,{totals:await db.merge(user.id,component,activityDays)});
  }catch{return reply(503,{error:'storage_unavailable'});}
 };}
 if(typeof Deno!=='undefined'){
@@ -46,7 +53,7 @@ if(typeof Deno!=='undefined'){
  const db={
   async rate(uid){const [row]=await sql`insert into salah_counter_private.rates(user_id,minute,n) values(${uid}::uuid,${Math.floor(Date.now()/60000)},1) on conflict(user_id) do update set minute=excluded.minute,n=case when salah_counter_private.rates.minute=excluded.minute then salah_counter_private.rates.n+1 else 1 end returning n`;return row.n<=60;},
   async read(uid){return aggregateCounters(await readRows(sql,uid));},
-  async merge(uid,c){return sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(hashtextextended(${uid},43))`;const [existing]=await tx`select sequence from salah_counter_private.components where user_id=${uid}::uuid and device=${c.device}::uuid`;if(!existing){const [n]=await tx`select count(*)::int as n from salah_counter_private.components where user_id=${uid}::uuid`;if(n.n>=100)throw Error('device_limit');}const seed=existing?c.seed:initialSeed(aggregateCounters(await readRows(tx,uid)),c.seed);await tx`insert into salah_counter_private.components(user_id,device,sequence,seed,delta) values(${uid}::uuid,${c.device}::uuid,${c.sequence},${tx.json(seed)},${tx.json(c.delta)}) on conflict(user_id,device) do update set sequence=excluded.sequence,delta=excluded.delta where salah_counter_private.components.sequence<excluded.sequence`;await tx`update salah_counter_private.components set saved_at=clock_timestamp() where user_id=${uid}::uuid and device=${c.device}::uuid`;return aggregateCounters(await readRows(tx,uid));});}
+  async merge(uid,c,activityDays=[]){return sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(hashtextextended(${uid},43))`;const [existing]=await tx`select sequence from salah_counter_private.components where user_id=${uid}::uuid and device=${c.device}::uuid`;if(!existing){const [n]=await tx`select count(*)::int as n from salah_counter_private.components where user_id=${uid}::uuid`;if(n.n>=100)throw Error('device_limit');}const seed=existing?c.seed:initialSeed(aggregateCounters(await readRows(tx,uid)),c.seed);await tx`insert into salah_counter_private.components(user_id,device,sequence,seed,delta) values(${uid}::uuid,${c.device}::uuid,${c.sequence},${tx.json(seed)},${tx.json(c.delta)}) on conflict(user_id,device) do update set sequence=excluded.sequence,delta=excluded.delta where salah_counter_private.components.sequence<excluded.sequence`;await tx`update salah_counter_private.components set saved_at=clock_timestamp() where user_id=${uid}::uuid and device=${c.device}::uuid`;for(const day of activityDays)await tx`insert into salah_counter_private.activity_days(user_id,day) values(${uid}::uuid,${day}::date) on conflict(user_id,day) do nothing`;if(activityDays.length)await tx`delete from salah_counter_private.activity_days where user_id=${uid}::uuid and day<(now()at time zone 'UTC')::date-8`;return aggregateCounters(await readRows(tx,uid));});}
  };
  Deno.serve(createCounterHandler({getUser:token=>auth.auth.getUser(token),getClaims:token=>auth.auth.getClaims(token),db,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;}}));
 }

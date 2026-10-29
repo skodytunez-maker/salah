@@ -27,7 +27,8 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   if(!user||user.id!==OWNER_ID||!user.email_confirmed_at||user.is_anonymous)return reply(403,{error:'owner_only'});
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
-  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'&&key!=='app'))return reply(400,{error:'invalid_parameters'});
+  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'&&key!=='app'&&key!=='activityDay'))return reply(400,{error:'invalid_parameters'});
+  if(url.searchParams.has('activityDay')&&mode!=='user')return reply(400,{error:'invalid_parameters'});
   let claims;
   try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
   catch{return reply(503,{error:'auth_unavailable'});}
@@ -56,7 +57,8 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    if(url.searchParams.has('days')||url.searchParams.has('page')||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))return reply(400,{error:'invalid_parameters'});
    if(!readUser)return reply(503,{error:'user_unavailable'});
    try{
-    const details=await readUser(id.toLowerCase());if(!details)return reply(404,{error:'not_found'});
+    const activityDay=url.searchParams.get('activityDay');if(activityDay!==null&&!validOwnerActivityDay(activityDay,now()))return reply(400,{error:'invalid_parameters'});
+    const details=await readUser(id.toLowerCase(),activityDay);if(!details)return reply(404,{error:'not_found'});
     if(mode==='user-avatar'){
      if(!details.hasAvatar||!readAvatar)return reply(404,{error:'not_found'});
      const bytes=await readAvatar(id.toLowerCase());
@@ -94,17 +96,21 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
  };
 }
 
+export function validOwnerActivityDay(day,now=Date.now()){
+ if(typeof day!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(day))return false;
+ const epoch=Date.parse(day+'T00:00:00Z');return Number.isFinite(epoch)&&new Date(epoch).toISOString().slice(0,10)===day&&Math.abs(Math.floor(epoch/86400000)-Math.floor(now/86400000))<=1;
+}
 export function safeOwnerUserDetails(details,id){
  const seconds=n=>(typeof n==='number'||typeof n==='string'&&/^\d+$/.test(n))&&Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):null;
  const kinds=new Set(['founder','week','month','streak7','streak30','streak100','streak200','streak365','hours25','hours50','hours100','hours250','hours500','hours1000','hours5000']);
  const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
- return{id,hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,
+ return{id,hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
   reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
   awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null})),
   updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
 }
 
-export async function readOwnerUserDetails(sql,id){
+export async function readOwnerUserDetails(sql,id,activityDay=null){
  return sql.begin(async tx=>{
   await tx`set transaction read only`;
   const [user]=await tx`select exists(select 1 from storage.objects o where o.bucket_id='profile-avatars' and o.name=u.id::text||'/profile.jpg') as "hasAvatar",exists(select 1 from salah_competition_private.preferences p where p.user_id=u.id) as connected,(now()at time zone 'Europe/Moscow')::date::text as day from auth.users u where u.id=${id}::uuid and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)`;
@@ -114,7 +120,8 @@ export async function readOwnerUserDetails(sql,id){
   const reciters=scores.filter(row=>row.period==='all').map(row=>({id:row.reciter,seconds:Number(row.seconds)})).sort((a,b)=>b.seconds-a.seconds||a.id.localeCompare(b.id)).slice(0,5);
   const awards=await tx`select kind,count(*)::int as count,max(earned_at) as "earnedAt" from salah_competition_private.awards where user_id=${id}::uuid group by kind order by max(earned_at) desc,kind limit 15`;
   const [saved]=await tx`select max(updated_at) as "updatedAt" from salah_competition_private.totals where user_id=${id}::uuid`;
-  return{hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards,updatedAt:saved?.updatedAt||null};
+  const targetDay=activityDay||user.day;const [activity]=await tx`select exists(select 1 from salah_counter_private.activity_days where user_id=${id}::uuid and day=${targetDay}::date) as active`;
+  return{adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards,updatedAt:saved?.updatedAt||null};
  });
 }
 
@@ -137,5 +144,5 @@ if(typeof Deno!=='undefined'){
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readUser:id=>readOwnerUserDetails(sql,id),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

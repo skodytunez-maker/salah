@@ -1,3 +1,4 @@
+import{dateKey}from './prayers.js';
 import{syncLessonNotificationAccount}from './lesson-notification-account.js';
 import{personalDataAllowed}from './audience.js';
 import{createAuthTransport}from './auth-transport.js';
@@ -126,7 +127,7 @@ export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1|
 export async function ownerUserDetails(id){
  if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
  const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
- return callOwner(data.session,'?mode=user&ids='+encodeURIComponent(id));
+ return callOwner(data.session,'?mode=user&ids='+encodeURIComponent(id)+'&activityDay='+encodeURIComponent(dateKey()));
 }
 export async function ownerUserAvatar(id){
  if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
