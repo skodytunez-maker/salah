@@ -1,5 +1,15 @@
 # SALAH release announcements
 
+## Candidate 421 — closed learning accounts
+
+Connect the prepared teacher/student cabinets and homework exchange to the
+existing protected API. Import the learning UI only when entering the lesson
+route. Teacher assignments and enrolled-account access remain server-checked;
+all three experimental public Knowledge cards remain disabled. Keep announcement
+418 and preserve the startup repairs and portrait/Azkar changes from 419–420.
+This candidate is local and not published; public source disclosure requires
+the explicit consent requested by the earlier automatic approval review.
+
 ## Version 420 — portrait and Azkar refinements (29 October 2026)
 
 Use the user-requested charcoal portrait background for Peshawa, preserving the
