@@ -1,5 +1,16 @@
 # SALAH release announcements
 
+## Version 420 — portrait and Azkar refinements (29 October 2026)
+
+Use the user-requested charcoal portrait background for Peshawa, preserving the
+original source file and recording the derivative. Remove hub-card arrows and
+increase the current-period label to 12px, placed in the card flow. Existing
+card actions and saved progress are unchanged.
+
+The 418 worker recovery also covers owner.html, the owner's existing Home
+Screen launch URL. Normal working-version update gates remain in place.
+Preserve announcement 418, illustrations, acknowledgement and expiry.
+
 ## Version 419 — restore startup after update (29 October 2026)
 
 Restore the APP_UPDATE_DATE export required by the main entry. Its removal in

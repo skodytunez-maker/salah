@@ -9,7 +9,7 @@
       "name": "Пешава Кадир аль-Курди",
       "format": "surah",
       "server": "https://cdn.mp3quran.net/audio/peshawa-kurdi/r1/",
-      "portrait": "assets/reciters/peshawaalkurdi.jpg",
+      "portrait": "assets/reciters/peshawaalkurdi-salah-420.jpg",
       "source": "https://www.mp3quran.net/eng/peshawa",
       "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=268",
       "verifiedOn": "2026-10-29"
@@ -176,7 +176,15 @@
       "bytes": 81625,
       "path": "dist/assets/reciters/peshawaalkurdi.jpg",
       "transformation": "none; original image bytes",
-      "rightsReviewStatus": "needs-review"
+      "rightsReviewStatus": "needs-review",
+      "derivative": {
+        "path": "dist/assets/reciters/peshawaalkurdi-salah-420.jpg",
+        "bytes": 100160,
+        "width": 700,
+        "height": 700,
+        "transformation": "AI-assisted background replacement to SALAH charcoal; original source retained.",
+        "evidence": "docs/peshawa-portrait-420.md"
+      }
     },
     {
       "id": "muhammadalfaqih",

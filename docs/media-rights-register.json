@@ -2855,6 +2855,16 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/listener-presence.md",
       "note": "Original SVG drawn in code for SALAH. It depicts the ranking UI and headphones indicator; no external image or logo is embedded."
+    },
+    {
+      "path": "dist/assets/reciters/peshawaalkurdi-salah-420.jpg",
+      "gitBlobSha": "a406e1435747f16acfcbcf39e42805d86717b3dc",
+      "bytes": 100160,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/bisha-al-kurdi.jpg",
+      "rightsEvidence": "docs/peshawa-portrait-420.md",
+      "note": "Derived from the named original portrait retained as peshawaalkurdi.jpg. User-requested AI-assisted charcoal background replacement; no claim of an unmodified photograph, ownership or additional license."
     }
   ],
   "wallpaperSets": [

@@ -51,7 +51,7 @@ async function upgrade(previousVersion,failInstall=false){
  const windowFor=url=>({url,async navigate(target){
   const original=new URL(url),next=new URL(target);
   assert.equal(next.origin,original.origin);assert.equal(next.pathname,original.pathname);assert.equal(next.hash,original.hash);
-  assert.equal(next.searchParams.get('salah-repair'),'419','Force a new document rather than a fragment-only navigation');
+  assert.equal(next.searchParams.get('salah-repair'),'420','Force a new document rather than a fragment-only navigation');
   for(const[key,value]of original.searchParams)assert.equal(next.searchParams.get(key),value);
   assert.ok(bundled,'Cache the complete corrected app before reopening');navigated.push(target);
  }});
@@ -60,7 +60,7 @@ async function upgrade(previousVersion,failInstall=false){
   skipWaiting:async()=>{assert.ok(bundled);skipped++;},
   clients:{claim:async()=>{claimed++;},matchAll:async()=>[
    windowFor(scope+'#adhkar'),windowFor(scope+'index.html?entry=shortcut#more'),
-   windowFor(scope+'recover.html'),windowFor(scope+'owner.html'),
+   windowFor(scope+'recover.html'),windowFor(scope+'owner.html#admin'),
    windowFor('https://example.test/another-app/'),windowFor('https://other.test/salah/')
   ]}};
  const context=vm.createContext({self,URL,Request,Response,Headers,Map,Set,Promise,AbortController,setTimeout,clearTimeout,
@@ -74,8 +74,8 @@ async function upgrade(previousVersion,failInstall=false){
  let activating;handlers.activate({waitUntil:promise=>activating=promise});await activating;
  assert.equal(claimed,1);assert.deepEqual(deleted,['salah-shell-v418'],'Keep Quran and personal/media caches');
  assert.equal(skipped,previousVersion===418?1:0);
- assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair=419#adhkar',scope+'index.html?entry=shortcut&salah-repair=419#more']:[],
-  'Reopen existing broken app windows only; preserve their routes and leave recovery/owner/other apps alone');
+ assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair=420#adhkar',scope+'index.html?entry=shortcut&salah-repair=420#more',scope+'owner.html?salah-repair=420#admin']:[],
+  'Reopen existing broken main and owner shortcuts; preserve routes and leave recovery/other apps alone');
 }
 await upgrade(418);await upgrade(416);await upgrade(null);await upgrade(418,true);
 console.log('PASS: a confirmed broken 418 installation recovers its existing Home Screen windows automatically; working releases and failed downloads do not bypass waiting.');
