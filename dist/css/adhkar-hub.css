@@ -14,8 +14,7 @@
 .adhkar-hub .hybrid-collection-copy{min-width:0;flex:1;gap:5px}
 .adhkar-hub .hybrid-collection-copy strong{color:var(--ivory,#f4f0e5);font:600 17px/1.35 Manrope,'Segoe UI',sans-serif;letter-spacing:-.25px;overflow-wrap:anywhere}
 .adhkar-hub .hybrid-collection-copy>span{color:#b6c0d3;font-size:11px;line-height:1.5}
-.adhkar-hub-arrow{flex:0 0 24px;text-align:right;color:#c8bc9c;font-size:21px;line-height:1;font-weight:400}
-.adhkar-hub .adhkar-period-badge{position:absolute;top:8px;right:15px;color:#d6c593;font-size:8px;line-height:1.2;letter-spacing:.5px;text-transform:none}
+.adhkar-hub .adhkar-period-badge{position:static;flex:0 0 auto;padding:5px 8px;border:1px solid #c8bc9c30;border-radius:9px;background:#c8bc9c12;color:#d6c593;font-size:12px;font-weight:600;line-height:1.25;letter-spacing:0;text-transform:none}
 .adhkar-hybrid .adhkar-hub .hybrid-collection.is-current{border-color:#c8bc9c80;background:linear-gradient(120deg,#1b2538,#111a2f);box-shadow:inset 3px 0 0 #c8bc9c}
 .adhkar-hub .hybrid-collection-progress{left:17px;right:17px;bottom:0;height:2px;background:transparent;border-radius:2px}
 .adhkar-hub .hybrid-collection-progress>span{background:#c8bc9c;max-width:100%;border-radius:2px}
@@ -33,7 +32,7 @@ body.adhkar-hub-open .workspace>footer{display:none!important}
  .adhkar-hub{gap:12px;min-height:508px}.adhkar-hub .hybrid-heading .eyebrow{margin-bottom:5px}.adhkar-hub .hybrid-heading h1{font-size:28px;margin-bottom:6px}
  .adhkar-hub-tiles{min-height:370px;grid-template-rows:repeat(5,minmax(66px,1fr));gap:8px}.adhkar-hybrid .adhkar-hub .hybrid-collection{min-height:66px;padding:12px 15px}.adhkar-hub .hybrid-emblem{width:38px;height:38px;flex-basis:38px}.adhkar-hub .hybrid-collection-copy strong{font-size:16px}
 }
-@media(max-width:360px){.adhkar-hub .hybrid-library button{font-size:11px;gap:6px}.adhkar-hybrid .adhkar-hub .hybrid-collection{gap:11px;padding-inline:13px}.adhkar-hub .hybrid-collection-copy strong{font-size:15px}.adhkar-hub-arrow{flex-basis:17px}.adhkar-hub .hybrid-collection-copy>span{font-size:10px}}
+@media(max-width:360px){.adhkar-hub .hybrid-library button{font-size:11px;gap:6px}.adhkar-hybrid .adhkar-hub .hybrid-collection{gap:11px;padding-inline:13px}.adhkar-hub .hybrid-collection-copy strong{font-size:15px}.adhkar-hub .hybrid-collection-copy>span{font-size:10px}}
 .short-counter-page{max-width:600px;margin:0 auto;padding-bottom:24px!important}
 .short-counter-page .lesson-top{margin-bottom:20px;gap:12px}.short-counter-page .lesson-top>span{font-size:9px;letter-spacing:1.2px}
 .short-counter-choice{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:17px 18px;border:1px solid #91a6ca38;border-radius:18px;background:#111a2f;text-align:left;color:var(--ivory,#f4f0e5)}

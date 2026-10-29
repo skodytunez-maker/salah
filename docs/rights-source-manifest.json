@@ -4028,6 +4028,11 @@
       "path": "docs/recognition-expansion-418.md",
       "bytes": 1010,
       "gitBlobSha": "02eb90c62f1d55a6ba748819f0c0f1290e3fe8a3"
+    },
+    {
+      "path": "dist/assets/reciters/peshawaalkurdi-salah-420.jpg",
+      "gitBlobSha": "a406e1435747f16acfcbcf39e42805d86717b3dc",
+      "bytes": 100160
     }
   ],
   "incrementalEvidence": [
