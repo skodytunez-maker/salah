@@ -1,4 +1,5 @@
 import{validAlphabetProgress}from './arabic-alphabet-core.js';
+import{freeRound}from './free-counter.js';
 import{validNamesProgress}from './allah-names-core.js';
 import{isRecord,validDay,jsonCopy,normalizeSettings,normalizeHistory,replacePersonalState,storageWarnings,storageProblem}from './storage.js';
 import{RECITERS}from './quran-reciters.js';
@@ -87,8 +88,8 @@ function personalValue(key,value){
  }else if(key==='adhkar-design'){
   if(!['classic','hybrid','salah','signature'].includes(value))fail('Некорректный вариант оформления азкаров.');
  }else if(key==='dhikr-free'){
-  exactKeys(value,['count','target'],key);
-  if(!count(value.count)||!Number.isInteger(value.target)||value.target<0||value.target>100000)fail('Некорректный свободный счётчик.');
+  exactKeys(value,['count','target','selected','rounds','custom'],key);
+  try{freeRound(JSON.stringify(value));}catch{fail('Некорректный свободный счётчик.');}
  }else progress(value,key);
  return value;
 }

@@ -12,6 +12,95 @@
   },
   "assets": [
     {
+      "path": "dist/assets/reciters/muhammadaltablawi.jpg",
+      "gitBlobSha": "b70cff3e9b7d153d74110629ac4d55ad3557c446",
+      "bytes": 38079,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/muhammad-mahmoud-al-tablawi.jpg?v=1781224190335",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/muhammad-mahmoud-al-tablawi. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/mahmoudalbanna.jpg",
+      "gitBlobSha": "9b47f78a0f8906eff28d2b17eccba88a8991f192",
+      "bytes": 13376,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/mahmoud-ali-al-banna.jpg",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/mahmoud-ali-al-banna. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/mustafaismail.jpg",
+      "gitBlobSha": "979e3585766240f1ef01b99c98c84b36d6b23ad0",
+      "bytes": 41800,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/mustafa-ismail.jpg?v=1781113959630",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/mustafa-ismail. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/muhammadjibreel.jpg",
+      "gitBlobSha": "e8f69f57bc6c740822ece251290d4d0a3cc6d6ba",
+      "bytes": 158922,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/muhammad-jibril.jpg?v=1782795294626",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/muhammad-jibril. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/noreensiddiq.jpg",
+      "gitBlobSha": "571f8481d576e7a3ad2420aeda40cc2c4fe1ec2a",
+      "bytes": 185309,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/noreen-muhammad-siddiq.jpg?v=1777634381242",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/noreen-muhammad-siddiq. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/fahadalkandari.jpg",
+      "gitBlobSha": "68be67970016baab6c39e77d3b3f3ffba31fcf80",
+      "bytes": 37197,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/fahd-al-kandari.jpg?v=1780249379352",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/fahd-al-kandari. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/muhammadalfaqih.jpg",
+      "gitBlobSha": "cbbe695cfb9b3eb28912b56b7d479d014ed5a8c8",
+      "bytes": 42543,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/mohammed-alfaqih.jpg?v=1778205361590",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/mohammed-alfaqih. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/reciters/peshawaalkurdi.jpg",
+      "gitBlobSha": "9975bda3bdaf89f2c6b0e7d7e8ea1ed25b012b7f",
+      "bytes": 81625,
+      "kind": "image",
+      "rightsReviewStatus": "needs-review",
+      "originUrl": "https://media.way2quran.com/imgs/bisha-al-kurdi.jpg",
+      "rightsEvidence": "docs/reciter-expansion-20261029.json",
+      "note": "Original portrait bytes from the named Way2Quran profile https://way2quran.com/en/reciters/bisha-al-kurdi. Provenance recorded; no redistribution license or exclusivity claimed."
+    },
+    {
+      "path": "dist/assets/updates/short-dhikr-418.svg",
+      "gitBlobSha": "8d5bda58decff7310efd5296939722dd1c477e00",
+      "bytes": 3116,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH vector composition: five navy collection cards alongside a short-dhikr selector and saved counter. Created in repository code for build418; no external images, embedded fonts or private user data."
+    },
+    {
       "path": "dist/assets/fonts/prata-counter-regular.ttf",
       "gitBlobSha": "afe3059e1f7f4b92792fd3312b85e350fa1520f0",
       "bytes": 96016,

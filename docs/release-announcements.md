@@ -296,3 +296,13 @@ SAHABA moves from Menu to a regular Knowledge card, retaining its existing desti
 ## 416 — Menu button block offset
 
 Move the button block40px farther below the Menu heading, preserving its row minimums, emphasized personal account and visible support action. Use the current dynamic viewport height for the Menu height budget so the author signature aligns with the fixed navigation rather than leaving a smaller-viewport gap. Keep the8px signature clearance; existing SAHABA placement, announcement410 and closed learning gates remain unchanged.
+
+
+## 418 — 29 октября 2026 · Азкары и свой счётчик
+
+Главный экран азкаров использует палитру Знаний и пять крупных карточек. На обычных портретных экранах390×844 и375×812 все действия видны без прокрутки; на меньшей высоте и при увеличенном тексте прокрутка остаётся доступной. Свой счётчик: восемь коротких формул, отдельные локальные круги и цели, свои тексты; общий накопленный счёт и прежняя привязка к аккаунтам сохранены. Резервные копии поддерживают новое состояние. Картинка short-dhikr-418.svg создана кодом SALAH и показывает эти изменения. Новое объявление418 включает только этот выпуск. Учебные разделы и закрытая неопубликованная417 в выпуск не входят.
+
+
+### Pending418: eight reciters
+
+Added a second current-edition feature picture made from the eight actual reciter portraits. The Azkar picture remains within this same unpublished edition. Each portrait is documented in `reciter-expansion-20261029.json`. No generic reciter artwork, old reader announcement, closed classroom news or Home banner is added. Announcement ID and expiry remain418 /2026-11-01.

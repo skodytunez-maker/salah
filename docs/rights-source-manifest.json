@@ -5,6 +5,51 @@
   "capturedAt": "2026-10-07",
   "entries": [
     {
+      "path": "dist/assets/reciters/muhammadaltablawi.jpg",
+      "gitBlobSha": "b70cff3e9b7d153d74110629ac4d55ad3557c446",
+      "bytes": 38079
+    },
+    {
+      "path": "dist/assets/reciters/mahmoudalbanna.jpg",
+      "gitBlobSha": "9b47f78a0f8906eff28d2b17eccba88a8991f192",
+      "bytes": 13376
+    },
+    {
+      "path": "dist/assets/reciters/mustafaismail.jpg",
+      "gitBlobSha": "979e3585766240f1ef01b99c98c84b36d6b23ad0",
+      "bytes": 41800
+    },
+    {
+      "path": "dist/assets/reciters/muhammadjibreel.jpg",
+      "gitBlobSha": "e8f69f57bc6c740822ece251290d4d0a3cc6d6ba",
+      "bytes": 158922
+    },
+    {
+      "path": "dist/assets/reciters/noreensiddiq.jpg",
+      "gitBlobSha": "571f8481d576e7a3ad2420aeda40cc2c4fe1ec2a",
+      "bytes": 185309
+    },
+    {
+      "path": "dist/assets/reciters/fahadalkandari.jpg",
+      "gitBlobSha": "68be67970016baab6c39e77d3b3f3ffba31fcf80",
+      "bytes": 37197
+    },
+    {
+      "path": "dist/assets/reciters/muhammadalfaqih.jpg",
+      "gitBlobSha": "cbbe695cfb9b3eb28912b56b7d479d014ed5a8c8",
+      "bytes": 42543
+    },
+    {
+      "path": "dist/assets/reciters/peshawaalkurdi.jpg",
+      "gitBlobSha": "9975bda3bdaf89f2c6b0e7d7e8ea1ed25b012b7f",
+      "bytes": 81625
+    },
+    {
+      "path": "dist/assets/updates/short-dhikr-418.svg",
+      "gitBlobSha": "8d5bda58decff7310efd5296939722dd1c477e00",
+      "bytes": 3116
+    },
+    {
       "path": "dist/assets/fonts/prata-counter-regular.ttf",
       "gitBlobSha": "afe3059e1f7f4b92792fd3312b85e350fa1520f0",
       "bytes": 96016
@@ -3948,6 +3993,41 @@
       "path": "dist/assets/updates/listener-presence-410.svg",
       "gitBlobSha": "75c9e708a1efbd440f69f10adb8664dd62b7edac",
       "bytes": 2175
+    },
+    {
+      "path": "dist/data/recognition/catalog-v2.json",
+      "bytes": 158236,
+      "gitBlobSha": "d7bd3c01efe8433dd7c271c5086b442a0a630d36"
+    },
+    {
+      "path": "dist/data/recognition/fingerprints-v2.bin.gz",
+      "bytes": 6489004,
+      "gitBlobSha": "c2e68d1ca6a6dd00780d0a229e07483f751c86f4"
+    },
+    {
+      "path": "dist/js/quran-recognition-data.js",
+      "bytes": 4173,
+      "gitBlobSha": "5d8be7ffac8a2c5045444eb9bcc4ef973ca38272"
+    },
+    {
+      "path": "tests/recognition/expanded-query-fixtures.json",
+      "bytes": 1268943,
+      "gitBlobSha": "45715953addd71a50fdf0f738a0870d9dbe20130"
+    },
+    {
+      "path": "scripts/check-quran-recognition.mjs",
+      "bytes": 4537,
+      "gitBlobSha": "9748ec086b81a53af59dab7b4139445edfeb3e9a"
+    },
+    {
+      "path": "scripts/check-recognition-ui.mjs",
+      "bytes": 5270,
+      "gitBlobSha": "727281bf69c9f65b2db6389831819704aa9b1a33"
+    },
+    {
+      "path": "docs/recognition-expansion-418.md",
+      "bytes": 1010,
+      "gitBlobSha": "02eb90c62f1d55a6ba748819f0c0f1290e3fe8a3"
     }
   ],
   "incrementalEvidence": [

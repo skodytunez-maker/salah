@@ -1,3 +1,4 @@
+import{SHORT_DHIKR_PRESETS,DEFAULT_SHORT_DHIKR,shortDhikr}from '../dist/js/short-dhikr.js';
 
 import {createDhikrCompletionGate} from '../dist/js/adhkar-completion.js';
 import {markDhikrActivity} from '../dist/js/dhikr-reminder.js';
@@ -69,12 +70,12 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     forward(){if(historyIndex<entries.length-1){historyIndex++;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}}
    },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},setTimeout:(fn,ms)=>{counterTimers.set(++timerSequence,fn);return timerSequence;},clearTimeout:id=>counterTimers.delete(id),scrollTo(_x,y){scroll=y}};
   let audioBusy=false,pauseRegistered=null;
-  const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector)},localStorage:storage,URLSearchParams,Event,Date,console,
+  const context=createContext({location,window,document:{body,querySelector:selector=>container.querySelector(selector),getElementById:id=>container.querySelector('#'+id)},localStorage:storage,URLSearchParams,Event,Date,console,
     bindNativeCardSwipe:()=>()=>{},createDhikrCompletionGate:()=>createDhikrCompletionGate({now:clock}),
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},
     read:(key,fallback)=>{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)},write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},settings:{haptic:false},
-    esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),toast:notice=>notices.push(notice),modal(){},closeModal(){},dateKey:()=>currentDay,createAdhkarProgressStore,createFreeCounterStore,stopDailyDuas(){},showDailyDuas(){},
+    esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),toast:notice=>notices.push(notice),modal(){},closeModal(){},dateKey:()=>currentDay,createAdhkarProgressStore,createFreeCounterStore,SHORT_DHIKR_PRESETS,DEFAULT_SHORT_DHIKR,shortDhikr,stopDailyDuas(){},showDailyDuas(){},
     adhkarPresentation,adhkarRecording,claimPlayback(){},registerPlayback(_owner,pause){pauseRegistered=pause;},setForegroundAudio(_owner,active){audioBusy=active;},
     Audio:class {constructor(url){this.src=url;this.paused=true;this.duration=60;this.currentTime=0;this.pauseCalls=0;audio.push(this)}play(){if(this.fail)return Promise.reject(Error('blocked'));this.paused=false;this.onplay?.();return Promise.resolve()}pause(){this.paused=true;this.pauseCalls++;this.onpause?.();}},
     fetch:async()=>{fetches++;return {ok:true,json:async()=>structuredClone(items)}}
