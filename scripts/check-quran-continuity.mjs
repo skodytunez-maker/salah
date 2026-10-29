@@ -46,7 +46,7 @@ for(const id of ['ar.alafasy','ar.mahermuaiqly']){
  await legacy.start(reciterRecording(catalog,112),'ar.idrisabkar');
  await legacy.changeReciter(id);assert.equal(legacyOptions.at(-1).reciter,reciterInfo(id).continuousReciter,'Changing voice from a whole chapter selects smooth playback too');legacy.stop();
 }
-assert.equal(RECITERS.filter(r=>!r.variantOf).length,46,'Recording variants do not add duplicate public reader cards');
+assert.equal(RECITERS.filter(r=>!r.variantOf).length,54,'Recording variants do not add duplicate public reader cards');
 assert.equal(reciterInfo('ar.alafasycontinuous').variantOf,'ar.alafasy','Listening time uses the established reader identity');
 assert.equal(reciterInfo('ar.mahermuaiqlycontinuous').variantOf,'ar.mahermuaiqly');
 console.log('PASS: whole-surah Mishary/Maher, one permitted mobile Audio across 112→113→114, correct verse positions, detached screens, pause/resume, final stop, legacy downloads and playback offsets.');

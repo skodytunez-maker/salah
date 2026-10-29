@@ -1,5 +1,6 @@
 // The current round is device-local; lifetime repetitions use the same private
 // account sync as catalogue adhkar. Resetting a round never resets the lifetime.
+import{shortRoundState,selectShortRound,validCustomDhikr,DEFAULT_SHORT_DHIKR}from './short-dhikr.js';
 export const FREE_TOTAL='free-dhikr';
 const KEY='salah:adhkar-progress-v2',FREE='salah:dhikr-free',MAX=1000000000000;
 const record=v=>v&&typeof v==='object'&&!Array.isArray(v);
@@ -7,7 +8,8 @@ export function freeRound(raw){
  if(raw===null)return {count:0,target:33};
  const p=JSON.parse(raw);
  if(!record(p)||!Number.isSafeInteger(p.count)||p.count<0||p.count>MAX||!Number.isInteger(p.target)||p.target<0||p.target>100000)throw Error('invalid_free_counter');
- return {count:p.count,target:p.target};
+ if(Object.keys(p).some(k=>!['count','target','selected','rounds','custom'].includes(k)))throw Error('invalid_free_counter');
+ return {count:p.count,target:p.target,...shortRoundState(p)};
 }
 export function counterTransaction(storage,writes){
  const previous=writes.map(([key])=>[key,storage.getItem(key)]);
@@ -50,7 +52,18 @@ export function createFreeCounterStore({storage,locks=()=>null,changed=()=>{}}){
    else if(action==='undo'){if(round.count){round.count--;total=Math.max(0,total-1)}}
    else if(action==='reset')round.count=0;
    else if(action==='target'){if(!Number.isInteger(value)||value<0||value>100000)return {ok:false};round.target=value}
+   else if(action==='select')Object.assign(round,selectShortRound(round,value));
+   else if(action==='add-dhikr'){
+    if(!validCustomDhikr(value)||(round.custom||[]).length>=20||(round.custom||[]).some(p=>p.id===value.id))return{ok:false};
+    const next=selectShortRound(round,round.selected||DEFAULT_SHORT_DHIKR);next.custom.push({...value});Object.assign(round,selectShortRound(next,value.id));
+   }
+   else if(action==='remove-dhikr'){
+    if(!(round.custom||[]).some(p=>p.id===value))return{ok:false};
+    const next=round.selected===value?selectShortRound(round,DEFAULT_SHORT_DHIKR):round;
+    next.custom=next.custom.filter(p=>p.id!==value);delete next.rounds[value];Object.assign(round,next);
+   }
    else return {ok:false};
+   if(round.selected)round.rounds[round.selected]={count:round.count,target:round.target};
    doc.totals[FREE_TOTAL]=total;
    counterTransaction(backend,[[KEY,JSON.stringify(doc)],[FREE,JSON.stringify(round)]]);
    changed();return {ok:true,...round,total,account};

@@ -1,0 +1,5 @@
+# Recognition expansion418 (unpublished)
+
+All221 baseline records and their indexes are retained. Eight independently decoded Al-Fatiha recordings extend coverage to229 records /54 library voices. These additions identify only the exact Al-Fatiha recordings listed in the coverage UI; they do not claim full-surah or live-reading coverage. Two independent8-second crops per new voice match the correct voice and surah (16/16), with ayah=null because there is no validated timestamp table. Reference MP3s and decode evidence stay outside dist. Exact public source URLs and original MP3 hashes are in catalog-v2.json. Optional ID3 cover metadata is omitted only during offline audio decoding; distributed source files are unchanged.
+
+The packed file grows from6340713 to6489004 bytes (+148291 bytes). Recognition is optional and runs on the device; no audio-upload behavior or confidence thresholds change. A new recognition cache namespace prevents a previously cached46-voice index from hiding the new voices.
