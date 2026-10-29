@@ -78,3 +78,23 @@ const retained=createPlaybackAudioSession({nav:{standalone:true,audioSession:ret
 retained.setIntent(true);retained.setIntent(false,{retainPlayback:true});assert.equal(retainedSession.type,'playback');retainedSession.change('interrupted');retained.notifyPause();retainedSession.change('active');retainedDoc.hide();retainedDoc.show();await flush();assert.equal(retainedResumes,0,'Retaining controls is not permission to resume');
 const replacement=createPlaybackAudioSession({nav:{audioSession:retainedSession}});replacement.setIntent(true);retained.destroy();assert.equal(retainedSession.type,'playback','Paused old player cannot clear replacement');replacement.destroy();assert.equal(retainedSession.type,'auto','Replacement restores original category');
 console.log('PASS: paused category retained without autoplay or ownership theft; stop/destroy restore original category');
+
+// A remote Play is explicit intent, even when iOS delayed the native pause event.
+await lock.start({number:1,verses:[{number:1,ayah:1}]},'ar.badralturki');await flush();
+const remoteAudio=lockTracks.at(-1),remoteSrc=remoteAudio.src;remoteAudio.currentTime=97;
+remoteAudio.paused=true; // OS paused while the page was suspended; no onpause yet.
+assert.equal(lock.state.status,'playing');const staleCalls=remoteAudio.calls;
+lockActions.play();await flush();
+assert.equal(remoteAudio.calls,staleCalls+1,'Control Center Play must inspect the retained media, not ignore a stale playing view');
+assert.equal(remoteAudio.src,remoteSrc);assert.equal(remoteAudio.currentTime,97);assert.equal(lock.state.status,'playing');
+const duplicateCalls=remoteAudio.calls;lockActions.play();await flush();assert.equal(remoteAudio.calls,duplicateCalls,'Repeated system Play never toggles into pause or restarts');
+lockActions.pause();await flush();const pausedSrc=remoteAudio.src,savedPlay=remoteAudio.play;let rejectedRemote=0;
+remoteAudio.play=async()=>{rejectedRemote++;throw Object.assign(Error('not allowed'),{name:'NotAllowedError'});};
+lockActions.play();await flush();assert.equal(rejectedRemote,1);assert.equal(lock.state.status,'paused','Denied background resume stays paused instead of clearing system audio');
+assert.equal(remoteAudio.src,pausedSrc,'Denied resume preserves native media source');assert.equal(remoteAudio.currentTime,97);
+lockDoc.hide();lockDoc.show();await flush();assert.equal(rejectedRemote,1,'No automatic retry after a denied explicit command');
+remoteAudio.play=savedPlay;lockActions.play();await flush();assert.equal(lock.state.status,'playing');assert.equal(remoteAudio.currentTime,97);
+lockActions.pause();let resolveRemote;remoteAudio.play=()=>{remoteAudio.calls++;return new Promise(resolve=>resolveRemote=()=>{remoteAudio.paused=false;resolve();});};
+const beforePendingRemote=remoteAudio.calls;lockActions.play();lockActions.play();assert.equal(remoteAudio.calls,beforePendingRemote+1,'Duplicate pending Play does not issue another native request');lockActions.pause();resolveRemote();await flush();
+assert.equal(lock.state.status,'paused','Pause wins over a delayed remote play completion');assert.equal(remoteAudio.paused,true,'Cancelled play cannot continue silently behind a paused view');
+lock.stop();console.log('PASS: Control Center explicit play, stale native pause, duplicate play, retained denied resume, gesture retry and delayed pause precedence');
