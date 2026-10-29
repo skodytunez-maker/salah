@@ -1,5 +1,20 @@
 # SALAH release announcements
 
+## Version 419 — restore startup after update (29 October 2026)
+
+Restore the APP_UPDATE_DATE export required by the main entry. Its removal in
+418 prevented the entire browser module graph from linking after the cached
+update activated. A module-link check now validates every HTML module entry
+without executing browser code. Keep announcement 418, its artwork, expiry,
+and acknowledgement. This repair does not introduce a new announcement.
+
+The worker asks its predecessor for release metadata. Only a confirmed broken
+418 predecessor triggers immediate activation and navigation of existing app
+windows after the complete corrected shell has been cached. This restores the
+existing iPhone Home Screen app; a reinstall is not required. Working versions
+retain the normal safe-screen update gate. Account storage and media caches are
+not cleared. The independent recover.html page provides an optional fallback.
+
 User preference, 16 October 2026: show feature pictures with short captions in
 the same “Что нового” dialog, both on the home screen and in Settings / Update.
 Use the existing accessible swipeable gallery. Future public releases keep
