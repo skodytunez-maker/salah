@@ -25,19 +25,17 @@ export function stopAlphabetName(){
 registerPlayback(owner,stopAlphabetName);
 globalThis.window?.addEventListener('hashchange',stopAlphabetName);
 globalThis.window?.addEventListener('pagehide',stopAlphabetName);
-export function alphabetNameControl(id,{glyph=null}={}){
+export function alphabetNameControl(id,{glyph=null,tile=false}={}){
  if(!audioLetter(id)||!Object.hasOwn(ALPHABET_RECORDINGS,id))return '';
  const character=alphabetAudioIdForGlyph(glyph)===id?glyph:audioLetter(id).char;
- return '<div class="alphabet-name-audio"><button class="alphabet-name-glyph" type="button" data-alphabet-name aria-pressed="false" aria-busy="false"><span class="alphabet-glyph" lang="ar" dir="rtl">'+character+'</span>'+speaker+'<span class="alphabet-name-action">Послушать название</span></button><span class="alphabet-name-status" role="status" aria-live="polite"></span></div>';
+ return '<div class="alphabet-name-audio"><button class="alphabet-name-glyph" type="button" data-alphabet-name="'+id+'" aria-pressed="false" aria-busy="false"><span class="alphabet-glyph" lang="ar" dir="rtl">'+character+'</span>'+(tile?'<small class="alphabet-name-caption">'+audioLetter(id).name+'</small>':'')+speaker+'<span class="alphabet-name-action">Послушать название</span></button><span class="alphabet-name-status" role="status" aria-live="polite"></span></div>';
 }
-export function bindAlphabetName(host,id){
- stopAlphabetName();
- const control=host.querySelector('[data-alphabet-name]'),message=host.querySelector('.alphabet-name-status');
+function bindNameControl(control,message,id){
  if(!control||!audioLetter(id)||!Object.hasOwn(ALPHABET_RECORDINGS,id))return;
  control.setAttribute('aria-label','Послушать название буквы: '+audioLetter(id).name);
  control.dataset.letterName=audioLetter(id).name;
  control.onclick=()=>{
-  if(audio&&(active||pending)){stopAlphabetName();return;}
+  if(audio&&button===control&&(active||pending)){stopAlphabetName();return;}
   stopAlphabetName();button=control;status=message;status.textContent='';
   const a=audio=new Audio(ALPHABET_RECORDINGS[id]),ticket=revision;
   a.preload='none';claimPlayback(owner);pending=true;setForegroundAudio(owner,true);paint();
@@ -52,4 +50,11 @@ export function bindAlphabetName(host,id){
   a.onended=()=>finish();a.onerror=()=>finish(true);
   try{Promise.resolve(a.play()).catch(()=>finish(true));}catch{finish(true);}
  };
+}
+
+export function bindAlphabetName(host,id){
+ stopAlphabetName();bindNameControl(host.querySelector('[data-alphabet-name]'),host.querySelector('.alphabet-name-status'),id);
+}
+export function bindAlphabetNames(host){
+ stopAlphabetName();for(const control of host.querySelectorAll('[data-alphabet-name]'))bindNameControl(control,control.closest('.alphabet-name-audio').querySelector('.alphabet-name-status'),control.dataset.alphabetName);
 }

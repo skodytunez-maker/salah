@@ -23,9 +23,18 @@ function show(id){showArabicAlphabet(host,{hash:'#knowledge?view=alphabet&letter
 for(const l of ARABIC_LETTERS){
  const before=FakeAudio.instances.length;show(l.id);yes(FakeAudio.instances.length===before,'No autoplay '+l.id);
  const b=host.querySelector('[data-alphabet-name]');yes(b?.getAttribute('aria-label')==='Послушать название буквы: '+l.name&&b.querySelector('.alphabet-glyph')?.textContent===l.char,'Explicit button '+l.id);
+ yes(b.closest('.alphabet-letter-head')&&host.querySelector('.alphabet-letter-head').querySelectorAll('.alphabet-glyph').length===1&&host.querySelectorAll('[data-alphabet-name]').length===1,'One tappable header glyph '+l.id);
  b.click();yes(FakeAudio.instances.at(-1).src===ALPHABET_RECORDINGS[l.id]&&foregroundAudioBusy(),'Correct mapping '+l.id);
  FakeAudio.instances.at(-1).onended();yes(b.getAttribute('aria-pressed')==='false'&&!foregroundAudioBusy(),'Completion resets '+l.id);
 }
+showArabicAlphabet(host,{hash:'#knowledge?view=alphabet'});
+yes(host.querySelectorAll('.alphabet-grid [data-alphabet-name]').length===28,'Grid has all28 audio buttons');
+yes(!host.querySelector('.alphabet-letter-head')&&!host.querySelector('audio[controls]'),'No separate selected letter/player in grid');
+const gridBefore=FakeAudio.instances.length,gridHash=location.hash;
+for(const l of ARABIC_LETTERS){host.querySelector('[data-alphabet-name="'+l.id+'"]').click();yes(FakeAudio.instances.at(-1).src===ALPHABET_RECORDINGS[l.id],'Grid plays '+l.id);yes(location.hash===gridHash,'Grid playback does not navigate '+l.id);yes(host.querySelectorAll('[aria-pressed="true"]').length===1,'Only selected grid letter active '+l.id);}
+yes(FakeAudio.instances.length===gridBefore+28,'A different letter starts immediately');
+host.querySelector('[data-alphabet-name="ya"]').click();yes(FakeAudio.instances.at(-1).paused,'Same grid letter stops');
+yes(host.querySelectorAll('.alphabet-tile-details[href*="letter="]').length===28,'Forms remain separately accessible');
 show('alif');let b=host.querySelector('[data-alphabet-name]');b.click();b.click();yes(FakeAudio.instances.at(-1).paused&&!foregroundAudioBusy(),'Stop works');b.click();claimPlayback('other');yes(FakeAudio.instances.at(-1).paused&&!foregroundAudioBusy(),'Other audio wins');
 b.click();w.dispatchEvent(new w.HashChangeEvent('hashchange'));yes(FakeAudio.instances.at(-1).paused&&!foregroundAudioBusy(),'Navigation stops');
 b.click();host.querySelector('[data-quiz-start]').click();yes(FakeAudio.instances.at(-1).paused&&!foregroundAudioBusy(),'Practice stops audio');
