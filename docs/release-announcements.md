@@ -342,3 +342,7 @@ Move the button block40px farther below the Menu heading, preserving its row min
 ### Pending418: eight reciters
 
 Added a second current-edition feature picture made from the eight actual reciter portraits. The Azkar picture remains within this same unpublished edition. Each portrait is documented in `reciter-expansion-20261029.json`. No generic reciter artwork, old reader announcement, closed classroom news or Home banner is added. Announcement ID and expiry remain418 /2026-11-01.
+
+## 422 — Azkar reading palette
+
+Morning/evening lists, reading cards, counter dock, audio and reading settings use the same navy palette as the Azkar hub. Layout, count behavior and public access gates are unchanged. Minor visual fix: retain announcement 418, acknowledgement and expiry.
