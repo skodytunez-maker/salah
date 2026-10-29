@@ -8,7 +8,7 @@ const native=new Session(),tracks=[],states=[],player=createQuranPlayer({surah:{
 await player.play();const audio=tracks[0];audio.currentTime=79;assert.equal(native.type,'playback');native.change('interrupted');audio.pause();assert.equal(player.state.status,'paused');const calls=audio.calls;await flush();assert.equal(audio.calls,calls,'Never resume while the OS still reports interruption');
 native.change('active');await flush();assert.equal(audio.calls,calls+1);assert.equal(audio.currentTime,79,'Resume the same source and position');assert.equal(tracks.length,1);assert.equal(player.state.status,'playing');
 native.change('active');await flush();assert.equal(audio.calls,calls+1,'No repeated retry loop');
-native.change('interrupted');audio.pause();player.pause();native.change('active');await flush();assert.equal(audio.calls,calls+1,'User pause during interruption must win');assert.equal(native.type,'auto');
+native.change('interrupted');audio.pause();player.pause();native.change('active');await flush();assert.equal(audio.calls,calls+1,'User pause during interruption must win');assert.equal(native.type,'playback','Explicit pause keeps the playback category for Control Center resume');
 player.toggle();await flush();assert.equal(native.type,'playback');const before=audio.calls;
 audio.pause();native.change('inactive');native.change('active');await flush();assert.equal(audio.calls,before,'A generic system pause with no interruption signal cannot auto-resume');
 player.toggle();await flush();native.change('interrupted');audio.pause();native.change('active');player.destroy();await flush();assert.equal(native.type,'auto');assert.equal(audio.src,'');const after=audio.calls;native.change('interrupted');native.change('active');await flush();assert.equal(audio.calls,after,'Destroyed player cannot resume');
@@ -42,7 +42,7 @@ sf.doc.hide();sf.doc.show();sa.pause();await flush();assert.equal(sa.paused,fals
 const beforeGeneric=sa.calls;sa.pause();sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.calls,beforeGeneric,'Generic visible pause must not restart');
 sf.player.toggle();await flush();
 // Explicit pause while backgrounded cancels the recovery ticket.
-sf.doc.hide();sa.pause();sf.player.pause();const manuallyPaused=sa.calls;sf.doc.show();sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.calls,manuallyPaused,'User pause during a type-only interruption wins');assert.equal(sf.nav.audioSession.type,'auto');
+sf.doc.hide();sa.pause();sf.player.pause();const manuallyPaused=sa.calls;sf.doc.show();sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.calls,manuallyPaused,'User pause during a type-only interruption wins');assert.equal(sf.nav.audioSession.type,'playback','Manual pause keeps resumable system controls without playback intent');
 // A queued foreground recovery is cancelled by an immediate manual pause.
 sf.player.toggle();await flush();sf.doc.hide();sa.pause();sf.doc.show();sf.player.pause();await flush();assert.equal(sa.calls,manuallyPaused+1,'Manual pause cancels the queued promise');
 sf.player.toggle();await flush();sf.doc.hide();sa.pause();sf.doc.show();sf.player.destroy();const destroyedCalls=sa.calls;await flush();sf.win.dispatchEvent(new Event('focus'));sf.doc.show();await flush();assert.equal(sa.calls,destroyedCalls,'Destroyed player and listeners cannot resume');
@@ -71,3 +71,10 @@ const lockMedia=createMediaSession({nav:{mediaSession:{setActionHandler(n,f){loc
 const lock=createQuranSession({media:lockMedia,load:async n=>({number:n,verses:[{number:1,ayah:1}]}),loadCatalog:async()=>({surahs:Array.from({length:114},(_,i)=>({number:i+1,name:'Сура '+(i+1)}))}),createPlayer:opts=>createQuranPlayer({...opts,audioNavigator:lockNav,audioDocument:lockDoc,audioWindow:lockWin,getAudio:async()=>null,loadTimings:async()=>null,createAudio:src=>{const a=new Audio(src);lockTracks.push(a);return a;}})});
 await lock.start({number:1,verses:[{number:1,ayah:1}]},'ar.badralturki');await flush();const la=lockTracks[0];lockDoc.hide();la.pause();lockActions.pause();const lockCalls=la.calls;lockDoc.show();await flush();assert.equal(la.calls,lockCalls,'Headphone/lock-screen pause is never ignored');assert.equal(lock.state.status,'paused');lock.stop();
 console.log('PASS: shipping Safari type-only PWA API,background/foreground/focus order,late pause,same-source seek position,one-shot rejection,no generic/tab retries,manual/lock-screen pause,ownership and full-API race');
+
+// Paused playback retains its category, but never playback intent or old ownership.
+const retainedSession=new Session(),retainedDoc=new Page();let retainedResumes=0;
+const retained=createPlaybackAudioSession({nav:{standalone:true,audioSession:retainedSession},doc:retainedDoc,win:new EventTarget(),canResume:()=>true,resume:()=>retainedResumes++});
+retained.setIntent(true);retained.setIntent(false,{retainPlayback:true});assert.equal(retainedSession.type,'playback');retainedSession.change('interrupted');retained.notifyPause();retainedSession.change('active');retainedDoc.hide();retainedDoc.show();await flush();assert.equal(retainedResumes,0,'Retaining controls is not permission to resume');
+const replacement=createPlaybackAudioSession({nav:{audioSession:retainedSession}});replacement.setIntent(true);retained.destroy();assert.equal(retainedSession.type,'playback','Paused old player cannot clear replacement');replacement.destroy();assert.equal(retainedSession.type,'auto','Replacement restores original category');
+console.log('PASS: paused category retained without autoplay or ownership theft; stop/destroy restore original category');

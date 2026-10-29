@@ -350,3 +350,7 @@ Morning/evening lists, reading cards, counter dock, audio and reading settings u
 ## 423 — Menu bottom breathing room
 
 Move the phone Menu button stack and footer up16px by reducing the title-to-buttons gap and reserving the same extra bottom space. Keep large button dimensions, title position and existing closed access. Minor visual fix retains announcement418 and expiry.
+
+## 424 — resumable iPhone pause
+
+Keep the playback audio-session category for an existing paused Quran track while clearing playback/recovery intent. Release on stop, completion, error or destruction. Preserve original announcement418 and acknowledgement/expiry; this repairs existing system controls, with no new feature announcement. Portrait changes are excluded.

@@ -30,9 +30,10 @@ export function createPlaybackAudioSession({nav=globalThis.navigator,doc=globalT
    return resume();
   }).catch(()=>{});
  }
- function setIntent(value){
+ function setIntent(value,{retainPlayback=false}={}){
   wanted=!!value;reset();if(!session||disposed){if(wanted&&standalone&&!stateSupported()&&!visible())backgrounded=true;return;}
-  if(!wanted){release();return;}
+  // A user pause clears recovery intent, while its existing media remains resumable.
+  if(!wanted){if(!retainPlayback)release();return;}
   if(!owns()){try{prior=owners.get(session)?.prior||session.type||'auto';session.type='playback';owners.set(session,{owner,prior});}catch{}}
   if(standalone&&!stateSupported()&&!visible())backgrounded=true;
  }
