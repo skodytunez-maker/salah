@@ -100,7 +100,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   }catch{if(!disposed&&id===token){timingStatus='unavailable';status='error';emit();}return false;}
  }
  function fail(id){if(disposed||id!==token)return;audioSession.setIntent(false);token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
- function pause(){if(disposed)return;audioSession.setIntent(false);clearWatchdog();clearNext();if(status==='loading'){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
+ function pause(){if(disposed)return;audioSession.setIntent(false,{retainPlayback:status!=='loading'&&!!audio});clearWatchdog();clearNext();if(status==='loading'){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
  function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){audioSession.setIntent(true);const id=token;status='loading';watch(id);audio.play().then(()=>{if(!disposed&&id===token&&status!=='paused'){status='playing';sync(id);prepareNext();startDurations();emit()}}).catch(error=>recover(id,error))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy(){audioSession.destroy();disposed=true;durationController.abort();token++;clearNext();release()}
