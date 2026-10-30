@@ -354,3 +354,9 @@ Move the phone Menu button stack and footer up16px by reducing the title-to-butt
 ## 424 — resumable iPhone pause
 
 Keep the playback audio-session category for an existing paused Quran track while clearing playback/recovery intent. Release on stop, completion, error or destruction. Preserve original announcement418 and acknowledgement/expiry; this repairs existing system controls, with no new feature announcement. Portrait changes are excluded.
+
+## 425 — Letter names on tap
+
+One public feature: names of the28alphabet letters play by tapping the large letter, with no visible media player. Complete short-name audio accepted by the user, from Alfathon (repository MIT declaration, ©2025 Erkin Kholmatov; original performer not identified). Volume gain and MP3 conversion documented per file. New code-native letter-card/speaker artwork alphabet-audio-425.svg. Attribution and full license in About and alphabet-audio-credits.html. Recordings load only on request and cache after real use, including Safari byte ranges. The rejected WAV set is excluded.
+
+The same names and a separate Hamza clip are available in already-private Muallim letter headers; no syllable recordings fabricated and no course gates opened. Internal owner profile adds only a day-specific yes/no Azkar activity mark, with no per-dhikr details in its API or UI. It is not a public ranking or feed announcement.

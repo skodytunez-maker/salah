@@ -9,7 +9,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
  let startOffset=0,next=null,durationTable=null,durationTask=null,durationStatus=whole?'ready':'loading';const durationController=new AbortController();
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
- let watchdog=null,watchedPosition=0,useFallback=false,preparedTimings=null;
+ let watchdog=null,watchedPosition=0,useFallback=false,preparedTimings=null,resumeRevision=0,resumeTask=null;
  const audioSession=createPlaybackAudioSession({nav:audioNavigator,doc:audioDocument,win:audioWindow,canResume:()=>!disposed&&status==='paused'&&!!audio?.paused&&!audio.ended,resume:resumeInterrupted});
  function resumeInterrupted(){const id=token,track=audio;if(disposed||!track||!track.paused||track.ended||status!=='paused')return;status='loading';watch(id);emit();return Promise.resolve(track.play()).then(()=>{if(!disposed&&id===token&&track===audio&&status!=='paused'&&!track.paused){status='playing';sync(id);prepareNext();emit();}}).catch(()=>{if(!disposed&&id===token&&track===audio){clearWatchdog();status='paused';emit();}});}
  const sourceUrl=index=>useFallback&&!offlineOnly?downloadAudioUrl(surah.verses[index].number,reciter,surah.number):audioUrl(surah.verses[index].number,reciter,surah.number);
@@ -48,7 +48,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    prepared.onerror=()=>{if(next===pending)clearNext();};prepared.load?.();
   }catch{if(next===pending){if(pending.resource)clearNext();else{next=null;if(preparedUrl)URL.revokeObjectURL(preparedUrl);}}}})();
  }
- function release(){clearWatchdog();timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();clearMediaOutputSources(audio);audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
+ function release(){resumeRevision++;resumeTask=null;clearWatchdog();timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeked=null;audio.onloadedmetadata=null;audio.pause();clearMediaOutputSources(audio);audio.src='';audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
  function sync(id,force=false){
   if(disposed||id!==token||!audio||!whole)return;
   if(timings&&Number.isFinite(audio.duration)&&timings.at(-1).end>audio.duration+3){timings=null;timingStatus='unavailable';force=true}
@@ -100,10 +100,30 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   }catch{if(!disposed&&id===token){timingStatus='unavailable';status='error';emit();}return false;}
  }
  function fail(id){if(disposed||id!==token)return;audioSession.setIntent(false);token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
- function pause(){if(disposed)return;audioSession.setIntent(false,{retainPlayback:status!=='loading'&&!!audio});clearWatchdog();clearNext();if(status==='loading'){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
- function toggle(){if(status==='playing'||status==='loading'){pause();return}if(audio&&status==='paused'){audioSession.setIntent(true);const id=token;status='loading';watch(id);audio.play().then(()=>{if(!disposed&&id===token&&status!=='paused'){status='playing';sync(id);prepareNext();startDurations();emit()}}).catch(error=>recover(id,error))}else void play(current,continuous,['error','paused'].includes(status)?startOffset:0)}
+ function pause(){if(disposed)return;const retain=!!audio&&(status!=='loading'||!!resumeTask);resumeRevision++;resumeTask=null;audioSession.setIntent(false,{retainPlayback:retain});clearWatchdog();clearNext();if(status==='loading'&&!retain){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
+ function resume(){
+  if(disposed)return;
+  if(audio&&['playing','loading'].includes(status)&&!audio.paused)return resumeTask;
+  if(audio&&status==='loading'&&resumeTask)return resumeTask;
+  if(!audio||!['paused','playing','loading'].includes(status))return play(current,continuous,['error','paused'].includes(status)?startOffset:0);
+  const track=audio,id=token,ticket=++resumeRevision;audioSession.setIntent(true);status='loading';watch(id);emit();
+  if(disposed||id!==token||ticket!==resumeRevision||status==='paused')return;
+  const isCurrentResume=()=>!disposed&&id===token&&track===audio&&ticket===resumeRevision;
+  function rejected(error){if(!isCurrentResume()||!['loading','playing'].includes(status))return;
+   if(error?.name==='NotAllowedError'||error?.name==='AbortError'){clearWatchdog();audioSession.setIntent(false,{retainPlayback:true});status='paused';emit();return;}recover(id,error);
+  }
+  let attempt;try{attempt=track.play();}catch(error){rejected(error);return;}
+  const task=Promise.resolve(attempt).then(()=>{
+   if(!isCurrentResume()){if(track===audio&&status==='paused'&&!track.paused)track.pause();return;}
+   if(status==='paused'){if(!track.paused)track.pause();return;}
+   if(track.paused){clearWatchdog();status='paused';emit();return;}
+   status='playing';sync(id);prepareNext();startDurations();emit();
+  }).catch(rejected).finally(()=>{if(ticket===resumeRevision)resumeTask=null;});
+  resumeTask=task;return task;
+ }
+ function toggle(){if(status==='playing'||status==='loading'){pause();return}return resume();}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy(){audioSession.destroy();disposed=true;durationController.abort();token++;clearNext();release()}
  function seek(seconds){if(disposed||!audio||!Number.isFinite(seconds))return;if(!whole&&durationTable){const point=timelinePosition(durationTable,seconds);if(point.index!==current){void play(point.index,continuous,point.seconds,status==='playing');return;}seconds=point.seconds;}try{audio.currentTime=Math.max(0,Math.min(seconds,Number.isFinite(audio.duration)?Math.max(0,audio.duration-.01):86400));sync(token,true);}catch{}}
- return{play,playFromAyah,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationStatus,durationSeconds:whole?(Number.isFinite(audio?.duration)?audio.duration:0):(durationTable?.total||0),trackPositionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset,positionSeconds:(durationTable?.starts[current]||0)+(Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset)}}}
+ return{play,playFromAyah,resume,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationStatus,durationSeconds:whole?(Number.isFinite(audio?.duration)?audio.duration:0):(durationTable?.total||0),trackPositionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset,positionSeconds:(durationTable?.starts[current]||0)+(Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset)}}}
 }

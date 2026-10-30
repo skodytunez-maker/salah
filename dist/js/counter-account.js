@@ -1,3 +1,4 @@
+import{createAdhkarActivityQueue}from './adhkar-activity-core.js';
 import{mountAccountLessonLink}from './account-lesson-link.js';
 import{lessonAccountReturn}from './lesson-invitation.js';
 import{hasFounderWelcomeSeen}from './founder-welcome-core.js';
@@ -12,6 +13,8 @@ import{mountOwnerAccount}from './admin.js';
 import{accountAuthClient,checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{createCounterSync}from './counter-sync-core.js';
 import{esc,modal}from './ui.js';
+let activityQueue=null;
+const getActivityQueue=()=>activityQueue||(activityQueue=createAdhkarActivityQueue({storage:localStorage}));
 let engine=null,session=null,timer=null,busy=null,status='local',reason='',host=null,accountScreen=0,accountArea=null;
 export const counterSyncStatus=()=>({status,reason,userId:session?.user?.id||null,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous,nickname:typeof session?.user?.user_metadata?.nickname==='string'?session.user.user_metadata.nickname.trim().slice(0,40):'',founderWelcomeSeen:hasFounderWelcomeSeen(session?.user)});
 function emailErrorMessage(error){
@@ -32,8 +35,9 @@ const notice=()=>{window.dispatchEvent(new Event('salah:counter-status'));update
 function lock(fn){return navigator.locks?.request?navigator.locks.request('salah:adhkar-progress-v2',fn):Promise.resolve(fn());}
 function getEngine(){return engine||(engine=createCounterSync({storage:localStorage,uuid:()=>crypto.randomUUID(),withLock:lock,changed:kind=>{if(kind==='saved'||kind==='account')window.dispatchEvent(new Event('salah:counter-restored'));},request:async(uid,component)=>{
  const {data,error}=await accountAuthClient().auth.getSession();if(error||!data.session||data.session.user.id!==uid)throw Error('sign_in_required');
- const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/adhkar-sync',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify(component),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
- const result=await response.json();if(!response.ok)throw Error(result.error||'storage_unavailable');return result;
+ const activityDays=getActivityQueue().pending(uid),payload=activityDays.length?{...component,activityDays}:component;
+ const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/adhkar-sync',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
+ const result=await response.json();if(!response.ok)throw Error(result.error||'storage_unavailable');if(activityDays.length)getActivityQueue().acknowledge(uid,activityDays);return result;
 }}));}
 // Profile access checks identity independently of the counter upload queue.
 async function refreshAccountSession({verifySession=false}={}){
@@ -71,6 +75,7 @@ function schedule(verify=false){pendingSessionCheck=pendingSessionCheck||verify=
 export function initCounterAccounts(){
  accountAuthClient().auth.onAuthStateChange(event=>{if(event!=='TOKEN_REFRESHED')queueMicrotask(schedule);});
  window.addEventListener('salah:counter-changed',schedule);
+ window.addEventListener('salah:adhkar-counted',event=>{const state=counterSyncStatus();if(!state.signedIn||event.detail?.account!==state.userId)return;try{if(localStorage.getItem('salah:counter-active-account')!==state.userId)return;if(getActivityQueue().mark(state.userId,event.detail.day))schedule();}catch{}});
  window.addEventListener('storage',e=>{if(e.key==='salah:adhkar-progress-v2')schedule();});
  window.addEventListener('online',()=>schedule(true));window.addEventListener('pageshow',()=>schedule(true));document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(true);});setInterval(()=>{if(session&&!document.hidden)synchronizeCounters({verifySession:true});},30000);schedule(true);
 }

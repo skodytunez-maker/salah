@@ -23,7 +23,7 @@ for(const bytes of [new TextEncoder().encode('<svg>bad</svg>'),new Uint8Array(20
 console.log('PASS: profile and avatar require fresh MFA owner; revoked, anonymous and forged roles denied; bounded JPEG; no public caching or private fields.');
 
 // Execute the actual read-only query with two accounts and all four periods.
-const db=new PGlite();await db.exec(`create schema auth;create schema storage;create schema salah_competition_private;
+const db=new PGlite();await db.exec(`create schema auth;create schema storage;create schema salah_competition_private;create schema salah_counter_private;create table salah_counter_private.activity_days(user_id uuid,day date,primary key(user_id,day));
  create table auth.users(id uuid primary key,email_confirmed_at timestamptz,is_anonymous boolean);
  create table storage.objects(bucket_id text,name text);create table salah_competition_private.preferences(user_id uuid);
  create table salah_competition_private.totals(user_id uuid,updated_at timestamptz);
@@ -38,6 +38,7 @@ const statements=[];
 const tag=client=>(parts,...args)=>{const text=parts.reduce((s,part,i)=>s+(i?'$'+i:'')+part,'');statements.push(text);return client.query(text,args).then(r=>r.rows);};
 const sql=tag(db);sql.begin=fn=>db.transaction(tx=>fn(tag(tx)));
 const stored=await readOwnerUserDetails(sql,first);assert.equal(stored.periods.all,90600);assert.equal(stored.hasAvatar,true);assert.deepEqual(stored.reciters.map(x=>x.id),['ar.alafasy','ar.badralturki']);assert.equal(stored.awards[0].kind,'hours25');assert.ok(statements[0].includes('set transaction read only'));assert.ok(!statements.some(s=>/\b(insert|update|delete|claim_founder|award_streak|award_hours)\b/i.test(s)),'Viewing a profile cannot award, update, or reset anything');
+await db.exec("insert into salah_counter_private.activity_days values('11111111-1111-4111-8111-111111111111','2026-10-30')");const withActivity=await readOwnerUserDetails(sql,first,'2026-10-30');assert.deepEqual(withActivity.adhkar,{day:'2026-10-30',active:true});const otherDay=await readOwnerUserDetails(sql,first,'2026-10-29');assert.equal(otherDay.adhkar.active,false);
 const empty=await readOwnerUserDetails(sql,'33333333-3333-4333-8333-333333333333');assert.equal(empty,null);await db.close();
 console.log('PASS: real SQL keeps accounts separate, adds every reciter, returns stored awards only and uses a read-only transaction.');
 

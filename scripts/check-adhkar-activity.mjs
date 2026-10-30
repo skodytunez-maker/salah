@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {createAdhkarActivityQueue,recentActivityDay,validActivityDay} from '../dist/js/adhkar-activity-core.js';
+import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
+const a='12345678-1234-4123-8123-123456789abc',b='abcdefab-1234-4123-8123-123456789abc';
+const now=Date.parse('2026-10-30T12:00:00Z');
+const values=new Map(),storage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};
+const queue=createAdhkarActivityQueue({storage,now:()=>now});
+assert.deepEqual(queue.pending(a),[]);
+assert.equal(queue.mark('guest','2026-10-30'),false);
+assert.equal(queue.mark(a,'2026-10-30'),true);assert.equal(queue.mark(a,'2026-10-30'),false);
+assert.deepEqual(queue.pending(a),['2026-10-30']);assert.deepEqual(queue.pending(b),[]);
+assert.equal(queue.mark(b,'2026-10-29'),true);queue.acknowledge(a,['2026-10-30']);
+assert.deepEqual(queue.pending(a),[]);assert.deepEqual(queue.pending(b),['2026-10-29']);
+assert.equal(queue.mark(a,'2026-10-30'),false,'Repeat actions do not produce another server mark');
+assert.equal(recentActivityDay('2026-10-31',now),true,'Local date may be ahead of UTC');
+for(const day of ['2026-02-30','2026-11-02','2026-10-01','__proto__'])assert.equal(queue.mark(a,day),false);
+assert.equal(validActivityDay('2026-02-30'),false);
+assert.ok([...values.values()].every(value=>!/(subhan|tasbih|count|seconds|time|morning|evening|free-dhikr)/i.test(value)),'Queue contains only days and saved flags');
+const w=new Window({url:'https://fixture.invalid/#owner'});Object.assign(globalThis,{window:w,document:w.document,localStorage:w.localStorage,location:w.location});
+const {ownerUserStatistics}=await import('../dist/js/owner-user-card.js');
+const root=w.document.createElement('main');
+for(const [active,text] of [[true,'Есть отметка'],[false,'Пока нет отметок']]){
+ root.innerHTML=ownerUserStatistics({connected:false,adhkar:{active,day:'2026-10-30',items:['secret-dhikr'],counts:{secret:99999}}});
+ const summary=root.querySelector('.owner-profile-activity');assert.ok(summary);assert.ok(summary.textContent.includes(text));assert.doesNotMatch(summary.textContent,/secret|99999/);
+ assert.equal(summary.querySelectorAll('li,ol,table').length,0);
+}
+root.innerHTML=ownerUserStatistics({connected:false});assert.match(root.querySelector('.owner-profile-activity').textContent,/Данных пока нет/);
+const source=await fs.readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
+assert.equal((source.match(/emitAdhkarActivity\(/g)||[]).length,2,'Only catalogue increment and custom-counter increment mark activity');
+assert.match(source,/if\(result\.changed\)\{markDhikrActivity\(\);emitAdhkarActivity\(activityAccount\);\}/);
+assert.match(source,/if\(result\.ok&&action==='increment'\)\{markDhikrActivity\(\);emitAdhkarActivity\(account\);\}/);
+const account=await fs.readFile(new URL('../dist/js/counter-account.js',import.meta.url),'utf8');
+assert.match(account,/event\.detail\?\.account!==state\.userId/);assert.match(account,/getActivityQueue\(\)\.acknowledge\(uid,activityDays\)/);
+await w.happyDOM.close();console.log('PASS: account-isolated one-bit daily marks, bounded dates, offline retry/ack, no counts/text, compact owner summary, no marks on mere page visits.');

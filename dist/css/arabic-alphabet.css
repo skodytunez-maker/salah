@@ -7,3 +7,15 @@
 .alphabet-quiz-choices .alphabet-glyph{display:block;font-size:27px;line-height:1.35;margin-bottom:3px}.alphabet-quiz-choices button>span:not(.alphabet-glyph){display:block}
 
 .alphabet-download-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.alphabet-download-options .button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;padding:15px;text-align:left;white-space:normal}.alphabet-download-options strong{font-size:13px;line-height:1.45}.alphabet-download-options small{font-size:11px;line-height:1.5;color:#b6c0d3}.alphabet-download summary{min-height:44px;display:list-item}@media(max-width:420px){.alphabet-download-options{grid-template-columns:1fr}}
+
+.alphabet-name-audio{position:relative;flex:none;display:flex;align-items:center;justify-content:center}.alphabet-page .alphabet-name-glyph{position:relative;display:block;min-width:85px;min-height:104px;padding:0 8px;border:1px solid transparent;border-radius:18px;background:transparent;color:inherit;cursor:pointer}.alphabet-name-glyph>.alphabet-glyph{display:block;font-size:76px;line-height:1.3}.alphabet-name-glyph>svg{position:absolute;right:1px;bottom:6px;width:17px;height:17px;fill:none;stroke:var(--gold,#d8c595);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.7}.alphabet-name-glyph[aria-pressed=true]{background:#d8c59512;border-color:#d8c59544}.alphabet-name-glyph[aria-busy=true]>svg{opacity:.35}.alphabet-name-glyph:focus-visible{outline:2px solid #e5d4ab;outline-offset:3px}.alphabet-name-action,.alphabet-name-status{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}.native-lesson-head .alphabet-name-glyph{min-width:88px;min-height:108px}.native-lesson-head .alphabet-name-glyph>.alphabet-glyph{font-size:82px}
+
+/* The alphabet grid itself is the audio surface; forms remain an explicit link. */
+.alphabet-grid .alphabet-tile{padding:0;display:flex;flex-direction:column;gap:0;min-width:0;overflow:hidden}
+.alphabet-grid .alphabet-name-audio{width:100%;min-width:0}
+.alphabet-grid .alphabet-name-glyph{width:100%;height:auto;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 6px 6px;border-radius:16px}
+.alphabet-grid .alphabet-name-glyph .alphabet-glyph{font-size:40px;line-height:1.25}
+.alphabet-grid .alphabet-name-glyph svg{width:12px;height:12px;right:6px;bottom:auto;top:7px;opacity:.65}
+.alphabet-grid .alphabet-name-caption{font:500 12px/1.3 system-ui,sans-serif;color:var(--text)}
+.alphabet-grid .alphabet-tile-details{font:500 11px/1.4 system-ui,sans-serif;color:var(--gold);padding:4px 6px 9px;text-align:center;text-decoration:none;min-height:28px}
+.alphabet-grid .alphabet-tile-details:focus-visible{outline:2px solid var(--gold);outline-offset:-3px;border-radius:10px}
