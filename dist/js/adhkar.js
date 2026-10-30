@@ -6,6 +6,7 @@ import {markDhikrActivity} from './dhikr-reminder.js';
 import{showDailyDuas,stopDailyDuas}from './daily-dua.js';import{createFreeCounterStore}from './free-counter.js';import{read,write,settings}from './storage.js';import{esc,toast,modal,closeModal}from './ui.js';import{dateKey}from './prayers.js';import{createAdhkarProgressStore}from './adhkar-progress.js';import{adhkarRecording,adhkarPresentation}from './adhkar-recordings.js';
 import{claimPlayback,registerPlayback}from './media-playback-focus.js';
 import{setForegroundAudio}from './audio-focus.js';
+import{preloadPronunciation}from './pronunciation-preload.js';
 const progressStore=createAdhkarProgressStore({storage:()=>localStorage,day:()=>dateKey(),locks:()=>navigator.locks});
 const freeStore=createFreeCounterStore({storage:()=>localStorage,locks:()=>navigator.locks,changed:()=>window.dispatchEvent(new Event('salah:counter-changed'))});
 const formatTotal=n=>n.toLocaleString('ru-RU');
@@ -143,7 +144,7 @@ function bindSwipe(){const shell=host.querySelector('.adhkar-shell');shell.tabIn
 window.addEventListener('storage',event=>{if(event.key!=='salah:adhkar-progress-v2'&&event.key!=='salah:dhikr-free'&&event.key!=='salah:counter-active-account')return;updateFreeCount();if(!group||!data)return;const button=host?.querySelector('#adhkar-count');if(!button)return;const item=data.items.find(i=>i.id===button.dataset.dhikrId);if(item)updateCount(item,progress(group))});
 
 const dhikrAudioOwner='adhkar-card';
-function stopDhikrAudio(){dhikrAudioToken++;const current=dhikrAudio;dhikrAudio=null;if(current){for(const name of ['onended','onerror','onpause','onplay','ontimeupdate','onloadedmetadata','ondurationchange'])current[name]=null;current.pause();current.src='';}setForegroundAudio(dhikrAudioOwner,false);}
+function stopDhikrAudio(){dhikrAudioToken++;const current=dhikrAudio;dhikrAudio=null;if(current){for(const name of ['onended','onerror','onpause','onplay','onplaying','ontimeupdate','onloadedmetadata','ondurationchange'])current[name]=null;current.pause();if(current.removeAttribute)current.removeAttribute('src');else current.src='';current.load?.();}setForegroundAudio(dhikrAudioOwner,false);}
 function setDhikrAudioLabel(button,label,playing=false){button.innerHTML='<svg class="dhikr-audio-icon" viewBox="0 0 24 24" aria-hidden="true">'+(playing?'<path d="M8 5v14M16 5v14"/>':'<path d="M9 6 18 12 9 18Z"/>')+'</svg>';button.setAttribute('aria-label',label+' азкар');button.setAttribute('title',label+' азкар');button.setAttribute('aria-pressed',String(playing));}
 
 function pauseDhikrAudio(){const button=host?.querySelector('#dhikr-play');dhikrAudio?.pause();setForegroundAudio(dhikrAudioOwner,false);if(button)setDhikrAudioLabel(button,'Продолжить');}
@@ -151,19 +152,23 @@ registerPlayback(dhikrAudioOwner,pauseDhikrAudio);
 function bindDhikrAudio(item){
  const button=host.querySelector('#dhikr-play'),recording=adhkarRecording(item);if(!button||!recording)return;
  const status=host.querySelector('#dhikr-audio-status');
+ // Warm just this card, without playback, focus ownership or a library download.
+ if(!dhikrAudio)try{dhikrAudio=new Audio(recording.url);preloadPronunciation(dhikrAudio);}catch{}
  button.onclick=event=>{
   // Replacing the SVG detaches the original click target before it bubbles.
   // Consume it here so a play/pause tap cannot also open the card explanation.
   event?.stopPropagation?.();
   if(dhikrAudio&&!dhikrAudio.paused){pauseDhikrAudio();return;}
+  if(dhikrAudio?.error)stopDhikrAudio();
   if(!dhikrAudio){dhikrAudio=new Audio(recording.url);dhikrAudio.preload='none';}
   const current=dhikrAudio,version=dhikrAudioToken,valid=()=>current===dhikrAudio&&version===dhikrAudioToken;
   const failure=()=>{if(!valid())return;stopDhikrAudio();if(button.isConnected){button.removeAttribute('aria-busy');setDhikrAudioLabel(button,'Повторить');status.textContent='Не удалось загрузить. Нажмите ещё раз.';}};
   current.onerror=failure;
-  current.onplay=()=>{if(valid()&&!current.paused){button.removeAttribute('aria-busy');setForegroundAudio(dhikrAudioOwner,true);setDhikrAudioLabel(button,'Пауза',true);status.textContent='';}};
+  current.onplay=()=>{if(valid()&&!current.paused){setForegroundAudio(dhikrAudioOwner,true);setDhikrAudioLabel(button,'Пауза',true);}};
+  current.onplaying=()=>{if(valid()&&!current.paused){button.removeAttribute('aria-busy');status.textContent='';}};
   current.onpause=()=>{if(valid()&&current.paused){button.removeAttribute('aria-busy');setForegroundAudio(dhikrAudioOwner,false);setDhikrAudioLabel(button,'Продолжить');}};
   current.onended=()=>{if(!valid())return;stopDhikrAudio();if(button.isConnected){button.removeAttribute('aria-busy');setDhikrAudioLabel(button,'Прослушать');status.textContent='';}};
-  claimPlayback(dhikrAudioOwner);setForegroundAudio(dhikrAudioOwner,true);setDhikrAudioLabel(button,'Пауза',true);button.setAttribute('aria-busy','true');status.textContent='';
+  claimPlayback(dhikrAudioOwner);setForegroundAudio(dhikrAudioOwner,true);setDhikrAudioLabel(button,'Пауза',true);button.setAttribute('aria-busy','true');status.textContent='Загрузка аудио…';
   try{Promise.resolve(current.play()).then(()=>{if(valid()){button.removeAttribute('aria-busy');status.textContent='';}}).catch(error=>{if(valid()&&current.paused&&error?.name==='AbortError')return;failure();});}catch{failure();}
  };
 }
