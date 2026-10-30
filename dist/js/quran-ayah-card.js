@@ -2,11 +2,31 @@ import {esc,modal,toast,closeModal} from './ui.js';
 import {loadSurah} from './quran-data.js';
 import {actionLabel,actionIcon} from './action-icons.js';
 
-// Stable local calendar day; no random selection during render and no inferred reading history.
+// A shared, shuffled Quran cycle: stable for the local calendar day, offline and without reading history.
+const dailyOrderCache=new Map();
+function shuffledDailyOrder(total,cycle){
+ let state=(Math.imul(cycle^0x9e3779b9,0x85ebca6b)^total)>>>0;
+ const random=()=>{let value=state=(state+0x6d2b79f5)>>>0;value=Math.imul(value^(value>>>15),value|1);value^=value+Math.imul(value^(value>>>7),value|61);return ((value^(value>>>14))>>>0)/4294967296;};
+ const order=Array.from({length:total},(_,i)=>i);
+ for(let i=total-1;i>0;i--){const j=Math.floor(random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+ return order;
+}
+function dailyOffset(total,day){
+ const cycle=Math.floor(day/total),key=total+':'+cycle;
+ let order=dailyOrderCache.get(key);
+ if(!order){
+  order=shuffledDailyOrder(total,cycle);
+  // Only the first two items can change, so the previous cycle's last item stays reproducible.
+  if(total>2&&order[0]===shuffledDailyOrder(total,cycle-1)[total-1])[order[0],order[1]]=[order[1],order[0]];
+  dailyOrderCache.set(key,order);if(dailyOrderCache.size>2)dailyOrderCache.delete(dailyOrderCache.keys().next().value);
+ }
+ return order[((day%total)+total)%total];
+}
 export function dailyPosition(index,date=new Date()){
  const day=Math.floor(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000);
  const total=index.surahs.reduce((sum,s)=>sum+s.ayahs,0);
- let offset=((day%total)+total)%total;
+ if(!Number.isFinite(day)||!Number.isSafeInteger(total)||total<1)return;
+ let offset=dailyOffset(total,day);
  for(const s of index.surahs){if(offset<s.ayahs)return {surah:s.number,ayah:offset+1};offset-=s.ayahs;}
 }
 let dailySurface=null;
