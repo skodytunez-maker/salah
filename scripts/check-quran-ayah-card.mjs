@@ -13,6 +13,29 @@ for(let day=0;day<6236;day++){
  const position=vm.runInContext('dailyPosition',context)(index,new Date(2026,0,1+day));
  assert.ok(position.surah>=1&&position.surah<=114&&position.ayah>=1&&position.ayah<=index.surahs[position.surah-1].ayahs);
 }
+const daily=vm.runInContext('dailyPosition',context),total=index.surahs.reduce((sum,s)=>sum+s.ayahs,0);
+const dayDate=day=>{const utc=new Date(day*86400000);return new Date(utc.getUTCFullYear(),utc.getUTCMonth(),utc.getUTCDate(),12);};
+const globalOffset=position=>index.surahs.slice(0,position.surah-1).reduce((sum,s)=>sum+s.ayahs,0)+position.ayah-1;
+const cycleStart=Math.floor(Math.floor(Date.UTC(2026,9,30)/86400000)/total)*total;
+const shuffled=Array.from({length:total},(_,i)=>globalOffset(daily(index,dayDate(cycleStart+i))));
+assert.equal(new Set(shuffled).size,total,'A complete daily cycle must include every ayah exactly once');
+assert.equal(Math.min(...shuffled),0);assert.equal(Math.max(...shuffled),total-1);
+assert.ok(shuffled.slice(1,366).filter((value,i)=>Math.abs(value-shuffled[i])>100).length>300,'Daily choices must be dispersed throughout the Quran, not advance to adjacent ayahs');
+const freshContext=vm.createContext({Date});
+vm.runInContext(source.replace(/^import .*;\n/gm,'').replace(/export /g,''),freshContext);
+const reopenedDaily=vm.runInContext('dailyPosition',freshContext);
+for(const date of [new Date(2026,9,30),new Date(2026,11,31),new Date(2027,0,1),new Date(2028,1,29),new Date(2026,2,8),new Date(2026,10,1)]){
+ const first=daily(index,new Date(date.getFullYear(),date.getMonth(),date.getDate(),0,1));
+ const last=daily(index,new Date(date.getFullYear(),date.getMonth(),date.getDate(),23,59));
+ assert.equal(JSON.stringify(first),JSON.stringify(last),'The local date keeps one ayah from midnight to midnight');
+ assert.equal(JSON.stringify(first),JSON.stringify(reopenedDaily(index,date)),'Reopening without storage, account or network must retain the same daily ayah');
+}
+for(let cycle=-2;cycle<12;cycle++){
+ const last=daily(index,dayDate((cycle+1)*total-1)),next=daily(index,dayDate((cycle+1)*total));
+ assert.notEqual(JSON.stringify(last),JSON.stringify(next),'The cycle boundary must not repeat yesterday’s ayah');
+}
+assert.equal(daily(index,new Date(NaN)),undefined);
+console.log('PASS: shuffled daily Quran selection, full-cycle coverage without repeats, local-day stability, reopening and cycle boundaries.');
 const longVerse=surah.verses[281];
 const normalized=text=>text.replace(/\s+/g,' ').trim();
 const isTranslation=row=>/^600 \d+px sans-serif$/.test(row.font);

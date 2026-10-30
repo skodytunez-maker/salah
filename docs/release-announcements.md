@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version427 — shuffled daily ayah (30 October2026)
+
+Fix the existing Ayah of the Day selector: use a reproducible shuffled cycle across all6236 Quran ayahs instead of advancing by one ayah per calendar day. Same local date gives the same reference, including offline and after reopening. Every ayah appears once per full cycle; prevent an immediate repeat at cycle boundaries. Text, translation, reading/listening/share actions and closed access gates are unchanged. Minor fix retains announcement425, artwork, acknowledgement and expiry; no new Home announcement.
+
+
 ## Version426 — compact account and current-recording preparation (30 October2026)
 
 Minor account layout and audio-startup refinements. Keep announcement425, its one alphabet illustration, acknowledgement and expiry unchanged. Do not append a new news card. The three learning-account entries share a compact bordered group; remove only the My Support link inside the account, preserving Main Menu support. Prepare only the current valid short recording; no autoplay, library download or source/wording changes. The Saba alternative remains a separate unpublished listening decision.
