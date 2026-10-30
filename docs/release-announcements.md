@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version426 — compact account and current-recording preparation (30 October2026)
+
+Minor account layout and audio-startup refinements. Keep announcement425, its one alphabet illustration, acknowledgement and expiry unchanged. Do not append a new news card. The three learning-account entries share a compact bordered group; remove only the My Support link inside the account, preserving Main Menu support. Prepare only the current valid short recording; no autoplay, library download or source/wording changes. The Saba alternative remains a separate unpublished listening decision.
+
+
 ## Candidate 421 — closed learning accounts
 
 Connect the prepared teacher/student cabinets and homework exchange to the
