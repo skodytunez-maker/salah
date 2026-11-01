@@ -42,3 +42,7 @@ Legacy canonical numeric preference strings (including Asr school "0") are norma
 - Audit found no cloud worship database or public storage buckets in this SALAH app; do not create public tables/buckets just to store analytics.
 
 References: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP ; https://www.goatcounter.com/help/csp ; https://supabase.com/docs/guides/database/secure-data ; https://supabase.com/docs/guides/functions/auth
+
+## Owner user directory
+The Users directory and its private cards are exclusive to the fixed SALAH owner identity, with live Auth identity, active session and MFA verification on every request. Administrator, moderator and teacher roles do not grant access. This includes attendance, listening totals, favorite reciters, awards, selected prayer city, last saved mushaf page and private avatar retrieval. Staff navigation does not render this directory. Teachers retain only their existing assigned pupil/classroom and homework workflows; public ranking visibility is separate.
+Regression: scripts/check-owner-role-privacy.mjs exercises all owner endpoints for all three non-owner roles, including forged owner claims, and verifies zero private reads and absent staff navigation.
