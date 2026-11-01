@@ -118,7 +118,7 @@ export function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    if(['enroll','preferences'].includes(action)){
     if(typeof input.remindersEnabled!=='boolean')fail(400,'Выберите настройку напоминания.');
     registered=await db.enroll(row,actor.id,text(actor.nickname||'Ученик',40,'ник'),input.remindersEnabled);
-    if(!registered)fail(409,'Все ученические места заняты.');
+    if(!registered)fail(403,'Доступ к занятию изменился. Попросите преподавателя проверить список учеников.');
    }
    if(action==='access'&&!registered&&!isOwner)fail(403,'Сначала запишитесь по приглашению.');
    return reply(200,{lesson:publicSchedule(row,Boolean(registered)||isOwner),account:{id:actor.id,nickname:actor.nickname||'Ученик'},enrolled:Boolean(registered)||isOwner,remindersEnabled:registered?.remindersEnabled===true,owner:isOwner});
