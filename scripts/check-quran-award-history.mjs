@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
-import{mountAwardHistory,awardWonDate}from '../dist/js/quran-award-history.js';
+import{mountAwardHistory,awardWonDate,awardHistoryLabel}from '../dist/js/quran-award-history.js';
 import{safeAward}from '../dist/js/quran-awards-core.js';
 const w=new Window(),host=w.document.createElement('section');w.document.body.append(host);
 const uuid=n=>String(n).padStart(8,'0')+'-1111-4111-8111-111111111111';
@@ -11,7 +11,7 @@ mountAwardHistory(host,rows,{isActive:()=>active,onCard:b=>cards.push(b.dataset.
 assert.equal(host.querySelector('[data-history-period="week"]').getAttribute('aria-pressed'),'true');
 assert.equal(host.querySelectorAll('details').length,2,'Only selected period is displayed');
 const first=host.querySelector('details'),summary=first.querySelector('summary');
-assert.match(summary.textContent,/3 нояб/);assert.doesNotMatch(summary.textContent,/26 окт|1 нояб|—/);assert.match(first.querySelector('.award-history-period').textContent,/26 окт.*2026.*1 нояб.*2026/);
+assert.match(summary.textContent,/26 окт.*1 нояб.*2026/);assert.doesNotMatch(summary.textContent,/3 нояб/);assert.match(first.querySelector('.award-history-period').textContent,/26 окт.*2026.*1 нояб.*2026/);assert.match(first.querySelector('.award-history-received').textContent,/3 нояб/);
 assert.doesNotMatch(summary.textContent,/ч |мин/,'The collapsed row shows the date, not listening hours');
 assert.equal(first.open,false);assert.match(first.querySelector('.award-history-detail').textContent,/8 ч 28 мин/);
 assert.equal(summary.querySelector('strong').textContent,'SA','Anonymous identity stays anonymous');
@@ -21,10 +21,13 @@ summary.click();assert.equal(first.open,false,'A second tap collapses the listen
 host.querySelector('[data-award-winner]').click();assert.deepEqual(cards,[rows[2].id]);
 host.querySelector('[data-history-period="month"]').click();
 assert.equal(host.querySelectorAll('details').length,1);assert.equal(host.querySelector('details').open,false);
-assert.match(host.querySelector('summary').textContent,/2 нояб/);assert.doesNotMatch(host.querySelector('summary').textContent,/1 окт|31 окт|—/);assert.match(host.querySelector('.award-history-period').textContent,/1 окт.*2026.*31 окт.*2026/);
+assert.match(host.querySelector('summary').textContent,/Октябрь 2026/);assert.doesNotMatch(host.querySelector('summary').textContent,/нояб|1 окт|31 окт|—/);assert.match(host.querySelector('.award-history-period').textContent,/1 окт.*2026.*31 окт.*2026/);assert.match(host.querySelector('.award-history-received').textContent,/2 нояб/);
 assert.equal(host.querySelector('.award-history-results').getAttribute('aria-label'),'Победители месяца');
 active=false;host.querySelector('[data-award-winner]').click();host.querySelector('[data-history-period="week"]').click();assert.equal(cards.length,1);assert.equal(host.querySelectorAll('details').length,1,'Inactive view cannot launch actions or switch');
 mountAwardHistory(host,[]);assert.equal(host.querySelectorAll('details').length,0);assert.match(host.textContent,/после завершения периода/);
 assert.equal(awardWonDate({earnedAt:''}),'');assert.equal(awardWonDate({earnedAt:'bad'}),'');assert.equal(awardWonDate({earnedAt:'2026-11-02'}),'');assert.equal(awardWonDate({earnedAt:'2026-11-02T21:10:00Z'}),awardWonDate({earnedAt:'2026-11-03T00:10:00+03:00'}),'Award day is independent of device timezone');
-mountAwardHistory(host,[{...rows[0],earnedAt:''}]);assert.match(host.querySelector('summary').textContent,/Дата не указана/);assert.doesNotMatch(host.querySelector('summary').textContent,/Invalid|19 окт|26 окт/);
-await w.happyDOM.close();console.log('PASS: weekly/monthly tabs, award-date collapsed rows, full period only on disclosure, accessible native disclosure, hours on tap, anonymous identities and inactive-view guard.');
+mountAwardHistory(host,[{...rows[0],earnedAt:''}]);assert.match(host.querySelector('summary').textContent,/19.*25 окт.*2026/);assert.equal(host.querySelector('.award-history-received'),null,'Do not infer a missing award date');
+assert.equal(awardHistoryLabel({start:'bad',end:'bad',kind:'week'}),'Период не указан');
+assert.equal(awardHistoryLabel({start:'2026-12-01',end:'2027-01-01',kind:'month'}),'Декабрь 2026');
+assert.match(awardHistoryLabel({start:'2026-12-28',end:'2027-01-04',kind:'week'}),/28 дек.*2026.*3 янв.*2027/,'Cross-year week remains unambiguous');
+await w.happyDOM.close();console.log('PASS: period-first weekly/monthly labels, actual award date inside disclosure, full period and hours on tap, timezone/year boundaries, anonymous identities and inactive-view guard.');

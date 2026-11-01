@@ -106,3 +106,4 @@
 .award-history-detail{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.award-history-period{grid-column:1 / -1;line-height:1.5}.award-history-period>span{display:block;margin-top:3px;color:#d3d9e5;font-size:12px;overflow-wrap:anywhere}
 
 .award-history-detail button{max-width:none;justify-self:start;text-align:left;min-height:36px}.award-history-detail strong{overflow-wrap:anywhere}
+.award-history-received{line-height:1.5}.award-history-received>span{display:block;margin-top:3px;color:#a6afc3;font-size:12px}
