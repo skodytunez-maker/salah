@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version428 — Quran queue audio-session continuity (2 November2026)
+
+Keep one playback-category owner throughout the Quran queue. Automatic chapter transitions reuse the permitted media element without unloading its source or releasing/reacquiring the OS audio session. Retire old player callbacks before switching; maintain pause/stop precedence and release the category at final completion, failure or explicit stop. Preserve existing announcement425, artwork, acknowledgement and expiry. No recording replacements, listening-time corrections or closed-section access changes. Automated lifecycle regression is covered; iPhone locked-screen acceptance remains necessary.
+
+
 ## Version427 — shuffled daily ayah (30 October2026)
 
 Fix the existing Ayah of the Day selector: use a reproducible shuffled cycle across all6236 Quran ayahs instead of advancing by one ayah per calendar day. Same local date gives the same reference, including offline and after reopening. Every ayah appears once per full cycle; prevent an immediate repeat at cycle boundaries. Text, translation, reading/listening/share actions and closed access gates are unchanged. Minor fix retains announcement425, artwork, acknowledgement and expiry; no new Home announcement.
