@@ -26,7 +26,7 @@ const host={querySelector:()=>null,querySelectorAll:selector=>selector==='[data-
 const pageContext=vm.createContext({reciterFilterTabs,recentReciters,listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion,competitionListeningTotal:()=>null,personalDataAllowed,URLSearchParams,location:{hash:'#quran?view=reciters&filter=salah-top'},read:(k,d)=>d,write:()=>true,esc:String,toast(){},counterSyncStatus:()=>({signedIn:true}),RECITERS,RECITER_FAVORITES_KEY:'fixture',normalizeReciterFavorites:()=>[],RANK_INTENTION_PHRASES:['Намерение'],rankTime,listenerPrivacyMarkup:()=>'',bindPopularConsent(){},personalListening:()=>({totals:{'ar.alafasy':local}}),competitionOwn:()=>own,cachedCompetition:p=>cache.get(p)||null,preloadCompetition:async()=>[],clearCompetitionCache:()=>cache.clear(),loadCompetition:p=>{requests.push(p);return new Promise(resolve=>deferred.set(p,rows=>{cache.set(p,rows);resolve(rows);}));},refreshCompetitionOwn:async()=>null,saveCompetitionSettings:async()=>{},connectCompetitionNotifications:async()=>{},syncCompetitionNow:async()=>{},competitionMarkup:rows=>{shown=rows;return 'result:'+rows[0]?.seconds;},bindCompetitionView(){},captureCompetitionLayout:()=>new Map(),animateCompetitionChange(){},updateCompetitionTimes:(target,rows)=>shown=rows,window:{addEventListener:(name,fn)=>handlers[name]=fn,removeEventListener:name=>delete handlers[name]},document:{hidden:false,addEventListener(){},removeEventListener(){}},setInterval:()=>1,clearInterval(){},Date});
 const page=vm.runInContext(pageSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountCompetition})',pageContext),stop=page.mountCompetition(host,()=>'<h1>Коран</h1>');
 for(let i=0;i<30;i++)handlers['salah:competition-updated']();assert.equal(requests.length,1,'Background updates share the existing pending request');deferred.get('all')([{...person}]);await flush();assert.match(html,/result:100/,'The original delayed response still paints');
-const before=writes;local=1;handlers['salah:personal-listening-progress']();assert.equal(writes,before);assert.equal(shown[0].seconds,101);assert.equal(shown[0].rank,1,'Local progress must not invent a new authoritative place');handlers['salah:personal-listening-progress']();assert.equal(shown[0].seconds,101,'The same local sample is never credited twice');
+const before=writes;local=1;handlers['salah:personal-listening-progress']();assert.equal(writes,before);assert.equal(shown[0].seconds,100);assert.equal(shown[0].rank,1,'Local progress must not invent a new authoritative place');handlers['salah:personal-listening-progress']();assert.equal(shown[0].seconds,100,'A separate device counter cannot be added to confirmed history twice');
 cache.set('day',[{...person,seconds:20}]);buttons.find(b=>b.dataset.competitionPeriod==='day').onclick();assert.match(html,/result:20/,'Cached day data paints before the network finishes');for(let i=0;i<30;i++)handlers['salah:competition-updated']();assert.equal(requests.filter(p=>p==='day').length,1);deferred.get('day')([{...person,seconds:22}]);await flush();assert.equal(shown[0].seconds,22);
 buttons.find(b=>b.dataset.competitionPeriod==='week').onclick();buttons.find(b=>b.dataset.competitionPeriod==='month').onclick();deferred.get('month')([{...person,seconds:80}]);await flush();deferred.get('week')([{...person,seconds:50}]);await flush();assert.equal(shown[0].seconds,80,'A late previous-period response cannot replace the selected period');stop();assert.equal(handlers['salah:personal-listening-progress'],undefined);
 // Exercise the actual Edge handler with synthetic read-only SQL rows.
@@ -42,3 +42,19 @@ console.log('PASS: one four-period transport, cache/abort/privacy, delayed-resul
 
 client.clearCompetitionCache();let retryCalls=0;clientContext.fetch=async()=>{retryCalls++;if(retryCalls===1)return{ok:false,status:502};return{ok:true,status:200,json:async()=>({day:testDay,boards:Object.fromEntries(['all','day','week','month'].map(p=>[p,{items:[person]}]))})};};assert.equal((await client.loadCompetition('all'))[0].seconds,100);assert.equal(retryCalls,2,'One temporary gateway failure recovers before showing unavailable');
 console.log('PASS: shared leaderboard request retries a temporary gateway failure once.');
+
+// A locally measured but not-yet-uploaded tail must survive a real page remount.
+pageContext.location.hash='#quran?view=reciters&filter=salah-top&period=week';
+cache.set('week',[{...person,seconds:7*3600+32*60}]);local=7*3600+32*60;
+let closeReading=page.mountCompetition(host,()=>'<h1>Коран</h1>');
+local+=27*60;handlers['salah:personal-listening-progress']();
+assert.equal(shown[0].seconds,7*3600+59*60);
+closeReading();closeReading=page.mountCompetition(host,()=>'<h1>Коран</h1>');
+assert.equal(shown[0].seconds,7*3600+59*60,'Reopening cannot discard a saved 27-minute local tail');
+assert.equal(shown[0].rank,1,'Local pending time cannot invent a confirmed rank');
+deferred.get('week')([{...person,seconds:7*3600+59*60}]);await flush();
+assert.equal(shown[0].seconds,7*3600+59*60,'Server acknowledgment does not add the same tail again');
+local=0;handlers['salah:personal-listening-progress']();
+assert.equal(shown[0].seconds,7*3600+59*60,'An empty/new device preserves the confirmed account total');
+closeReading();
+console.log('PASS: pending local reading survives remount, acknowledgment cannot double it and a new device preserves cloud time.');

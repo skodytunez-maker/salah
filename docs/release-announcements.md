@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Candidate430 — durable personal listening in Top SALAH (2 November2026)
+
+Use the greater of the confirmed board score and the account-scoped local period counter for the displayed own-reciter duration. Remove mount-local additive previews: reopening must retain locally recorded pending time; server acknowledgment must not add it twice. Other-device time comes from refreshed confirmed results; local display cannot change the confirmed rank. Checkpoint actual media progress at most every five seconds from media callbacks, even when background interval timers are suspended; save the final tail on pause/end and sample before pagehide/visibility saves. No invented listening credit or live database changes. Exact historical27-minute difference is not proved from present records. Minor fix retains announcement425, artwork, acknowledgment and expiry. Quran429 queue changes and closed-section gates remain unchanged. Local candidate, not published.
+
+
 ## Version429 — preserve Android device compatibility (2 November2026)
 
 Google Play detected28 devices excluded by permission-implied hardware requirements in the428 candidate. Declare location, GPS, network location and microphone hardware optional: city selection and the application remain usable without location/recording hardware. Preserve runtime permission requests, manifest components and all428 Quran queue continuity changes. Verify optional declarations in the actual built App Bundle. Minor release preserves announcement425, artwork, acknowledgement and expiry. Closed sections remain closed; no account data or listening scores are changed.
