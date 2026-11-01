@@ -3050,6 +3050,15 @@
       "note": "Knowledge symbol, coloured by CSS mask using the application gold theme token."
     },
     {
+      "path": "dist/assets/knowledge-teacher.svg",
+      "gitBlobSha": "b6ad799a99fe07e7a01f9fa60ead394d5e80becd",
+      "bytes": 350,
+      "kind": "icon",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH teacher-at-board vector drawn in repository source for432; no third-party image or typeface incorporated.",
+      "note": "Thematic teacher-cabinet entry icon in the existing navy/gold interface."
+    },
+    {
       "path": "dist/assets/knowledge-live.svg",
       "gitBlobSha": "16e3ab2e8065114075eb9851431e1810cab17c06",
       "bytes": 313,

@@ -4135,6 +4135,11 @@
       "bytes": 348
     },
     {
+      "path": "dist/assets/knowledge-teacher.svg",
+      "gitBlobSha": "b6ad799a99fe07e7a01f9fa60ead394d5e80becd",
+      "bytes": 350
+    },
+    {
       "path": "dist/assets/knowledge-live.svg",
       "gitBlobSha": "16e3ab2e8065114075eb9851431e1810cab17c06",
       "bytes": 313
