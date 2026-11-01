@@ -405,3 +405,6 @@ The same names and a separate Hamza clip are available in already-private Mualli
 ## 434 — History award date
 
 Minor history layout correction: below the winner show the actual earnedAt date in the competition calendar zone Europe/Moscow; full period and listening hours stay inside native disclosure. Weekly/monthly tabs, identity privacy and current transferable titles are unchanged. Unknown timestamps are labelled, never inferred from the period end. Announcement425, acknowledgement and expiry retained.
+
+## 435 — Period labels and phone disclosure
+History identifies the period won: compact week date range or month name and year, such as October2026, rather than the next month's handover date. Exact period, optional actual earnedAt date and listening hours remain inside the disclosure. On narrow phones these details and card action stack in a full-width column so seconds do not become an isolated line. Minor refinement, announcement425 and closed access unchanged.
