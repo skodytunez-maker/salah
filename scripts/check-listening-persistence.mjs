@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import{personalDataAllowed}from '../dist/js/audience.js';
+import{RECITERS,reciterInfo}from '../dist/js/quran-reciters.js';
+import{createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodTotals,addListeningDay}from '../dist/js/reciter-popularity-core.js';
+const source=await fs.readFile(new URL('../dist/js/reciter-popularity.js',import.meta.url),'utf8');
+const stored=new Map(),events={},documentEvents={},reciter='ar.alafasy',key='reciter-personal-listening-v1:fixture-user';
+let clock=new Date(2026,9,31,23,58,0).getTime(),sample,tick,writes=0,attempts=0,allowWrites=true,state={reciter,surah:{number:1},index:0,positionSeconds:0,status:'playing'};
+const context=vm.createContext({personalDataAllowed,RECITERS,reciterInfo,createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodTotals,addListeningDay,Date,initListenerPresence(){},initCompetition(){},read:(k,d)=>stored.has(k)?structuredClone(stored.get(k)):d,write:(k,v)=>{if(k===key)attempts++;if(!allowWrites)return false;stored.set(k,structuredClone(v));if(k===key)writes++;return true;},esc:String,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',window:{addEventListener:(n,f)=>events[n]=f,dispatchEvent(){}},document:{hidden:false,addEventListener:(n,f)=>documentEvents[n]=f},navigator:{onLine:false},Event:class{},crypto:{randomUUID:()=> '11111111-1111-4111-8111-111111111111'},setInterval:f=>tick=f,AbortSignal});
+const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/^export \{.*\};?$/gm,'').replace(/export /g,'')+';({initReciterPopularity});',context);
+api.initReciterPopularity({playback:{get state(){return{...state};},subscribe:f=>{sample=f;f();}},getAccount:()=>({signedIn:true,userId:'fixture-user'}),getClient:()=>null,now:()=>clock});
+const advance=(seconds,status='playing')=>{clock+=seconds*1000;state.positionSeconds+=seconds;state.status=status;sample();};
+// iOS can deliver media progress while suppressing the application's interval.
+context.document.hidden=true;documentEvents.visibilitychange();advance(27*60);
+assert.equal(stored.get(key)?.totals[reciter],27*60,'A background progress event must save without the periodic timer');
+assert.equal(Object.values(stored.get(key).days).reduce((sum,rows)=>sum+(rows[reciter]||0),0),27*60,'Midnight splits must preserve all measured seconds');
+const checkpointWrites=writes;for(let i=0;i<8;i++)advance(.25);
+assert.equal(writes,checkpointWrites,'Frequent timeupdate callbacks cannot write storage every frame');
+advance(.5,'paused');assert.equal(stored.get(key).totals[reciter],27*60+2.5,'Pause must save the last short tail immediately');
+advance(0,'playing');clock+=1000;state.positionSeconds+=1;events.pagehide();
+assert.equal(stored.get(key).totals[reciter],27*60+3.5,'Page exit samples the current audio position before saving');
+await tick();assert.equal(stored.get(key).totals[reciter],27*60+3.5,'The later timer cannot count the same interval twice');
+allowWrites=false;advance(6);const failedAttempts=attempts;for(let i=0;i<8;i++)advance(.25);assert.equal(attempts,failedAttempts,'Failed storage is retried at a bounded rate too');allowWrites=true;advance(3);assert.equal(stored.get(key).totals[reciter],27*60+14.5,'Failed writes retain dirty progress for a later successful retry');
+console.log('PASS: background persistence without timers, bounded writes, midnight conservation, pause/pagehide tail and no duplicate credit.');

@@ -14,10 +14,13 @@ import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompet
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes}from './competition-view.js';
 export function mountCompetition(host,heading){
  if(!personalDataAllowed()){showRestrictedFeature(host,'Топ SALAH');return()=>{};}
- const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false;const previews=new Map();
+ const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false;
  if(!['day','week','month','all'].includes(period))period='all';
  const periods=[['day','День'],['week','Неделя'],['month','Месяц'],['all','Всё время']],liveTotal=createLiveListeningTotal(),sharedMotion=createSharedListeningMotion();
- function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>{if(row.id!==own.id)return row;const key=own.id+':'+period+':'+new Date().toDateString()+':'+row.reciter,local=totals[row.reciter]||0,previous=previews.get(key),seconds=previous?Math.max(row.seconds,previous.seconds+Math.max(0,local-previous.local)):row.seconds;previews.set(key,{local,seconds});return{...row,seconds};});}
+ // Both counters already include this device's history: compare them, never add
+ // a page-local delta to the cloud result. Saved pending time survives remounts;
+ // time from other devices appears when the confirmed board refreshes.
+ function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>row.id===own.id?{...row,seconds:Math.max(row.seconds,Math.floor(totals[row.reciter]||0))}:row);}
  function draw(){if(closed)return;const shown=displayRows(),own=competitionOwn(),signed=counterSyncStatus().signedIn,count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
  const target=liveTotal.sample(competitionListeningTotal(period),personalListening(period).totals,{key:own?.id+':'+period+':'+new Date().toDateString(),eligible:signed&&own?.enabled===true&&['initial','profile'].includes(own.mode)});
  if(resetMotionOnDraw){sharedMotion.reset();if(!refreshing)resetMotionOnDraw=false;}
@@ -39,7 +42,7 @@ export function mountCompetition(host,heading){
  }
  async function act(action){if(busy)return;busy=true;draw();try{await action();}catch(e){toast(e.message||'Не удалось сохранить');}finally{busy=false;draw();}}
  async function refresh(force=false){if(closed||document.hidden)return;if(refreshing?.period===period)return refreshing.task;const selected=period,token=++generation,entry={period:selected,task:null};refreshing=entry;entry.task=(async()=>{try{const data=await loadCompetition(selected,{force});if(closed||token!==generation)return;rows=data;loading=false;error=false;}catch{if(closed||token!==generation)return;loading=false;error=true;}finally{if(refreshing===entry)refreshing=null;}draw();})();return entry.task;}
- const privacyUpdate=()=>{clearCompetitionCache();liveTotal.reset();sharedMotion.reset();generation++;refreshing=null;previews.clear();const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh(true);};
+ const privacyUpdate=()=>{clearCompetitionCache();liveTotal.reset();sharedMotion.reset();generation++;refreshing=null;const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh(true);};
  const ownUpdate=()=>{void refresh();},authUpdate=()=>{void refreshCompetitionOwn().catch(()=>{});void refresh();},visible=()=>{resetMotionOnDraw=true;sharedMotion.reset();if(!document.hidden)void refresh(true);};
  window.addEventListener('salah:listener-visibility',privacyUpdate);window.addEventListener('salah:competition-updated',ownUpdate);window.addEventListener('salah:popularity-updated',authUpdate);window.addEventListener('salah:counter-status',authUpdate);document.addEventListener('visibilitychange',visible);
  const progress=()=>{if(!closed&&!document.hidden)draw();};window.addEventListener('salah:personal-listening-progress',progress);
