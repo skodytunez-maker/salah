@@ -401,3 +401,7 @@ One public feature: names of the28alphabet letters play by tapping the large let
 
 The same names and a separate Hamza clip are available in already-private Muallim letter headers; no syllable recordings fabricated and no course gates opened. Internal owner profile adds only a day-specific yes/no Azkar activity mark, with no per-dhikr details in its API or UI. It is not a public ranking or feed announcement.
 
+
+## 434 — History award date
+
+Minor history layout correction: below the winner show the actual earnedAt date in the competition calendar zone Europe/Moscow; full period and listening hours stay inside native disclosure. Weekly/monthly tabs, identity privacy and current transferable titles are unchanged. Unknown timestamps are labelled, never inferred from the period end. Announcement425, acknowledgement and expiry retained.
