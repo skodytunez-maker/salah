@@ -1,4 +1,5 @@
 import{TEACHER_ADMIN_ACTIONS,teacherAdmin}from './teacher-roles-core.mjs';
+import{STUDENT_ADMIN_ACTIONS,studentAdmission}from './student-admission-core.mjs';
 import{normalizeReadingCheck}from '../../../dist/js/reading-check-core.js';
 import{WORK_ACTIONS,WORK_OWNER_ACTIONS,createHomeworkWorkService}from './homework-work-core.mjs';
 import{localTimestamp,validLocalTime,shiftDay}from '../../../dist/js/reminder-events.js';
@@ -46,9 +47,9 @@ export function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    const joined=new Uint8Array(bytes);let pos=0;for(const chunk of chunks){joined.set(chunk,pos);pos+=chunk.length;}
    let input;try{input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(joined));}catch{fail(400,'Неверный запрос.');}
    if(!input||typeof input!=='object'||Array.isArray(input))fail(400,'Неверный запрос.');
-   const action=input.action,ownerAction=['create','update','transition','owner-list','set-homework'].includes(action)||WORK_OWNER_ACTIONS.includes(action)||action==='class-pupils'||action==='portal'&&input.view==='teacher';
+   const action=input.action,studentAdmin=STUDENT_ADMIN_ACTIONS.includes(action),ownerAction=studentAdmin||['create','update','transition','owner-list','set-homework'].includes(action)||WORK_OWNER_ACTIONS.includes(action)||action==='class-pupils'||action==='portal'&&input.view==='teacher';
    const adminAction=TEACHER_ADMIN_ACTIONS.includes(action);
-   if(![...TEACHER_ADMIN_ACTIONS,'teacher-access','create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences','homework','set-homework','portal','class-pupils',...WORK_ACTIONS].includes(action))fail(400,'Неизвестное действие.');
+   if(![...TEACHER_ADMIN_ACTIONS,...STUDENT_ADMIN_ACTIONS,'teacher-access','create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences','homework','set-homework','portal','class-pupils',...WORK_ACTIONS].includes(action))fail(400,'Неизвестное действие.');
    let actor=await verifyAccount(bearer[1],{teacherRequired:ownerAction||action==='teacher-access',ownerRequired:adminAction});
    if(!uuid.test(actor?.id||''))fail(401,'Войдите в аккаунт SALAH.');
    if(action==='work-file'&&(actor.teacher||actor.id===CLASSROOM_OWNER))actor=await verifyAccount(bearer[1],{teacherRequired:true});
@@ -64,19 +65,22 @@ export function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    }
    if(action==='portal'){
     if(!['student','teacher'].includes(input.view))fail(400,'Выберите кабинет.');
+    if(input.view==='student'&&!actor.teacher&&!actor.owner&&!await db.hasLearningAccess(actor.id))fail(403,'Кабинет откроется, когда преподаватель или владелец добавит вас на занятие.');
     const teaching=input.view==='teacher',rows=await db.list(actor.id,teaching),summaries=await db.portalSummary(actor.id,teaching,rows.map(row=>row.id));
     const byId=new Map(summaries.map(summary=>[summary.lessonId,summary]));
     return reply(200,{view:input.view,account:{id:actor.id,nickname:actor.nickname||'Участник SALAH'},canTeach:actor.teacher===true||actor.owner===true,canManageTeachers:actor.id===CLASSROOM_OWNER,lessons:rows.map(row=>{const summary=byId.get(row.id)||{};return{...publicSchedule(row),...(teaching?{pupilCount:summary.pupilCount||0,pendingCount:summary.pendingCount||0}:{work:summary.work||null})};})});
    }
-   if(['mine','owner-list'].includes(action))return reply(200,{lessons:(await db.list(actor.id,action==='owner-list')).map(l=>publicSchedule(l))});
+   if(['mine','owner-list'].includes(action)){if(action==='mine'&&!actor.teacher&&!actor.owner&&!await db.hasLearningAccess(actor.id))fail(403,'Доступ к обучению ещё не назначен.');return reply(200,{lessons:(await db.list(actor.id,action==='owner-list')).map(l=>publicSchedule(l))});}
    let row;if(['preview','enroll'].includes(action)||action==='homework'&&input.code!==undefined){if(!opaque.test(input.code||''))fail(404,'Приглашение недействительно.');row=await db.byInvite(await inviteDigest(input.code));}
    else{if(!opaque.test(input.id||''))fail(404,'Урок не найден.');row=await db.get(input.id);}
    if(!row)fail(404,'Урок недоступен.');
    const isOwner=actor.id===row.ownerId,enrollment=await db.enrollment(row.id,actor.id);
    if(isOwner&&!actor.teacher&&!actor.owner)fail(403,'Доступ преподавателя отозван.');
    if(db.teacherRole&&['preview','enroll','access','preferences'].includes(action)&&!(await db.teacherRole(row.ownerId)).active)fail(403,'Доступ к занятию временно приостановлен.');
-   if(ownerAction&&!isOwner)fail(403,'Нет доступа к этому уроку.');
-   if(!['preview','enroll'].includes(action)&&!isOwner&&!enrollment)fail(403,'Войдите по приглашению преподавателя.');
+   const admissionOwner=studentAdmin&&actor.id===CLASSROOM_OWNER&&actor.owner===true;
+   if(ownerAction&&!isOwner&&!admissionOwner)fail(403,'Нет доступа к этому уроку.');
+   if(!isOwner&&!admissionOwner&&!enrollment)fail(403,'Доступ к занятию ещё не назначен. Попросите преподавателя добавить ваш ник в SALAH.');
+   if(studentAdmin)return reply(200,await studentAdmission({action,input,actor,row,db,fail}));
    if(action==='class-pupils'){
     if(row.state==='cancelled')fail(410,'Занятие отменено.');
     return reply(200,{lesson:publicSchedule(row),pupils:await db.portalPupils(row.id,actor.id)});
@@ -114,7 +118,7 @@ export function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    if(['enroll','preferences'].includes(action)){
     if(typeof input.remindersEnabled!=='boolean')fail(400,'Выберите настройку напоминания.');
     registered=await db.enroll(row,actor.id,text(actor.nickname||'Ученик',40,'ник'),input.remindersEnabled);
-    if(!registered)fail(409,'Все ученические места заняты.');
+    if(!registered)fail(403,'Доступ к занятию изменился. Попросите преподавателя проверить список учеников.');
    }
    if(action==='access'&&!registered&&!isOwner)fail(403,'Сначала запишитесь по приглашению.');
    return reply(200,{lesson:publicSchedule(row,Boolean(registered)||isOwner),account:{id:actor.id,nickname:actor.nickname||'Ученик'},enrolled:Boolean(registered)||isOwner,remindersEnabled:registered?.remindersEnabled===true,owner:isOwner});

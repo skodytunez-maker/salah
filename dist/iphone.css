@@ -393,3 +393,14 @@ html:has(body.home-page),body.home-page{overscroll-behavior-y:none}
 /* Match the Knowledge heading: the same white sans-serif title scale. */
 .adhkar-hybrid .hybrid-heading h1{font-family:'Manrope','Segoe UI',sans-serif;font-size:32px;font-weight:600;line-height:1.25;letter-spacing:-1px;color:var(--ivory,#f4f0e5)}
 @media(max-width:600px){.adhkar-hybrid .hybrid-heading h1{font-size:29px}}
+
+/* One viewport, two rows: only the reading content scrolls. The counter never
+   depends on the height of a translated passage or a fixed descendant in it. */
+@media(max-width:850px){
+ body.adhkar-reading{height:100vh;height:100dvh;overflow:hidden}
+ body.adhkar-reading .adhkar-shell{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;gap:0;min-height:0;max-width:none;width:auto;height:100vh;height:100dvh;margin:0;padding:calc(12px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(112px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));box-sizing:border-box}
+ body.adhkar-reading.adhkar-focus .adhkar-shell{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+ body.adhkar-reading .adhkar-reading-content{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;touch-action:pan-y pinch-zoom;-webkit-overflow-scrolling:touch;padding-bottom:16px;scroll-padding-bottom:16px}
+ body.adhkar-reading .adhkar-shell>.dhikr-counter-dock{position:relative;flex:0 0 auto;inset:auto;left:auto;bottom:auto;transform:none;width:100%;max-width:none;margin:8px 0 0;backdrop-filter:none}
+ body.adhkar-reading.has-quran-audio .adhkar-reading-content{padding-bottom:136px;scroll-padding-bottom:136px}
+}

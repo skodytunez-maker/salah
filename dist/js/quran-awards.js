@@ -6,6 +6,7 @@ import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{reciterInfo}from './quran-reciters.js';
 import{reciterImageUrl}from './approved-catalog.js';
 import{rankTime}from './reciter-ranking-core.js';
+import{mountAwardHistory}from './quran-award-history.js';
 import{QURAN_AWARDS,awardInfo,awardPeriod,awardShareIdentity,safeAward,safeAwardState,weekDays,dayCountLabel,calendarAward,awardArtwork,awardMetric,hourAwardProgress}from './quran-awards-core.js';
 const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition';
 const emblem=(kind,locked=false)=>{const a=awardInfo(kind);return '<span class="award-emblem'+(a.artwork?' award-emblem-medallion':'')+(locked?' award-locked':'')+'" style="--award-color:'+a.color+'"><img src="'+awardArtwork(kind)+'" alt=""></span>';};
@@ -62,9 +63,10 @@ export async function showAwardWinners({isActive=()=>true}={}){
  modal('<div class="award-collection"><div class="modal-head"><h2>История побед SALAH</h2><button class="text-button" data-close>Закрыть</button></div><p class="award-note" role="status">Загружаем победителей…</p></div>');
  const root=document.getElementById('modal-content'),current=root.firstElementChild;
  try{const rows=await loadAwardWinners();if(!isActive()||!current.isConnected)return;
-  current.innerHTML='<div class="modal-head"><h2>История побед SALAH</h2><button class="text-button" data-close>Закрыть</button></div>'+QURAN_AWARDS.filter(a=>calendarAward(a.kind)).map(a=>'<h3>'+a.title+'</h3>'+(rows.filter(x=>x.kind===a.kind).map(row=>'<button type="button" class="award-winner-entry" data-award-winner="'+row.id+'">'+emblem(row.kind)+'<span><strong>'+esc(awardShareIdentity(row.listener).label)+'</strong><small>'+esc(rankTime(row.seconds))+' · '+esc(awardPeriod(row))+'</small></span></button>').join('')||'<p class="award-note">Победитель появится после завершения периода.</p>')).join('')+'<p class="award-collection-note">Итоги — в 00:00 по Москве. Один слушатель — один любимый чтец. Не забывайте о намерении.</p>';
+  current.classList.add('award-fixed-header','award-history-dialog');
+  current.innerHTML='<div class="modal-head"><h2>История побед</h2><button class="text-button" data-close>Закрыть</button></div><div class="award-scroll-body"><div data-award-history></div><p class="award-collection-note">Итоги — в 00:00 по Москве. Не забывайте о намерении.</p></div>';
   current.querySelector('[data-close]').onclick=closeModal;
-  current.querySelectorAll('[data-award-winner]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const fresh=(await loadAwardWinners()).find(x=>x.id===b.dataset.awardWinner);if(!current.isConnected||!isActive())return;if(!fresh)throw Error('hidden');await showWinnerCard(fresh,{isActive});}catch{if(current.isConnected)toast('Карточка недоступна. Обновите итоги.');}finally{if(b.isConnected)b.disabled=false;}});
+  mountAwardHistory(current.querySelector('[data-award-history]'),rows,{isActive,onCard:async b=>{if(b.disabled)return;b.disabled=true;try{const fresh=(await loadAwardWinners()).find(x=>x.id===b.dataset.awardWinner);if(!current.isConnected||!isActive())return;if(!fresh)throw Error('hidden');await showWinnerCard(fresh,{isActive});}catch{if(current.isConnected)toast('Карточка недоступна. Обновите итоги.');}finally{if(b.isConnected)b.disabled=false;}}});
  }catch{if(current.isConnected)current.innerHTML='<div class="modal-head"><h2>История побед SALAH</h2><button class="text-button" data-close>Закрыть</button></div><p class="award-note">Не удалось загрузить итоги.</p><button class="text-button" data-award-retry>Повторить</button>';current.querySelector('[data-close]')?.addEventListener('click',closeModal);current.querySelector('[data-award-retry]')?.addEventListener('click',()=>void showAwardWinners({isActive}));}
 }
 const image=async(src)=>{const img=new Image();img.src=src;await img.decode();return img;};

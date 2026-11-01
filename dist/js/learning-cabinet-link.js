@@ -12,7 +12,7 @@ export async function mountLearningCabinetLink(root,{userId,isActive=()=>root.is
   if(data.lessons.length)entries.push(['#lesson','Моё обучение','Занятия, задания и результаты','student']);
   if(!entries.length)return;
   const doc=root.ownerDocument,nav=doc.createElement('nav');nav.className='learning-cabinet-links';nav.dataset.learningCabinets='';nav.setAttribute('aria-label','Мои кабинеты обучения');
-  for(const[href,label,detail,role]of entries){const link=doc.createElement('a');link.href=href;link.className='learning-cabinet-card';link.dataset.learningCabinet=role;link.innerHTML='<span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-knowledge-prayer"></span></span><span class="learning-cabinet-copy"><strong>'+label+'</strong><small>'+detail+'</small></span><span class="learning-cabinet-arrow" aria-hidden="true">→</span>';nav.append(link);}
+  for(const[href,label,detail,role]of entries){const link=doc.createElement('a');link.href=href;link.className='learning-cabinet-card';link.dataset.learningCabinet=role;link.innerHTML='<span class="knowledge-icon" aria-hidden="true">'+(role==='teacher'?'<img src="./assets/knowledge-teacher.svg" alt="">':'<span class="knowledge-symbol knowledge-symbol-knowledge-prayer"></span>')+'</span><span class="learning-cabinet-copy"><strong>'+label+'</strong><small>'+detail+'</small></span><span class="learning-cabinet-arrow" aria-hidden="true">→</span>';nav.append(link);}
   root.querySelector('.knowledge-head')?.after(nav);
  }catch{}
 }

@@ -243,6 +243,38 @@ async function teacherAdmin({action,input,actor,db,ownerId,fail}){
  return{userId:input.userId,...result};
 }
 
+const STUDENT_ADMIN_ACTIONS=['student-lookup','student-add','student-remove'];
+async function studentAdmission({action,input,actor,row,db,fail}){
+ if(action==='student-lookup'){
+  const nickname=typeof input.nickname==='string'?input.nickname.trim().toLowerCase():'';
+  if(nickname.length<2||nickname.length>40||/[\x00-\x1f\x7f]/.test(nickname))fail(400,'Введите ник в SALAH: от 2 до 40 символов.');
+  return{accounts:await db.studentLookup(nickname,row.ownerId)};
+ }
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.userId||'')||input.userId===row.ownerId)fail(400,'Выберите зарегистрированного ученика.');
+ const admitted=await db.studentSet(row,actor.id,input.userId,action==='student-add');
+ if(!admitted)fail(409,'Занятие, доступ или свободные места изменились. Обновите список.');
+ return{userId:input.userId,added:action==='student-add'};
+}
+
+function createStudentAdmissionDb({sql,ownerId}){
+ return{
+  async hasLearningAccess(uid){const[r]=await sql`select exists(select 1 from salah_classroom_private.enrollments e join salah_classroom_private.lessons l on l.id=e.lesson_id where e.user_id=${uid}::uuid and l.state<>'cancelled' and (l.owner_id=${ownerId}::uuid or exists(select 1 from salah_classroom_private.teachers t where t.user_id=l.owner_id and t.active))) as allowed`;return r?.allowed===true;},
+  async studentLookup(nickname,teacherId){return(await sql`select id,raw_user_meta_data->>'nickname' as nickname from auth.users where id<>${teacherId}::uuid and email_confirmed_at is not null and not coalesce(is_anonymous,false) and (banned_until is null or banned_until<=now()) and strpos(lower(trim(raw_user_meta_data->>'nickname')),${nickname})>0 order by (lower(trim(raw_user_meta_data->>'nickname'))=${nickname}) desc,id limit 8`).map(row=>({id:row.id,nickname:String(row.nickname).trim().slice(0,40)}));},
+  async studentSet(row,actorId,targetId,add){return sql.begin(async tx=>{
+   const[l]=await tx`select owner_id,state,ends_at,details from salah_classroom_private.lessons where id=${row.id} for update`;
+   if(!l||l.state==='cancelled'||targetId===l.owner_id||actorId!==ownerId&&actorId!==l.owner_id)return false;
+   if(actorId!==ownerId){const[t]=await tx`select active from salah_classroom_private.teachers where user_id=${actorId}::uuid for share`;if(t?.active!==true)return false;}
+   if(!add){await tx`delete from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${targetId}::uuid`;return true;}
+   if(!['planned','live'].includes(l.state)||l.ends_at.getTime()<=Date.now())return false;
+   const[u]=await tx`select id,raw_user_meta_data->>'nickname' as nickname from auth.users where id=${targetId}::uuid and email_confirmed_at is not null and not coalesce(is_anonymous,false) and (banned_until is null or banned_until<=now()) for share`;if(!u)return false;
+   const[prior]=await tx`select user_id from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${targetId}::uuid`;if(prior)return true;
+   const[n]=await tx`select count(*)::int as n from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id<>${l.owner_id}::uuid`;if(n.n>=l.details.maxParticipants-1)return false;
+   const nickname=typeof u.nickname==='string'&&u.nickname.trim()?u.nickname.trim().slice(0,40):'Ученик';
+   await tx`insert into salah_classroom_private.enrollments(lesson_id,user_id,nickname,reminders_enabled)values(${row.id},${targetId}::uuid,${nickname},false)on conflict(lesson_id,user_id)do nothing`;return true;
+  });}
+ };
+}
+
 const CLASSROOM_OWNER='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
 const CLASSROOM_ORIGINS=new Set(['https://skodytunez-maker.github.io','https://desktop-jecm5lt.taila4556d.ts.net']);
 const opaque=/^[A-Za-z0-9_-]{32}$/,uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -287,9 +319,9 @@ function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    const joined=new Uint8Array(bytes);let pos=0;for(const chunk of chunks){joined.set(chunk,pos);pos+=chunk.length;}
    let input;try{input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(joined));}catch{fail(400,'Неверный запрос.');}
    if(!input||typeof input!=='object'||Array.isArray(input))fail(400,'Неверный запрос.');
-   const action=input.action,ownerAction=['create','update','transition','owner-list','set-homework'].includes(action)||WORK_OWNER_ACTIONS.includes(action)||action==='class-pupils'||action==='portal'&&input.view==='teacher';
+   const action=input.action,studentAdmin=STUDENT_ADMIN_ACTIONS.includes(action),ownerAction=studentAdmin||['create','update','transition','owner-list','set-homework'].includes(action)||WORK_OWNER_ACTIONS.includes(action)||action==='class-pupils'||action==='portal'&&input.view==='teacher';
    const adminAction=TEACHER_ADMIN_ACTIONS.includes(action);
-   if(![...TEACHER_ADMIN_ACTIONS,'teacher-access','create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences','homework','set-homework','portal','class-pupils',...WORK_ACTIONS].includes(action))fail(400,'Неизвестное действие.');
+   if(![...TEACHER_ADMIN_ACTIONS,...STUDENT_ADMIN_ACTIONS,'teacher-access','create','update','transition','owner-list','preview','enroll','detail','mine','access','leave','preferences','homework','set-homework','portal','class-pupils',...WORK_ACTIONS].includes(action))fail(400,'Неизвестное действие.');
    let actor=await verifyAccount(bearer[1],{teacherRequired:ownerAction||action==='teacher-access',ownerRequired:adminAction});
    if(!uuid.test(actor?.id||''))fail(401,'Войдите в аккаунт SALAH.');
    if(action==='work-file'&&(actor.teacher||actor.id===CLASSROOM_OWNER))actor=await verifyAccount(bearer[1],{teacherRequired:true});
@@ -305,19 +337,22 @@ function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    }
    if(action==='portal'){
     if(!['student','teacher'].includes(input.view))fail(400,'Выберите кабинет.');
+    if(input.view==='student'&&!actor.teacher&&!actor.owner&&!await db.hasLearningAccess(actor.id))fail(403,'Кабинет откроется, когда преподаватель или владелец добавит вас на занятие.');
     const teaching=input.view==='teacher',rows=await db.list(actor.id,teaching),summaries=await db.portalSummary(actor.id,teaching,rows.map(row=>row.id));
     const byId=new Map(summaries.map(summary=>[summary.lessonId,summary]));
     return reply(200,{view:input.view,account:{id:actor.id,nickname:actor.nickname||'Участник SALAH'},canTeach:actor.teacher===true||actor.owner===true,canManageTeachers:actor.id===CLASSROOM_OWNER,lessons:rows.map(row=>{const summary=byId.get(row.id)||{};return{...publicSchedule(row),...(teaching?{pupilCount:summary.pupilCount||0,pendingCount:summary.pendingCount||0}:{work:summary.work||null})};})});
    }
-   if(['mine','owner-list'].includes(action))return reply(200,{lessons:(await db.list(actor.id,action==='owner-list')).map(l=>publicSchedule(l))});
+   if(['mine','owner-list'].includes(action)){if(action==='mine'&&!actor.teacher&&!actor.owner&&!await db.hasLearningAccess(actor.id))fail(403,'Доступ к обучению ещё не назначен.');return reply(200,{lessons:(await db.list(actor.id,action==='owner-list')).map(l=>publicSchedule(l))});}
    let row;if(['preview','enroll'].includes(action)||action==='homework'&&input.code!==undefined){if(!opaque.test(input.code||''))fail(404,'Приглашение недействительно.');row=await db.byInvite(await inviteDigest(input.code));}
    else{if(!opaque.test(input.id||''))fail(404,'Урок не найден.');row=await db.get(input.id);}
    if(!row)fail(404,'Урок недоступен.');
    const isOwner=actor.id===row.ownerId,enrollment=await db.enrollment(row.id,actor.id);
    if(isOwner&&!actor.teacher&&!actor.owner)fail(403,'Доступ преподавателя отозван.');
    if(db.teacherRole&&['preview','enroll','access','preferences'].includes(action)&&!(await db.teacherRole(row.ownerId)).active)fail(403,'Доступ к занятию временно приостановлен.');
-   if(ownerAction&&!isOwner)fail(403,'Нет доступа к этому уроку.');
-   if(!['preview','enroll'].includes(action)&&!isOwner&&!enrollment)fail(403,'Войдите по приглашению преподавателя.');
+   const admissionOwner=studentAdmin&&actor.id===CLASSROOM_OWNER&&actor.owner===true;
+   if(ownerAction&&!isOwner&&!admissionOwner)fail(403,'Нет доступа к этому уроку.');
+   if(!isOwner&&!admissionOwner&&!enrollment)fail(403,'Доступ к занятию ещё не назначен. Попросите преподавателя добавить ваш ник в SALAH.');
+   if(studentAdmin)return reply(200,await studentAdmission({action,input,actor,row,db,fail}));
    if(action==='class-pupils'){
     if(row.state==='cancelled')fail(410,'Занятие отменено.');
     return reply(200,{lesson:publicSchedule(row),pupils:await db.portalPupils(row.id,actor.id)});
@@ -355,7 +390,7 @@ function createScheduleHandler({db,verifyAccount,storage,now=Date.now}){
    if(['enroll','preferences'].includes(action)){
     if(typeof input.remindersEnabled!=='boolean')fail(400,'Выберите настройку напоминания.');
     registered=await db.enroll(row,actor.id,text(actor.nickname||'Ученик',40,'ник'),input.remindersEnabled);
-    if(!registered)fail(409,'Все ученические места заняты.');
+    if(!registered)fail(403,'Доступ к занятию изменился. Попросите преподавателя проверить список учеников.');
    }
    if(action==='access'&&!registered&&!isOwner)fail(403,'Сначала запишитесь по приглашению.');
    return reply(200,{lesson:publicSchedule(row,Boolean(registered)||isOwner),account:{id:actor.id,nickname:actor.nickname||'Ученик'},enrolled:Boolean(registered)||isOwner,remindersEnabled:registered?.remindersEnabled===true,owner:isOwner});
@@ -376,7 +411,7 @@ const db={
  async list(uid,owner){const rows=owner?await sql`select * from salah_classroom_private.lessons where owner_id=${uid}::uuid and (ends_at>now()-interval '7 days' or (state<>'cancelled' and coalesce(length(details->'homework'->>'text'),0)>0)) order by starts_at limit 50`:await sql`select l.* from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id where e.user_id=${uid}::uuid and (l.ends_at>now()-interval '1 day' or (l.state<>'cancelled' and coalesce(length(l.details->'homework'->>'text'),0)>0)) order by l.starts_at desc limit 50`;return rows.map(fromRow);},
  async update(row,revision){const rows=await sql`update salah_classroom_private.lessons set details=${sql.json(row)} || jsonb_build_object('homework',details->'homework','homeworkRevision',coalesce(details->'homeworkRevision','0'::jsonb)),state=${row.state},revision=${row.revision},starts_at=to_timestamp(${row.startsAt}/1000.0),ends_at=to_timestamp(${row.endsAt}/1000.0),reminder_at=to_timestamp(${row.reminderAt}/1000.0) where id=${row.id} and owner_id=${row.ownerId}::uuid and revision=${revision} returning id`;return rows.length===1;},
  async updateHomework(row,expected){const rows=await sql`update salah_classroom_private.lessons set details=details || ${sql.json({homework:row.homework,homeworkRevision:row.homeworkRevision})} where id=${row.id} and owner_id=${row.ownerId}::uuid and state<>'cancelled' and revision=${row.revision} and coalesce((details->>'homeworkRevision')::int,0)=${expected} returning id`;return rows.length===1;},
- async enroll(row,uid,nickname,reminders){return sql.begin(async tx=>{const[l]=await tx`select * from salah_classroom_private.lessons where id=${row.id} for update`;if(!l||!['planned','live'].includes(l.state)||l.ends_at.getTime()<=Date.now())return null;const[prior]=await tx`select user_id from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id=${uid}::uuid`;if(!prior){const[n]=await tx`select count(*)::int as n from salah_classroom_private.enrollments where lesson_id=${row.id} and user_id<>${l.owner_id}::uuid`;if(uid!==l.owner_id&&n.n>=l.details.maxParticipants-1)return null;}await tx`insert into salah_classroom_private.enrollments(lesson_id,user_id,nickname,reminders_enabled)values(${row.id},${uid}::uuid,${nickname},${reminders})on conflict(lesson_id,user_id)do update set nickname=excluded.nickname,reminders_enabled=excluded.reminders_enabled`;return{remindersEnabled:reminders};});},
+ async enroll(row,uid,nickname,reminders){const[r]=await sql`update salah_classroom_private.enrollments e set nickname=${nickname},reminders_enabled=${reminders} from salah_classroom_private.lessons l where e.lesson_id=${row.id} and e.user_id=${uid}::uuid and l.id=e.lesson_id and l.state in('planned','live') and l.ends_at>now() returning e.reminders_enabled`;return r?{remindersEnabled:r.reminders_enabled}:null;},
  async removeEnrollment(id,uid){await sql`delete from salah_classroom_private.enrollments where lesson_id=${id} and user_id=${uid}::uuid`;}
 };
 async function verifyAccount(token,{ownerRequired=false,teacherRequired=false}={}){
@@ -389,7 +424,7 @@ async function verifyAccount(token,{ownerRequired=false,teacherRequired=false}={
  const candidate=u.user_metadata?.nickname,nickname=typeof candidate==='string'&&candidate.trim().length>=2&&candidate.trim().length<=40&&!/[\x00-\x1f]/.test(candidate)?candidate.trim():'Ученик';
  return{id:u.id,nickname,owner,teacher:role.active,teacherRevision:role.revision};
 }
-Object.assign(db,createHomeworkDb({sql}),createLearningPortalDb({sql}),createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}));
+Object.assign(db,createHomeworkDb({sql}),createLearningPortalDb({sql}),createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}),createStudentAdmissionDb({sql,ownerId:CLASSROOM_OWNER}));
 const storageSecret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const storage=createHomeworkStorage(storageSecret?createClient(PROJECT,storageSecret,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}):null);
 Deno.serve(createScheduleHandler({db,verifyAccount,storage}));

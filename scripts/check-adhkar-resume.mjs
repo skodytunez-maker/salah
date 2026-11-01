@@ -283,3 +283,14 @@ console.log('PASS: compact speaker/pause control, actual provider mapping, exter
 // Actual prescribed counter UI, including the pause and consent tap.
 let completionClock=0;const completion=browser({hash:'#adhkar?group=morning&view=card&item=surah112',clock:()=>completionClock});await completion.open();for(let i=0;i<3;i++)await completion.select('#adhkar-count').click();assert.equal(completion.select('#adhkar-count').disabled,true);assert.match(completion.select('#adhkar-count').textContent,/Выполнил/);const prescribedTotal=JSON.parse(completion.storage.getItem('salah:adhkar-progress-v2')).totals.surah112;completionClock=1200;completion.flushCounterTimers();assert.equal(completion.select('#adhkar-count').disabled,false);await completion.select('#adhkar-count').click();assert.match(completion.select('#adhkar-count').textContent,/0 дополнительно/);assert.equal(JSON.parse(completion.storage.getItem('salah:adhkar-progress-v2')).totals.surah112,prescribedTotal);completionClock=1700;completion.flushCounterTimers();await completion.select('#adhkar-count').click();const afterExtra=JSON.parse(completion.storage.getItem('salah:adhkar-progress-v2'));assert.equal(afterExtra.days['2026-10-02'].morning.counts.surah112,3);assert.equal(afterExtra.days['2026-10-02'].morning.extraCounts.surah112,1);assert.equal(afterExtra.totals.surah112,prescribedTotal+1);completion.module.stopAdhkar();console.log('PASS: deliberate completion screen preserves base, does not count the unlock tap and shows extra repetitions separately.');
 await import('./check-adhkar-completion.mjs');
+
+// The long translated text scrolls independently; counting/completion is outside it.
+const layout=browser({hash:'#adhkar?group=evening&view=card&item=sayyid'});await layout.open();
+const reading=layout.select('.adhkar-reading-content'),dock=layout.select('.dhikr-counter-dock');
+assert.ok(reading.querySelector('.dhikr-passage'));assert.equal(reading.querySelector('#adhkar-count'),null);
+assert.equal(dock.querySelector('#adhkar-count'),layout.select('#adhkar-count'));
+assert.equal(reading.attributes.role,'region');assert.equal(reading.attributes.tabindex,'0');
+await layout.select('#adhkar-count').click();assert.match(dock.textContent,/1/);
+await layout.select('#adhkar-next').click();assert.equal(layout.select('.adhkar-reading-content').querySelector('#adhkar-count'),null);
+assert.equal(layout.container.querySelectorAll('.dhikr-counter-dock').length,1);
+layout.module.stopAdhkar();console.log('PASS: independent keyboard-accessible reading area, sibling counter, working count and single dock after paging.');

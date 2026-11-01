@@ -7,40 +7,58 @@ import{accountAuthClient,checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}
 import{createOwnerFrameViewport}from './owner-frame-viewport.js';
 import{claimPlayback}from './media-playback-focus.js';
 const origin='https://desktop-jecm5lt.taila4556d.ts.net',pattern=/^[\w-]{32}$/;
-let active=null;
+let active=null,portalCache=null;
 export const studentLessonBusy=()=>Boolean(active?.formDirty||active?.workBusy||(active?.busy&&active.frame?.isConnected));
-export function stopStudentLesson(){if(!active)return;const old=active;active=null;old.disposed=true;old.host.removeEventListener('input',old.formInput);old.host.removeEventListener('change',old.formInput);old.host.removeEventListener('click',old.formCancel);old.stopCabinet?.();old.stopCabinet=null;old.stopWork?.();old.stopWork=null;clearInterval(old.timer);clearTimeout(old.timeout);old.viewport?.dispose();if(old.listen)window.removeEventListener('message',old.listen);try{old.frame?.contentWindow?.postMessage({type:'salah:owner-preview-leave',nonce:old.nonce},origin);}catch{}old.frame?.remove();}
+export function stopStudentLesson({keepPortal=false}={}){if(!keepPortal)portalCache=null;if(!active)return;const old=active;active=null;old.disposed=true;old.host.removeEventListener('input',old.formInput);old.host.removeEventListener('change',old.formInput);old.host.removeEventListener('click',old.formCancel);old.stopCabinet?.();old.stopCabinet=null;old.stopWork?.();old.stopWork=null;clearInterval(old.timer);clearTimeout(old.timeout);old.viewport?.dispose();if(old.listen)window.removeEventListener('message',old.listen);try{old.frame?.contentWindow?.postMessage({type:'salah:owner-preview-leave',nonce:old.nonce},origin);}catch{}old.frame?.remove();}
 export const lessonAccountReturn=hash=>{const p=new URLSearchParams(hash.split('?')[1]||''),code=p.get('lesson'),id=p.get('lessonClass');return p.get('lessonHome')==='1'?'#lesson':pattern.test(code||'')?'#lesson?invite='+code:pattern.test(id||'')?'#lesson?class='+id:null;};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function showLessonInvitation(host,{hash=location.hash}={}){
  const params=new URLSearchParams(hash.split('?')[1]||''),code=params.get('invite'),id=params.get('class'),mine=!code&&!id,cabinetMode=params.get('view')||'student',cabinetTab=params.get('tab')||'overview',key=code||id||['portal',cabinetMode,cabinetTab,params.get('focus')||'',params.get('student')||'',params.get('new')||'',params.get('room')||''].join(':');
  if(active?.host===host&&active.key===key&&!active.disposed)return;
- stopStudentLesson();const state={host,key,disposed:false,busy:false};active=state;
+ stopStudentLesson({keepPortal:mine&&active?.mine===true&&active.host===host});const state={host,key,mine,disposed:false,busy:false};active=state;
  const live=()=>active===state&&!state.disposed&&host.isConnected;
- state.formInput=event=>{if(live()&&event.target.closest?.('form')&&!event.target.readOnly)state.formDirty=true;};
+ state.formInput=event=>{if(live()&&event.target.closest?.('form:not([data-student-search])')&&!event.target.readOnly)state.formDirty=true;};
  state.formCancel=event=>{if(event.target.closest?.('[data-cancel],[data-cancel-form]'))state.formDirty=false;};
  host.addEventListener('input',state.formInput);host.addEventListener('change',state.formInput);host.addEventListener('click',state.formCancel);
  function panel(content){state.stopCabinet?.();state.stopCabinet=null;state.stopWork?.();state.stopWork=null;state.workBusy=false;if(live())host.innerHTML='<section class="alphabet-page lesson-account-entry"><a class="alphabet-back" href="#lesson">← Моё обучение</a><span class="knowledge-eyebrow">ОНЛАЙН-ЗАНЯТИЯ · SALAH</span>'+content+'</section>';}
  if(!mine&&(!pattern.test(key||'')||Boolean(code)===Boolean(id))){panel('<h1>Приглашение недоступно</h1><p>Откройте общую ссылку преподавателя.</p>');return;}
  panel('<h1>Приглашение на занятие</h1><p role="status">Проверяем вход в SALAH…</p>');
  let userId=null,checkedToken=null;
- async function token(){const checked=await checkAccountSession({force:true});if(['unavailable','changed'].includes(checked.state))throw Object.assign(Error('Не удалось проверить вход. Попробуйте ещё раз.'),{status:503});if(checked.state!=='valid'||!checked.session?.user?.email_confirmed_at||checked.session.user.is_anonymous)throw Object.assign(Error('Войдите в аккаунт SALAH.'),{status:401});if(userId&&userId!==checked.session.user.id)throw Object.assign(Error('Аккаунт изменился. Откройте приглашение заново.'),{status:401});userId=checked.session.user.id;return checked.session.access_token;}
- async function call(action,extra={}){const access=await token();const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/classroom-schedule',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+access,'Content-Type':'application/json'},body:JSON.stringify({action,...(code?{code}:{id}),...extra}),credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw Object.assign(Error(value.error||'Не удалось открыть занятие.'),{status:response.status});if(['submit-work','review-work','set-homework'].includes(action))state.formDirty=false;return value;}
+ async function token(){const checked=await checkAccountSession();if(['unavailable','changed'].includes(checked.state))throw Object.assign(Error('Не удалось проверить вход. Попробуйте ещё раз.'),{status:503});if(checked.state!=='valid'||!checked.session?.user?.email_confirmed_at||checked.session.user.is_anonymous)throw Object.assign(Error('Войдите в аккаунт SALAH.'),{status:401});if(userId&&userId!==checked.session.user.id)throw Object.assign(Error('Аккаунт изменился. Откройте приглашение заново.'),{status:401});userId=checked.session.user.id;return checked.session.access_token;}
+ async function call(action,extra={}){const access=await token();const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/classroom-schedule',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+access,'Content-Type':'application/json'},body:JSON.stringify({action,...(code?{code}:{id}),...extra}),credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw Object.assign(Error(value.error||'Не удалось открыть занятие.'),{status:response.status});if(['submit-work','review-work','set-homework','student-add','student-remove'].includes(action)){state.formDirty=false;portalCache=null;}return value;}
+ async function portal(view,{force=false}={}){
+  // Only this open cabinet retains server responses, briefly and per account.
+  // Every action still passes the server's live role/session checks.
+  await token();if(!live())throw Error('Кабинет закрыт.');
+  if(portalCache?.userId!==userId)portalCache={userId,views:new Map(),pending:new Map()};
+  const cache=portalCache,entry=cache.views.get(view);
+  if(!force&&entry&&Date.now()-entry.at<15000)return entry.data;
+  if(!force&&cache.pending.has(view))return cache.pending.get(view);
+  const task=call('portal',{view}).then(value=>{if(value.account?.id!==userId)throw Object.assign(Error('Аккаунт изменился. Откройте кабинет заново.'),{status:401});if(portalCache===cache){cache.views.set(view,{data:value,at:Date.now()});if(value.canTeach!==true)cache.views.delete('teacher');}return value;});
+  cache.pending.set(view,task);try{return await task;}finally{if(cache.pending.get(view)===task)cache.pending.delete(view);}
+ }
+ function navigateCabinet(next){
+  if(!live()||next===location.hash)return;
+  if(studentLessonBusy()&&!window.confirm('Перейти без сохранения изменений?'))return;
+  history.replaceState(history.state,'',next);showLessonInvitation(host,{hash:next});
+  window.dispatchEvent(new CustomEvent('salah:route-history'));window.scrollTo({top:0,behavior:'instant'});
+ }
  function signedOut(message){const returnKey=mine?'lessonHome=1':code?'lesson='+code:'lessonClass='+id;panel('<h1>Войдите в SALAH</h1><p>'+esc(message||'Для записи и входа на занятие нужен ваш аккаунт SALAH.')+'</p><a class="button" href="#account?'+returnKey+'">Вход и регистрация</a><button class="button secondary" type="button" data-retry>Проверить вход</button>');host.querySelector('[data-retry]')?.addEventListener('click',()=>{stopStudentLesson();showLessonInvitation(host,{hash});});}
- async function draw(){
+ async function draw(force=false){
   if(mine){
    if(!['student','teacher'].includes(cabinetMode))throw Object.assign(Error('Кабинет не найден.'),{status:404});
-   const result=await call('portal',{view:cabinetMode});if(!live())return;if(result.account?.id!==userId)throw Object.assign(Error('Аккаунт изменился. Откройте кабинет заново.'),{status:401});
+   const result=await portal(cabinetMode,{force});if(!live())return;if(result.account?.id!==userId)throw Object.assign(Error('Аккаунт изменился. Откройте кабинет заново.'),{status:401});
    if(params.get('room')&&cabinetMode==='teacher'){if(!pattern.test(params.get('room')))throw Error('Урок не найден.');await join(params.get('room'),true);return;}
    state.stopWork?.();state.stopWork=null;state.stopCabinet?.();
    const privateCall=async(path,input,method='GET')=>{const access=await token();const response=await fetch(origin+'/api/'+path,{method,headers:{Authorization:'Bearer '+access,...(method==='POST'?{'Content-Type':'application/json'}:{})},...(method==='POST'?{body:JSON.stringify(input||{})}:{}),credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw Object.assign(Error(value.error||'Не удалось открыть расписание.'),{status:response.status});if(method==='POST')state.formDirty=false;return value;};
-   state.stopCabinet=mountLearningCabinet(host,{data:result,tab:cabinetTab,selectedClass:params.get('focus'),onRefresh:()=>void run(),onLesson:(lessonId,enter)=>{location.hash='#lesson?class='+lessonId+(enter?'&enter=1':'');},
+   state.stopCabinet=mountLearningCabinet(host,{data:result,tab:cabinetTab,selectedClass:params.get('focus'),onRefresh:()=>void run({force:true}),onNavigate:navigateCabinet,onLesson:(lessonId,enter)=>{location.hash='#lesson?class='+lessonId+(enter?'&enter=1':'');},
     mountTeachers:slot=>mountTeacherAdmin(slot,{call,isActive:live}),
     makeHref:(mode,tab='overview',extra={})=>'#lesson?'+new URLSearchParams({view:mode,tab,...extra,...(params.get('return')==='owner'&&result.canManageTeachers?{return:'owner'}:{})}),
     mountSchedule:slot=>{const placeholder=host.ownerDocument.createElement('div');placeholder.className='lesson-list';placeholder.hidden=true;slot.append(placeholder);const stop=mountLessonPlans({root:slot,api:path=>privateCall(path),post:(path,input)=>privateCall(path,input,'POST'),onStart:async lessonId=>{location.hash='#lesson?view=teacher&room='+lessonId+(params.get('return')==='owner'&&result.canManageTeachers?'&return=owner':'');}});if(params.get('new')==='1')slot.querySelector('[data-new]')?.click();return()=>{stop();placeholder.remove();};},
     mountHomework:(slot,lesson)=>mountCabinetHomework(slot,{lesson,call,isActive:live,selectedStudent:params.get('student')}),
-    mountPupils:(slot,lesson)=>mountCabinetPupils(slot,{lesson,call,isActive:live,onReview:(lessonId,studentId)=>{location.hash='#lesson?view=teacher&tab=homework&focus='+lessonId+'&student='+studentId;}})
-   });if(params.get('return')==='owner'&&result.canManageTeachers){const back=host.querySelector('.learning-cabinet>a.alphabet-back');if(back){back.href='#admin?view=teachers';back.textContent='← Преподаватели';}}return;
+    mountPupils:(slot,lesson)=>mountCabinetPupils(slot,{lesson,call,isActive:live,onReview:(lessonId,studentId)=>navigateCabinet('#lesson?view=teacher&tab=homework&focus='+lessonId+'&student='+studentId)})
+   });if(params.get('return')==='owner'&&result.canManageTeachers){const back=host.querySelector('.learning-cabinet>a.alphabet-back');if(back){back.href='#admin?view=teachers';back.textContent='← Преподаватели';}}
+   if(result.canTeach===true)void portal(cabinetMode==='teacher'?'student':'teacher').catch(()=>{});return;
   }
   let data;if(code){try{data=await call('preview');}catch(error){if(error.status!==410)throw error;data=await call('homework');}}else data=await call('homework');if(!live())return;
   const l=data.lesson,closed=['ended','cancelled'].includes(l.state)||l.endsAt<=Date.now(),date=new Intl.DateTimeFormat('ru-RU',{timeZone:l.timeZone,weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}).format(l.startsAt);
@@ -68,6 +86,7 @@ export function showLessonInvitation(host,{hash=location.hash}={}){
   };
   window.addEventListener('message',state.listen);state.timer=setInterval(()=>void send(),20000);state.timeout=setTimeout(()=>{const el=host.querySelector('[data-room-status]');if(live()&&el&&!el.hidden)el.textContent='Подключение задерживается. Вернитесь к приглашению и повторите.';},15000);
  }
- async function run(){if(state.formDirty&&!window.confirm('Обновить раздел без сохранения изменений?'))return;try{await draw();}catch(error){if(!live())return;if(error.status===401)signedOut();else{panel('<h1>'+(mine?'Кабинет пока недоступен':'Занятие недоступно')+'</h1><p role="alert">'+esc(error.message)+'</p>'+(mine&&cabinetMode==='teacher'?'<a class="button secondary" href="#account">Проверить аккаунт</a><a class="text-button" href="#lesson">Моё обучение</a>':'')+'<button class="button secondary" type="button" data-retry>Повторить</button>');host.querySelector('[data-retry]').onclick=()=>void run();}}}
+ async function run({force=false}={}){if(state.formDirty&&!window.confirm('Обновить раздел без сохранения изменений?'))return;try{await draw(force);}catch(error){if(!live())return;if([401,403].includes(error.status))portalCache=null;if(error.status===401)signedOut();else{panel('<h1>'+(mine?'Кабинет пока недоступен':'Занятие недоступно')+'</h1><p role="alert">'+esc(error.message)+'</p>'+(mine&&cabinetMode==='teacher'?'<a class="button secondary" href="#account">Проверить аккаунт</a><a class="text-button" href="#lesson">Моё обучение</a>':'')+'<button class="button secondary" type="button" data-retry>Повторить</button>');host.querySelector('[data-retry]').onclick=()=>void run({force:true});}}}
  void run();
 }
+
