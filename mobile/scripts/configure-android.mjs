@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {configureAndroidIcons} from './android-icons.mjs';
 import {syncAndroidVersion} from './android-release.mjs';
+import {configureOptionalAndroidHardware} from './android-optional-hardware.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const mobileRoot=path.resolve(here,'..');
@@ -45,6 +46,7 @@ const manifestPath=path.join(androidRoot,'AndroidManifest.xml');
 let manifest=await fs.readFile(manifestPath,'utf8');
 if(!manifest.includes('android.permission.CAMERA'))manifest=manifest.replace('<application','<uses-permission android:name="android.permission.CAMERA" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n    <application');
 for(const permission of ['RECORD_AUDIO','MODIFY_AUDIO_SETTINGS','ACCESS_COARSE_LOCATION','ACCESS_FINE_LOCATION','POST_NOTIFICATIONS','SCHEDULE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED','FOREGROUND_SERVICE','FOREGROUND_SERVICE_MEDIA_PLAYBACK','WAKE_LOCK'])if(!manifest.includes('android.permission.'+permission))manifest=manifest.replace('<application','<uses-permission android:name="android.permission.'+permission+'" />\n    <application');
+manifest=configureOptionalAndroidHardware(manifest);
 if(!manifest.includes('android:name=".SalahAdhanService"'))manifest=manifest.replace('</application>','<service android:name=".SalahAdhanService" android:exported="false" android:foregroundServiceType="mediaPlayback" />\n    </application>');
 const reminderReceiver=`        <receiver android:name=".SalahReminderReceiver" android:exported="false">
             <intent-filter>

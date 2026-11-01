@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version429 — preserve Android device compatibility (2 November2026)
+
+Google Play detected28 devices excluded by permission-implied hardware requirements in the428 candidate. Declare location, GPS, network location and microphone hardware optional: city selection and the application remain usable without location/recording hardware. Preserve runtime permission requests, manifest components and all428 Quran queue continuity changes. Verify optional declarations in the actual built App Bundle. Minor release preserves announcement425, artwork, acknowledgement and expiry. Closed sections remain closed; no account data or listening scores are changed.
+
+
 ## Version428 — Quran queue audio-session continuity (2 November2026)
 
 Keep one playback-category owner throughout the Quran queue. Automatic chapter transitions reuse the permitted media element without unloading its source or releasing/reacquiring the OS audio session. Retire old player callbacks before switching; maintain pause/stop precedence and release the category at final completion, failure or explicit stop. Preserve existing announcement425, artwork, acknowledgement and expiry. No recording replacements, listening-time corrections or closed-section access changes. Automated lifecycle regression is covered; iPhone locked-screen acceptance remains necessary.
