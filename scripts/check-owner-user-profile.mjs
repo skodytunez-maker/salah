@@ -34,6 +34,7 @@ const db=new PGlite();await db.exec(`create schema auth;create schema storage;cr
  insert into storage.objects values('profile-avatars','${first}/profile.jpg');insert into salah_competition_private.preferences values('${first}');
  insert into fixture_scores values('${first}','all','ar.alafasy',90000),('${first}','all','ar.badralturki',600),('${first}','day','ar.alafasy',120),('${first}','week','ar.alafasy',600),('${first}','month','ar.alafasy',900),('${second}','all','ar.alafasy',1000000);
  insert into salah_competition_private.awards values('${first}','hours25',now()),('${second}','hours100',now());`);
+await db.exec(`create table salah_competition_private.award_periods(kind text,ends_on date);alter table salah_competition_private.awards add column id uuid,add column ends_on date,add column seconds bigint;`);
 const statements=[];
 const tag=client=>(parts,...args)=>{const text=parts.reduce((s,part,i)=>s+(i?'$'+i:'')+part,'');statements.push(text);return client.query(text,args).then(r=>r.rows);};
 const sql=tag(db);sql.begin=fn=>db.transaction(tx=>fn(tag(tx)));

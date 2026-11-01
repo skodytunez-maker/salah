@@ -1,3 +1,12 @@
+// A title belongs to one winner of the latest finalized period, never to all
+// historical winners. Existing award records remain immutable history.
+export async function currentTitleHolders(sql){
+ const rows=await sql`with recent as(select kind,max(ends_on)ends_on from salah_competition_private.award_periods where kind in('week','month') group by kind)
+ select distinct on(a.kind) a.kind,a.user_id from salah_competition_private.awards a join recent r on r.kind=a.kind and r.ends_on=a.ends_on
+ order by a.kind,a.seconds desc,a.earned_at,a.user_id,a.id`;
+ const result={week:null,month:null};for(const row of rows)if(Object.hasOwn(result,row.kind))result[row.kind]=row.user_id;return result;
+}
+
 // Deploy only to the separate SALAH project. Storage credentials stay server-side.
 // A valid session is checked against Auth on EVERY request before owner access.
 const OWNER_ID='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
@@ -119,9 +128,11 @@ export async function readOwnerUserDetails(sql,id,activityDay=null){
   const periods={all:0,day:0,week:0,month:0};for(const row of scores){const value=Number(row.seconds);if(!Object.hasOwn(periods,row.period)||!Number.isSafeInteger(value)||value<0||!Number.isSafeInteger(periods[row.period]+value))throw Error('invalid_score');periods[row.period]+=value;}
   const reciters=scores.filter(row=>row.period==='all').map(row=>({id:row.reciter,seconds:Number(row.seconds)})).sort((a,b)=>b.seconds-a.seconds||a.id.localeCompare(b.id)).slice(0,5);
   const awards=await tx`select kind,count(*)::int as count,max(earned_at) as "earnedAt" from salah_competition_private.awards where user_id=${id}::uuid group by kind order by max(earned_at) desc,kind limit 15`;
+  const holders=await currentTitleHolders(tx);
+  const visibleAwards=awards.filter(row=>!['week','month'].includes(row.kind)||holders[row.kind]===id);
   const [saved]=await tx`select max(updated_at) as "updatedAt" from salah_competition_private.totals where user_id=${id}::uuid`;
   const targetDay=activityDay||user.day;const [activity]=await tx`select exists(select 1 from salah_counter_private.activity_days where user_id=${id}::uuid and day=${targetDay}::date) as active`;
-  return{adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards,updatedAt:saved?.updatedAt||null};
+  return{adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:visibleAwards,updatedAt:saved?.updatedAt||null};
  });
 }
 

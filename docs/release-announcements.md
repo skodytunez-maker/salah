@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version431 — learning entries and transferable period titles (2 November2026)
+
+Place the server-verified owner-cabinet entry first in My Account, before the avatar, statistics and awards. Move current-role teaching and enrolled-student entries to the start of Knowledge; teacher management remains in the owner workspace. Read roles only from the existing verified classroom portal response, reject late/switched-account results, and never expose experimental Knowledge cards to public visitors. Weekly/monthly titles belong to one winner of the latest finalized period and transfer only after the next completed-period result. Keep original awards as historical records; show full win history from the bottom of Top SALAH. Public podium badges, own account and owner-viewed user profiles use the same current-holder rule. Ties select one stable holder by score, award timestamp, account ID and award ID. No source award records are deleted or rewritten. Preserve430 listening persistence,429 Quran queue transitions, announcement425, acknowledgment and expiry.
+
+
 ## Candidate430 — durable personal listening in Top SALAH (2 November2026)
 
 Use the greater of the confirmed board score and the account-scoped local period counter for the displayed own-reciter duration. Remove mount-local additive previews: reopening must retain locally recorded pending time; server acknowledgment must not add it twice. Other-device time comes from refreshed confirmed results; local display cannot change the confirmed rank. Checkpoint actual media progress at most every five seconds from media callbacks, even when background interval timers are suspended; save the final tail on pause/end and sample before pagehide/visibility saves. No invented listening credit or live database changes. Exact historical27-minute difference is not proved from present records. Minor fix retains announcement425, artwork, acknowledgment and expiry. Quran429 queue changes and closed-section gates remain unchanged. Local candidate, not published.
