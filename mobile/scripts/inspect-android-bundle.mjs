@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {androidReleaseVersion} from './android-release.mjs';
 import {PLAY_PACKAGE,NATIVE_PACKAGE} from './configure-play-release.mjs';
+import {verifyOptionalAndroidHardware} from './android-optional-hardware.mjs';
 export function bundleManifestReport(xml,expected){
  const attribute=(tag,name)=>xml.match(new RegExp('<'+tag+'\\b[^>]*\\b'+name+'="([^"<>]+)"'))?.[1];
  const report={applicationId:attribute('manifest','package'),versionCode:Number(attribute('manifest','android:versionCode')),versionName:attribute('manifest','android:versionName'),targetSdk:Number(attribute('uses-sdk','android:targetSdkVersion')),minSdk:Number(attribute('uses-sdk','android:minSdkVersion')),debuggable:attribute('application','android:debuggable')==='true'};
@@ -20,6 +21,7 @@ export async function inspectBundle(bundle,output,{signed=false}={}){
  const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
  const expected=androidReleaseVersion(await fs.readFile(path.join(root,'dist/js/app-release.js'),'utf8'));
  const report=bundleManifestReport(xml,expected);
+ if(expected.versionCode>=429)verifyOptionalAndroidHardware(xml);
  report.permissions=[...xml.matchAll(/<uses-permission\b[^>]*android:name="([^"]+)"/g)].map(m=>m[1]);
  if(expected.versionCode>=343)for(const permission of ['ACCESS_COARSE_LOCATION','ACCESS_FINE_LOCATION'])if(!report.permissions.includes('android.permission.'+permission))throw Error('Bundle is missing foreground location permission: '+permission);
  const entries=execFileSync('unzip',['-Z1',path.resolve(bundle)],{encoding:'utf8',timeout:30000}).split(/\r?\n/);
