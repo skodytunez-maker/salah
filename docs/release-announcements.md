@@ -408,3 +408,7 @@ Minor history layout correction: below the winner show the actual earnedAt date 
 
 ## 435 — Period labels and phone disclosure
 History identifies the period won: compact week date range or month name and year, such as October2026, rather than the next month's handover date. Exact period, optional actual earnedAt date and listening hours remain inside the disclosure. On narrow phones these details and card action stack in a full-width column so seconds do not become an isolated line. Minor refinement, announcement425 and closed access unchanged.
+
+## 436 — Stable Knowledge opening
+
+Resolve the role-checked cabinet entry before revealing the signed-in Knowledge catalog, so late insertion cannot push already visible cards down. The brief status has a three-second limit; on timeout/error the public catalog opens without private cabinet links and late responses cannot insert anything. Guest catalog stays immediate. Server role/session checks and all closed access remain unchanged. Minor fix retains announcement425. Ranking preview is excluded.
