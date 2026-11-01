@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version433 — private account context (2 November2026)
+
+Owner MFA profile shows selected prayer city and the last successfully rendered mushaf page with edition and server save time. Only the latest observation is retained; no page history, precise coordinates or IP location is collected. Checkpoints belong to the signed-in account and do not backfill anonymous/device bookmarks. Existing presence heartbeat carries the bounded optional context; older clients remain supported. Keep public announcement425 and closed Knowledge access unchanged.
+
+
 ## Version432 — private connection recovery and compact win history (2 November2026)
 
 Keep the existing425 public announcement, acknowledgement, expiry and feature artwork. This minor fix hides the remote classroom frame until its verified loaded handshake, provides retry after load/auth errors, and avoids timing out while the app is suspended. All existing owner/session checks stay in force; public sections remain closed. History now separates finalized weekly/monthly results with two period buttons; dates are visible and listening hours expand on tap. Winner-card access still refreshes public visibility before export. No award/listening data is changed. Cabinet role/tab navigation replaces the current history entry; a short account-scoped in-memory portal cache removes repeated downloads while server authorization stays authoritative. Use a teacher-at-board icon. Learning access requires explicit owner/teacher addition to a lesson: shared links cannot self-enroll a user. Reject unassigned student portals and direct lesson/work access server-side. Registered nickname search and add/remove live in the class pupil roster. Reuse existing private enrollment tables/RLS; no migration or payment processing.

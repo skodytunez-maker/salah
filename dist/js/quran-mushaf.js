@@ -57,6 +57,7 @@ export function mountMushaf(host,index,requestedPage=null){
   host.querySelector('#mushaf-page-number').textContent=page+' / 604';host.querySelector('#mushaf-page-input').value=page;
   host.querySelector('#mushaf-prev').disabled=page===1;host.querySelector('#mushaf-next').disabled=page===604;
   drawBookmarks();fitPrintedPage(paper,prefs.size);retainFonts();
+  readingCheckpoint={page,edition};publishReadingCheckpoint();
   if(!write(MUSHAF_LAST_KEY,page))toast('Не удалось сохранить место чтения');
   listening?.setPage(page);listening?.refresh();
   requestAnimationFrame(()=>{if(!closed&&ticket===generation){fitPrintedPage(paper,prefs.size);window.scrollTo(0,0);}});
@@ -77,10 +78,12 @@ export function mountMushaf(host,index,requestedPage=null){
  };
  host.querySelector('#mushaf-edition').onchange=e=>{const anchor=printLines&&printedVerseKeys(printLines)[0]?.split(':').map(Number);prefs=mushafPreferences({...prefs,edition:e.target.value,editionChosen:true});apply();if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить настройки чтения');const target=anchor&&printedPageForPosition(anchor[0],anchor[1],prefs.edition)||page;drawBookmarks();if(target!==requested){navigate(target);return;}openPage(target);};
  listening=mountMushafListening(host,{page,index,getEdition:()=>prefs.edition,getTheme:()=>prefs.theme,setTheme:theme=>{prefs=mushafPreferences({...prefs,theme});host.querySelector('#mushaf-theme').value=prefs.theme;apply();if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить фон');},openColors:()=>{host.querySelector('.mushaf-options').open=false;colors.showModal();},getLines:()=>printLines,getFollow:()=>prefs.follow,setFollow:value=>{prefs=mushafPreferences({...prefs,follow:value});if(!write(MUSHAF_PREFERENCES_KEY,prefs))toast('Не удалось сохранить настройки чтения');},navigate:p=>navigate(p,true)});
+ let readingCheckpoint=null;const publishReadingCheckpoint=()=>{if(!closed&&!document.hidden&&shell.isConnected&&readingCheckpoint){try{window.dispatchEvent(new window.CustomEvent('salah:reading-checkpoint',{detail:readingCheckpoint}));}catch{}}};
+ window.addEventListener('salah:account-context-ready',publishReadingCheckpoint);document.addEventListener('visibilitychange',publishReadingCheckpoint);
  openPage();
  const resize=()=>{if(!closed&&printLines)fitPrintedPage(paper,prefs.size);};
  window.addEventListener('resize',resize);
- const dispose=()=>{closed=true;pages.dispose();if(colors.open)colors.close();listening?.dispose();touch=null;window.removeEventListener('resize',resize);paper.removeEventListener('touchstart',touchStart);paper.removeEventListener('touchmove',touchMove);paper.removeEventListener('touchend',touchEnd);paper.removeEventListener('touchcancel',touchCancel);paper.removeEventListener('keydown',keydown);document.body.classList.remove('quran-focus');};
+ const dispose=()=>{closed=true;window.removeEventListener('salah:account-context-ready',publishReadingCheckpoint);document.removeEventListener('visibilitychange',publishReadingCheckpoint);pages.dispose();if(colors.open)colors.close();listening?.dispose();touch=null;window.removeEventListener('resize',resize);paper.removeEventListener('touchstart',touchStart);paper.removeEventListener('touchmove',touchMove);paper.removeEventListener('touchend',touchEnd);paper.removeEventListener('touchcancel',touchCancel);paper.removeEventListener('keydown',keydown);document.body.classList.remove('quran-focus');};
  dispose.navigateTo=value=>{const target=parseMushafPage(value);if(closed||!shell.isConnected||target===null)return false;if(target!==requested||!printLines)openPage(target);return true;};
  return dispose;
 }

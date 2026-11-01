@@ -20,7 +20,7 @@ for(const [data,options,status]of [
  [{...input,p_active:'true'},{},400],
  [{...input,p_tab:'bad'},{},400],
  [{...input,p_sequence:Number.MAX_SAFE_INTEGER+1},{},400],
- [input,{raw:'x'.repeat(1025)},413]
+ [input,{raw:'x'.repeat(2049)},413]
 ])assert.equal((await handler(request(data,options))).status,status);
 assert.equal(writes.length,0,'Malformed, anonymous and cross-origin calls cannot write');
 for(const override of [
@@ -39,7 +39,7 @@ assert.equal((await createPresenceHandler({...services,isSessionActive:async()=>
 const failed=await createPresenceHandler({...services,record:async()=>{throw Error('private database failure')}})(request());assert.equal(failed.status,503);assert.ok(!(await failed.text()).includes('private database failure'));
 assert.match(source,/clock_timestamp\(\)/,'Visit time must come from the server');
 assert.match(source,/where excluded\.sequence>app_presence\.sequence/,'A delayed offline request cannot replace a newer foreground record');
-assert.match(source,/if\(!input\.p_active\)\{await sql`update public\.app_presence set active=false,sequence=\$\{input\.p_sequence\} where/,'An offline request only closes existing presence and cannot create a visit or change the last foreground time');
+assert.match(source,/if\(!input\.p_active\)\{await sql\.begin\(async tx=>\{const changed=await tx`update public\.app_presence set active=false,sequence=\$\{input\.p_sequence\} where/,'An offline request only closes existing presence and cannot create a visit or change the last foreground time');
 console.log('PASS: presence writes only for the verified caller; anonymous, forged, revoked, foreign origin and supplied user ID denied; database errors fail closed; no user data returned.');
 
 const notification={enabled:true,permission:'granted',browser:true,device:{id:tab,token:'a'.repeat(64)}};
@@ -48,7 +48,7 @@ assert.equal((await notificationHandler(request({...input,p_notifications:notifi
 for(const value of [null,{...notification,user_id:id},{...notification,enabled:'true'},{...notification,permission:'fake'},{...notification,device:{...notification.device,token:'bad'}},{...notification,device:{...notification.device,other:'value'}}])assert.equal((await handler(request({...input,p_notifications:value}))).status,400);
 assert.equal((await handler(request({...input,p_active:false,p_notifications:notification}))).status,400,'Closing a tab cannot change device preferences');
 assert.match(source,/token_hash=\$\{tokenHash\}/,'Background linking requires the existing device capability');
-assert.match(source,/!changed.length\|\|!input.p_notifications/,'Delayed reports cannot replace newer preferences');
+assert.match(source,/if\(!changed.length\)return;[\s\S]*if\(!input.p_notifications\)return;/,'Delayed reports cannot replace newer preferences');
 assert.match(source,/session_id=excluded.session_id/);assert.match(source,/checked_at=excluded.checked_at/);
 console.log('PASS: optional notification reports are bounded and validated; device capability required, signed session retained, old clients remain compatible.');
 
@@ -64,3 +64,5 @@ for(const origin of ['capacitor://localhost','http://localhost','https://localho
  assert.equal((await handler(request(input,{headers:{Origin:origin,Authorization:''}}))).status,401);
 }
 console.log('PASS: APK presence accepts exact native origins while unsigned requests remain denied.');
+
+const native={enabled:true,permission:'granted',browser:false,device:null,nativeUntil:Date.now()+86400000};assert.equal((await handler(request({...input,p_notifications:native}))).status,200);for(const n of [{...native,nativeUntil:Date.now()+15*86400000},{...native,permission:'denied'},{...native,device:{id:tab,token:'a'.repeat(64)}}])assert.equal((await handler(request({...input,p_notifications:n}))).status,400);console.log('PASS: deployed native notification reports retain their bounded validity and cannot claim unsupported permission or capabilities.');

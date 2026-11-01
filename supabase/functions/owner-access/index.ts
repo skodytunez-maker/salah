@@ -113,7 +113,8 @@ export function safeOwnerUserDetails(details,id){
  const seconds=n=>(typeof n==='number'||typeof n==='string'&&/^\d+$/.test(n))&&Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):null;
  const kinds=new Set(['founder','week','month','streak7','streak30','streak100','streak200','streak365','hours25','hours50','hours100','hours250','hours500','hours1000','hours5000']);
  const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
- return{id,hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
+ const context=details.context,city=typeof context?.city==='string'&&context.city.trim()?context.city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;const v=context?.reading,reading=v&&Number.isInteger(v.page)&&v.page>=1&&v.page<=604&&['madani','tajweed'].includes(v.edition)&&Number.isFinite(Date.parse(v.savedAt))?{page:v.page,edition:v.edition,savedAt:new Date(v.savedAt).toISOString()}:null;
+ return{id,context:{city,reading},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
   reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
   awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null})),
   updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
@@ -132,7 +133,8 @@ export async function readOwnerUserDetails(sql,id,activityDay=null){
   const visibleAwards=awards.filter(row=>!['week','month'].includes(row.kind)||holders[row.kind]===id);
   const [saved]=await tx`select max(updated_at) as "updatedAt" from salah_competition_private.totals where user_id=${id}::uuid`;
   const targetDay=activityDay||user.day;const [activity]=await tx`select exists(select 1 from salah_counter_private.activity_days where user_id=${id}::uuid and day=${targetDay}::date) as active`;
-  return{adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:visibleAwards,updatedAt:saved?.updatedAt||null};
+  const [context]=await tx`select city,reading_page as page,reading_edition as edition,reading_saved_at as "savedAt" from salah_counter_private.account_context where user_id=${id}::uuid`;
+  return{context:{city:context?.city||null,reading:context?.page?{page:context.page,edition:context.edition,savedAt:context.savedAt}:null},adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:visibleAwards,updatedAt:saved?.updatedAt||null};
  });
 }
 
