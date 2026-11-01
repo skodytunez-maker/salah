@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{mountLearningCabinetLink}from '../dist/js/learning-cabinet-link.js';
+const w=new Window({url:'https://fixture.invalid/#knowledge'}),doc=w.document,root=doc.createElement('section');doc.body.append(root);
+const userId='11111111-1111-4111-8111-111111111111',session={access_token:'fixture-session',user:{id:userId,email_confirmed_at:'2026-01-01',is_anonymous:false,user_metadata:{role:'teacher'}}};let calls=0;
+const reset=()=>root.innerHTML='<div class="knowledge-head"><h1>Знания</h1></div><div class="knowledge-cards"><a href="#knowledge?view=alphabet">Алфавит</a></div>';
+const mount=(data,options={})=>mountLearningCabinetLink(root,{userId,checkSession:async()=>({state:'valid',session}),fetcher:async(url,init)=>{calls++;assert.equal(init.cache,'no-store');assert.equal(init.credentials,'omit');assert.equal(JSON.parse(init.body).action,'portal');return Response.json(data);},...options});
+reset();await mount({lessons:[],canTeach:false,canManageTeachers:true});assert.equal(root.querySelector('nav'),null,'Client metadata/management alone cannot unlock a teaching entry');
+reset();await mount({lessons:[],canTeach:true,canManageTeachers:true});assert.equal(root.querySelectorAll('[data-learning-cabinet]').length,1);assert.equal(root.querySelector('[data-learning-cabinet=teacher]').getAttribute('href'),'#lesson?view=teacher');assert.equal(root.querySelector('.knowledge-head').nextElementSibling,root.querySelector('nav'),'Teaching entry is first after the Knowledge heading');assert.equal(root.querySelector('a[href="#admin?view=teachers"]'),null,'Teacher management stays in the owner workspace');
+reset();await mount({lessons:[{}],canTeach:false});assert.equal(root.querySelectorAll('[data-learning-cabinet]').length,1);assert.equal(root.querySelector('[data-learning-cabinet=student]').getAttribute('href'),'#lesson');
+reset();await mount({lessons:[{}],canTeach:true});await mount({lessons:[{}],canTeach:true});assert.equal(root.querySelectorAll('nav').length,1);assert.equal(root.querySelectorAll('[data-learning-cabinet]').length,2);
+reset();const before=calls;await mount({lessons:[{}],canTeach:true},{checkSession:async()=>({state:'valid',session:{...session,user:{...session.user,id:'22222222-2222-4222-8222-222222222222'}}})});assert.equal(calls,before);assert.equal(root.querySelector('nav'),null);
+await mount({lessons:[{}],canTeach:true},{isActive:()=>false});assert.equal(root.querySelector('nav'),null,'A late reply cannot mount into a departed page');
+await w.happyDOM.close();console.log('PASS: role-checked top Knowledge entry, enrolled student path, no management duplication, no forged or stale account access.');

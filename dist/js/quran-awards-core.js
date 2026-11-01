@@ -1,7 +1,7 @@
 import{safeListener,rankTime}from './reciter-ranking-core.js';
 export const QURAN_AWARDS=[
- {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Первое место по времени любимого чтеца за календарную неделю.'},
- {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Первое место по времени любимого чтеца за календарный месяц.'},
+ {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Переходящий значок победителя завершённой календарной недели. Остаётся у победителя до следующих итогов; прошлые победы — в истории Топ SALAH.'},
+ {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Переходящий значок победителя завершённого календарного месяца. Остаётся у победителя до следующих итогов; прошлые победы — в истории Топ SALAH.'},
  {kind:'streak7',title:'Неделя с Кораном',icon:'seedling',color:'#bf926c',days:7,artwork:'assets/awards/streak-7-v1.png',rule:'7 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak30',title:'Месяц с Кораном',icon:'book-open',color:'#d8be88',days:30,artwork:'assets/awards/streak-30-v1.png',rule:'30 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak100',title:'100 дней с Кораном',icon:'gem',color:'#c2cbd8',days:100,artwork:'assets/awards/streak-100-v1.png',rule:'100 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
@@ -28,7 +28,9 @@ export function awardShareIdentity(person){const p=safeListener(person);return p
 export function safeAwardState(data){
  if(!data||!validAwardDate(data.day)||!Array.isArray(data.items)||!data.streak)throw Error('invalid_awards');
  const items=data.items.map(safeAward).filter(Boolean),n=x=>Number.isSafeInteger(x)&&x>=0?x:0;
- return {day:data.day,listeningSeconds:n(data.listeningSeconds),items,counts:Object.fromEntries(QURAN_AWARDS.map(a=>[a.kind,Math.max(items.filter(x=>x.kind===a.kind).length,n(data.counts?.[a.kind]))])),listener:safeListener(data.listener),streak:{current:n(data.streak.current),best:n(data.streak.best),today:data.streak.today===true,freezes:Math.min(3,n(data.streak.freezes??3)),refillDays:Math.min(6,n(data.streak.refillDays)),protectedDays:Array.isArray(data.streak.protectedDays)?data.streak.protectedDays.filter(validAwardDate):[],days:Array.isArray(data.streak.days)?data.streak.days.filter(validAwardDate):[]}};
+ const historyCounts=Object.fromEntries(QURAN_AWARDS.map(a=>[a.kind,Math.max(items.filter(x=>x.kind===a.kind).length,n(data.counts?.[a.kind]))]));
+ const counts={...historyCounts};if(Array.isArray(data.activeKinds))for(const kind of ['week','month'])counts[kind]=data.activeKinds.includes(kind)?1:0;
+ return {day:data.day,listeningSeconds:n(data.listeningSeconds),items,counts,historyCounts,listener:safeListener(data.listener),streak:{current:n(data.streak.current),best:n(data.streak.best),today:data.streak.today===true,freezes:Math.min(3,n(data.streak.freezes??3)),refillDays:Math.min(6,n(data.streak.refillDays)),protectedDays:Array.isArray(data.streak.protectedDays)?data.streak.protectedDays.filter(validAwardDate):[],days:Array.isArray(data.streak.days)?data.streak.days.filter(validAwardDate):[]}};
 }
 export function awardCaption(row){return calendarAward(row.kind)?rankTime(row.seconds):awardPeriod(row);}
 export function weekDays(today,heard,protectedDays=[]){const anchor=new Date(today+'T12:00:00Z'),monday=new Date(anchor);monday.setUTCDate(monday.getUTCDate()-(monday.getUTCDay()+6)%7);const set=new Set(heard),protectedSet=new Set(protectedDays);return Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setUTCDate(d.getUTCDate()+i);const day=d.toISOString().slice(0,10);return{day,number:d.getUTCDate(),label:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][i],heard:set.has(day),protected:protectedSet.has(day),today:day===today,future:day>today};});}

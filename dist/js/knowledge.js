@@ -1,3 +1,4 @@
+import{mountLearningCabinetLink}from './learning-cabinet-link.js';
 import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview,preloadOwnerLearning}from './owner-learning-frame.js';
 import{ownerVerified}from './owner-auth.js';
 import{ownerLearningPreview}from './owner-learning-links.js';
@@ -38,7 +39,7 @@ const entries = [
   {kind:'sahaba',icon:'knowledge-sahaba',title:'SAHABA',description:'Истории сподвижников Пророка ﷺ.',detail:'Истории',action:'Читать истории',href:'https://sahaba-learning.skodytunez.chatgpt.site',external:true}
 ];
 
-export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified() } = {}) {
+export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified(),learningUserId=null } = {}) {
   const routeParams=new URLSearchParams(hash.split('?')[1]||'');
   const featureView=routeParams.get('view');
   const preview=routeParams.get('preview')||(['online-lessons','muallim','live-stream'].includes(featureView)?featureView:null);
@@ -84,6 +85,9 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
 
     </div>
   </section>`;
+  const page=container.querySelector('.knowledge-page');
+  page.dataset.learningUser=learningUserId||'';
+  if(learningUserId)void mountLearningCabinetLink(page,{userId:learningUserId,isActive:()=>page.isConnected&&container.querySelector('.knowledge-page')===page});
   if (typeof onStart === 'function') {
     container.querySelectorAll('[data-learning-entry]').forEach(link => {
       link.addEventListener('click', event => {
