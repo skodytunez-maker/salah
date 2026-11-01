@@ -12,7 +12,12 @@ code=code.replace(/import\{claimPlayback\}from '[^']+';/,"const claimPlayback=()
 const{mountOwnerLearningPreview:mount,stopOwnerLearningPreview:stop,ownerLearningBusy:busy,validOwnerCourseProgress:valid,validOwnerBookProgress:validBook}=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
 const host=doc.createElement('main');doc.body.append(host);
 const sent=[],source={postMessage:(data,origin)=>sent.push({data,origin})},realCreate=doc.createElement.bind(doc);
-doc.createElement=(tag,...rest)=>{const node=realCreate(tag,...rest);if(tag==='iframe')Object.defineProperty(node,'contentWindow',{configurable:true,get:()=>source});return node;};
+doc.createElement=(tag,...rest)=>{const node=realCreate(tag,...rest);if(tag==='iframe'){
+ Object.defineProperty(node,'contentWindow',{configurable:true,get:()=>source});
+ // Happy DOM dispatches an artificial error when iframe loading is disabled.
+ // This test supplies its own transport outcomes, including explicit failures.
+ const dispatch=node.dispatchEvent.bind(node);node.dispatchEvent=event=>event.type==='error'&&!event.testFailure?true:dispatch(event);
+}return node;};
 assert.equal(mount(host,'muallim'),false);assert.equal(host.querySelector('iframe'),null);
 probe.verified=true;assert.equal(mount(host,'unknown'),false);assert.equal(mount(host,'online-lessons'),true);
 const frame=host.querySelector('iframe'),url=new URL(frame.src),origin=url.origin,nonce=new URLSearchParams(url.hash.slice(1)).get('nonce');
@@ -56,6 +61,33 @@ message({type:'salah:owner-preview-native-progress',nonce:backgroundNonce,value:
 message({type:'salah:owner-preview-native-progress',nonce:backgroundNonce,value:native});assert.deepEqual(JSON.parse(localStorage.getItem('salah:muallim-native-progress')),native);
 message({type:'salah:owner-preview-ready',nonce:backgroundNonce});await new Promise(r=>setTimeout(r,0));assert.deepEqual(sent.at(-1).data.nativeProgress,native);
 probe.verified=false;probe.authChanged();assert.ok(!backgroundFrame.isConnected&&!busy(),'Explicit revocation closes the preview immediately');
-stop();await w.happyDOM.close();
+stop();
+// Exercise the actual loading/error/retry lifecycle without waiting 20 seconds.
+const realTimeout=globalThis.setTimeout;let connectionDeadline;
+globalThis.setTimeout=(fn,delay,...args)=>{if(delay===20000){connectionDeadline=fn;return 987654321;}return realTimeout(fn,delay,...args);};
+try{
+ probe.verified=true;probe.token=async()=>'renewed-token';mount(host,'online-lessons');
+ let f=host.querySelector('iframe'),n=new URLSearchParams(new URL(f.src).hash.slice(1)).get('nonce');
+ assert.equal(f.hidden,true,'No white iframe is shown before its verified loaded handshake');
+ message({type:'salah:owner-preview-loaded',nonce:n});assert.equal(f.hidden,true,'Loaded before ready is ignored');
+ connectionDeadline();assert.equal(f.hidden,true);assert.equal(host.querySelector('button').hidden,false);assert.match(host.textContent,/Сервис занятий сейчас не отвечает/);
+ message({type:'salah:owner-preview-ready',nonce:n});await new Promise(r=>realTimeout(r,0));
+ assert.equal(f.hidden,true,'Ready alone still does not expose the frame');
+ message({type:'salah:owner-preview-loaded',nonce:n});assert.equal(f.hidden,false);assert.equal(host.querySelector('button').hidden,true);
+ f.dispatchEvent(Object.assign(new w.Event('error'),{testFailure:true}));assert.equal(f.hidden,true);assert.equal(host.querySelector('button').hidden,false);
+ const previous=f,previousNonce=n;host.querySelector('button').click();f=host.querySelector('iframe');n=new URLSearchParams(new URL(f.src).hash.slice(1)).get('nonce');
+ assert.notEqual(f,previous);assert.notEqual(n,previousNonce);assert.equal(previous.isConnected,false);
+ message({type:'salah:owner-preview-loaded',nonce:previousNonce});assert.equal(f.hidden,true,'Old attempts cannot reveal the replacement frame');
+ assert.equal(host.querySelector('button').hidden,true,'New attempt must begin loading: '+host.textContent);Object.defineProperty(doc,'hidden',{configurable:true,value:true});connectionDeadline();assert.equal(host.querySelector('button').hidden,true,'Suspending the app is not a connection failure: '+host.textContent);
+ Object.defineProperty(doc,'hidden',{configurable:true,value:false});w.dispatchEvent(new w.Event('visibilitychange'));connectionDeadline();assert.equal(host.querySelector('button').hidden,false,'Retry is offered if the resumed attempt still cannot connect');
+ message({type:'salah:owner-preview-ready',nonce:n});await new Promise(r=>realTimeout(r,0));message({type:'salah:owner-preview-error',nonce:n});assert.equal(f.hidden,true);assert.equal(host.querySelector('button').hidden,false,'Server access failure has an actionable retry');
+ stop();
+ probe.verified=true;probe.token=async()=>{throw Error('expired');};mount(host,'online-lessons');f=host.querySelector('iframe');n=new URLSearchParams(new URL(f.src).hash.slice(1)).get('nonce');message({type:'salah:owner-preview-ready',nonce:n});await new Promise(r=>realTimeout(r,0));
+ assert.equal(f.isConnected,false);assert.equal(host.querySelector('button').hidden,false,'A failed grant removes the frame but keeps retry');
+ probe.verified=false;probe.token=async()=>'renewed-token';probe.revalidate=async()=>{probe.verified=true;return true;};host.querySelector('button').click();await new Promise(r=>realTimeout(r,0));assert.ok(host.querySelector('iframe'),'Retry revalidates an expired owner grant before remounting');
+}finally{stop();globalThis.setTimeout=realTimeout;}
+await w.happyDOM.close();
 console.log('PASS: internal owner frame, strict origin/source/nonce handshake, token privacy, revocation, validated progress and audio/update state.');
+
+
 

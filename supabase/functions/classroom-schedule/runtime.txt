@@ -1,4 +1,5 @@
 import{createTeacherRolesDb}from './teacher-roles-db.mjs';
+import{createStudentAdmissionDb}from './student-admission-db.mjs';
 import{createLearningPortalDb}from './learning-portal-db.mjs';
 import{createHomeworkDb}from './homework-work-db.mjs';
 import{createHomeworkStorage}from './homework-work-storage.mjs';
@@ -30,7 +31,7 @@ async function verifyAccount(token,{ownerRequired=false,teacherRequired=false}={
  const candidate=u.user_metadata?.nickname,nickname=typeof candidate==='string'&&candidate.trim().length>=2&&candidate.trim().length<=40&&!/[\x00-\x1f]/.test(candidate)?candidate.trim():'Ученик';
  return{id:u.id,nickname,owner,teacher:role.active,teacherRevision:role.revision};
 }
-Object.assign(db,createHomeworkDb({sql}),createLearningPortalDb({sql}),createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}));
+Object.assign(db,createHomeworkDb({sql}),createLearningPortalDb({sql}),createTeacherRolesDb({sql,ownerId:CLASSROOM_OWNER}),createStudentAdmissionDb({sql,ownerId:CLASSROOM_OWNER}));
 const storageSecret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const storage=createHomeworkStorage(storageSecret?createClient(PROJECT,storageSecret,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}):null);
 Deno.serve(createScheduleHandler({db,verifyAccount,storage}));

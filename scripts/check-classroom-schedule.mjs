@@ -7,6 +7,7 @@ actors.set('weak-owner-token-1234567890',{id:CLASSROOM_OWNER,nickname:'Owner',ow
 const rows=new Map(),members=new Map();let available=true;
 const db={async rate(){return true;},async create(row){if(rows.has(row.id))return false;rows.set(row.id,row);return true;},async get(id){return rows.get(id);},async byInvite(hash){return [...rows.values()].find(r=>r.inviteHash===hash);},async enrollment(id,uid){return members.get(id+uid);},async list(uid,owner){return[...rows.values()].filter(l=>owner?l.ownerId===uid:members.has(l.id+uid));},async update(row,revision){if(rows.get(row.id)?.revision!==revision)return false;rows.set(row.id,row);return true;},async enroll(row,uid,nickname,remindersEnabled){const key=row.id+uid;if(!members.has(key)&&[...members.keys()].filter(k=>k.startsWith(row.id)).length>=row.maxParticipants-1)return null;const v={nickname,remindersEnabled};members.set(key,v);return v;},async removeEnrollment(id,uid){members.delete(id+uid);}};
 const handle=createScheduleHandler({db,now:()=>clock,verifyAccount:async token=>{if(!available)throw new ScheduleError(503,'unavailable');const actor=actors.get(token);if(!actor)throw new ScheduleError(401,'invalid_session');return actor;}});
+Object.assign(db,{hasLearningAccess:async uid=>[...members.keys()].some(key=>key.endsWith(uid)),studentLookup:async()=>[],studentSet:async(row,actorId,targetId,add)=>{if(actorId!==row.ownerId)return false;if(!add){await db.removeEnrollment(row.id,targetId);return true;}return Boolean(await db.enroll(row,targetId,'Ученик',false));}});
 async function call(action,input={},token='owner-token-1234567890',origin='https://skodytunez-maker.github.io'){const r=await handle(new Request('https://example.invalid/classroom-schedule',{method:'POST',headers:{Authorization:'Bearer '+token,Origin:origin},body:JSON.stringify({action,...input})}));return{status:r.status,data:await r.json()};}
 const input={id,code,title:'Арабский язык',teacherName:'Преподаватель',date:'2026-10-27',time:'20:00',timeZone:'Asia/Yekaterinburg',reminderTime:'17:00',minutes:60,maxParticipants:3};
 assert.equal(lessonSchedule(input,clock).reminderAt,Date.parse('2026-10-27T17:00:00+05:00'));
@@ -17,10 +18,13 @@ assert.equal((await call('create',input,'forged-token-1234567890')).status,401);
 assert.equal((await call('create',input,undefined,'https://evil.invalid')).status,403);
 assert.equal((await call('create',input)).status,201);assert.equal(rows.get(id).inviteHash,await inviteDigest(code));assert.ok(!JSON.stringify((await call('owner-list')).data).includes(code));
 assert.equal((await call('detail',{id},'student-token-1234567890')).status,403);
+assert.equal((await call('enroll',{code,remindersEnabled:true,userId:CLASSROOM_OWNER,role:'teacher'},'student-token-1234567890')).status,403,'A shared link never grants paid access');
+assert.equal((await call('student-add',{id,userId:uid})).status,200);
 let result=await call('enroll',{code,remindersEnabled:true,userId:CLASSROOM_OWNER,role:'teacher'},'student-token-1234567890');assert.equal(result.status,200);assert.equal(result.data.account.id,uid);assert.equal(result.data.owner,false);assert.equal(members.get(id+uid).nickname,'Ученик <b>');
 assert.equal((await call('enroll',{code,remindersEnabled:false},'student-token-1234567890')).status,200);assert.equal(members.size,1,'repeat account uses one place');assert.equal(members.get(id+uid).remindersEnabled,false);
-assert.equal((await call('enroll',{code,remindersEnabled:true},'student2-token-1234567890')).status,200);
-assert.equal((await call('enroll',{code,remindersEnabled:true},'student3-token-1234567890')).status,409);
+assert.equal((await call('student-add',{id,userId:uid2})).status,200);assert.equal((await call('enroll',{code,remindersEnabled:true},'student2-token-1234567890')).status,200);
+assert.equal((await call('student-add',{id,userId:uid3})).status,409);
+assert.equal((await call('enroll',{code,remindersEnabled:true},'student3-token-1234567890')).status,403);
 assert.equal((await call('preferences',{id,remindersEnabled:true},'student-token-1234567890')).status,200);
 assert.equal((await call('transition',{id,state:'live'})).status,409,'cannot open room early');
 assert.equal((await call('update',{...input,id,time:'21:00'})).status,200);assert.equal(rows.get(id).revision,2);
