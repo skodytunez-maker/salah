@@ -17,7 +17,7 @@ const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const OWNER_RELEASES={salah:[{date:'2026-10-16',version:'339',changes:['Профили пользователей открываются из списка: фото, сохранённое время прослушивания, любимые чтецы и полученные награды.','Доступ к профилям и фото проверяется на сервере при каждом запросе: только владелец с действующей сессией и вторым фактором.']},{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readAvatar=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readAvatar=null,readGeography=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -85,6 +85,11 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    try{const result=await readUsers(page);if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('invalid');const date=v=>Number.isFinite(Date.parse(v))?new Date(v).toISOString():null;return reply(200,{total:result.total,online:Number.isSafeInteger(result.online)&&result.online>=0?result.online:0,page,users:result.users.slice(0,50).map(row=>({id:/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.id||'')?row.id:null,nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника',joinedAt:date(row.joinedAt),lastSignInAt:date(row.lastSignInAt),lastSeenAt:date(row.lastSeenAt),appVersion:Number.isSafeInteger(row.appVersion)&&row.appVersion>=1&&row.appVersion<=1000000&&date(row.versionCheckedAt)?row.appVersion:null,versionCheckedAt:date(row.versionCheckedAt),lastSavedAt:date(row.lastSavedAt),notifications:date(row.notificationCheckedAt)?{enabled:row.notificationEnabled===true,background:row.notificationBackground===true,permissionGranted:row.notificationGranted===true,permissionDenied:row.notificationDenied===true,checkedAt:date(row.notificationCheckedAt)}:null,online:row.online===true&&Number.isFinite(Date.parse(row.lastSeenAt))&&Date.parse(row.lastSeenAt)>=now()-90000}))});}catch{return reply(503,{error:'users_unavailable'});}
   }
   if(url.searchParams.has('page'))return reply(400,{error:'invalid_parameters'});
+  if(mode==='geography'){
+   const days=Number(url.searchParams.get('days')||7);if(![1,7,30].includes(days))return reply(400,{error:'invalid_period'});
+   if(!readGeography)return reply(503,{error:'geography_unavailable'});
+   try{return reply(200,summarizeOwnerGeography(await readGeography(days),days,now()));}catch{return reply(503,{error:'geography_unavailable'});}
+  }
   if(mode!=='stats')return reply(400,{error:'invalid_mode'});
   if(!statsToken)return reply(503,{error:'statistics_not_connected'});
   const days=Number(url.searchParams.get('days')||7);
@@ -109,12 +114,38 @@ export function validOwnerActivityDay(day,now=Date.now()){
  if(typeof day!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(day))return false;
  const epoch=Date.parse(day+'T00:00:00Z');return Number.isFinite(epoch)&&new Date(epoch).toISOString().slice(0,10)===day&&Math.abs(Math.floor(epoch/86400000)-Math.floor(now/86400000))<=1;
 }
+
+// Latest selected prayer cities of verified accounts active in the rolling
+// period. Never infer residence from an IP, and never expose account IDs here.
+export function summarizeOwnerGeography(rows,days,now=Date.now()){
+ if(![1,7,30].includes(days)||!Array.isArray(rows))throw Error('invalid_geography');
+ const clean=value=>typeof value==='string'&&value.trim()&&value.length<=160&&!/[\u0000-\u001f\u007f]/.test(value)?value.trim():null;
+ const countries=new Map(),cities=new Map();let total=0,withCity=0,withCountry=0;
+ for(const row of rows){
+  const n=row?.accounts;if(!Number.isSafeInteger(n)||n<1||!Number.isSafeInteger(total+n))throw Error('invalid_geography');total+=n;
+  const city=clean(row.city),country=city?clean(row.country):null;if(!city)continue;withCity+=n;
+  const key=JSON.stringify([city,country]),previous=cities.get(key);cities.set(key,{name:city,country,accounts:n+(previous?.accounts||0)});
+  if(country){withCountry+=n;countries.set(country,(countries.get(country)||0)+n);}
+ }
+ const order=(a,b)=>b.accounts-a.accounts||a.name.localeCompare(b.name,'ru')||String(a.country||'').localeCompare(String(b.country||''),'ru');
+ const countryRows=[...countries].map(([name,accounts])=>({name,accounts})).sort(order),cityRows=[...cities.values()].sort(order);
+ return{period:days,total,withCity,withCountry,countries:countryRows.slice(0,100),cities:cityRows.slice(0,100),otherCountries:countryRows.slice(100).reduce((n,r)=>n+r.accounts,0),otherCities:cityRows.slice(100).reduce((n,r)=>n+r.accounts,0),updatedAt:new Date(now).toISOString()};
+}
+export async function readOwnerGeography(sql,days){
+ if(![1,7,30].includes(days))throw Error('invalid_period');
+ return sql`select c.city,c.country,count(*)::int as accounts from auth.users u
+ left join salah_counter_private.account_context c on c.user_id=u.id
+ where u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)
+ and exists(select 1 from public.app_presence p where p.user_id=u.id and p.app='salah' and p.last_seen>=clock_timestamp()-(${days}::integer*interval '1 day') and p.last_seen<=clock_timestamp())
+ group by c.city,c.country`;
+}
 export function safeOwnerUserDetails(details,id){
  const seconds=n=>(typeof n==='number'||typeof n==='string'&&/^\d+$/.test(n))&&Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):null;
  const kinds=new Set(['founder','week','month','streak7','streak30','streak100','streak200','streak365','hours25','hours50','hours100','hours250','hours500','hours1000','hours5000']);
  const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
  const context=details.context,city=typeof context?.city==='string'&&context.city.trim()?context.city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;const v=context?.reading,reading=v&&Number.isInteger(v.page)&&v.page>=1&&v.page<=604&&['madani','tajweed'].includes(v.edition)&&Number.isFinite(Date.parse(v.savedAt))?{page:v.page,edition:v.edition,savedAt:new Date(v.savedAt).toISOString()}:null;
- return{id,context:{city,reading},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
+ const country=city&&typeof context?.country==='string'&&context.country.trim()?context.country.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;
+ return{id,context:{city,reading,...(country?{country}:{})},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
   reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
   awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null})),
   updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
@@ -133,8 +164,8 @@ export async function readOwnerUserDetails(sql,id,activityDay=null){
   const visibleAwards=awards.filter(row=>!['week','month'].includes(row.kind)||holders[row.kind]===id);
   const [saved]=await tx`select max(updated_at) as "updatedAt" from salah_competition_private.totals where user_id=${id}::uuid`;
   const targetDay=activityDay||user.day;const [activity]=await tx`select exists(select 1 from salah_counter_private.activity_days where user_id=${id}::uuid and day=${targetDay}::date) as active`;
-  const [context]=await tx`select city,reading_page as page,reading_edition as edition,reading_saved_at as "savedAt" from salah_counter_private.account_context where user_id=${id}::uuid`;
-  return{context:{city:context?.city||null,reading:context?.page?{page:context.page,edition:context.edition,savedAt:context.savedAt}:null},adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:visibleAwards,updatedAt:saved?.updatedAt||null};
+  const [context]=await tx`select city,country,reading_page as page,reading_edition as edition,reading_saved_at as "savedAt" from salah_counter_private.account_context where user_id=${id}::uuid`;
+  return{context:{city:context?.city||null,country:context?.country||null,reading:context?.page?{page:context.page,edition:context.edition,savedAt:context.savedAt}:null},adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:visibleAwards,updatedAt:saved?.updatedAt||null};
  });
 }
 
@@ -157,5 +188,5 @@ if(typeof Deno!=='undefined'){
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

@@ -29,6 +29,7 @@ console.log('PASS: account-scoped checkpoints, no anonymous backfill, bounded co
 const db=new PGlite();await db.exec(`create role anon;create role authenticated;create schema auth;create schema salah_counter_private;create table auth.users(id uuid primary key);insert into auth.users values('${first}'),('${second}');`);
 await db.exec(await readFile(new URL('../supabase/migrations/20261102_owner_reading_context.sql',import.meta.url),'utf8'));
 const tag=parts=>(strings,...args)=>db.query(strings.reduce((s,p,i)=>s+(i?'$'+i:'')+p,''),args).then(r=>r.rows),sql=tag();
+await db.exec(await readFile(new URL('../supabase/migrations/20261102174057_owner_account_geography.sql',import.meta.url),'utf8'));
 await recordAccountContext(sql,first,value);await recordAccountContext(sql,second,{city:'Москва',reading:null});
 await recordAccountContext(sql,first,{city:'Тюмень',reading:{page:2,edition:'tajweed',observedAt:'2026-11-02T11:00:00Z'}});
 await recordAccountContext(sql,first,{city:'Тюмень',reading:{page:600,edition:'madani',observedAt:'2026-11-02T09:00:00Z'}});

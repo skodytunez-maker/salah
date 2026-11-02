@@ -451,3 +451,12 @@ The installed Android package can now remove a legacy browser worker at its loca
 A rejected web update no longer reports “current”. Unsupported descriptors, required Google Play upgrades, bridge failures, offline state and ongoing downloads have distinct outcomes. The native settings screen hides the redundant browser install action. Manual checks stop waiting after20seconds while a native download can continue. Web updates445 onward require native445, so this native repair must be distributed through Google Play before older APKs can receive subsequent web releases.
 
 Retain announcement425, acknowledgement, expiry and artwork. This candidate does not include guest analytics, geography, server ranking optimization, reminders, new recordings or expanded closed-section access. The tester screenshot proves web338 is visible; it does not establish the installed APK version. Physical-device upgrade acceptance remains required.
+
+
+## 446 — Owner activity, selected city/country and compact list-row awards
+
+Publish the previously prepared activity chart with period summary, day selection and collapsed complete daily list. Owner-only geography shows active verified SALAH accounts by their selected prayer city and optional country, kept separate from website visitor counts. Profile labels use city, country. The optional country is transmitted with existing authenticated foreground context; old clients remain supported. Existing city-only rows stay honest until the selected country is sent. No GPS/IP lookup, coordinates, city guessing, movement history or staff visibility is added.
+
+Only lower ranking list rows place the existing leader artwork beside the nickname with50px width and12px gap; podiums, formula, ordering, periods and switches are unchanged. Preserve all444/445 session/startup/update recovery and closed-section gates. No441 audio,442 sender or guest analytics included.
+
+Minor owner-only interface work and the accepted badge refinement retain announcement425, its current feature artwork, acknowledgement and expiry. No new Home promotion.

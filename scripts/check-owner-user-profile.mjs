@@ -38,7 +38,8 @@ await db.exec(`create table salah_competition_private.award_periods(kind text,en
 const statements=[];
 const tag=client=>(parts,...args)=>{const text=parts.reduce((s,part,i)=>s+(i?'$'+i:'')+part,'');statements.push(text);return client.query(text,args).then(r=>r.rows);};
 const sql=tag(db);sql.begin=fn=>db.transaction(tx=>fn(tag(tx)));
-await db.exec("insert into salah_counter_private.account_context values('11111111-1111-4111-8111-111111111111','Казань',187,'tajweed','2026-11-02T01:00:00Z')");
+await db.exec('alter table salah_counter_private.account_context add column country text');
+await db.exec("insert into salah_counter_private.account_context(user_id,city,reading_page,reading_edition,reading_saved_at) values('11111111-1111-4111-8111-111111111111','Казань',187,'tajweed','2026-11-02T01:00:00Z')");
 const stored=await readOwnerUserDetails(sql,first);assert.equal(stored.context.city,'Казань');assert.equal(stored.context.reading.page,187);assert.equal((await readOwnerUserDetails(sql,second)).context.reading,null);assert.equal(stored.periods.all,90600);assert.equal(stored.hasAvatar,true);assert.deepEqual(stored.reciters.map(x=>x.id),['ar.alafasy','ar.badralturki']);assert.equal(stored.awards[0].kind,'hours25');assert.ok(statements[0].includes('set transaction read only'));assert.ok(!statements.some(s=>/\b(insert|update|delete|claim_founder|award_streak|award_hours)\b/i.test(s)),'Viewing a profile cannot award, update, or reset anything');
 await db.exec("insert into salah_counter_private.activity_days values('11111111-1111-4111-8111-111111111111','2026-10-30')");const withActivity=await readOwnerUserDetails(sql,first,'2026-10-30');assert.deepEqual(withActivity.adhkar,{day:'2026-10-30',active:true});const otherDay=await readOwnerUserDetails(sql,first,'2026-10-29');assert.equal(otherDay.adhkar.active,false);
 const empty=await readOwnerUserDetails(sql,'33333333-3333-4333-8333-333333333333');assert.equal(empty,null);await db.close();

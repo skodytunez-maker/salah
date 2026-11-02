@@ -6,14 +6,15 @@ function validNotification(value){
  return device===null||!!device&&typeof device==='object'&&!Array.isArray(device)&&Object.keys(device).length===2&&UUID.test(device.id||'')&&/^[a-f0-9]{64}$/.test(device.token||'');
 }
 export function validAccountContext(value,now=Date.now()){
- if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==2||!Object.hasOwn(value,'city')||!Object.hasOwn(value,'reading'))return false;
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['city','reading','country'].includes(k))||!Object.hasOwn(value,'city')||!Object.hasOwn(value,'reading'))return false;
  if(value.city!==null&&(typeof value.city!=='string'||!value.city.trim()||value.city.length>160||/[\u0000-\u001f\u007f]/.test(value.city)))return false;
+ if(Object.hasOwn(value,'country')&&(value.city===null||typeof value.country!=='string'||!value.country.trim()||value.country.length>160||/[\u0000-\u001f\u007f]/.test(value.country)))return false;
  const v=value.reading;if(v===null)return true;
  if(!v||typeof v!=='object'||Array.isArray(v)||Object.keys(v).length!==3||!Number.isInteger(v.page)||v.page<1||v.page>604||!['madani','tajweed'].includes(v.edition)||typeof v.observedAt!=='string')return false;
  const time=Date.parse(v.observedAt);return Number.isFinite(time)&&time>=0&&time<=now+300000;
 }
 export async function recordAccountContext(tx,uid,value){
- await tx`insert into salah_counter_private.account_context(user_id,city,city_updated_at) values(${uid}::uuid,${value.city?.trim()||null},clock_timestamp()) on conflict(user_id) do update set city=excluded.city,city_updated_at=excluded.city_updated_at where account_context.city is distinct from excluded.city`;
+ await tx`insert into salah_counter_private.account_context(user_id,city,country,city_updated_at) values(${uid}::uuid,${value.city?.trim()||null},${value.country?.trim()||null},clock_timestamp()) on conflict(user_id) do update set city=excluded.city,country=case when account_context.city is not distinct from excluded.city then coalesce(excluded.country,account_context.country) else excluded.country end,city_updated_at=excluded.city_updated_at where account_context.city is distinct from excluded.city or (excluded.country is not null and account_context.country is distinct from excluded.country)`;
  const v=value.reading;if(v)await tx`update salah_counter_private.account_context set reading_page=${v.page},reading_edition=${v.edition},reading_observed_at=${new Date(v.observedAt).toISOString()}::timestamptz,reading_saved_at=clock_timestamp() where user_id=${uid}::uuid and (reading_observed_at is null or reading_observed_at<${new Date(v.observedAt).toISOString()}::timestamptz)`;
 }
 const ORIGINS=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);

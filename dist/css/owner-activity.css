@@ -1,0 +1,72 @@
+#owner-panel-activity .owner-chart-heading{margin:0 0 4px;min-height:44px;gap:12px}
+.owner-activity-label{font:500 14px/1.4 'Manrope','Segoe UI',sans-serif;color:var(--muted,#adb6c7)}
+#owner-panel-activity #owner-periods{margin:0 0 16px;padding:4px;border-radius:18px}
+#owner-panel-activity #owner-periods button{min-height:44px;padding:8px 6px;font-size:14px;border-radius:14px}
+#owner-activity-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0;padding:0}
+#owner-activity-status.owner-activity-warning{position:static;width:auto;height:auto;overflow:visible;clip-path:none;font-size:12px;color:var(--gold,#d6c18b);line-height:1.5;margin:0 0 10px}
+#owner-activity-content{min-width:0}
+.owner-activity-summary{display:grid;grid-template-columns:1.15fr 1fr;gap:10px;margin-bottom:12px}
+.owner-activity-summary>div{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:1px solid var(--border,#344056);border-radius:20px;background:var(--panel,#111a2c);min-width:0}
+.owner-activity-summary span{font-size:12px;color:var(--muted,#adb6c7);line-height:1.4}
+.owner-activity-summary strong{font:600 32px/1.05 'Manrope','Segoe UI',sans-serif;color:var(--gold,#d6c18b);font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.owner-activity-summary small{font-size:11px;color:var(--muted,#adb6c7);line-height:1.4;overflow-wrap:anywhere}
+.owner-activity-card{padding:8px 14px 14px;border:1px solid var(--border,#344056);border-radius:22px;background:var(--panel,#111a2c)}
+.owner-activity-chart-title{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+.owner-activity-chart-title h2{font:600 15px/1.4 'Manrope','Segoe UI',sans-serif;margin:0;color:var(--text,#edf0f5)}
+.owner-activity-chart-title button{font-size:12px;min-height:44px;padding:8px 4px;color:var(--gold,#d6c18b)}
+.owner-activity-picked{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:6px;margin:0 0 8px}
+.owner-activity-picked>button{width:44px;height:44px;padding:10px;border:1px solid var(--border,#344056);border-radius:14px;background:transparent;color:var(--gold,#d6c18b)}
+.owner-activity-picked>button:disabled{opacity:.25}
+.owner-activity-picked .action-icon{width:20px;height:20px;display:block;margin:auto}
+
+.owner-activity-picked>div{text-align:center;min-width:0;display:grid;gap:5px}
+.owner-activity-picked time{font-size:12px;line-height:1.4;color:var(--muted,#adb6c7)}
+.owner-activity-picked strong{font:600 24px/1.2 'Manrope','Segoe UI',sans-serif;color:var(--text,#edf0f5);font-variant-numeric:tabular-nums}
+.owner-activity-picked small{font-size:11px;font-weight:400;color:var(--muted,#adb6c7)}
+.owner-activity-plot{position:relative;height:112px;border-bottom:1px solid var(--border,#344056);background:repeating-linear-gradient(to top,transparent 0,transparent calc(33.333% - 1px),#ffffff07 calc(33.333% - 1px),#ffffff07 33.333%);border-radius:4px}
+.owner-activity-bars{height:100%;display:flex;justify-content:space-around;align-items:flex-end;gap:3px;padding:0 3px;overflow:hidden}
+.owner-activity-bar{display:block;flex:1;max-width:64px;height:var(--bar-height);min-width:0;border-radius:4px 4px 0 0;background:var(--gold,#d6c18b);opacity:.38;transition:opacity .12s}
+.owner-activity-bar.is-selected{opacity:1;background:var(--gold,#d6c18b);box-shadow:0 0 0 1px #fff2 inset}
+.owner-activity-bar.is-missing{background:var(--muted,#adb6c7);opacity:.2}
+.owner-activity-plot input[type=range]{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;margin:0;opacity:.001;cursor:crosshair;touch-action:pan-y}
+.owner-activity-plot:focus-within{outline:2px solid var(--gold,#d6c18b);outline-offset:5px}
+.owner-activity-axis{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:10px;color:var(--muted,#adb6c7)}
+.owner-activity-hint{font-size:11px;line-height:1.4;color:var(--muted,#adb6c7);margin:12px 0 0;text-align:center}
+.owner-activity-days{margin-top:12px;border:1px solid var(--border,#344056);border-radius:18px;background:var(--panel,#111a2c);overflow:hidden}
+.owner-activity-days>summary{min-height:48px;box-sizing:border-box;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;cursor:pointer;list-style:none}
+.owner-activity-days>summary::-webkit-details-marker{display:none}
+.owner-activity-days>summary>span:last-child{font-size:12px;color:var(--muted,#adb6c7)}
+.owner-activity-days>summary::after{content:'';width:16px;height:16px;flex:none;background:url('../assets/chevron-left.svg') center/contain no-repeat;transform:rotate(-90deg)}
+.owner-activity-days[open]>summary::after{transform:rotate(90deg)}
+.owner-activity-daily-list{padding:0 16px 8px}
+.owner-activity-daily-list>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;border-top:1px solid var(--border,#344056);font-size:13px}
+.owner-activity-daily-list strong{font-variant-numeric:tabular-nums}
+.owner-activity-footer{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:0 16px;margin-top:10px;min-height:44px;font-size:11px;color:var(--muted,#adb6c7)}
+.owner-activity-footer>span{padding-top:14px;flex-shrink:0}
+.owner-activity-info>summary{min-height:44px;display:flex;align-items:center;justify-content:flex-end;cursor:pointer;color:var(--gold,#d6c18b);font-size:12px;list-style:none}
+.owner-activity-info>p{font-size:12px;line-height:1.6;margin:4px 0 8px}
+.owner-activity-info[open]{flex-basis:100%;box-sizing:border-box;background:var(--panel,#111a2c);padding:0 14px 12px;border:1px solid var(--border,#344056);border-radius:16px}
+.owner-activity-info .owner-reports-link{font-size:12px;min-height:44px;padding:10px 0;margin:0}
+.owner-activity-empty{padding:24px 16px;border:1px solid var(--border,#344056);border-radius:20px;background:var(--panel,#111a2c);font-size:14px;line-height:1.6;color:var(--muted,#adb6c7)}
+@media(max-width:360px){.owner-activity-summary>div{padding:14px 12px}.owner-activity-summary strong{font-size:31px}.owner-activity-card{padding-inline:12px}.owner-activity-picked strong{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.owner-activity-bar{transition:none}}
+@media(max-height:800px) and (max-width:759px){.owner-activity-plot{height:90px}.owner-activity-hint{display:none}.owner-activity-summary>div{padding:12px 14px}.owner-activity-summary strong{font-size:30px}}
+
+.owner-activity-days>summary>span:first-child{flex:1}
+.owner-activity-days>summary::after{filter:invert(.8)}
+
+#owner-activity-status:empty{display:none}
+
+.owner-geography{margin-top:12px;border:1px solid var(--border,#344056);border-radius:20px;background:var(--panel,#111a2c);overflow:hidden}
+.owner-geography>summary{display:flex;align-items:center;gap:12px;padding:15px 16px;min-height:50px;cursor:pointer;list-style:none;font-size:15px}
+.owner-geography>summary::-webkit-details-marker{display:none}
+.owner-geography>summary>span{flex:1}.owner-geography>summary small{font-size:12px;color:var(--muted,#adb6c7)}
+.owner-geography>summary::after{content:'⌄';font-size:18px;color:var(--gold,#d6c18b)}.owner-geography[open]>summary::after{transform:rotate(180deg)}
+.owner-geo-body{padding:0 16px 14px}.owner-geo-note,.owner-geo-status{font-size:12px;line-height:1.5;color:var(--muted,#adb6c7);margin:0 0 12px}.owner-geo-status:empty{display:none}
+.owner-geo-tabs{display:flex;gap:4px;background:rgba(0,0,0,.15);padding:4px;border-radius:14px;margin-bottom:16px}
+.owner-geo-tabs button{flex:1;border:0;border-radius:10px;min-height:44px;background:transparent;color:var(--muted,#adb6c7);font:inherit;font-size:14px;padding:8px}
+.owner-geo-tabs button[aria-pressed=true]{background:var(--nav-active,#26314e);color:var(--gold,#d6c18b)}
+.owner-geo-list{list-style:none;padding:0;margin:0}.owner-geo-list li{margin:0 0 17px}.owner-geo-list li>div{display:flex;align-items:baseline;gap:12px;font-size:13px;margin-bottom:8px}
+.owner-geo-list li>div>span{flex:1;min-width:0;overflow-wrap:anywhere}.owner-geo-list strong{font-size:14px;white-space:nowrap}.owner-geo-list small{font-weight:400;font-size:11px;color:var(--muted,#adb6c7);margin-left:6px}
+.owner-geo-track{display:block;height:5px;border-radius:10px;background:rgba(255,255,255,.04);overflow:hidden}.owner-geo-track i{display:block;height:100%;border-radius:inherit;background:var(--gold,#d6c18b)}
+.owner-geography :focus-visible{outline:2px solid var(--gold,#d6c18b);outline-offset:2px}
