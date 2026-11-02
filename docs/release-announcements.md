@@ -426,3 +426,12 @@ Minor layout corrections after the functional audit. The guest sign-in title and
 The atmosphere audio retry button obeys its hidden attribute: it stays absent when sound is disabled, and is available only when enabled sound needs another user gesture. The fix is scoped to ambient settings, preserving all other pages.
 
 Retain announcement425, its existing artwork, acknowledgement and expiry. No new home promotion or release banner. Top SALAH visuals, tabs, ranking formula, awards, recordings and closed-feature access are unchanged.
+
+
+## 439 — Stable private profile scrolling
+
+Presence polling could recreate a focused profile heading and scroll the owner away from the section being read. Restore heading focus without scrolling and preserve the profile scroll offset during replacement. A fresh profile opening starts at its own top. The private profile now owns one fixed viewport scroll region with safe-area padding and a sticky return bar, instead of delegating the long screen to the iPhone document rubber band.
+
+The actual pre-fix interface reproduced a presence update moving document scroll790.4 to0. The corrected interface retained profile scroll660.8 and the last account panel position through six changing presence responses. This is browser verification; physical iPhone gesture acceptance remains required.
+
+Retain announcement425, acknowledgement, expiry and artwork. No ranking, award, audio-file, role or closed-feature access changes.

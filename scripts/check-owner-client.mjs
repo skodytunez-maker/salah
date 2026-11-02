@@ -75,7 +75,7 @@ class Element {
  setAttribute(key,value){this.attributes[key]=String(value);}
  getAttribute(key){return this.attributes[key]??null;}
  get id(){return this.attributes.id||'';}
- focus(){this.focused=true;Element.activeElement=this;}
+ focus(options={}){this.focused=true;this.focusOptions=options;Element.activeElement=this;if(!options.preventScroll){for(let node=this.parent;node;node=node.parent)if(node.id==='owner-user-detail')node.scrollTop=0;}}
 }
 function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request,browser=null}={}){
  const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false,get activeElement(){return Element.activeElement;}};let timerId=0;
@@ -132,6 +132,19 @@ cards.app.querySelector('[data-user]').onclick();assert.equal(cards.app.querySel
 assert.ok(!ownerUserCard({nickname:'<img src=x onerror=alert(1)>',online:false}).includes('<img'),'User-controlled names are escaped');
 const cardFailure=dashboard({request:async()=>{if(cardFailure.calls.length>1)throw Error('Fixture refresh unavailable');return{total:1,users:[{id:firstId,nickname:'Saved card'}]};}});await cardFailure.showAdmin(cardFailure.app);await settle();cardFailure.app.querySelector('[data-user]').onclick();await cardFailure.app.querySelector('#owner-user-refresh').onclick();await settle();assert.match(cardFailure.app.querySelector('#owner-user-card').textContent,/Saved card/);assert.match(cardFailure.app.querySelector('#owner-user-card-status').textContent,/unavailable/);
 console.log('PASS: private cards use stable IDs, distinguish unknown settings, survive polling failures and reordering, escape names and disappear on access revocation.');
+
+// Native focus scrolls its ancestor unless preventScroll is requested. Exercise
+// the actual polling/render path while the reading position is away from top.
+const scrolling=dashboard({result:{total:1,users:[{id:firstId,nickname:'Reading profile',lastSeenAt:'2026-11-02T06:00:00Z'}]}});
+await scrolling.showAdmin(scrolling.app);await settle();scrolling.app.querySelector('#owner-tab-users').onclick();await settle();scrolling.app.querySelector('[data-user]').onclick();await settle();
+const readingSurface=scrolling.app.querySelector('#owner-user-detail');readingSurface.scrollTop=640;
+scrolling.result.users[0].lastSeenAt='2026-11-02T06:01:00Z';
+for(const pulse of scrolling.intervals.values())pulse();await settle();
+assert.equal(readingSurface.scrollTop,640,'A changed presence response must not focus-scroll the private profile back to its heading');
+assert.equal(scrolling.app.querySelector('#owner-user-name').focusOptions.preventScroll,true);
+scrolling.app.querySelector('#owner-user-back').onclick();scrolling.app.querySelector('[data-user]').onclick();await settle();
+assert.equal(readingSurface.scrollTop,0,'A fresh profile opening starts at its own top rather than retaining the previous bottom');
+console.log('PASS: presence polling keeps profile reading position and heading focus without scrolling; a new opening resets only the profile scroller.');
 
 // A profile remains open while the user reads, scrolls or selects its content.
 cards.app.querySelector('#owner-user-back').onclick();assert.equal(cards.app.querySelector('#owner-user-detail').hidden,true);assert.equal(cards.app.querySelector('[data-user]').focused,true);
