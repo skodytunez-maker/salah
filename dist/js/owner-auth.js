@@ -101,6 +101,11 @@ export async function ownerStatistics(days=7){
  if(error)throw Error('Войдите снова.');
  return callOwner(data.session,'?mode=stats&days='+days);
 }
+export async function ownerGeography(days=7){
+ if(![1,7,30].includes(days))throw Error('Неизвестный период.');
+ const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ return callOwner(data.session,'?mode=geography&days='+days);
+}
 export function initOwnerAccess(onChanged){
  onOwnerChange(onChanged);
  const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive())verifyOwner({verifySession:true}).catch(()=>{});};

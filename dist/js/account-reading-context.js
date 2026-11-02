@@ -12,6 +12,6 @@ export function createReadingContext({storage,now=()=>Date.now()}={}){
  return{
   activate(id){account=UUID.test(id||'')?id:null;},
   record(value){if(!account)return false;const next=readingContext({...value,observedAt:new Date(now()).toISOString()},now());if(!next)return false;memory.set(account,next);try{storage.setItem(key(account),JSON.stringify(next));}catch{}return true;},
-  snapshot(city,id=account){const name=typeof city==='string'?city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):'';return{city:name||null,reading:load(id)};}
+  snapshot(city,id=account,country=null){const name=typeof city==='string'?city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):'';const nation=name&&typeof country==='string'?country.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):'';return{city:name||null,reading:load(id),...(nation?{country:nation}:{})};}
  };
 }

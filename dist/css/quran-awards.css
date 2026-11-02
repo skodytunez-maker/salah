@@ -107,3 +107,12 @@
 
 .award-history-detail button{max-width:none;justify-self:start;text-align:left;min-height:36px}.award-history-detail strong{overflow-wrap:anywhere}
 .award-history-received{line-height:1.5}.award-history-received>span{display:block;margin-top:3px;color:#a6afc3;font-size:12px}
+
+/* Keep list-row leader emblems beside the nickname, without changing the podium. */
+.competition-list-row .competition-person{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:12px}
+.competition-list-row .competition-person-identity{flex:0 1 auto;min-width:0}
+.competition-list-row .competition-award-badges{flex:0 0 auto;width:auto;max-width:none;flex-wrap:nowrap;align-items:center;gap:4px;padding-left:0}
+.competition-list-row .competition-leader-award{position:relative;display:block;width:50px;flex:none}
+.competition-list-row .competition-person:has(.competition-award-badges[data-count="2"]){flex-wrap:wrap;row-gap:4px}
+.competition-list-row .competition-award-badges[data-count="2"]{flex:0 1 auto;max-width:100%;flex-wrap:wrap}
+.competition-list-row .competition-leader-award small{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
