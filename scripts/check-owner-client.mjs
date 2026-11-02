@@ -88,6 +88,22 @@ function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nic
 }
 const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
 const outage=dashboard({allowed:false,verifyError:Error('Server unavailable')});await outage.showAdmin(outage.app);await settle();assert.ok(outage.app.querySelector('#owner-access-retry'));assert.equal(outage.app.querySelector('#owner-login'),null,'A server outage must not masquerade as signed-out');assert.equal(outage.app.querySelector('#owner-users-list'),null);assert.equal(outage.calls.length,0);outage.app.ownerDispose();
+
+// Re-entering the cabinet from the main panel is a fresh home entry, not a
+// request to resume the last section; explicit section/history URLs still work.
+const reentry=dashboard({result:{total:0,users:[]}});
+for(const view of ['users','activity','teachers','team','tools']){
+ reentry.location.hash='#admin?view='+view;await reentry.showAdmin(reentry.app);await settle();
+ assert.equal(reentry.app.querySelector('#owner-panel-'+view).hidden,false,'Explicit owner section remains reachable: '+view);
+ reentry.location.hash='#more';reentry.events.get('hashchange')();
+ reentry.location.hash='#admin';await reentry.showAdmin(reentry.app);await settle();
+ assert.equal(reentry.app.querySelector('#owner-panel-home').hidden,false,'Panel re-entry returns to cabinet home after '+view);
+ assert.equal(reentry.app.querySelector('#owner-panel-'+view).hidden,true);
+}
+reentry.location.hash='#admin?view=unknown';await reentry.showAdmin(reentry.app);await settle();assert.equal(reentry.app.querySelector('#owner-panel-home').hidden,false);
+reentry.app.ownerDispose();
+console.log('PASS: owner re-entry opens the section chooser after every section; explicit section links remain supported.');
+
 const cabinet=dashboard();await cabinet.showAdmin(cabinet.app);await settle();
 assert.equal(cabinet.app.querySelector('.owner-users').hidden,true);
 assert.equal(cabinet.app.querySelector('#owner-users-count').textContent,'125');
