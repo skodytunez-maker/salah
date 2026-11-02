@@ -32,15 +32,24 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
  if(!available&&acknowledgeAnnouncement){acknowledge(safe);document.querySelector('.release-dialog [data-close]')?.addEventListener('click',()=>window.dispatchEvent(new Event('salah:release-dismissed')),{once:true});}
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
+export const nativeUpdateRuntime=()=>globalThis.Capacitor?.isNativePlatform?.()===true||Number.isSafeInteger(globalThis.__SALAH_NATIVE_BOOT__?.versionCode);
+export function updateStatusMessage(status){return ({current:'Установлена последняя версия SALAH.',loading:'Обновление проверяется или загружается. Попробуйте ещё раз немного позже.',offline:'Для обновления нужен интернет.',unavailable:'Не удалось проверить обновление. Попробуйте ещё раз.', 'native-unavailable':'Не удалось связаться со службой обновления приложения. Попробуйте ещё раз.', 'native-required':'Для этого обновления нужна новая версия SALAH из Google Play.', 'rolled-back':'Предыдущее обновление не запустилось. Сохранена рабочая версия SALAH. Проверьте обновление в Google Play.'})[status]||'';}
+export async function checkNativeUpdate(updater,{force=false,timeoutMs=20000}={}){
+ if(navigator.onLine===false)return 'offline';
+ if(typeof updater?.check!=='function')return 'native-unavailable';
+ let timer;
+ try{
+  const result=await Promise.race([Promise.resolve().then(()=>updater.check({force})),new Promise(resolve=>{timer=setTimeout(()=>resolve({status:'loading'}),timeoutMs);})]);
+  return ['current','available','loading','native-required','rolled-back'].includes(result?.status)?result.status:'native-unavailable';
+ }catch{return 'native-unavailable';}finally{clearTimeout(timer);}
+}
 export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,canApplyUpdate=canAutoUpdate,showRelease=showAppRelease}={}) {
  const nativeUpdater=globalThis.Capacitor?.Plugins?.SalahLiveUpdate;
- if(nativeUpdater){
+ if(nativeUpdater||nativeUpdateRuntime()){
   manualCheck=async(force=false)=>{
-   if(navigator.onLine===false)return 'offline';
-   const result=await nativeUpdater.check({force});
-   if(force && result.status==='available')toast('Обновление загружено. Установится при следующем запуске SALAH.');
-   else if(force && result.status==='native-required')toast('Для этого обновления нужна новая версия приложения из Google Play.');
-   return result.status==='native-required'?'unavailable':result.status;
+   const status=await checkNativeUpdate(nativeUpdater,{force});
+   if(force && status==='available')toast('Обновление загружено. Установится при следующем запуске SALAH.');
+   return status;
   };
   // A service worker must never mask files from a new native web bundle.
   if('serviceWorker' in navigator){for(const registration of await navigator.serviceWorker.getRegistrations().catch(()=>[]))await registration.unregister().catch(()=>{});}

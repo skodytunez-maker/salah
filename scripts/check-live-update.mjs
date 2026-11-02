@@ -17,6 +17,9 @@ try{
  for(const name of ['index.html','js/native-entry.js','js/app-release.js','js/app.js','js/vendor/capacitor-core.js']){await fs.mkdir(path.dirname(path.join(source,name)),{recursive:true});await fs.writeFile(path.join(source,name),'fixture');}
  const manifest=await buildWebUpdate(source,out,333),bytes=await fs.readFile(path.join(out,manifest.file));
  assert.equal(manifest.sha256,createHash('sha256').update(bytes).digest('hex'));assert.equal(manifest.bytes,bytes.length);assert.equal(manifest.minNativeVersion,332);
+ await assert.rejects(buildWebUpdate(source,out,445),/Missing native startup recovery/);
+ await fs.writeFile(path.join(source,'js/native-startup-recovery.js'),'fixture');
+ const nativeRepair=await buildWebUpdate(source,out,445);assert.equal(nativeRepair.minNativeVersion,445,'Startup repair needs the new native bootstrap, not just downloaded web files');
  await fs.writeFile(path.join(source,'secret.jks'),'private');await assert.rejects(buildWebUpdate(source,out,334));await fs.rm(path.join(source,'secret.jks'));
  await fs.rm(path.join(source,'index.html'));await assert.rejects(buildWebUpdate(source,out,334));
 } finally{await fs.rm(root,{recursive:true,force:true});}

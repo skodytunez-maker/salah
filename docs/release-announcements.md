@@ -442,3 +442,12 @@ Retain announcement425, acknowledgement, expiry and artwork. No ranking, award, 
 A stalled account check now settles to a recoverable state after12seconds, superseding late responses without clearing stored credentials. An access-token rejection after one successful token refresh is not treated as proof that the refresh session was revoked. Explicit session/user/refresh-token revocations remain final, and private gates still require current server verification and MFA. The initial account title is neutral until the session check completes. A temporary owner gate error shows Retry instead of the sign-in form; fresh authentication resumes through the existing SDK. No credential, permission, closed-section or ranking formula change.
 
 The server write optimization is prepared separately and is not deployed in444. This release changes only the client. Existing announcement425, acknowledgement, expiry and artwork stay unchanged. Guest counting and the separate443 statistics/geography candidate are not included.
+
+
+## 445 — Native startup and update feedback
+
+The installed Android package can now remove a legacy browser worker at its local app origin and reload the same route from APK or verified active assets. Recovery runs once per Activity, checks the local origin in Java and JavaScript, and leaves credentials, settings, reading progress, IndexedDB and downloaded audio intact. Normal ready/version acknowledgement, archive verification, Families protection and failed-bundle rollback remain enabled. Clean launches do not reload.
+
+A rejected web update no longer reports “current”. Unsupported descriptors, required Google Play upgrades, bridge failures, offline state and ongoing downloads have distinct outcomes. The native settings screen hides the redundant browser install action. Manual checks stop waiting after20seconds while a native download can continue. Web updates445 onward require native445, so this native repair must be distributed through Google Play before older APKs can receive subsequent web releases.
+
+Retain announcement425, acknowledgement, expiry and artwork. This candidate does not include guest analytics, geography, server ranking optimization, reminders, new recordings or expanded closed-section access. The tester screenshot proves web338 is visible; it does not establish the installed APK version. Physical-device upgrade acceptance remains required.

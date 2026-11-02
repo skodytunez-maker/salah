@@ -15,6 +15,16 @@ public final class SalahLiveUpdatePolicy {
         return schema == 1 && minimum >= 332 && minimum <= nativeVersion && version > current
             && version > pending && version != failed && version < Integer.MAX_VALUE;
     }
+    static String status(int version,int minimum,int schema,int nativeVersion,int current,int pending,boolean pendingComplete,int failed) {
+        if(schema!=1 || minimum<332 || version<=0 || version==Integer.MAX_VALUE)return "unavailable";
+        if(minimum>nativeVersion)return "native-required";
+        if(pending>current && pendingComplete)return "available";
+        if(version<=current)return "current";
+        if(version==failed)return "rolled-back";
+        // Incomplete staged data must not report that the app is up to date.
+        if(!accepts(version,minimum,schema,nativeVersion,current,0,failed))return "unavailable";
+        return "download";
+    }
     static File entry(File root,String name) throws Exception {
         if (name == null || name.isEmpty() || name.startsWith("/") || name.indexOf(92) >= 0
             || name.contains(":") || name.indexOf(0) >= 0) throw new Exception("Unsafe update entry");

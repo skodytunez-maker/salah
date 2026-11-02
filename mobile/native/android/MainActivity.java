@@ -22,6 +22,7 @@ public class MainActivity extends BridgeActivity {
         SalahLiveUpdateStore updates = new SalahLiveUpdateStore(this);
         int nativeVersion = nativeVersion();
         int selected = updates.launch(nativeVersion);
+        bridgeBuilder.addWebViewListener(new SalahNativeStartup(nativeVersion,selected));
         if(selected > 0) bridgeBuilder.setServerPath(new ServerPath(ServerPath.PathType.BASE_PATH, updates.version(selected).getAbsolutePath()));
         super.onCreate(savedInstanceState);
         // A broken web release cannot strand the app; retain the original APK assets.

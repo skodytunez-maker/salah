@@ -14,6 +14,7 @@ public class SalahLiveUpdatePlugin extends Plugin {
     private SalahLiveUpdateStore store;
     private long lastCheck=0;
     private boolean busy=false;
+    private volatile String lastStatus="loading";
     @Override public void load(){store=new SalahLiveUpdateStore(getContext());}
     @Override protected void handleOnDestroy(){worker.shutdownNow();}
     @PluginMethod public void ready(PluginCall call){
@@ -25,10 +26,10 @@ public class SalahLiveUpdatePlugin extends Plugin {
     @PluginMethod public void check(PluginCall call){
         synchronized(this){
             if(busy){result(call,"loading");return;}
-            if(!Boolean.TRUE.equals(call.getBoolean("force",false)) && System.currentTimeMillis()-lastCheck<300000){result(call,"current");return;}
+            if(!Boolean.TRUE.equals(call.getBoolean("force",false)) && System.currentTimeMillis()-lastCheck<300000){result(call,lastStatus);return;}
             busy=true;lastCheck=System.currentTimeMillis();
         }
-        worker.execute(()->{try{result(call,download());}catch(Exception e){result(call,"unavailable");}finally{synchronized(this){busy=false;}}});
+        worker.execute(()->{try{lastStatus=download();}catch(Exception e){lastStatus="unavailable";}finally{synchronized(this){busy=false;}}result(call,lastStatus);});
     }
     private void result(PluginCall call,String status){JSObject value=new JSObject();value.put("status",status);call.resolve(value);}
     private byte[] fetch(URL url,long limit) throws Exception {
@@ -50,10 +51,9 @@ public class SalahLiveUpdatePlugin extends Plugin {
         int version=manifest.getInt("version"),minimum=manifest.getInt("minNativeVersion");
         int nativeVersion=getContext().getPackageManager().getPackageInfo(getContext().getPackageName(),0).versionCode;
         int current=Math.max(nativeVersion,Math.max(store.prefs.getInt("confirmed",0),store.prefs.getInt("trial",0)));
-        if(minimum>nativeVersion)return "native-required";
         int pending=store.prefs.getInt("pending",0);
-        if(pending>current && store.complete(pending))return "available";
-        if(!SalahLiveUpdatePolicy.accepts(version,minimum,manifest.getInt("schema"),nativeVersion,current,pending,store.prefs.getInt("failed",0)))return "current";
+        String status=SalahLiveUpdatePolicy.status(version,minimum,manifest.getInt("schema"),nativeVersion,current,pending,store.complete(pending),store.prefs.getInt("failed",0));
+        if(!status.equals("download"))return status;
         String digest=manifest.getString("sha256"),file=manifest.getString("file");
         if(!digest.matches("[0-9a-f]{64}") || !file.equals("web-"+version+"-"+digest+".zip"))throw new Exception("Invalid update descriptor");
         // Immutable hash-addressed archive; a stale manifest can never point to changed bytes.
