@@ -1,7 +1,8 @@
 import{mountTeacherAdmin}from './teacher-admin.js';
 import{ownerClassroomCall}from './owner-classroom.js';
 import{staffIcon}from './staff-markup.js';
-const icon=kind=>({home:'house.svg',teachers:'book.svg',tools:'gear.svg'}[kind]?'<img src="assets/'+({home:'house.svg',teachers:'book.svg',tools:'gear.svg'}[kind])+'" alt="" aria-hidden="true">':staffIcon(({users:'team',activity:'audit',materials:'publications'}[kind])||kind));
+const employeeIcon="<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"17\" rx=\"2.5\"/><path d=\"M9 4V2h6v2M8 17c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5\"/><circle cx=\"12\" cy=\"9\" r=\"2.3\"/></svg>";
+const icon=kind=>kind==='team'?employeeIcon:({home:'house.svg',teachers:'book.svg',tools:'gear.svg'}[kind]?'<img src="assets/'+({home:'house.svg',teachers:'book.svg',tools:'gear.svg'}[kind])+'" alt="" aria-hidden="true">':staffIcon(({users:'team',activity:'audit',materials:'publications'}[kind])||kind));
 export function mountOwnerWorkspace(app,{isActive=()=>app.isConnected,onSelect=()=>{}}={}){
  const doc=app.ownerDocument,main=app.querySelector('.admin-intro'),nav=app.querySelector('.owner-sections');if(!main||!nav)throw Error('Кабинет пока недоступен.');main.classList.add('owner-workspace');
  const pageHeading=app.querySelector('.page-head>div');let accountReturn=null;if(pageHeading){accountReturn=doc.createElement('a');accountReturn.className='owner-account-return';accountReturn.href='#account';accountReturn.innerHTML=staffIcon('back')+'<span>Мой аккаунт</span>';pageHeading.prepend(accountReturn);}

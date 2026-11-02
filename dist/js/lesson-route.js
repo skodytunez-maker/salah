@@ -1,3 +1,10 @@
+// Shared public loading shell; it contains no account data or access grant.
+export function lessonEntryLoading(hash=''){
+ const params=new URLSearchParams(hash.split('?')[1]||''),cabinet=!params.has('invite')&&!params.has('class');
+ if(!cabinet)return '<section class="alphabet-page lesson-account-entry"><a class="alphabet-back" href="#knowledge">← Знания</a><h1>Онлайн-занятие</h1><p role="status">Открываем занятие…</p></section>';
+ return '<section class="alphabet-page learning-cabinet cabinet-loading" aria-busy="true"><a class="alphabet-back" href="#knowledge">← Знания</a><div class="cabinet-kicker">ОБУЧЕНИЕ · SALAH</div><h1>'+(params.get('view')==='teacher'?'Кабинет преподавателя':'Моё обучение')+'</h1><p class="cabinet-welcome" role="status">Открываем кабинет…</p><div class="cabinet-loading-panel" aria-hidden="true"><span></span><span></span><span></span></div></section>';
+}
+
 // Keep the private learning UI out of the ordinary app's startup graph.
 export function createLessonRoute({load=()=>import('./lesson-invitation.js')}={}){
  let module=null,loading=null,generation=0,view=null;
@@ -9,7 +16,7 @@ export function createLessonRoute({load=()=>import('./lesson-invitation.js')}={}
   if(view?.host===host&&view.hash===hash)return;
   const token=++generation;view={host,hash};
   const active=()=>generation===token&&host.isConnected;
-  host.innerHTML='<section class="alphabet-page lesson-account-entry"><a class="alphabet-back" href="#knowledge">← Знания</a><h1>Моё обучение</h1><p role="status">Открываем кабинет…</p></section>';
+  host.innerHTML=lessonEntryLoading(hash);
   const task=loading||(loading=Promise.resolve().then(load));
   void task.then(value=>{
    if(typeof value.showLessonInvitation!=='function'||typeof value.stopStudentLesson!=='function'||typeof value.studentLessonBusy!=='function')throw Error('learning_module_unavailable');

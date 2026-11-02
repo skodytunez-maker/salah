@@ -468,3 +468,13 @@ Remove the duplicate Overview destination. Keep the existing Visits layout, char
 Keep the profile navigation outside its single viewport content scroller, so the toolbar cannot paint over the portrait. Preserve the reading position through presence updates and reset it only on a new profile opening. Refine the existing Menu owner emblem to a quieter circular gold/navy S without changing its meaning, owner gate or roles.
 
 Retain announcement425, artwork, acknowledgement and expiry. Top layout/formula, audio, authentication, native runtime minimum445 and closed Knowledge access remain unchanged. Explicitly requested one-off country backfill for existing Tyumen/Omsk/Ganja rows was applied separately; it changes no chosen city or timestamps and is not a migration or guess for ambiguous cities.
+
+## 448 — Owner tile caption fit and distinct staff icon
+
+Owner cabinet cards use content-based row minimums and normal-height page flow below the My Account return. Keep captions inside the card at shorter viewport heights, allow captions to wrap without horizontal overflow, and permit document scrolling when the safe-area/viewport budget cannot fit the content. Preserve existing text sizes and the five-row/two-column layout; no clipping or line clamp hides labels.
+
+Use an identity badge icon for the Employees tile and navigation, distinct from Users (people) and Teachers (book). The shared staff messenger icon system and all role checks remain unchanged.
+
+Minor cosmetic fix retains announcement425, artwork, acknowledgment and expiry. No Top, audio, access, private data, native minimum445 or closed-section changes.
+
+448 also removes the unrelated invitation screen during teacher/student cabinet loading. A shared data-free shell keeps the requested cabinet heading through the lazy import and live server authorization, with static placeholders rather than an invitation title or checking-login page. Actual invitation, denial, retry, session, role, account-scoped cache and closed-section checks remain in force. No automatic access is granted by a route title.
