@@ -52,6 +52,9 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   if(view==='alphabet'){if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
   delete container.dataset.alphabetHash;
   const saved=savedLesson(read('learning-progress',null));
+  const catalogKey=JSON.stringify([learningUserId,ownerAccess,saved]);
+  // Status/owner refreshes must not replace the current catalog with a loader.
+  if(container.querySelector('.knowledge-page')?.dataset.catalogKey===catalogKey)return;
   container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title"${learningUserId?' aria-busy="true"':''}>
     <div class="page-head knowledge-head">
       <div>
@@ -90,6 +93,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   </section>`;
   const page=container.querySelector('.knowledge-page');
   page.dataset.learningUser=learningUserId||'';
+  page.dataset.catalogKey=catalogKey;
   if(learningUserId)void mountCabinetLink(page,{userId:learningUserId,isActive:()=>page.isConnected&&container.querySelector('.knowledge-page')===page});
   if (typeof onStart === 'function') {
     container.querySelectorAll('[data-learning-entry]').forEach(link => {
