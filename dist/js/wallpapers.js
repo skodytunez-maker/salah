@@ -6,6 +6,7 @@ export const wallpapers=[
 ];
 export const wallpaperChoice=value=>wallpapers.some(item=>item.id===value)?value:'mosque';
 const day=86400000,rad=Math.PI/180,clamp=value=>Math.max(0,Math.min(1,value));
+const smooth=value=>{const t=clamp(value);return t*t*(3-2*t)};
 // Positions use the selected city. Coordinates are projected into the wallpaper,
 // not used as compass bearings; its skyline hides bodies below the visible sky.
 export const skyGeometry={width:853,height:1844,horizon:1060};
@@ -55,6 +56,9 @@ export function skyObjects(now,times,mode='auto',preview=null,city=null){
  if(![sun.azimuth,sun.altitude,moon.azimuth,moon.altitude,moon.distance].every(Number.isFinite))return emptySky();
  const events=skyEvents(instant,city),s=bodyPoint(instant,sun,events.solar),m=bodyPoint(instant,moon,events.lunar);
  // Apparent upper-limb horizon convention used by SunCalc's rise/set solver.
- const sunUp=sun.altitude+.266+.09>=0,moonUp=moon.altitude+.2725*Math.asin(6378.14/moon.distance)/rad+.09>=0;
- return {sunX:s.x,sunY:s.y,sun:sunUp?1:0,moonX:m.x,moonY:m.y,moon:moonUp?(sunUp?0.42:1):0};
+ const sunLimb=sun.altitude+.266+.09,moonLimb=moon.altitude+.2725*Math.asin(6378.14/moon.distance)/rad+.09;
+ // A half-degree band fades the disc through the horizon without a binary flash.
+ // Lunar daylight brightness follows the same continuous solar light curve.
+ const sunVisible=smooth((sunLimb+.25)/.5),moonVisible=smooth((moonLimb+.25)/.5),daylight=smooth((sun.altitude+1)/2);
+ return {sunX:s.x,sunY:s.y,sun:sunVisible,moonX:m.x,moonY:m.y,moon:moonVisible*(1-.58*daylight)};
 }
