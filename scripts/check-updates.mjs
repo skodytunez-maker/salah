@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from '../dist/js/app-release.js';
-import {releaseDate,validatedRelease,registerAppWorker,checkAppUpdate,hasSeenAnnouncement} from '../dist/js/pwa-updates.js';
+import {releaseDate,validatedRelease,registerAppWorker,checkAppUpdate,applyAppUpdate,hasSeenAnnouncement} from '../dist/js/pwa-updates.js';
 assert.equal(validatedRelease({version:140,date:'2026-02-31',changes:['x']}),null);
 assert.equal(validatedRelease({version:'140',date:'2026-10-03',changes:['x']}),null);
 assert.equal(validatedRelease({version:140,date:'2026-10-03',changes:[{}]}),null);
@@ -106,6 +106,29 @@ playbackBusy=false;intervals.at(-1).fn();assert.equal(automaticMessages,manualSt
 playbackBusy=true;workerEvents.controllerchange();assert.equal(reloads,manualReloads,'Playback starting during activation blocks reload too');
 playbackBusy=false;intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);intervals.at(-1).fn();assert.equal(reloads,manualReloads+1);
 console.log('PASS: manual updates wait for playback, recheck at controller activation and reload once after audio ends.');
+
+// The Settings button applies a ready update itself; no second banner tap.
+playbackBusy=false;registration.waiting=waiting;
+await registerAppWorker({canApplyUpdate:()=>!playbackBusy});
+const directMessages=automaticMessages,directReloads=reloads;
+assert.equal(await checkAppUpdate(),'available');assert.equal(await applyAppUpdate(),'updating');
+assert.equal(automaticMessages,directMessages+1);assert.equal(await applyAppUpdate(),'updating');assert.equal(automaticMessages,directMessages+1,'Repeated Settings taps cannot activate twice');
+workerEvents.controllerchange();workerEvents.controllerchange();assert.equal(reloads,directReloads+1);
+
+// Another window has already activated a newer worker, but this document is old.
+registration.waiting=null;registration.installing=null;serviceWorker.controller={postMessage:waiting.postMessage};
+await registerAppWorker({canShowRelease:()=>false,canAutoUpdate:()=>false,canApplyUpdate:()=>!playbackBusy});
+const staleReloads=reloads;
+assert.equal(await checkAppUpdate(),'available','A newer active worker cannot be reported as current to an old document');
+assert.equal(await applyAppUpdate(),'updating');assert.equal(reloads,staleReloads+1);
+
+playbackBusy=true;
+await registerAppWorker({canShowRelease:()=>false,canAutoUpdate:()=>false,canApplyUpdate:()=>!playbackBusy});
+const staleBusyReloads=reloads;assert.equal(await checkAppUpdate(),'available');assert.equal(await applyAppUpdate(),'deferred');
+intervals.at(-1).fn();assert.equal(reloads,staleBusyReloads,'Even stale-window repair waits for current audio');
+playbackBusy=false;intervals.at(-1).fn();assert.equal(reloads,staleBusyReloads+1);intervals.at(-1).fn();assert.equal(reloads,staleBusyReloads+1);
+assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);
+console.log('PASS: Settings applies ready workers in one action, repairs old documents controlled by newer workers, queues during playback and preserves personal data.');
 const events={};const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://example.test/salah/'},location:{origin:'https://example.test'},addEventListener:(k,f)=>events[k]=f}});
 vm.runInContext(await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),context);
 let release;events.message({data:{type:'SALAH_RELEASE_INFO'},ports:[{postMessage:v=>release=JSON.parse(JSON.stringify(v))}]});
