@@ -47,7 +47,8 @@ body.reduce-motion #home-scene>div,body.reduce-motion *:after{transition:none!im
 #home-scene .scene-sun{left:calc(var(--sky-sunX,50)*1%);top:calc(var(--sky-sunY,58)*1%);width:3.8%;height:auto;border-radius:50%;background:radial-gradient(circle,#fffbe9 20%,#ffedb4 70%,#f7c982 100%);box-shadow:0 0 12px 2px rgba(255,215,157,.25);opacity:var(--sky-sun,0)}
 #home-scene .scene-moon{left:calc(var(--sky-moonX,50)*1%);top:calc(var(--sky-moonY,58)*1%);width:5%;height:auto;filter:none;opacity:var(--sky-moon,0)}
 .scene-moon img{display:block;width:100%;height:100%;object-fit:contain}
-#home-scene.sky-reset .scene-sun,#home-scene.sky-reset .scene-moon{transition:none}
+/* Reset position after a pause/city change without flashing the disc opacity. */
+#home-scene.sky-reset .scene-sun,#home-scene.sky-reset .scene-moon{transition:opacity 1.2s linear}
 .scene-preview:not(.reduce-motion) #home-scene .scene-sun,.scene-preview:not(.reduce-motion) #home-scene .scene-moon{transition:left 0s,top 0s,opacity .5s linear}
 /* Match the wallpaper's centered cover crop: weather stays behind the glass. */
 body[data-wallpaper="new-york"] #weather-layer{clip-path:none;-webkit-mask-image:url('./assets/window-weather-mask.svg');mask-image:url('./assets/window-weather-mask.svg');-webkit-mask-size:cover;mask-size:cover;-webkit-mask-position:center center;mask-position:center center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;mask-mode:alpha}
@@ -156,3 +157,9 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 
 /* Use the same Tyumen night photograph in every orientation, centred on the bridge. */
 #home-scene[data-wallpaper="landmark"][data-landmark-city="tyumen"] .scene-night{background-size:cover;background-position:75% center}
+
+/* Khujand’s distant skyline is around half the portrait source, above the
+   generic panorama horizon. Keep low winter arcs in that visible sky; the
+   existing skyline mask still occludes buildings, and high arcs stay on screen. */
+#home-scene[data-landmark-city="khujand"] .scene-sun{top:clamp(8%,calc((var(--sky-sunY,58) - 8.5)*1%),58%)}
+#home-scene[data-landmark-city="khujand"] .scene-moon{top:clamp(8%,calc((var(--sky-moonY,58) - 8.5)*1%),58%)}

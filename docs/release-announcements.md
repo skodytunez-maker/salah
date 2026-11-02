@@ -483,3 +483,10 @@ Minor cosmetic fix retains announcement425, artwork, acknowledgment and expiry. 
 ## 449 — Owner cabinet fresh entry
 
 Opening the bare #admin cabinet entry from the account or main panel always starts at the owner section chooser. Remove module-level last-section fallback; explicit section links and existing Back/history routes keep their destination. Preserve announcement425, artwork, acknowledgment and expiry. No visual, Top, audio, access, server or native minimum445 changes.
+
+
+## 450 — Continuous Sun and Moon visibility
+
+Keep the existing independent astronomical paths and continuous position interpolation. Replace binary upper-limb rise/set visibility with a smooth half-degree fade and blend lunar daylight brightness continuously with solar elevation. Returning after a pause or switching city resets position without a streak while retaining opacity fading. Skyline masks, weather, fixed backgrounds and reduced-motion settings remain intact. Retain announcement425, artwork, acknowledgment and expiry; no prayer time, Top, auth or access changes.
+
+For the reported Khujand background, lift only the visual projected track by 8.5 source percentage points to match its higher distant skyline; bound high arcs inside the sky. Preserve the photograph/mask alignment, actual city/time visibility and independent lunar path. Other artwork projection is unchanged.

@@ -37,17 +37,24 @@ const observed=Date.parse('2026-10-02T06:51:00+05:00');
 assert.deepEqual(at(observed,tyumen,{Fajr:observed+day,Sunrise:observed+day,Maghrib:observed-day}),morning);
 const solar=getTimes(new Date(observed),tyumen.latitude,tyumen.longitude),sunrise=+solar.sunrise,sunset=+solar.sunset;
 assert.equal(at(sunrise-2*minute).sun,0);
-assert.equal(at(sunrise).sun,1,'the upper solar limb is visible at astronomical sunrise');
+assert.ok(at(sunrise).sun>0&&at(sunrise).sun<1,'the upper solar limb fades through astronomical sunrise');
 assert.equal(at(sunrise+2*minute).sun,1);
 assert.equal(at(sunset-2*minute).sun,1);assert.equal(at(sunset+2*minute).sun,0);
 const sunAtRise=getPosition(solar.sunrise,tyumen.latitude,tyumen.longitude);
 assert.ok(sunAtRise.altitude<0,'sunrise refers to the upper limb, not the center');
 assert.ok(sunAtRise.altitude+.266+.09>=0);
 const moonEvents=getMoonTimes(new Date(observed),tyumen.latitude,tyumen.longitude,0);
-assert.ok(at(+moonEvents.set-2*minute).moon>0);assert.equal(at(+moonEvents.set+2*minute).moon,0);
+assert.ok(at(+moonEvents.set-2*minute).moon>0);assert.equal(at(+moonEvents.set+5*minute).moon,0);
 const moonAtSet=getMoonPosition(moonEvents.set,tyumen.latitude,tyumen.longitude);
 const moonUpperLimb=moonAtSet.altitude+.2725*Math.asin(6378.14/moonAtSet.distance)*180/Math.PI+.09;
 assert.ok(Math.abs(moonUpperLimb)<.001,'moonset and position share an upper-limb convention');
+
+
+// Rise/set and the daytime Moon brightness must change continuously.
+for(const event of [solar.sunrise,solar.sunset,moonEvents.rise,moonEvents.set])if(Number.isFinite(+event)){
+ const before=at(+event-1000),after=at(+event+1000);
+ for(const key of ['sun','moon'])assert.ok(Math.abs(before[key]-after[key])<.025,'No visibility flash across '+key+' horizon at '+event.toISOString());
+}
 
 // The UTC day sets before it rises: midnight needs the previous day's rise.
 const nyMoon=getMoonTimes(new Date('2026-06-21T12:00:00Z'),nyc.latitude,nyc.longitude,0);
@@ -98,7 +105,7 @@ assert.deepEqual(skyGeometry,{width:853,height:1844,horizon:1060});
 assert.match(mask,/viewBox="0 0 853 1844"/);assert.match(mask,/<path\s[^>]*d="[^\"]*Z"/i,'the skyline needs a closed occluding mask');
 assert.match(css,/aspect-ratio:\s*853\s*\/\s*1844/);assert.match(css,/mask-image:url\(['"]?\.\/assets\/window-sky-mask\.svg/);
 for(const property of ['sunX','sunY','moonX','moonY'])assert.ok(css.includes('--sky-'+property),'each body needs its own projected coordinates');
-assert.match(css,/#home-scene\.sky-reset[^}]*transition:none/s,'re-entry and city changes must not streak across the panorama');
+assert.match(css,/#home-scene\.sky-reset[^}]*transition:opacity 1\.2s linear/s,'Re-entry resets coordinates without streaking and preserves the visibility fade');
 console.log('PASS: wallpaper/settings persistence; real independent daylight Sun/Moon paths; upper-limb rise/set; previous-day lunar arcs; polar/invalid cities; preview clock; cache rollover; panorama mask.');
 
 // Wallpaper preferences never change the prayer city or its calculation.
