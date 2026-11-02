@@ -435,3 +435,12 @@ Presence polling could recreate a focused profile heading and scroll the owner a
 The actual pre-fix interface reproduced a presence update moving document scroll790.4 to0. The corrected interface retained profile scroll660.8 and the last account panel position through six changing presence responses. This is browser verification; physical iPhone gesture acceptance remains required.
 
 Retain announcement425, acknowledgement, expiry and artwork. No ranking, award, audio-file, role or closed-feature access changes.
+
+
+## 441 — Continuous system playback during chapter handoff and authoritative Pause
+
+An in-flight Play could emit a native play event after a later explicit Pause. The onplay callback overwrote the paused state and allowed the cancelled play promise to leave audio running. The player now tracks explicit playback intent across requests: a late play event re-pauses cancelled playback, while an explicit new Play retains the same recording and position. Stale end events after explicit Pause do not advance the queue. Unexpected OS interruption recovery, chapter handoff, category ownership and stop cleanup remain intact.
+
+The new isolated regression uses actual Quran session/player/MediaSession modules, a controllable native media fixture, the real onplay handler and a delayed play promise. It fails on439 and passes on441, including69→70→71 continuation after remote controls. This does not claim physical iPhone acceptance or prove that the recording has the identical cause. The owner reports audio continuing despite Control Center Pause and progression returning only after entering SALAH; both need retesting on-device. Minor441 preserves announcement425, acknowledgement, expiry, artwork, Top, closed-access gates and all personal data. Candidate440 remains held and is not included.
+
+Automatic chapter handoff also retains the existing system playback state while the next media source loads. Release439 emitted three paused system states between two playing chapters. Candidate441 skips those intermediate metadata/state updates and publishes the next chapter on actual playback; explicit Pause/Stop and loading errors still update the system immediately. Tests cover pending handoff cancellation and failed next-chapter loading. No background keep-alive audio, forced volume, silent-loop workaround or data reset is introduced.
