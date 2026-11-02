@@ -31,11 +31,13 @@ export async function buildWebUpdate(source,out,version=APP_VERSION){
  }}
  await walk(source);
  for(const name of ['index.html','js/native-entry.js','js/app-release.js','js/app.js','js/vendor/capacitor-core.js'])if(!files.some(f=>f.name===name))throw Error('Incomplete web update: '+name);
+ if(version>=445&&!files.some(f=>f.name==='js/native-startup-recovery.js'))throw Error('Missing native startup recovery');
  if(files.length>5000||files.reduce((n,f)=>n+f.bytes.length,0)>180*1024*1024)throw Error('Update exceeds native limits');
  const zip=packZip(files);if(zip.length>100*1024*1024)throw Error('Archive too large');
  const sha256=createHash('sha256').update(zip).digest('hex'),file='web-'+version+'-'+sha256+'.zip';
  await fs.mkdir(out,{recursive:true});await fs.writeFile(path.join(out,file),zip);
- const manifest={schema:1,version,minNativeVersion:332,file,sha256,bytes:zip.length};
+ // 445 repairs native startup; older APKs must update through Google Play first.
+ const manifest={schema:1,version,minNativeVersion:version>=445?445:332,file,sha256,bytes:zip.length};
  await fs.writeFile(path.join(out,'latest.json'),JSON.stringify(manifest)+String.fromCharCode(10));
  return manifest;
 }

@@ -21,6 +21,7 @@ await fs.cp(source,target,{recursive:true,force:true,filter:src=>!src.startsWith
 await fs.mkdir(path.join(target,'js/vendor'),{recursive:true});
 await fs.copyFile(runtime,path.join(target,'js/vendor/capacitor-core.js'));
 await fs.copyFile(path.join(mobileRoot,'native/native-entry.js'),path.join(target,'js/native-entry.js'));
+await fs.copyFile(path.join(mobileRoot,'native/native-startup-recovery.js'),path.join(target,'js/native-startup-recovery.js'));
 await fs.copyFile(
   path.join(mobileRoot,'node_modules/@capacitor/core/LICENSE'),
   path.join(target,'js/vendor/capacitor-LICENSE.txt')

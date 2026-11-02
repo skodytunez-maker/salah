@@ -23,4 +23,13 @@ public class SalahLiveUpdatePolicyTest {
    try { SalahLiveUpdatePolicy.entry(root,name);fail(name); } catch(Exception expected) {}
   }
  }
+ @Test public void failedOrUnsupportedUpdatesNeverClaimCurrent() {
+  assertEquals("rolled-back",SalahLiveUpdatePolicy.status(444,332,1,338,338,0,false,444));
+  assertEquals("native-required",SalahLiveUpdatePolicy.status(445,445,1,338,338,0,false,0));
+  assertEquals("unavailable",SalahLiveUpdatePolicy.status(444,332,2,436,436,0,false,0));
+  assertEquals("current",SalahLiveUpdatePolicy.status(444,332,1,445,445,0,false,444));
+  assertEquals("download",SalahLiveUpdatePolicy.status(446,445,1,445,445,446,false,0));
+  assertEquals("available",SalahLiveUpdatePolicy.status(446,445,1,445,445,446,true,0));
+  assertEquals("download",SalahLiveUpdatePolicy.status(447,445,1,445,445,0,false,446));
+ }
 }
