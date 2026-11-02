@@ -19,7 +19,7 @@ console.log('PASS: repeated and concurrent Auth checks do not rotate tokens; rev
 for(const recoveryError of [{status:503},{code:'refresh_token_already_used',status:400},null]){
  let rotations=0,refusals=0,closed=0,active={access_token:'expired-fixture',user:{id:'fixture-user'}};
  const retryGuard=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{session:active}}),getUser:async()=>{refusals++;return{error:{code:'bad_jwt',status:403}};},refreshSession:async()=>{rotations++;if(recoveryError)return{error:recoveryError};active={...active,access_token:'renewed-fixture'};return{data:{session:active}};},signOut:async()=>{closed++;active=null;return{};}})});
- const result=await retryGuard({force:true});assert.equal(rotations,1);assert.equal(refusals,recoveryError?1:2);assert.equal(result.state,recoveryError?.status===503?'unavailable':'revoked');assert.equal(closed,recoveryError?.status===503?0:1);
+ const result=await retryGuard({force:true});assert.equal(rotations,1);assert.equal(refusals,recoveryError?1:2);assert.equal(result.state,recoveryError?.code==='refresh_token_already_used'?'revoked':'unavailable');assert.equal(closed,recoveryError?.code==='refresh_token_already_used'?1:0);
 }
 console.log('PASS: expired-JWT recovery never loops; transient recovery failure preserves the session; confirmed refusal ends only the current local session.');
 
@@ -55,3 +55,17 @@ for(const revoked of [true,false]){
 }
 
 console.log('PASS: stale final session reads cannot sign out or replace a newly accepted account.');
+
+// A stuck SDK call or a late refusal cannot keep the account screen spinning
+// indefinitely, delete stored credentials, or invalidate a newer accepted login.
+for(const newerLogin of [false,true]){
+ let deadline,release,closed=0,cleared=0;
+ let live={access_token:'waiting-fixture',user:{id:'current-user'}};
+ const stuck=new Promise(resolve=>release=resolve);
+ const bounded=createSessionGuard({getAuth:()=>({getSession:async()=>({data:{session:live}}),getUser:async()=>{await stuck;return{error:{code:'session_not_found'}};},signOut:async()=>{closed++;live=null;return{};}}),setTimer:fn=>{deadline=fn;return 1;},clearTimer:()=>cleared++});
+ const result=bounded({force:true});await new Promise(resolve=>setImmediate(resolve));
+ if(newerLogin){live={access_token:'newly-signed-in',user:{id:'new-user'}};bounded.acceptRefresh(live);}
+ deadline();assert.equal((await result).state,newerLogin?'changed':'unavailable');assert.equal(closed,0);assert.ok(live);assert.equal(cleared,1);
+ release();await new Promise(resolve=>setImmediate(resolve));assert.equal(closed,0,'A deadline supersedes the late session refusal');
+}
+console.log('PASS: bounded session restoration preserves credentials; a late refusal or older deadline cannot invalidate a newer login.');

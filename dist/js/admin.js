@@ -53,9 +53,16 @@ export async function showAdmin(app,options={}){
  const id=++screen;app.dataset.ownerScreen=String(id);
  const active=()=>app.dataset.ownerScreen===String(id)&&(options.isActive?options.isActive():location.hash.split('?')[0]==='#admin');
  app.innerHTML=(options.embedded?'':title('Кабинет владельца'))+'<section class="panel section"><p role="status">Проверяем доступ…</p></section>';
- let allowed=ownerVerified();
- if(!allowed)try{allowed=await verifyOwner();}catch{}
+ let allowed=ownerVerified(),accessError=null;
+ if(!allowed)try{allowed=await verifyOwner();}catch(error){accessError=error;}
  if(!active())return;
+ if(!allowed&&accessError&&![401,403].includes(accessError.status)){
+  app.innerHTML=(options.embedded?'':title('Кабинет владельца'))+'<section class="panel section owner-login"><p role="status">Сервис входа временно не отвечает. Не удалось проверить доступ к кабинету.</p><p class="muted">Повторная регистрация не нужна. Сохранённый вход не очищается.</p><button type="button" class="button" id="owner-access-retry">Повторить проверку</button><a class="text-button" href="#more">Вернуться в меню</a></section>';
+  const retry=()=>{if(active()&&!document.hidden)void showAdmin(app,options);};
+  const timer=setTimeout(retry,30000);window.addEventListener('online',retry);
+  app.ownerDispose=()=>{clearTimeout(timer);window.removeEventListener('online',retry);};
+  app.querySelector('#owner-access-retry').onclick=retry;return;
+ }
  if(!allowed&&ownerNeedsMfa()){await showMfa(app,active,options);return;}
  if(!allowed){
   if(options.embedded){app.innerHTML='';return;}

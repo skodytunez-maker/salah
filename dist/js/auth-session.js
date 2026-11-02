@@ -1,9 +1,10 @@
 // Verify the live Auth session without rotating its refresh token. The SDK alone
 // renews tokens automatically; repeated UI checks must not compete with renewal.
-export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
+export function createSessionGuard({getAuth,now=Date.now,interval=30000,timeout=12000,setTimer=setTimeout,clearTimer=clearTimeout}){
  let pending=null,checkedToken=null,checkedAt=0,generation=0;
  const check=async function({force=false}={}){
   if(pending)return pending;
+  const requestGeneration=generation;
   const task=(async()=>{
    const started=generation,auth=getAuth();let first;try{first=await auth.getSession();}catch{return{state:'unavailable'};}
    if(started!==generation)return{state:'changed'};
@@ -31,7 +32,7 @@ export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
    }
    if(started!==generation)return{state:'changed'};
    if(verified.error){
-    const error=verified.error,revoked=['refresh_token_not_found','refresh_token_already_used','session_not_found','user_not_found','user_banned','bad_jwt'].includes(error.code)||/invalid refresh token|refresh token.*not found/i.test(error.message||'');
+    const error=verified.error,revoked=['refresh_token_not_found','refresh_token_already_used','session_not_found','user_not_found','user_banned'].includes(error.code)||/invalid refresh token|refresh token.*not found/i.test(error.message||'');
     if(!revoked)return{state:'unavailable'};
     // A stale refusal cannot clear a newly signed-in account or renewed session.
     let latest;try{latest=await auth.getSession();}catch{return{state:'unavailable'};}
@@ -51,7 +52,7 @@ export function createSessionGuard({getAuth,now=Date.now,interval=30000}){
     return{state:'changed'};
    }
    checkedToken=session.access_token;checkedAt=now();return{state:'valid',session:{...session,user:verified.data.user}};
-  })();pending=task;try{return await task;}finally{if(pending===task)pending=null;}
+  })();let timer;const bounded=Promise.race([task,new Promise(resolve=>{timer=setTimer(()=>{if(generation!==requestGeneration){resolve({state:'changed'});return;}generation++;checkedToken=null;resolve({state:'unavailable'});},timeout);})]);pending=bounded;try{return await bounded;}finally{clearTimer(timer);if(pending===bounded)pending=null;}
  };
  // An SDK renewal already checked Auth. This only caches freshness; protected
  // functions still verify identity, the live session and current permissions.

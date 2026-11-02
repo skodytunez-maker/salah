@@ -435,3 +435,10 @@ Presence polling could recreate a focused profile heading and scroll the owner a
 The actual pre-fix interface reproduced a presence update moving document scroll790.4 to0. The corrected interface retained profile scroll660.8 and the last account panel position through six changing presence responses. This is browser verification; physical iPhone gesture acceptance remains required.
 
 Retain announcement425, acknowledgement, expiry and artwork. No ranking, award, audio-file, role or closed-feature access changes.
+
+
+## 444 — Preserve sessions during Auth interruptions
+
+A stalled account check now settles to a recoverable state after12seconds, superseding late responses without clearing stored credentials. An access-token rejection after one successful token refresh is not treated as proof that the refresh session was revoked. Explicit session/user/refresh-token revocations remain final, and private gates still require current server verification and MFA. The initial account title is neutral until the session check completes. A temporary owner gate error shows Retry instead of the sign-in form; fresh authentication resumes through the existing SDK. No credential, permission, closed-section or ranking formula change.
+
+The server refresh function skips physical rewrites of unchanged favorite/rank state. Changed selections, scores, ties, periods, rank notifications and grants retain the original behavior. Existing announcement425, acknowledgement, expiry and artwork stay unchanged. Guest counting and the separate443 statistics/geography candidate are not included.
