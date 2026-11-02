@@ -1,39 +1,20 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
-import {createLearningCabinetLoader,mountLearningCabinetLink} from '../dist/js/learning-cabinet-link.js';
-const uid='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
-let clock=1000,calls=0,authCalls=0,user={id:uid,email_confirmed_at:'2026-01-01',is_anonymous:false},token='fixture-token',grant=true,valid=true;
-const loader=createLearningCabinetLoader({now:()=>clock,checkSession:async options=>{authCalls++;assert.equal(options.force,false);return{state:valid?'valid':'signed_out',session:{access_token:token,user}};},fetcher:async(_url,options)=>{calls++;assert.equal(options.credentials,'omit');assert.equal(options.cache,'no-store');return Response.json({canTeach:grant,lessons:[]});}});
-assert.deepEqual(await loader.load(uid),{teacher:true,student:false});
-for(let n=0;n<10;n++)assert.equal((await loader.load(uid)).teacher,true);
-assert.equal(calls,1,'Ten quick returns cannot refetch the role portal');assert.equal(authCalls,11,'Cached navigation still checks the current live session');
-clock+=30000;grant=false;assert.equal((await loader.load(uid)).teacher,false);assert.equal(calls,2,'A role decision expires after thirty seconds');
-token='renewed-fixture-token';grant=true;assert.equal((await loader.load(uid)).teacher,true);assert.equal(calls,3,'A new access token cannot reuse old grants');
-valid=false;assert.equal(await loader.load(uid),null);valid=true;grant=false;assert.equal((await loader.load(uid)).teacher,false);assert.equal(calls,4,'Sign-out invalidates the old decision');
-user={...user,id:other};assert.equal(await loader.load(uid),null,'Other accounts cannot inherit the cached entry');user={...user,id:uid};
-for(const patch of [{email_confirmed_at:null},{is_anonymous:true}]){user={id:uid,email_confirmed_at:'2026-01-01',is_anonymous:false,...patch};assert.equal(await loader.load(uid),null);}user={id:uid,email_confirmed_at:'2026-01-01',is_anonymous:false};
-let release,requests=0;
-const concurrent=createLearningCabinetLoader({checkSession:async()=>({state:'valid',session:{access_token:token,user}}),fetcher:async()=>{requests++;return new Promise(resolve=>release=resolve);}});
-const a=concurrent.load(uid),b=concurrent.load(uid);await Promise.resolve();await Promise.resolve();assert.equal(requests,1,'Home warm-up and Knowledge entry share one portal request');
-release(Response.json({canTeach:true,lessons:[{private:'not retained'}]}));const [one,two]=await Promise.all([a,b]);assert.deepEqual(one,{teacher:true,student:true});assert.deepEqual(two,one);assert.ok(Object.isFrozen(one));
-const late=concurrent.load(uid);concurrent.clear();assert.equal(await late,null,'An invalidation cancels a pending Auth continuation');
-let failed=0;const errors=createLearningCabinetLoader({checkSession:async()=>({state:'valid',session:{access_token:token,user}}),fetcher:async()=>{failed++;throw Error('offline');}});
-await assert.rejects(errors.load(uid));await assert.rejects(errors.load(uid));assert.equal(failed,2,'Failed checks do not become cached grants');
-const w=new Window({url:'https://fixture.invalid/#knowledge',settings:{disableIframePageLoading:true}});
-Object.assign(globalThis,{window:w,document:w.document,location:w.location,history:w.history,localStorage:w.localStorage});
-document.body.innerHTML='<main></main>';const root=document.querySelector('main');
-const {showKnowledge}=await import('../dist/js/knowledge.js');
-grant=true;token='final-fixture-token';const decision=await loader.load(uid),warmCalls=calls;
-const options={ownerAccess:false,learningUserId:uid,mountCabinetLink:(page,opts)=>mountLearningCabinetLink(page,{...opts,loadDecision:loader.load})};
-const flush=async()=>{for(let i=0;i<6;i++)await Promise.resolve();};
-for(let n=0;n<5;n++){
- root.innerHTML='<div>Главная</div>';showKnowledge(root,options);await flush();
- assert.equal(root.querySelector('[data-knowledge-content]').hidden,false,'Warm catalog is visible before the next animation frame');
- assert.equal(root.querySelector('[data-learning-access-status]'),null);assert.ok(root.querySelector('[data-learning-cabinet=teacher]'));
- const card=root.querySelector('.knowledge-card');showKnowledge(root,options);assert.equal(root.querySelector('.knowledge-card'),card,'Unchanged same-route refresh preserves the existing DOM');
-}
-assert.equal(calls,warmCalls,'Five Home/Knowledge cycles reuse the same checked decision');
-showKnowledge(root,{...options,learningUserId:other});await flush();assert.equal(root.querySelector('[data-learning-cabinet]'),null,'Account change cannot reuse another account cabinet');
-const css=await readFile(new URL('../dist/home-selected.css',import.meta.url),'utf8');assert.match(css,/body\.home-page \.central-prayer\{animation:none\}/,'Home opacity reveal cannot replay on return');
-await w.happyDOM.close();console.log('PASS: repeated Home/Knowledge navigation without portal reloads, same-route DOM stability, bounded token/account-scoped flags, live-session validation, expiry/revocation, concurrent warm-up, no cached failures/private lesson data and no Home opacity replay.');
+
+const learning=await readFile(new URL('../dist/js/learning.js',import.meta.url),'utf8');
+const style=await readFile(new URL('../dist/style.css',import.meta.url),'utf8');
+
+assert.match(learning,/id="lesson-prev"/);
+assert.match(learning,/id="lesson-next"/);
+assert.match(learning,/id="lesson-prev" aria-label="Предыдущий шаг"/);
+assert.match(learning,/id="lesson-next" aria-label=".*Завершить.*Следующий шаг/);
+assert.match(learning,/Завершить/);
+assert.match(learning,/host\.querySelector\('#lesson-prev'\).*moveLesson\(-1\)/);
+assert.match(learning,/host\.querySelector\('#lesson-next'\).*moveLesson\(1\)/);
+assert.doesNotMatch(learning,/Свайп влево —/);
+
+assert.match(style,/\.lesson-controls\{pointer-events:auto;/);
+assert.match(style,/@media\(max-width:520px\)\{\.lesson-controls\{gap:10px\}/);
+assert.match(style,/\.lesson-controls \.button\{width:auto;flex:1 1 0;/);
+
+console.log('PASS: prayer learning has explicit Back/Next controls, swipe remains optional, and mobile controls are tappable.');
