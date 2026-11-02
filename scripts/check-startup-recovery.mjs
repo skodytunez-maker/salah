@@ -43,6 +43,7 @@ assert.deepEqual((await run({noWorker:true})).navigation,['./#home']);
 console.log('PASS: independent recovery activates only corrected releases, waits for activation, handles offline/retry, and preserves account/settings/counters.');
 
 // The installed iPhone shortcut must recover without opening Safari or reinstalling.
+const {APP_VERSION}=await import('../dist/js/app-release.js');
 const workerSource=await fs.readFile(new URL('../dist/sw.js',import.meta.url),'utf8');
 async function upgrade(previousVersion,failInstall=false){
  const handlers={},cached=new Map(),deleted=[],navigated=[];let skipped=0,claimed=0,bundled=false;
@@ -51,7 +52,7 @@ async function upgrade(previousVersion,failInstall=false){
  const windowFor=url=>({url,async navigate(target){
   const original=new URL(url),next=new URL(target);
   assert.equal(next.origin,original.origin);assert.equal(next.pathname,original.pathname);assert.equal(next.hash,original.hash);
-  assert.equal(next.searchParams.get('salah-repair'),'446','Force a new document rather than a fragment-only navigation');
+  assert.equal(next.searchParams.get('salah-repair'),String(APP_VERSION),'Force a new document rather than a fragment-only navigation');
   for(const[key,value]of original.searchParams)assert.equal(next.searchParams.get(key),value);
   assert.ok(bundled,'Cache the complete corrected app before reopening');navigated.push(target);
  }});
@@ -74,7 +75,7 @@ async function upgrade(previousVersion,failInstall=false){
  let activating;handlers.activate({waitUntil:promise=>activating=promise});await activating;
  assert.equal(claimed,1);assert.deepEqual(deleted,['salah-shell-v418'],'Keep Quran and personal/media caches');
  assert.equal(skipped,previousVersion===418?1:0);
- assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair=446#adhkar',scope+'index.html?entry=shortcut&salah-repair=446#more',scope+'owner.html?salah-repair=446#admin']:[],
+ assert.deepEqual(navigated,previousVersion===418?[scope+'?salah-repair='+APP_VERSION+'#adhkar',scope+'index.html?entry=shortcut&salah-repair='+APP_VERSION+'#more',scope+'owner.html?salah-repair='+APP_VERSION+'#admin']:[],
   'Reopen existing broken main and owner shortcuts; preserve routes and leave recovery/other apps alone');
 }
 await upgrade(418);await upgrade(416);await upgrade(null);await upgrade(418,true);
