@@ -419,8 +419,10 @@ Resolve the role-checked cabinet entry before revealing the signed-in Knowledge 
 Warm the role decision on Home; retain only two navigation booleans in memory for 30 seconds, keyed to the verified live account token. Re-entering Knowledge reuses this bounded decision after the live session guard instead of refetching the portal every time. No lesson data, credentials or new permissions are persisted. Cabinet endpoints still authorize each entry. Already mounted Knowledge catalogs survive unrelated same-state renders. Home prayer-card opacity animation no longer restarts on every route return. Announcement425 and expiry preserved; Top SALAH and closed gates unchanged.
 
 
-## 438 — Guest menu account copy stays inside its tile
+## 438 — Menu copy and conditional atmosphere controls
 
-Minor layout correction after the functional audit. The guest sign-in title and subtitle share two grid rows beside the avatar, within the existing large account tile. Authenticated account tiles and the rest of the menu keep their sizing and behavior. Verified at320×568,394×852,430×932 and1024×768: no horizontal overflow, all account-copy bounds inside the tile. On short screens normal scrolling remains available.
+Minor layout corrections after the functional audit. The guest sign-in title and subtitle share two grid rows beside the avatar, within the existing large account tile. Authenticated account tiles and the rest of the menu keep their sizing and behavior. Verified at320×568,394×852,430×932 and1024×768: no horizontal overflow, all account-copy bounds inside the tile. On short screens normal scrolling remains available.
+
+The atmosphere audio retry button obeys its hidden attribute: it stays absent when sound is disabled, and is available only when enabled sound needs another user gesture. The fix is scoped to ambient settings, preserving all other pages.
 
 Retain announcement425, its existing artwork, acknowledgement and expiry. No new home promotion or release banner. Top SALAH visuals, tabs, ranking formula, awards, recordings and closed-feature access are unchanged.
