@@ -1,3 +1,4 @@
+import{lessonEntryLoading}from './lesson-route.js';
 import{mountTeacherAdmin}from './teacher-admin.js';
 import{mountLearningCabinet,mountCabinetHomework,mountCabinetPupils}from './learning-cabinets.js';
 import{mountLessonPlans}from './lesson-planning.js';
@@ -22,7 +23,7 @@ export function showLessonInvitation(host,{hash=location.hash}={}){
  host.addEventListener('input',state.formInput);host.addEventListener('change',state.formInput);host.addEventListener('click',state.formCancel);
  function panel(content){state.stopCabinet?.();state.stopCabinet=null;state.stopWork?.();state.stopWork=null;state.workBusy=false;if(live())host.innerHTML='<section class="alphabet-page lesson-account-entry"><a class="alphabet-back" href="#lesson">← Моё обучение</a><span class="knowledge-eyebrow">ОНЛАЙН-ЗАНЯТИЯ · SALAH</span>'+content+'</section>';}
  if(!mine&&(!pattern.test(key||'')||Boolean(code)===Boolean(id))){panel('<h1>Приглашение недоступно</h1><p>Откройте общую ссылку преподавателя.</p>');return;}
- panel('<h1>Приглашение на занятие</h1><p role="status">Проверяем вход в SALAH…</p>');
+ if(mine)host.innerHTML=lessonEntryLoading(hash);else panel('<h1>Приглашение на занятие</h1><p role="status">Проверяем вход в SALAH…</p>');
  let userId=null,checkedToken=null;
  async function token(){const checked=await checkAccountSession();if(['unavailable','changed'].includes(checked.state))throw Object.assign(Error('Не удалось проверить вход. Попробуйте ещё раз.'),{status:503});if(checked.state!=='valid'||!checked.session?.user?.email_confirmed_at||checked.session.user.is_anonymous)throw Object.assign(Error('Войдите в аккаунт SALAH.'),{status:401});if(userId&&userId!==checked.session.user.id)throw Object.assign(Error('Аккаунт изменился. Откройте приглашение заново.'),{status:401});userId=checked.session.user.id;return checked.session.access_token;}
  async function call(action,extra={}){const access=await token();const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/classroom-schedule',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+access,'Content-Type':'application/json'},body:JSON.stringify({action,...(code?{code}:{id}),...extra}),credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw Object.assign(Error(value.error||'Не удалось открыть занятие.'),{status:response.status});if(['submit-work','review-work','set-homework','student-add','student-remove'].includes(action)){state.formDirty=false;portalCache=null;}return value;}

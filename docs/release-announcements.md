@@ -476,3 +476,5 @@ Owner cabinet cards use content-based row minimums and normal-height page flow b
 Use an identity badge icon for the Employees tile and navigation, distinct from Users (people) and Teachers (book). The shared staff messenger icon system and all role checks remain unchanged.
 
 Minor cosmetic fix retains announcement425, artwork, acknowledgment and expiry. No Top, audio, access, private data, native minimum445 or closed-section changes.
+
+448 also removes the unrelated invitation screen during teacher/student cabinet loading. A shared data-free shell keeps the requested cabinet heading through the lazy import and live server authorization, with static placeholders rather than an invitation title or checking-login page. Actual invitation, denial, retry, session, role, account-scoped cache and closed-section checks remain in force. No automatic access is granted by a route title.
