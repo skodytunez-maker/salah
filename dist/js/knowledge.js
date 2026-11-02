@@ -39,7 +39,7 @@ const entries = [
   {kind:'sahaba',icon:'knowledge-sahaba',title:'SAHABA',description:'Истории сподвижников Пророка ﷺ.',detail:'Истории',action:'Читать истории',href:'https://sahaba-learning.skodytunez.chatgpt.site',external:true}
 ];
 
-export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified(),learningUserId=null } = {}) {
+export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified(),learningUserId=null,mountCabinetLink=mountLearningCabinetLink } = {}) {
   const routeParams=new URLSearchParams(hash.split('?')[1]||'');
   const featureView=routeParams.get('view');
   const preview=routeParams.get('preview')||(['online-lessons','muallim','live-stream'].includes(featureView)?featureView:null);
@@ -52,7 +52,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   if(view==='alphabet'){if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
   delete container.dataset.alphabetHash;
   const saved=savedLesson(read('learning-progress',null));
-  container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title">
+  container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title"${learningUserId?' aria-busy="true"':''}>
     <div class="page-head knowledge-head">
       <div>
         <span class="knowledge-eyebrow">УЧИТЬСЯ И ПОВТОРЯТЬ</span>
@@ -60,6 +60,8 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
         <p class="knowledge-intro">В своём темпе. По одному шагу.</p>
       </div>
     </div>
+    ${learningUserId?'<p class="muted knowledge-access-status" role="status" data-learning-access-status>Открываем знания…</p>':''}
+    <div data-knowledge-content${learningUserId?' hidden':''}>
     ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail">Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
     <div class="knowledge-cards">
       ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'} ${entry.external?'target="_blank" rel="noopener noreferrer"':''}>
@@ -84,10 +86,11 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
 
 
     </div>
+    </div>
   </section>`;
   const page=container.querySelector('.knowledge-page');
   page.dataset.learningUser=learningUserId||'';
-  if(learningUserId)void mountLearningCabinetLink(page,{userId:learningUserId,isActive:()=>page.isConnected&&container.querySelector('.knowledge-page')===page});
+  if(learningUserId)void mountCabinetLink(page,{userId:learningUserId,isActive:()=>page.isConnected&&container.querySelector('.knowledge-page')===page});
   if (typeof onStart === 'function') {
     container.querySelectorAll('[data-learning-entry]').forEach(link => {
       link.addEventListener('click', event => {
