@@ -435,3 +435,10 @@ Presence polling could recreate a focused profile heading and scroll the owner a
 The actual pre-fix interface reproduced a presence update moving document scroll790.4 to0. The corrected interface retained profile scroll660.8 and the last account panel position through six changing presence responses. This is browser verification; physical iPhone gesture acceptance remains required.
 
 Retain announcement425, acknowledgement, expiry and artwork. No ranking, award, audio-file, role or closed-feature access changes.
+
+
+## 440 — Visible manual update feedback
+
+Settings Update shows a persistent accessible result beside the button instead of relying on a short toast or a second banner tap. Checking, downloading, installation, deferred playback, native restart, offline, unavailable, failure and timeout are distinguished. A ready web update applies from this action; native updates keep their next-launch behavior. Checks recover after twelve seconds and late results cannot apply after a timeout or departure.
+
+Manual checks also compare the active service worker release with the open document: another window may have activated a newer worker while this window still runs older JavaScript. Such a stale document offers a safe reload rather than reporting itself current. Existing playback/lesson/QR/download guards, single-reload behavior and all personal storage remain intact. Minor440 preserves announcement425, artwork, acknowledgement and expiry; no Top or closed-access changes.

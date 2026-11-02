@@ -2,7 +2,7 @@ import{illustratedReleaseMarkup,bindIllustratedRelease}from './release-gallery.j
 import{isPublicReleaseChange}from './release-illustrations.js';
 import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from './app-release.js';
 import {esc,modal} from './ui.js';
-let manualCheck=null;
+let manualCheck=null,manualApply=null;
 const CHECK_INTERVAL=5*60*1000;
 const LEGACY_SEEN_KEY='salah:update-last-seen-v1';
 const SEEN_KEY='salah:update-announcement-seen-v2';
@@ -32,9 +32,15 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
  if(!available&&acknowledgeAnnouncement){acknowledge(safe);document.querySelector('.release-dialog [data-close]')?.addEventListener('click',()=>window.dispatchEvent(new Event('salah:release-dismissed')),{once:true});}
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
+export async function applyAppUpdate(){return manualApply?manualApply():'unavailable';}
+function workerRelease(worker){
+ if(!worker?.postMessage)return Promise.resolve(null);
+ return new Promise(resolve=>{let settled=false,channel;const done=value=>{if(settled)return;settled=true;clearTimeout(timer);channel?.port1.close();resolve(validatedRelease(value));};const timer=setTimeout(()=>done(null),1500);try{channel=new MessageChannel();channel.port1.onmessage=event=>done(event.data);worker.postMessage({type:'SALAH_RELEASE_INFO'},[channel.port2]);}catch{done(null);}});
+}
 export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,canApplyUpdate=canAutoUpdate,showRelease=showAppRelease}={}) {
  const nativeUpdater=globalThis.Capacitor?.Plugins?.SalahLiveUpdate;
  if(nativeUpdater){
+  manualApply=async()=> 'restart';
   manualCheck=async(force=false)=>{
    if(navigator.onLine===false)return 'offline';
    const result=await nativeUpdater.check({force});
@@ -48,9 +54,10 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)void manualCheck().catch(()=>{});});
   return;
  }
- if(!('serviceWorker' in navigator))return;
+ manualApply=null;
+ if(!('serviceWorker' in navigator)){manualCheck=null;return;}
  manualCheck=null;
- let requested=false,reloaded=false,applyQueued=false,reloadPending=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
+ let requested=false,reloaded=false,applyQueued=false,reloadPending=false,staleWindow=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
  const startedAt=Date.now();let startupUntouched=true,lastInteraction=-Infinity;
  const cancelStartup=()=>{startupUntouched=false;lastInteraction=Date.now()};
  const inputs=['pointerdown','touchstart','keydown'];
@@ -69,6 +76,12 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  });
  try {
   registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+  manualApply=async()=>{
+   if(!registration.waiting&&!staleWindow){const active=await workerRelease(navigator.serviceWorker.controller);staleWindow=Boolean(active&&active.version>APP_VERSION);if(!staleWindow)return registration.installing||registration.active?.state==='activating'?'loading':'current';}
+   if(requested&&registration.waiting)return blocked()?'deferred':'updating';
+   const applied=requestApply();clearBanner();if(!applied)dismissedWorker=registration.waiting;
+   return applied?'updating':'deferred';
+  };
   function makeBanner({release=currentRelease,available=false}={}){
    clearBanner();banner=document.createElement('aside');banner.className='app-update';banner.setAttribute('role','status');banner.setAttribute('aria-label',available?'Обновление SALAH':'SALAH обновлён');
    const copy=document.createElement('div');copy.className='app-update-copy';
@@ -113,10 +126,13 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    void offer(force);
    if(registration.waiting&&navigator.serviceWorker.controller)return 'available';
    if(registration.installing){watch(registration.installing);return 'loading';}
+   // Another tab can activate a newer worker while this window keeps old JS.
+   // Checking registration.update() alone would incorrectly report it current.
+   if(force){const active=await workerRelease(navigator.serviceWorker.controller);staleWindow=Boolean(active&&active.version>APP_VERSION);if(staleWindow)return 'available';}
    if(checking)return checking;
    if(navigator.onLine===false)return 'offline';
    const gap=Date.now()-lastCheck;if(!force&&gap>=0&&gap<CHECK_INTERVAL)return 'current';lastCheck=Date.now();
-   checking=(async()=>{await registration.update();watch(registration.installing);void offer(force);return registration.waiting&&navigator.serviceWorker.controller?'available':registration.installing?'loading':'current';})();
+   checking=(async()=>{await registration.update();watch(registration.installing);void offer(force);if(registration.waiting&&navigator.serviceWorker.controller)return 'available';if(registration.installing)return 'loading';if(force){const active=await workerRelease(navigator.serviceWorker.controller);staleWindow=Boolean(active&&active.version>APP_VERSION);if(staleWindow)return 'available';}return 'current';})();
    try{return await checking;}finally{checking=null;}
   }
   manualCheck=check;
