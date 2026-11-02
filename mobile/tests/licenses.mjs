@@ -41,6 +41,8 @@ await put('scripts/collect-licenses.mjs',await fs.readFile(new URL('../scripts/c
 await put('scripts/sync-web.mjs',await fs.readFile(new URL('../scripts/sync-web.mjs',import.meta.url),'utf8'));
 await put('node_modules/@capacitor/core/dist/index.js','export const Capacitor={};\n');
 await put('native/native-entry.js','// Native entry fixture\n');
+const recovery=await fs.readFile(new URL('../native/native-startup-recovery.js',import.meta.url),'utf8');
+await put('native/native-startup-recovery.js',recovery);
 for(const name of ['Apache-2.0.txt','Cordova-NOTICE.txt'])await put('licenses/'+name,await fs.readFile(new URL('../licenses/'+name,import.meta.url),'utf8'));
 await put('www/previous-bundle.txt','Keep the previous generated bundle if validation fails.');
 await fs.mkdir(path.join(fixture,'dist'),{recursive:true});
@@ -51,6 +53,7 @@ assert.equal(await fs.readFile(path.join(root,'www/previous-bundle.txt'),'utf8')
 await fs.rename(path.join(root,'node_modules/@capacitor/core/missing-license-fixture'),path.join(root,'node_modules/@capacitor/core/LICENSE'));
 const success=sync();assert.equal(success.status,0,success.stderr);
 assert.match(await fs.readFile(path.join(root,'www/index.html'),'utf8'),/js\/native-entry.js/);
+assert.equal(await fs.readFile(path.join(root,'www/js/native-startup-recovery.js'),'utf8'),recovery);
 assert.ok((await fs.readFile(path.join(root,'www/third-party/Capacitor-NOTICES.txt'),'utf8')).includes('@capacitor/ios@8.5.2'));
 assert.equal(await fs.readFile(path.join(root,'www/js/vendor/capacitor-LICENSE.txt'),'utf8'),fixtureMIT);
 lock.packages['node_modules/../../outside']={version:'1',integrity:'sha512-Zml4dHVyZQ==',resolved:'https://registry.npmjs.org/fixture/-/fixture.tgz'};await writeLock();
@@ -58,3 +61,4 @@ await assert.rejects(collectMobileLicenses(root),/Unsafe dependency path/);delet
 lock.packages[''].dependencies['@capacitor/core']='8.5.1';await writeLock();
 await assert.rejects(collectMobileLicenses(root),/manifest and lockfile disagree/);
 console.log('PASS: locked versions, complete notices and README/UNLICENSE, deterministic report, optional platform packages, missing licenses, unsafe paths and protected bundle replacement.');
+
