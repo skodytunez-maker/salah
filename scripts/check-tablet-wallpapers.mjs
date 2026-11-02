@@ -1,3 +1,4 @@
+import{skyProjectionFrame,projectSkyObjects}from '../dist/js/wallpapers.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {wallpaperLayout,applyWallpaperLayout} from '../dist/js/wallpaper-layout.js';
@@ -112,3 +113,24 @@ for(const viewport of [{width:844,height:390},{width:932,height:430},{width:740,
 const weatherSource=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');assert.ok(weatherSource.includes('viewportWidth>viewportHeight'),'Landscape phone requests available wide assets');
 assert.match(css,/data-scene-layout="phone-landscape"/);
 console.log('PASS: landscape phones fill every edge, retain aspect ratio, use wide assets and restore portrait.');
+
+// Astronomical paths must remain inside the actual visible photo crop, including
+// a tall phone displaying a wide landmark and a wide tablet with a portrait scene.
+const skyCatalogue=JSON.parse(await readFile(new URL('../dist/wallpapers/catalog.json',import.meta.url),'utf8'));
+for(const viewport of [{width:390,height:844},{width:844,height:390},{width:900,height:1344},{width:1344,height:900}]){
+ for(const entry of [{id:null,wallpaper:'mosque'},{id:null,wallpaper:'new-york'},...skyCatalogue.cities.map(c=>({...c,wallpaper:'landmark'}))]){
+  const wide=entry.fitSubject||entry.tablet&&Math.min(viewport.width,viewport.height)>=600||entry.tablet&&viewport.width>viewport.height;
+  const geometry=entry.wallpaper==='landmark'?(wide?{width:1536,height:1024,fitSubject:true,focalX:entry.tablet?.focalX??.5}:['afghanistan','badakhshan'].includes(entry.id)?{width:941,height:1672}:{width:853,height:1844}):null;
+  const options={...viewport,wallpaper:entry.wallpaper,landmark:entry.id,geometry,layout:wallpaperLayout({...viewport,wallpaper:entry.wallpaper,geometry})};
+  const photo=skyProjectionFrame(options);assert.ok(photo);
+  for(const progress of [8,29,50,71,92])for(const elevation of [0,15,35,57.5]){
+   const raw={sunX:progress,sunY:elevation,sun:1,moonX:100-progress,moonY:elevation,moon:.42},projected=projectSkyObjects(raw,options);
+   for(const body of ['sun','moon']){const x=photo.left+photo.width*projected[body+'X']/100,y=photo.top+photo.height*projected[body+'Y']/100;
+    assert.ok(x>=0&&x<=viewport.width,entry.id+' '+body+' stays in the horizontal crop');assert.ok(y>=0&&y<=viewport.height,entry.id+' '+body+' stays in the vertical crop');}
+   assert.equal(projected.sun,raw.sun);assert.equal(projected.moon,entry.wallpaper==='mosque'?0:raw.moon,'Keep the original mosque crescent without a duplicate dynamic Moon');
+  }
+  const a=projectSkyObjects({sunX:30,sunY:40,sun:1,moonX:55,moonY:30,moon:.42},options),b=projectSkyObjects({sunX:30.001,sunY:40.001,sun:1,moonX:55.001,moonY:30.001,moon:.42},options);
+  for(const key of ['sunX','sunY','moonX','moonY'])assert.ok(Math.abs(a[key]-b[key])<.01,'Projection remains continuous while bodies move');
+ }
+}
+console.log('PASS: all 23 city backgrounds, mosque and New York retain continuous visible sky paths across phone/tablet crops; original mosque crescent remains the only Moon.');

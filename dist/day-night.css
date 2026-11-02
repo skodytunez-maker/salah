@@ -158,8 +158,12 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 /* Use the same Tyumen night photograph in every orientation, centred on the bridge. */
 #home-scene[data-wallpaper="landmark"][data-landmark-city="tyumen"] .scene-night{background-size:cover;background-position:75% center}
 
-/* Khujand’s distant skyline is around half the portrait source, above the
-   generic panorama horizon. Keep low winter arcs in that visible sky; the
-   existing skyline mask still occludes buildings, and high arcs stay on screen. */
-#home-scene[data-landmark-city="khujand"] .scene-sun{top:clamp(8%,calc((var(--sky-sunY,58) - 8.5)*1%),58%)}
-#home-scene[data-landmark-city="khujand"] .scene-moon{top:clamp(8%,calc((var(--sky-moonY,58) - 8.5)*1%),58%)}
+
+/* All celestial planes share the photograph/mask source rectangle. Keep paths
+   inside the visible crop, including tall phones showing wide city artwork. */
+#home-scene .scene-sky .scene-sky-plane{inset:auto;left:var(--sky-plane-left,0px);top:var(--sky-plane-top,0px);width:var(--sky-plane-width,100%);height:var(--sky-plane-height,100%);aspect-ratio:auto;transform:none}
+#home-scene .scene-sun{width:clamp(14px,3.8%,26px)}
+#home-scene .scene-moon{width:clamp(18px,5%,32px)}
+#home-scene[data-wallpaper="mosque"] .scene-sky{display:block;overflow:hidden;-webkit-mask-image:url('./assets/mosque-sky-mask.svg');mask-image:url('./assets/mosque-sky-mask.svg');-webkit-mask-size:auto 100%;mask-size:auto 100%;-webkit-mask-position:85% center;mask-position:85% center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;mask-mode:alpha}
+#home-scene[data-wallpaper="mosque"] .scene-moon{display:none}
+@media(min-width:601px){#home-scene[data-wallpaper="mosque"] .scene-sky{-webkit-mask-position:center;mask-position:center}}

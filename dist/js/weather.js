@@ -1,5 +1,5 @@
 import{actionIcon,actionLabel}from './action-icons.js';
-import{skyObjects,previewClock}from './wallpapers.js';
+import{skyObjects,previewClock,skyProjectionFrame,projectSkyObjects}from './wallpapers.js';
 import{loadLandmark}from './landmarks.js';
 import{applyWallpaperLayout}from './wallpaper-layout.js';
 import{settings}from './storage.js';
@@ -7,7 +7,7 @@ import{sceneAt,previewScene,sceneForMode}from './day-night.js';
 import{weatherFrame}from './weather-data.js';
 export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REFRESH_INTERVAL}from './weather-data.js';
 
-let skyAnimation=null;
+let skyAnimation=null,lastSkySample=null,lastSkyStamp=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null;
 function wallpaperCaption(scene){
@@ -17,10 +17,14 @@ function wallpaperCaption(scene){
  if(caption.textContent!==name)caption.textContent=name;
  if(caption.hidden!==!name)caption.hidden=!name;
 }
-function layoutScene(scene,effect=document.getElementById('weather-layer')){
+let skyProjectionContext=null,skyProjectionKey=null;
+function layoutScene(scene,effect=document.getElementById('weather-layer'),reproject=true){
  wallpaperCaption(scene);
  const layout=applyWallpaperLayout(scene,effect,{width:document.documentElement?.clientWidth,height:window.innerHeight,wallpaper:scene.dataset.wallpaper,geometry:scene.dataset.wallpaper==='landmark'?landmarkGeometry:null});
  if(layout){if(document.body.dataset.sceneLayout!==layout.mode)document.body.dataset.sceneLayout=layout.mode;}else if(document.body.dataset.sceneLayout)delete document.body.dataset.sceneLayout;
+ skyProjectionContext={width:document.documentElement?.clientWidth||window.innerWidth,height:window.innerHeight,wallpaper:scene.dataset.wallpaper,landmark:landmarkEntry?.id||settings.landmarkCity,geometry:landmarkGeometry,layout};
+ const plane=skyProjectionFrame(skyProjectionContext),key=JSON.stringify([skyProjectionContext,plane]);
+ if(plane&&key!==skyProjectionKey){skyProjectionKey=key;for(const[name,value]of Object.entries({left:plane.planeLeft,top:plane.planeTop,width:plane.width,height:plane.height}))scene.style.setProperty('--sky-plane-'+name,value+'px');if(reproject&&lastSkySample)paintSky(scene,lastSkySample,lastSkyStamp);}
 }
 let layoutResize=null;
 window.addEventListener('resize',()=>{
@@ -126,7 +130,10 @@ function paintWeather(effect,now,weather,frame,home,scene){
 let previousSkyTime=null,previousSkyContext=null,previousSky=null;
 let inactiveContext=null;
 function paintSky(scene,sky,now){
- const context=[settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.city?.latitude,settings.city?.longitude,previewOverride,previewStarted].join(':');
+ lastSkySample=sky;lastSkyStamp=now;
+ sky=projectSkyObjects(sky,skyProjectionContext||{wallpaper:settings.wallpaper});
+ if(scene.dataset.wallpaper==='landmark'&&!landmarkEntry)sky={...sky,sun:0,moon:0};
+ const context=[skyProjectionKey,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.city?.latitude,settings.city?.longitude,previewOverride,previewStarted].join(':');
  const reset=previousSkyContext!==context||previousSkyTime===null||Math.abs(now-previousSkyTime)>5000||previousSky&&['sunX','moonX'].some(key=>Math.abs(sky[key]-previousSky[key])>15);
  scene.classList.toggle('sky-reset',reset);previousSkyContext=context;previousSkyTime=now;previousSky=sky;
  for(const key of ['sunX','sunY','sun','moonX','moonY','moon'])scene.style.setProperty('--sky-'+key,String(sky[key]));
@@ -150,7 +157,7 @@ export function atmosphere(now,times,weather){
  const preview=previewStarted!==null,instant=preview&&previewOverride===null?previewClock(now,times,Math.min(performance.now()-previewStarted,19999),settings.city):now;
  const frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):settings.city?sceneForMode(instant,times,'auto',settings.city):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode,settings.city),scene=sceneLayer();
  document.body.classList.toggle('scene-preview',preview);
- scene.dataset.phase=frame.phase;prepareLandmark(scene,home);layoutScene(scene,effect);
+ scene.dataset.phase=frame.phase;prepareLandmark(scene,home);layoutScene(scene,effect,false);
  const skyMode=preview?(previewOverride==='day'?'light':previewOverride==='night'?'dark':'auto'):settings.backgroundMode;
  const sky=skyObjects(now,times,skyMode,preview&&previewOverride===null?Math.min(performance.now()-previewStarted,19999):null,settings.city);
  paintSky(scene,sky,previewStarted!==null?performance.now():now);

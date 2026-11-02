@@ -3212,6 +3212,15 @@
       "license": "SIL-OFL-1.1",
       "rightsEvidence": "dist/assets/fonts/scheherazade-new-OFL.txt",
       "note": "Unmodified Scheherazade New 4.500 webfont from the official SIL archive https://software.sil.org/downloads/r/scheherazade/ScheherazadeNew-4.500.zip. Used for optional private reading homework. Bundled SIL OFL notice."
+    },
+    {
+      "path": "dist/assets/mosque-sky-mask.svg",
+      "gitBlobSha": "c80124e7826a77091a4ea8606be93d346ae80b73",
+      "bytes": 1086,
+      "kind": "vector",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/sky-projection-451.md",
+      "note": "Project-authored geometric vector occlusion mask aligned to the existing SALAH mosque photograph; no imported raster or external vector. Existing photograph and its original crescent remain unchanged."
     }
   ],
   "wallpaperSets": [

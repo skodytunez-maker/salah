@@ -62,3 +62,27 @@ export function skyObjects(now,times,mode='auto',preview=null,city=null){
  const sunVisible=smooth((sunLimb+.25)/.5),moonVisible=smooth((moonLimb+.25)/.5),daylight=smooth((sun.altitude+1)/2);
  return {sunX:s.x,sunY:s.y,sun:sunVisible,moonX:m.x,moonY:m.y,moon:moonVisible*(1-.58*daylight)};
 }
+
+// Visual projection follows each artwork's skyline; astronomy above remains unchanged.
+const artworkHorizons={tyumen:[.535,.50],omsk:[.59],moscow:[.70],khujand:[.49,.40],dushanbe:[.65],almaty:[.60],astana:[.58],tashkent:[.65],grozny:[.67],makhachkala:[.607],derbent:[.543],pamir:[.445],afghanistan:[.32],badakhshan:[.30],istanbul:[.596],cairo:[.586],'kuala-lumpur':[.557],makkah:[.596,.598],madinah:[.586,.596],uhud:[.56,.58],'al-aqsa':[.561,.518],kaspiysk:[.488],kazan:[.342]};
+export function skyProjectionFrame({width,height,wallpaper='mosque',geometry=null,layout=null}={}){
+ if(!Number.isFinite(width)||width<=0||!Number.isFinite(height)||height<=0)return null;
+ if(layout)return{left:layout.left,top:layout.top,width:layout.width,height:layout.height,planeLeft:0,planeTop:0};
+ const ratio=wallpaper==='mosque'?1.5:853/1844,scale=Math.max(width/ratio,height),photoWidth=scale*ratio,photoHeight=scale;
+ const left=(width-photoWidth)*(wallpaper==='mosque'&&width<=600?.85:.5),top=(height-photoHeight)/2;
+ return{left,top,width:photoWidth,height:photoHeight,planeLeft:left,planeTop:top};
+}
+export function projectSkyObjects(sky,{width,height,wallpaper='mosque',landmark=null,geometry=null,layout=null}={}){
+ const frame=skyProjectionFrame({width,height,wallpaper,geometry,layout});if(!frame)return{...sky,moon:wallpaper==='mosque'?0:sky.moon};
+ const wide=Number.isFinite(geometry?.width)&&Number.isFinite(geometry?.height)?geometry.width>geometry.height:!!layout&&wallpaper==='new-york';
+ const choices=artworkHorizons[landmark],horizon=wallpaper==='mosque'?.55:wallpaper==='new-york'?(wide?.54:.49):choices?.[wide&&choices.length>1?1:0]??.55;
+ const left=Math.max(0,-frame.left/frame.width),right=Math.min(1,(width-frame.left)/frame.width),top=Math.max(0,-frame.top/frame.height),bottom=Math.min(1,(height-frame.top)/frame.height);
+ const xPad=(right-left)*.07,x0=left+xPad,x1=right-xPad,ceiling=top+(bottom-top)*.07;
+ const floor=Math.max(ceiling+.04,Math.min(horizon,bottom-(bottom-top)*.16));
+ const output={...sky};
+ for(const body of ['sun','moon']){const progress=clamp((sky[body+'X']-8)/84),altitude=(skyGeometry.horizon/skyGeometry.height*100-sky[body+'Y'])/100;
+  output[body+'X']=(x0+(x1-x0)*progress)*100;output[body+'Y']=Math.max(ceiling,Math.min(floor+.012,floor-altitude))*100;}
+ // The original mosque photograph retains its decorative crescent by request.
+ if(wallpaper==='mosque')output.moon=0;
+ return output;
+}

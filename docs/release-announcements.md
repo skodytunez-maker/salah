@@ -490,3 +490,8 @@ Opening the bare #admin cabinet entry from the account or main panel always star
 Keep the existing independent astronomical paths and continuous position interpolation. Replace binary upper-limb rise/set visibility with a smooth half-degree fade and blend lunar daylight brightness continuously with solar elevation. Returning after a pause or switching city resets position without a streak while retaining opacity fading. Skyline masks, weather, fixed backgrounds and reduced-motion settings remain intact. Retain announcement425, artwork, acknowledgment and expiry; no prayer time, Top, auth or access changes.
 
 For the reported Khujand background, lift only the visual projected track by 8.5 source percentage points to match its higher distant skyline; bound high arcs inside the sky. Preserve the photograph/mask alignment, actual city/time visibility and independent lunar path. Other artwork projection is unchanged.
+
+
+## 451 — Visible celestial paths on every background
+
+Fit the existing independent Sun/Moon paths inside each visible photo crop and above each artwork skyline, with one aligned source rectangle for masks and sky. Add a project-authored vector sky mask for the original mosque and a moving Sun. Keep the original mosque crescent and both photographs unchanged by explicit user preference; suppress a duplicate dynamic Moon only there. City backgrounds and New York use moving Sun/Moon. Preserve motion settings, astronomical visibility, weather, prayer city/calculation, Top, access, native minimum445 and announcement425/artwork/acknowledgment/expiry.
