@@ -16,6 +16,7 @@ const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf
 const menuExecutable=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf('\nfunction render('))+'\n;({more});';
 const decode=value=>String(value).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 class Element {
+ getAttribute(key){return this.attributes[key]??null;}
  constructor(tag='div',attributes={},parent=null){this.tag=tag;this.attributes=attributes;this.parent=parent;this.children=[];this.value=attributes.value||'';this.text='';this.disabled='disabled' in attributes;this.hidden='hidden' in attributes;}
  prepend(...nodes){for(const n of nodes.reverse()){this.children.unshift(n);n.parent=this;}}
  set href(value){this.attributes.href=String(value);}get href(){return this.attributes.href||'';}
