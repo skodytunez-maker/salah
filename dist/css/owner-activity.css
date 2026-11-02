@@ -70,3 +70,5 @@
 .owner-geo-list li>div>span{flex:1;min-width:0;overflow-wrap:anywhere}.owner-geo-list strong{font-size:14px;white-space:nowrap}.owner-geo-list small{font-weight:400;font-size:11px;color:var(--muted,#adb6c7);margin-left:6px}
 .owner-geo-track{display:block;height:5px;border-radius:10px;background:rgba(255,255,255,.04);overflow:hidden}.owner-geo-track i{display:block;height:100%;border-radius:inherit;background:var(--gold,#d6c18b)}
 .owner-geography :focus-visible{outline:2px solid var(--gold,#d6c18b);outline-offset:2px}
+
+.owner-geo-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;min-height:50px}.owner-geo-heading h2{margin:0;font-family:inherit;font-size:15px;font-weight:500;line-height:1.4}.owner-geo-heading small{font-size:12px;color:var(--muted,#adb6c7)}
