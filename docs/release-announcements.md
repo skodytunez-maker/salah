@@ -412,3 +412,8 @@ History identifies the period won: compact week date range or month name and yea
 ## 436 — Stable Knowledge opening
 
 Resolve the role-checked cabinet entry before revealing the signed-in Knowledge catalog, so late insertion cannot push already visible cards down. The brief status has a three-second limit; on timeout/error the public catalog opens without private cabinet links and late responses cannot insert anything. Guest catalog stays immediate. Server role/session checks and all closed access remain unchanged. Minor fix retains announcement425. Ranking preview is excluded.
+
+
+## 437 — Knowledge navigation without repeated loading flashes
+
+Warm the role decision on Home; retain only two navigation booleans in memory for 30 seconds, keyed to the verified live account token. Re-entering Knowledge reuses this bounded decision after the live session guard instead of refetching the portal every time. No lesson data, credentials or new permissions are persisted. Cabinet endpoints still authorize each entry. Already mounted Knowledge catalogs survive unrelated same-state renders. Home prayer-card opacity animation no longer restarts on every route return. Announcement425 and expiry preserved; Top SALAH and closed gates unchanged.
