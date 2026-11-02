@@ -460,3 +460,11 @@ Publish the previously prepared activity chart with period summary, day selectio
 Only lower ranking list rows place the existing leader artwork beside the nickname with50px width and12px gap; podiums, formula, ordering, periods and switches are unchanged. Preserve all444/445 session/startup/update recovery and closed-section gates. No441 audio,442 sender or guest analytics included.
 
 Minor owner-only interface work and the accepted badge refinement retain announcement425, its current feature artwork, acknowledgement and expiry. No new Home promotion.
+
+## 447 — Simpler owner statistics and separate profile scrolling
+
+Remove the duplicate Overview destination. Keep the existing Visits layout, chart, periods and totals without adding another summary. Old overview links resolve to Visits. Geography is always visible and its city/country tabs remain; remove the duplicate complete-day list while keeping chart day selection and accessible arrows.
+
+Keep the profile navigation outside its single viewport content scroller, so the toolbar cannot paint over the portrait. Preserve the reading position through presence updates and reset it only on a new profile opening. Refine the existing Menu owner emblem to a quieter circular gold/navy S without changing its meaning, owner gate or roles.
+
+Retain announcement425, artwork, acknowledgement and expiry. Top layout/formula, audio, authentication, native runtime minimum445 and closed Knowledge access remain unchanged. Explicitly requested one-off country backfill for existing Tyumen/Omsk/Ganja rows was applied separately; it changes no chosen city or timestamps and is not a migration or guess for ambiguous cities.

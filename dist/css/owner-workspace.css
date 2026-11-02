@@ -275,3 +275,9 @@ body.menu-page .account-entry:not(.account-entry-compact)>small{grid-column:2;gr
 body.owner-profile-page{height:100vh;height:100dvh;min-height:0;overflow:hidden}
 body.owner-profile-page #owner-user-detail.owner-profile-screen{position:fixed;inset:0;z-index:20;width:100%;max-width:760px;height:100vh;height:100dvh;min-height:0;margin:0 auto;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;overflow-anchor:none;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 body.owner-profile-page .owner-profile-screen .owner-profile-navigation{top:env(safe-area-inset-top,0px)}
+
+/* Keep profile controls outside its single reading scroller. */
+body.owner-profile-page #owner-user-detail.owner-profile-screen{display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+body.owner-profile-page .owner-profile-screen .owner-profile-navigation{position:static;top:auto;margin-bottom:16px}
+body.owner-profile-page #owner-user-card{min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;overflow-anchor:none;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;padding-bottom:24px}
+body.owner-profile-page #owner-user-card-status:empty{display:none}
