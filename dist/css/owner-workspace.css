@@ -281,3 +281,5 @@ body.owner-profile-page #owner-user-detail.owner-profile-screen{display:grid;gri
 body.owner-profile-page .owner-profile-screen .owner-profile-navigation{position:static;top:auto;margin-bottom:16px}
 body.owner-profile-page #owner-user-card{min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;overflow-anchor:none;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;padding-bottom:24px}
 body.owner-profile-page #owner-user-card-status:empty{display:none}
+
+.owner-account-return{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin:0 0 4px;color:var(--gold,#d8c393);font:500 14px/1.4 'Manrope','Segoe UI',sans-serif;text-decoration:none}.owner-account-return svg{width:18px;height:18px;flex:none}.owner-account-return:focus-visible{outline:2px solid var(--gold,#d8c393);outline-offset:3px;border-radius:8px}
