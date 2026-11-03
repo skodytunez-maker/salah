@@ -30,11 +30,17 @@ export function createPlaybackAudioSession({nav=globalThis.navigator,doc=globalT
    return resume();
   }).catch(()=>{});
  }
- function setIntent(value,{retainPlayback=false}={}){
+ function setIntent(value,{retainPlayback=false,reacquire=false}={}){
   wanted=!!value;reset();if(!session||disposed){if(wanted&&standalone&&!stateSupported()&&!visible())backgrounded=true;return;}
   // A user pause clears recovery intent, while its existing media remains resumable.
   if(!wanted){if(!retainPlayback)release();return;}
   if(!owns()){try{prior=owners.get(session)?.prior||session.type||'auto';session.type='playback';owners.set(session,{owner,prior});}catch{}}
+  else if(reacquire&&standalone&&!stateSupported()){
+   // An explicit Control Center Play can arrive after iOS deactivated the
+   // retained category. Reconfigure it in the same gesture before media.play().
+   // Ordinary lifecycle recovery must never take audio from another app.
+   try{session.type='auto';session.type='playback';}catch{}
+  }
   if(standalone&&!stateSupported()&&!visible())backgrounded=true;
  }
  function changed(){

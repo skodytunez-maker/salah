@@ -533,3 +533,7 @@ Discard the selected city/country member pane when leaving Visits for another ow
 458: добавлены пять постоянных наград за подтверждённое чтение и завершённые утренние/вечерние азкары. Карточка reading-adhkar-awards использует новые медали, показывает реальный путь получения; личного рекорда нет. Учёт начинается с явных действий в обновлённом приложении, без восстановления из закладок/посещений.
 
 458 до публикации: подтверждение чтения упрощено до одной кнопки «Джуз прочитан» в конце каждого джуза. Учёт ведётся по 30 разным джузам, повторная отметка не увеличивает прогресс. Отметок страниц нет. Иллюстрации, идентификатор новости и срок показа сохранены.
+
+## 459 — Control Center resume on iPhone
+
+Explicit remote Play in a standalone type-only Safari audio session reacquires the retained playback category before the same media element is resumed; keep source and playback time. Duplicate Play and in-app/browser/full-state sessions do not cycle categories. A delayed native onplay cannot defeat a newer Pause, and an unsuccessful native resume consumes recovery intent. Preserve announcement458, its artwork, acknowledgement and expiry, native minimum445, new awards and all access rules. Physical iPhone background resume acceptance is required; no universal WebKit fix is claimed from emulated tests.
