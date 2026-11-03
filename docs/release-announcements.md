@@ -495,3 +495,8 @@ For the reported Khujand background, lift only the visual projected track by 8.5
 ## 451 — Visible celestial paths on every background
 
 Fit the existing independent Sun/Moon paths inside each visible photo crop and above each artwork skyline, with one aligned source rectangle for masks and sky. Add a project-authored vector sky mask for the original mosque and a moving Sun. Keep the original mosque crescent and both photographs unchanged by explicit user preference; suppress a duplicate dynamic Moon only there. City backgrounds and New York use moving Sun/Moon. Preserve motion settings, astronomical visibility, weather, prayer city/calculation, Top, access, native minimum445 and announcement425/artwork/acknowledgment/expiry.
+
+
+## 452 — Preserve renewed session during profile writes
+
+Serialize SDK session-writing operations so a delayed profile/MFA response cannot compete with token renewal. Coordinate shared browser storage with exclusive Web Locks; busy/timeout skips never steal an active writer. Use the pinned SDK process queue when Web Locks are unavailable. Add offline regression using the actual pinned browser SDK and production client configuration with two clients, plus bounded busy/retry cases. No server/Auth configuration, token-reuse policy, session key, permissions, Top, audio, sky, native minimum445 or closed-section changes. Preserve announcement425, artwork, acknowledgment and expiry. Previously revoked sessions still require a new sign-in.

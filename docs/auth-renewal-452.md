@@ -1,0 +1,13 @@
+# Session write coordination — 452
+
+The owner authorized inspection of only their own session metadata on 2026-11-03. No credentials, refresh-token strings, passwords or other accounts were queried. The owner's iPhone session has no active refresh token after 2026-11-02 22:31:29 UTC. Auth rejected an older token at that time and rejected another token from the same revoked session at 2026-11-03 05:54:39 UTC. The account remains present. These observations establish token reuse/revocation, but do not establish which device callback originally restored stale storage.
+
+A separate offline reproduction with the unmodified shipped Supabase JS 2.117.2 browser bundle demonstrates a concrete client defect: a delayed updateUser profile response can overwrite tokens written by concurrent refreshSession. With the production 451 client options, the regression fails (refresh-before replaces refresh-after). No real token or network request is used.
+
+452 opts into the pinned SDK's supported legacy lock option for session-writing operations. Web Locks coordinate contexts with shared origin storage. A held lock is never stolen; timed-out/zero-wait acquisition throws the SDK timeout type without running the writer. Browsers without Web Locks use the SDK process queue. The SDK is pinned; this option is deprecated upstream and requires reevaluation before a major SDK upgrade. No custom token persistence, duplicate credentials or relaxed server rotation policy is introduced.
+
+The existing check-auth-load.mjs now exercises two real SDK clients using both process and Web Locks coordination and an explicit busy/timeout/retry case. The profile keeps its new nickname and rotated credentials. Existing transient outage, late-response, revocation, MFA, QR and server denial checks remain. The production account callback audit found no awaited Auth operation inside onAuthStateChange; deferred follow-up work stays outside the SDK lock.
+
+Limitations: the exact originating callback on the physical iPhone is not available remotely. Serialization prevents the reproduced race; this is not a guarantee against every possible browser storage loss or real session revocation. A session already revoked by the server cannot be restored by a client update; the user must authenticate again once.
+
+Sources inspected: https://supabase.com/docs/guides/auth/sessions ; https://github.com/supabase/supabase-js/blob/master/packages/core/auth-js/migrations/lockless-coordination.md ; shipped vendor/supabase-source.json and matching SHA256-pinned browser bundle. Changelog index markdown fetch was unavailable; HTML changelog was inspected instead.
