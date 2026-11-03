@@ -520,3 +520,7 @@ Manual return-reminder controls are rebased from the held442 candidate: owner-on
 ## 456 — Compact guests and city/country drilldown
 
 Compact guest/account counts with collection date and expandable help. Canonicalize known selected cities and country aliases consistently in the client, presence handler, owner aggregates and private SQL helper. Backfill only existing account-context city/country values without changing prayer settings, visit times or Quran checkpoints. City/country rows open paginated owner-only members for the same rolling period, retaining live session/MFA gates, private profile navigation and return focus. Preserve announcement425/artwork/acknowledgment/expiry, native minimum445, Top and all closed-section rules. No guest counting changes, reminder sends, new location provider or coordinates.
+
+## 457 — Fresh Visits entry after leaving nested geography
+
+Discard the selected city/country member pane when leaving Visits for another owner section. Re-enter Visits at the aggregate chart and geography, retaining the chosen period and already loaded totals. Dispose the old member list so late requests cannot reopen it. Same-section renders and opening/returning from an account profile retain their originating city list. No Auth, API, database, guest count, reminder, Top or closed-section changes. Preserve announcement425/artwork/acknowledgment/expiry and native minimum445.
