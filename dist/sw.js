@@ -60,7 +60,7 @@ self.addEventListener('activate',event=>{
     let url;try{url=new URL(client.url);}catch{continue;}
     if(url.origin===self.location.origin&&navigationShell(url)&&typeof client.navigate==='function'){
      // A changed query forces a document load even when the existing URL has a fragment.
-     url.searchParams.set('salah-repair','451');reloads.push(client.navigate(url.href));
+     url.searchParams.set('salah-repair',String(RELEASE.version));reloads.push(client.navigate(url.href));
     }
    }
    await Promise.allSettled(reloads);
