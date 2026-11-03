@@ -53,3 +53,5 @@ for(const role of ['anon','authenticated']){const privileges=(await db.query("se
 assert.ok((await db.query("select relrowsecurity from pg_class where oid='salah_competition_private.read_pages'::regclass")).rows[0].relrowsecurity);await db.close();
 const safe=safeAwardState({day:'2026-11-04',items:[],streak:{},learning:{juz:[1,1,99],adhkarDays:7}});assert.deepEqual(safe.learning,{juz:[1],adhkarDays:7});assert.match(awardMetric({kind:'adhkar7'}),/азкарами/);assert.match(awardMetric({kind:'reading10'}),/джузов/);
 console.log('PASS: 20 awards; verified 604-page/juz and dhikr catalogues; explicit actions only; per-account offline retry; complete paired days with breaks; PostgreSQL thresholds/idempotence, old-award retention, live-session and private privileges.');
+
+const readerStyles=await fs.readFile(new URL('../dist/quran.css',import.meta.url),'utf8');assert.match(readerStyles,/\.mushaf-read-confirm\{/);for(const shell of ['index','owner','share'])assert.match(await fs.readFile(new URL('../dist/'+shell+'.html',import.meta.url),'utf8'),/href="\.\/quran\.css"/);
