@@ -67,7 +67,7 @@ Deno.serve(async req=>{
  if(body?.action==='presence'){let packet;try{packet=listenerPresencePacket(body);}catch{return reply({error:'invalid_presence'},400);}const result=await presenceDb.update(user,packet);return result.retry?reply({error:'retry'},429):reply(result);}
  if(body?.action==='learning-progress'){
   let packet;try{packet=learningPacket(body);}catch{return reply({error:'invalid_progress'},400);}
-  const result=await sql`select salah_competition_private.record_learning_progress(${user.id}::uuid,${user.session}::uuid,${sql.json(packet.pages)}::jsonb,${sql.json(packet.rounds)}::jsonb)learning`;
+  const result=await sql`select salah_competition_private.record_learning_progress(${user.id}::uuid,${user.session}::uuid,${sql.json(packet.juz)}::jsonb,${sql.json(packet.rounds)}::jsonb)learning`;
   return reply({ok:true,learning:result[0].learning});
  }
  await ensure(user);

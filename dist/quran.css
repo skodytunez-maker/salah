@@ -425,3 +425,5 @@ header.quran-section-title{height:auto}
 .competition-user-face{overflow:visible}.competition-user-face>img{border-radius:50%}.competition-user-face .competition-listening{position:absolute;right:-4px;bottom:-3px;z-index:1;width:14px;height:14px;display:grid;place-items:center;border-radius:50%;background:rgba(14,25,42,.78);border:1px solid rgba(216,190,136,.4);color:#e1cea1;pointer-events:none}.competition-user-face .competition-listening[hidden]{display:none!important}.competition-listening svg{width:10px;height:10px;display:block}
 
 .mushaf-read-confirm{display:grid;gap:8px;justify-items:center;margin:18px auto;max-width:360px;text-align:center}.mushaf-read-confirm .button{width:100%;min-height:44px}.mushaf-read-confirm small{color:var(--muted);font:inherit;font-size:.8rem}.mushaf-read-confirm button:disabled{opacity:.7}
+
+.mushaf-read-confirm[hidden]{display:none}
