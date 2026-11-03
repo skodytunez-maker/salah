@@ -4,7 +4,7 @@ import{personalListening}from './reciter-popularity.js';
 import{listeningDayKey}from './reciter-popularity-core.js';
 import{dayCountLabel}from './quran-awards-core.js';
 let started=false,layer=null,timer=null;
-export function hideSeriesCelebration(){clearTimeout(timer);timer=null;layer?.remove();layer=null;}
+export function hideSeriesCelebration(){clearTimeout(timer);timer=null;const present=layer;layer?.remove();layer=null;if(present)window.dispatchEvent(new window.Event('salah:award-presentation-ended'));}
 export function showSeriesCelebration(event){
  hideSeriesCelebration();const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  layer=document.createElement('div');layer.className='series-celebration'+(reduced?' series-celebration-reduced':'');layer.style.setProperty('--series-color',event.color);layer.setAttribute('role','status');layer.setAttribute('aria-live','polite');layer.setAttribute('aria-label',event.to+' '+dayCountLabel(event.to)+' в серии');
@@ -18,7 +18,7 @@ export function showSeriesCelebration(event){
  timer=setTimeout(()=>{if(layer){layer.classList.add('series-celebration-ending');timer=setTimeout(hideSeriesCelebration,reduced?1:320);}},reduced?1400:2300);
 }
 export function initSeriesCelebration({getAccount}){
- if(started)return;started=true;const engine=createSeriesCelebration({storage:localStorage,getUser:getAccount,getOwn:()=>competitionOwn()?.awards,getLocalDay:()=>{const day=listeningDayKey(Date.now()),values=personalListening().days?.[day]||{};return{day,seconds:Object.values(values).reduce((n,s)=>n+(Number.isFinite(s)?s:0),0)};},isVisible:()=>isQuranCelebrationRoute(location.hash)&&!document.hidden&&!document.getElementById('modal')?.open,show:showSeriesCelebration});
+ if(started)return;started=true;const engine=createSeriesCelebration({storage:localStorage,getUser:getAccount,getOwn:()=>competitionOwn()?.awards,getLocalDay:()=>{const day=listeningDayKey(Date.now()),values=personalListening().days?.[day]||{};return{day,seconds:Object.values(values).reduce((n,s)=>n+(Number.isFinite(s)?s:0),0)};},isVisible:()=>isQuranCelebrationRoute(location.hash)&&!document.hidden&&!document.getElementById('modal')?.open&&!document.querySelector('.founder-welcome'),show:showSeriesCelebration});
  let scope=getAccount()?.userId||null;
  const auth=()=>{const id=getAccount()?.signedIn?getAccount().userId:null;if(scope!==id){hideSeriesCelebration();engine.reset();scope=id;}engine.observe();};
  window.addEventListener('salah:counter-status',auth);window.addEventListener('salah:competition-updated',()=>engine.observe());

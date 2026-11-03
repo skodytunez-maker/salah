@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version458 — earned collection and award presentations (4 November2026)
+
+Keep every issued weekly/monthly win in the personal collection, grouped by award type with its dated results. Only the current finalized-period winner wears the transferable podium title; selection, scores and source award records stay unchanged. The existing MFA-protected owner-access user profile now includes every earned kind and up to 200 dated calendar wins in its read-only response; no schema or permission changes. Each of the fifteen earned types has a replayable presentation using its approved artwork. New non-founder awards queue once per account/device at a quiet Home screen; existing awards are initially baselined and remain manually replayable, avoiding a rollout popup burst. Existing founder welcome and account-scoped acknowledgement stay intact. The presentation stops on navigation, hidden state, account change or playback; it neither grants rewards nor changes listening time. Reduced motion, keyboard/focus, safe areas and queued-image failures are covered. New public announcement458 contains only the collection and ceremony feature compositions; no old cards or financial features are appended. Closed sections remain closed.
+
+
 ## Version433 — private account context (2 November2026)
 
 Owner MFA profile shows selected prayer city and the last successfully rendered mushaf page with edition and server save time. Only the latest observation is retained; no page history, precise coordinates or IP location is collected. Checkpoints belong to the signed-in account and do not backfill anonymous/device bookmarks. Existing presence heartbeat carries the bounded optional context; older clients remain supported. Keep public announcement425 and closed Knowledge access unchanged.

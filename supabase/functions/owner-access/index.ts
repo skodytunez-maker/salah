@@ -228,13 +228,15 @@ export async function readOwnerGeography(sql,days){
 }
 export function safeOwnerUserDetails(details,id){
  const seconds=n=>(typeof n==='number'||typeof n==='string'&&/^\d+$/.test(n))&&Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):null;
+ const date=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
+ const wins=row=>['week','month'].includes(row.kind)?(Array.isArray(row.wins)?row.wins:[]).slice(0,200).filter(win=>date(win.start)&&date(win.end)&&win.start<win.end&&seconds(win.seconds)>0).map(win=>({start:win.start,end:win.end,seconds:seconds(win.seconds)})):[];
  const kinds=new Set(['founder','week','month','streak7','streak30','streak100','streak200','streak365','hours25','hours50','hours100','hours250','hours500','hours1000','hours5000']);
  const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
  const context=details.context,city=typeof context?.city==='string'&&context.city.trim()?context.city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;const v=context?.reading,reading=v&&Number.isInteger(v.page)&&v.page>=1&&v.page<=604&&['madani','tajweed'].includes(v.edition)&&Number.isFinite(Date.parse(v.savedAt))?{page:v.page,edition:v.edition,savedAt:new Date(v.savedAt).toISOString()}:null;
  const resolvedLocation=canonicalAccountLocation(city,context?.country);const country=resolvedLocation.country;
  return{id,context:{city:resolvedLocation.city,reading,...(country?{country}:{})},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
   reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
-  awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null})),
+  awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null,...(['week','month'].includes(row.kind)?{wins:wins(row)}:{})})),
   updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
 }
 
@@ -247,12 +249,12 @@ export async function readOwnerUserDetails(sql,id,activityDay=null){
   const periods={all:0,day:0,week:0,month:0};for(const row of scores){const value=Number(row.seconds);if(!Object.hasOwn(periods,row.period)||!Number.isSafeInteger(value)||value<0||!Number.isSafeInteger(periods[row.period]+value))throw Error('invalid_score');periods[row.period]+=value;}
   const reciters=scores.filter(row=>row.period==='all').map(row=>({id:row.reciter,seconds:Number(row.seconds)})).sort((a,b)=>b.seconds-a.seconds||a.id.localeCompare(b.id)).slice(0,5);
   const awards=await tx`select kind,count(*)::int as count,max(earned_at) as "earnedAt" from salah_competition_private.awards where user_id=${id}::uuid group by kind order by max(earned_at) desc,kind limit 15`;
-  const holders=await currentTitleHolders(tx);
-  const visibleAwards=awards.filter(row=>!['week','month'].includes(row.kind)||holders[row.kind]===id);
+  const wins=await tx`select kind,starts_on::text as "start",ends_on::text as "end",seconds::text as seconds from salah_competition_private.awards where user_id=${id}::uuid and kind in('week','month') order by ends_on desc,earned_at desc,id limit 200`;
+  const earnedAwards=awards.map(row=>({...row,...(['week','month'].includes(row.kind)?{wins:wins.filter(win=>win.kind===row.kind).map(({start,end,seconds})=>({start,end,seconds}))}:{})}));
   const [saved]=await tx`select max(updated_at) as "updatedAt" from salah_competition_private.totals where user_id=${id}::uuid`;
   const targetDay=activityDay||user.day;const [activity]=await tx`select exists(select 1 from salah_counter_private.activity_days where user_id=${id}::uuid and day=${targetDay}::date) as active`;
   const [context]=await tx`select city,country,reading_page as page,reading_edition as edition,reading_saved_at as "savedAt" from salah_counter_private.account_context where user_id=${id}::uuid`;
-  return{context:{city:context?.city||null,country:context?.country||null,reading:context?.page?{page:context.page,edition:context.edition,savedAt:context.savedAt}:null},adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:visibleAwards,updatedAt:saved?.updatedAt||null};
+  return{context:{city:context?.city||null,country:context?.country||null,reading:context?.page?{page:context.page,edition:context.edition,savedAt:context.savedAt}:null},adhkar:{day:targetDay,active:activity?.active===true},hasAvatar:user.hasAvatar,connected:user.connected||scores.length>0,periods,reciters,awards:earnedAwards,updatedAt:saved?.updatedAt||null};
  });
 }
 

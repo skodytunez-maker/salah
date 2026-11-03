@@ -1,7 +1,7 @@
 import{safeListener,rankTime}from './reciter-ranking-core.js';
 export const QURAN_AWARDS=[
- {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Переходящий значок победителя завершённой календарной недели. Остаётся у победителя до следующих итогов; прошлые победы — в истории Топ SALAH.'},
- {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Переходящий значок победителя завершённого календарного месяца. Остаётся у победителя до следующих итогов; прошлые победы — в истории Топ SALAH.'},
+ {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Награда за победу в завершённой календарной неделе сохраняется в коллекции вместе с датами и результатом. Значок в Топ SALAH переходит к победителю следующей недели.'},
+ {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Награда за победу в завершённом календарном месяце сохраняется в коллекции вместе с датами и результатом. Значок в Топ SALAH переходит к победителю следующего месяца.'},
  {kind:'streak7',title:'Неделя с Кораном',icon:'seedling',color:'#bf926c',days:7,artwork:'assets/awards/streak-7-v1.png',rule:'7 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak30',title:'Месяц с Кораном',icon:'book-open',color:'#d8be88',days:30,artwork:'assets/awards/streak-30-v1.png',rule:'30 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak100',title:'100 дней с Кораном',icon:'gem',color:'#c2cbd8',days:100,artwork:'assets/awards/streak-100-v1.png',rule:'100 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
@@ -18,6 +18,8 @@ export const QURAN_AWARDS=[
 ];
 export const awardInfo=kind=>QURAN_AWARDS.find(a=>a.kind===kind);
 export const calendarAward=kind=>kind==='week'||kind==='month';
+// A collection records earned wins. Current podium titles remain a separate count.
+export const awardCollectionCounts=state=>Object.fromEntries(QURAN_AWARDS.map(a=>[a.kind,Math.max(state.historyCounts?.[a.kind]||0,state.items.filter(x=>x.kind===a.kind).length)]));
 export function validAwardDate(value){return typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}
 export function safeAward(row){
  if(!row||!awardInfo(row.kind)||!/^[-a-f0-9]{36}$/i.test(row.id||'')||!validAwardDate(row.start)||!validAwardDate(row.end)||row.end<row.start||!Number.isSafeInteger(row.seconds)||row.seconds<0||calendarAward(row.kind)&&(!row.reciter||row.seconds===0)||awardInfo(row.kind).hours&&row.seconds<awardInfo(row.kind).hours*3600)return null;
