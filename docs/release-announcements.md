@@ -500,3 +500,8 @@ Fit the existing independent Sun/Moon paths inside each visible photo crop and a
 ## 452 — Preserve renewed session during profile writes
 
 Serialize SDK session-writing operations so a delayed profile/MFA response cannot compete with token renewal. Coordinate shared browser storage with exclusive Web Locks; busy/timeout skips never steal an active writer. Use the pinned SDK process queue when Web Locks are unavailable. Add offline regression using the actual pinned browser SDK and production client configuration with two clients, plus bounded busy/retry cases. No server/Auth configuration, token-reuse policy, session key, permissions, Top, audio, sky, native minimum445 or closed-section changes. Preserve announcement425, artwork, acknowledgment and expiry. Previously revoked sessions still require a new sign-in.
+
+
+## 453 — Align the protected account confirmation action
+
+Render the existing protected-entry action inside the signed-in account action grid, between earned awards and Account details, before Sign out. Match the full available row width, allow text wrapping, retain a52px touch target and vertical separation. Preserve the existing link, same-hash retry handler, visibility condition, MFA/server authorization and sign-out behavior. No Auth/token/session changes; retain452 renewal coordination, Top, native minimum445 and announcement425/artwork/acknowledgment/expiry.
