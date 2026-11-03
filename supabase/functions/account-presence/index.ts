@@ -1,3 +1,39 @@
+// BEGIN SHARED ACCOUNT LOCATION
+// Country fallback for established SALAH city names only. No network geolocation.
+export const LOCATION_COUNTRIES={
+ 'россия':'Россия',ru:'Россия',russia:'Россия','российская федерация':'Россия',
+ 'азербайджан':'Азербайджан',az:'Азербайджан',azerbaijan:'Азербайджан',
+ 'таджикистан':'Таджикистан',tj:'Таджикистан',tajikistan:'Таджикистан',
+ 'узбекистан':'Узбекистан',uz:'Узбекистан',uzbekistan:'Узбекистан',
+ 'казахстан':'Казахстан',kz:'Казахстан',kazakhstan:'Казахстан',
+ 'кыргызстан':'Кыргызстан','киргизия':'Кыргызстан',kg:'Кыргызстан',kyrgyzstan:'Кыргызстан',
+ 'саудовская аравия':'Саудовская Аравия',sa:'Саудовская Аравия','saudi arabia':'Саудовская Аравия',
+ 'оаэ':'ОАЭ',ae:'ОАЭ','united arab emirates':'ОАЭ'
+};
+export const LOCATION_CITIES={
+ 'тюмень':['Тюмень','Россия'],tyumen:['Тюмень','Россия'],
+ 'омск':['Омск','Россия'],omsk:['Омск','Россия'],
+ 'буйнакск':['Буйнакск','Россия'],buynaksk:['Буйнакск','Россия'],
+ 'гянджа':['Гянджа','Азербайджан'],ganja:['Гянджа','Азербайджан'],
+ 'москва':['Москва','Россия'],'санкт-петербург':['Санкт-Петербург','Россия'],
+ 'казань':['Казань','Россия'],'екатеринбург':['Екатеринбург','Россия'],'уфа':['Уфа','Россия'],
+ 'тюкалинск':['Тюкалинск','Россия'],'тюльган':['Тюльган','Россия'],
+ 'медина':['Медина','Саудовская Аравия'],'мекка':['Мекка','Саудовская Аравия'],
+ 'душанбе':['Душанбе','Таджикистан'],'худжанд':['Худжанд','Таджикистан'],
+ 'ташкент':['Ташкент','Узбекистан'],'алматы':['Алматы','Казахстан'],
+ 'дубай':['Дубай','ОАЭ'],'тюп':['Тюп','Кыргызстан']
+};
+const locationClean=value=>typeof value==='string'?value.trim().replace(/\s+/g,' ').slice(0,160):'';
+const locationKey=value=>value.toLowerCase().replaceAll('ё','е');
+export function canonicalAccountLocation(city,country=null){
+ let name=locationClean(city),nation=locationClean(country);if(!name)return{city:null,country:null};
+ nation=LOCATION_COUNTRIES[locationKey(nation)]||nation;
+ const suffix=/^(.*),\s*([^,]+)$/.exec(name),end=suffix&&LOCATION_COUNTRIES[locationKey(suffix[2].trim())];
+ if(end&&(!nation||nation===end)){name=suffix[1].trim();nation=nation||end;}
+ const known=LOCATION_CITIES[locationKey(name)];if(known){name=known[0];nation=nation||known[1];}
+ return{city:name||null,country:nation||null};
+}
+// END SHARED ACCOUNT LOCATION
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function validNotification(value){
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['enabled','permission','browser','device','nativeUntil'].includes(k))||typeof value.enabled!=='boolean'||typeof value.browser!=='boolean'||!['granted','denied','default','unsupported'].includes(value.permission))return false;
@@ -14,6 +50,7 @@ export function validAccountContext(value,now=Date.now()){
  const time=Date.parse(v.observedAt);return Number.isFinite(time)&&time>=0&&time<=now+300000;
 }
 export async function recordAccountContext(tx,uid,value){
+ value={...value,...canonicalAccountLocation(value.city,value.country)};
  await tx`insert into salah_counter_private.account_context(user_id,city,country,city_updated_at) values(${uid}::uuid,${value.city?.trim()||null},${value.country?.trim()||null},clock_timestamp()) on conflict(user_id) do update set city=excluded.city,country=case when account_context.city is not distinct from excluded.city then coalesce(excluded.country,account_context.country) else excluded.country end,city_updated_at=excluded.city_updated_at where account_context.city is distinct from excluded.city or (excluded.country is not null and account_context.country is distinct from excluded.country)`;
  const v=value.reading;if(v)await tx`update salah_counter_private.account_context set reading_page=${v.page},reading_edition=${v.edition},reading_observed_at=${new Date(v.observedAt).toISOString()}::timestamptz,reading_saved_at=clock_timestamp() where user_id=${uid}::uuid and (reading_observed_at is null or reading_observed_at<${new Date(v.observedAt).toISOString()}::timestamptz)`;
 }
