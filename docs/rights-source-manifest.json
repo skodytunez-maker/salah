@@ -4198,6 +4198,31 @@
       "path": "dist/assets/fonts/scheherazade-new-regular-v4500.woff2",
       "gitBlobSha": "f8ce40f6eebaf984f16d81cc668f862590461468",
       "bytes": 124783
+    },
+    {
+      "path": "dist/assets/awards/reading-juz-1-v1.png",
+      "gitBlobSha": "2d911cd19fae40c577e4d5f29f7ff03bd083b70b",
+      "bytes": 1931364
+    },
+    {
+      "path": "dist/assets/awards/reading-juz-10-v1.png",
+      "gitBlobSha": "69ec4db85f7f81b8f15a6de4eeb9c39f85292350",
+      "bytes": 2031740
+    },
+    {
+      "path": "dist/assets/awards/reading-khatm-v1.png",
+      "gitBlobSha": "7109820839aa9f021271cc57ffe042e471141f45",
+      "bytes": 2236915
+    },
+    {
+      "path": "dist/assets/awards/adhkar-7-v1.png",
+      "gitBlobSha": "05e2eb87b0b7fea0faf04a4ae4cfb5c175984598",
+      "bytes": 1963764
+    },
+    {
+      "path": "dist/assets/awards/adhkar-30-v1.png",
+      "gitBlobSha": "1702cdd860d021c983efae833632662c212d6678",
+      "bytes": 2125008
     }
   ],
   "incrementalEvidence": [

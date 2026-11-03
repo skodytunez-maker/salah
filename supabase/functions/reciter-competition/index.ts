@@ -4,6 +4,7 @@ import postgres from 'npm:postgres@3.4.9';
 import{createListeningTotalsLoader}from './listening-totals.mjs';
 const loadListeningTotals=createListeningTotalsLoader();
 import{ownAwards,awardWinners}from './awards.mjs';
+import{learningPacket}from './learning-progress.mjs';
 import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionSubscription}from './core.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
 const url=Deno.env.get('SUPABASE_URL')!,key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -64,6 +65,11 @@ Deno.serve(async req=>{
  if(req.method!=='POST')return reply({error:'method'},405);
  if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}
  if(body?.action==='presence'){let packet;try{packet=listenerPresencePacket(body);}catch{return reply({error:'invalid_presence'},400);}const result=await presenceDb.update(user,packet);return result.retry?reply({error:'retry'},429):reply(result);}
+ if(body?.action==='learning-progress'){
+  let packet;try{packet=learningPacket(body);}catch{return reply({error:'invalid_progress'},400);}
+  const result=await sql`select salah_competition_private.record_learning_progress(${user.id}::uuid,${user.session}::uuid,${sql.json(packet.pages)}::jsonb,${sql.json(packet.rounds)}::jsonb)learning`;
+  return reply({ok:true,learning:result[0].learning});
+ }
  await ensure(user);
  if(body?.action==='snapshot'){
   let snapshot;try{const approved=await sql`SELECT entity_id FROM salah_staff_private.catalog WHERE kind='reciter'`;snapshot=competitionSnapshot(body,Date.now(),[...COMPETITION_RECITERS,...approved.map(x=>x.entity_id)]);}catch{return reply({error:'invalid_snapshot'},400);}

@@ -45,7 +45,7 @@ const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Из�
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Ваши победы остаются с вами'));assert.ok(root.querySelector('.release-award-history-preview img'));assert.ok(root.querySelector('.release-award-ceremony-preview img'));
+assert.equal(root.querySelectorAll('.release-feature').length,3);assert.ok(root.querySelector('.release-new-milestones img'));assert.ok(root.textContent.includes('Ваши победы остаются с вами'));assert.ok(root.querySelector('.release-award-history-preview img'));assert.ok(root.querySelector('.release-award-ceremony-preview img'));
 for(const old of ['Восемь новых чтецов','Азкары в вашем ритме','Алфавит для скачивания','Онлайн-занятия','Буквы со звуком'])assert.ok(!root.textContent.includes(old));
 assert.equal(root.querySelectorAll('.release-coming-button:disabled').length,0);
 for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');

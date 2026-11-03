@@ -529,3 +529,5 @@ Compact guest/account counts with collection date and expandable help. Canonical
 ## 457 — Fresh Visits entry after leaving nested geography
 
 Discard the selected city/country member pane when leaving Visits for another owner section. Re-enter Visits at the aggregate chart and geography, retaining the chosen period and already loaded totals. Dispose the old member list so late requests cannot reopen it. Same-section renders and opening/returning from an account profile retain their originating city list. No Auth, API, database, guest count, reminder, Top or closed-section changes. Preserve announcement425/artwork/acknowledgment/expiry and native minimum445.
+
+458: добавлены пять постоянных наград за подтверждённое чтение и завершённые утренние/вечерние азкары. Карточка reading-adhkar-awards использует новые медали, показывает реальный путь получения; личного рекорда нет. Учёт начинается с явных действий в обновлённом приложении, без восстановления из закладок/посещений.

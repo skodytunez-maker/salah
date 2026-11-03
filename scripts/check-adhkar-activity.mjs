@@ -28,7 +28,7 @@ for(const [active,text] of [[true,'Есть отметка'],[false,'Пока н
 root.innerHTML=ownerUserStatistics({connected:false});assert.match(root.querySelector('.owner-profile-activity').textContent,/Данных пока нет/);
 const source=await fs.readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 assert.equal((source.match(/emitAdhkarActivity\(/g)||[]).length,2,'Only catalogue increment and custom-counter increment mark activity');
-assert.match(source,/if\(result\.changed\)\{markDhikrActivity\(\);emitAdhkarActivity\(activityAccount\);\}/);
+assert.match(source,/if\(result\.changed\)\{markDhikrActivity\(\);emitAdhkarActivity\(activityAccount\);recordAdhkarRound\(activityAccount,activityGroup,result\.progress\);\}/);
 assert.match(source,/if\(result\.ok&&action==='increment'\)\{markDhikrActivity\(\);emitAdhkarActivity\(account\);\}/);
 const account=await fs.readFile(new URL('../dist/js/counter-account.js',import.meta.url),'utf8');
 assert.match(account,/event\.detail\?\.account!==state\.userId/);assert.match(account,/getActivityQueue\(\)\.acknowledge\(uid,activityDays\)/);

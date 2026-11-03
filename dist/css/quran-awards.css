@@ -145,3 +145,5 @@
 .release-award-history-preview>img{width:80px;height:90px;object-fit:contain}
 .release-award-history-preview>div{display:grid;gap:10px;min-width:0}.release-award-history-preview strong{font-size:14px;color:#f4f0e5}.release-award-history-preview small{font-size:12px;color:#d8be88}.release-award-history-preview span{font-size:11px;color:#adb8cb;border-top:1px solid #ffffff14;padding-top:8px}
 .release-award-ceremony-preview{height:100%;display:grid;place-content:center;justify-items:center;gap:12px;background:radial-gradient(ellipse,#d8be882a,transparent 65%)}.release-award-ceremony-preview img{width:118px;height:118px;object-fit:contain;filter:drop-shadow(0 0 18px #d8be8830)}.release-award-ceremony-preview strong{font-size:13px;color:#d8be88}
+
+.release-new-milestones{display:flex;align-items:center;justify-content:center;width:100%;gap:6px;padding:16px}.release-new-milestones img{width:30%;min-width:0;object-fit:contain;filter:drop-shadow(0 10px 12px #0006)}
