@@ -7,6 +7,73 @@ export async function currentTitleHolders(sql){
  const result={week:null,month:null};for(const row of rows)if(Object.hasOwn(result,row.kind))result[row.kind]=row.user_id;return result;
 }
 
+// BEGIN SHARED ACCOUNT LOCATION
+// Country fallback for established SALAH city names only. No network geolocation.
+export const LOCATION_COUNTRIES={
+ 'россия':'Россия',ru:'Россия',russia:'Россия','российская федерация':'Россия',
+ 'азербайджан':'Азербайджан',az:'Азербайджан',azerbaijan:'Азербайджан',
+ 'таджикистан':'Таджикистан',tj:'Таджикистан',tajikistan:'Таджикистан',
+ 'узбекистан':'Узбекистан',uz:'Узбекистан',uzbekistan:'Узбекистан',
+ 'казахстан':'Казахстан',kz:'Казахстан',kazakhstan:'Казахстан',
+ 'кыргызстан':'Кыргызстан','киргизия':'Кыргызстан',kg:'Кыргызстан',kyrgyzstan:'Кыргызстан',
+ 'саудовская аравия':'Саудовская Аравия',sa:'Саудовская Аравия','saudi arabia':'Саудовская Аравия',
+ 'оаэ':'ОАЭ',ae:'ОАЭ','united arab emirates':'ОАЭ'
+};
+export const LOCATION_CITIES={
+ 'тюмень':['Тюмень','Россия'],tyumen:['Тюмень','Россия'],
+ 'омск':['Омск','Россия'],omsk:['Омск','Россия'],
+ 'буйнакск':['Буйнакск','Россия'],buynaksk:['Буйнакск','Россия'],
+ 'гянджа':['Гянджа','Азербайджан'],ganja:['Гянджа','Азербайджан'],
+ 'москва':['Москва','Россия'],'санкт-петербург':['Санкт-Петербург','Россия'],
+ 'казань':['Казань','Россия'],'екатеринбург':['Екатеринбург','Россия'],'уфа':['Уфа','Россия'],
+ 'тюкалинск':['Тюкалинск','Россия'],'тюльган':['Тюльган','Россия'],
+ 'медина':['Медина','Саудовская Аравия'],'мекка':['Мекка','Саудовская Аравия'],
+ 'душанбе':['Душанбе','Таджикистан'],'худжанд':['Худжанд','Таджикистан'],
+ 'ташкент':['Ташкент','Узбекистан'],'алматы':['Алматы','Казахстан'],
+ 'дубай':['Дубай','ОАЭ'],'тюп':['Тюп','Кыргызстан']
+};
+const locationClean=value=>typeof value==='string'?value.trim().replace(/\s+/g,' ').slice(0,160):'';
+const locationKey=value=>value.toLowerCase().replaceAll('ё','е');
+export function canonicalAccountLocation(city,country=null){
+ let name=locationClean(city),nation=locationClean(country);if(!name)return{city:null,country:null};
+ nation=LOCATION_COUNTRIES[locationKey(nation)]||nation;
+ const suffix=/^(.*),\s*([^,]+)$/.exec(name),end=suffix&&LOCATION_COUNTRIES[locationKey(suffix[2].trim())];
+ if(end&&(!nation||nation===end)){name=suffix[1].trim();nation=nation||end;}
+ const known=LOCATION_CITIES[locationKey(name)];if(known){name=known[0];nation=nation||known[1];}
+ return{city:name||null,country:nation||null};
+}
+// END SHARED ACCOUNT LOCATION
+export function validGeoSelection(kind,city,country){
+ const clean=v=>typeof v==='string'&&v.trim()&&v.length<=160&&!/[\u0000-\u001f\u007f]/.test(v);
+ if(kind==='country')return clean(country)&&!city?{kind,city:null,country:canonicalAccountLocation('?',country).country}:null;
+ if(kind!=='city'||!clean(city)||country!==null&&country!==''&&!clean(country))return null;
+ const resolved=canonicalAccountLocation(city,country);return{kind,...resolved};
+}
+export async function readOwnerGeoMembers(sql,days,selection,page=1){
+ if(![1,7,30].includes(days)||!Number.isSafeInteger(page)||page<1||page>10000||!selection||!validGeoSelection(selection.kind,selection.city,selection.country))throw Error('invalid_filter');
+ const [group]=await sql`with eligible as(
+ select u.id,max(p.last_seen) as last_seen,bool_or(p.active and p.last_seen>=clock_timestamp()-interval '90 seconds') as online
+ from auth.users u join salah_counter_private.account_context c on c.user_id=u.id
+ cross join lateral salah_counter_private.canonical_location(c.city,c.country) n
+ join public.app_presence p on p.user_id=u.id and p.app='salah' and p.last_seen>=clock_timestamp()-(${days}::int*interval '1 day') and p.last_seen<=clock_timestamp()
+ where u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)
+ and ((${selection.kind}='country' and n.country=${selection.country}) or (${selection.kind}='city' and n.city=${selection.city} and n.country is not distinct from ${selection.country}))
+ group by u.id)
+ select count(*)::int as total,(select array_agg(id) from(select id from eligible order by online desc,last_seen desc nulls last,id limit 50 offset ${(page-1)*50}) members) as ids from eligible`;
+ const ids=group.ids||[];if(!ids.length)return{total:group.total,online:0,users:[]};
+ const users=await sql`select u.id::text as id,u.raw_user_meta_data->>'nickname' as nickname,u.created_at as "joinedAt",u.last_sign_in_at as "lastSignInAt",p.last_seen as "lastSeenAt",coalesce(p.online,false) as online,v.app_version as "appVersion",v.version_checked_at as "versionCheckedAt",c.saved_at as "lastSavedAt",n.checked_at as "notificationCheckedAt",n.enabled as "notificationEnabled",n.granted as "notificationGranted",n.denied as "notificationDenied",n.background as "notificationBackground" from auth.users u left join lateral(select max(last_seen) as last_seen,bool_or(active and last_seen>=now()-interval '90 seconds') as online from public.app_presence where user_id=u.id and app='salah') p on true left join lateral(select app_version,version_checked_at from public.app_presence where user_id=u.id and app='salah' and app_version is not null and version_checked_at is not null order by version_checked_at desc,tab_id limit 1) v on true left join lateral(select max(saved_at) as saved_at from salah_counter_private.components where user_id=u.id) c on true left join lateral(
+ select max(n.checked_at) as checked_at,bool_or(n.enabled) as enabled,bool_or(n.enabled and n.permission='granted') as granted,bool_or(n.enabled) and bool_and(not n.enabled or n.permission='denied') as denied,
+ bool_or(n.enabled and n.permission='granted' and ((n.native_until>now() and n.native_until<=n.checked_at+interval '14 days') or (coalesce(d.enabled,false) and d.subscription is not null and d.preferences is not null and d.updated_at>now()-interval '90 days' and d.preferences->'reminders'->>'enabled'='true' and exists(select 1 from jsonb_each(coalesce(d.preferences->'reminders'->'prayers','{}'::jsonb)) r where r.key in('Fajr','Dhuhr','Asr','Maghrib','Isha') and (r.value->>'atTime'='true' or r.value->>'beforeMinutes' in('5','10','15','30')))))) as background
+ from(select distinct on(s.session_id) s.* from public.app_notification_status s join auth.sessions a on a.id=s.session_id and a.user_id=s.user_id where s.user_id=u.id and s.checked_at>now()-interval '90 days' order by s.session_id,s.checked_at desc,s.tab_id) n
+ left join salah_push_private.devices d on d.id=n.push_device_id
+ ) n on true where u.id=any(${ids}::uuid[]) and u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false order by coalesce(p.online,false) desc,p.last_seen desc nulls last,u.id`;
+ return{total:group.total,online:users.filter(row=>row.online).length,users};
+}
+export function safeOwnerUsers(result,page,now=Date.now){
+ if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('invalid');const date=v=>Number.isFinite(Date.parse(v))?new Date(v).toISOString():null;return{total:result.total,online:Number.isSafeInteger(result.online)&&result.online>=0?result.online:0,page,users:result.users.slice(0,50).map(row=>({id:/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.id||'')?row.id:null,nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника',joinedAt:date(row.joinedAt),lastSignInAt:date(row.lastSignInAt),lastSeenAt:date(row.lastSeenAt),appVersion:Number.isSafeInteger(row.appVersion)&&row.appVersion>=1&&row.appVersion<=1000000&&date(row.versionCheckedAt)?row.appVersion:null,versionCheckedAt:date(row.versionCheckedAt),lastSavedAt:date(row.lastSavedAt),notifications:date(row.notificationCheckedAt)?{enabled:row.notificationEnabled===true,background:row.notificationBackground===true,permissionGranted:row.notificationGranted===true,permissionDenied:row.notificationDenied===true,checkedAt:date(row.notificationCheckedAt)}:null,online:row.online===true&&Number.isFinite(Date.parse(row.lastSeenAt))&&Date.parse(row.lastSeenAt)>=now()-90000}))};
+}
+
+
 // Deploy only to the separate SALAH project. Storage credentials stay server-side.
 // A valid session is checked against Auth on EVERY request before owner access.
 const OWNER_ID='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7';
@@ -17,7 +84,7 @@ const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const OWNER_RELEASES={salah:[{date:'2026-10-16',version:'339',changes:['Профили пользователей открываются из списка: фото, сохранённое время прослушивания, любимые чтецы и полученные награды.','Доступ к профилям и фото проверяется на сервере при каждом запросе: только владелец с действующей сессией и вторым фактором.']},{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readAvatar=null,readGeography=null,readVisitors=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -36,7 +103,8 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   if(!user||user.id!==OWNER_ID||!user.email_confirmed_at||user.is_anonymous)return reply(403,{error:'owner_only'});
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
-  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'&&key!=='app'&&key!=='activityDay'))return reply(400,{error:'invalid_parameters'});
+  if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'&&key!=='app'&&key!=='activityDay'&&key!=='kind'&&key!=='city'&&key!=='country'))return reply(400,{error:'invalid_parameters'});
+  if(['kind','city','country'].some(k=>url.searchParams.has(k))&&mode!=='geography-users')return reply(400,{error:'invalid_parameters'});
   if(url.searchParams.has('activityDay')&&mode!=='user')return reply(400,{error:'invalid_parameters'});
   let claims;
   try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
@@ -78,11 +146,19 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    }catch{return reply(503,{error:'user_unavailable'});}
   }
   if(url.searchParams.has('ids'))return reply(400,{error:'invalid_parameters'});
+  if(mode==='geography-users'){
+   if([...url.searchParams].some(([k])=>url.searchParams.getAll(k).length!==1))return reply(400,{error:'invalid_parameters'});
+   const days=Number(url.searchParams.get('days')||7),page=Number(url.searchParams.get('page')||1);
+   const selection=validGeoSelection(url.searchParams.get('kind'),url.searchParams.get('city'),url.searchParams.get('country'));
+   if(![1,7,30].includes(days)||!Number.isSafeInteger(page)||page<1||page>10000||!selection)return reply(400,{error:'invalid_filter'});
+   if(!readGeoMembers)return reply(503,{error:'geography_unavailable'});
+   try{return reply(200,{...safeOwnerUsers(await readGeoMembers(days,selection,page),page,now),period:days,selection});}catch{return reply(503,{error:'geography_unavailable'});}
+  }
   if(mode==='users'){
    if(url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
    const page=Number(url.searchParams.get('page')||1);if(!Number.isSafeInteger(page)||page<1||page>10000)return reply(400,{error:'invalid_page'});
    if(!readUsers)return reply(503,{error:'users_not_connected'});
-   try{const result=await readUsers(page);if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('invalid');const date=v=>Number.isFinite(Date.parse(v))?new Date(v).toISOString():null;return reply(200,{total:result.total,online:Number.isSafeInteger(result.online)&&result.online>=0?result.online:0,page,users:result.users.slice(0,50).map(row=>({id:/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.id||'')?row.id:null,nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника',joinedAt:date(row.joinedAt),lastSignInAt:date(row.lastSignInAt),lastSeenAt:date(row.lastSeenAt),appVersion:Number.isSafeInteger(row.appVersion)&&row.appVersion>=1&&row.appVersion<=1000000&&date(row.versionCheckedAt)?row.appVersion:null,versionCheckedAt:date(row.versionCheckedAt),lastSavedAt:date(row.lastSavedAt),notifications:date(row.notificationCheckedAt)?{enabled:row.notificationEnabled===true,background:row.notificationBackground===true,permissionGranted:row.notificationGranted===true,permissionDenied:row.notificationDenied===true,checkedAt:date(row.notificationCheckedAt)}:null,online:row.online===true&&Number.isFinite(Date.parse(row.lastSeenAt))&&Date.parse(row.lastSeenAt)>=now()-90000}))});}catch{return reply(503,{error:'users_unavailable'});}
+   try{const result=await readUsers(page);return reply(200,safeOwnerUsers(result,page,now));}catch{return reply(503,{error:'users_unavailable'});}
   }
   if(url.searchParams.has('page'))return reply(400,{error:'invalid_parameters'});
   if(mode==='visitors'){
@@ -128,7 +204,7 @@ export function summarizeOwnerGeography(rows,days,now=Date.now()){
  const countries=new Map(),cities=new Map();let total=0,withCity=0,withCountry=0;
  for(const row of rows){
   const n=row?.accounts;if(!Number.isSafeInteger(n)||n<1||!Number.isSafeInteger(total+n))throw Error('invalid_geography');total+=n;
-  const city=clean(row.city),country=city?clean(row.country):null;if(!city)continue;withCity+=n;
+  const {city,country}=canonicalAccountLocation(clean(row.city),clean(row.country));if(!city)continue;withCity+=n;
   const key=JSON.stringify([city,country]),previous=cities.get(key);cities.set(key,{name:city,country,accounts:n+(previous?.accounts||0)});
   if(country){withCountry+=n;countries.set(country,(countries.get(country)||0)+n);}
  }
@@ -155,8 +231,8 @@ export function safeOwnerUserDetails(details,id){
  const kinds=new Set(['founder','week','month','streak7','streak30','streak100','streak200','streak365','hours25','hours50','hours100','hours250','hours500','hours1000','hours5000']);
  const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
  const context=details.context,city=typeof context?.city==='string'&&context.city.trim()?context.city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;const v=context?.reading,reading=v&&Number.isInteger(v.page)&&v.page>=1&&v.page<=604&&['madani','tajweed'].includes(v.edition)&&Number.isFinite(Date.parse(v.savedAt))?{page:v.page,edition:v.edition,savedAt:new Date(v.savedAt).toISOString()}:null;
- const country=city&&typeof context?.country==='string'&&context.country.trim()?context.country.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;
- return{id,context:{city,reading,...(country?{country}:{})},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
+ const resolvedLocation=canonicalAccountLocation(city,context?.country);const country=resolvedLocation.country;
+ return{id,context:{city:resolvedLocation.city,reading,...(country?{country}:{})},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
   reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
   awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,15).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null})),
   updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
@@ -199,5 +275,5 @@ if(typeof Deno!=='undefined'){
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readVisitors:days=>readOwnerVisitors(sql,days),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

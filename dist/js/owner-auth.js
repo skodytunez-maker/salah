@@ -158,3 +158,9 @@ export async function ownerVisitors(days=7){
  const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
  return callOwner(data.session,'?mode=visitors&days='+days);
 }
+
+export async function ownerGeoMembers(days,selection,page=1){
+ const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ const query=new URLSearchParams({mode:'geography-users',days:String(days),page:String(page),kind:selection.kind});if(selection.city)query.set('city',selection.city);if(selection.country)query.set('country',selection.country);
+ return callOwner(data.session,'?'+query);
+}
