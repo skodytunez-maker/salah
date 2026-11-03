@@ -206,7 +206,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":451,"date":"2026-11-03","changes":["Арабский алфавит: слушайте названия всех 28 букв и повторяйте запись по нажатию."],"announcement":{"version":425,"date":"2026-10-30","changes":["Арабский алфавит: слушайте названия всех 28 букв и повторяйте запись по нажатию."]}};
+const RELEASE={"version":452,"date":"2026-11-03","changes":["Арабский алфавит: слушайте названия всех 28 букв и повторяйте запись по нажатию."],"announcement":{"version":425,"date":"2026-10-30","changes":["Арабский алфавит: слушайте названия всех 28 букв и повторяйте запись по нажатию."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_LESSON_ACCOUNT'){event.waitUntil(lessonAccountMessage(event));return;}if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
