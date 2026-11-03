@@ -321,7 +321,8 @@ function firebaseSupportPayload(device,event,now){
  const expires=Math.floor(at+86400000);
  return {message:{token:device.token,data:{kind,thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
 }
-function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now}){
+function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now,payloadBuilder=firebaseSupportPayload}){
+ if(typeof payloadBuilder!=='function')throw Error('invalid_firebase_sender_configuration');
  if(credential?.type!=='service_account'||credential.project_id!==PROJECT||!new RegExp('^[\\w-]+@'+PROJECT+'\\.iam\\.gserviceaccount\\.com$').test(credential.client_email||'')||credential.token_uri!==TOKEN_URL||typeof credential.private_key!=='string'||credential.private_key.length>12000||!credential.private_key.startsWith('-----BEGIN PRIVATE KEY-----'))throw Error('invalid_firebase_sender_configuration');
  let cached=null,pending=null;
  async function access(){
@@ -340,7 +341,7 @@ function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now}){
  }
  return async(device,event)=>{
   try{
-   const payload=firebaseSupportPayload(device,event,clock()),token=await access();
+   const payload=payloadBuilder(device,event,clock()),token=await access();
    const response=await fetcher('https://fcm.googleapis.com/v1/projects/'+PROJECT+'/messages:send',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(payload),redirect:'error',signal:AbortSignal.timeout(8000)});
    if(response.ok)return 'sent';if(response.status===401)cached=null;
    const value=await response.json().catch(()=>null);
@@ -360,6 +361,47 @@ async function dispatchNativeSupportPush({db,sender,clock=Date.now}){
   await db.nativeSupportComplete(row.id,row.message_id,result);
   if(result==='sent')sent++;if(result==='expired')await db.nativeSupportExpire(row.id);
  }}));return sent;
+}
+
+const RETURN_DAYS=[7,14,30];
+const RETURN_COOLDOWN=7*86400000;
+const RETURN_TTL=120000;
+const RETURN_DEFAULT_TEXT='Уделим несколько минут Корану и азкарам? Откройте SALAH.';
+const RETURN_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+function returnText(value){return typeof value==='string'&&!/[\u0000-\u001f\u007f]/.test(value)&&value.trim().length>=5&&value.trim().length<=180?value.trim():null;}
+function returnStamp(value){const n=typeof value==='number'?value:typeof value==='string'?Date.parse(value):NaN;return Number.isFinite(n)&&n>0?n:null;}
+function returnAllowedAt(now,zone){try{if(typeof zone!=='string'||zone.length>80)return false;const hour=Number(new Intl.DateTimeFormat('en',{timeZone:zone,hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date(now)).find(p=>p.type==='hour')?.value);return hour>=8&&hour<22;}catch{return false;}}
+function returnRecipientReady(row,now){
+ if(!row||!RETURN_UUID.test(row.user||'')||!RETURN_UUID.test(row.device||'')||!RETURN_UUID.test(row.id||'')||!['web','native'].includes(row.channel)||!RETURN_DAYS.includes(row.days)||row.confirmed!==true||row.anonymous!==false||row.banned!==false||row.sessionActive!==true||row.deviceEnabled!==true||!returnAllowedAt(now,row.timeZone))return false;
+ const last=returnStamp(row.lastVisit),snapshot=returnStamp(row.activityAt),sent=returnStamp(row.lastSent),expires=returnStamp(row.campaignExpires);
+ return !!last&&!!snapshot&&!!expires&&expires>now&&now-last>=row.days*86400000&&last<=snapshot&&(!sent||now-sent>=RETURN_COOLDOWN)&&!!returnText(row.body);
+}
+function ownerReturnNotice(row,now){
+ if(!returnRecipientReady(row,now))return null;
+ return{title:'SALAH',body:returnText(row.body),kind:'owner-return',user:row.user,eventId:row.id,timeZone:row.timeZone,at:now,expiresAt:now+RETURN_TTL,tag:'salah-push-owner-return-'+row.id,url:'#home'};
+}
+
+function firebaseOwnerReturnPayload(device,event,now){
+ if(!RETURN_UUID.test(device?.user_id||'')||typeof device.token!=='string'||device.token.length<100||device.token.length>4096||!/^[-\w:.]+$/.test(device.token)||event?.kind!=='owner-return'||!RETURN_UUID.test(event.eventId||'')||event.user!==device.user_id||!returnText(event.body)||!Number.isFinite(event.at)||event.at>now||!Number.isFinite(event.expiresAt)||event.expiresAt<=now||event.expiresAt-event.at>RETURN_TTL||!returnAllowedAt(now,event.timeZone))throw Error('invalid_owner_return_notice');
+ // Display notification: the existing Android FCM SDK can show this while the
+ // app is backgrounded. It is not a fabricated support conversation/message.
+ return{message:{token:device.token,notification:{title:'SALAH',body:returnText(event.body)},data:{kind:'owner-return',event:event.eventId},android:{priority:'normal',ttl:Math.max(1,Math.floor((event.expiresAt-now)/1000))+'s',collapse_key:'salah-owner-return',notification:{tag:'salah-owner-return-'+event.eventId,icon:'salah_notification'}}}};
+}
+function createFirebaseOwnerReturnSender(options){return createFirebaseSupportSender({...options,payloadBuilder:firebaseOwnerReturnPayload});}
+
+async function dispatchOwnerReturns({db,send,clock=Date.now}){
+ if(!db.ownerReturnJobs)return 0;
+ const began=clock(),jobs=await db.ownerReturnJobs(began);let sent=0;
+ for(const candidate of jobs.slice(0,100)){
+  if(clock()-began>=20000)break;
+  const claim=await db.ownerReturnClaim(candidate.id,clock());if(!claim)continue;
+  const current=await db.ownerReturnActive(candidate.id,claim.token,clock());
+  if(!returnRecipientReady(current,clock())){await db.ownerReturnComplete(candidate.id,claim.token,'skipped',clock());continue;}
+  const notice=ownerReturnNotice(current,clock());let result;
+  try{result=await send(current,notice);}catch{result='retry';}
+  await db.ownerReturnComplete(candidate.id,claim.token,['sent','expired'].includes(result)?result:'retry',clock());if(result==='sent')sent++;
+ }
+ return sent;
 }
 
 
@@ -456,7 +498,13 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
 }
 function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
-function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null}){
+function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null,firebaseReturnSender=null}){
+ async function sendOwnerReturn(device,event){
+  if(!event||!returnAllowedAt(clock(),event.timeZone)||event.expiresAt<=clock())return 'retry';
+  if(device.channel==='native')return firebaseReturnSender?firebaseReturnSender({user_id:device.user,token:device.nativeToken},event):'retry';
+  try{const config=await db.config();await webpush.sendNotification(subscription(device.subscription),JSON.stringify(event),{vapidDetails:{subject:PUBLIC_APP,publicKey:config.vapid.publicKey,privateKey:config.vapid.privateKey},TTL:Math.max(1,Math.ceil((event.expiresAt-clock())/1000)),urgency:'normal',timeout:8000});return 'sent';}
+  catch(error){return [404,410].includes(error.statusCode)?'expired':'retry';}
+ }
  async function send(device,event){
   try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else if(event.kind==='staff')await db.staffPushExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
@@ -517,6 +565,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
      }
      // A dead push gateway must not hold up all other phones.
      await Promise.all(Array.from({length:Math.min(8,devices.length)},async()=>{while(cursor<devices.length&&clock()-started<95000){const device=devices[cursor++];await deliverDevice(device);}}));
+     try{delivered+=await dispatchOwnerReturns({db,send:sendOwnerReturn,clock});}catch{console.warn('owner_return_unavailable');}
      await db.cleanup(clock());return reply({delivered});
     }finally{await db.release();}
    }
@@ -557,6 +606,19 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
 
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,idle_timeout:20,connect_timeout:10,prepare:false});
 const db={
+ async ownerReturnJobs(now){
+  const at=new Date(now).toISOString();
+  await sql`update salah_return_private.campaigns set state='expired'where state in('draft','queued')and expires_at<=${at}::timestamptz`;
+  await sql`update salah_return_private.recipients r set state='skipped'from salah_return_private.campaigns c where c.id=r.campaign_id and c.state in('cancelled','expired')and(r.state in('pending','retry')or(r.state='sending'and r.claimed_at<${at}::timestamptz-interval'2 minutes'))`;
+  await sql`update salah_return_private.recipients set state='expired'where attempts>=3 and(state='retry'or(state='sending'and claimed_at<${at}::timestamptz-interval'2 minutes'))`;
+  await sql`update salah_return_private.campaigns c set state='complete'where c.state='queued'and not exists(select 1 from salah_return_private.recipients r where r.campaign_id=c.id and r.state in('pending','retry','sending'))`;
+  await sql`delete from salah_return_private.limits where minute<${Math.floor(now/60000)-1440}`;
+  await sql`delete from salah_return_private.campaigns where created_at<${at}::timestamptz-interval'90 days'`;
+  return sql`select r.id from salah_return_private.recipients r join salah_return_private.campaigns c on c.id=r.campaign_id where c.state='queued'and c.expires_at>${at}::timestamptz and r.attempts<3 and(r.next_attempt_at is null or r.next_attempt_at<=${at}::timestamptz)and(r.state in('pending','retry')or(r.state='sending'and r.claimed_at<${at}::timestamptz-interval'2 minutes'))and(${at}::timestamptz at time zone r.time_zone)::time>=time'08:00'and(${at}::timestamptz at time zone r.time_zone)::time<time'22:00'order by c.created_at,r.id limit 100`;
+ },
+ async ownerReturnClaim(id,now){const[r]=await sql`select salah_return_private.claim(${id}::uuid,${new Date(now).toISOString()}::timestamptz)as value`;return r?.value;},
+ async ownerReturnActive(id,token,now){const[r]=await sql`select salah_return_private.job_details(${id}::uuid,${token}::uuid,${new Date(now).toISOString()}::timestamptz)as value`;return r?.value;},
+ async ownerReturnComplete(id,token,state,now){await sql`select salah_return_private.complete(${id}::uuid,${token}::uuid,${state},${new Date(now).toISOString()}::timestamptz)`;},
  async staffPushEvents(){await sql`delete from salah_staff_private.push_deliveries where claimed_at<now()-interval '7 days'`;await sql`delete from salah_staff_private.push_devices where updated_at<now()-interval '90 days'`;return sql`select * from salah_staff_private.push_candidates()`;},
  async staffPushActive(id,message){const rows=await sql`select id from salah_staff_private.push_candidates(${id}::uuid,${message}::uuid)`;return rows.length===1;},
  async staffPushClaim(id,message,now){const rows=await sql`insert into salah_staff_private.push_deliveries(device_id,message_id,state,claimed_at)values(${id}::uuid,${message}::uuid,'sending',to_timestamp(${now}/1000.0))on conflict(device_id,message_id)do update set state='sending',claimed_at=excluded.claimed_at where push_deliveries.state='retry'or(push_deliveries.state='sending'and push_deliveries.claimed_at<to_timestamp(${now}/1000.0)-interval '30 seconds')returning message_id`;return rows.length===1;},
@@ -600,6 +662,6 @@ const db={
   async put(key,rows,expires){await sql`insert into salah_push_private.cache(key,rows,expires_at) values(${key},${sql.json(rows)},to_timestamp(${expires}/1000.0)) on conflict(key) do update set rows=excluded.rows,expires_at=excluded.expires_at`;}
  }
 };
-let firebaseSender=null;
-try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw)firebaseSender=createFirebaseSupportSender({credential:JSON.parse(raw)});}catch{}
-Deno.serve(createPushHandler({db,webpush,firebaseSender}));
+let firebaseSender=null,firebaseReturnSender=null;
+try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw){const credential=JSON.parse(raw);firebaseSender=createFirebaseSupportSender({credential});firebaseReturnSender=createFirebaseOwnerReturnSender({credential});}}catch{}
+Deno.serve(createPushHandler({db,webpush,firebaseSender,firebaseReturnSender}));

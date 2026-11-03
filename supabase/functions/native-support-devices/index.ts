@@ -11,14 +11,15 @@ export function createNativeSupportDevicesHandler({getUser,getClaims,isSessionAc
  const authorization=req.headers.get('Authorization')||'';if(!/^Bearer [A-Za-z0-9._-]{16,8192}$/.test(authorization))return reply(401,{error:'sign_in_required'});
  if(!req.headers.get('Content-Type')?.startsWith('application/json'))return reply(415,{error:'invalid_input'});
  let input;try{const reader=req.body?.getReader();if(!reader)throw Error();let size=0,chunks=[];while(true){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>6000){await reader.cancel();return reply(413,{error:'invalid_input'})}chunks.push(part.value)}const raw=new Uint8Array(size);let offset=0;for(const part of chunks){raw.set(part,offset);offset+=part.length}input=JSON.parse(new TextDecoder().decode(raw));}catch{return reply(400,{error:'invalid_input'})}
- const allowed=input?.action==='register'?['action','device','token']:input?.action==='remove'?['action','device']:null;
- if(!allowed||!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(key=>!allowed.includes(key))||allowed.some(key=>!Object.hasOwn(input,key))||!UUID.test(input.device||'')||input.action==='register'&&(typeof input.token!=='string'||input.token.length<100||input.token.length>4096||!/^[-\w:.]+$/.test(input.token)))return reply(400,{error:'invalid_input'});
+ const allowed=input?.action==='register'?['action','device','token','timeZone']:input?.action==='remove'?['action','device']:null;
+ if(!allowed||!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(key=>!allowed.includes(key))||(input.action==='register'?['action','device','token']:['action','device']).some(key=>!Object.hasOwn(input,key))||!UUID.test(input.device||'')||input.action==='register'&&(typeof input.token!=='string'||input.token.length<100||input.token.length>4096||!/^[-\w:.]+$/.test(input.token)))return reply(400,{error:'invalid_input'});
+ if(input.timeZone!==undefined){try{if(typeof input.timeZone!=='string'||input.timeZone.length>80)throw Error();new Intl.DateTimeFormat('en',{timeZone:input.timeZone}).format(0);}catch{return reply(400,{error:'invalid_timezone'});}}
  let user,claims;
  try{const u=await getUser(authorization.slice(7)),c=await getClaims(authorization.slice(7));if(u.error||c.error)return reply(401,{error:'invalid_session'});user=u.data?.user;claims=c.data?.claims;}catch{return reply(503,{error:'auth_unavailable'})}
  if(!UUID.test(user?.id||'')||!user.email_confirmed_at||user.is_anonymous||claims?.sub!==user.id||claims.iss!==PROJECT+'/auth/v1'||!UUID.test(claims.session_id||''))return reply(401,{error:'invalid_session'});
  try{if(!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'})}
  if(input.action==='register'&&!senderReady())return reply(503,{error:'sender_unavailable'});
- try{const ok=input.action==='register'?await register(user.id,claims.session_id,input.device,input.token):await remove(user.id,claims.session_id,input.device);return ok?reply(200,{ok:true}):reply(403,{error:'device_unavailable'});}catch{return reply(503,{error:'storage_unavailable'})}
+ try{const ok=input.action==='register'?await register(user.id,claims.session_id,input.device,input.token,...(input.timeZone===undefined?[]:[input.timeZone])):await remove(user.id,claims.session_id,input.device);return ok?reply(200,{ok:true}):reply(403,{error:'device_unavailable'});}catch{return reply(503,{error:'storage_unavailable'})}
 };}
 if(typeof Deno!=='undefined'){
  const {default:postgres}=await import('npm:postgres@3.4.9');const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
@@ -28,8 +29,8 @@ if(typeof Deno!=='undefined'){
  try{const secret=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(secret){const{createFirebaseSupportSender}=await import('./firebase-support-sender.mjs');createFirebaseSupportSender({credential:JSON.parse(secret)});configured=true;}}catch{}
  Deno.serve(createNativeSupportDevicesHandler({getUser:token=>auth.auth.getUser(token),getClaims:token=>auth.auth.getClaims(token),senderReady:()=>configured,
  isSessionActive:async(uid,sid)=>{const[row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},
- register:async(uid,sid,id,token)=>{
-  const rows=await sql`insert into salah_support_private.native_devices(id,user_id,session_id,token,token_hash,enabled,updated_at) select ${id}::uuid,${uid}::uuid,${sid}::uuid,${token},encode(sha256(convert_to(${token},'UTF8')),'hex'),true,now() where exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) on conflict(id) do update set session_id=excluded.session_id,token=excluded.token,token_hash=excluded.token_hash,enabled=true,updated_at=now() where salah_support_private.native_devices.user_id=excluded.user_id returning id`;return rows.length===1;
+ register:async(uid,sid,id,token,timeZone=null)=>{
+  const rows=await sql`insert into salah_support_private.native_devices(id,user_id,session_id,token,token_hash,enabled,updated_at,time_zone) select ${id}::uuid,${uid}::uuid,${sid}::uuid,${token},encode(sha256(convert_to(${token},'UTF8')),'hex'),true,now(),${timeZone} where exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) on conflict(id) do update set session_id=excluded.session_id,token=excluded.token,token_hash=excluded.token_hash,enabled=true,updated_at=now(),time_zone=coalesce(excluded.time_zone,native_devices.time_zone) where salah_support_private.native_devices.user_id=excluded.user_id returning id`;return rows.length===1;
  },
  remove:async(uid,sid,id)=>{await sql`update salah_support_private.native_devices set enabled=false,token=null,token_hash=null where id=${id}::uuid and user_id=${uid}::uuid and session_id=${sid}::uuid`;return true;}
  }));

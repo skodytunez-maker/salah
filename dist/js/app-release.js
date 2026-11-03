@@ -1,4 +1,4 @@
-export const APP_VERSION=454;
+export const APP_VERSION=455;
 export const APP_UPDATED_AT='2026-11-03';
 export const APP_UPDATE_DATE='3 ноября 2026';
 export const APP_CHANGES=["Арабский алфавит: слушайте названия всех 28 букв и повторяйте запись по нажатию."];

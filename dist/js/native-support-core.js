@@ -1,5 +1,5 @@
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export function createNativeSupportClient({plugin,getSession,register,notice=()=>{},open=()=>{}}){
+export function createNativeSupportClient({plugin,getSession,register,registrationContext=()=>'',notice=()=>{},open=()=>{}}){
  let revision=0,actor=null,session=null,receipt='',tail=Promise.resolve(),pendingTap=null;
  const taps=new Set();
  const queue=task=>{const result=tail.catch(()=>{}).then(task);tail=result.catch(()=>{});return result;};
@@ -16,7 +16,7 @@ export function createNativeSupportClient({plugin,getSession,register,notice=()=
    const result=await bounded(enable?plugin.enable({user:expectedActor}):plugin.getRegistration({user:expectedActor}),enable?60000:15000);
    if(id!==revision||!valid(current)||current.user.id!==actor)return {ready:false};
    if(!UUID.test(result?.device||'')||typeof result.token!=='string'||result.token.length<100||result.token.length>4096)throw Error('invalid_native_registration');
-   const signature=current.user.id+':'+result.device+':'+result.token+':'+current.access_token;
+   const signature=current.user.id+':'+result.device+':'+result.token+':'+current.access_token+':'+registrationContext();
    if(signature!==receipt){await register(current,result);if(id!==revision)return {ready:false};receipt=signature;}
    return {ready:true};
   });

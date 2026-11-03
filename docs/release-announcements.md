@@ -510,3 +510,9 @@ Render the existing protected-entry action inside the signed-in account action g
 ## 454 — Opaque under-page canvas for history transitions
 
 Set matching deep-night background colors on html and body, and isolate body painting so its existing negative-z scenery remains above the opaque canvas. This provides a dark under-page color for iOS history-swipe snapshots while keeping the original route gestures, Home scenery, Sun/Moon, scroll, media, auth, Top and closed sections. Browser fixture verifies opaque root/body and preserved scenic rendering; physical iPhone native-swipe acceptance remains required. Preserve announcement425/artwork/acknowledgment/expiry and native minimum445.
+
+## 455 — Separate guests and signed-in accounts
+
+Owner-only rolling24h/7d/30d aggregates from a new write-only guest-device counter and existing confirmed account presence. Await resolved authentication before counting guests; no names, email, IP-derived fingerprint or coordinates. Random persistent device UUID is hashed server-side, daily storage is private/RLS deny-all, requests and retention bounded. Record tracking start explicitly; do not reconstruct historical guests or sum guest devices and accounts as people. Preserve existing website statistics, geography, owner live-session/MFA gates, Top, closed sections, announcement425 and native minimum445.
+
+Manual return-reminder controls are rebased from the held442 candidate: owner-only preview, explicit queue/cancel, existing connected devices, one device/account, weekly cooldown, local08:00–22:00 and120-second TTL. Preserve existing prayer/support/staff/classroom schedulers. No campaign is created or sent by deploying this feature. Existing owner-remindersv1/native-support-devicesv6 and private campaign migration already match; only the shared dispatcher still needs its separately approved deployment. No extra opt-in switch or second city.

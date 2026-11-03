@@ -295,3 +295,14 @@ body.owner-page #app[data-owner-view="home"] .owner-menu-tile strong{display:blo
 body.owner-page #app[data-owner-view="home"] .owner-menu-tile small{margin:0;line-height:1.4}
 body.owner-page #app[data-owner-view="home"] .owner-menu-tile>svg,body.owner-page #app[data-owner-view="home"] .owner-menu-tile>img{width:26px;height:26px;flex:none}
 }
+
+.owner-return-entry{display:flex;justify-content:flex-end;margin:0 0 12px}
+.owner-return-entry button{min-height:44px;padding:8px 12px;border:1px solid var(--line,#344057);border-radius:14px;color:var(--gold,#d6c38f)}
+.owner-return-form{display:grid;gap:14px;min-width:0}
+.owner-return-form .field{display:grid;gap:8px;margin:0}
+.owner-return-form textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:96px;font:inherit;line-height:1.5;padding:12px;border-radius:14px;background:var(--surface,#10192b);color:inherit;border:1px solid var(--line,#344057)}
+.owner-return-form select{width:100%;min-height:48px;font:inherit;border-radius:14px;padding:10px}
+.owner-return-form p{margin:0;font-size:14px;line-height:1.5}
+.owner-return-form dl{display:grid;grid-template-columns:1fr auto;gap:10px;margin:0;padding:14px;border:1px solid var(--line,#344057);border-radius:16px}
+.owner-return-form dd{margin:0;font-weight:600}
+.owner-return-form [hidden]{display:none!important}

@@ -12,4 +12,6 @@ assert.equal((await createNativeSupportDevicesHandler(deps)(request({},''))).sta
 assert.equal((await createNativeSupportDevicesHandler({...deps,isSessionActive:async()=>false})(request())).status,401);
 assert.equal(saves,1,'spoofed authority or revoked sessions cannot register a device');
 assert.equal((await createNativeSupportDevicesHandler({...deps,senderReady:()=>false})(request())).status,503);assert.equal(saves,1,'unconfigured sender must never claim a connected native device');
-console.log('PASS native device registration derives identity from verified active session; strict shape, bounded token and forged authority rejection');
+let zone;assert.equal((await createNativeSupportDevicesHandler({...deps,register:async(...args)=>{zone=args[4];return true;}})(request({timeZone:'Asia/Yekaterinburg'}))).status,200);assert.equal(zone,'Asia/Yekaterinburg');
+assert.equal((await createNativeSupportDevicesHandler(deps)(request({timeZone:'invalid/timezone'}))).status,400);
+console.log('PASS native device registration derives identity from verified active session; strict shape, bounded token, optional validated timezone and forged authority rejection');
