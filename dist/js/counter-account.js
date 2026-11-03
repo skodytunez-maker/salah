@@ -14,8 +14,8 @@ import{createCounterSync}from './counter-sync-core.js';
 import{esc,modal}from './ui.js';
 let activityQueue=null;
 const getActivityQueue=()=>activityQueue||(activityQueue=createAdhkarActivityQueue({storage:localStorage}));
-let engine=null,session=null,timer=null,busy=null,status='local',reason='',host=null,accountScreen=0,accountArea=null;
-export const counterSyncStatus=()=>({status,reason,userId:session?.user?.id||null,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous,nickname:typeof session?.user?.user_metadata?.nickname==='string'?session.user.user_metadata.nickname.trim().slice(0,40):'',founderWelcomeSeen:hasFounderWelcomeSeen(session?.user)});
+let engine=null,session=null,timer=null,busy=null,status='local',reason='',identityKnown=false,host=null,accountScreen=0,accountArea=null;
+export const counterSyncStatus=()=>({status,reason,identityKnown,userId:session?.user?.id||null,signedIn:!!session?.user?.email_confirmed_at&&!session.user.is_anonymous,nickname:typeof session?.user?.user_metadata?.nickname==='string'?session.user.user_metadata.nickname.trim().slice(0,40):'',founderWelcomeSeen:hasFounderWelcomeSeen(session?.user)});
 function emailErrorMessage(error){
  if(navigator.onLine===false)return 'Нет соединения. Подключитесь к интернету и повторите отправку.';
  if(error?.status===429||['over_email_send_rate_limit','over_request_rate_limit'].includes(error?.code))return 'Слишком много запросов. Подождите немного и попробуйте снова.';
@@ -40,6 +40,7 @@ function getEngine(){return engine||(engine=createCounterSync({storage:localStor
 }}));}
 // Profile access checks identity independently of the counter upload queue.
 async function refreshAccountSession({verifySession=false}={}){
+ identityKnown=false;notice();
  try{
   let checked;
   for(let attempt=0;attempt<3;attempt++){
@@ -48,7 +49,7 @@ async function refreshAccountSession({verifySession=false}={}){
   }
   if(checked.state==='unavailable'||checked.state==='changed')throw Error('auth_unavailable');
   const next=checked.session,uid=next?.user?.id||null;
-  session=next;await getEngine().activate(uid);
+  session=next;await getEngine().activate(uid);identityKnown=true;
   if(!uid){status='local';reason=checked.state==='revoked'?'session_expired':'';notice();return false;}
   return true;
  }catch(error){status='pending';reason=error?.message==='auth_unavailable'?'auth_unavailable':'storage_unavailable';notice();return false;}
@@ -72,7 +73,7 @@ export async function synchronizeCounters({verifySession=false}={}){
 let pendingSessionCheck=false;
 function schedule(verify=false){pendingSessionCheck=pendingSessionCheck||verify===true;clearTimeout(timer);timer=setTimeout(()=>{const verifySession=pendingSessionCheck;pendingSessionCheck=false;synchronizeCounters({verifySession});},700);}
 export function initCounterAccounts(){
- accountAuthClient().auth.onAuthStateChange(event=>{if(event!=='TOKEN_REFRESHED')queueMicrotask(schedule);});
+ accountAuthClient().auth.onAuthStateChange(event=>{if(event!=='TOKEN_REFRESHED'){identityKnown=false;notice();queueMicrotask(schedule);}});
  window.addEventListener('salah:counter-changed',schedule);
  window.addEventListener('salah:adhkar-counted',event=>{const state=counterSyncStatus();if(!state.signedIn||event.detail?.account!==state.userId)return;try{if(localStorage.getItem('salah:counter-active-account')!==state.userId)return;if(getActivityQueue().mark(state.userId,event.detail.day))schedule();}catch{}});
  window.addEventListener('storage',e=>{if(e.key==='salah:adhkar-progress-v2')schedule();});

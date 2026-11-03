@@ -1,0 +1,9 @@
+import postgres from 'npm:postgres@3.4.9';
+import {createClient} from 'npm:@supabase/supabase-js@2.117.2';
+const ownerReturnSql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
+const ownerReturnAuth=createClient(PROJECT,'sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR',{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+Deno.serve(createOwnerReminderHandler({
+ getUser:token=>ownerReturnAuth.auth.getUser(token),getClaims:token=>ownerReturnAuth.auth.getClaims(token),
+ isSessionActive:async(uid,sid)=>{const[row]=await ownerReturnSql`select exists(select 1 from auth.sessions s join auth.users u on u.id=s.user_id where s.id=${sid}::uuid and s.user_id=${uid}::uuid and(s.not_after is null or s.not_after>now())and(u.banned_until is null or u.banned_until<=now()))as active`;return row.active===true;},
+ request:async(uid,sid,action,input)=>{const[row]=await ownerReturnSql`select salah_return_private.request(${uid}::uuid,${sid}::uuid,${action},${ownerReturnSql.json(input)}::jsonb)as value`;return row.value;}
+}));

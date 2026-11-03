@@ -152,3 +152,9 @@ export async function ownerPreviewAccessToken(){
  if(error||!session?.access_token||session.user?.id!==verifiedOwnerId())throw Error('Подтвердите вход владельца.');
  return session.access_token;
 }
+
+export async function ownerVisitors(days=7){
+ if(![1,7,30].includes(days))throw Error('Неизвестный период.');
+ const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ return callOwner(data.session,'?mode=visitors&days='+days);
+}

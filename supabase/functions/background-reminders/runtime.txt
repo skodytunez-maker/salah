@@ -2,6 +2,19 @@ import postgres from 'npm:postgres@3.4.9';
 import webpush from 'npm:web-push@3.6.7';
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,idle_timeout:20,connect_timeout:10,prepare:false});
 const db={
+ async ownerReturnJobs(now){
+  const at=new Date(now).toISOString();
+  await sql`update salah_return_private.campaigns set state='expired'where state in('draft','queued')and expires_at<=${at}::timestamptz`;
+  await sql`update salah_return_private.recipients r set state='skipped'from salah_return_private.campaigns c where c.id=r.campaign_id and c.state in('cancelled','expired')and(r.state in('pending','retry')or(r.state='sending'and r.claimed_at<${at}::timestamptz-interval'2 minutes'))`;
+  await sql`update salah_return_private.recipients set state='expired'where attempts>=3 and(state='retry'or(state='sending'and claimed_at<${at}::timestamptz-interval'2 minutes'))`;
+  await sql`update salah_return_private.campaigns c set state='complete'where c.state='queued'and not exists(select 1 from salah_return_private.recipients r where r.campaign_id=c.id and r.state in('pending','retry','sending'))`;
+  await sql`delete from salah_return_private.limits where minute<${Math.floor(now/60000)-1440}`;
+  await sql`delete from salah_return_private.campaigns where created_at<${at}::timestamptz-interval'90 days'`;
+  return sql`select r.id from salah_return_private.recipients r join salah_return_private.campaigns c on c.id=r.campaign_id where c.state='queued'and c.expires_at>${at}::timestamptz and r.attempts<3 and(r.next_attempt_at is null or r.next_attempt_at<=${at}::timestamptz)and(r.state in('pending','retry')or(r.state='sending'and r.claimed_at<${at}::timestamptz-interval'2 minutes'))and(${at}::timestamptz at time zone r.time_zone)::time>=time'08:00'and(${at}::timestamptz at time zone r.time_zone)::time<time'22:00'order by c.created_at,r.id limit 100`;
+ },
+ async ownerReturnClaim(id,now){const[r]=await sql`select salah_return_private.claim(${id}::uuid,${new Date(now).toISOString()}::timestamptz)as value`;return r?.value;},
+ async ownerReturnActive(id,token,now){const[r]=await sql`select salah_return_private.job_details(${id}::uuid,${token}::uuid,${new Date(now).toISOString()}::timestamptz)as value`;return r?.value;},
+ async ownerReturnComplete(id,token,state,now){await sql`select salah_return_private.complete(${id}::uuid,${token}::uuid,${state},${new Date(now).toISOString()}::timestamptz)`;},
  async staffPushEvents(){await sql`delete from salah_staff_private.push_deliveries where claimed_at<now()-interval '7 days'`;await sql`delete from salah_staff_private.push_devices where updated_at<now()-interval '90 days'`;return sql`select * from salah_staff_private.push_candidates()`;},
  async staffPushActive(id,message){const rows=await sql`select id from salah_staff_private.push_candidates(${id}::uuid,${message}::uuid)`;return rows.length===1;},
  async staffPushClaim(id,message,now){const rows=await sql`insert into salah_staff_private.push_deliveries(device_id,message_id,state,claimed_at)values(${id}::uuid,${message}::uuid,'sending',to_timestamp(${now}/1000.0))on conflict(device_id,message_id)do update set state='sending',claimed_at=excluded.claimed_at where push_deliveries.state='retry'or(push_deliveries.state='sending'and push_deliveries.claimed_at<to_timestamp(${now}/1000.0)-interval '30 seconds')returning message_id`;return rows.length===1;},
@@ -45,6 +58,6 @@ const db={
   async put(key,rows,expires){await sql`insert into salah_push_private.cache(key,rows,expires_at) values(${key},${sql.json(rows)},to_timestamp(${expires}/1000.0)) on conflict(key) do update set rows=excluded.rows,expires_at=excluded.expires_at`;}
  }
 };
-let firebaseSender=null;
-try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw)firebaseSender=createFirebaseSupportSender({credential:JSON.parse(raw)});}catch{}
-Deno.serve(createPushHandler({db,webpush,firebaseSender}));
+let firebaseSender=null,firebaseReturnSender=null;
+try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw){const credential=JSON.parse(raw);firebaseSender=createFirebaseSupportSender({credential});firebaseReturnSender=createFirebaseOwnerReturnSender({credential});}}catch{}
+Deno.serve(createPushHandler({db,webpush,firebaseSender,firebaseReturnSender}));

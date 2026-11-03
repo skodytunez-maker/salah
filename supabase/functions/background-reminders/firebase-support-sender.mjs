@@ -9,7 +9,8 @@ export function firebaseSupportPayload(device,event,now){
  const expires=Math.floor(at+86400000);
  return {message:{token:device.token,data:{kind,thread:event.thread,message:event.messageId,user:device.user_id,expires:String(expires)},android:{priority:'high',ttl:Math.max(1,Math.floor((expires-now)/1000))+'s'}}};
 }
-export function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now}){
+export function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date.now,payloadBuilder=firebaseSupportPayload}){
+ if(typeof payloadBuilder!=='function')throw Error('invalid_firebase_sender_configuration');
  if(credential?.type!=='service_account'||credential.project_id!==PROJECT||!new RegExp('^[\\w-]+@'+PROJECT+'\\.iam\\.gserviceaccount\\.com$').test(credential.client_email||'')||credential.token_uri!==TOKEN_URL||typeof credential.private_key!=='string'||credential.private_key.length>12000||!credential.private_key.startsWith('-----BEGIN PRIVATE KEY-----'))throw Error('invalid_firebase_sender_configuration');
  let cached=null,pending=null;
  async function access(){
@@ -28,7 +29,7 @@ export function createFirebaseSupportSender({credential,fetcher=fetch,clock=Date
  }
  return async(device,event)=>{
   try{
-   const payload=firebaseSupportPayload(device,event,clock()),token=await access();
+   const payload=payloadBuilder(device,event,clock()),token=await access();
    const response=await fetcher('https://fcm.googleapis.com/v1/projects/'+PROJECT+'/messages:send',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(payload),redirect:'error',signal:AbortSignal.timeout(8000)});
    if(response.ok)return 'sent';if(response.status===401)cached=null;
    const value=await response.json().catch(()=>null);
