@@ -14,13 +14,13 @@ export async function showAwardCelebration(value,{isActive=()=>true,canShow=()=>
  root.className='founder-welcome award-presentation'+(reduced?' founder-welcome-reduced':'');root.style.setProperty('--award-color',info.color);root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Вручение награды · '+info.title);root.tabIndex=-1;
  root.innerHTML='<div class="founder-welcome-content award-presentation-content"><span class="award-presentation-eyebrow">НАГРАДА SALAH</span><div class="founder-medal-light award-presentation-medal" aria-hidden="true"><span class="award-presentation-orbit"></span></div><h2></h2><p class="award-presentation-period"></p><p class="award-presentation-metric"></p><button type="button" class="founder-welcome-close">Спасибо</button></div>';
  root.querySelector('.award-presentation-medal').append(picture);root.querySelector('h2').textContent=info.title;root.querySelector('.award-presentation-period').textContent=awardPeriod(row);root.querySelector('.award-presentation-metric').textContent=awardMetric(row);
- const button=root.querySelector('button'),background=[],timers=[];let closed=false;
+ const button=root.querySelector('button'),background=[],timers=[];let closed=false,removed=false;
  const check=()=>{if(!isActive()||document.hidden)finish('inactive');};
  const key=event=>{if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();finish('dismissed');}else if(event.key==='Tab'){event.preventDefault();button.focus();}};
+ const remove=reason=>{if(removed)return;removed=true;timers.forEach(clearTimeout);root.remove();for(const [element,inert]of background)if(element.isConnected)element.inert=inert;if(layer?.root===root)layer=null;window.removeEventListener('hashchange',check);window.removeEventListener('salah:counter-status',check);document.removeEventListener('visibilitychange',check);window.dispatchEvent(new window.Event('salah:award-presentation-ended'));if(reason!=='inactive'&&isActive()){onClose();if(previous?.isConnected&&!previous.closest('[inert]'))previous.focus?.();}};
  const finish=reason=>{
-  if(closed)return;closed=true;timers.forEach(clearTimeout);document.removeEventListener('keydown',key,true);window.removeEventListener('hashchange',check);window.removeEventListener('salah:counter-status',check);document.removeEventListener('visibilitychange',check);
-  const remove=()=>{root.remove();for(const [element,inert]of background)if(element.isConnected)element.inert=inert;if(layer?.root===root)layer=null;window.dispatchEvent(new window.Event('salah:award-presentation-ended'));if(reason!=='inactive'&&isActive()){onClose();if(previous?.isConnected&&!previous.closest('[inert]'))previous.focus?.();}};
-  if(reason==='inactive'||reduced){remove();return;}root.classList.add('founder-welcome-ending');setTimeout(remove,420);
+  if(closed){if(reason==='inactive')remove(reason);return;}closed=true;timers.forEach(clearTimeout);document.removeEventListener('keydown',key,true);
+  if(reason==='inactive'||reduced){remove(reason);return;}root.classList.add('founder-welcome-ending');timers.push(setTimeout(()=>remove(reason),420));
  };
  onReady();if(!isActive())return null;
  for(const element of document.body.children)if(!['SCRIPT','STYLE','LINK'].includes(element.tagName)){background.push([element,element.inert]);element.inert=true;}
