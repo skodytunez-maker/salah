@@ -221,3 +221,15 @@ assert.ok(gateway.select('#counter-profile'));
 console.log('PASS: profile opens independently of blocked cloud upload; an unclassified network refusal never clears the login.');
 
 const lessonReturn=browser();lessonReturn.location.hash='#account?lesson='+'b'.repeat(32);lessonReturn.fixture.session={access_token:'lesson-return-token',user:{id:'11111111-1111-4111-8111-111111111111',email:'fixture@example.test',email_confirmed_at:'2026-10-02',user_metadata:{nickname:'Ученик'}}};await lessonReturn.showCounterAccount(lessonReturn.app);assert.equal(lessonReturn.select('.account-lesson-return').href,'#lesson?invite='+'b'.repeat(32));assert.equal(lessonReturn.select('.account-lesson-return').textContent,'Вернуться к занятию');console.log('PASS: Account returns directly to its own lesson invitation after login.');
+
+// Guest analytics must consume a resolved identity from the actual account module.
+const guestRestoration=browser();assert.equal(guestRestoration.counterSyncStatus().identityKnown,false);
+guestRestoration.fixture.sessionGate=deferred();const awaitingIdentity=guestRestoration.synchronizeCounters({verifySession:true});
+assert.equal(guestRestoration.counterSyncStatus().identityKnown,false,'Pending restoration is never a guest');
+guestRestoration.fixture.sessionGate.resolve();await awaitingIdentity;
+assert.equal(guestRestoration.counterSyncStatus().identityKnown,true);assert.equal(guestRestoration.counterSyncStatus().userId,null);
+const unavailableIdentity=browser();unavailableIdentity.fixture.session={access_token:'saved-token',user:{id:'11111111-1111-4111-8111-111111111111',email:'fixture@example.test',email_confirmed_at:'2026-10-02',user_metadata:{}}};unavailableIdentity.fixture.refreshError={status:503};
+await unavailableIdentity.synchronizeCounters({verifySession:true});assert.equal(unavailableIdentity.counterSyncStatus().identityKnown,false,'Saved session during an Auth outage is not resolved as guest');
+assert.equal(unavailableIdentity.fixture.signOuts.length,0);
+unavailableIdentity.fixture.refreshError=null;await unavailableIdentity.synchronizeCounters({verifySession:true});assert.equal(unavailableIdentity.counterSyncStatus().identityKnown,true);assert.equal(unavailableIdentity.counterSyncStatus().signedIn,true);
+console.log('PASS: actual account restoration publishes unresolved/resolved identity for guest analytics without token rotation or sign-out on outages.');
