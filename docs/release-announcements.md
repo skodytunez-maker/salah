@@ -505,3 +505,8 @@ Serialize SDK session-writing operations so a delayed profile/MFA response canno
 ## 453 — Align the protected account confirmation action
 
 Render the existing protected-entry action inside the signed-in account action grid, between earned awards and Account details, before Sign out. Match the full available row width, allow text wrapping, retain a52px touch target and vertical separation. Preserve the existing link, same-hash retry handler, visibility condition, MFA/server authorization and sign-out behavior. No Auth/token/session changes; retain452 renewal coordination, Top, native minimum445 and announcement425/artwork/acknowledgment/expiry.
+
+
+## 454 — Opaque under-page canvas for history transitions
+
+Set matching deep-night background colors on html and body, and isolate body painting so its existing negative-z scenery remains above the opaque canvas. This provides a dark under-page color for iOS history-swipe snapshots while keeping the original route gestures, Home scenery, Sun/Moon, scroll, media, auth, Top and closed sections. Browser fixture verifies opaque root/body and preserved scenic rendering; physical iPhone native-swipe acceptance remains required. Preserve announcement425/artwork/acknowledgment/expiry and native minimum445.
