@@ -1,7 +1,7 @@
 import{dateKey}from './prayers.js';
 import{syncLessonNotificationAccount}from './lesson-notification-account.js';
 import{personalDataAllowed}from './audience.js';
-import{createAuthTransport}from './auth-transport.js';
+import{createAuthTransport,createAuthLock}from './auth-transport.js';
 import{createSessionGuard}from './auth-session.js';
 // Public connection key; owner authority is always checked by the server.
 export const OWNER_PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
@@ -16,7 +16,7 @@ function authClient(){
  if(!personalDataAllowed())throw Error('Личные данные защищены: аккаунт в этом режиме недоступен.');
  if(!client){
   if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
-  client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000}});
+  client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000,lock:createAuthLock({TimeoutError:window.supabase.NavigatorLockAcquireTimeoutError,fallbackLock:window.supabase.processLock})}});
   client.auth.onAuthStateChange((event,session)=>{
    syncLessonNotificationAccount(session?.user?.email_confirmed_at&&!session.user.is_anonymous?session.user.id:null);
    const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&verified;

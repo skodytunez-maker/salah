@@ -10,3 +10,23 @@ export function createAuthTransport({request=(...args)=>fetch(...args),timeout=1
   finally{clearTimeout(timer);upstream?.removeEventListener('abort',cancel);}
  };
 }
+
+// Keep profile/MFA writes and refresh-token rotation in one queue. The pinned
+// SDK otherwise permits a late profile response to restore pre-refresh tokens.
+// A busy browser lock is temporary unavailability: never steal it and run two
+// session writers at once. Browsers without Web Locks use the SDK process queue.
+export function createAuthLock({locks=globalThis.navigator?.locks,TimeoutError=Error,fallbackLock,setTimer=setTimeout,clearTimer=clearTimeout}={}){
+ if(!locks?.request)return fallbackLock;
+ return async(name,acquireTimeout,fn)=>{
+  const controller=new AbortController();let timer;
+  const unavailable=()=>new TimeoutError('Account session is busy. Retry later.');
+  if(acquireTimeout>0)timer=setTimer(()=>controller.abort(),acquireTimeout);
+  try{
+   return await locks.request(name,acquireTimeout===0?{mode:'exclusive',ifAvailable:true}:{mode:'exclusive',signal:controller.signal},async lock=>{
+    clearTimer(timer);if(!lock)throw unavailable();
+    return await fn();
+   });
+  }catch(error){if(controller.signal.aborted)throw unavailable();throw error;}
+  finally{clearTimer(timer);}
+ };
+}
