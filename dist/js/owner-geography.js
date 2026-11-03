@@ -34,5 +34,6 @@ export function mountOwnerGeography(host,{load,loadMembers=null,onUser=()=>{},is
   catch(error){if(version!==generation||disposed)return;if(error?.status===401||error?.status===403||!alive()){clear();return;}render(model?'Не удалось обновить. Показаны последние данные.':'Не удалось загрузить географию.');}
  };
  const clear=()=>{generation++;members?.dispose();members=null;model=null;host.innerHTML='';};
- return{refresh,clear,dispose(){clear();disposed=true;}};
+ const resetView=()=>{members?.dispose();members=null;tab='cities';all=false;openerIndex=0;render();};
+ return{refresh,clear,resetView,dispose(){clear();disposed=true;}};
 }

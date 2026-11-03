@@ -247,3 +247,17 @@ failActivity=true;const oldActivity=activityHost.textContent;await stableActivit
 failActivity=false;deniedActivity=true;await stableActivity.app.querySelector('#owner-refresh').onclick();assert.equal(activityHost.querySelector('.owner-activity-summary'),null,'A server access denial must clear private statistics');
 const periodResolvers=new Map(),latestActivity=dashboard({statsRequest:days=>new Promise(resolve=>periodResolvers.set(days,resolve))});await latestActivity.showAdmin(latestActivity.app);await settle();latestActivity.app.querySelectorAll('[data-period]').find(b=>b.dataset.period==='30').onclick();periodResolvers.get(30)({...activityStats,total:30});await settle();periodResolvers.get(7)({...activityStats,total:7});await settle();assert.match(latestActivity.app.querySelector('.owner-activity-summary').textContent,/За 30 дней30/,'Late earlier-period response must not overwrite the current period');
 console.log('PASS: refresh keeps the chart stable, failures keep the last snapshot, and rapid period switching rejects stale responses.');
+
+// Entering Visits from another owner section must show statistics, not its previous city.
+const visitsReentry=dashboard({result:{total:0,users:[]}});await visitsReentry.showAdmin(visitsReentry.app);await settle();
+for(const destination of ['home','users','tools']){
+ visitsReentry.location.hash='#admin?view=activity';visitsReentry.app.ownerHandleRoute(visitsReentry.location.hash);
+ const geoHost=visitsReentry.app.querySelector('#owner-geography-content');geoHost.innerHTML='<h3 data-selected-city="">Тюмень, Россия</h3>';
+ visitsReentry.app.ownerHandleRoute(visitsReentry.location.hash);assert.ok(geoHost.querySelector('[data-selected-city]'),'An unchanged route does not reset an open city');
+ visitsReentry.location.hash=destination==='home'?'#admin':'#admin?view='+destination;visitsReentry.app.ownerHandleRoute(visitsReentry.location.hash);
+ assert.equal(geoHost.querySelector('[data-selected-city]'),null,'Leaving Visits clears nested geography for '+destination);
+ visitsReentry.location.hash='#admin?view=activity';visitsReentry.app.ownerHandleRoute(visitsReentry.location.hash);
+ assert.equal(visitsReentry.app.querySelector('#owner-panel-activity').hidden,false);assert.ok(geoHost.querySelector('.owner-geography'));
+}
+visitsReentry.location.hash='#more';visitsReentry.events.get('hashchange')();visitsReentry.location.hash='#admin?view=activity';await visitsReentry.showAdmin(visitsReentry.app);await settle();assert.equal(visitsReentry.app.querySelector('[data-selected-city]'),null);visitsReentry.app.ownerDispose();
+console.log('PASS: city → owner menu/users/system → Visits opens statistics; unchanged section route and profile source context are retained.');
