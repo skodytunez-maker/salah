@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version458 — earned collection and award presentations (4 November2026)
+
+Keep every issued weekly/monthly win in the personal collection, grouped by award type with its dated results. Only the current finalized-period winner wears the transferable podium title; selection, scores and source award records stay unchanged. The existing MFA-protected owner-access user profile now includes every earned kind and up to 200 dated calendar wins in its read-only response; no schema or permission changes. Each of the fifteen earned types has a replayable presentation using its approved artwork. New non-founder awards queue once per account/device at a quiet Home screen; existing awards are initially baselined and remain manually replayable, avoiding a rollout popup burst. Existing founder welcome and account-scoped acknowledgement stay intact. The presentation stops on navigation, hidden state, account change or playback; it neither grants rewards nor changes listening time. Reduced motion, keyboard/focus, safe areas and queued-image failures are covered. New public announcement458 contains only the collection and ceremony feature compositions; no old cards or financial features are appended. Closed sections remain closed. The fullscreen owner profile now puts its bottom gesture inset inside the scrollable card rather than outside its grid viewport, removing the permanent dark clipping band while preserving safe final-row spacing and visible error/status text.
+
+
 ## Version433 — private account context (2 November2026)
 
 Owner MFA profile shows selected prayer city and the last successfully rendered mushaf page with edition and server save time. Only the latest observation is retained; no page history, precise coordinates or IP location is collected. Checkpoints belong to the signed-in account and do not backfill anonymous/device bookmarks. Existing presence heartbeat carries the bounded optional context; older clients remain supported. Keep public announcement425 and closed Knowledge access unchanged.
@@ -524,3 +529,7 @@ Compact guest/account counts with collection date and expandable help. Canonical
 ## 457 — Fresh Visits entry after leaving nested geography
 
 Discard the selected city/country member pane when leaving Visits for another owner section. Re-enter Visits at the aggregate chart and geography, retaining the chosen period and already loaded totals. Dispose the old member list so late requests cannot reopen it. Same-section renders and opening/returning from an account profile retain their originating city list. No Auth, API, database, guest count, reminder, Top or closed-section changes. Preserve announcement425/artwork/acknowledgment/expiry and native minimum445.
+
+458: добавлены пять постоянных наград за подтверждённое чтение и завершённые утренние/вечерние азкары. Карточка reading-adhkar-awards использует новые медали, показывает реальный путь получения; личного рекорда нет. Учёт начинается с явных действий в обновлённом приложении, без восстановления из закладок/посещений.
+
+458 до публикации: подтверждение чтения упрощено до одной кнопки «Джуз прочитан» в конце каждого джуза. Учёт ведётся по 30 разным джузам, повторная отметка не увеличивает прогресс. Отметок страниц нет. Иллюстрации, идентификатор новости и срок показа сохранены.

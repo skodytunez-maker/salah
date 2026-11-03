@@ -8,7 +8,7 @@ const loadImages=()=>imageTask??=Promise.all(assets.map(src=>{const im=new Image
 export function hideFounderWelcome(root=layer,{immediate=false}={}){
  if(!root||root!==layer)return;
  clearTimeout(exitTimer);clearTimeout(removeTimer);
- const remove=()=>{if(layer===root)layer=null;root.remove();root.dispatchEvent(new window.Event('founder-welcome-ended'));};
+ const remove=()=>{if(layer===root)layer=null;root.remove();root.dispatchEvent(new window.Event('founder-welcome-ended'));window.dispatchEvent(new window.Event('salah:award-presentation-ended'));};
  if(immediate||root.classList.contains('founder-welcome-reduced')){remove();return;}
  root.classList.add('founder-welcome-ending');removeTimer=setTimeout(remove,420);
 }

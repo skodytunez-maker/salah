@@ -196,6 +196,61 @@
       "height": 1254,
       "alpha": true,
       "generationTool": "built-in imagegen"
+    },
+    {
+      "path": "dist/assets/awards/reading-juz-1-v1.png",
+      "gitBlobSha": "2d911cd19fae40c577e4d5f29f7ff03bd083b70b",
+      "bytes": 1931364,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a0f25b-270d-77d3-a76e-633ece56c374/exec-5e5b748c-27aa-4db4-a05f-2458db356794.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single SALAH app achievement medal, transparent PNG. The input image is STYLE REFERENCE ONLY: match its premium front-facing circular embossed metal medallion, diameter, bevel rim, delicate texture, soft upper-left studio light, and restrained 3D relief. Create a DISTINCT new medal in warm bronze. Center motif: a raised open book under a pointed architectural arch, a small crescent above the book. Large raised numeral at lower center, exact text \"1\". No other text or Arabic script. Isolated, centered, complete circular rim with 8 percent transparent margin, no pedestal, no ribbon, no outer glow, no background or checkerboard. Clearly readable at 80 pixels."
+    },
+    {
+      "path": "dist/assets/awards/reading-juz-10-v1.png",
+      "gitBlobSha": "69ec4db85f7f81b8f15a6de4eeb9c39f85292350",
+      "bytes": 2031740,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a0f25b-270d-77d3-a76e-633ece56c374/exec-89440578-6120-4bd9-abba-014ba2dbb2c9.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single SALAH app achievement medal, transparent PNG. The input image is STYLE REFERENCE ONLY: match its premium front-facing circular embossed metal medallion, diameter, bevel rim, delicate texture, soft upper-left studio light, and restrained 3D relief. Create a DISTINCT new medal in cool polished silver. Center motif: a raised open book under a pointed architectural arch, a small crescent above the book. Large raised numeral at lower center, exact text \"10\". No other text or Arabic script. Isolated, centered, complete circular rim with 8 percent transparent margin, no pedestal, no ribbon, no outer glow, no background or checkerboard. Clearly readable at 80 pixels."
+    },
+    {
+      "path": "dist/assets/awards/reading-khatm-v1.png",
+      "gitBlobSha": "7109820839aa9f021271cc57ffe042e471141f45",
+      "bytes": 2236915,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a0f25b-270d-77d3-a76e-633ece56c374/exec-b3baccf1-f900-407c-87f9-8d9a1de35110.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single SALAH app achievement medal, transparent PNG. The input image is STYLE REFERENCE ONLY: match its premium front-facing circular embossed metal medallion, diameter, bevel rim, delicate texture, soft upper-left studio light, and restrained 3D relief. Create a DISTINCT new medal in rich warm gold. Center motif: a raised elegant closed Quran book with a simple geometric cover, surrounded by a restrained laurel arch and small crescent. Large raised numeral at lower center, exact text \"30\". No other text or Arabic script. Isolated, centered, complete circular rim with 8 percent transparent margin, no pedestal, no ribbon, no outer glow, no background or checkerboard. Clearly readable at 80 pixels."
+    },
+    {
+      "path": "dist/assets/awards/adhkar-7-v1.png",
+      "gitBlobSha": "05e2eb87b0b7fea0faf04a4ae4cfb5c175984598",
+      "bytes": 1963764,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a0f25b-270d-77d3-a76e-633ece56c374/exec-9b8815e4-b870-47b8-b0c2-73c80271b743.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single SALAH app achievement medal, transparent PNG. The input image is STYLE REFERENCE ONLY: match its premium front-facing circular embossed metal medallion, diameter, bevel rim, delicate texture, soft upper-left studio light, and restrained 3D relief. Create a DISTINCT new medal in warm bronze. Center motif: raised prayer beads forming an elegant oval, with a small rising sun and crescent inside the oval. Large raised numeral at lower center, exact text \"7\". No other text or Arabic script. Isolated, centered, complete circular rim with 8 percent transparent margin, no pedestal, no ribbon, no outer glow, no background or checkerboard. Clearly readable at 80 pixels."
+    },
+    {
+      "path": "dist/assets/awards/adhkar-30-v1.png",
+      "gitBlobSha": "1702cdd860d021c983efae833632662c212d6678",
+      "bytes": 2125008,
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "generationTool": "built-in imagegen",
+      "originalGeneratedPath": "C:/Users/ПК/.codex/generated_images/01a0f25b-270d-77d3-a76e-633ece56c374/exec-a0da9655-80ff-4391-b459-82ab38dc919f.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single SALAH app achievement medal, transparent PNG. The input image is STYLE REFERENCE ONLY: match its premium front-facing circular embossed metal medallion, diameter, bevel rim, delicate texture, soft upper-left studio light, and restrained 3D relief. Create a DISTINCT new medal in rich warm gold. Center motif: raised prayer beads forming an elegant oval, with a small rising sun and crescent inside the oval. Large raised numeral at lower center, exact text \"30\". No other text or Arabic script. Isolated, centered, complete circular rim with 8 percent transparent margin, no pedestal, no ribbon, no outer glow, no background or checkerboard. Clearly readable at 80 pixels."
     }
   ],
   "version": 316,

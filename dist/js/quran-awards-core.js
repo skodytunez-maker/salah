@@ -1,7 +1,7 @@
 import{safeListener,rankTime}from './reciter-ranking-core.js';
 export const QURAN_AWARDS=[
- {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Переходящий значок победителя завершённой календарной недели. Остаётся у победителя до следующих итогов; прошлые победы — в истории Топ SALAH.'},
- {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Переходящий значок победителя завершённого календарного месяца. Остаётся у победителя до следующих итогов; прошлые победы — в истории Топ SALAH.'},
+ {kind:'week',title:'Лидер недели',icon:'medal',artwork:'assets/awards/leader-week-v4.png',color:'#c2cbd8',rule:'Награда за победу в завершённой календарной неделе сохраняется в коллекции вместе с датами и результатом. Значок в Топ SALAH переходит к победителю следующей недели.'},
+ {kind:'month',title:'Лидер месяца',icon:'trophy',artwork:'assets/awards/leader-month-v4.png',color:'#d8be88',rule:'Награда за победу в завершённом календарном месяце сохраняется в коллекции вместе с датами и результатом. Значок в Топ SALAH переходит к победителю следующего месяца.'},
  {kind:'streak7',title:'Неделя с Кораном',icon:'seedling',color:'#bf926c',days:7,artwork:'assets/awards/streak-7-v1.png',rule:'7 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak30',title:'Месяц с Кораном',icon:'book-open',color:'#d8be88',days:30,artwork:'assets/awards/streak-30-v1.png',rule:'30 дней прослушивания в одной серии. Для всех слушателей, независимо от места в рейтинге.'},
  {kind:'streak100',title:'100 дней с Кораном',icon:'gem',color:'#c2cbd8',days:100,artwork:'assets/awards/streak-100-v1.png',rule:'100 дней прослушивания в одной серии. Награда остаётся в коллекции.'},
@@ -14,10 +14,17 @@ export const QURAN_AWARDS=[
  {kind:'hours500',title:'500 часов с Кораном',icon:'book-open',hours:500,artwork:'assets/awards/listening-500-v2.svg',color:'#d8be88',rule:'500 часов прослушивания Корана за всё время. Учитываются все чтецы. Перерывы не сбрасывают время, награда остаётся в аккаунте.'},
  {kind:'hours1000',title:'1000 часов с Кораном',icon:'book-open',hours:1000,artwork:'assets/awards/listening-1000-v2.svg',color:'#dfe5eb',rule:'1000 часов прослушивания Корана за всё время. Учитываются все чтецы. Перерывы не сбрасывают время, награда остаётся в аккаунте.'},
  {kind:'hours5000',title:'5000 часов с Кораном',icon:'book-open',hours:5000,artwork:'assets/awards/listening-5000-v2.svg',color:'#e7d4a8',rule:'5000 часов прослушивания Корана за всё время. Учитываются все чтецы. Перерывы не сбрасывают время, награда остаётся в аккаунте.'},
+ {"kind":"reading1","title":"Первый джуз","icon":"book-open","color":"#bf926c","readingJuz":1,"artwork":"assets/awards/reading-juz-1-v1.png","rule":"Один полностью прочитанный джуз. В конце джуза нажмите «Джуз прочитан», чтобы подтвердить чтение. Открытие и перелистывание страниц не учитываются."},
+ {"kind":"reading10","title":"10 джузов","icon":"book-open","color":"#c2cbd8","readingJuz":10,"artwork":"assets/awards/reading-juz-10-v1.png","rule":"10 разных подтверждённых джузов. После чтения каждого нажмите «Джуз прочитан» в его конце. Повторная отметка одного джуза не увеличивает число. Прогресс сохраняется между устройствами."},
+ {"kind":"khatm","title":"Хатм Корана","icon":"book-open","color":"#d8be88","readingJuz":30,"artwork":"assets/awards/reading-khatm-v1.png","rule":"Подтверждено чтение всех 30 разных джузов Корана. После каждого нажмите «Джуз прочитан» в его конце. Порядок чтения и перерывы не мешают получить награду."},
+ {"kind":"adhkar7","title":"Неделя с азкарами","icon":"circle","color":"#bf926c","adhkarDays":7,"artwork":"assets/awards/adhkar-7-v1.png","rule":"7 разных дней, в каждый из которых полностью завершены утренние и вечерние азкары. Дни могут идти с перерывами. Свободный счётчик и отдельные повторения не заменяют завершение двух наборов."},
+ {"kind":"adhkar30","title":"Месяц с азкарами","icon":"circle","color":"#d8be88","adhkarDays":30,"artwork":"assets/awards/adhkar-30-v1.png","rule":"30 разных дней с полностью завершёнными утренними и вечерними азкарами. Перерывы не сбрасывают накопленные дни. Полученная награда остаётся в аккаунте."},
  {kind:'founder',title:'Первопроходец SALAH',icon:'award',artwork:'assets/awards/founder-v1.png',color:'#d8be88',rule:'Для первых 100 подтверждённых пользователей SALAH. Награда остаётся в вашем аккаунте.'}
 ];
 export const awardInfo=kind=>QURAN_AWARDS.find(a=>a.kind===kind);
 export const calendarAward=kind=>kind==='week'||kind==='month';
+// A collection records earned wins. Current podium titles remain a separate count.
+export const awardCollectionCounts=state=>Object.fromEntries(QURAN_AWARDS.map(a=>[a.kind,Math.max(state.historyCounts?.[a.kind]||0,state.items.filter(x=>x.kind===a.kind).length)]));
 export function validAwardDate(value){return typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}
 export function safeAward(row){
  if(!row||!awardInfo(row.kind)||!/^[-a-f0-9]{36}$/i.test(row.id||'')||!validAwardDate(row.start)||!validAwardDate(row.end)||row.end<row.start||!Number.isSafeInteger(row.seconds)||row.seconds<0||calendarAward(row.kind)&&(!row.reciter||row.seconds===0)||awardInfo(row.kind).hours&&row.seconds<awardInfo(row.kind).hours*3600)return null;
@@ -30,7 +37,7 @@ export function safeAwardState(data){
  const items=data.items.map(safeAward).filter(Boolean),n=x=>Number.isSafeInteger(x)&&x>=0?x:0;
  const historyCounts=Object.fromEntries(QURAN_AWARDS.map(a=>[a.kind,Math.max(items.filter(x=>x.kind===a.kind).length,n(data.counts?.[a.kind]))]));
  const counts={...historyCounts};if(Array.isArray(data.activeKinds))for(const kind of ['week','month'])counts[kind]=data.activeKinds.includes(kind)?1:0;
- return {day:data.day,listeningSeconds:n(data.listeningSeconds),items,counts,historyCounts,listener:safeListener(data.listener),streak:{current:n(data.streak.current),best:n(data.streak.best),today:data.streak.today===true,freezes:Math.min(3,n(data.streak.freezes??3)),refillDays:Math.min(6,n(data.streak.refillDays)),protectedDays:Array.isArray(data.streak.protectedDays)?data.streak.protectedDays.filter(validAwardDate):[],days:Array.isArray(data.streak.days)?data.streak.days.filter(validAwardDate):[]}};
+ return {day:data.day,learning:{juz:Array.isArray(data.learning?.juz)?[...new Set(data.learning.juz.filter(x=>Number.isInteger(x)&&x>=1&&x<=30))]:[],adhkarDays:n(data.learning?.adhkarDays)},listeningSeconds:n(data.listeningSeconds),items,counts,historyCounts,listener:safeListener(data.listener),streak:{current:n(data.streak.current),best:n(data.streak.best),today:data.streak.today===true,freezes:Math.min(3,n(data.streak.freezes??3)),refillDays:Math.min(6,n(data.streak.refillDays)),protectedDays:Array.isArray(data.streak.protectedDays)?data.streak.protectedDays.filter(validAwardDate):[],days:Array.isArray(data.streak.days)?data.streak.days.filter(validAwardDate):[]}};
 }
 export function awardCaption(row){return calendarAward(row.kind)?rankTime(row.seconds):awardPeriod(row);}
 export function weekDays(today,heard,protectedDays=[]){const anchor=new Date(today+'T12:00:00Z'),monday=new Date(anchor);monday.setUTCDate(monday.getUTCDate()-(monday.getUTCDay()+6)%7);const set=new Set(heard),protectedSet=new Set(protectedDays);return Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setUTCDate(d.getUTCDate()+i);const day=d.toISOString().slice(0,10);return{day,number:d.getUTCDate(),label:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][i],heard:set.has(day),protected:protectedSet.has(day),today:day===today,future:day>today};});}
@@ -39,6 +46,6 @@ export function dayCountLabel(n){return n%100>=11&&n%100<=14?'дней':n%10===1
 
 export function awardArtwork(kind){const a=awardInfo(kind);if(!a)throw Error('Unknown award');return './'+(a.artwork||'assets/icons/'+a.icon+'.svg');}
 
-export function awardMetric(row){const a=awardInfo(row.kind);return calendarAward(row.kind)?rankTime(row.seconds):a.days?a.days+' дней с Кораном':a.hours?a.hours+' часов с Кораном':'Первопроходец SALAH';}
+export function awardMetric(row){const a=awardInfo(row.kind);return calendarAward(row.kind)?rankTime(row.seconds):a.readingJuz?(a.readingJuz===1?'1 джуз прочитан':a.readingJuz+' джузов прочитано'):a.adhkarDays?a.adhkarDays+' дней с азкарами':a.days?a.days+' дней с Кораном':a.hours?a.hours+' часов с Кораном':'Первопроходец SALAH';}
 
 export function hourAwardProgress(state,kind){const a=awardInfo(kind);if(!a?.hours)return '';const heard=Number.isSafeInteger(state.listeningSeconds)&&state.listeningSeconds>=0?state.listeningSeconds:0;return 'Прослушано: '+rankTime(heard)+'. До награды — '+rankTime(Math.max(0,a.hours*3600-heard))+'.';}
