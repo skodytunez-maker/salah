@@ -90,6 +90,7 @@ for(const coordination of ['process','web']){
  let serverUser=user;let releaseProfile,profileStarted;const profileReady=new Promise(r=>profileStarted=r);
  const request=async(url,options)=>{
   if(String(url).endsWith('/user')&&options.method==='PUT'){profileStarted();await new Promise(r=>releaseProfile=r);serverUser={...user,user_metadata:{nickname:'After'}};return Response.json(serverUser);}
+  if(String(url).includes('/logout'))return new Response(null,{status:204});
   if(String(url).includes('/token?'))return Response.json({...initial,access_token:'access-after',refresh_token:'refresh-after',expires_in:3600,user:serverUser});
   throw Error('Unexpected offline fixture request '+url);
  };
@@ -103,10 +104,16 @@ for(const coordination of ['process','web']){
  // profile update subsequently writes its older copy of both tokens.
  await new Promise(r=>setTimeout(r,0));releaseProfile();
  assert.equal((await profile).error,null);assert.equal((await renewal).error,null);
- const saved=JSON.parse(values.get(key));await auth.dispose();await peer.dispose();
+ const saved=JSON.parse(values.get(key));
  console.log(JSON.stringify({case:'real-sdk-profile-renewal',coordination,nickname:saved.user.user_metadata.nickname,keptRotation:saved.refresh_token==='refresh-after'}));
  assert.equal(saved.refresh_token,'refresh-after','A pending profile update must never put an already-used refresh token back in storage');
  assert.equal(saved.access_token,'access-after');assert.equal(saved.user.user_metadata.nickname,'After');
+ const pendingProfileReady=new Promise(r=>profileStarted=r);
+ const pendingProfile=auth.updateUser({data:{nickname:'After'}});await pendingProfileReady;
+ const logout=peer.signOut({scope:'local'});await new Promise(r=>setTimeout(r,0));releaseProfile();
+ assert.equal((await pendingProfile).error,null);assert.equal((await logout).error,null);
+ assert.equal(values.has(key),false,'Explicit sign-out must win over a pending profile response in every context');
+ await auth.dispose();await peer.dispose();
 }
 
 // A busy/frozen tab causes a bounded retry, never a parallel operation or a
