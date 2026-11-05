@@ -3,7 +3,7 @@ import{read,write}from './storage.js';
 export const TAFSIR_REVISION='eb82bb6294efe30ad5c135c03b1864afaa70e855';
 export const TAFSIR_CACHE='salah-quran-tafsir-v1';
 export const TAFSIRS=[
- {id:'saadi',name:'Ас-Саади',folder:'ru-tafseer-al-saddi',source:'https://qul.tarteel.ai/resources/tafsir/170'},
+ {id:'saadi',name:'Ас-Саади',folder:'ru-tafseer-al-saddi',source:'https://qul.tarteel.ai/resources/tafsir/36'},
  {id:'ibn-kathir',name:'Ибн Касир',folder:'ru-tafsir-ibne-kahtir',source:'https://qul.tarteel.ai/resources/tafsir/307'}
 ];
 const edition=id=>TAFSIRS.find(row=>row.id===id);
