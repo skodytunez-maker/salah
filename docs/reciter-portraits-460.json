@@ -1,0 +1,66 @@
+{
+  "version": 460,
+  "createdOn": "2026-11-05",
+  "tool": "Built-in image_gen",
+  "intent": "User requested better portraits of four new readers; keep Dibirov unchanged.",
+  "processing": "Four identity-preserving photographic edits, calm slate background, head-and-shoulders composition. Generated originals retained locally. App copies encoded800x800 WebP quality92.",
+  "unchanged": {
+    "id": "ar.muhammaddibirov",
+    "path": "dist/assets/reciters/muhammaddibirov-460.jpg",
+    "gitBlobSha": "23de62976b52aa62c5f10d0af5e4d2d9f62132dc"
+  },
+  "portraits": [
+    {
+      "id": "ahmadtalib",
+      "prompt": "Use case: identity-preserve. Edit the attached real photograph into a clean, professional photographic head-and-shoulders portrait for a Quran reciter catalog. Output one square portrait, 1024x1024. Preserve the exact person's identity, facial proportions, age, expression, gaze direction, beard/hair pattern and original clothing/headwear. Do not invent a different person, change the face, beautify, de-age, add glasses, or alter religious clothing. Improve only the crop, restrained clarity, natural exposure and realistic photographic detail. Keep natural skin texture, no plastic smoothing, no painterly or illustration treatment. Replace the distracting background with a very subtle dark navy/slate studio background (#111b2b), soft natural edge separation. Full headwear must fit with a little breathing space; eyes/face in the upper-middle and shoulders visible, face large enough to read in a small app card. No text, logo, border, watermark, microphone, books, furniture, other people or decorative symbols. The original face must remain recognizable. Subject: Ahmad Talib bin Humaid. Keep his downward three-quarter gaze and white ghutra and gold-trimmed bisht exactly as photographed. Do not turn his head to face the camera.",
+      "generatedFile": "exec-fe50f6e4-5574-4d70-b0b3-fdcb6aa20369.png",
+      "old": "dist/assets/reciters/ahmadtalib-460.png",
+      "path": "dist/assets/reciters/ahmadtalib-460-v2.webp",
+      "sha": "8bcb466af499d74c651d371f65986a186152a186",
+      "bytes": 89106
+    },
+    {
+      "id": "kamilsamigullin",
+      "prompt": "Use case: identity-preserve. Edit the attached real photograph into a clean, professional photographic head-and-shoulders portrait for a Quran reciter catalog. Output one square portrait, 1024x1024. Preserve the exact person's identity, facial proportions, age, expression, gaze direction, beard/hair pattern and original clothing/headwear. Do not invent a different person, change the face, beautify, de-age, add glasses, or alter religious clothing. Improve only the crop, restrained clarity, natural exposure and realistic photographic detail. Keep natural skin texture, no plastic smoothing, no painterly or illustration treatment. Replace the distracting background with a very subtle dark navy/slate studio background (#111b2b), soft natural edge separation. Full headwear must fit with a little breathing space; eyes/face in the upper-middle and shoulders visible, face large enough to read in a small app card. No text, logo, border, watermark, microphone, books, furniture, other people or decorative symbols. The original face must remain recognizable. Subject: Kamil Samigullin. Keep his smile, black skullcap, dark waistcoat over the light shirt and exact beard/face. Crop from chest upward, excluding chair and hands.",
+      "generatedFile": "exec-291427a1-be06-4fe1-9b57-0265b6330ef3.png",
+      "old": "dist/assets/reciters/kamilsamigullin-460.png",
+      "path": "dist/assets/reciters/kamilsamigullin-460-v2.webp",
+      "sha": "e917a1200cbb7cecbb9f23185a90d5be83123cb2",
+      "bytes": 77092
+    },
+    {
+      "id": "alijonqori",
+      "prompt": "Use case: identity-preserve. Edit the attached real photograph into a clean, professional photographic head-and-shoulders portrait for a Quran reciter catalog. Output one square portrait, 1024x1024. Preserve the exact person's identity, facial proportions, age, expression, gaze direction, beard/hair pattern and original clothing/headwear. Do not invent a different person, change the face, beautify, de-age, add glasses, or alter religious clothing. Improve only the crop, restrained clarity, natural exposure and realistic photographic detail. Keep natural skin texture, no plastic smoothing, no painterly or illustration treatment. Replace the distracting background with a very subtle dark navy/slate studio background (#111b2b), soft natural edge separation. Full headwear must fit with a little breathing space; eyes/face in the upper-middle and shoulders visible, face large enough to read in a small app card. No text, logo, border, watermark, microphone, books, furniture, other people or decorative symbols. The original face must remain recognizable. Subject: Alijon Qori, Ali bin Faidullah Makhdum. This is already a sharp authentic portrait; preserve the original face, front-facing pose, white turban and dark blue traditional jacket closely. Avoid unnecessary facial reconstruction.",
+      "generatedFile": "exec-6631773d-b6c0-46d9-a0b1-655f83930be1.png",
+      "old": "dist/assets/reciters/alijonqori-460.jpg",
+      "path": "dist/assets/reciters/alijonqori-460-v2.webp",
+      "sha": "d20d32226258569e709f63bd305bc8b25aa07070",
+      "bytes": 91242
+    },
+    {
+      "id": "jahongirnematov",
+      "prompt": "Use case: identity-preserve. Edit the attached real photograph into a clean, professional photographic head-and-shoulders portrait for a Quran reciter catalog. Output one square portrait, 1024x1024. Preserve the exact person's identity, facial proportions, age, expression, gaze direction, beard/hair pattern and original clothing/headwear. Do not invent a different person, change the face, beautify, de-age, add glasses, or alter religious clothing. Improve only the crop, restrained clarity, natural exposure and realistic photographic detail. Keep natural skin texture, no plastic smoothing, no painterly or illustration treatment. Replace the distracting background with a very subtle dark navy/slate studio background (#111b2b), soft natural edge separation. Full headwear must fit with a little breathing space; eyes/face in the upper-middle and shoulders visible, face large enough to read in a small app card. No text, logo, border, watermark, microphone, books, furniture, other people or decorative symbols. The original face must remain recognizable. Subject: Jahongir Qori Nematov. Keep the original downward gaze, black cap, short mustache and goatee, dark textured jacket and light shirt. Crop to head and shoulders; exclude book, hands, desk and shelves. Do not create a new frontal-facing face.",
+      "generatedFile": "exec-adc5ed20-c418-401c-a435-b4a68f089b45.png",
+      "old": "dist/assets/reciters/jahongirnematov-460.jpg",
+      "path": "dist/assets/reciters/jahongirnematov-460-v2.webp",
+      "sha": "30ec172c26c67ec8a4e92161efd530dd572a5c55",
+      "bytes": 86712
+    }
+  ],
+  "sourcePages": {
+    "ahmadtalib": "https://x.com/TahmadTaleb",
+    "kamilsamigullin": "https://commons.wikimedia.org/wiki/File:Mufti_Kamil_Samigullin.jpg",
+    "alijonqori": "https://way2quran.com/en/reciters/ali-bin-faidullah-makhdum",
+    "jahongirnematov": "https://www.attartil.uz/"
+  },
+  "sourcePhotos": {
+    "ahmadtalib": "https://pbs.twimg.com/profile_images/1708847336892375040/nj9g44VK.jpg",
+    "kamilsamigullin": "https://upload.wikimedia.org/wikipedia/commons/2/24/Mufti_Kamil_Samigullin.jpg",
+    "alijonqori": "https://media.way2quran.com/imgs/ali-bin-faidullah-makhdum.jpg?v=1777155202969",
+    "jahongirnematov": "https://www.attartil.uz/assets/img/qori-1200.webp?v=2d5cab7b"
+  },
+  "licenseNotes": {
+    "kamilsamigullin": "Dumrt.ru, original file metadata© Salavat Kamaletdinov; CC BY4.0. Background and crop altered with AI. Attribution provided in dist/reciter-portrait-credits.html.",
+    "other": "Public source identity checked; independent reuse grant not established. AI processing does not erase source rights."
+  }
+}

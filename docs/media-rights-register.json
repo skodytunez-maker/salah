@@ -3268,14 +3268,6 @@
       "note": "Individually generated with built-in ImageGen for the SALAH reading/adhkar award collection. Existing SALAH medallion supplied as style reference. Original transparent output retained, no third-party award artwork copied."
     },
     {
-      "path": "dist/assets/reciters/ahmadtalib-460.png",
-      "gitBlobSha": "a5da594fe192370be90d1dd19499be126612a982",
-      "rightsReviewStatus": "needs-review",
-      "rightsEvidence": "docs/reciter-expansion-460.json",
-      "originUrl": "https://haramain.tv/imams-of-two-holy-mosque/",
-      "note": "Identity-labelled public portrait; independent reuse grant not established."
-    },
-    {
       "path": "dist/assets/reciters/muhammaddibirov-460.jpg",
       "gitBlobSha": "23de62976b52aa62c5f10d0af5e4d2d9f62132dc",
       "rightsReviewStatus": "needs-review",
@@ -3292,34 +3284,45 @@
     },
     {
       "path": "dist/assets/updates/new-reciters-460.png",
-      "gitBlobSha": "497c20ec8d8f288822444f563e01fd9fc4b30b5e",
+      "gitBlobSha": "8e7bfdfc267e1e431b1e2a5e35fc4c928568e355",
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "SALAH preview screenshot captured2026-11-05 with actual460 modules; no account data.",
-      "note": "Feature-specific screenshot. The new-reciters composition inherits the portrait source review statuses; screenshot provenance does not grant portrait rights."
+      "note": "Actual app catalog screenshot with four source-based AI portrait edits; Dibirov unchanged. Composite inherits source portrait conditions."
     },
     {
-      "path": "dist/assets/reciters/kamilsamigullin-460.png",
-      "gitBlobSha": "11d23e06a12a954d3b8d747514aaa2da52cdbb82",
+      "path": "dist/assets/reciters/ahmadtalib-460-v2.webp",
+      "gitBlobSha": "8bcb466af499d74c651d371f65986a186152a186",
       "rightsReviewStatus": "needs-review",
-      "rightsEvidence": "docs/reciter-expansion-460.json",
-      "originUrl": "https://azan.info/audio/view/Koran-karim-235",
-      "note": "Identity-labelled public source photo; independent reuse grant not established."
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": null,
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
     },
     {
-      "path": "dist/assets/reciters/alijonqori-460.jpg",
-      "gitBlobSha": "e83977f1f5e88dce1e95887abe610d8ecebb8ae9",
-      "rightsReviewStatus": "needs-review",
-      "rightsEvidence": "docs/reciter-expansion-460.json",
-      "originUrl": "https://mp3muslim.uz/quran/shayx-alijon-qori",
-      "note": "Original publisher album cover identifying this recitation. Independent reuse grant not established."
+      "path": "dist/assets/reciters/kamilsamigullin-460-v2.webp",
+      "gitBlobSha": "e917a1200cbb7cecbb9f23185a90d5be83123cb2",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": "https://commons.wikimedia.org/wiki/File:Mufti_Kamil_Samigullin.jpg",
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page.",
+      "license": "CC BY 4.0",
+      "attribution": "Dumrt.ru; original metadata © Salavat Kamaletdinov",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
     },
     {
-      "path": "dist/assets/reciters/jahongirnematov-460.jpg",
-      "gitBlobSha": "50b9b40db0e7e91db6f08890a17f3a10620676aa",
+      "path": "dist/assets/reciters/alijonqori-460-v2.webp",
+      "gitBlobSha": "d20d32226258569e709f63bd305bc8b25aa07070",
       "rightsReviewStatus": "needs-review",
-      "rightsEvidence": "docs/reciter-expansion-460.json",
-      "originUrl": "https://muslim.uz/oz/e/post/32913-vaqf-xayriya-jamoat-fondiga-ijrochi-direktor-tayinlandi",
-      "note": "Identity-labelled public source photo; independent reuse grant not established."
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": null,
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
+    },
+    {
+      "path": "dist/assets/reciters/jahongirnematov-460-v2.webp",
+      "gitBlobSha": "30ec172c26c67ec8a4e92161efd530dd572a5c55",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": null,
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
     }
   ],
   "wallpaperSets": [

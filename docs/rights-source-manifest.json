@@ -4225,11 +4225,6 @@
       "bytes": 2125008
     },
     {
-      "path": "dist/assets/reciters/ahmadtalib-460.png",
-      "gitBlobSha": "a5da594fe192370be90d1dd19499be126612a982",
-      "bytes": 112578
-    },
-    {
       "path": "dist/assets/reciters/muhammaddibirov-460.jpg",
       "gitBlobSha": "23de62976b52aa62c5f10d0af5e4d2d9f62132dc",
       "bytes": 23241
@@ -4241,23 +4236,28 @@
     },
     {
       "path": "dist/assets/updates/new-reciters-460.png",
-      "gitBlobSha": "497c20ec8d8f288822444f563e01fd9fc4b30b5e",
-      "bytes": 63810
+      "gitBlobSha": "8e7bfdfc267e1e431b1e2a5e35fc4c928568e355",
+      "bytes": 59121
     },
     {
-      "path": "dist/assets/reciters/kamilsamigullin-460.png",
-      "gitBlobSha": "11d23e06a12a954d3b8d747514aaa2da52cdbb82",
-      "bytes": 11250
+      "path": "dist/assets/reciters/ahmadtalib-460-v2.webp",
+      "gitBlobSha": "8bcb466af499d74c651d371f65986a186152a186",
+      "bytes": 89106
     },
     {
-      "path": "dist/assets/reciters/alijonqori-460.jpg",
-      "gitBlobSha": "e83977f1f5e88dce1e95887abe610d8ecebb8ae9",
-      "bytes": 146861
+      "path": "dist/assets/reciters/kamilsamigullin-460-v2.webp",
+      "gitBlobSha": "e917a1200cbb7cecbb9f23185a90d5be83123cb2",
+      "bytes": 77092
     },
     {
-      "path": "dist/assets/reciters/jahongirnematov-460.jpg",
-      "gitBlobSha": "50b9b40db0e7e91db6f08890a17f3a10620676aa",
-      "bytes": 32737
+      "path": "dist/assets/reciters/alijonqori-460-v2.webp",
+      "gitBlobSha": "d20d32226258569e709f63bd305bc8b25aa07070",
+      "bytes": 91242
+    },
+    {
+      "path": "dist/assets/reciters/jahongirnematov-460-v2.webp",
+      "gitBlobSha": "30ec172c26c67ec8a4e92161efd530dd572a5c55",
+      "bytes": 86712
     }
   ],
   "incrementalEvidence": [

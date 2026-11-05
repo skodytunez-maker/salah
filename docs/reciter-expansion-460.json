@@ -118,7 +118,7 @@
       "source": "https://www.mp3quran.net/eng/a_binhameed",
       "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=137",
       "verifiedOn": "2026-11-05",
-      "portrait": "assets/reciters/ahmadtalib-460.png"
+      "portrait": "assets/reciters/ahmadtalib-460-v2.webp"
     },
     {
       "id": "ar.muhammaddibirov",
@@ -390,7 +390,7 @@
       },
       "source": "https://azan.info/audio/view/Koran-karim-235",
       "verifiedOn": "2026-11-05",
-      "portrait": "assets/reciters/kamilsamigullin-460.png",
+      "portrait": "assets/reciters/kamilsamigullin-460-v2.webp",
       "offline": false
     },
     {
@@ -517,7 +517,7 @@
       "source": "https://www.mp3quran.net/eng/aalyg-n-kory-hmd-n",
       "sourceApi": "https://www.mp3quran.net/api/v3/reciters?language=eng&reciter=21196",
       "verifiedOn": "2026-11-05",
-      "portrait": "assets/reciters/alijonqori-460.jpg"
+      "portrait": "assets/reciters/alijonqori-460-v2.webp"
     },
     {
       "id": "ar.jahongirnematov",
@@ -579,7 +579,7 @@
       },
       "source": "https://mp3muslim.uz/component/muscol/H/459-zha-ongir-ori-ne-matov/556-ur-oni-karim-tilovati-muallim",
       "verifiedOn": "2026-11-05",
-      "portrait": "assets/reciters/jahongirnematov-460.jpg",
+      "portrait": "assets/reciters/jahongirnematov-460-v2.webp",
       "offline": false
     }
   ],
