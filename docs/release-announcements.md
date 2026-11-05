@@ -551,3 +551,5 @@ New announcement460 includes only a real borderless Mushaf screenshot and the ne
 461 moves the Mushaf controls below the iPhone status bar fade in both reading modes. It keeps announcement 460 and its expiry.
 
 462 restores online playback for Kamil Samigullin and Jahongir Nematov by allowing their two recording directories in the media policy. It keeps announcement 460 and its expiry.
+
+463 brings the fullscreen Mushaf page header beside the exit control, reclaiming the extra row above the text. It keeps announcement 460 and its expiry.
