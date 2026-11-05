@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {createHash} from 'node:crypto';
+import {reciterInfo} from '../dist/js/quran-reciters.js';
 const root=new URL('../',import.meta.url);
 const html=await readFile(new URL('dist/index.html',root),'utf8');
 const policy=html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
@@ -23,6 +24,21 @@ for(const directive of ['media-src','connect-src'])assert.ok(policy.split(';').f
 assert.doesNotMatch(policy,/script-src[^;]*akamaized/,'Live streams cannot supply application scripts');
 const hls=await readFile(new URL('dist/js/vendor/hls-light.min.js',root));assert.equal(createHash('sha256').update(hls).digest('hex'),'0251332c00a216a35d7d6919044d60da82b78beb3bd50ac6c662ae74a2f5474b');
 const connectSources=policy.split(';').find(x=>x.trim().startsWith('connect-src '));assert.ok(connectSources.trim().split(/\s+/).includes('https://www.mp3quran.net'));
+// Stream online-only recordings from the verified directories without granting fetch access.
+const mediaSources = policy.split(';').find(directive => directive.trim().startsWith('media-src ')).trim().split(/\s+/);
+for (const [id, directory] of [
+  ['ar.kamilsamigullin', 'https://azan.info/upload/Audio/'],
+  ['ar.jahongirnematov', 'https://mp3muslim.uz/mp3/01-Quran/Jahongir_qori/'],
+]) {
+  const reciter = reciterInfo(id);
+  assert.equal(reciter.offline, false);
+  assert.ok(mediaSources.includes(directory), 'The browser must allow audio for ' + id);
+  const origin = new URL(directory).origin;
+  assert.ok(!mediaSources.includes(origin), 'Only the recording directory is allowed');
+  assert.ok(!connectSources.includes(origin), 'Online playback does not require fetch access');
+  const recordings = Object.values(reciter.surahUrls);
+  assert.ok(recordings.length > 0 && recordings.every(url => url.startsWith(directory)));
+}
 const frameSources=policy.split(';').find(x=>x.trim().startsWith('frame-src ')).trim().split(/\s+/).slice(1);assert.deepEqual(frameSources.sort(),['https://desktop-jecm5lt.taila4556d.ts.net','https://salah-saadi.goatcounter.com','https://www.youtube-nocookie.com'].sort());
 const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
 assert.equal(createHash('sha256').update(sdk).digest('hex'),'59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd');
