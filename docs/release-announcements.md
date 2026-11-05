@@ -537,3 +537,13 @@ Discard the selected city/country member pane when leaving Visits for another ow
 ## 459 — Control Center resume on iPhone
 
 Explicit remote Play in a standalone type-only Safari audio session reacquires the retained playback category before the same media element is resumed; keep source and playback time. Duplicate Play and in-app/browser/full-state sessions do not cycle categories. A delayed native onplay cannot defeat a newer Pause, and an unsuccessful native resume consumes recovery intent. Preserve announcement458, its artwork, acknowledgement and expiry, native minimum445, new awards and all access rules. Physical iPhone background resume acceptance is required; no universal WebKit fix is claimed from emulated tests.
+
+## 460 — Borderless Mushaf and two verified reciters
+
+New announcement460 includes only a real borderless Mushaf screenshot and the new Ahmad Talib/Muhammad Dibirov cards. Exit control remains visible, page/bookmarks/text are retained and both paper/night themes work. Reciter source lists contain107/24 available chapters, no invented timing or missing chapter playback. Preserve Top formulas, account session behavior, min native445 and all closed sections. Umar Sildinskiy remains pending verified complete recordings. RF tafsir review is edition-specific evidence in docs/tafsir-rf-review-20261105.json; no general legal clearance or text removal claimed. Sun/Moon observation is queued separately.
+
+460 candidate expanded after user selection: Kamil Samigullin112 complete-track candidates (3/4 withheld for publisher boundary reports), Alijon Qori114 surahs and Jahongir Nematov25 teaching recordings (1,91–114; Baqara94sec excerpt withheld). User excluded Kazakhstan. Kamil/Jahongir online only because source lacks CORS. No new sun/moon change in460.
+
+460 portrait refinement: four source-based AI-assisted photographic edits with calm slate backgrounds and consistent head/shoulder framing. Dibirov retained byte-for-byte. Minor refinement preserves announcement460 and existing expiry. Kamil source credited underCC BY4.0; portrait-source attribution is available from About.
+
+460 minor sky correction: retain the same public announcement460 and expiry. Pair rise/set events so the partly visible Sun and Moon no longer jump horizontally at the horizon on any existing background. Astronomical opacity, prayer settings, polar fallback, artwork crop and the original mosque crescent remain unchanged. Regression covers solar/lunar rise/set across seasons and both hemispheres. See docs/sky-motion-460.json.

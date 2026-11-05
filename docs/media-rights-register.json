@@ -3266,6 +3266,63 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/salah-medallions-source.json",
       "note": "Individually generated with built-in ImageGen for the SALAH reading/adhkar award collection. Existing SALAH medallion supplied as style reference. Original transparent output retained, no third-party award artwork copied."
+    },
+    {
+      "path": "dist/assets/reciters/muhammaddibirov-460.jpg",
+      "gitBlobSha": "23de62976b52aa62c5f10d0af5e4d2d9f62132dc",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-expansion-460.json",
+      "originUrl": "https://t.me/mdrecites",
+      "note": "Identity-labelled public portrait; independent reuse grant not established."
+    },
+    {
+      "path": "dist/assets/updates/mushaf-reading-460.png",
+      "gitBlobSha": "d0dd1bbc790d5f1c9a77b73b3cd7fe9953f55527",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "SALAH preview screenshot captured2026-11-05 with actual460 modules; no account data.",
+      "note": "Feature-specific screenshot. The new-reciters composition inherits the portrait source review statuses; screenshot provenance does not grant portrait rights."
+    },
+    {
+      "path": "dist/assets/updates/new-reciters-460.png",
+      "gitBlobSha": "8e7bfdfc267e1e431b1e2a5e35fc4c928568e355",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "SALAH preview screenshot captured2026-11-05 with actual460 modules; no account data.",
+      "note": "Actual app catalog screenshot with four source-based AI portrait edits; Dibirov unchanged. Composite inherits source portrait conditions."
+    },
+    {
+      "path": "dist/assets/reciters/ahmadtalib-460-v2.webp",
+      "gitBlobSha": "8bcb466af499d74c651d371f65986a186152a186",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": null,
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
+    },
+    {
+      "path": "dist/assets/reciters/kamilsamigullin-460-v2.webp",
+      "gitBlobSha": "e917a1200cbb7cecbb9f23185a90d5be83123cb2",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": "https://commons.wikimedia.org/wiki/File:Mufti_Kamil_Samigullin.jpg",
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page.",
+      "license": "CC BY 4.0",
+      "attribution": "Dumrt.ru; original metadata © Salavat Kamaletdinov",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "path": "dist/assets/reciters/alijonqori-460-v2.webp",
+      "gitBlobSha": "d20d32226258569e709f63bd305bc8b25aa07070",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": null,
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
+    },
+    {
+      "path": "dist/assets/reciters/jahongirnematov-460-v2.webp",
+      "gitBlobSha": "30ec172c26c67ec8a4e92161efd530dd572a5c55",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/reciter-portraits-460.json",
+      "originUrl": null,
+      "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
     }
   ],
   "wallpaperSets": [

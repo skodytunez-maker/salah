@@ -1,0 +1,281 @@
+{
+  "version": 460,
+  "date": "2026-11-05",
+  "problem": "At rise/set, independent last-rise and next-set queries selected different arcs while a disc was half visible. The position jumped55–61percent of the source panorama in4seconds.",
+  "fix": "Pair each rise with its following set; use an active or nearest completed arc through the horizon fade. Retain azimuth fallback for circumpolar bodies without a complete current arc.",
+  "preserved": [
+    "Astronomical time and solar/lunar opacity",
+    "Prayer schedule and selected city",
+    "Manual day/night background modes",
+    "All artwork projections",
+    "Original decorative mosque crescent"
+  ],
+  "before": [
+    {
+      "city": "Тюмень",
+      "body": "sun",
+      "event": "rise",
+      "time": "2026-11-05T02:57:19.400Z",
+      "xBefore": 69.50267696189225,
+      "xAfter": 8.005307871390023,
+      "opacityBefore": 0.508959093848447,
+      "opacityAfter": 0.5327686839795248,
+      "jump": 61.497369090502225
+    },
+    {
+      "city": "Тюмень",
+      "body": "sun",
+      "event": "set",
+      "time": "2026-11-05T11:44:50.506Z",
+      "xBefore": 91.99469212860997,
+      "xAfter": 30.547725992483848,
+      "opacityBefore": 0.5327862520197161,
+      "opacityAfter": 0.5089544338808718,
+      "jump": 61.44696613612612
+    },
+    {
+      "city": "Тюмень",
+      "body": "moon",
+      "event": "rise",
+      "time": "2026-11-05T23:19:41.813Z",
+      "xBefore": 66.57802072266897,
+      "xAfter": 8.004230476884285,
+      "opacityBefore": 0.48735115720866573,
+      "opacityAfter": 0.5126547297354885,
+      "jump": 58.57379024578468
+    },
+    {
+      "city": "Тюмень",
+      "body": "moon",
+      "event": "set",
+      "time": "2026-11-05T10:16:45.038Z",
+      "xBefore": 91.99622768024497,
+      "xAfter": 36.509383114421524,
+      "opacityBefore": 0.21567000633186717,
+      "opacityAfter": 0.20433067877904898,
+      "jump": 55.486844565823446
+    },
+    {
+      "city": "Худжанд",
+      "body": "sun",
+      "event": "rise",
+      "time": "2026-11-05T01:55:20.450Z",
+      "xBefore": 66.75844137361557,
+      "xAfter": 8.00452308083728,
+      "opacityBefore": 0.5029634006032705,
+      "opacityAfter": 0.5387559460080366,
+      "jump": 58.75391829277829
+    },
+    {
+      "city": "Худжанд",
+      "body": "sun",
+      "event": "set",
+      "time": "2026-11-05T12:14:23.275Z",
+      "xBefore": 91.99547691916273,
+      "xAfter": 33.26905215154014,
+      "opacityBefore": 0.5387721554468438,
+      "opacityAfter": 0.5029634815668586,
+      "jump": 58.72642476762259
+    },
+    {
+      "city": "Худжанд",
+      "body": "moon",
+      "event": "rise",
+      "time": "2026-11-05T22:48:22.921Z",
+      "xBefore": 65.38880907977273,
+      "xAfter": 8.004009382910626,
+      "opacityBefore": 0.4818673530843302,
+      "opacityAfter": 0.5181314355638835,
+      "jump": 57.3847996968621
+    },
+    {
+      "city": "Худжанд",
+      "body": "moon",
+      "event": "set",
+      "time": "2026-11-05T10:04:25.540Z",
+      "xBefore": 91.9962274968503,
+      "xAfter": 36.282058094943054,
+      "opacityBefore": 0.21788470505893917,
+      "opacityAfter": 0.20211900209987155,
+      "jump": 55.71416940190724
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "sun",
+      "event": "rise",
+      "time": "2026-11-05T11:31:08.778Z",
+      "xBefore": 66.83194177793693,
+      "xAfter": 8.004541904462176,
+      "opacityBefore": 0.5031096438316159,
+      "opacityAfter": 0.5386070422616333,
+      "jump": 58.82739987347476
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "sun",
+      "event": "set",
+      "time": "2026-11-05T21:47:37.667Z",
+      "xBefore": 91.99545809553783,
+      "xAfter": 33.19583784842921,
+      "opacityBefore": 0.538622973449869,
+      "opacityAfter": 0.5031090887483105,
+      "jump": 58.79962024710862
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "moon",
+      "event": "rise",
+      "time": "2026-11-05T07:43:17.799Z",
+      "xBefore": 64.7360511810662,
+      "xAfter": 8.003865902785753,
+      "opacityBefore": 0.4818885921389811,
+      "opacityAfter": 0.5181006057418605,
+      "jump": 56.73218527828045
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "moon",
+      "event": "set",
+      "time": "2026-11-05T19:47:34.660Z",
+      "xBefore": 91.99613409721425,
+      "xAfter": 35.825181018879064,
+      "opacityBefore": 0.21780661767450119,
+      "opacityAfter": 0.20219318510027576,
+      "jump": 56.17095307833519
+    }
+  ],
+  "after": [
+    {
+      "city": "Тюмень",
+      "body": "sun",
+      "event": "rise",
+      "time": "2026-11-05T02:57:19.400Z",
+      "xBefore": 8,
+      "xAfter": 8.005307871390023,
+      "opacityBefore": 0.508959093848447,
+      "opacityAfter": 0.5327686839795248,
+      "jump": 0.005307871390023422
+    },
+    {
+      "city": "Тюмень",
+      "body": "sun",
+      "event": "set",
+      "time": "2026-11-05T11:44:50.506Z",
+      "xBefore": 91.99469212860997,
+      "xAfter": 92,
+      "opacityBefore": 0.5327862520197161,
+      "opacityAfter": 0.5089544338808718,
+      "jump": 0.0053078713900305274
+    },
+    {
+      "city": "Тюмень",
+      "body": "moon",
+      "event": "rise",
+      "time": "2026-11-05T23:19:41.813Z",
+      "xBefore": 8,
+      "xAfter": 8.004230476884285,
+      "opacityBefore": 0.48735115720866573,
+      "opacityAfter": 0.5126547297354885,
+      "jump": 0.004230476884284684
+    },
+    {
+      "city": "Тюмень",
+      "body": "moon",
+      "event": "set",
+      "time": "2026-11-05T10:16:45.038Z",
+      "xBefore": 91.99622768024497,
+      "xAfter": 92,
+      "opacityBefore": 0.21567000633186717,
+      "opacityAfter": 0.20433067877904898,
+      "jump": 0.0037723197550292298
+    },
+    {
+      "city": "Худжанд",
+      "body": "sun",
+      "event": "rise",
+      "time": "2026-11-05T01:55:20.450Z",
+      "xBefore": 8,
+      "xAfter": 8.00452308083728,
+      "opacityBefore": 0.5029634006032705,
+      "opacityAfter": 0.5387559460080366,
+      "jump": 0.004523080837280702
+    },
+    {
+      "city": "Худжанд",
+      "body": "sun",
+      "event": "set",
+      "time": "2026-11-05T12:14:23.275Z",
+      "xBefore": 91.99547691916273,
+      "xAfter": 92,
+      "opacityBefore": 0.5387721554468438,
+      "opacityAfter": 0.5029634815668586,
+      "jump": 0.0045230808372735964
+    },
+    {
+      "city": "Худжанд",
+      "body": "moon",
+      "event": "rise",
+      "time": "2026-11-05T22:48:22.921Z",
+      "xBefore": 8,
+      "xAfter": 8.004009382910626,
+      "opacityBefore": 0.4818673530843302,
+      "opacityAfter": 0.5181314355638835,
+      "jump": 0.004009382910625803
+    },
+    {
+      "city": "Худжанд",
+      "body": "moon",
+      "event": "set",
+      "time": "2026-11-05T10:04:25.540Z",
+      "xBefore": 91.9962274968503,
+      "xAfter": 92,
+      "opacityBefore": 0.21788470505893917,
+      "opacityAfter": 0.20211900209987155,
+      "jump": 0.0037725031497046757
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "sun",
+      "event": "rise",
+      "time": "2026-11-05T11:31:08.778Z",
+      "xBefore": 8,
+      "xAfter": 8.004541904462176,
+      "opacityBefore": 0.5031096438316159,
+      "opacityAfter": 0.5386070422616333,
+      "jump": 0.00454190446217595
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "sun",
+      "event": "set",
+      "time": "2026-11-05T21:47:37.667Z",
+      "xBefore": 91.99545809553783,
+      "xAfter": 92,
+      "opacityBefore": 0.538622973449869,
+      "opacityAfter": 0.5031090887483105,
+      "jump": 0.004541904462172397
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "moon",
+      "event": "rise",
+      "time": "2026-11-05T07:43:17.799Z",
+      "xBefore": 8,
+      "xAfter": 8.003865902785753,
+      "opacityBefore": 0.4818885921389811,
+      "opacityAfter": 0.5181006057418605,
+      "jump": 0.0038659027857530504
+    },
+    {
+      "city": "Нью-Йорк",
+      "body": "moon",
+      "event": "set",
+      "time": "2026-11-05T19:47:34.660Z",
+      "xBefore": 91.99613409721425,
+      "xAfter": 92,
+      "opacityBefore": 0.21780661767450119,
+      "opacityAfter": 0.20219318510027576,
+      "jump": 0.0038659027857477213
+    }
+  ]
+}

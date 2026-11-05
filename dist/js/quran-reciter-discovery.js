@@ -20,7 +20,12 @@ export const RECITER_ADDED_AT={
 "ar.muhammadjibreel": "2026-10-29T00:00:00.000Z",
 "ar.mustafaismail": "2026-10-29T00:00:00.000Z",
 "ar.mahmoudalbanna": "2026-10-29T00:00:00.000Z",
-"ar.muhammadaltablawi": "2026-10-29T00:00:00.000Z"
+"ar.muhammadaltablawi": "2026-10-29T00:00:00.000Z",
+"ar.ahmadtalib":"2026-11-05T00:00:00.000Z",
+"ar.muhammaddibirov":"2026-11-05T00:00:00.000Z",
+"ar.kamilsamigullin":"2026-11-05T00:00:00.000Z",
+"ar.alijonqori":"2026-11-05T00:00:00.000Z",
+"ar.jahongirnematov":"2026-11-05T00:00:00.000Z"
 };
 export const RECITER_PROMOTION_MS=3*86400000;
 export const RECITER_RECENT_MS=30*86400000;

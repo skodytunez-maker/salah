@@ -56,6 +56,19 @@ for(const event of [solar.sunrise,solar.sunset,moonEvents.rise,moonEvents.set])i
  for(const key of ['sun','moon'])assert.ok(Math.abs(before[key]-after[key])<.025,'No visibility flash across '+key+' horizon at '+event.toISOString());
 }
 
+// A visible upper limb must stay on the same rise/set arc through the fade.
+// A previous-rise/next-set lookup used to teleport a half-visible disc by ~60%.
+for(const city of [tyumen,nyc,{latitude:40.2833,longitude:69.6222},{latitude:-33.8688,longitude:151.2093}]){
+ for(const date of ['2026-03-20T12:00:00Z','2026-06-21T12:00:00Z','2026-11-05T12:00:00Z','2026-12-21T12:00:00Z']){
+  const solar=getTimes(new Date(date),city.latitude,city.longitude),lunar=getMoonTimes(new Date(date),city.latitude,city.longitude,0);
+  for(const [body,event]of [['sun',solar.sunrise],['sun',solar.sunset],['moon',lunar.rise],['moon',lunar.set]])if(Number.isFinite(+event)){
+   const before=at(+event-2000,city),after=at(+event+2000,city);finite(before);finite(after);
+   assert.ok(Math.abs(before[body+'X']-after[body+'X'])<.1,'No horizontal teleport for a visible '+body+' near '+event.toISOString());
+   assert.ok(before[body]>0&&after[body]>0,'Retain the genuine horizon fade instead of hiding the regression');
+  }
+ }
+}
+
 // The UTC day sets before it rises: midnight needs the previous day's rise.
 const nyMoon=getMoonTimes(new Date('2026-06-21T12:00:00Z'),nyc.latitude,nyc.longitude,0);
 assert.ok(+nyMoon.set<+nyMoon.rise);

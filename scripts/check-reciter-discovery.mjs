@@ -7,7 +7,7 @@ import {normalizeReciterFavorites,toggleReciterFavorite,RECITER_FAVORITES_KEY} f
 import {RECITER_ADDED_AT,RECITER_PROMOTION_MS,RECITER_RECENT_MS,reciterIsPromoted,recentReciters,orderReciterCatalog,reciterFilterTabs} from '../dist/js/quran-reciter-discovery.js';
 const catalogCount=RECITERS.filter(r=>!r.variantOf).length;
 const now=Date.parse('2026-10-18T12:00:00Z'),ids=Object.keys(RECITER_ADDED_AT),lastAdded=Math.max(...Object.values(RECITER_ADDED_AT).map(Date.parse));
-assert.equal(ids.length,21);assert.equal(recentReciters(RECITERS,now).length,13);
+assert.equal(ids.length,26);assert.equal(recentReciters(RECITERS,now).length,13);
 const r=reciterInfo('ar.ahmadalnufais'),start=Date.parse(RECITER_ADDED_AT[r.id]);
 assert.equal(reciterIsPromoted(r,start-1),false);assert.equal(reciterIsPromoted(r,start),true);assert.equal(reciterIsPromoted(r,start+RECITER_PROMOTION_MS-1),true);assert.equal(reciterIsPromoted(r,start+RECITER_PROMOTION_MS),false);
 assert.equal(recentReciters([r],start+RECITER_RECENT_MS-1).length,1);assert.equal(recentReciters([r],start+RECITER_RECENT_MS).length,0);

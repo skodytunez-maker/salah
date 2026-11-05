@@ -427,3 +427,16 @@ header.quran-section-title{height:auto}
 .mushaf-read-confirm{display:grid;gap:8px;justify-items:center;margin:18px auto;max-width:360px;text-align:center}.mushaf-read-confirm .button{width:100%;min-height:44px}.mushaf-read-confirm small{color:var(--muted);font:inherit;font-size:.8rem}.mushaf-read-confirm button:disabled{opacity:.7}
 
 .mushaf-read-confirm[hidden]{display:none}
+
+/* A reversible reading viewport also works in iPhone Home Screen apps. */
+.mushaf-top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}.mushaf-fullscreen{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:10px;border:1px solid #c9b47f55;border-radius:14px;background:#182238;color:#dec78e}.mushaf-fullscreen svg{display:block;width:22px;height:22px}.mushaf-fullscreen:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+body.mushaf-reading{background:#101929!important}body.mushaf-reading:has(.mushaf-shell[data-theme=paper]){background:#fffaf0!important}
+body.quran-focus.mushaf-reading .workspace{width:100%;max-width:none;margin:0;padding:0!important}
+body.mushaf-reading .mushaf-shell{max-width:none;margin:0;padding:calc(env(safe-area-inset-top,0px) + 54px) env(safe-area-inset-right,0px) calc(env(safe-area-inset-bottom,0px) + 12px) env(safe-area-inset-left,0px);background:var(--paper-bg);min-height:100svh}
+body.mushaf-reading .mushaf-shell>:not(.mushaf-top):not(.mushaf-paper):not(.mushaf-read-confirm){display:none!important}
+body.mushaf-reading .mushaf-top{position:fixed;top:calc(env(safe-area-inset-top,0px) + 5px);right:calc(env(safe-area-inset-right,0px) + 7px);left:auto;transform:none;width:auto;z-index:120;display:flex;min-height:0;padding:0;background:transparent;border:0;box-shadow:none}
+body.mushaf-reading .mushaf-top>a,body.mushaf-reading .mushaf-top>strong,body.mushaf-reading .mushaf-options{display:none!important}
+body.mushaf-reading .mushaf-fullscreen{background:var(--paper-bg);color:var(--paper-ink);border-color:var(--paper-line);box-shadow:0 2px 10px #0002}
+body.mushaf-reading .mushaf-paper{border:0;border-radius:0;box-shadow:none;padding:0 4px 6px;outline-offset:-2px}
+body.mushaf-reading .mushaf-print-meta>span,body.mushaf-reading .mushaf-print-meta>strong{border:0;border-radius:0;background:transparent!important;color:var(--paper-ink)!important}
+body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mushaf-print-meta{padding-top:0}body.mushaf-reading .mushaf-read-confirm{padding-inline:12px}body.mushaf-reading #quran-global-player{display:none!important}

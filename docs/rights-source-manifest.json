@@ -4223,6 +4223,41 @@
       "path": "dist/assets/awards/adhkar-30-v1.png",
       "gitBlobSha": "1702cdd860d021c983efae833632662c212d6678",
       "bytes": 2125008
+    },
+    {
+      "path": "dist/assets/reciters/muhammaddibirov-460.jpg",
+      "gitBlobSha": "23de62976b52aa62c5f10d0af5e4d2d9f62132dc",
+      "bytes": 23241
+    },
+    {
+      "path": "dist/assets/updates/mushaf-reading-460.png",
+      "gitBlobSha": "d0dd1bbc790d5f1c9a77b73b3cd7fe9953f55527",
+      "bytes": 84988
+    },
+    {
+      "path": "dist/assets/updates/new-reciters-460.png",
+      "gitBlobSha": "8e7bfdfc267e1e431b1e2a5e35fc4c928568e355",
+      "bytes": 59121
+    },
+    {
+      "path": "dist/assets/reciters/ahmadtalib-460-v2.webp",
+      "gitBlobSha": "8bcb466af499d74c651d371f65986a186152a186",
+      "bytes": 89106
+    },
+    {
+      "path": "dist/assets/reciters/kamilsamigullin-460-v2.webp",
+      "gitBlobSha": "e917a1200cbb7cecbb9f23185a90d5be83123cb2",
+      "bytes": 77092
+    },
+    {
+      "path": "dist/assets/reciters/alijonqori-460-v2.webp",
+      "gitBlobSha": "d20d32226258569e709f63bd305bc8b25aa07070",
+      "bytes": 91242
+    },
+    {
+      "path": "dist/assets/reciters/jahongirnematov-460-v2.webp",
+      "gitBlobSha": "30ec172c26c67ec8a4e92161efd530dd572a5c55",
+      "bytes": 86712
     }
   ],
   "incrementalEvidence": [

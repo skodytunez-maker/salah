@@ -1,0 +1,45 @@
+{
+  "checkedOn": "2026-11-05",
+  "scope": "Specific Russian editions and traceability of the electronic texts used by SALAH; no blanket author-level legal conclusion.",
+  "officialRegister": "https://minjust.gov.ru/ru/extremist-materials/?q=%D0%9A%D0%BE%D1%80%D0%B0%D0%BD",
+  "entries": [
+    {
+      "number": 5160,
+      "author": "Ибн Касир",
+      "edition": "Мухтасар «Тафсир аль-Курʼан аль-Азым», Китаб, Махачкала, 2013–2014, том2,608стр.",
+      "decision": "Красноглинский районный суд Самары,18.08.2020; апелляция26.01.2021",
+      "listed": "2021-04-01",
+      "exception": "Содержание и цитаты из Корана исключены из признания экстремистскими."
+    },
+    {
+      "number": 5161,
+      "author": "Ибн Касир",
+      "edition": "То же издание, том3,625стр.",
+      "decision": "Те же судебные акты.",
+      "listed": "2021-04-01"
+    },
+    {
+      "number": 5162,
+      "author": "Ас-Саади",
+      "edition": "«Облегчение от Великодушного и Милостивого», перевод Э.Кулиева, Эксмо:Умма,Москва,2014, том1,784стр.",
+      "decision": "Те же судебные акты.",
+      "listed": "2021-04-01"
+    }
+  ],
+  "electronicSource": {
+    "revision": "eb82bb6294efe30ad5c135c03b1864afaa70e855",
+    "metadata": "https://github.com/spa5k/tafsir_api/blob/eb82bb6294efe30ad5c135c03b1864afaa70e855/tafsir/editions.json",
+    "saadi": "https://qul.tarteel.ai/resources/tafsir/36",
+    "ibnKathir": "https://qul.tarteel.ai/resources/tafsir/307",
+    "editionIdentityConfirmed": false,
+    "missing": [
+      "specific printed edition",
+      "publisher",
+      "translator for both datasets",
+      "mapping to court-described edition"
+    ],
+    "sourceLinkCorrection": "SALAH previously linked Saadi to QUL170 (Besim Korkut); corrected the attribution link to Russian Saadi36 without changing text."
+  },
+  "conclusion": "No affirmative distribution clearance established for the exact electronic texts in SALAH. Listed print editions must not be described as permitted; other editions require identification and comparison with the relevant decisions. No tafsir text changed or removed by this review.",
+  "followUp": "Obtain publisher/translator/edition metadata for the actual dataset before stating its RF status."
+}

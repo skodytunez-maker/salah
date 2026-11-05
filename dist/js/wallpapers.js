@@ -30,10 +30,15 @@ function skyEvents(now,city){
  return eventsCache={key,solar,lunar};
 }
 function bodyPoint(now,position,events){
- const rise=events.filter(event=>event.kind==='rise'&&event.time<=now+1000).at(-1);
- const set=events.find(event=>event.kind==='set'&&event.time>=now-1000);
- // At polar latitudes a body may stay up for days without a rise/set pair.
- const progress=rise&&set&&set.time>rise.time?clamp((now-rise.time)/(set.time-rise.time)):null;
+ // Keep one rise/set arc through the complete horizon fade. Choosing rise
+ // before now and set after now independently changes the arc while the disc
+ // is still visible, causing a horizontal jump at both ends of the day.
+ const arcs=events.filter(event=>event.kind==='rise').map(rise=>{const set=events.find(event=>event.kind==='set'&&event.time>rise.time);return set?{rise:rise.time,set:set.time}:null}).filter(Boolean);
+ const active=arcs.find(arc=>arc.rise<=now&&now<=arc.set);
+ const nearest=active||arcs.reduce((best,arc)=>{const distance=Math.min(Math.abs(now-arc.rise),Math.abs(now-arc.set));return !best||distance<best.distance?{...arc,distance}:best},null);
+ // Circumpolar bodies may have no complete arc in the cached event window.
+ const arc=!active&&position.altitude>0?null:nearest;
+ const progress=arc?clamp((now-arc.rise)/(arc.set-arc.rise)):null;
  return {x:progress===null?50-42*Math.sin(position.azimuth*rad):8+84*progress,
   y:skyGeometry.horizon/skyGeometry.height*100-50*Math.max(-2,Math.min(90,position.altitude))/90};
 }
