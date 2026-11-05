@@ -549,3 +549,5 @@ New announcement460 includes only a real borderless Mushaf screenshot and the ne
 460 minor sky correction: retain the same public announcement460 and expiry. Pair rise/set events so the partly visible Sun and Moon no longer jump horizontally at the horizon on any existing background. Astronomical opacity, prayer settings, polar fallback, artwork crop and the original mosque crescent remain unchanged. Regression covers solar/lunar rise/set across seasons and both hemispheres. See docs/sky-motion-460.json.
 
 461 moves the Mushaf controls below the iPhone status bar fade in both reading modes. It keeps announcement 460 and its expiry.
+
+462 restores online playback for Kamil Samigullin and Jahongir Nematov by allowing their two recording directories in the media policy. It keeps announcement 460 and its expiry.
