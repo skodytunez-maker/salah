@@ -547,3 +547,5 @@ New announcement460 includes only a real borderless Mushaf screenshot and the ne
 460 portrait refinement: four source-based AI-assisted photographic edits with calm slate backgrounds and consistent head/shoulder framing. Dibirov retained byte-for-byte. Minor refinement preserves announcement460 and existing expiry. Kamil source credited underCC BY4.0; portrait-source attribution is available from About.
 
 460 minor sky correction: retain the same public announcement460 and expiry. Pair rise/set events so the partly visible Sun and Moon no longer jump horizontally at the horizon on any existing background. Astronomical opacity, prayer settings, polar fallback, artwork crop and the original mosque crescent remain unchanged. Regression covers solar/lunar rise/set across seasons and both hemispheres. See docs/sky-motion-460.json.
+
+461 moves the Mushaf controls below the iPhone status bar fade in both reading modes. It keeps announcement 460 and its expiry.
