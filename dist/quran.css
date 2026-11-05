@@ -362,9 +362,14 @@ header.quran-section-title{height:auto}
 .mushaf-edition{font-size:10px;text-align:center;letter-spacing:.2px;color:#aebbd0;margin:8px 0 0;line-height:1.5}
 
 /* Reader controls stay reachable while the long printed page scrolls. */
-.mushaf-shell{padding-top:calc(58px + env(safe-area-inset-top,0px))}
-.mushaf-top{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(720px,calc(100% - 24px));z-index:100;padding-top:calc(6px + env(safe-area-inset-top,0px));padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px));box-shadow:0 5px 14px #03081555}
-.mushaf-options-panel{top:calc(100% + 6px);max-height:calc(100dvh - 88px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.mushaf-shell {
+  --mushaf-safe-top: var(--salah-safe-top, env(safe-area-inset-top, 0px));
+  /* Leave room for the iPhone status-bar fade below the safe area. */
+  --mushaf-toolbar-inset: calc(var(--mushaf-safe-top) + min(40px, var(--mushaf-safe-top)));
+  padding-top: calc(58px + var(--mushaf-toolbar-inset));
+}
+.mushaf-top{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(720px,calc(100% - 24px));z-index:100;padding-top:calc(6px + var(--mushaf-toolbar-inset));padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px));box-shadow:0 5px 14px #03081555}
+.mushaf-options-panel{top:calc(100% + 6px);max-height:calc(100dvh - 88px - var(--mushaf-toolbar-inset) - env(safe-area-inset-bottom,0px))}
 .mushaf-listening{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin:8px 5px 10px;min-width:0}
 .mushaf-listening>button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 10px;border:1px solid #c9b47f66;border-radius:12px;color:#ddc591;background:#182238;font-size:12px;white-space:nowrap}
 .mushaf-listening>button:disabled{opacity:.5}.mushaf-listening>button[hidden]{display:none}
@@ -432,9 +437,9 @@ header.quran-section-title{height:auto}
 .mushaf-top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}.mushaf-fullscreen{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:10px;border:1px solid #c9b47f55;border-radius:14px;background:#182238;color:#dec78e}.mushaf-fullscreen svg{display:block;width:22px;height:22px}.mushaf-fullscreen:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 body.mushaf-reading{background:#101929!important}body.mushaf-reading:has(.mushaf-shell[data-theme=paper]){background:#fffaf0!important}
 body.quran-focus.mushaf-reading .workspace{width:100%;max-width:none;margin:0;padding:0!important}
-body.mushaf-reading .mushaf-shell{max-width:none;margin:0;padding:calc(env(safe-area-inset-top,0px) + 54px) env(safe-area-inset-right,0px) calc(env(safe-area-inset-bottom,0px) + 12px) env(safe-area-inset-left,0px);background:var(--paper-bg);min-height:100svh}
+body.mushaf-reading .mushaf-shell{max-width:none;margin:0;padding:calc(var(--mushaf-toolbar-inset) + 54px) env(safe-area-inset-right,0px) calc(env(safe-area-inset-bottom,0px) + 12px) env(safe-area-inset-left,0px);background:var(--paper-bg);min-height:100svh}
 body.mushaf-reading .mushaf-shell>:not(.mushaf-top):not(.mushaf-paper):not(.mushaf-read-confirm){display:none!important}
-body.mushaf-reading .mushaf-top{position:fixed;top:calc(env(safe-area-inset-top,0px) + 5px);right:calc(env(safe-area-inset-right,0px) + 7px);left:auto;transform:none;width:auto;z-index:120;display:flex;min-height:0;padding:0;background:transparent;border:0;box-shadow:none}
+body.mushaf-reading .mushaf-top{position:fixed;top:calc(var(--mushaf-toolbar-inset) + 5px);right:calc(env(safe-area-inset-right,0px) + 7px);left:auto;transform:none;width:auto;z-index:120;display:flex;min-height:0;padding:0;background:transparent;border:0;box-shadow:none}
 body.mushaf-reading .mushaf-top>a,body.mushaf-reading .mushaf-top>strong,body.mushaf-reading .mushaf-options{display:none!important}
 body.mushaf-reading .mushaf-fullscreen{background:var(--paper-bg);color:var(--paper-ink);border-color:var(--paper-line);box-shadow:0 2px 10px #0002}
 body.mushaf-reading .mushaf-paper{border:0;border-radius:0;box-shadow:none;padding:0 4px 6px;outline-offset:-2px}
