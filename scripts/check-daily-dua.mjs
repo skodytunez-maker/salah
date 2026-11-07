@@ -7,7 +7,7 @@ import {Script,createContext} from 'node:vm';
 import {validateDuaCatalogue,safeDuaSource,cleanDuaFavorites,filterDuas,duaRoute,duaPassage} from '../dist/js/daily-dua-core.js';
 
 const catalogue=validateDuaCatalogue(JSON.parse(await readFile(new URL('../dist/data/daily-dua.json',import.meta.url),'utf8')));
-assert.equal(catalogue.items.length,61);
+assert.equal(catalogue.items.length,66);
 assert.equal(catalogue.categories.length,11);
 assert.deepEqual(filterDuas(catalogue,{query:'перед близостью'}).map(i=>i.id),['before-intimacy']);
 assert.deepEqual(filterDuas(catalogue,{query:'перед едой'}).map(i=>i.id),['before-meal','forgot-before-meal']);
@@ -77,7 +77,7 @@ let release;const gate=new Promise(resolve=>release=resolve);
 page=browser('#adhkar?view=duas',new Storage(),async()=>{await gate;return {ok:true,json:async()=>structuredClone(catalogue)}});
 const pending=page.open();page.module.stopDailyDuas();page.host.innerHTML='<p>Другой раздел</p>';release();await pending;assert.equal(page.host.textContent,'Другой раздел','A late load cannot overwrite a newer screen');
 page=browser('#adhkar?view=duas',new Storage(),async()=>{throw Error('offline')});await page.open();assert.ok(page.host.querySelector('#dua-retry'));assert.ok(page.host.querySelector('#dua-back'));
-console.log('PASS: 61 duas with internally checked references, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
+console.log('PASS: 66 duas with internally checked references, categories/search/favorites, source safety, no counters, exact reader restoration, navigation and cancelled-load/retry behavior.');
 
 const savedProgress=JSON.stringify({version:2,totals:{tasbih:300},days:{'2026-10-06':{evening:{tasbih:50}}}});
 const qunutStorage=new Storage();qunutStorage.setItem('salah:adhkar-progress-v2',savedProgress);

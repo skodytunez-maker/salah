@@ -1,6 +1,6 @@
 # Quran listening presence · 410
 
-The Top SALAH headphones indicator reports advancing Quran playback for an enabled, visible public profile. It never derives listening from an app visit, cumulative minutes, or ruqyah playback. Hidden and initial-only profiles never expose this signal. Public responses contain only a bounded remaining lease, attached to the existing public ID; account, session and per-page IDs stay private.
+The Top SALAH headphones indicator reports advancing Quran playback for enabled participants using a public profile or an anonymous initial. It never derives listening from an app visit, cumulative minutes, or ruqyah playback. Hidden profiles never expose this signal. Anonymous initials can show headphones, but their nickname and photo remain excluded from the public payload and rendering. This extension was explicitly approved for464. Public responses contain only a bounded remaining lease, attached to the existing public ID; account, session and per-page IDs stay private.
 
 The player emits at most one playing heartbeat per15seconds and clears the state on pause, failure, completion or page exit. No forward progress for20seconds clears it locally. A45second server lease tolerates missed network packets and expires on offline or frozen devices. The public board refresh interval can add its existing polling delay to a visible pause change. Background playback can keep the icon when the browser permits heartbeats; it expires safely when the browser freezes tasks.
 

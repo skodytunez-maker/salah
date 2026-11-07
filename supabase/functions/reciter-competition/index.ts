@@ -30,13 +30,13 @@ async function ensure(user:any,initialEnabled=true){const hash=await hashFor(use
 });}
 async function publicBoard(period:string,day:string,holders:any={}){
  const rows=await sql`select b.user_id,b.reciter,b.seconds,b.place,v.public_id as id,v.mode,
- case when v.mode='profile' and (u.banned_until is null or u.banned_until<=now()) then coalesce(least(45,greatest(0,ceil(extract(epoch from(live.latest+interval '45 seconds'-statement_timestamp())))))::int,0) else 0 end active_for_seconds,
+ case when v.mode in ('initial','profile') and (u.banned_until is null or u.banned_until<=now()) then coalesce(least(45,greatest(0,ceil(extract(epoch from(live.latest+interval '45 seconds'-statement_timestamp())))))::int,0) else 0 end active_for_seconds,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
  case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
  case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
  from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id left join lateral(select max(lp.reported_at) latest from salah_competition_private.listener_presence lp join auth.sessions s on s.id=lp.session_id and s.user_id=lp.user_id where lp.user_id=b.user_id and lp.playing and lp.reported_at>statement_timestamp()-interval '45 seconds' and (s.not_after is null or s.not_after>now())) live on true order by b.place,v.public_id limit 1000`;
- const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],activeForSeconds:r.mode==='profile'?Number(r.active_for_seconds)||0:0,seconds:Number(r.seconds),rank:Number(r.place),awards:[...(holders.week===r.user_id?['week']:[]),...(holders.month===r.user_id?['month']:[])]})),limited:rows.length===1000};
+ const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],activeForSeconds:['initial','profile'].includes(r.mode)?Number(r.active_for_seconds)||0:0,seconds:Number(r.seconds),rank:Number(r.place),awards:[...(holders.week===r.user_id?['week']:[]),...(holders.month===r.user_id?['month']:[])]})),limited:rows.length===1000};
 }
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
