@@ -1,3 +1,4 @@
+import{createDhikrFeedback}from '../dist/js/dhikr-feedback.js';
 import{preloadPronunciation}from '../dist/js/pronunciation-preload.js';
 import{SHORT_DHIKR_PRESETS,DEFAULT_SHORT_DHIKR,shortDhikr}from '../dist/js/short-dhikr.js';
 
@@ -71,7 +72,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     forward(){if(historyIndex<entries.length-1){historyIndex++;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}}
    },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},setTimeout:(fn,ms)=>{counterTimers.set(++timerSequence,fn);return timerSequence;},clearTimeout:id=>counterTimers.delete(id),scrollTo(_x,y){scroll=y}};
   let audioBusy=false,pauseRegistered=null;
-  const context=createContext({recordAdhkarRound:()=>{},emitAdhkarActivity:()=>{},location,window,document:{body,querySelector:selector=>container.querySelector(selector),getElementById:id=>container.querySelector('#'+id)},localStorage:storage,URLSearchParams,Event,Date,console,
+  const context=createContext({createDhikrFeedback,recordAdhkarRound:()=>{},emitAdhkarActivity:()=>{},location,window,document:{body,querySelector:selector=>container.querySelector(selector),getElementById:id=>container.querySelector('#'+id)},localStorage:storage,URLSearchParams,Event,Date,console,
     bindNativeCardSwipe:()=>()=>{},createDhikrCompletionGate:()=>createDhikrCompletionGate({now:clock}),
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},

@@ -7,7 +7,7 @@ import{awardArtwork}from './quran-awards-core.js';
 let entries=[],rings={};
 const label=p=>p.mode==='profile'?p.nickname:p.initial;
 const medalRings={gold:'#d8be88',silver:'#c2cbd8',bronze:'#bf926c'};
-const listening=p=>p.mode==='profile'&&Number.isFinite(p.listeningUntil)&&p.listeningUntil>Date.now();
+const listening=p=>['initial','profile'].includes(p.mode)&&Number.isFinite(p.listeningUntil)&&p.listeningUntil>Date.now();
 const headphones=p=>'<span class="competition-listening" role="img" aria-label="Слушает Коран" '+(listening(p)?'':'hidden')+'><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3M4 12h3v8H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 1-2Zm16 0h-3v8h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-1-2Z"/></svg></span>';
 const avatar=p=>'<span class="competition-user-face" data-listening-person="'+esc(p.id)+'" style="--listener-ring:'+(medalRings[medalForRank(p.rank)]||rings[p.id]||listenerRing(p.id))+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(competitionAvatar(p.id))+'" alt="" loading="lazy">':'')+headphones(p)+'</span>';
 const leaderAwards=p=>{const kinds=[...new Set(Array.isArray(p.awards)?p.awards:[])].filter(k=>k==='week'||k==='month');return kinds.length?'<span class="competition-award-badges" data-count="'+kinds.length+'">'+kinds.map(k=>'<span class="competition-leader-award"><span class="competition-leader-picture competition-leader-'+k+'"><img src="'+awardArtwork(k)+'" alt=""></span><small>'+(k==='week'?'Лидер недели':'Лидер месяца')+'</small></span>').join('')+'</span>':'';};

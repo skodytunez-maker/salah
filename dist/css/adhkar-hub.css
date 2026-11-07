@@ -63,3 +63,6 @@ body.adhkar-hub-open .workspace>footer{display:none!important}
 .adhkar-signature .adhkar-shell .dhikr-counter-dock #adhkar-count:disabled{border-color:var(--adhkar-accent)}
 .adhkar-signature .dhikr-favorite,.adhkar-signature .adhkar-shell .dhikr-audio-toggle,.adhkar-signature .adhkar-shell .adhkar-settings>summary{background:var(--adhkar-navy);border-color:#c8bc9c55;color:#d6c593}
 .adhkar-signature .dhikr-favorite[aria-pressed=true],.adhkar-signature .adhkar-shell .dhikr-audio-toggle[aria-pressed=true]{background:var(--adhkar-navy-raised);border-color:var(--adhkar-accent)}
+
+/* Compact independent feedback controls for both counters. */
+.dhikr-feedback-options{display:flex;flex-wrap:wrap;gap:4px 20px;margin:10px 0;color:var(--muted);font-family:inherit;font-size:13px}.dhikr-feedback-options label{display:flex;align-items:center;gap:8px;min-height:44px;margin:0}.dhikr-feedback-options input{width:18px;height:18px;min-height:0;padding:0;accent-color:var(--gold)}.dhikr-feedback-options p{flex-basis:100%;font-size:12px;margin:0;line-height:1.5}.dhikr-feedback-options label:has(input:disabled){opacity:.55}.short-counter-page>.dhikr-feedback-options{justify-content:center}

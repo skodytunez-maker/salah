@@ -12,7 +12,7 @@ export function createListenerPresenceDb(sql){return{
   if(rate.attempts>120)return{ok:false,retry:true};
   await tx`delete from salah_competition_private.listener_presence where (user_id,tab_id) in(select user_id,tab_id from salah_competition_private.listener_presence where reported_at<now()-interval '10 minutes' order by reported_at limit 100 for update skip locked)`;
   const[pref]=await tx`select p.enabled,v.mode from salah_competition_private.preferences p join public.reciter_listener_visibility v using(user_id) where p.user_id=${user.id}::uuid`;
-  const eligible=pref?.enabled===true&&pref.mode==='profile';
+  const eligible=pref?.enabled===true&&['initial','profile'].includes(pref.mode);
   const[prior]=await tx`select sequence from salah_competition_private.listener_presence where user_id=${user.id}::uuid and tab_id=${packet.tab}::uuid`;
   if(!eligible&&!prior)return{ok:true,playing:false};
   if(!prior){const[n]=await tx`select count(*)::int as n from salah_competition_private.listener_presence where user_id=${user.id}::uuid`;if(n.n>=32)return{ok:false,retry:true};}
