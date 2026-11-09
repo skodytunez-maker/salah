@@ -4,6 +4,8 @@ import{reciterInfo}from './quran-reciters.js';
 import{rankTime,listenerRing,assignListenerRings,medalForRank}from './reciter-ranking-core.js';
 import{competitionAvatar}from './competition-client.js';
 import{awardArtwork}from './quran-awards-core.js';
+import{ownerVerified,verifyOwner}from './owner-auth.js';
+import{counterSyncStatus}from './counter-account.js';
 let entries=[],rings={};
 const label=p=>p.mode==='profile'?p.nickname:p.initial;
 const medalRings={gold:'#d8be88',silver:'#c2cbd8',bronze:'#bf926c'};
@@ -22,7 +24,30 @@ export function competitionMarkup(rows){
 }
 export function bindCompetitionView(host){
  host.querySelectorAll('.competition-user-face img').forEach(image=>image.onerror=()=>image.remove());
- host.querySelectorAll('[data-competition-person]').forEach(button=>button.onclick=()=>{const p=entries.find(p=>p.id===button.dataset.competitionPerson);if(!p)return;modal('<div class="modal-head"><h2>'+esc(p.mode==='profile'?p.nickname:'Ник скрыт')+'</h2><button class="text-button" data-close>Закрыть</button></div>'+avatar(p)+'<p>'+esc(rankTime(p.seconds))+' прослушано</p>'+(p.mode==='initial'?'<p class="muted">Слушатель выбрал анонимность.</p>':''));});
+ let selection=0;
+ host.querySelectorAll('[data-competition-person]').forEach(button=>button.onclick=async()=>{
+  const p=entries.find(p=>p.id===button.dataset.competitionPerson);if(!p)return;
+  const request=++selection;
+  if(p.mode==='profile'&&(ownerVerified()||counterSyncStatus().signedIn)){
+   const origin=location.hash,account=counterSyncStatus().userId;
+   const owner=ownerVerified()||await verifyOwner().catch(()=>false);
+   if(request!==selection||location.hash!==origin||counterSyncStatus().userId!==account||!button.isConnected||
+    (host.id==='modal-content'&&!document.getElementById('modal')?.open))return;
+   if(!entries.some(item=>item.id===p.id&&item.mode==='profile'))return;
+   if(owner&&ownerVerified()){
+    const selected=document.querySelector('[data-competition-period][aria-pressed="true"]')?.dataset.competitionPeriod;
+    const params=new URLSearchParams(origin.split('?')[1]||'');
+    if(selected&&params.has('period')&&params.get('period')!==selected){
+     params.set('period',selected);history.replaceState(history.state,'','#quran?'+params);
+    }
+    const back=location.hash;
+    const target='#admin?view=profile&listener='+encodeURIComponent(p.id);
+    history.pushState({salahRankProfileBack:back},'',target);
+    closeModal();window.dispatchEvent(new Event('hashchange'));
+    return;
+   }
+  }
+  modal('<div class="modal-head"><h2>'+esc(p.mode==='profile'?p.nickname:'Ник скрыт')+'</h2><button class="text-button" data-close>Закрыть</button></div>'+avatar(p)+'<p>'+esc(rankTime(p.seconds))+' прослушано</p>'+(p.mode==='initial'?'<p class="muted">Слушатель выбрал анонимность.</p>':''));});
  const all=host.querySelector('#competition-all');if(all)all.onclick=()=>{modal('<div class="modal-head"><h2>Топ SALAH</h2><button class="text-button" data-close>Закрыть</button></div><div class="competition-full-list">'+entries.map(row).join('')+'</div>');const root=document.getElementById('modal-content');root.querySelectorAll('a').forEach(link=>link.onclick=closeModal);bindCompetitionView(root);};
 }
 

@@ -82,9 +82,9 @@ class Element {
  get id(){return this.attributes.id||'';}
  focus(options={}){this.focused=true;this.focusOptions=options;Element.activeElement=this;if(!options.preventScroll){for(let node=this.parent;node;node=node.parent)if(node.id==='owner-user-card')node.scrollTop=0;}}
 }
-function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request,statsRequest=null,browser=null,verifyError=null}={}){
+function dashboard({allowed=true,mfaRequired=false,result={total:125,users:[{nickname:'Fixture',lastSignInAt:null}]},stats={total:0,stats:[]},site='',request,statsRequest=null,browser=null,verifyError=null,rankRequest=async()=>null}={}){
  const app=new Element(),location={hash:'#admin',pathname:'/owner.html'},calls=[],intervals=new Map(),events=new Map(),document={hidden:false,get activeElement(){return Element.activeElement;}};let timerId=0;
- const context=createContext({mountOwnerReturnCampaign:()=>()=>{},ownerGeoMembers:async()=>({}),mountOwnerVisitors,ownerVisitors:async days=>({days,guests:0,accounts:0,startedAt:new Date().toISOString(),updatedAt:new Date().toISOString()}),mountOwnerGeography,ownerGeography:async days=>({period:days,total:0,withCity:0,withCountry:0,otherCities:0,otherCountries:0,cities:[],countries:[]}),ownerActivityView,bindOwnerActivity,mountOwnerWorkspace:(app,options)=>{app.querySelector('.admin-intro').insertAdjacentHTML('beforeend','<div id="owner-panel-home"></div><div id="owner-panel-teachers"></div><div id="owner-panel-team"></div><div id="owner-panel-tools"></div>');return{navigate:view=>options.onSelect(view),canLeave:()=>true,select(){},dispose(){}};},ownerUserRow,setTimeout,clearTimeout,createOwnerUserDetail:options=>createOwnerUserDetail({...options,load:async id=>({id,connected:false,hasAvatar:false,periods:{},awards:[],reciters:[]})}),actionIcon,actionLabel,mountOwnerErrorSummary:()=>{},bindOwnerNotificationInfo,bindOwnerCardNavigation,createOwnerCardHistory,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:browser||{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>{if(verifyError)throw verifyError;return allowed;},URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async days=>statsRequest?statsRequest(days):stats,signOutOwner:async()=>{allowed=false;}});
+ const context=createContext({mountOwnerReturnCampaign:()=>()=>{},ownerGeoMembers:async()=>({}),mountOwnerVisitors,ownerVisitors:async days=>({days,guests:0,accounts:0,startedAt:new Date().toISOString(),updatedAt:new Date().toISOString()}),mountOwnerGeography,ownerGeography:async days=>({period:days,total:0,withCity:0,withCountry:0,otherCities:0,otherCountries:0,cities:[],countries:[]}),ownerActivityView,bindOwnerActivity,mountOwnerWorkspace:(app,options)=>{app.querySelector('.admin-intro').insertAdjacentHTML('beforeend','<div id="owner-panel-home"></div><div id="owner-panel-teachers"></div><div id="owner-panel-team"></div><div id="owner-panel-tools"></div>');return{navigate:view=>options.onSelect(view),canLeave:()=>true,select(){},dispose(){}};},ownerUserRow,setTimeout,clearTimeout,createOwnerUserDetail:options=>createOwnerUserDetail({...options,load:async id=>({id,connected:false,hasAvatar:false,periods:{},awards:[],reciters:[]})}),actionIcon,actionLabel,mountOwnerErrorSummary:()=>{},bindOwnerNotificationInfo,bindOwnerCardNavigation,createOwnerCardHistory,ownerUserCard,validOwnerUserId,notificationLabels,location,Date,document,setInterval:fn=>{const id=++timerId;intervals.set(id,fn);return id},clearInterval:id=>intervals.delete(id),window:browser||{addEventListener:(event,fn)=>events.set(event,fn),removeEventListener:event=>events.delete(event)},analyticsSite:()=>site,esc:value=>String(value).replaceAll('<','&lt;').replaceAll('>','&gt;'),title:()=>'',ownerVerified:()=>allowed,verifyOwner:async()=>{if(verifyError)throw verifyError;return allowed;},URLSearchParams,onOwnerChange:fn=>{events.set('owner-change',fn);return()=>events.delete('owner-change')},ownerNeedsMfa:()=>mfaRequired,ownerMfaFactors:async()=>[],ownerRankUser:rankRequest,ownerUsers:async page=>{calls.push(page);return request?request(page):result;},ownerStatistics:async days=>statsRequest?statsRequest(days):stats,signOutOwner:async()=>{allowed=false;}});
  return{app,location,calls,result,intervals,events,document,setAllowed:value=>{allowed=value;events.get('owner-change')?.()},...new Script(adminExecutable).runInContext(context)};
 }
 const settle=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
@@ -196,6 +196,24 @@ function browserHistory(){
  const pop=()=>{win.location.href=entries[index].url;for(const fn of [...listeners.get('popstate')||[]])fn({state:entries[index].state})};
  return{win,entries,listeners,get index(){return index},get queued(){return queued},flush(){if(queued){queued--;index=Math.max(0,index-1);pop()}},forward(){index=Math.min(entries.length-1,index+1);pop()}};
 }
+const rankBrowser=browserHistory(),rankBack='#quran?view=reciters&filter=salah-top&period=week';
+rankBrowser.win.history.pushState(null,'','https://fixture.invalid/'+rankBack);
+const rankId='33333333-3333-4333-8333-333333333333',rankHash='#admin?view=profile&listener='+rankId;
+rankBrowser.win.history.pushState({salahRankProfileBack:rankBack},'','https://fixture.invalid/'+rankHash);
+const rankCard=dashboard({browser:rankBrowser.win,rankRequest:async id=>{assert.equal(id,rankId);return {id:secondId,nickname:'From rank'};}});
+rankCard.location.hash=rankHash;
+await rankCard.showAdmin(rankCard.app);await settle();
+assert.equal(rankCard.app.querySelector('#owner-user-detail').hidden,false);
+assert.match(rankCard.app.querySelector('#owner-user-card').textContent,/From rank/);
+assert.match(rankCard.app.querySelector('#owner-user-back').textContent,/Топ SALAH/);
+assert.deepEqual(rankCard.calls,[],'A rank card does not load the whole private list');
+rankCard.setAllowed(false);
+assert.equal(rankCard.app.querySelector('#owner-user-card').innerHTML,'','Revocation clears the loaded card');
+rankCard.app.querySelector('#owner-user-back').onclick();rankCard.app.querySelector('#owner-user-back').onclick();
+assert.equal(rankBrowser.queued,1,'Repeated taps consume only one history entry');
+rankBrowser.flush();assert.ok(rankBrowser.win.location.href.endsWith(rankBack),'Back restores the ranking period');
+rankCard.app.ownerDispose();
+
 const browser=browserHistory(),backCards=dashboard({browser:browser.win,result:{total:125,users:[{id:firstId,nickname:'Private test user'}]}});
 backCards.location.hash='#admin?view=users';await backCards.showAdmin(backCards.app,{isActive:()=>browser.win.location.href.includes('#admin')});await settle();
 backCards.app.querySelector('#owner-tab-users').onclick();await settle();
