@@ -12,7 +12,7 @@ export function createRouteBackStack(win=window){
 const visible=el=>el&&!el.disabled&&!el.closest('[hidden]')&&el.getClientRects().length>0;
 export function resolveBackAction(app,stack){
  // Nested screens return one level before the router is allowed to consume a route.
- for(const id of ['owner-user-back','dua-list','dua-back','adhkar-close','counter-close','dhikr-back','adhkar-return']){const button=app.querySelector('#'+id);if(visible(button))return()=>button.click();}
+ for(const id of ['owner-user-back','owner-geo-back','dua-list','dua-back','adhkar-close','counter-close','dhikr-back','adhkar-return']){const button=app.querySelector('#'+id);if(visible(button))return()=>button.click();}
  if(stack.canBack())return()=>stack.back();
  const back=app.querySelector('.menu-home-access,.menu-back,.settings-back,.lesson-top a,.quran-reader-top a,[data-back]');
  return visible(back)?()=>back.click():null;

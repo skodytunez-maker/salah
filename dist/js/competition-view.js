@@ -6,7 +6,7 @@ import{competitionAvatar,competitionOwn}from './competition-client.js';
 import{awardArtwork}from './quran-awards-core.js';
 import{ownerVerified,verifyOwner,ownerNeedsMfa}from './owner-auth.js';
 import{counterSyncStatus}from './counter-account.js';
-let entries=[],rings={};
+let entries=[],rings={},liveDialog=null;
 const label=p=>p.mode==='profile'?p.nickname:p.initial;
 export function competitionProfilePreview(id){const entry=entries.find(row=>row.id===id);return entry&&['profile','initial'].includes(entry.mode)?label(entry):'';}
 const medalRings={gold:'#d8be88',silver:'#c2cbd8',bronze:'#bf926c'};
@@ -27,18 +27,49 @@ export function competitionMarkup(rows,access={}){
  if(!entries.length)return '<p class="reciter-empty">Здесь появятся слушатели и их любимые чтецы.</p>';
  const top=entries.slice(0,3);return '<section class="competition-showcase" aria-label="Первые пять слушателей"><div class="competition-podium competition-podium-'+top.length+'">'+top.map((p,i)=>'<article class="competition-card competition-slot-'+(i+1)+' rank-medal-'+medalForRank(p.rank)+'" data-competition-entry="'+esc(p.id)+'" data-competition-rank="'+p.rank+'" data-competition-reciter="'+esc(p.reciter)+'"><span class="competition-place">'+p.rank+' место</span>'+picture(p)+person(p,access)+'<b class="competition-time" aria-label="'+esc(rankTime(p.seconds))+'" title="'+esc(rankTime(p.seconds))+'">'+esc(podiumTime(p.seconds))+'</b></article>').join('')+'</div><div class="competition-next">'+entries.slice(3,5).map(p=>row(p,access)).join('')+'</div>'+(top.some((p,i)=>i&&p.rank===top[i-1].rank)?'<p class="rank-tie-note">Одинаковое время — одинаковое место.</p>':'')+'<button type="button" class="button secondary rank-open-all" id="competition-all">Весь рейтинг<span>'+entries.length+'</span></button></section>';
 }
-export function bindCompetitionView(host,access={}){
+function findRankEntry(host,id){return [...host.querySelectorAll('[data-competition-entry]')].find(element=>element.dataset.competitionEntry===id);}
+function focusRankEntry(entry){
+ if(!entry)return;
+ const target=entry.querySelector('[data-competition-person]')||entry;
+ target.focus({preventScroll:true});entry.scrollIntoView({block:'center'});
+}
+function showRankList(rows,access,focusId){
+ modal('<div class="modal-head"><h2>Топ SALAH</h2><button class="text-button" data-close>Закрыть</button></div><div class="competition-full-list">'+rows.map(p=>row(p,access)).join('')+'</div>');
+ const root=document.getElementById('modal-content');root.querySelectorAll('a').forEach(link=>link.onclick=closeModal);bindCompetitionView(root,access);
+ if(focusId)focusRankEntry(findRankEntry(root,focusId));
+}
+export function closeCompetitionLiveList(){
+ if(!liveDialog)return;
+ const {root}=liveDialog;liveDialog=null;
+ if(root.isConnected){closeModal();root.replaceChildren();}
+}
+function updateCompetitionLiveStatus(host,rows,access){
+ const active=rows?.filter(listening)??null,label=host.querySelector('[data-competition-live-count]');
+ const count=active?String(active.length):'—';
+ if(label&&label.textContent!==count)label.textContent=count;
+ if(!liveDialog)return;
+ const {root,account}=liveDialog;
+ if(!root.isConnected||!document.getElementById('modal')?.open){liveDialog=null;return;}
+ if(!access.owner||!ownerVerified()||account!==counterSyncStatus().userId){closeCompetitionLiveList();return;}
+ const html=active?.length?active.map(p=>'<div class="competition-active-row">'+person(p,access)+'</div>').join(''):'<p class="muted">'+(active?'Сейчас никто из участников Топа не слушает.':'Данные о прослушивании временно недоступны.')+'</p>';
+ if(html===liveDialog.html)return;
+ const focused=document.activeElement?.dataset.competitionPerson;
+ liveDialog.html=html;root.innerHTML=html;
+ bindCompetitionView(root,access,()=>active??[]);
+ if(focused)[...root.querySelectorAll('[data-competition-person]')].find(button=>button.dataset.competitionPerson===focused)?.focus({preventScroll:true});
+}
+export function bindCompetitionView(host,access={},getEntries=()=>entries,getLiveRows=()=>null){
  host.querySelectorAll('.competition-user-face img').forEach(image=>image.onerror=()=>image.remove());
  let selection=0;
  host.querySelectorAll('[data-competition-person]').forEach(button=>button.onclick=async()=>{
-  let p=entries.find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
+  let p=getEntries().find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
   const request=++selection;
   if(access.owner){
    const origin=location.hash,account=counterSyncStatus().userId;
    const owner=ownerVerified()||await verifyOwner().catch(()=>false);
    if(request!==selection||location.hash!==origin||counterSyncStatus().userId!==account||!button.isConnected||
     (host.id==='modal-content'&&!document.getElementById('modal')?.open))return;
-   p=entries.find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
+   p=getEntries().find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
    if((owner&&ownerVerified())||ownerNeedsMfa()){
     const selected=document.querySelector('[data-competition-period][aria-pressed="true"]')?.dataset.competitionPeriod;
     const params=new URLSearchParams(origin.split('?')[1]||'');
@@ -54,10 +85,21 @@ export function bindCompetitionView(host,access={}){
   }
   if(!counterSyncStatus().signedIn||competitionOwn()?.id!==p.id)return;
   modal('<div class="modal-head"><h2>'+esc(p.mode==='profile'?p.nickname:'Ник скрыт')+'</h2><button class="text-button" data-close>Закрыть</button></div>'+avatar(p)+'<p>'+esc(rankTime(p.seconds))+' прослушано</p>'+(p.mode==='initial'?'<p class="muted">Слушатель выбрал анонимность.</p>':''));});
- const all=host.querySelector('#competition-all');if(all)all.onclick=()=>{modal('<div class="modal-head"><h2>Топ SALAH</h2><button class="text-button" data-close>Закрыть</button></div><div class="competition-full-list">'+entries.map(p=>row(p,access)).join('')+'</div>');const root=document.getElementById('modal-content');root.querySelectorAll('a').forEach(link=>link.onclick=closeModal);bindCompetitionView(root,access);};
+ const all=host.querySelector('#competition-all');if(all)all.onclick=()=>showRankList(getEntries(),access);
+ const mine=host.querySelector('[data-competition-own]');
+ if(mine)mine.onclick=()=>{const own=getEntries().find(item=>item.id===access.ownId);if(!own)return;const visible=findRankEntry(host,own.id);if(visible)focusRankEntry(visible);else showRankList(getEntries(),access,own.id);};
+ const active=host.querySelector('[data-competition-live-open]');
+ if(active&&access.owner)active.onclick=async()=>{
+  const origin=location.hash,account=counterSyncStatus().userId;
+  if(!account||!(ownerVerified()||await verifyOwner().catch(()=>false))||!active.isConnected||origin!==location.hash||account!==counterSyncStatus().userId||!ownerVerified())return;
+  modal('<div class="modal-head"><h2>Сейчас слушают</h2><button type="button" class="text-button" data-close>Закрыть</button></div><div class="competition-full-list" data-competition-live-list></div>');
+  liveDialog={root:document.querySelector('[data-competition-live-list]'),account,html:''};
+  updateCompetitionLiveStatus(host,getLiveRows(),access);
+ };
 }
 
-export function updateCompetitionTimes(host,rows){
+export function updateCompetitionTimes(host,rows,liveRows=null,access={}){
+ updateCompetitionLiveStatus(host,liveRows,access);
  entries=rows.slice();const results=new Map(entries.map(p=>[p.id,p]));for(const root of [host,document.getElementById('modal-content')]){if(!root)continue;for(const face of root.querySelectorAll('[data-listening-person]')){const p=results.get(face.dataset.listeningPerson),badge=face.querySelector('.competition-listening');if(badge)badge.hidden=!p||!listening(p);}
  for(const card of root.querySelectorAll('[data-competition-entry]')){const person=results.get(card.dataset.competitionEntry),time=card.querySelector('.competition-time');if(person&&time){const full=rankTime(person.seconds),value=card.classList.contains('competition-card')?podiumTime(person.seconds):full;if(time.textContent!==value)time.textContent=value;time.setAttribute('aria-label',full);time.title=full;}}}
 }

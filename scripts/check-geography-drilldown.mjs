@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import{readFile}from 'node:fs/promises';
 import{spawnSync}from 'node:child_process';
+import{runInNewContext}from 'node:vm';
+import{esc}from '../dist/js/ui.js';
+import{ownerUserRow}from '../dist/js/owner-user-list.js';
+import{createStaffAvatarManager}from '../dist/js/owner-team-avatars.js';
 import{PGlite}from '../tests/staff/node_modules/@electric-sql/pglite/dist/index.js';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{canonicalAccountLocation}from '../dist/js/account-location.js';
@@ -47,7 +51,7 @@ for(const query of ['?mode=geography-users&days=99&kind=city&city=Тюмень',
 const reply=await handler(request()),body=await reply.json();assert.equal(reply.status,200);assert.equal(body.selection.country,'Россия');assert.equal(body.secret,undefined);assert.equal(body.users[0].secret,undefined);assert.equal(body.period,7);
 const w=new Window(),host=w.document.createElement('div');w.document.body.append(host);let nextMembers=Promise.resolve(body),opened=null;const groupData=summarizeOwnerGeography([{city:'Тюмень',country:'Россия',accounts:7},{city:'Тюмень',country:null,accounts:1}],7);
 assert.equal(groupData.cities.length,1);assert.equal(groupData.cities[0].accounts,8);
-const geo=mountOwnerGeography(host,{load:async days=>({...groupData,period:days}),loadMembers:(days,selection,page)=>nextMembers,onUser:(user,button)=>opened={user,button}});await geo.refresh(7);assert.equal(host.querySelectorAll('.owner-geo-row').length,1);host.querySelector('.owner-geo-row').click();await new Promise(r=>setImmediate(r));assert.equal(host.querySelectorAll('[data-user]').length,1);assert.equal(host.querySelector('script'),null);host.querySelector('[data-user]').click();assert.equal(opened.user.id,id(1));host.querySelector('[data-geo-back]').click();assert.ok(host.querySelector('.owner-geo-row'));assert.equal(w.document.activeElement,host.querySelector('.owner-geo-row'));
+const geo=mountOwnerGeography(host,{load:async days=>({...groupData,period:days}),loadMembers:(days,selection,page)=>nextMembers,onUser:(user,button)=>opened={user,button}});await geo.refresh(7);assert.equal(host.querySelectorAll('.owner-geo-row').length,1);host.querySelector('.owner-geo-row').click();await new Promise(r=>setImmediate(r));assert.equal(host.querySelectorAll('[data-user]').length,1);assert.equal(host.querySelector('[data-member-avatar]').dataset.memberAvatar,id(1));assert.match(host.querySelector('[data-member-avatar]').textContent,/^<N$/);assert.equal(host.querySelector('#owner-geo-back'),host.querySelector('[data-geo-back]'));assert.equal(host.querySelector('script'),null);host.querySelector('[data-user]').click();assert.equal(opened.user.id,id(1));host.querySelector('[data-geo-back]').click();assert.ok(host.querySelector('.owner-geo-row'));assert.equal(w.document.activeElement,host.querySelector('.owner-geo-row'));
 host.querySelector('[data-geo-tab="countries"]').click();nextMembers=Promise.resolve({...body,selection:{kind:'country',city:null,country:'Россия'}});host.querySelector('.owner-geo-row').click();await new Promise(r=>setImmediate(r));assert.equal(host.querySelectorAll('[data-user]').length,1);
 let late;nextMembers=new Promise(r=>late=r);const refreshing=geo.refresh(7);await geo.refresh(30);late(body);await refreshing;await new Promise(r=>setImmediate(r));assert.equal(host.querySelectorAll('[data-user]').length,0,'Period change removes old private member list');geo.dispose();assert.equal(host.innerHTML,'');
 const members=mountOwnerGeoMembers(host,{load:async()=>{throw Object.assign(Error(),{status:403});},onDenied:()=>opened='denied'});await members.open(city,7);assert.equal(host.innerHTML,'');assert.equal(opened,'denied');members.dispose();
@@ -55,6 +59,22 @@ const members=mountOwnerGeoMembers(host,{load:async()=>{throw Object.assign(Erro
 // Leaving Visits must discard the nested city/country screen; card entry itself must retain it.
 nextMembers=Promise.resolve(body);const reentryGeo=mountOwnerGeography(host,{load:async days=>({...groupData,period:days}),loadMembers:()=>nextMembers,onUser:()=>{}});await reentryGeo.refresh(7);host.querySelector('.owner-geo-row').click();await new Promise(r=>setImmediate(r));host.querySelector('[data-user]').click();assert.ok(host.querySelector('[data-user]'),'Opening a profile does not reset the source city list');reentryGeo.resetView();assert.ok(host.querySelector('.owner-geo-list'));assert.equal(host.querySelector('[data-user]'),null);assert.equal(host.querySelector('[data-geo-tab="cities"]').getAttribute('aria-pressed'),'true');
 let delayedReentry;nextMembers=new Promise(resolve=>delayedReentry=resolve);host.querySelector('[data-geo-tab="countries"]').click();host.querySelector('.owner-geo-row').click();reentryGeo.resetView();delayedReentry({...body,selection:{kind:'country',city:null,country:'Россия'}});await new Promise(r=>setImmediate(r));assert.equal(host.querySelector('[data-user]'),null,'Late list cannot reopen a country after leaving Visits');assert.ok(host.querySelector('.owner-geo-list'));await reentryGeo.refresh(7);assert.equal(host.querySelector('[data-user]'),null);reentryGeo.dispose();
+const avatarSource=await read('dist/js/owner-geo-members.js'),avatarHost=w.document.createElement('div');
+w.document.body.append(avatarHost);
+const loadedPhotos=[],revokedPhotos=[];
+const mountWithPhotos=runInNewContext(avatarSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';mountOwnerGeoMembers',{
+ esc,ownerUserRow,createStaffAvatarManager:options=>createStaffAvatarManager({
+  ...options,includeNode:node=>node.closest('[data-user]').isConnected,interval:()=>1,clear(){},
+  load:async userId=>{loadedPhotos.push(userId);return userId===id(1)?new Blob([new Uint8Array([255,216,255,0])],{type:'image/jpeg'}):null;},
+  createUrl:()=> 'blob:private-geography-fixture',revokeUrl:url=>revokedPhotos.push(url)
+ })
+});
+const avatarMembers=mountWithPhotos(avatarHost,{load:async()=>({...body,selection:{kind:'country',city:null,country:'Россия'},users:[...body.users,{id:id(2),nickname:'Без фото',online:false}]})});
+await avatarMembers.open({kind:'country',city:null,country:'Россия'},7);await new Promise(resolve=>setImmediate(resolve));
+assert.deepEqual(loadedPhotos.sort(),[id(1),id(2)].sort());
+assert.equal(avatarHost.querySelector('[data-member-avatar="'+id(1)+'"] img').getAttribute('src'),'blob:private-geography-fixture');
+const fallbackAvatar=avatarHost.querySelector('[data-member-avatar="'+id(2)+'"]');assert.equal(fallbackAvatar.querySelector('img'),null);assert.equal(fallbackAvatar.textContent,'БЕ');
+avatarMembers.dispose();assert.deepEqual(revokedPhotos,['blob:private-geography-fixture']);assert.equal(avatarHost.innerHTML,'');
 const visitors=mountOwnerVisitors(host,{load:async days=>({days,guests:1,accounts:22,startedAt:'2026-11-03T08:53:26Z',updatedAt:new Date().toISOString()})});await visitors.refresh(7);assert.equal(host.querySelector('.owner-visitor-explanation').hidden,true);host.querySelector('[data-visitor-help]').click();assert.equal(host.querySelector('.owner-visitor-explanation').hidden,false);visitors.dispose();await w.happyDOM.close();
 const build=spawnSync(process.execPath,['scripts/build-account-location.mjs','--check'],{encoding:'utf8',windowsHide:true});assert.equal(build.status,0,build.stderr);
 console.log('PASS: shared JS/SQL location normalization, legacy backfill preservation, selected-city country persistence, country/city aggregation and bounded exact member pages, namesake separation, injection resistance, owner/MFA/session gates, stale/disposed private lists, profile entry/back focus and compact guest explanation.');
