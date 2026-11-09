@@ -4,7 +4,7 @@ import{reciterInfo}from './quran-reciters.js';
 import{rankTime,listenerRing,assignListenerRings,medalForRank}from './reciter-ranking-core.js';
 import{competitionAvatar}from './competition-client.js';
 import{awardArtwork}from './quran-awards-core.js';
-import{ownerVerified,verifyOwner}from './owner-auth.js';
+import{ownerVerified,verifyOwner,ownerNeedsMfa}from './owner-auth.js';
 import{counterSyncStatus}from './counter-account.js';
 let entries=[],rings={};
 const label=p=>p.mode==='profile'?p.nickname:p.initial;
@@ -34,7 +34,7 @@ export function bindCompetitionView(host){
    if(request!==selection||location.hash!==origin||counterSyncStatus().userId!==account||!button.isConnected||
     (host.id==='modal-content'&&!document.getElementById('modal')?.open))return;
    if(!entries.some(item=>item.id===p.id&&item.mode==='profile'))return;
-   if(owner&&ownerVerified()){
+   if((owner&&ownerVerified())||ownerNeedsMfa()){
     const selected=document.querySelector('[data-competition-period][aria-pressed="true"]')?.dataset.competitionPeriod;
     const params=new URLSearchParams(origin.split('?')[1]||'');
     if(selected&&params.has('period')&&params.get('period')!==selected){

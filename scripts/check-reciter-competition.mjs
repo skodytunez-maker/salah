@@ -53,9 +53,9 @@ assert.equal(clockHost.querySelector('.competition-card .competition-time').getA
 assert.equal(clockHost.querySelector('.competition-list-row .competition-time').textContent,'37 мин','Full list keeps written units');
 assert.equal(clockHost.querySelectorAll('.competition-card').length,3);
 const rankOrigin='#quran?view=reciters&filter=salah-top&period=day',rankLocation={hash:rankOrigin};
-let owner=false,gateCalls=0,rankPushes=[],profileDialog='';
+let owner=false,mfa=false,gateCalls=0,rankPushes=[],profileDialog='';
 Object.assign(ctx,{URLSearchParams,location:rankLocation,window:{dispatchEvent(){}},Event,
- counterSyncStatus:()=>({signedIn:true,userId:'test-owner'}),ownerVerified:()=>owner,verifyOwner:async()=>{gateCalls++;return owner;},
+ counterSyncStatus:()=>({signedIn:true,userId:'test-owner'}),ownerVerified:()=>owner,ownerNeedsMfa:()=>mfa,verifyOwner:async()=>{gateCalls++;return owner;},
  history:{state:null,pushState(state,_unused,url){rankPushes.push({state,url});rankLocation.hash=url;},replaceState(_state,_unused,url){rankLocation.hash=url;}},
  modal:html=>{profileDialog=html;},closeModal(){}});
 clockHost.innerHTML=api.competitionMarkup([{...people[0],mode:'profile',nickname:'Same name'},people[1]]);
@@ -67,6 +67,7 @@ assert.match(profileDialog,/Ник скрыт/);
 await rankButtons[0].onclick();assert.equal(gateCalls,1);assert.equal(rankPushes.length,0);assert.match(profileDialog,/Same name/);
 owner=true;
 await rankButtons[0].onclick();assert.deepEqual(JSON.parse(JSON.stringify(rankPushes)),[{state:{salahRankProfileBack:rankOrigin},url:'#admin?view=profile&listener='+people[0].id}]);
+owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[0].onclick();assert.equal(rankPushes.length,2,'An owner needing MFA enters the protected card route to complete verification');
 await clockWindow.happyDOM.abort();
 
 console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');
