@@ -62,12 +62,20 @@ clockHost.innerHTML=api.competitionMarkup([{...people[0],mode:'profile',nickname
 api.bindCompetitionView(clockHost);
 const rankButtons=clockHost.querySelectorAll('[data-competition-person]');
 await rankButtons[1].onclick();
-assert.equal(gateCalls,0,'An anonymous nickname cannot trigger an owner lookup');
-assert.match(profileDialog,/Ник скрыт/);
-await rankButtons[0].onclick();assert.equal(gateCalls,1);assert.equal(rankPushes.length,0);assert.match(profileDialog,/Same name/);
+assert.equal(rankPushes.length,0,'An ordinary account cannot open an anonymous participant’s owner card');
+assert.match(profileDialog,/Ник скрыт/);assert.doesNotMatch(profileDialog,/Hidden nickname/);
+await rankButtons[0].onclick();assert.equal(gateCalls,2);assert.equal(rankPushes.length,0);assert.match(profileDialog,/Same name/);
 owner=true;
-await rankButtons[0].onclick();assert.deepEqual(JSON.parse(JSON.stringify(rankPushes)),[{state:{salahRankProfileBack:rankOrigin},url:'#admin?view=profile&listener='+people[0].id}]);
-owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[0].onclick();assert.equal(rankPushes.length,2,'An owner needing MFA enters the protected card route to complete verification');
+await rankButtons[0].onclick();
+rankLocation.hash=rankOrigin;await rankButtons[1].onclick();
+assert.deepEqual(JSON.parse(JSON.stringify(rankPushes)),[people[0],people[1]].map(person=>({state:{salahRankProfileBack:rankOrigin},url:'#admin?view=profile&listener='+person.id})));
+for(const period of ['day','week','month','all']){
+ const back=rankOrigin.replace('period=day','period='+period);
+ rankLocation.hash=back;await rankButtons[1].onclick();
+ assert.equal(rankPushes.at(-1).state.salahRankProfileBack,back);
+ assert.equal(rankPushes.at(-1).url,'#admin?view=profile&listener='+people[1].id);
+}
+owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[1].onclick();assert.equal(rankPushes.length,7,'An owner needing MFA can verify from an anonymous participant’s protected card route');
 await clockWindow.happyDOM.abort();
 
 console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');

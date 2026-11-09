@@ -276,7 +276,7 @@ export function readOwnerUserSummaries(sql,page,listenerId=null){
  from(select distinct on(s.session_id) s.* from public.app_notification_status s join auth.sessions a on a.id=s.session_id and a.user_id=s.user_id where s.user_id=u.id and s.checked_at>now()-interval '90 days' order by s.session_id,s.checked_at desc,s.tab_id) n
  left join salah_push_private.devices d on d.id=n.push_device_id
  ) n on true where u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false
- and (${listenerId}::uuid is null or u.id=(select l.user_id from public.reciter_listener_visibility l join salah_competition_private.preferences pref on pref.user_id=l.user_id and pref.enabled where l.public_id=${listenerId}::uuid and l.mode='profile'))
+ and (${listenerId}::uuid is null or u.id=(select l.user_id from public.reciter_listener_visibility l join salah_competition_private.preferences pref on pref.user_id=l.user_id and pref.enabled where l.public_id=${listenerId}::uuid and l.mode in('initial','profile')))
  order by coalesce(p.online,false) desc,p.last_seen desc nulls last,u.id limit 50 offset ${(page-1)*50}`;
 }
 

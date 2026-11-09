@@ -26,14 +26,14 @@ export function bindCompetitionView(host){
  host.querySelectorAll('.competition-user-face img').forEach(image=>image.onerror=()=>image.remove());
  let selection=0;
  host.querySelectorAll('[data-competition-person]').forEach(button=>button.onclick=async()=>{
-  const p=entries.find(p=>p.id===button.dataset.competitionPerson);if(!p)return;
+  let p=entries.find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
   const request=++selection;
-  if(p.mode==='profile'&&(ownerVerified()||counterSyncStatus().signedIn)){
+  if(ownerVerified()||counterSyncStatus().signedIn){
    const origin=location.hash,account=counterSyncStatus().userId;
    const owner=ownerVerified()||await verifyOwner().catch(()=>false);
    if(request!==selection||location.hash!==origin||counterSyncStatus().userId!==account||!button.isConnected||
     (host.id==='modal-content'&&!document.getElementById('modal')?.open))return;
-   if(!entries.some(item=>item.id===p.id&&item.mode==='profile'))return;
+   p=entries.find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
    if((owner&&ownerVerified())||ownerNeedsMfa()){
     const selected=document.querySelector('[data-competition-period][aria-pressed="true"]')?.dataset.competitionPeriod;
     const params=new URLSearchParams(origin.split('?')[1]||'');

@@ -67,7 +67,7 @@ await db.exec(`alter table auth.users add column raw_user_meta_data jsonb defaul
 let rankReads=0;
 const rankConfig={...config,readRankUser:async id=>{rankReads++;return (await readOwnerUserSummaries(sql,1,id))[0];}};
 for(const overrides of [{getUser:async()=>({data:{user:{...user,id:second}}})},{getClaims:async()=>({data:{claims:{...claims,aal:'aal1'}}})},{isSessionActive:async()=>false}]){
- const denied=await createOwnerHandler({...rankConfig,...overrides})(request('rank-user',publicFirst));
+ const denied=await createOwnerHandler({...rankConfig,...overrides})(request('rank-user',publicSecond));
  assert.ok([401,403].includes(denied.status));
 }
 assert.equal(rankReads,0,'Unauthorized requests cannot resolve public ranking IDs');
@@ -78,13 +78,17 @@ const rankResponse=await rankHandler(request('rank-user',publicFirst));
 assert.equal(rankResponse.status,200);assert.equal(rankResponse.headers.get('cache-control'),'no-store, private');
 const rankUser=(await rankResponse.json()).user;
 assert.equal(rankUser.id,first);assert.equal(rankUser.nickname,'Same name');assert.ok(!Object.hasOwn(rankUser,'email'));
-assert.equal((await rankHandler(request('rank-user',publicSecond))).status,404,'Anonymous ranking rows cannot be resolved');
+const anonymousRankResponse=await rankHandler(request('rank-user',publicSecond));
+assert.equal(anonymousRankResponse.status,200);
+assert.equal((await anonymousRankResponse.json()).user.id,second,'An MFA owner can open an anonymous ranking row by its exact public ID');
 assert.equal((await rankHandler(request('rank-user',first))).status,404,'Internal IDs cannot be used as ranking IDs');
 await db.exec(`update public.reciter_listener_visibility set mode='hidden' where public_id='${publicFirst}'`);
 assert.equal((await rankHandler(request('rank-user',publicFirst))).status,404,'A recently hidden participant cannot be opened from a stale board');
+await db.exec(`update salah_competition_private.preferences set enabled=false where user_id='${second}'`);
+assert.equal((await rankHandler(request('rank-user',publicSecond))).status,404,'An account that stops participating cannot be opened from a stale board');
 assert.equal((await readOwnerUserSummaries(sql,1)).length,2,'The ordinary owner list still includes both accounts');
 await db.close();
-console.log('PASS: the protected ranking lookup uses the exact public ID, denies hidden/anonymous rows, and requires active owner MFA.');
+console.log('PASS: the protected ranking lookup uses the exact public ID, resolves anonymous rows only for the active MFA owner, and denies hidden rows.');
 console.log('PASS: real SQL keeps accounts separate, adds every reciter, returns stored awards only and uses a read-only transaction.');
 
 const waits=new Map(),states=[],revoked=[];let next=0;
