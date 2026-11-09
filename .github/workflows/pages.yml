@@ -93,6 +93,8 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run sync:web
           node scripts/build-web-update.mjs
+      - name: Stage iPhone media return test for Pages
+        run: cp -R tests/ios-media-return dist/media-return-test
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload SALAH
