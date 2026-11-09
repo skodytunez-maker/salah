@@ -1,3 +1,4 @@
+import{isLiveListeningDay,liveListeningPacket,createLiveListeningDb}from './live-listening.mjs';
 import{currentTitleHolders}from './period-titles.mjs';
 import{listenerPresencePacket,createListenerPresenceDb}from './listener-presence.mjs';
 import postgres from 'npm:postgres@3.4.9';
@@ -51,6 +52,7 @@ Deno.serve(async req=>{
   return new Response(bytes,{headers:{...headers,'Content-Type':'image/jpeg'}});
  }
  if(req.method==='GET'&&params.get('winners')==='1')return reply(await awardWinners(sql));
+ if(req.method==='GET'&&params.get('live')==='1'){const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));if(!isLiveListeningDay(day))return reply({error:'invalid_day'},400);return reply(await createLiveListeningDb(sql).read(day));}
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
   const holders=await currentTitleHolders(sql);
@@ -64,6 +66,7 @@ Deno.serve(async req=>{
  }
  if(req.method!=='POST')return reply({error:'method'},405);
  if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}
+ if(body?.action==='live-sample'){let packet;try{packet=liveListeningPacket(body);}catch{return reply({error:'invalid_live_sample'},400);}const live=createLiveListeningDb(sql),result=await live.update(user,packet);if(result.retry)return reply({error:'retry'},429);if(result.updated)await live.read(packet.day);return reply(result);}
  if(body?.action==='presence'){let packet;try{packet=listenerPresencePacket(body);}catch{return reply({error:'invalid_presence'},400);}const result=await presenceDb.update(user,packet);return result.retry?reply({error:'retry'},429):reply(result);}
  if(body?.action==='learning-progress'){
   let packet;try{packet=learningPacket(body);}catch{return reply({error:'invalid_progress'},400);}
@@ -96,5 +99,5 @@ Deno.serve(async req=>{
   await sql.begin(async tx=>{await tx`select pg_advisory_xact_lock(28520261011)`;await tx`update salah_competition_private.preferences set enabled=coalesce(${body.enabled??null},enabled),notify=coalesce(${body.notify??null},notify),period=coalesce(${body.period??null},period),updated_at=now()where user_id=${user.id}::uuid`;if(body.enabled===true)await tx`update public.reciter_listener_visibility set mode='initial',public_id=gen_random_uuid(),updated_at=now()where user_id=${user.id}::uuid and mode='hidden'`;await tx`delete from salah_competition_private.rank_state where user_id=${user.id}::uuid`;await tx`delete from salah_competition_private.events where user_id=${user.id}::uuid`;await tx`select public.competition_refresh()`;});return reply({ok:true});
  }
  return reply({error:'invalid_action'},400);
- }catch(e){if(e?.status===401)return reply({error:'sign_in_required'},401);const reason=String(e?.message||'');return reply({error:['disabled','devices_limit','invalid_growth'].includes(reason)?reason:reason==='retry'?'retry':'temporarily_unavailable'},reason==='retry'?429:['disabled','devices_limit','invalid_growth'].includes(reason)?400:503);}
+ }catch(e){if(e?.status===401)return reply({error:'sign_in_required'},401);const reason=String(e?.message||'');return reply({error:['disabled','devices_limit','invalid_growth','invalid_live_growth'].includes(reason)?reason:reason==='retry'?'retry':'temporarily_unavailable'},reason==='retry'?429:['disabled','devices_limit','invalid_growth','invalid_live_growth'].includes(reason)?400:503);}
 });
