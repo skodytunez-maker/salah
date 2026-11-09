@@ -561,3 +561,7 @@ New announcement460 includes only a real borderless Mushaf screenshot and the ne
 ## 466 — owner profile from the SALAH leaderboard
 
 A verified owner can tap a visible nickname in Top SALAH to open the existing owner profile. Back returns to the selected ranking period. The server resolves the public ranking identifier only after checking the live owner session and MFA. Anonymous and hidden rows cannot resolve to owner profiles from the leaderboard. Preserve the current illustrated announcement, acknowledgement and expiry.
+
+## 467 — owner cards for anonymous ranking rows
+
+The verified owner can open the existing owner card for any listed participant, including rows shown as initials. Other accounts may open only their own ranking summary. The public ranking continues to respect profile visibility. City, country and user geography remain visible only to the verified owner. The existing owner-access gate requires the current owner session and MFA, and hidden rows still cannot be resolved from the leaderboard. Preserve the current illustrated announcement, acknowledgement and expiry.

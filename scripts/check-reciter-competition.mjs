@@ -7,6 +7,7 @@ import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{competitionSnapshot,competitionDay,competitionSubscription}from '../supabase/functions/reciter-competition/core.mjs';
+import{publicListenerRows}from '../supabase/functions/reciter-competition/listener-labels.mjs';
 import{competitionPushEvent,dispatchCompetitionPush}from '../supabase/functions/background-reminders/competition-push.mjs';
 import{notification}from '../supabase/functions/background-reminders/core.mjs';
 import{reciterInfo}from '../dist/js/quran-reciters.js';
@@ -54,20 +55,49 @@ assert.equal(clockHost.querySelector('.competition-list-row .competition-time').
 assert.equal(clockHost.querySelectorAll('.competition-card').length,3);
 const rankOrigin='#quran?view=reciters&filter=salah-top&period=day',rankLocation={hash:rankOrigin};
 let owner=false,mfa=false,gateCalls=0,rankPushes=[],profileDialog='';
+const rankDialog=clockWindow.document.createElement('dialog');rankDialog.id='modal';
+rankDialog.innerHTML='<div id="modal-content"></div>';clockWindow.document.body.append(rankDialog);
+const rankList=rankDialog.querySelector('#modal-content');
 Object.assign(ctx,{URLSearchParams,location:rankLocation,window:{dispatchEvent(){}},Event,
- counterSyncStatus:()=>({signedIn:true,userId:'test-owner'}),ownerVerified:()=>owner,ownerNeedsMfa:()=>mfa,verifyOwner:async()=>{gateCalls++;return owner;},
+ counterSyncStatus:()=>({signedIn:true,userId:'test-owner'}),competitionOwn:()=>({id:people[0].id}),ownerVerified:()=>owner,ownerNeedsMfa:()=>mfa,verifyOwner:async()=>{gateCalls++;return owner;},
  history:{state:null,pushState(state,_unused,url){rankPushes.push({state,url});rankLocation.hash=url;},replaceState(_state,_unused,url){rankLocation.hash=url;}},
- modal:html=>{profileDialog=html;},closeModal(){}});
-clockHost.innerHTML=api.competitionMarkup([{...people[0],mode:'profile',nickname:'Same name'},people[1]]);
-api.bindCompetitionView(clockHost);
-const rankButtons=clockHost.querySelectorAll('[data-competition-person]');
-await rankButtons[1].onclick();
-assert.equal(gateCalls,0,'An anonymous nickname cannot trigger an owner lookup');
-assert.match(profileDialog,/Ник скрыт/);
-await rankButtons[0].onclick();assert.equal(gateCalls,1);assert.equal(rankPushes.length,0);assert.match(profileDialog,/Same name/);
+ modal:html=>{profileDialog=html;rankList.innerHTML=html;rankDialog.open=true;},closeModal(){rankDialog.open=false;}});
+const rankRows=[{...people[0],mode:'profile',nickname:'Same name'},...people.slice(1)];
+const publicRank=publicListenerRows(rankRows.map(p=>({...p,city:'private fixture city',country:'private fixture country'})));
+assert.ok(publicRank.every(p=>!Object.hasOwn(p,'city')&&!Object.hasOwn(p,'country')),'Location never enters the public ranking payload');
+assert.ok(!Object.hasOwn(publicRank[1],'nickname')&&!Object.hasOwn(publicRank[1],'hasPhoto'));
+clockHost.innerHTML=api.competitionMarkup(rankRows);
+assert.equal(clockHost.querySelectorAll('[data-competition-person]').length,0,'Guests cannot open ranking profiles');
+const ownAccess={ownId:people[0].id};
+clockHost.innerHTML=api.competitionMarkup(rankRows,ownAccess);
+api.bindCompetitionView(clockHost,ownAccess);
+let rankButtons=clockHost.querySelectorAll('[data-competition-person]');
+assert.equal(rankButtons.length,1,'Ordinary accounts can only open their own row');
+await rankButtons[0].onclick();assert.match(profileDialog,/Same name/);assert.equal(gateCalls,0);
+clockHost.querySelector('#competition-all').onclick();
+assert.equal(rankList.querySelectorAll('[data-competition-person]').length,1,'The full list enforces the same card restrictions');
+assert.doesNotMatch(rankList.innerHTML,/Hidden nickname/);
+const ownerAccess={owner:true,ownId:people[0].id};
+clockHost.innerHTML=api.competitionMarkup(rankRows,ownerAccess);
+api.bindCompetitionView(clockHost,ownerAccess);
+rankButtons=clockHost.querySelectorAll('[data-competition-person]');
+profileDialog='';await rankButtons[1].onclick();
+assert.equal(rankPushes.length,0,'Stale owner buttons cannot open somebody else’s card');
+assert.equal(profileDialog,'');
 owner=true;
-await rankButtons[0].onclick();assert.deepEqual(JSON.parse(JSON.stringify(rankPushes)),[{state:{salahRankProfileBack:rankOrigin},url:'#admin?view=profile&listener='+people[0].id}]);
-owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[0].onclick();assert.equal(rankPushes.length,2,'An owner needing MFA enters the protected card route to complete verification');
+await rankButtons[0].onclick();
+rankLocation.hash=rankOrigin;await rankButtons[1].onclick();
+assert.deepEqual(JSON.parse(JSON.stringify(rankPushes)),[people[0],people[1]].map(person=>({state:{salahRankProfileBack:rankOrigin},url:'#admin?view=profile&listener='+person.id})));
+for(const period of ['day','week','month','all']){
+ const back=rankOrigin.replace('period=day','period='+period);
+ rankLocation.hash=back;await rankButtons[1].onclick();
+ assert.equal(rankPushes.at(-1).state.salahRankProfileBack,back);
+ assert.equal(rankPushes.at(-1).url,'#admin?view=profile&listener='+people[1].id);
+}
+rankLocation.hash=rankOrigin;clockHost.querySelector('#competition-all').onclick();
+const last=rankList.querySelector('[data-competition-person="'+people[5].id+'"]');
+assert.ok(last);await last.onclick();assert.equal(rankPushes.at(-1).url,'#admin?view=profile&listener='+people[5].id);
+owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[1].onclick();assert.equal(rankPushes.length,8,'An owner needing MFA can verify from an anonymous participant’s protected card route');
 await clockWindow.happyDOM.abort();
 
 console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');
@@ -78,5 +108,22 @@ const oldPlaces=new Map([['a',{id:'a',rank:1,role:'podium',x:100,y:100,reciter:'
 const pageSource=await fs.readFile(new URL('../dist/js/competition-page.js',import.meta.url),'utf8');let domWrites=0,timeUpdates=0,clockRows=[people[0]],refreshCallback;const eventHandlers={},host={querySelector:()=>null,querySelectorAll:()=>[],set innerHTML(value){domWrites++},get innerHTML(){return ''}};
 const pageContext=vm.createContext({reciterFilterTabs,recentReciters,listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion,competitionListeningTotal:()=>null,personalDataAllowed,URLSearchParams,location:{hash:'#quran?view=reciters&filter=salah-top'},read:(key,fallback)=>fallback,write:()=>true,esc:escape,toast(){},counterSyncStatus:()=>({signedIn:false}),RECITERS:[{id:'ar.alafasy'}],RECITER_FAVORITES_KEY:'fixture-favorites',normalizeReciterFavorites:()=>[],RANK_INTENTION_PHRASES:['Не забывай о намерении'],rankTime,listenerPrivacyMarkup:()=>'',bindPopularConsent(){},cachedCompetition:()=>null,preloadCompetition:async()=>[],clearCompetitionCache(){},personalListening:()=>({totals:{}}),loadCompetition:async()=>clockRows,competitionOwn:()=>null,refreshCompetitionOwn:async()=>null,saveCompetitionSettings:async()=>{},connectCompetitionNotifications:async()=>{},syncCompetitionNow:async()=>{},competitionMarkup:()=>'<p>ranking fixture</p>',bindCompetitionView(){},captureCompetitionLayout:()=>new Map(),animateCompetitionChange(){},updateCompetitionTimes:(target,rows)=>{timeUpdates++;assert.equal(rows[0].seconds,2460)},window:{addEventListener:(name,fn)=>eventHandlers[name]=fn,removeEventListener(){}},document:{hidden:false,addEventListener(){},removeEventListener(){}},setInterval:fn=>{if(!refreshCallback)refreshCallback=fn;return 1},clearInterval(){},Date});
 const pageApi=vm.runInContext(pageSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountCompetition})',pageContext);const cleanup=pageApi.mountCompetition(host,()=>'<h1>Коран</h1>');await new Promise(resolve=>setImmediate(resolve));const beforePoll=domWrites;clockRows=[{...people[0],seconds:2460}];refreshCallback();await new Promise(resolve=>setImmediate(resolve));assert.equal(domWrites,beforePoll,'Seconds polling must preserve the existing page and portraits');assert.equal(timeUpdates,1);cleanup();console.log('PASS: repeated polling updates seconds in place, without remounting portrait cards.');
+
+let rankingActor={signedIn:true,userId:'fixture-owner'},completeOwnerCheck;
+const accessStates=[];
+Object.assign(pageContext,{counterSyncStatus:()=>rankingActor,ownerVerified:()=>false,ownerNeedsMfa:()=>false,
+ verifyOwner:()=>new Promise(resolve=>{completeOwnerCheck=resolve;}),cachedCompetition:()=>clockRows,
+ competitionMarkup:(_rows,access)=>{accessStates.push(access.owner);return '<p>ranking role fixture</p>';},
+ updateCompetitionTimes(){}});
+const closeAccessTest=pageApi.mountCompetition(host,()=>'<h1>Коран</h1>');
+assert.equal(accessStates.at(-1),false,'Cards stay closed while checking owner access');
+completeOwnerCheck(true);await new Promise(resolve=>setImmediate(resolve));
+assert.equal(accessStates.at(-1),true,'The normal Top entry enables owner cards after verification');
+rankingActor={signedIn:true,userId:'ordinary'};
+eventHandlers['salah:counter-status']();
+assert.equal(accessStates.at(-1),false,'Account changes immediately remove owner actions');
+completeOwnerCheck(false);await new Promise(resolve=>setImmediate(resolve));
+assert.equal(accessStates.at(-1),false);closeAccessTest();
+console.log('PASS: owner card actions require verified role on Top entry and reset immediately on account change.');
 
 const medalBefore=new Map([['first',{id:'first',rank:1,role:'podium',x:100,y:0}],['second',{id:'second',rank:2,role:'podium',x:0,y:20}],['third',{id:'third',rank:3,role:'podium',x:200,y:20}],['fourth',{id:'fourth',rank:4,role:'row',x:0,y:200}]]);const medalAfter=[{id:'fourth',rank:1,role:'podium',x:100,y:0},{id:'first',rank:2,role:'podium',x:0,y:20},{id:'second',rank:3,role:'podium',x:200,y:20}];const changes=competitionMotionPlan(medalBefore,medalAfter);assert.equal(changes.find(p=>p.id==='fourth').medal,'gold');assert.equal(changes.find(p=>p.id==='first').medal,'silver');assert.equal(changes.find(p=>p.id==='second').medal,'bronze');const samePlace=competitionMotionPlan(medalBefore,[{id:'first',rank:1,role:'podium',x:110,y:0}]);assert.equal(samePlace[0].medal,'','Layout shifts must not retrigger medal flashes');for(const [medal,color]of [['gold','#d8be88'],['silver','#c2cbd8'],['bronze','#bf926c']]){const frames=competitionGlowFrames(medal,'none');assert.ok(frames[1].boxShadow.includes(color));assert.equal(frames.at(-1).boxShadow,'none','Pulse restores the original styling');}assert.deepEqual(competitionMotionPlan(medalBefore,medalAfter,true),[]);console.log('PASS: changed podium places glow in their destination medal color, stable places do not flash and reduced motion is respected.');
