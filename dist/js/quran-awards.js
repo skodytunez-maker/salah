@@ -106,6 +106,6 @@ export async function showWinnerCard(row,{isActive=()=>true,own=false}={}){
  try{const canvas=await renderWinnerCard(row);const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error()),'image/png'));if(!valid||!preview.isConnected||!isActive())return;file=new File([blob],'SALAH-'+row.kind+'-'+row.start+'.png',{type:'image/png'});canvas.className='award-card-preview';canvas.setAttribute('aria-label',awardInfo(row.kind).title+' · '+awardShareIdentity(row.listener).label);preview.replaceChildren(canvas);line.textContent='Сторис · 1080 × 1920';send.disabled=save.disabled=false;}catch{if(line.isConnected)line.textContent='Не удалось создать карточку.';}
  save.onclick=()=>{if(valid&&isActive()&&file)downloadAward(file);};
  send.onclick=async()=>{if(!valid||!isActive()||!file)return;try{if(navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:'SALAH · '+awardInfo(row.kind).title});else{downloadAward(file);toast('Карточка сохранена для отправки');}}catch(e){if(e.name!=='AbortError')toast('Не удалось поделиться. Сохраните карточку.');}};
- if(own)bindAwardReplay(root,{isActive,onClose:current=>showAwardDetail(current,row.kind,{isActive})});
+ if(own)bindAwardReplay(root,row,{isActive,onClose:()=>void showWinnerCard(row,{isActive,own})});
  protectAwardDialog(isActive);
 }
