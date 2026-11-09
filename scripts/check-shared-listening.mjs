@@ -39,15 +39,17 @@ try{
   await pg.query("insert into salah_competition_private.totals values($1,$2,$3,$4,$4,now()-interval '30 seconds')",[p.id,p.device,reciter,p.base]);
   await pg.query('insert into salah_competition_private.days values($1,$2,$3,$4,$5,$5)',[p.id,p.device,reciter,day,p.base]);
  }
- const db=createLiveListeningDb({begin:work=>pg.transaction(tx=>work({unsafe:async(sql,params)=>(await tx.query(sql,params)).rows}))});
+ const db=createLiveListeningDb({unsafe:async(sql,params)=>(await pg.query(sql,params)).rows,begin:work=>pg.transaction(tx=>work({unsafe:async(sql,params)=>(await tx.query(sql,params)).rows}))});
  const packet=(p,n)=>liveListeningPacket({action:'live-sample',device:p.device,day,rows:[{reciter,total:n,dayTotal:n}]});
  const official=async()=>Number((await pg.query("select sum(seconds) s from public.competition_scores('all',$1::date)",[day])).rows[0].s);
- const refresh=async()=>{await pg.exec("update public.salah_shared_listening set sampled_at=now()-interval '2 seconds'");return db.read(day);};
- const base=await db.read(day);
+ const refresh=async()=>{await pg.exec("update public.salah_shared_listening set sampled_at=now()-interval '2 seconds'");return db.publish(day);};
+ assert.equal(await db.current(day),null,'Viewer requests cannot create a frame');
+ const base=await db.publish(day);
  assert.equal(base.totals.all,300);
- assert.deepEqual(await db.read(day),base,'Readers within a second get the same frame');
+ assert.deepEqual(await db.current(day),base,'Readers get the same published frame');
  assert.equal((await db.update(people[0],packet(people[0],101))).ok,true);
  assert.equal((await db.update(people[1],packet(people[1],201))).ok,true);
+ assert.deepEqual(await db.current(day),base,'Reading never recomputes the aggregate');
  const shared=await refresh();
  assert.deepEqual(shared.totals,{day:302,week:302,month:302,all:302});
  assert.equal(await official(),300,'Live samples cannot affect the ranked score');

@@ -52,7 +52,7 @@ Deno.serve(async req=>{
   return new Response(bytes,{headers:{...headers,'Content-Type':'image/jpeg'}});
  }
  if(req.method==='GET'&&params.get('winners')==='1')return reply(await awardWinners(sql));
- if(req.method==='GET'&&params.get('live')==='1'){const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));if(!isLiveListeningDay(day))return reply({error:'invalid_day'},400);return reply(await createLiveListeningDb(sql).read(day));}
+ if(req.method==='GET'&&params.get('live')==='1'){const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));if(!isLiveListeningDay(day))return reply({error:'invalid_day'},400);return reply(await createLiveListeningDb(sql).current(day));}
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
   const holders=await currentTitleHolders(sql);
@@ -66,7 +66,7 @@ Deno.serve(async req=>{
  }
  if(req.method!=='POST')return reply({error:'method'},405);
  if(Number(req.headers.get('content-length')||0)>200000)return reply({error:'body'},413);const text=await req.text();if(text.length>200000)return reply({error:'body'},413);let body;try{body=JSON.parse(text);}catch{return reply({error:'body'},400);}
- if(body?.action==='live-sample'){let packet;try{packet=liveListeningPacket(body);}catch{return reply({error:'invalid_live_sample'},400);}const live=createLiveListeningDb(sql),result=await live.update(user,packet);if(result.retry)return reply({error:'retry'},429);if(result.updated)await live.read(packet.day);return reply(result);}
+ if(body?.action==='live-sample'){let packet;try{packet=liveListeningPacket(body);}catch{return reply({error:'invalid_live_sample'},400);}const live=createLiveListeningDb(sql),result=await live.update(user,packet);if(result.retry)return reply({error:'retry'},429);if(result.updated)await live.publish(packet.day);return reply(result);}
  if(body?.action==='presence'){let packet;try{packet=listenerPresencePacket(body);}catch{return reply({error:'invalid_presence'},400);}const result=await presenceDb.update(user,packet);return result.retry?reply({error:'retry'},429):reply(result);}
  if(body?.action==='learning-progress'){
   let packet;try{packet=learningPacket(body);}catch{return reply({error:'invalid_progress'},400);}

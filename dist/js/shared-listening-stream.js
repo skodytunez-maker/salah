@@ -9,7 +9,7 @@ export function createSharedListeningStream({getDay,onChange,environment=globalT
   const controller=new AbortController(),version=generation;pending=controller;lastRead=Date.now();
   try{const response=await fetcher(OWNER_PROJECT_URL+'/functions/v1/reciter-competition?live=1&day='+day,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(5000)])});
    if(!response.ok)throw Error('shared_total_unavailable');
-   const frame=await response.json();if(version===generation)accept(frame);
+   const frame=await response.json();if(!frame)throw Error('shared_total_unavailable');if(version===generation)accept(frame);
   }catch{if(version===generation&&store.get()&&Date.now()-lastAccepted>10000){store.reset();onChange(null);}}finally{if(pending===controller)pending=null;}
  }
  function disconnect(){generation++;pending?.abort();pending=null;const old=client;client=null;channel=null;if(old){void old.removeAllChannels().catch(()=>{});old.realtime.disconnect();}}

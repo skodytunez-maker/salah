@@ -12,10 +12,17 @@ export function liveListeningPacket(body,now=Date.now()){
 export function createLiveListeningDb(sql){
  const query=(connection,text,values=[])=>connection.unsafe(text,values);
  const frame=row=>row?{day:String(row.day).slice(0,10),revision:Number(row.revision),at:Number(row.sampled_ms),totals:row.totals}:null;
- async function read(day){
+ const selectFrame="select day::text,revision,extract(epoch from sampled_at)*1000 as sampled_ms,totals from public.salah_shared_listening where day=$1::date";
+ async function current(day){
+  const [saved]=await query(sql,selectFrame+" and sampled_at>clock_timestamp()-interval '10 seconds'",[day]);
+  return frame(saved);
+ }
+ async function publish(day){
   return sql.begin(async tx=>{
-   await query(tx,"select pg_advisory_xact_lock(46520261108)");
-   const [cached]=await query(tx,"select day::text,revision,extract(epoch from sampled_at)*1000 as sampled_ms,totals from public.salah_shared_listening where day=$1::date and sampled_at>clock_timestamp()-interval '1 second'",[day]);
+   await query(tx,"set local statement_timeout='1500ms'");
+   const [lock]=await query(tx,"select pg_try_advisory_xact_lock(46520261108) acquired");
+   if(!lock.acquired)return null;
+   const [cached]=await query(tx,selectFrame+" and sampled_at>clock_timestamp()-interval '1 second'",[day]);
    if(cached)return frame(cached);
    const rows=await query(tx,"select periods.period,coalesce(sum(s.seconds)filter(where p.enabled and v.mode<>'hidden' and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)),0)::text as seconds from(values('day'),('week'),('month'),('all'))periods(period) left join lateral salah_competition_private.live_competition_scores(periods.period,$1::date)s on true left join salah_competition_private.preferences p using(user_id) left join public.reciter_listener_visibility v using(user_id) left join auth.users u on u.id=s.user_id group by periods.period",[day]);
    const totals={};for(const row of rows){const n=Number(row.seconds);if(!['day','week','month','all'].includes(row.period)||!Number.isSafeInteger(n)||n<0)throw Error('invalid_total');totals[row.period]=n;}
@@ -47,6 +54,6 @@ export function createLiveListeningDb(sql){
    return{ok:true,updated:true,needsSnapshot};
   });
  }
- return{read,update};
+ return{current,publish,update};
 }
 
