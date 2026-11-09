@@ -564,4 +564,4 @@ A verified owner can tap a visible nickname in Top SALAH to open the existing ow
 
 ## 467 — owner cards for anonymous ranking rows
 
-The verified owner can open the existing owner card for any listed participant, including rows shown as initials. The public ranking continues to respect profile visibility. The existing owner-access gate requires the current owner session and MFA, and hidden rows still cannot be resolved from the leaderboard. Preserve the current illustrated announcement, acknowledgement and expiry.
+The verified owner can open the existing owner card for any listed participant, including rows shown as initials. Other accounts may open only their own ranking summary. The public ranking continues to respect profile visibility. City, country and user geography remain visible only to the verified owner. The existing owner-access gate requires the current owner session and MFA, and hidden rows still cannot be resolved from the leaderboard. Preserve the current illustrated announcement, acknowledgement and expiry.

@@ -2,7 +2,7 @@ import{read,write}from './storage.js';
 import{esc,modal,closeModal}from './ui.js';
 import{reciterInfo}from './quran-reciters.js';
 import{rankTime,listenerRing,assignListenerRings,medalForRank}from './reciter-ranking-core.js';
-import{competitionAvatar}from './competition-client.js';
+import{competitionAvatar,competitionOwn}from './competition-client.js';
 import{awardArtwork}from './quran-awards-core.js';
 import{ownerVerified,verifyOwner,ownerNeedsMfa}from './owner-auth.js';
 import{counterSyncStatus}from './counter-account.js';
@@ -13,22 +13,26 @@ const listening=p=>['initial','profile'].includes(p.mode)&&Number.isFinite(p.lis
 const headphones=p=>'<span class="competition-listening" role="img" aria-label="Слушает Коран" '+(listening(p)?'':'hidden')+'><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3M4 12h3v8H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 1-2Zm16 0h-3v8h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-1-2Z"/></svg></span>';
 const avatar=p=>'<span class="competition-user-face" data-listening-person="'+esc(p.id)+'" style="--listener-ring:'+(medalRings[medalForRank(p.rank)]||rings[p.id]||listenerRing(p.id))+'"><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(competitionAvatar(p.id))+'" alt="" loading="lazy">':'')+headphones(p)+'</span>';
 const leaderAwards=p=>{const kinds=[...new Set(Array.isArray(p.awards)?p.awards:[])].filter(k=>k==='week'||k==='month');return kinds.length?'<span class="competition-award-badges" data-count="'+kinds.length+'">'+kinds.map(k=>'<span class="competition-leader-award"><span class="competition-leader-picture competition-leader-'+k+'"><img src="'+awardArtwork(k)+'" alt=""></span><small>'+(k==='week'?'Лидер недели':'Лидер месяца')+'</small></span>').join('')+'</span>':'';};
-const person=p=>'<button type="button" class="competition-person" data-competition-person="'+esc(p.id)+'" aria-label="'+esc(p.mode==='profile'?'Профиль: '+p.nickname:'Анонимный слушатель')+'"><span class="competition-person-identity">'+avatar(p)+'<strong>'+esc(label(p))+'</strong></span>'+leaderAwards(p)+'</button>';
+const person=(p,access)=>{
+ const content='<span class="competition-person-identity">'+avatar(p)+'<strong>'+esc(label(p))+'</strong></span>'+leaderAwards(p);
+ if(!access.owner&&p.id!==access.ownId)return '<span class="competition-person" style="cursor:default">'+content+'</span>';
+ return '<button type="button" class="competition-person" data-competition-person="'+esc(p.id)+'" aria-label="'+esc(p.mode==='profile'?'Профиль: '+p.nickname:'Карточка слушателя')+'">'+content+'</button>';
+};
 const picture=p=>'<a class="competition-reciter" href="#quran?view=reciters&reciter='+encodeURIComponent(p.reciter)+'" aria-label="Слушать: '+esc(reciterInfo(p.reciter).name)+'"><img class="reciter-portrait" src="./'+esc(reciterInfo(p.reciter).portrait||'assets/person.svg')+'" alt="'+esc(reciterInfo(p.reciter).name)+'" loading="lazy"><small>'+esc(reciterInfo(p.reciter).name)+'</small></a>';
 const podiumTime=seconds=>{const value=Math.max(0,Math.floor(seconds||0));return Math.floor(value/3600)+':'+String(Math.floor(value%3600/60)).padStart(2,'0')+':'+String(value%60).padStart(2,'0');};
-const row=p=>'<article class="competition-list-row" data-competition-entry="'+esc(p.id)+'" data-competition-rank="'+p.rank+'" data-competition-reciter="'+esc(p.reciter)+'"><b class="competition-place">'+p.rank+'</b>'+picture(p)+'<div>'+person(p)+'<span class="competition-time">'+esc(rankTime(p.seconds))+'</span></div></article>';
-export function competitionMarkup(rows){
+const row=(p,access)=>'<article class="competition-list-row" data-competition-entry="'+esc(p.id)+'" data-competition-rank="'+p.rank+'" data-competition-reciter="'+esc(p.reciter)+'"><b class="competition-place">'+p.rank+'</b>'+picture(p)+'<div>'+person(p,access)+'<span class="competition-time">'+esc(rankTime(p.seconds))+'</span></div></article>';
+export function competitionMarkup(rows,access={}){
  entries=rows.slice();const saved=read('listener-ring-colors-v1',{});rings=assignListenerRings(entries,saved);if(Object.keys(rings).length)write('listener-ring-colors-v1',Object.fromEntries(Object.entries({...saved,...rings}).slice(-512)));
  if(!entries.length)return '<p class="reciter-empty">Здесь появятся слушатели и их любимые чтецы.</p>';
- const top=entries.slice(0,3);return '<section class="competition-showcase" aria-label="Первые пять слушателей"><div class="competition-podium competition-podium-'+top.length+'">'+top.map((p,i)=>'<article class="competition-card competition-slot-'+(i+1)+' rank-medal-'+medalForRank(p.rank)+'" data-competition-entry="'+esc(p.id)+'" data-competition-rank="'+p.rank+'" data-competition-reciter="'+esc(p.reciter)+'"><span class="competition-place">'+p.rank+' место</span>'+picture(p)+person(p)+'<b class="competition-time" aria-label="'+esc(rankTime(p.seconds))+'" title="'+esc(rankTime(p.seconds))+'">'+esc(podiumTime(p.seconds))+'</b></article>').join('')+'</div><div class="competition-next">'+entries.slice(3,5).map(row).join('')+'</div>'+(top.some((p,i)=>i&&p.rank===top[i-1].rank)?'<p class="rank-tie-note">Одинаковое время — одинаковое место.</p>':'')+'<button type="button" class="button secondary rank-open-all" id="competition-all">Весь рейтинг<span>'+entries.length+'</span></button></section>';
+ const top=entries.slice(0,3);return '<section class="competition-showcase" aria-label="Первые пять слушателей"><div class="competition-podium competition-podium-'+top.length+'">'+top.map((p,i)=>'<article class="competition-card competition-slot-'+(i+1)+' rank-medal-'+medalForRank(p.rank)+'" data-competition-entry="'+esc(p.id)+'" data-competition-rank="'+p.rank+'" data-competition-reciter="'+esc(p.reciter)+'"><span class="competition-place">'+p.rank+' место</span>'+picture(p)+person(p,access)+'<b class="competition-time" aria-label="'+esc(rankTime(p.seconds))+'" title="'+esc(rankTime(p.seconds))+'">'+esc(podiumTime(p.seconds))+'</b></article>').join('')+'</div><div class="competition-next">'+entries.slice(3,5).map(p=>row(p,access)).join('')+'</div>'+(top.some((p,i)=>i&&p.rank===top[i-1].rank)?'<p class="rank-tie-note">Одинаковое время — одинаковое место.</p>':'')+'<button type="button" class="button secondary rank-open-all" id="competition-all">Весь рейтинг<span>'+entries.length+'</span></button></section>';
 }
-export function bindCompetitionView(host){
+export function bindCompetitionView(host,access={}){
  host.querySelectorAll('.competition-user-face img').forEach(image=>image.onerror=()=>image.remove());
  let selection=0;
  host.querySelectorAll('[data-competition-person]').forEach(button=>button.onclick=async()=>{
   let p=entries.find(item=>item.id===button.dataset.competitionPerson);if(!p)return;
   const request=++selection;
-  if(ownerVerified()||counterSyncStatus().signedIn){
+  if(access.owner){
    const origin=location.hash,account=counterSyncStatus().userId;
    const owner=ownerVerified()||await verifyOwner().catch(()=>false);
    if(request!==selection||location.hash!==origin||counterSyncStatus().userId!==account||!button.isConnected||
@@ -47,8 +51,9 @@ export function bindCompetitionView(host){
     return;
    }
   }
+  if(!counterSyncStatus().signedIn||competitionOwn()?.id!==p.id)return;
   modal('<div class="modal-head"><h2>'+esc(p.mode==='profile'?p.nickname:'Ник скрыт')+'</h2><button class="text-button" data-close>Закрыть</button></div>'+avatar(p)+'<p>'+esc(rankTime(p.seconds))+' прослушано</p>'+(p.mode==='initial'?'<p class="muted">Слушатель выбрал анонимность.</p>':''));});
- const all=host.querySelector('#competition-all');if(all)all.onclick=()=>{modal('<div class="modal-head"><h2>Топ SALAH</h2><button class="text-button" data-close>Закрыть</button></div><div class="competition-full-list">'+entries.map(row).join('')+'</div>');const root=document.getElementById('modal-content');root.querySelectorAll('a').forEach(link=>link.onclick=closeModal);bindCompetitionView(root);};
+ const all=host.querySelector('#competition-all');if(all)all.onclick=()=>{modal('<div class="modal-head"><h2>Топ SALAH</h2><button class="text-button" data-close>Закрыть</button></div><div class="competition-full-list">'+entries.map(p=>row(p,access)).join('')+'</div>');const root=document.getElementById('modal-content');root.querySelectorAll('a').forEach(link=>link.onclick=closeModal);bindCompetitionView(root,access);};
 }
 
 export function updateCompetitionTimes(host,rows){
