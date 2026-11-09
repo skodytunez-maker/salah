@@ -12,7 +12,7 @@ import{esc,title}from './ui.js';
 import{notificationLabels}from './notification-status.js';
 import{ownerUserCard,validOwnerUserId,bindOwnerNotificationInfo}from './owner-user-card.js';
 import{createOwnerUserDetail}from './owner-user-detail.js';
-import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerGeography,ownerGeoMembers,ownerVisitors,ownerUsers,ownerReleases,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
+import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerGeography,ownerGeoMembers,ownerVisitors,ownerUsers,ownerRankUser,ownerReleases,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
 let screen=0,period=7;
 
 async function showMfa(app,active,options){
@@ -98,7 +98,8 @@ export async function showAdmin(app,options={}){
   }catch(error){if(active()&&historyOpen)historyContent.textContent=error.message;}
  };
  const panels=Object.fromEntries(['home','users','activity','teachers','team','tools'].map(view=>[view,app.querySelector('#owner-panel-'+view)])),tabs=Array.from(app.querySelectorAll('[data-view]'));
- const requestedView=new URLSearchParams(location.hash.split('?')[1]||'').get('view');const initialView=requestedView==='overview'?'activity':requestedView;let selectedView=initialView==='profile'?'users':Object.hasOwn(panels,initialView)?initialView:'home',usersPage=1,usersLoad=0,usersBusy=false,usersLoaded=false,usersSnapshot=[],selectedUser=null,profileOpener=null;
+ const entryHash=location.hash,entryParams=new URLSearchParams(entryHash.split('?')[1]||'');
+ const requestedView=entryParams.get('view'),listenerId=requestedView==='profile'&&validOwnerUserId(entryParams.get('listener'))?entryParams.get('listener'):null;const initialView=requestedView==='overview'?'activity':requestedView;let selectedView=initialView==='profile'?'users':Object.hasOwn(panels,initialView)?initialView:'home',usersPage=1,usersLoad=0,usersBusy=false,usersLoaded=false,usersSnapshot=[],selectedUser=null,profileOpener=null;
  const cardArea=app.querySelector('#owner-panel-users');cardArea.insertAdjacentHTML('beforeend','<section class="owner-profile-screen" id="owner-user-detail" hidden><header class="owner-profile-navigation"><button type="button" class="text-button" id="owner-user-back">'+actionLabel('back','Пользователи')+'</button><button type="button" class="text-button" id="owner-user-refresh">Обновить</button></header><div id="owner-user-card"></div><p class="muted owner-card-status" id="owner-user-card-status" role="status" aria-live="polite"></p></section>');
  const detail=app.querySelector('#owner-user-detail'),card=app.querySelector('#owner-user-card'),cardStatus=app.querySelector('#owner-user-card-status');
  app.append?.(detail);
@@ -108,10 +109,35 @@ export async function showAdmin(app,options={}){
  let listPosition=null;
  const closeCard=()=>{const previous=selectedUser?.id;profileDetail.reset();privateProfile={};selectedUser=null;detail.hidden=true;card.innerHTML='';cardStatus.textContent='';app.classList.remove('owner-profile-open');document.body?.classList.remove('owner-profile-page');app.querySelector('#owner-users-list').hidden=false;if(profileOpener?.isConnected!==false&&profileOpener?.focus)profileOpener.focus({preventScroll:true});else Array.from(app.querySelectorAll('[data-user]')).find(button=>button.dataset.user===previous)?.focus({preventScroll:true});profileOpener=null;if(listPosition)window.scrollTo?.({...listPosition,behavior:'instant'});};
  const cardHistory=createOwnerCardHistory({dismiss:closeCard,isActive:active,win:window,profileUrl:href=>href.split('#')[0]+'#admin?view=profile',onRoute:()=>window.dispatchEvent?.(new Event('salah:route-history'))});
- const openUser=(user,opener=null)=>{if(!validOwnerUserId(user.id)||!cardHistory.open())return;profileOpener=opener;listPosition={left:window.scrollX||0,top:window.scrollY||0};selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;app.classList.add('owner-profile-open');document.body?.classList.add('owner-profile-page');window.scrollTo?.({top:0,left:0,behavior:'instant'});card.scrollTop=0;card.querySelector('#owner-user-name').focus({preventScroll:true});void profileDetail.select(user.id);};
- app.querySelector('#owner-user-back').onclick=()=>cardHistory.back();
- bindOwnerCardNavigation(detail,{dismiss:()=>cardHistory.back(),isOpen:()=>!!selectedUser});
- app.querySelector('#owner-user-refresh').onclick=()=>{void profileDetail.refresh();return readUsers(true);};
+ const openUser=(user,opener=null)=>{if(!validOwnerUserId(user.id)||(!listenerId&&!cardHistory.open()))return;profileOpener=opener;listPosition={left:window.scrollX||0,top:window.scrollY||0};selectedUser=user;renderCard();cardStatus.textContent='';app.querySelector('#owner-users-list').hidden=true;detail.hidden=false;app.classList.add('owner-profile-open');document.body?.classList.add('owner-profile-page');window.scrollTo?.({top:0,left:0,behavior:'instant'});card.scrollTop=0;card.querySelector('#owner-user-name').focus({preventScroll:true});void profileDetail.select(user.id);};
+ const backButton=app.querySelector('#owner-user-back'),refreshButton=app.querySelector('#owner-user-refresh');
+ let rankRequest=0,returningToRank=false;
+ const returnFromCard=()=>{
+  if(!listenerId){cardHistory.back();return;}
+  if(returningToRank)return;
+  returningToRank=true;rankRequest++;
+  if(/^#quran\?/.test(window.history?.state?.salahRankProfileBack||''))window.history.back();
+  else location.replace('#quran?view=reciters&filter=salah-top');
+ };
+ const clearRankCard=message=>{profileDetail.reset();selectedUser=null;card.innerHTML='';cardStatus.textContent=message;};
+ const loadRankUser=async()=>{
+  const request=++rankRequest;
+  detail.hidden=false;app.classList.add('owner-profile-open');document.body?.classList.add('owner-profile-page');
+  cardStatus.textContent='Загружаем карточку…';refreshButton.disabled=true;
+  const current=()=>active()&&location.hash===entryHash&&request===rankRequest;
+  try{
+   const user=await ownerRankUser(listenerId);
+   if(!current())return;
+   if(!ownerVerified()||!validOwnerUserId(user?.id)){clearRankCard('Карточка пользователя недоступна.');return;}
+   if(selectedUser?.id===user.id){selectedUser=user;renderCard();cardStatus.textContent='';void profileDetail.refresh();}
+   else openUser(user);
+  }catch{if(current())clearRankCard('Карточка пользователя недоступна. Обновите рейтинг или попробуйте ещё раз.');}
+  finally{if(current())refreshButton.disabled=false;}
+ };
+ backButton.onclick=returnFromCard;
+ if(listenerId)backButton.innerHTML=actionLabel('back','Топ SALAH');
+ bindOwnerCardNavigation(detail,{dismiss:returnFromCard,isOpen:()=>!!selectedUser||!!listenerId});
+ refreshButton.onclick=()=>{if(listenerId)return loadRankUser();void profileDetail.refresh();return readUsers(true);};
   const readUsers=async(quiet=false)=>{if(quiet&&usersBusy)return;usersBusy=true;const version=++usersLoad,area=app.querySelector('#owner-users-list'),count=app.querySelector('#owner-users-count');if(!quiet||!area.children.length)area.innerHTML='<p class="muted" role="status">Загружаем пользователей…</p>';try{const result=await ownerUsers(usersPage);if(!active()||version!==usersLoad)return;if(!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.users))throw Error('Список пользователей временно недоступен.');count.textContent=result.total.toLocaleString('ru-RU');const date=value=>value?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Ещё не входил';usersSnapshot=result.users;usersLoaded=true;
  if(selectedUser){const current=usersSnapshot.find(user=>user.id===selectedUser.id);if(current){selectedUser=current;renderCard();cardStatus.textContent='';}else cardStatus.textContent='Пользователь сейчас на другой странице списка. Данные карточки пока не обновлены.';}
  const focusedUid=document.activeElement?.closest?.('[data-user]')?.dataset.user;area.innerHTML='<p class="owner-users-heading"><span>Зарегистрировано: '+result.total+'</span><span class="presence-status is-online">'+(result.online||0)+' в сети</span></p><div class="owner-user-rows">'+(result.users.length?result.users.map(user=>ownerUserRow(user)).join(''):'<p class="muted">Пока нет зарегистрированных пользователей.</p>')+'</div>'+(result.total>50?'<div class="button-row"><button class="text-button" id="users-prev" '+(usersPage===1?'disabled':'')+'>Назад</button><span>'+usersPage+' / '+Math.ceil(result.total/50)+'</span><button class="text-button" id="users-next" '+(usersPage*50>=result.total?'disabled':'')+'>Далее</button></div>':'')+'<button class="text-button" id="users-refresh">Обновить список</button>';area.querySelectorAll('[data-user]').forEach(button=>button.onclick=()=>{const user=usersSnapshot.find(row=>row.id===button.dataset.user);if(user)openUser(user);});void hydrateUserAvatars();if(focusedUid&&detail.hidden)Array.from(area.querySelectorAll('[data-user]')).find(button=>button.dataset.user===focusedUid)?.focus({preventScroll:true});const prev=area.querySelector('#users-prev'),next=area.querySelector('#users-next');if(prev)prev.onclick=()=>{usersPage--;readUsers();};if(next)next.onclick=()=>{usersPage++;readUsers();};area.querySelector('#users-refresh').onclick=()=>readUsers();}catch(error){if(active()&&version===usersLoad){if(selectedUser){cardStatus.textContent=error.message;return;}if(quiet&&usersLoaded){area.querySelector('#users-refresh').textContent='Не удалось обновить · Повторить';return;}count.textContent='—';area.innerHTML='<p class="muted" role="status">'+esc(error.message)+'</p><button type="button" class="text-button" id="users-retry">Повторить</button>';area.querySelector('#users-retry').onclick=()=>readUsers();}}finally{if(version===usersLoad)usersBusy=false;}};
@@ -121,10 +147,11 @@ export async function showAdmin(app,options={}){
  const selectView=view=>{if(view==='overview')view='activity';if(!Object.hasOwn(panels,view))view='home';if(!workspace.canLeave(view))return false;if(selectedView==='activity'&&view!=='activity')geography.resetView();workspace.select(view);if(view!=='users'&&selectedUser)cardHistory.back();selectedView=view;if(view!=='users'){listAvatars?.dispose();listAvatars=null;}else void hydrateUserAvatars();for(const [name,panel]of Object.entries(panels))panel.hidden=name!==view;for(const tab of tabs){const selected=tab.dataset.view===view;tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');}app.querySelector('#owner-periods').hidden=view!=='activity';if(view==='users'&&usersLoad>0)void readUsers(true);return true;};
  tabs.forEach((tab,index)=>{tab.onclick=()=>workspace.navigate(tab.dataset.view);tab.onkeydown=event=>{const target=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowRight'?(index+1)%tabs.length:event.key==='ArrowLeft'?(index+tabs.length-1)%tabs.length:null;if(target===null)return;event.preventDefault();workspace.navigate(tabs[target].dataset.view);if(tabs[target].getAttribute('aria-selected')==='true')tabs[target].focus();};});
  selectView(selectedView);
- const presenceTimer=setInterval(()=>{if(!active()){app.ownerDispose?.();return;}if(!document.hidden&&selectedView==='users')void readUsers(true);},30000);
+ const presenceTimer=setInterval(()=>{if(!active()){app.ownerDispose?.();return;}if(!listenerId&&!document.hidden&&selectedView==='users')void readUsers(true);},30000);
  const closePolling=()=>{if(!active())app.ownerDispose?.();};window.addEventListener('hashchange',closePolling);
- app.ownerHandleRoute=hash=>{if(!active()||!ownerVerified()||hash.split('?')[0]!=='#admin')return false;const requested=new URLSearchParams(hash.split('?')[1]||'').get('view')||'home';if(requested==='profile')return !!selectedUser;const target=requested==='overview'?'activity':Object.hasOwn(panels,requested)?requested:'home';if(target!==selectedView)selectView(target);return true;};
- app.ownerDispose=()=>{stopOwnerReturn();visitors.dispose();geography.dispose();stopActivity();delete app.ownerHandleRoute;document.body?.classList.remove('owner-profile-page');listAvatars?.dispose();listAvatars=null;if(avatarScrollTimer!==null)clearTimeout(avatarScrollTimer);window.removeEventListener('scroll',avatarScroll,true);workspace.dispose();profileDetail.dispose();privateProfile={};cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
+ app.ownerHandleRoute=hash=>{if(!active()||!ownerVerified()||hash.split('?')[0]!=='#admin'||listenerId&&hash!==entryHash)return false;const requested=new URLSearchParams(hash.split('?')[1]||'').get('view')||'home';if(requested==='profile')return !!selectedUser;const target=requested==='overview'?'activity':Object.hasOwn(panels,requested)?requested:'home';if(target!==selectedView)selectView(target);return true;};
+ const stopRankAccess=listenerId?onOwnerChange(()=>{if(active()&&!ownerVerified()){rankRequest++;clearRankCard('Подтвердите вход владельца.');refreshButton.disabled=false;}}):()=>{};
+ app.ownerDispose=()=>{rankRequest++;stopRankAccess();stopOwnerReturn();visitors.dispose();geography.dispose();stopActivity();delete app.ownerHandleRoute;document.body?.classList.remove('owner-profile-page');listAvatars?.dispose();listAvatars=null;if(avatarScrollTimer!==null)clearTimeout(avatarScrollTimer);window.removeEventListener('scroll',avatarScroll,true);workspace.dispose();profileDetail.dispose();privateProfile={};cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
  let load=0;
  const readStats=async()=>{
   void visitors.refresh(period);
@@ -147,6 +174,7 @@ export async function showAdmin(app,options={}){
  app.querySelector('#owner-refresh').onclick=readStats;
  app.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{period=Number(button.dataset.period);app.querySelectorAll('[data-period]').forEach(item=>item.setAttribute('aria-pressed',String(Number(item.dataset.period)===period)));readStats();});
  if(app.querySelector('#owner-sign-out'))app.querySelector('#owner-sign-out').onclick=async()=>{try{await signOutOwner();if(active())showAdmin(app,options);}catch(error){if(active())app.querySelector('#owner-activity-status').textContent=error.message;}};
+ if(listenerId){void loadRankUser();return;}
  if(initialView==='profile'&&window.location){window.history?.replaceState(window.history.state,'','#admin?view=users');window.dispatchEvent?.(new Event('salah:route-history'));}readUsers();readStats();
 }
 

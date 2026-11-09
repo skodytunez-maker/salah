@@ -4,7 +4,7 @@ import{createOwnerUserDetail}from '../dist/js/owner-user-detail.js';
 import{ownerUserCard}from '../dist/js/owner-user-card.js';
 import{PGlite}from '../tests/staff/node_modules/@electric-sql/pglite/dist/index.js';
 const source=await fs.readFile(new URL('../supabase/functions/owner-access/index.ts',import.meta.url),'utf8');
-const {createOwnerHandler,readOwnerUserDetails}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {createOwnerHandler,readOwnerUserDetails,readOwnerUserSummaries}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const owner='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7',first='11111111-1111-4111-8111-111111111111',second='22222222-2222-4222-8222-222222222222';
 const user={id:owner,email_confirmed_at:'2026-10-16',factors:[{status:'verified',factor_type:'totp'}]},claims={sub:owner,iss:'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',aal:'aal2',session_id:first};
 const sample={context:{city:'Тюмень',reading:{page:127,edition:'madani',savedAt:'2026-11-02T00:00:00.000Z'}},id:first,connected:true,hasAvatar:true,periods:{all:90600,day:120,week:600,month:900},reciters:[{id:'ar.alafasy',seconds:90600}],awards:[{kind:'hours25',count:1,earnedAt:'2026-10-16T00:00:00Z'}]};
@@ -50,7 +50,41 @@ await db.exec(`insert into salah_competition_private.awards(user_id,kind,earned_
 const prior=await readOwnerUserDetails(sql,first),weekly=prior.awards.find(x=>x.kind==='week');assert.equal(weekly.count,2,'Owner sees every earned victory after the title moves to someone else');assert.equal(weekly.wins.length,2);assert.deepEqual(weekly.wins.map(x=>x.start),['2026-10-19','2026-10-12']);assert.ok(!weekly.wins.some(x=>x.start==='2026-10-26'),'Another account cannot leak into dated wins');
 const dated=await createOwnerHandler({...config,readUser:async()=>({...sample,awards:[{...weekly,wins:[...weekly.wins,{start:'2026-02-30',end:'2026-03-02',seconds:10},{start:'2026-10-19',end:'2026-10-26',seconds:-1}]}]})})(request());const datedProfile=await dated.json();assert.equal(datedProfile.awards[0].wins.length,2);assert.equal(datedProfile.awards[0].wins[0].seconds,42791);assert.deepEqual(Object.keys(datedProfile.awards[0].wins[0]).sort(),['end','seconds','start'],'Private profile only returns whitelisted dated results');
 const historyHtml=ownerUserCard({nickname:'Previous winner'},{details:{...sample,awards:datedProfile.awards}});assert.match(historyHtml,/owner-award-with-history/);assert.match(historyHtml,/19 окт/);assert.match(historyHtml,/25 окт/);assert.ok(!historyHtml.includes('26 окт. 2026 г. — 1 нояб.'));assert.ok(!historyHtml.includes('data-award-celebrate'),'Owner cannot present another user reward as their own');
-const empty=await readOwnerUserDetails(sql,'33333333-3333-4333-8333-333333333333');assert.equal(empty,null);await db.close();
+const empty=await readOwnerUserDetails(sql,'33333333-3333-4333-8333-333333333333');assert.equal(empty,null);
+
+const publicFirst='33333333-3333-4333-8333-333333333333',publicSecond='44444444-4444-4444-8444-444444444444';
+await db.exec(`alter table auth.users add column raw_user_meta_data jsonb default '{"nickname":"Same name"}', add column created_at timestamptz default now(), add column last_sign_in_at timestamptz;
+ alter table salah_competition_private.preferences add column enabled boolean default true;
+ insert into salah_competition_private.preferences(user_id) values('${second}');
+ create table public.reciter_listener_visibility(user_id uuid, public_id uuid unique, mode text);
+ insert into public.reciter_listener_visibility values('${first}','${publicFirst}','profile'),('${second}','${publicSecond}','initial');
+ create table public.app_presence(user_id uuid,app text,last_seen timestamptz,active boolean,app_version int,version_checked_at timestamptz,tab_id text);
+ create table auth.sessions(id uuid,user_id uuid);
+ create table public.app_notification_status(user_id uuid,session_id uuid,tab_id text,checked_at timestamptz,enabled boolean,permission text,native_until timestamptz,push_device_id uuid);
+ create schema salah_push_private;
+ create table salah_push_private.devices(id uuid,enabled boolean,subscription jsonb,preferences jsonb,updated_at timestamptz);
+ create table salah_counter_private.components(user_id uuid,saved_at timestamptz);`);
+let rankReads=0;
+const rankConfig={...config,readRankUser:async id=>{rankReads++;return (await readOwnerUserSummaries(sql,1,id))[0];}};
+for(const overrides of [{getUser:async()=>({data:{user:{...user,id:second}}})},{getClaims:async()=>({data:{claims:{...claims,aal:'aal1'}}})},{isSessionActive:async()=>false}]){
+ const denied=await createOwnerHandler({...rankConfig,...overrides})(request('rank-user',publicFirst));
+ assert.ok([401,403].includes(denied.status));
+}
+assert.equal(rankReads,0,'Unauthorized requests cannot resolve public ranking IDs');
+const rankHandler=createOwnerHandler(rankConfig);
+assert.equal((await rankHandler(request('rank-user',publicFirst+'&page=1'))).status,400);
+assert.equal((await rankHandler(request('rank-user',publicFirst+'&ids='+publicSecond))).status,400);
+const rankResponse=await rankHandler(request('rank-user',publicFirst));
+assert.equal(rankResponse.status,200);assert.equal(rankResponse.headers.get('cache-control'),'no-store, private');
+const rankUser=(await rankResponse.json()).user;
+assert.equal(rankUser.id,first);assert.equal(rankUser.nickname,'Same name');assert.ok(!Object.hasOwn(rankUser,'email'));
+assert.equal((await rankHandler(request('rank-user',publicSecond))).status,404,'Anonymous ranking rows cannot be resolved');
+assert.equal((await rankHandler(request('rank-user',first))).status,404,'Internal IDs cannot be used as ranking IDs');
+await db.exec(`update public.reciter_listener_visibility set mode='hidden' where public_id='${publicFirst}'`);
+assert.equal((await rankHandler(request('rank-user',publicFirst))).status,404,'A recently hidden participant cannot be opened from a stale board');
+assert.equal((await readOwnerUserSummaries(sql,1)).length,2,'The ordinary owner list still includes both accounts');
+await db.close();
+console.log('PASS: the protected ranking lookup uses the exact public ID, denies hidden/anonymous rows, and requires active owner MFA.');
 console.log('PASS: real SQL keeps accounts separate, adds every reciter, returns stored awards only and uses a read-only transaction.');
 
 const waits=new Map(),states=[],revoked=[];let next=0;

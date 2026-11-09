@@ -34,7 +34,7 @@ assert.equal(await dispatchCompetitionPush({db,send:async()=>{sends++;return 'se
 claimed=false;db.competitionActive=async()=>false;assert.equal(await dispatchCompetitionPush({db,send:async()=>{throw Error('Must not notify after retaking place')},clock:()=>now}),0);
 const source=await fs.readFile(new URL('../dist/js/competition-view.js',import.meta.url),'utf8'),escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ctx=vm.createContext({personalDataAllowed,read:()=>({}),write:()=>true,esc:escape,modal(){},closeModal(){},reciterInfo,rankTime,listenerRing,assignListenerRings,medalForRank,awardArtwork,competitionAvatar:()=>{throw Error('Anonymous photo must never be requested')}});
-const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({competitionMarkup,avatar,updateCompetitionTimes})',ctx);
+const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({competitionMarkup,avatar,bindCompetitionView,updateCompetitionTimes})',ctx);
 const people=Array.from({length:6},(_,i)=>({id:'00000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),mode:'initial',initial:'SA',reciter:'ar.alafasy',seconds:2400-i*60,rank:i+1,nickname:'Hidden nickname',hasPhoto:false}));
 const html=api.competitionMarkup(people);assert.equal((html.match(/class="competition-card /g)||[]).length,3);assert.equal((html.match(/class="competition-list-row"/g)||[]).length,2);assert.ok(!html.includes('Hidden nickname'));assert.match(html,/rank-medal-gold/);assert.match(html,/rank-medal-silver/);assert.match(html,/rank-medal-bronze/);assert.match(html,/40 мин/);assert.match(html,/Весь рейтинг/);
 const tied=api.competitionMarkup([{...people[0],rank:1},{...people[1],rank:1},{...people[2],rank:3}]);assert.equal((tied.match(/rank-medal-gold/g)||[]).length,2);assert.match(tied,/rank-medal-bronze/);
@@ -52,6 +52,22 @@ assert.equal(clockHost.querySelector('.competition-card .competition-time').text
 assert.equal(clockHost.querySelector('.competition-card .competition-time').getAttribute('aria-label'),'1 ч 0 мин 1 с');
 assert.equal(clockHost.querySelector('.competition-list-row .competition-time').textContent,'37 мин','Full list keeps written units');
 assert.equal(clockHost.querySelectorAll('.competition-card').length,3);
+const rankOrigin='#quran?view=reciters&filter=salah-top&period=day',rankLocation={hash:rankOrigin};
+let owner=false,mfa=false,gateCalls=0,rankPushes=[],profileDialog='';
+Object.assign(ctx,{URLSearchParams,location:rankLocation,window:{dispatchEvent(){}},Event,
+ counterSyncStatus:()=>({signedIn:true,userId:'test-owner'}),ownerVerified:()=>owner,ownerNeedsMfa:()=>mfa,verifyOwner:async()=>{gateCalls++;return owner;},
+ history:{state:null,pushState(state,_unused,url){rankPushes.push({state,url});rankLocation.hash=url;},replaceState(_state,_unused,url){rankLocation.hash=url;}},
+ modal:html=>{profileDialog=html;},closeModal(){}});
+clockHost.innerHTML=api.competitionMarkup([{...people[0],mode:'profile',nickname:'Same name'},people[1]]);
+api.bindCompetitionView(clockHost);
+const rankButtons=clockHost.querySelectorAll('[data-competition-person]');
+await rankButtons[1].onclick();
+assert.equal(gateCalls,0,'An anonymous nickname cannot trigger an owner lookup');
+assert.match(profileDialog,/Ник скрыт/);
+await rankButtons[0].onclick();assert.equal(gateCalls,1);assert.equal(rankPushes.length,0);assert.match(profileDialog,/Same name/);
+owner=true;
+await rankButtons[0].onclick();assert.deepEqual(JSON.parse(JSON.stringify(rankPushes)),[{state:{salahRankProfileBack:rankOrigin},url:'#admin?view=profile&listener='+people[0].id}]);
+owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[0].onclick();assert.equal(rankPushes.length,2,'An owner needing MFA enters the protected card route to complete verification');
 await clockWindow.happyDOM.abort();
 
 console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');

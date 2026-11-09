@@ -130,6 +130,14 @@ export const checkAccountSession=createSessionGuard({getAuth:()=>authClient().au
 
 export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error("Неизвестная страница.");const {data,error}=await authClient().auth.getSession();if(error)throw Error("Войдите снова.");return callOwner(data.session,"?mode=users&page="+page);}
 
+export async function ownerRankUser(id){
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный участник рейтинга.');
+ const {data,error}=await authClient().auth.getSession();
+ if(error)throw Error('Войдите снова.');
+ const result=await callOwner(data.session,'?mode=rank-user&ids='+encodeURIComponent(id));
+ return result.user;
+}
+
 export async function ownerUserDetails(id){
  if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
  const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
