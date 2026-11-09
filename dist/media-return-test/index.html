@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#070b16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SALAH · Плеер">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'; manifest-src 'self'; media-src https://server11.mp3quran.net https://cdn.mp3quran.net; base-uri 'none'; form-action 'none'">
+  <title>SALAH · Аль Имран</title>
+  <link rel="manifest" href="./manifest.json">
+  <link id="portrait-icon" rel="icon" type="image/jpeg" href="../assets/reciters/yasseraldossari.jpg">
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #070b16; color: #f4f0e7; }
+    body { max-width: 28rem; margin: auto; padding: 2rem 1.25rem; }
+    img { width: 7.5rem; aspect-ratio: 1; object-fit: cover; border-radius: 1rem; }
+    audio { width: 100%; margin-block: .5rem 1rem; }
+    nav { display: flex; flex-wrap: wrap; gap: .75rem; }
+    a { color: #f2d492; padding: .55rem .7rem; border: 1px solid #626879; border-radius: .6rem; }
+    a[aria-current="page"] { background: #30394a; }
+    p { line-height: 1.5; }
+  </style>
+  <script type="module" src="./player.js"></script>
+</head>
+<body>
+  <main>
+    <p>SALAH · Проверка возврата из Пункта управления</p>
+    <img src="../assets/reciters/yasseraldossari.jpg" alt="Ясир ад-Даусари">
+    <h1>Аль Имран</h1>
+    <p>Ясир ад-Даусари</p>
+    <nav aria-label="Режим обложки">
+      <a id="page-mode" href="./index.html">Портрет со страницы</a>
+      <a id="metadata-mode" href="./index.html?mode=metadata">Портрет из плеера</a>
+    </nav>
+    <p id="mode"></p>
+    <audio id="recitation" aria-label="Аль Имран в чтении Ясира ад-Даусари" controls preload="none" src="https://server11.mp3quran.net/yasser/003.mp3"></audio>
+    <p>Включи чтение, открой Пункт управления и нажми на портрет. Проверь, виден ли портрет и какое приложение открылось.</p>
+  </main>
+</body>
+</html>
