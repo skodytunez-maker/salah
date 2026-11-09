@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import{createOwnerUserDetail}from '../dist/js/owner-user-detail.js';
-import{ownerUserCard}from '../dist/js/owner-user-card.js';
+import{ownerUserCard,bindOwnerAwardHistory}from '../dist/js/owner-user-card.js';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{PGlite}from '../tests/staff/node_modules/@electric-sql/pglite/dist/index.js';
 const source=await fs.readFile(new URL('../supabase/functions/owner-access/index.ts',import.meta.url),'utf8');
 const {createOwnerHandler,readOwnerUserDetails,readOwnerUserSummaries}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
@@ -49,7 +50,23 @@ await db.exec(`insert into salah_competition_private.awards(user_id,kind,earned_
  insert into salah_competition_private.award_periods values('week','2026-11-02');`);
 const prior=await readOwnerUserDetails(sql,first),weekly=prior.awards.find(x=>x.kind==='week');assert.equal(weekly.count,2,'Owner sees every earned victory after the title moves to someone else');assert.equal(weekly.wins.length,2);assert.deepEqual(weekly.wins.map(x=>x.start),['2026-10-19','2026-10-12']);assert.ok(!weekly.wins.some(x=>x.start==='2026-10-26'),'Another account cannot leak into dated wins');
 const dated=await createOwnerHandler({...config,readUser:async()=>({...sample,awards:[{...weekly,wins:[...weekly.wins,{start:'2026-02-30',end:'2026-03-02',seconds:10},{start:'2026-10-19',end:'2026-10-26',seconds:-1}]}]})})(request());const datedProfile=await dated.json();assert.equal(datedProfile.awards[0].wins.length,2);assert.equal(datedProfile.awards[0].wins[0].seconds,42791);assert.deepEqual(Object.keys(datedProfile.awards[0].wins[0]).sort(),['end','seconds','start'],'Private profile only returns whitelisted dated results');
-const historyHtml=ownerUserCard({nickname:'Previous winner'},{details:{...sample,awards:datedProfile.awards}});assert.match(historyHtml,/owner-award-with-history/);assert.match(historyHtml,/19 окт/);assert.match(historyHtml,/25 окт/);assert.ok(!historyHtml.includes('26 окт. 2026 г. — 1 нояб.'));assert.ok(!historyHtml.includes('data-award-celebrate'),'Owner cannot present another user reward as their own');
+const awards=[...datedProfile.awards,...sample.awards,{kind:'founder',count:1,earnedAt:null}];
+const win=new Window({url:'https://fixture.invalid'}),card=win.document.createElement('div');
+win.document.body.append(card);
+card.innerHTML=ownerUserCard({nickname:'Previous winner'},{details:{...sample,awards}});
+bindOwnerAwardHistory(card,awards);
+const dialog=card.querySelector('.owner-award-dialog'),week=card.querySelector('[data-owner-award="week"]');
+assert.equal(card.querySelectorAll('.owner-award-grid > li > button').length,3,'All award types use the same tile');
+assert.doesNotMatch(card.textContent,/19 окт/,'History stays out of the grid');
+week.click();assert.equal(dialog.open,true);assert.match(dialog.textContent,/Лидер недели/);assert.match(dialog.textContent,/19 окт/);assert.match(dialog.textContent,/25 окт/);assert.match(dialog.textContent,/11 ч 53 мин 11 с/);
+assert.doesNotMatch(dialog.textContent,/26 окт\. 2026 г\. — 1 нояб\./);
+assert.equal(card.querySelector('[data-award-celebrate]'),null,'Viewing an owner card cannot trigger another user’s presentation');
+dialog.querySelector('button').click();assert.equal(dialog.open,false);
+await new Promise(resolve=>setImmediate(resolve));
+card.querySelector('[data-owner-award="hours25"]').click();assert.match(dialog.textContent,/16 октября 2026/);assert.doesNotMatch(dialog.textContent,/Лидер недели/);dialog.close();
+await new Promise(resolve=>setImmediate(resolve));
+card.querySelector('[data-owner-award="founder"]').click();assert.match(dialog.textContent,/Дата получения не сохранена/);dialog.close();
+await win.happyDOM.abort();
 const empty=await readOwnerUserDetails(sql,'33333333-3333-4333-8333-333333333333');assert.equal(empty,null);
 
 const publicFirst='33333333-3333-4333-8333-333333333333',publicSecond='44444444-4444-4444-8444-444444444444';

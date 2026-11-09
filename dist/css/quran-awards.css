@@ -119,11 +119,6 @@
 
 /* A quiet presentation uses the actual earned medal, with its own colour and date. */
 .award-replay{width:100%;margin-top:16px;min-height:46px}
-.owner-profile-awards li.owner-award-with-history{grid-column:1 / -1;display:block;padding:0}
-.owner-award-with-history details{width:100%;border:1px solid #ffffff15;border-radius:14px;padding:0 12px;box-sizing:border-box}
-.owner-award-with-history summary{display:flex;align-items:center;gap:10px;cursor:pointer;min-height:76px;padding:8px 0;box-sizing:border-box;list-style:none}
-.owner-award-with-history summary::-webkit-details-marker{display:none}.owner-award-with-history summary::after{content:'⌄';margin-left:auto;color:#c8b889}.owner-award-with-history details[open] summary::after{transform:rotate(180deg)}
-.owner-profile-awards .owner-award-with-history ol{list-style:none;padding:0;margin:0 0 10px;border-top:1px solid #ffffff15}.owner-profile-awards .owner-award-with-history ol li{display:grid;gap:4px;padding:10px 0;border-bottom:1px solid #ffffff0c;font-size:11px;line-height:1.6}.owner-award-with-history ol strong{color:#c8b889}.owner-award-with-history summary:focus-visible{outline:2px solid #d8be88;outline-offset:2px;border-radius:10px}
 .award-presentation{pointer-events:auto;overflow-y:auto;overscroll-behavior:contain;padding:calc(env(safe-area-inset-top,0px) + 28px) 24px calc(env(safe-area-inset-bottom,0px) + 28px);background:rgba(3,8,16,.88)}
 .award-presentation-content{max-width:380px;padding:20px 0;box-sizing:border-box}
 .award-presentation-eyebrow{display:block;margin-bottom:24px;color:var(--award-color);font:11px/1.5 Manrope,'Segoe UI',sans-serif;letter-spacing:.24em}

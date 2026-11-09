@@ -452,3 +452,10 @@ body.mushaf-reading .mushaf-print-meta {
   padding: 0 54px 0 4px;
 }
 body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mushaf-read-confirm{padding-inline:12px}body.mushaf-reading #quran-global-player{display:none!important}
+
+.competition-quick-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.competition-quick-action{flex:1 1 130px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:8px 12px;border:1px solid #ffffff1b;border-radius:12px;background:#111b2b;color:inherit;font:inherit;font-size:.84rem;text-align:left}
+button.competition-quick-action{cursor:pointer}
+.competition-quick-action strong{color:#d8be88;white-space:nowrap}
+.competition-quick-action:focus-visible{outline:2px solid #d8be88;outline-offset:2px}
+.competition-active-row{padding:8px 0;border-bottom:1px solid #ffffff1b}

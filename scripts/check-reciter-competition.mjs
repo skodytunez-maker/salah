@@ -98,6 +98,33 @@ rankLocation.hash=rankOrigin;clockHost.querySelector('#competition-all').onclick
 const last=rankList.querySelector('[data-competition-person="'+people[5].id+'"]');
 assert.ok(last);await last.onclick();assert.equal(rankPushes.at(-1).url,'#admin?view=profile&listener='+people[5].id);
 owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[1].onclick();assert.equal(rankPushes.length,8,'An owner needing MFA can verify from an anonymous participant’s protected card route');
+const rankActions='<button data-competition-own>Моё место</button><button data-competition-live-open>Сейчас слушают <b data-competition-live-count></b></button>';
+const scrolling=[];clockWindow.HTMLElement.prototype.scrollIntoView=function(){scrolling.push(this.dataset.competitionEntry);};
+const sixth={ownId:people[5].id};
+clockHost.innerHTML=rankActions+api.competitionMarkup(rankRows,sixth);
+api.bindCompetitionView(clockHost,sixth);
+clockHost.querySelector('[data-competition-own]').click();
+assert.equal(scrolling.at(-1),people[5].id,'My place reaches a row outside the first five');
+assert.equal(clockWindow.document.activeElement.dataset.competitionPerson,people[5].id);
+const current=Date.now();
+let liveRows=[{...people[5],listeningUntil:current+60000},{...people[1],listeningUntil:current-1},{...people[2],mode:'hidden',listeningUntil:current+60000}];
+rankLocation.hash=rankOrigin;
+clockHost.innerHTML=rankActions+api.competitionMarkup(rankRows,ownerAccess);
+api.bindCompetitionView(clockHost,{},()=>rankRows,()=>liveRows);
+api.updateCompetitionTimes(clockHost,rankRows,liveRows);
+assert.equal(clockHost.querySelector('[data-competition-live-count]').textContent,'1');
+assert.equal(clockHost.querySelector('[data-competition-live-open]').onclick,null,'An ordinary account cannot open the live list');
+owner=true;
+api.bindCompetitionView(clockHost,ownerAccess,()=>rankRows,()=>liveRows);
+await clockHost.querySelector('[data-competition-live-open]').onclick();
+const liveList=rankList.querySelector('[data-competition-live-list]');
+assert.equal(liveList.querySelectorAll('[data-competition-person]').length,1);
+assert.ok(liveList.querySelector('[data-competition-person="'+people[5].id+'"]'),'Live status includes rows outside the current ranking period');
+assert.doesNotMatch(liveList.innerHTML,/Hidden nickname|private fixture/);
+liveRows=[];api.updateCompetitionTimes(clockHost,rankRows,liveRows,ownerAccess);
+assert.match(liveList.textContent,/Сейчас никто/);
+owner=false;api.updateCompetitionTimes(clockHost,rankRows,liveRows,ownerAccess);
+assert.equal(rankDialog.open,false);assert.equal(liveList.childElementCount,0);
 await clockWindow.happyDOM.abort();
 
 console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');
@@ -106,7 +133,7 @@ const oldPlaces=new Map([['a',{id:'a',rank:1,role:'podium',x:100,y:100,reciter:'
 
 // Polling seconds must update text without remounting photos or the page shell.
 const pageSource=await fs.readFile(new URL('../dist/js/competition-page.js',import.meta.url),'utf8');let domWrites=0,timeUpdates=0,clockRows=[people[0]],refreshCallback;const eventHandlers={},host={querySelector:()=>null,querySelectorAll:()=>[],set innerHTML(value){domWrites++},get innerHTML(){return ''}};
-const pageContext=vm.createContext({reciterFilterTabs,recentReciters,listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion,competitionListeningTotal:()=>null,personalDataAllowed,URLSearchParams,location:{hash:'#quran?view=reciters&filter=salah-top'},read:(key,fallback)=>fallback,write:()=>true,esc:escape,toast(){},counterSyncStatus:()=>({signedIn:false}),RECITERS:[{id:'ar.alafasy'}],RECITER_FAVORITES_KEY:'fixture-favorites',normalizeReciterFavorites:()=>[],RANK_INTENTION_PHRASES:['Не забывай о намерении'],rankTime,listenerPrivacyMarkup:()=>'',bindPopularConsent(){},cachedCompetition:()=>null,preloadCompetition:async()=>[],clearCompetitionCache(){},personalListening:()=>({totals:{}}),loadCompetition:async()=>clockRows,competitionOwn:()=>null,refreshCompetitionOwn:async()=>null,saveCompetitionSettings:async()=>{},connectCompetitionNotifications:async()=>{},syncCompetitionNow:async()=>{},competitionMarkup:()=>'<p>ranking fixture</p>',bindCompetitionView(){},captureCompetitionLayout:()=>new Map(),animateCompetitionChange(){},updateCompetitionTimes:(target,rows)=>{timeUpdates++;assert.equal(rows[0].seconds,2460)},window:{addEventListener:(name,fn)=>eventHandlers[name]=fn,removeEventListener(){}},document:{hidden:false,addEventListener(){},removeEventListener(){}},setInterval:fn=>{if(!refreshCallback)refreshCallback=fn;return 1},clearInterval(){},Date});
+const pageContext=vm.createContext({reciterFilterTabs,recentReciters,listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion,competitionListeningTotal:()=>null,personalDataAllowed,URLSearchParams,location:{hash:'#quran?view=reciters&filter=salah-top'},read:(key,fallback)=>fallback,write:()=>true,esc:escape,toast(){},counterSyncStatus:()=>({signedIn:false}),RECITERS:[{id:'ar.alafasy'}],RECITER_FAVORITES_KEY:'fixture-favorites',normalizeReciterFavorites:()=>[],RANK_INTENTION_PHRASES:['Не забывай о намерении'],rankTime,listenerPrivacyMarkup:()=>'',bindPopularConsent(){},cachedCompetition:()=>null,preloadCompetition:async()=>[],clearCompetitionCache(){},personalListening:()=>({totals:{}}),loadCompetition:async()=>clockRows,competitionOwn:()=>null,refreshCompetitionOwn:async()=>null,saveCompetitionSettings:async()=>{},connectCompetitionNotifications:async()=>{},syncCompetitionNow:async()=>{},competitionMarkup:()=>'<p>ranking fixture</p>',bindCompetitionView(){},closeCompetitionLiveList(){},captureCompetitionLayout:()=>new Map(),animateCompetitionChange(){},updateCompetitionTimes:(target,rows)=>{if(rows[0]?.seconds===2460)timeUpdates++},window:{addEventListener:(name,fn)=>eventHandlers[name]=fn,removeEventListener(){}},document:{hidden:false,addEventListener(){},removeEventListener(){}},setInterval:fn=>{if(!refreshCallback)refreshCallback=fn;return 1},clearInterval(){},Date});
 const pageApi=vm.runInContext(pageSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountCompetition})',pageContext);const cleanup=pageApi.mountCompetition(host,()=>'<h1>Коран</h1>');await new Promise(resolve=>setImmediate(resolve));const beforePoll=domWrites;clockRows=[{...people[0],seconds:2460}];refreshCallback();await new Promise(resolve=>setImmediate(resolve));assert.equal(domWrites,beforePoll,'Seconds polling must preserve the existing page and portraits');assert.equal(timeUpdates,1);cleanup();console.log('PASS: repeated polling updates seconds in place, without remounting portrait cards.');
 
 let rankingActor={signedIn:true,userId:'fixture-owner'},completeOwnerCheck;

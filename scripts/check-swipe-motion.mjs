@@ -38,8 +38,8 @@ assert.equal(stack.canBack(),false);stack.back();assert.equal(backCalls,0);asser
 entries.splice(at+1);entries.push({hash:'#more',state:{...entries[at].state,salahOwnerCard:'private'}});at++;assert.equal(stack.canForward(),false,'A private card discards the old forward branch');win.history.back();assert.equal(stack.canForward(),false,'Forward must not recreate a private card');stack.dispose();
 // The user detail/list and reader/list are always consumed before the route history.
 let returned=0,routeBack=0;const button={disabled:false,closest:()=>null,getClientRects:()=>[{}],click:()=>returned++};
-for(const id of ['owner-user-back','adhkar-close','dua-list','counter-close']){const app={querySelector:q=>q==='#'+id?button:null};resolveBackAction(app,{canBack:()=>true,back:()=>routeBack++})();}
-assert.equal(returned,4);assert.equal(routeBack,0);resolveBackAction({querySelector:()=>null},{canBack:()=>true,back:()=>routeBack++})();assert.equal(routeBack,1);
+for(const id of ['owner-user-back','owner-geo-back','adhkar-close','dua-list','counter-close']){const app={querySelector:q=>q==='#'+id?button:null};resolveBackAction(app,{canBack:()=>true,back:()=>routeBack++})();}
+assert.equal(returned,5);assert.equal(routeBack,0);resolveBackAction({querySelector:()=>null},{canBack:()=>true,back:()=>routeBack++})();assert.equal(routeBack,1);
 assert.equal(resolveBackAction({querySelector:()=>null},{canBack:()=>false}),null);
 let homeCalls=0;const homeLink={...button,click:()=>homeCalls++};resolveBackAction({querySelector:q=>q.includes('.menu-home-access')?homeLink:null},{canBack:()=>false})();assert.equal(homeCalls,1,'Opening Menu directly still provides a route Home');
 console.log('PASS: interactive drag/preview, thresholds and velocity, cancel/reversal/boundaries, no duplicate click, lifecycle cleanup, reduced motion, nested Back and safe route history.');

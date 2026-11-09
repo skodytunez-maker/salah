@@ -52,17 +52,20 @@ export function showAwardCollection(state,{isActive=()=>true}={}){
 export function showAwardDetail(state,kind,{isActive=()=>true}={}){
  if(!isActive())return;const a=awardInfo(kind);if(!a)return;const history=state.items.filter(x=>x.kind===kind).sort((a,b)=>b.end.localeCompare(a.end)||b.id.localeCompare(a.id));
  modal('<div class="award-collection award-fixed-header award-detail-dialog"><div class="modal-head"><button type="button" class="text-button" data-award-back>Все награды</button><button type="button" class="award-dialog-close" data-close aria-label="Закрыть окно наград"><img src="./assets/x-lg.svg" alt=""></button></div><div class="award-scroll-body"><div class="award-detail">'+emblem(kind,!history.length)+'<h3 tabindex="-1" autofocus>'+a.title+'</h3><p>'+a.rule+'</p>'+(history.length?'<p class="award-note">'+(calendarAward(kind)?'Побед: '+(state.historyCounts?.[kind]||history.length):'Награда получена')+'</p>':'<p class="award-note">'+(calendarAward(kind)?'Результат фиксируется по завершении периода.':a.readingJuz?'Прочитано джузов: '+state.learning.juz.length+' из '+a.readingJuz+'.':a.adhkarDays?'Завершены оба набора: '+state.learning.adhkarDays+' из '+a.adhkarDays+' дней.':a.days?'Награда появится после '+a.days+' дней прослушивания в одной серии.':a.hours?esc(hourAwardProgress(state,kind)):'Награда доступна первым 100 пользователям SALAH.')+'</p>')+(history.length?'<button type="button" class="button secondary award-replay" data-award-celebrate="'+history[0].id+'">Посмотреть вручение</button>':'')+'</div>'+history.map(row=>'<button type="button" class="award-winner-entry" data-award-result="'+row.id+'">'+emblem(kind)+'<span><strong>'+esc(awardPeriod(row))+'</strong><small>'+esc(awardMetric(row))+'</small></span></button>').join('')+'</div></div>');
- document.getElementById('modal').scrollTop=0;const root=document.getElementById('modal-content');root.querySelector('.award-detail h3')?.focus({preventScroll:true});root.querySelector('[data-award-back]').onclick=()=>showAwardCollection(state,{isActive});bindAwardReplay(root,{isActive,onClose:current=>showAwardDetail(current,kind,{isActive})});protectAwardDialog(isActive);
+ document.getElementById('modal').scrollTop=0;const root=document.getElementById('modal-content');root.querySelector('.award-detail h3')?.focus({preventScroll:true});root.querySelector('[data-award-back]').onclick=()=>showAwardCollection(state,{isActive});bindAwardReplay(root,history[0],{isActive,onClose:()=>showAwardDetail(state,kind,{isActive})});protectAwardDialog(isActive);
  root.querySelectorAll('[data-award-result]').forEach(b=>b.onclick=async()=>{if(!isActive())return;b.disabled=true;try{await refreshCompetitionOwn({force:true});if(!isActive())return;const current=safeAwardState(competitionOwn()?.awards),row=current.items.find(x=>x.id===b.dataset.awardResult);if(!row)throw Error('missing');await showWinnerCard({...row,listener:current.listener},{isActive,own:true});}catch{if(isActive())toast('Не удалось открыть карточку. Повторите позже.');}finally{if(b.isConnected)b.disabled=false;}});
 }
-function bindAwardReplay(root,{isActive,onClose}){
+function bindAwardReplay(root,row,{isActive,onClose}){
  const button=root.querySelector('[data-award-celebrate]');if(!button)return;
- button.onclick=async()=>{if(button.disabled||!isActive())return;button.disabled=true;
-  try{await refreshCompetitionOwn({force:true});if(!isActive()||!button.isConnected)return;const current=safeAwardState(competitionOwn()?.awards),row=current.items.find(x=>x.id===button.dataset.awardCelebrate);if(!row)throw Error('missing');
-   const shown=await showAwardCelebration(row,{isActive,onReady:closeModal,onClose:()=>onClose(safeAwardState(competitionOwn()?.awards))});if(!shown&&isActive())toast('Не удалось открыть вручение. Повторите позже.');
-  }catch{if(isActive())toast('Не удалось открыть вручение. Повторите позже.');}finally{if(button.isConnected)button.disabled=false;}
+ const dialog=document.getElementById('modal'),stillOpen=()=>dialog.open&&button.isConnected;
+ button.onclick=async()=>{if(button.disabled||!isActive()||!stillOpen())return;button.disabled=true;
+  try{
+   const shown=await showAwardCelebration(row,{isActive,canShow:stillOpen,onReady:closeModal,onClose});
+   if(!shown&&isActive()&&stillOpen())toast('Не удалось открыть вручение. Повторите позже.');
+  }catch{if(isActive()&&stillOpen())toast('Не удалось открыть вручение. Повторите позже.');}finally{if(button.isConnected)button.disabled=false;}
  };
 }
+
 export async function loadAwardWinners(){
  const response=await fetch(endpoint+'?winners=1',{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(8000)});
  if(!response.ok)throw Error('unavailable');const data=await response.json();if(!Array.isArray(data.items))throw Error('invalid');
@@ -103,6 +106,6 @@ export async function showWinnerCard(row,{isActive=()=>true,own=false}={}){
  try{const canvas=await renderWinnerCard(row);const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error()),'image/png'));if(!valid||!preview.isConnected||!isActive())return;file=new File([blob],'SALAH-'+row.kind+'-'+row.start+'.png',{type:'image/png'});canvas.className='award-card-preview';canvas.setAttribute('aria-label',awardInfo(row.kind).title+' · '+awardShareIdentity(row.listener).label);preview.replaceChildren(canvas);line.textContent='Сторис · 1080 × 1920';send.disabled=save.disabled=false;}catch{if(line.isConnected)line.textContent='Не удалось создать карточку.';}
  save.onclick=()=>{if(valid&&isActive()&&file)downloadAward(file);};
  send.onclick=async()=>{if(!valid||!isActive()||!file)return;try{if(navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:'SALAH · '+awardInfo(row.kind).title});else{downloadAward(file);toast('Карточка сохранена для отправки');}}catch(e){if(e.name!=='AbortError')toast('Не удалось поделиться. Сохраните карточку.');}};
- if(own)bindAwardReplay(root,{isActive,onClose:current=>showAwardDetail(current,row.kind,{isActive})});
+ if(own)bindAwardReplay(root,row,{isActive,onClose:()=>void showWinnerCard(row,{isActive,own})});
  protectAwardDialog(isActive);
 }
