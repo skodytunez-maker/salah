@@ -1,3 +1,5 @@
+import{listeningDayKey}from './reciter-popularity-core.js';
+import{createSharedListeningStream}from './shared-listening-stream.js';
 import{reciterFilterTabs,recentReciters}from './quran-reciter-discovery.js';
 import{listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion}from './listening-summary.js';
 import{personalDataAllowed,showRestrictedFeature}from './audience.js';
@@ -14,7 +16,7 @@ import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompet
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes}from './competition-view.js';
 export function mountCompetition(host,heading){
  if(!personalDataAllowed()){showRestrictedFeature(host,'Топ SALAH');return()=>{};}
- const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false;
+ const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false,sharedStream=null;
  if(!['day','week','month','all'].includes(period))period='all';
  const periods=[['day','День'],['week','Неделя'],['month','Месяц'],['all','Всё время']],liveTotal=createLiveListeningTotal(),sharedMotion=createSharedListeningMotion();
  // Both counters already include this device's history: compare them, never add
@@ -22,9 +24,9 @@ export function mountCompetition(host,heading){
  // time from other devices appears when the confirmed board refreshes.
  function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>row.id===own.id?{...row,seconds:Math.max(row.seconds,Math.floor(totals[row.reciter]||0))}:row);}
  function draw(){if(closed)return;const shown=displayRows(),own=competitionOwn(),signed=counterSyncStatus().signedIn,count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
- const target=liveTotal.sample(competitionListeningTotal(period),personalListening(period).totals,{key:own?.id+':'+period+':'+new Date().toDateString(),eligible:signed&&own?.enabled===true&&['initial','profile'].includes(own.mode)});
+ const sharedTotal=sharedStream?.frame()?.totals?.[period];const target=sharedTotal??liveTotal.sample(competitionListeningTotal(period),personalListening(period).totals,{key:own?.id+':'+period+':'+new Date().toDateString(),eligible:signed&&own?.enabled===true&&['initial','profile'].includes(own.mode)});
  if(resetMotionOnDraw){sharedMotion.reset();if(!refreshing)resetMotionOnDraw=false;}
- const total=sharedMotion.sample(target,{server:competitionListeningTotal(period),key:(own?.id||'guest')+':'+period+':'+new Date().toDateString()+':'+signed+':'+own?.enabled+':'+own?.mode});
+ const total=sharedTotal??sharedMotion.sample(target,{server:competitionListeningTotal(period),key:(own?.id||'guest')+':'+period+':'+new Date().toDateString()+':'+signed+':'+own?.enabled+':'+own?.mode});
  const key=JSON.stringify({period,busy,signed,favorites,count,newCount:recentReciters(RECITERS).length,own:own?{id:own.id,mode:own.mode,enabled:own.enabled,notify:own.notify,period:own.period}:null,loading:loading&&!rows.length,error,rows:rows.map(({seconds,listeningUntil,...person})=>person)});
  if(key===renderKey){updateListeningSummary(host,total);updateCompetitionTimes(host,shown);return;}renderKey=key;
  let html='<section class="quran-library quran-reciters-library rank-page competition-page">'+heading()+''+reciterFilterTabs(null,favorites,RECITERS)+'<nav class="reciter-top-tabs" aria-label="Топы"><a class="reciter-top-tab reciter-top-personal" href="#quran?view=reciters&filter=my-top"><span><strong>Мой топ</strong><small>Ваше время</small></span></a><a class="reciter-top-tab reciter-top-global" href="#quran?view=reciters&filter=salah-top" aria-current="page"><span><strong>Топ SALAH</strong><small>Слушатели</small></span></a></nav>';
@@ -48,7 +50,8 @@ export function mountCompetition(host,heading){
  const progress=()=>{if(!closed&&!document.hidden)draw();};window.addEventListener('salah:personal-listening-progress',progress);
  const timer=setInterval(()=>void refresh(true),5000),phraseTimer=setInterval(()=>{const line=host.querySelector('#rank-intention');if(line&&!document.hidden)line.textContent=RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length];},15000);
  const presenceTimer=setInterval(()=>{if(!closed&&!document.hidden)updateCompetitionTimes(host,displayRows());},1000);
- const motionTimer=setInterval(()=>{if(!closed&&!document.hidden&&!resetMotionOnDraw)updateListeningSummary(host,sharedMotion.tick());},250);
+ const motionTimer=setInterval(()=>{if(!closed&&!document.hidden&&!resetMotionOnDraw&&!sharedStream?.frame())updateListeningSummary(host,sharedMotion.tick());},250);
+ sharedStream=createSharedListeningStream({getDay:()=>listeningDayKey(Date.now()),onChange:()=>{sharedMotion.reset();draw();}});
  rows=cachedCompetition(period)||[];loading=!rows.length;draw();resetMotionOnDraw=true;void refresh();void preloadCompetition();void refreshCompetitionOwn().catch(()=>{});
- return()=>{closed=true;generation++;clearInterval(timer);clearInterval(phraseTimer);clearInterval(motionTimer);clearInterval(presenceTimer);sharedMotion.reset();window.removeEventListener('salah:personal-listening-progress',progress);window.removeEventListener('salah:listener-visibility',privacyUpdate);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
+ return()=>{closed=true;sharedStream.close();generation++;clearInterval(timer);clearInterval(phraseTimer);clearInterval(motionTimer);clearInterval(presenceTimer);sharedMotion.reset();window.removeEventListener('salah:personal-listening-progress',progress);window.removeEventListener('salah:listener-visibility',privacyUpdate);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
 }

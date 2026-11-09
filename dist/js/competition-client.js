@@ -1,3 +1,4 @@
+import{createSharedListeningReporter}from './shared-listening-core.js';
 import{personalDataAllowed}from './audience.js';
 import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{read,write}from './storage.js';
@@ -23,6 +24,7 @@ async function request(body=null,{signal,keepalive=false}={}){
  const response=await fetch(endpoint+(body?'':'?own=true&day='+listeningDayKey(Date.now())+'&participation='+(enabled()?'on':'off')),{method:body?'POST':'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),credentials:'omit',referrerPolicy:'no-referrer',signal:signal||AbortSignal.timeout(15000),keepalive});
  if(account().userId!==user)throw Error('Аккаунт изменился');if(!response.ok){const error=Error(response.status===429?'Повторим синхронизацию чуть позже':'Не удалось сохранить. Проверьте соединение.');error.status=response.status;throw error;}return response.json();
 }
+export const sendCompetitionLiveSample=(packet,options)=>request(packet,options);
 export const sendCompetitionPresence=(packet,options)=>request(packet,options);
 export async function refreshCompetitionOwn({force=false}={}){
  const user=account().signedIn?account().userId:null;if(!user){own=null;scope=null;return null;}if(scope!==user){scope=user;own=null;lastOwn=lastUpload=retryAt=0;lastSignature='';}
@@ -65,5 +67,7 @@ export async function syncCompetitionNow(force=false){
  }catch{retryAt=Date.now()+15000;}})();inflight=task;try{await task;}finally{if(inflight===task)inflight=null;}
 }
 export function initCompetition({getAccount,getClient,getSnapshot,isEnabled}){if(!personalDataAllowed()||initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;
+ const liveReporter=createSharedListeningReporter({getSnapshot:snapshot,getScope:()=>account().signedIn?account().userId:null,getDay:()=>listeningDayKey(Date.now()),getDevice:deviceId,isEligible:()=>personalDataAllowed()&&navigator.onLine!==false&&enabled()&&competitionOwn()?.enabled===true&&['initial','profile'].includes(competitionOwn()?.mode),send:sendCompetitionLiveSample,onBaselineNeeded:()=>void syncCompetitionNow()});
+ liveReporter.sample();setInterval(()=>liveReporter.sample(),1000);for(const event of ['salah:personal-listening-progress','salah:counter-status','salah:listener-visibility','salah:popularity-consent','online','offline'])window.addEventListener(event,()=>liveReporter.sample());
  setInterval(()=>void syncCompetitionNow(),15000);window.addEventListener('salah:personal-listening',()=>void syncCompetitionNow());window.addEventListener('online',()=>void syncCompetitionNow());window.addEventListener('salah:counter-status',()=>void syncCompetitionNow());window.addEventListener('salah:popularity-updated',()=>{lastOwn=0;void syncCompetitionNow();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCompetitionNow();});void syncCompetitionNow();
 }
