@@ -42,4 +42,26 @@ const fading=await fixture();let reopened=0;await fading.api.showAwardCelebratio
 let loaded;const lazy=await fixture({imageGate:new Promise(r=>loaded=r)});const pending=lazy.api.showAwardCelebration(row('month'),{isActive:lazy.isActive});lazy.revoke();loaded();assert.equal(await pending,null,'A late image cannot show a previous account');await lazy.dispose();
 const timed=await fixture();await timed.api.showAwardCelebration(row('hours25'),{isActive:timed.isActive});await timed.flush(6000);assert.ok(timed.w.document.querySelector('.award-presentation'),'A real presentation does not vanish immediately');await timed.flush(15000);assert.ok(timed.w.document.querySelector('.founder-welcome-ending'));await timed.flush(420);assert.equal(timed.w.document.querySelector('.award-presentation'),null);await timed.dispose();
 const reduced=await fixture();await reduced.api.showAwardCelebration(row('streak30'),{isActive:reduced.isActive,reduced:true});reduced.w.document.dispatchEvent(new reduced.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(reduced.w.document.querySelector('.award-presentation'),null);await reduced.dispose();
+const replaySource=await fs.readFile(new URL('../dist/js/quran-awards.js',import.meta.url),'utf8');
+const replayCode=replaySource.slice(replaySource.indexOf('function bindAwardReplay('),replaySource.indexOf('export async function loadAwardWinners'));
+let releaseReplayImage;
+const replay=await fixture({imageGate:new Promise(resolve=>{releaseReplayImage=resolve;})});
+const replayDialog=replay.w.document.getElementById('modal');
+replayDialog.innerHTML='<button data-award-celebrate>Посмотреть вручение</button>';
+const replayButton=replayDialog.querySelector('button');let restored=0,requests=0;
+const bindReplay=vm.runInNewContext(replayCode+';bindAwardReplay',{
+ document:replay.w.document,showAwardCelebration:replay.api.showAwardCelebration,
+ closeModal:()=>replayDialog.close(),toast:message=>assert.fail(message),
+ refreshCompetitionOwn:async()=>{requests++;throw Error('offline');}
+});
+bindReplay(replayDialog,row('week'),{isActive:replay.isActive,onClose:()=>restored++});
+replayDialog.showModal();
+const cancelledReplay=replayButton.onclick();replayDialog.close();releaseReplayImage();await cancelledReplay;
+assert.equal(replay.w.document.querySelector('.award-presentation'),null,'Closing the award during image load cancels the replay');
+replayDialog.showModal();await replayButton.onclick();
+assert.equal(requests,0,'An already displayed award can be replayed offline');
+assert.equal(replayDialog.open,false,'The collection closes before the presentation starts');
+assert.match(replay.w.document.querySelector('.award-presentation h2').textContent,/Лидер недели/);
+replay.w.document.querySelector('.award-presentation button').click();await replay.flush(420);
+assert.equal(restored,1);await replay.dispose();
 console.log('PASS: permanent collection versus transferable Top title; all 15 real medals, dated replay, baseline/new-award queue, per-account deduplication, retry and late-account safety, reduced motion, keyboard/focus/inert restoration and dismissal.');

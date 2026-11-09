@@ -565,3 +565,7 @@ A verified owner can tap a visible nickname in Top SALAH to open the existing ow
 ## 467 — owner cards for anonymous ranking rows
 
 The verified owner can open the existing owner card for any listed participant, including rows shown as initials. Other accounts may open only their own ranking summary. The public ranking continues to respect profile visibility. City, country and user geography remain visible only to the verified owner. The existing owner-access gate requires the current owner session and MFA, and hidden rows still cannot be resolved from the leaderboard. Preserve the current illustrated announcement, acknowledgement and expiry.
+
+## 468 — award history and leaderboard profile transition
+
+Use the same tappable tiles for medals and leaderboard titles in the protected owner profile. Show saved dates or calendar results and listening time for the selected award. Replay an already loaded personal award without another account request. When opening a profile from Top SALAH, show the public leaderboard label while the verified owner profile loads. Keep the current illustrated announcement, acknowledgement and expiry.

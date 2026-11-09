@@ -8,6 +8,7 @@ import{ownerVerified,verifyOwner,ownerNeedsMfa}from './owner-auth.js';
 import{counterSyncStatus}from './counter-account.js';
 let entries=[],rings={};
 const label=p=>p.mode==='profile'?p.nickname:p.initial;
+export function competitionProfilePreview(id){const entry=entries.find(row=>row.id===id);return entry&&['profile','initial'].includes(entry.mode)?label(entry):'';}
 const medalRings={gold:'#d8be88',silver:'#c2cbd8',bronze:'#bf926c'};
 const listening=p=>['initial','profile'].includes(p.mode)&&Number.isFinite(p.listeningUntil)&&p.listeningUntil>Date.now();
 const headphones=p=>'<span class="competition-listening" role="img" aria-label="Слушает Коран" '+(listening(p)?'':'hidden')+'><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3M4 12h3v8H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 1-2Zm16 0h-3v8h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-1-2Z"/></svg></span>';

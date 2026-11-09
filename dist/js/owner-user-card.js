@@ -4,7 +4,7 @@ import{notificationLabels}from './notification-status.js';
 import{formatListeningTime}from './reciter-popularity-core.js';
 import{reciterInfo}from './quran-reciters.js';
 import{reciterImageUrl}from './approved-catalog.js';
-import{QURAN_AWARDS,awardArtwork,awardPeriod}from './quran-awards-core.js';
+import{awardInfo,awardArtwork,awardPeriod,calendarAward,validAwardDate}from './quran-awards-core.js';
 export const validOwnerUserId=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 export function ownerUserDate(value){return typeof value==='string'&&Number.isFinite(Date.parse(value))?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Нет данных';}
 function ownerAvatar(url,nickname){
@@ -19,6 +19,30 @@ export function bindOwnerAvatarPreview(card){
  preview.addEventListener('close',()=>{if(button.isConnected)button.focus();});
 }
 function reciterRow(row,time){let info;try{info=reciterInfo(row.id);}catch{info={name:'Чтец',portrait:null};}return '<li><img class="owner-profile-reciter-image" src="'+esc(reciterImageUrl(info.portrait))+'" alt="" width="40" height="40" loading="lazy" decoding="async"><span>'+esc(info.name)+'</span><strong>'+time(row.seconds)+'</strong></li>';}
+function ownerAwards(awards){
+ const tiles=awards.slice(0,20).map(row=>{
+  const info=awardInfo(row.kind);if(!info)return '';
+  return '<li><button type="button" class="owner-award-button" data-owner-award="'+info.kind+'" aria-haspopup="dialog"><img src="'+esc(awardArtwork(info.kind))+'" alt="" loading="lazy"><strong>'+esc(info.title)+(row.count>1?' · '+row.count:'')+'</strong></button></li>';
+ }).join('');
+ return '<section class="owner-profile-panel owner-profile-awards" aria-labelledby="owner-profile-awards-title"><h2 id="owner-profile-awards-title">Награды</h2>'+(tiles?'<ul class="owner-award-grid">'+tiles+'</ul><dialog class="owner-award-dialog" aria-labelledby="owner-award-dialog-title"><div class="owner-award-dialog-content"></div></dialog>':'<p class="muted">Пока нет полученных наград.</p>')+'</section>';
+}
+export function bindOwnerAwardHistory(card,awards){
+ const dialog=card.querySelector('.owner-award-dialog');if(!dialog)return;
+ const content=dialog.querySelector('.owner-award-dialog-content');let opener=null;
+ dialog.onkeydown=event=>{if(event.key==='Escape')event.stopPropagation();};
+ dialog.onclick=event=>{if(event.target===dialog)dialog.close();};
+ dialog.addEventListener('close',()=>{content.replaceChildren();if(opener?.isConnected)opener.focus({preventScroll:true});opener=null;});
+ card.querySelectorAll('[data-owner-award]').forEach(button=>button.onclick=()=>{
+  if(dialog.open)return;
+  const row=awards?.find(award=>award.kind===button.dataset.ownerAward),info=awardInfo(row?.kind);if(!info)return;
+  const wins=(Array.isArray(row.wins)?row.wins:[]).filter(win=>validAwardDate(win.start)&&validAwardDate(win.end)&&win.end>win.start&&Number.isSafeInteger(win.seconds)&&win.seconds>0).slice(0,200);
+  const earned=typeof row.earnedAt==='string'&&Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):null;
+  const history=wins.length?'<p class="muted">История побед</p><div class="owner-award-wins">'+wins.map(win=>'<p><span>'+esc(awardPeriod({...win,kind:info.kind}))+'</span><b>'+esc(formatListeningTime(win.seconds))+'</b></p>').join('')+'</div>'+(row.count>wins.length?'<p class="muted">Показано '+wins.length+' из '+row.count+' побед.</p>':''):'<p class="muted">'+(earned?(row.count>1?'Последнее получение · ':'Получена · ')+esc(earned):calendarAward(info.kind)?'Периоды побед пока не сохранены.':'Дата получения не сохранена.')+'</p>';
+  content.innerHTML='<img src="'+esc(awardArtwork(info.kind))+'" alt=""><h2 id="owner-award-dialog-title">'+esc(info.title)+'</h2>'+history+'<button type="button" class="text-button" autofocus>Закрыть</button>';
+  content.querySelector('button').onclick=()=>dialog.close();
+  opener=button;dialog.showModal();
+ });
+}
 export function ownerUserStatistics(details){
  if(!details)return '';
  const time=value=>Number.isSafeInteger(value)&&value>=0?esc(formatListeningTime(value)):'Нет данных';
@@ -26,10 +50,14 @@ export function ownerUserStatistics(details){
  const listening='<section class="owner-profile-panel owner-profile-listening" aria-labelledby="owner-profile-listening-title"><h2 id="owner-profile-listening-title">Прослушивание</h2>'+(details.connected?'<div class="owner-profile-total"><span>Всего прослушано</span><strong>'+time(periods.all)+'</strong></div><dl class="owner-profile-periods">'+[['day','Сегодня'],['week','За неделю'],['month','За месяц']].map(([period,label])=>'<div><dt>'+label+'</dt><dd>'+time(periods[period])+'</dd></div>').join('')+'</dl>':'<p class="muted">Данные прослушивания ещё не сохранены.</p>')+'</section>';
  const activity='<section class="owner-profile-panel owner-profile-activity" aria-labelledby="owner-profile-activity-title"><div><h2 id="owner-profile-activity-title">Азкары</h2><span>Сегодня</span></div><strong class="'+(details.adhkar?.active===true?'is-active':'')+'">'+(typeof details.adhkar?.active==='boolean'?(details.adhkar.active?'Есть отметка':'Пока нет отметок'):'Данных пока нет')+'</strong></section>';
  const favorites=reciters.length?'<section class="owner-profile-panel owner-profile-favorites" aria-labelledby="owner-profile-favorites-title"><h2 id="owner-profile-favorites-title">Любимые чтецы</h2><ol class="owner-profile-reciters">'+reciters.slice(0,5).map(row=>reciterRow(row,time)).join('')+'</ol></section>':'';
- const achievements='<section class="owner-profile-panel owner-profile-awards" aria-labelledby="owner-profile-awards-title"><h2 id="owner-profile-awards-title">Награды</h2><ul>'+awards.slice(0,20).map(row=>{const info=QURAN_AWARDS.find(award=>award.kind===row.kind);if(!info)return '';const title='<img src="./'+esc(awardArtwork(row.kind))+'" alt="" loading="lazy"><span><strong>'+esc(info.title)+(row.count>1?' · '+row.count:'')+'</strong></span>';const wins=(Array.isArray(row.wins)?row.wins:[]).filter(win=>/^\d{4}-\d{2}-\d{2}$/.test(win.start||'')&&/^\d{4}-\d{2}-\d{2}$/.test(win.end||'')&&Number.isSafeInteger(win.seconds)&&win.seconds>0).slice(0,200);return '<li'+(wins.length?' class="owner-award-with-history"':'')+'>'+(wins.length?'<details><summary>'+title+'</summary><ol>'+wins.map(win=>'<li><span>'+esc(awardPeriod({...win,kind:row.kind}))+'</span><strong>'+time(win.seconds)+'</strong></li>').join('')+'</ol>'+(row.count>wins.length?'<p class="muted">Показаны последние '+wins.length+' побед из '+row.count+'.</p>':'')+'</details>':title)+'</li>';}).join('')+'</ul>'+(awards.length?'':'<p class="muted">Пока нет полученных наград.</p>')+'</section>';
+ const achievements=ownerAwards(awards);
  const checkpoint=details.context?.reading,validPage=Number.isInteger(checkpoint?.page)&&checkpoint.page>=1&&checkpoint.page<=604&&['madani','tajweed'].includes(checkpoint.edition);
  const reading='<section class="owner-profile-panel owner-profile-reading" aria-labelledby="owner-profile-reading-title"><h2 id="owner-profile-reading-title">Чтение Корана</h2><dl class="owner-profile-context"><div><dt>Последняя страница</dt><dd>'+(validPage?'Стр. '+checkpoint.page+' / 604':'Пока нет данных')+'</dd></div>'+(validPage?'<div><dt>'+(checkpoint.edition==='madani'?'Мединский мусхаф':'Цветной таджвид')+'</dt><dd>'+esc(ownerUserDate(checkpoint.savedAt))+'</dd></div>':'')+'</dl></section>';
  return listening+reading+activity+favorites+achievements;
+}
+export function ownerUserCardPreview(label){
+ const nickname=typeof label==='string'&&label.trim()?label:'Карточка пользователя';
+ return '<article class="owner-user-card owner-profile owner-profile-preview" aria-busy="true" aria-labelledby="owner-user-name"><section class="owner-profile-identity"><header class="owner-profile-hero">'+(label?ownerAvatar(null,nickname):'<div class="owner-user-avatar" aria-hidden="true"></div>')+'<h1 id="owner-user-name" tabindex="-1">'+esc(nickname)+'</h1></header></section><div class="owner-profile-sections" aria-hidden="true"><div class="owner-profile-panel"><span></span><span></span><span></span></div></div></article>';
 }
 export function ownerUserCard(user,{details=null,avatarUrl=null,loading=false,error=''}={}){
  const writeLink=validOwnerUserId(user.id)?'<a class="button owner-user-write" href="#support?owner=1&amp;user='+encodeURIComponent(user.id)+'">'+staffIcon('messages')+'<span>Написать</span></a>':'';
