@@ -591,3 +591,5 @@ Announce the Top SALAH listening modes in one feature card. Animate a contained 
 ## 473 — looping motion in release news
 
 The active illustrated news card alternates between its two portraits while the dialog is open. Future animated cards share the same alternating loop. Inactive cards pause and reduced-motion modes render a static frame. Record installed news acknowledgement on the «Понятно» button. Preserve announcement 472, artwork and expiry.
+
+Rank the heart view by the favorite reciter's time. The clock view continues to rank by the combined time. Reuse the existing favorite-reciter API when the overall board has been capped.

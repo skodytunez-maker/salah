@@ -118,9 +118,10 @@ assert.equal(cards[0].querySelector('[data-competition-score]').textContent,'1:2
 assert.equal(firstTrack.children[1].querySelector('[data-competition-reciter-time]').textContent,'0:30:05');
 assert.equal(firstTrack.scrollLeft,110,'A live update leaves the selected portrait in place');
 clockHost.querySelector('[data-competition-score-mode]').click();assert.equal(toggled,1);
-clockHost.innerHTML=api.competitionMarkup(totals,{},'favorite');
+clockHost.innerHTML=api.competitionMarkup([{...totals[1],rank:1},{...totals[0],rank:2}],{},'favorite');
 assert.equal(clockHost.querySelectorAll('.competition-card')[0].dataset.competitionRank,'1');
-assert.equal(clockHost.querySelector('[data-competition-score]').textContent,'0:40:00');
+assert.equal(clockHost.querySelector('[data-competition-score]').textContent,'0:39:00');
+assert.equal(clockHost.querySelectorAll('.competition-card')[0].dataset.competitionEntry,totals[1].id);
 assert.equal(clockHost.querySelectorAll('.competition-card')[0].querySelectorAll('[data-reciter-slide]').length,1);
 assert.equal(clockHost.querySelector('[data-competition-score-mode]').getAttribute('aria-pressed'),'true');
 clockHost.innerHTML=api.competitionMarkup(people);
