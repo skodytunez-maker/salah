@@ -5,7 +5,7 @@ export function createRouteBackStack(win=window){
  function remember(){const id=win.history.state?.[key],found=steps.indexOf(id);if(found>=0){index=found;return;}const next=prefix+'-'+sequence++;steps.splice(index+1);steps.push(next);index=steps.length-1;try{win.history.replaceState({...win.history.state,[key]:next},'');}catch{steps.length=0;index=-1;}}
  // Opening a private owner card creates an unrepeatable, same-URL entry and
  // discards the browser's old forward branch. Never offer that old branch.
- function syncPrivateView(){if(win.history.state?.salahOwnerCard)steps.splice(index+1);}
+ function syncPrivateView(){if(win.history.state?.salahOwnerCard||win.history.state?.salahOwnerGeography)steps.splice(index+1);}
  remember();win.addEventListener('hashchange',remember);win.addEventListener('popstate',remember);win.addEventListener('salah:route-history',remember);
  return{canBack:()=>{syncPrivateView();return index>0;},canForward:()=>{syncPrivateView();return index>=0&&index<steps.length-1;},back(){if(index>0)win.history.back();},forward(){syncPrivateView();if(index>=0&&index<steps.length-1)win.history.forward();},dispose(){win.removeEventListener('hashchange',remember);win.removeEventListener('popstate',remember);win.removeEventListener('salah:route-history',remember);}};
 }

@@ -575,3 +575,7 @@ In Top SALAH, jump to the signed-in participant’s row in the current period, i
 ## 469 — simplify Top SALAH
 
 Temporarily remove the My Place and Now Listening actions from the ranking. Preserve the ranking, period selection, listening indicators and the owner-only profile flow. Keep the current illustrated announcement, acknowledgement and expiry.
+
+## 470 — system Back in geography and manual award replay
+
+Give a city or country drilldown a private browser Back entry so the system gesture returns to the selected geography tab. Keep location and profile data out of browser history. Keep an explicitly requested award presentation open while automatic award scheduling runs. Preserve the current illustrated announcement, acknowledgement and expiry.
