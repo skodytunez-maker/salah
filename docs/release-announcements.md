@@ -587,3 +587,9 @@ The opt-in public Top response ranks by each participant’s combined listening 
 ## 472 — animated Top SALAH release news
 
 Announce the Top SALAH listening modes in one feature card. Animate a contained horizontal slide between existing catalog portraits with sample reciter times. The combined time stays fixed in the preview. Use the current SALAH colors and a static frame when app or system motion is reduced.
+
+## 473 — looping motion in release news
+
+The active illustrated news card alternates between its two portraits while the dialog is open. Future animated cards share the same alternating loop. Inactive cards pause and reduced-motion modes render a static frame. Record installed news acknowledgement on the «Понятно» button. Preserve announcement 472, artwork and expiry.
+
+Rank the heart view by the favorite reciter's time. The clock view continues to rank by the combined time. Reuse the existing favorite-reciter API when the overall board has been capped.

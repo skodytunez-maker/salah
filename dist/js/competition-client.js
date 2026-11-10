@@ -5,10 +5,10 @@ import{RECITERS}from './quran-reciters.js';
 import{listeningDayKey}from './reciter-popularity-core.js';
 import{safeListener}from './reciter-ranking-core.js';
 const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition',allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
-const boards=new Map(),boardRequests=new Map();
-export function cachedCompetition(period='all'){const entry=boards.get(listeningDayKey(Date.now())+':'+period);return entry&&Date.now()-entry.at<10000?entry.rows.slice():null;}
+const boards=new Map(),favoriteBoards=new Map(),boardRequests=new Map();
+export function cachedCompetition(period='all',{mode='total'}={}){const entry=(mode==='favorite'?favoriteBoards:boards).get(listeningDayKey(Date.now())+':'+period);return entry&&Date.now()-entry.at<10000?entry.rows.slice():null;}
 export function competitionListeningTotal(period='all'){return boards.get(listeningDayKey(Date.now())+':'+period)?.totalSeconds??null;}
-export function clearCompetitionCache(){boards.clear();for(const request of boardRequests.values())request.controller.abort();boardRequests.clear();}
+export function clearCompetitionCache(){boards.clear();favoriteBoards.clear();for(const request of boardRequests.values())request.controller.abort();boardRequests.clear();}
 export function preloadCompetition(){return loadCompetition('all').catch(()=>[]);}
 let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
 export const competitionOwn=()=>own&&scope===account().userId?own:null;
@@ -32,16 +32,41 @@ export async function refreshCompetitionOwn({force=false}={}){
 }
 export async function saveCompetitionSettings(values){await request({action:'settings',...values});await refreshCompetitionOwn({force:true});}
 export function sharedPersonalTotals(local,period){const cloud=competitionOwn()?.totals?.[period];if(!cloud)return local;const merged={...local};for(const[id,n]of Object.entries(cloud))if(allowed.has(id)&&Number.isSafeInteger(n)&&n>=0)merged[id]=Math.max(merged[id]||0,n);return merged;}
-export async function loadCompetition(period='all',{force=false}={}){
+function favoriteOrder(rows){
+ if(!rows.some(row=>row.totalSeconds!==undefined))return rows;
+ const sorted=rows.slice().sort((a,b)=>b.seconds-a.seconds||a.id.localeCompare(b.id));let rank=1;
+ return sorted.map((row,index)=>{if(index&&row.seconds!==sorted[index-1].seconds)rank=index+1;return {...row,rank};});
+}
+export async function loadCompetition(period='all',{force=false,mode='total'}={}){
  if(!personalDataAllowed())return [];
  if(!['all','day','week','month'].includes(period))throw Error('invalid');
- const day=listeningDayKey(Date.now()),cached=cachedCompetition(period);if(cached&&!force)return cached;
- if(boardRequests.has(day)){await boardRequests.get(day).task;return cachedCompetition(period)||[];}
- const startedAt=Date.now(),controller=new AbortController(),entry={controller,task:null},timeout=setTimeout(()=>controller.abort(),8000);
- entry.task=(async()=>{let response;for(let attempt=0;attempt<2;attempt++){try{response=await fetch(endpoint+'?boards=1&details=reciters&day='+day,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});if(![502,503,504].includes(response.status)||attempt)break;}catch(error){if(controller.signal.aborted||attempt||error.name==='AbortError')throw error;}await new Promise(resolve=>setTimeout(resolve,400));if(controller.signal.aborted)throw Error('cancelled');}if(!response.ok)throw Error('unavailable');const data=await response.json();if(data.day!==day||!data.boards)throw Error('invalid');
-  const parsed=[];for(const p of ['all','day','week','month']){if(!Array.isArray(data.boards[p]?.items))throw Error('invalid');const seen=new Set(),rows=data.boards[p].items.flatMap(row=>{const person=safeListener(row);if(!person||seen.has(person.id)||!allowed.has(row.reciter)||!Number.isSafeInteger(row.seconds)||row.seconds<=0||!Number.isSafeInteger(row.rank)||row.rank<=0)return[];seen.add(person.id);const total=Number.isSafeInteger(row.totalSeconds)&&row.totalSeconds>=row.seconds?row.totalSeconds:null,ids=new Set();const reciters=total!==null&&Array.isArray(row.reciters)?row.reciters.filter(item=>{if(!allowed.has(item?.reciter)||ids.has(item.reciter)||!Number.isSafeInteger(item.seconds)||item.seconds<=0||item.seconds>total)return false;ids.add(item.reciter);return true;}).map(({reciter,seconds})=>({reciter,seconds})):[];return[{...person,...(total!==null?{totalSeconds:total,reciters}:{}),listeningUntil:Number.isInteger(row.activeForSeconds)&&row.activeForSeconds>0&&row.activeForSeconds<=45?startedAt+row.activeForSeconds*1000:0,reciter:row.reciter,seconds:row.seconds,rank:row.rank,awards:Array.isArray(row.awards)?row.awards.filter(k=>k==='week'||k==='month').slice(0,2):[]}];});parsed.push([p,rows]);}
-  if(controller.signal.aborted)throw Error('cancelled');for(const stored of boards.keys())if(!stored.startsWith(day+':'))boards.delete(stored);for(const[p,rows]of parsed)boards.set(day+':'+p,{rows,at:Date.now(),totalSeconds:Number.isSafeInteger(data.listeningTotals?.[p])&&data.listeningTotals[p]>=0?data.listeningTotals[p]:null});
- })();boardRequests.set(day,entry);try{await entry.task;return cachedCompetition(period)||[];}finally{clearTimeout(timeout);if(boardRequests.get(day)===entry)boardRequests.delete(day);}
+ const day=listeningDayKey(Date.now()),cached=cachedCompetition(period,{mode});if(cached&&!force)return cached;
+ const legacy=mode==='favorite'&&boards.get(day+':'+period)?.limited===true,requestKey=day+(legacy?':favorite':':total');
+ const pending=boardRequests.get(requestKey);
+ if(pending)await pending.task;
+ else{
+  const controller=new AbortController(),startedAt=Date.now(),timeout=setTimeout(()=>controller.abort(),11000),entry={controller,task:null};
+ entry.task=(async()=>{let response;for(let attempt=0;attempt<2;attempt++){try{response=await fetch(endpoint+'?boards=1'+(legacy?'':'&details=reciters')+'&day='+day,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});if(![502,503,504].includes(response.status)||attempt)break;}catch(error){if(controller.signal.aborted||attempt||error.name==='AbortError')throw error;}await new Promise(resolve=>setTimeout(resolve,400));if(controller.signal.aborted)throw Error('cancelled');}if(!response.ok)throw Error('unavailable');const data=await response.json();if(data.day!==day||!data.boards)throw Error('invalid');
+  const parsed=[];for(const p of ['all','day','week','month']){if(!Array.isArray(data.boards[p]?.items))throw Error('invalid');const seen=new Set(),rows=data.boards[p].items.flatMap(row=>{const person=safeListener(row);if(!person||seen.has(person.id)||!allowed.has(row.reciter)||!Number.isSafeInteger(row.seconds)||row.seconds<=0||!Number.isSafeInteger(row.rank)||row.rank<=0)return[];seen.add(person.id);const total=Number.isSafeInteger(row.totalSeconds)&&row.totalSeconds>=row.seconds?row.totalSeconds:null,ids=new Set();const reciters=total!==null&&Array.isArray(row.reciters)?row.reciters.filter(item=>{if(!allowed.has(item?.reciter)||ids.has(item.reciter)||!Number.isSafeInteger(item.seconds)||item.seconds<=0||item.seconds>total)return false;ids.add(item.reciter);return true;}).map(({reciter,seconds})=>({reciter,seconds})):[];return[{...person,...(total!==null?{totalSeconds:total,reciters}:{}),listeningUntil:Number.isInteger(row.activeForSeconds)&&row.activeForSeconds>0&&row.activeForSeconds<=45?startedAt+row.activeForSeconds*1000:0,reciter:row.reciter,seconds:row.seconds,rank:row.rank,awards:Array.isArray(row.awards)?row.awards.filter(k=>k==='week'||k==='month').slice(0,2):[]}];});parsed.push([p,rows,data.boards[p].limited===true]);}
+   if(controller.signal.aborted)throw Error('cancelled');
+   for(const cache of [boards,favoriteBoards])for(const stored of cache.keys())if(!stored.startsWith(day+':'))cache.delete(stored);
+   for(const [p,rows,limited] of parsed){
+    const key=day+':'+p,totalSeconds=Number.isSafeInteger(data.listeningTotals?.[p])&&data.listeningTotals[p]>=0?data.listeningTotals[p]:null,at=Date.now();
+    if(legacy){
+     favoriteBoards.set(key,{rows,at});
+     const overall=boards.get(key);if(overall&&totalSeconds!==null)overall.totalSeconds=totalSeconds;
+    }else{
+     boards.set(key,{rows,at,totalSeconds,limited});
+     if(!limited)favoriteBoards.set(key,{rows:favoriteOrder(rows),at});
+    }
+   }
+  })();boardRequests.set(requestKey,entry);
+  try{await entry.task;}finally{clearTimeout(timeout);if(boardRequests.get(requestKey)===entry)boardRequests.delete(requestKey);}
+ }
+ const result=cachedCompetition(period,{mode});
+ // A capped overall board cannot tell us who would enter a favorite-reciter leaderboard.
+ if(!result&&mode==='favorite'&&!legacy&&boards.get(day+':'+period)?.limited)return loadCompetition(period,{mode,force:true});
+ return result||[];
 }
 function deviceId(){const key='competition-device-v1:'+account().userId;let id=read(key,null);if(!/^[a-f0-9-]{36}$/i.test(id||'')){id=crypto.randomUUID();if(!write(key,id))throw Error('Не удалось сохранить устройство');}return id;}
 export async function connectCompetitionNotifications(period){
