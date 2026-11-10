@@ -98,6 +98,33 @@ rankLocation.hash=rankOrigin;clockHost.querySelector('#competition-all').onclick
 const last=rankList.querySelector('[data-competition-person="'+people[5].id+'"]');
 assert.ok(last);await last.onclick();assert.equal(rankPushes.at(-1).url,'#admin?view=profile&listener='+people[5].id);
 owner=false;mfa=true;rankLocation.hash=rankOrigin;await rankButtons[1].onclick();assert.equal(rankPushes.length,8,'An owner needing MFA can verify from an anonymous participant’s protected card route');
+const totals=[
+ {...people[0],seconds:2400,totalSeconds:4800,reciters:[{reciter:'ar.alafasy',seconds:2400},{reciter:'ar.yasseraldossaricontinuous',seconds:1800},{reciter:'ar.badralturki',seconds:600}]},
+ {...people[1],seconds:2340,totalSeconds:3200,reciters:[{reciter:'ar.alafasy',seconds:2340},{reciter:'ar.yasseraldossaricontinuous',seconds:860}]}
+];
+const chosen=new Map();let toggled=0;
+clockHost.innerHTML=api.competitionMarkup(totals,{},'total');api.bindCompetitionView(clockHost,{},'total',chosen,()=>toggled++);
+const cards=clockHost.querySelectorAll('.competition-card'),firstTrack=cards[0].querySelector('.competition-reciter-track');
+Object.defineProperty(firstTrack,'clientWidth',{value:110});
+assert.equal(cards[0].querySelector('[data-competition-score]').textContent,'1:20:00');
+assert.equal(cards[0].querySelector('[data-competition-reciter-time]').textContent,'0:40:00');
+assert.equal(firstTrack.children.length,3);firstTrack.scrollLeft=110;firstTrack.dispatchEvent(new clockWindow.Event('scroll'));
+assert.equal(chosen.get(totals[0].id),'ar.yasseraldossaricontinuous');
+assert.equal(chosen.get(totals[1].id),'ar.alafasy','Swiping one podium card leaves the adjacent carousel in place');
+assert.equal(firstTrack.children[1].getAttribute('aria-hidden'),'false');
+assert.equal(cards[0].querySelector('[data-competition-score]').textContent,'1:20:00','Changing reciter keeps the total fixed');
+api.updateCompetitionTimes(clockHost,[{...totals[0],totalSeconds:4805,reciters:totals[0].reciters.map((reciter,i)=>i===1?{...reciter,seconds:1805}:reciter)},totals[1]],'total');
+assert.equal(cards[0].querySelector('[data-competition-score]').textContent,'1:20:05');
+assert.equal(firstTrack.children[1].querySelector('[data-competition-reciter-time]').textContent,'0:30:05');
+assert.equal(firstTrack.scrollLeft,110,'A live update leaves the selected portrait in place');
+clockHost.querySelector('[data-competition-score-mode]').click();assert.equal(toggled,1);
+clockHost.innerHTML=api.competitionMarkup(totals,{},'favorite');
+assert.equal(clockHost.querySelectorAll('.competition-card')[0].dataset.competitionRank,'1');
+assert.equal(clockHost.querySelector('[data-competition-score]').textContent,'0:40:00');
+assert.equal(clockHost.querySelectorAll('.competition-card')[0].querySelectorAll('[data-reciter-slide]').length,1);
+assert.equal(clockHost.querySelector('[data-competition-score-mode]').getAttribute('aria-pressed'),'true');
+clockHost.innerHTML=api.competitionMarkup(people);
+assert.equal(clockHost.querySelector('[data-competition-score-mode]'),null,'An older server cannot imply totals or fabricate carousel entries');
 await clockWindow.happyDOM.abort();
 
 console.log('PASS: bounded snapshots, dates, safe push gateways, single delivery, retaken-rank suppression, top-five UI, medal ties and anonymous rendering.');

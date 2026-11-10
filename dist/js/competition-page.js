@@ -15,13 +15,14 @@ import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompet
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes}from './competition-view.js';
 export function mountCompetition(host,heading){
  if(!personalDataAllowed()){showRestrictedFeature(host,'Топ SALAH');return()=>{};}
- const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false,ownerCheck=null;
+ const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false,ownerCheck=null,mode='total';
+ const selectedReciters=new Map();
  if(!['day','week','month','all'].includes(period))period='all';
  const periods=[['day','День'],['week','Неделя'],['month','Месяц'],['all','Всё время']],liveTotal=createLiveListeningTotal(),sharedMotion=createSharedListeningMotion();
  // Both counters already include this device's history: compare them, never add
  // a page-local delta to the cloud result. Saved pending time survives remounts;
  // time from other devices appears when the confirmed board refreshes.
- function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>row.id===own.id?{...row,seconds:Math.max(row.seconds,Math.floor(totals[row.reciter]||0))}:row);}
+ function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>row.id===own.id&&row.totalSeconds===undefined?{...row,seconds:Math.max(row.seconds,Math.floor(totals[row.reciter]||0))}:row);}
  function checkRankOwner(){
   const {signedIn,userId}=counterSyncStatus();
   if(!signedIn||!userId){ownerCheck=null;return;}
@@ -37,18 +38,18 @@ export function mountCompetition(host,heading){
  if(resetMotionOnDraw){sharedMotion.reset();if(!refreshing)resetMotionOnDraw=false;}
  const total=sharedMotion.sample(target,{server:competitionListeningTotal(period),key:(own?.id||'guest')+':'+period+':'+new Date().toDateString()+':'+signed+':'+own?.enabled+':'+own?.mode});
  const access={owner:!!(signed&&ownerCheck?.userId===userId&&ownerCheck?.allowed),ownId:signed?own?.id:null};
- const key=JSON.stringify({period,busy,signed,access,favorites,count,newCount:recentReciters(RECITERS).length,own:own?{id:own.id,mode:own.mode,enabled:own.enabled,notify:own.notify,period:own.period}:null,loading:loading&&!rows.length,error,rows:rows.map(({seconds,listeningUntil,...person})=>person)});
- if(key===renderKey){updateListeningSummary(host,total);updateCompetitionTimes(host,shown);return;}renderKey=key;
+ const key=JSON.stringify({period,mode,busy,signed,access,favorites,count,newCount:recentReciters(RECITERS).length,own:own?{id:own.id,mode:own.mode,enabled:own.enabled,notify:own.notify,period:own.period}:null,loading:loading&&!rows.length,error,rows:rows.map(({seconds,listeningUntil,totalSeconds,reciters,...person})=>({...person,hasTotal:totalSeconds!==undefined,reciters:reciters?.map(item=>item.reciter)}))});
+ if(key===renderKey){updateListeningSummary(host,total);updateCompetitionTimes(host,shown,mode);return;}renderKey=key;
  let html='<section class="quran-library quran-reciters-library rank-page competition-page">'+heading()+''+reciterFilterTabs(null,favorites,RECITERS)+'<nav class="reciter-top-tabs" aria-label="Топы"><a class="reciter-top-tab reciter-top-personal" href="#quran?view=reciters&filter=my-top"><span><strong>Мой топ</strong><small>Ваше время</small></span></a><a class="reciter-top-tab reciter-top-global" href="#quran?view=reciters&filter=salah-top" aria-current="page"><span><strong>Топ SALAH</strong><small>Слушатели</small></span></a></nav>';
  html+='<div class="competition-heading"><p class="rank-intention" id="rank-intention" aria-live="off">'+RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length]+'</p></div><div class="reciter-period-tabs" role="group" aria-label="Период">'+periods.map(([p,label])=>'<button type="button" data-competition-period="'+p+'" aria-pressed="'+(p===period)+'">'+label+'</button>').join('')+'</div>';
  html+=listeningSummaryMarkup(total);
- html+=loading&&!rows.length?'<p class="reciter-empty">Загружаем рейтинг…</p>':error&&!rows.length?'<p class="reciter-empty">Рейтинг временно недоступен.<button class="text-button" id="competition-retry">Повторить</button></p>':competitionMarkup(shown,access);
+ html+=loading&&!rows.length?'<p class="reciter-empty">Загружаем рейтинг…</p>':error&&!rows.length?'<p class="reciter-empty">Рейтинг временно недоступен.<button class="text-button" id="competition-retry">Повторить</button></p>':competitionMarkup(shown,access,mode);
  if(error&&rows.length)html+='<p class="muted competition-sync-note">Показан последний загруженный результат.</p>';
  if(!signed)html+='<a class="text-button" href="#account">Войти в аккаунт</a>';
  else if(own){html+='<div class="competition-settings">'+(!own.enabled?'<p class="muted competition-explanation">Учёт в рейтинге отключён для этого аккаунта.</p>':'')+(own.enabled?listenerPrivacyMarkup({allowJoin:false})+'<div class="rank-privacy-bar competition-notify-row"><label class="switch-row"><span>Уведомлять, если меня обошли</span><input type="checkbox" role="switch" id="competition-notify" aria-label="Уведомлять, если меня обошли" '+(own.notify?'checked ':'')+(busy?'disabled':'')+'></label></div>':'')+'</div>';}
  html+='<button type="button" class="competition-awards-link" id="competition-awards"><img src="./assets/icons/trophy.svg" alt="">История побед</button>';
- html+='</section>';const before=captureCompetitionLayout(host);host.innerHTML=html;bindCompetitionView(host,access);animateCompetitionChange(host,before);bindPopularConsent(host);
- host.querySelectorAll('[data-competition-period]').forEach(button=>button.onclick=()=>{if(period===button.dataset.competitionPeriod)return;period=button.dataset.competitionPeriod;write('competition-period',period);const cached=cachedCompetition(period);rows=cached||[];loading=cached===null;error=false;draw();resetMotionOnDraw=true;void refresh();});const retry=host.querySelector('#competition-retry');if(retry)retry.onclick=()=>void refresh(true);
+ html+='</section>';const before=captureCompetitionLayout(host);host.innerHTML=html;bindCompetitionView(host,access,mode,selectedReciters,()=>{mode=mode==='total'?'favorite':'total';draw();host.querySelector('[data-competition-score-mode]')?.focus({preventScroll:true});});animateCompetitionChange(host,before);bindPopularConsent(host);
+ host.querySelectorAll('[data-competition-period]').forEach(button=>button.onclick=()=>{if(period===button.dataset.competitionPeriod)return;period=button.dataset.competitionPeriod;selectedReciters.clear();write('competition-period',period);const cached=cachedCompetition(period);rows=cached||[];loading=cached===null;error=false;draw();resetMotionOnDraw=true;void refresh();});const retry=host.querySelector('#competition-retry');if(retry)retry.onclick=()=>void refresh(true);
  const awards=host.querySelector('#competition-awards');if(awards)awards.onclick=()=>void showAwardWinners({isActive:()=>!closed});
  const notify=host.querySelector('#competition-notify');if(notify)notify.onchange=()=>{const enabled=notify.checked;void act(async()=>{if(enabled)await connectCompetitionNotifications(period);else await saveCompetitionSettings({notify:false});});};
  }
@@ -59,7 +60,7 @@ export function mountCompetition(host,heading){
  window.addEventListener('salah:listener-visibility',privacyUpdate);window.addEventListener('salah:competition-updated',ownUpdate);window.addEventListener('salah:popularity-updated',authUpdate);window.addEventListener('salah:counter-status',authUpdate);document.addEventListener('visibilitychange',visible);
  const progress=()=>{if(!closed&&!document.hidden)draw();};window.addEventListener('salah:personal-listening-progress',progress);
  const timer=setInterval(()=>void refresh(true),5000),phraseTimer=setInterval(()=>{const line=host.querySelector('#rank-intention');if(line&&!document.hidden)line.textContent=RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length];},15000);
- const presenceTimer=setInterval(()=>{if(!closed&&!document.hidden)updateCompetitionTimes(host,displayRows());},1000);
+ const presenceTimer=setInterval(()=>{if(!closed&&!document.hidden)updateCompetitionTimes(host,displayRows(),mode);},1000);
  const motionTimer=setInterval(()=>{if(!closed&&!document.hidden&&!resetMotionOnDraw)updateListeningSummary(host,sharedMotion.tick());},250);
  rows=cachedCompetition(period)||[];loading=!rows.length;checkRankOwner();draw();resetMotionOnDraw=true;void refresh();void preloadCompetition();void refreshCompetitionOwn().catch(()=>{});
  return()=>{closed=true;generation++;clearInterval(timer);clearInterval(phraseTimer);clearInterval(motionTimer);clearInterval(presenceTimer);sharedMotion.reset();window.removeEventListener('salah:personal-listening-progress',progress);window.removeEventListener('salah:listener-visibility',privacyUpdate);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
