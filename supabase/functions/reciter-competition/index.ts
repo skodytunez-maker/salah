@@ -52,7 +52,7 @@ async function publicBoard(period:string,day:string,holders:any={},withTotals=fa
   select r.user_id,r.reciter,r.seconds,r.place,r.total_seconds,p.reciters from ranked r left join podium p using(user_id)
  )`:sql`public.competition_board(${period},${day}::date)`;
  const detailFields=withTotals?sql`,b.total_seconds,b.reciters`:sql``;
- const rows=await sql`select b.user_id,b.reciter,b.seconds,b.place${detailFields},v.public_id as id,v.mode,
+ const rows=await sql`select b.user_id,b.reciter,b.seconds,b.place ${detailFields},v.public_id as id,v.mode,
  case when v.mode in ('initial','profile') and (u.banned_until is null or u.banned_until<=now()) then coalesce(least(45,greatest(0,ceil(extract(epoch from(live.latest+interval '45 seconds'-statement_timestamp())))))::int,0) else 0 end active_for_seconds,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
