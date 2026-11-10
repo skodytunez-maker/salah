@@ -1,4 +1,4 @@
-export const APP_VERSION=472;
+export const APP_VERSION=473;
 export const APP_UPDATED_AT='2026-11-10';
 export const APP_UPDATE_DATE='10 ноября 2026';
 export const APP_CHANGES=["Топ SALAH: часы показывают общее время, сердце — время любимого чтеца. В режиме часов листайте портреты внутри карточек пьедестала."];

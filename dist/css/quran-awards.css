@@ -144,11 +144,11 @@
 .release-new-milestones{display:flex;align-items:center;justify-content:center;width:100%;gap:6px;padding:16px}.release-new-milestones img{width:30%;min-width:0;object-fit:contain;filter:drop-shadow(0 10px 12px #0006)}
 
 .release-new-art:has(.release-top-demo){height:auto;padding:8px 0 12px}
-.release-top-demo{width:min(100%,220px);display:grid;justify-items:center;gap:8px;font-variant-numeric:tabular-nums}
+.release-top-demo{width:min(100%,220px);margin-inline:auto;display:grid;justify-items:center;gap:8px;font-variant-numeric:tabular-nums}
 .release-top-demo-card{width:152px;max-width:100%;box-sizing:border-box;padding:8px 6px;border:1px solid var(--line,#ffffff20);border-radius:16px;background:linear-gradient(145deg,#192438,#0d1524);text-align:center}
 .release-top-demo-place{color:var(--gold,#d8be88);font-size:11px}
 .release-top-demo-window{overflow:hidden;margin-top:6px}
-.release-top-demo-track{display:flex;width:200%;animation:release-top-slide 4.8s cubic-bezier(.25,.7,.25,1) both}
+.release-top-demo-track{display:flex;width:200%;--release-motion-keyframes:release-top-slide}
 .release-top-demo-track figure{margin:0;flex:0 0 50%;min-width:0;display:grid;justify-items:center;gap:4px}
 .release-new-art .release-top-demo .release-reader-portrait{width:58px;height:58px;border:1.5px solid var(--gold,#d8be88);object-position:center 18%;display:block}
 .release-top-demo-track figcaption strong,.release-top-demo-track figcaption small,.release-top-demo-total small{display:block}
@@ -157,14 +157,19 @@
 .release-top-demo-dots{position:relative;width:16px;height:5px;margin:6px auto 4px}
 .release-top-demo-dots::before,.release-top-demo-dots::after{content:'';position:absolute;left:0;width:5px;height:5px;border-radius:50%;background:var(--muted,#a6afc3)}
 .release-top-demo-dots::before{box-shadow:11px 0 var(--muted,#a6afc3)}
-.release-top-demo-dots::after{background:var(--gold,#d8be88);animation:release-top-dot 4.8s cubic-bezier(.25,.7,.25,1) both}
+.release-top-demo-dots{--release-motion-keyframes:release-top-dot}
+.release-top-demo-dots::after{background:var(--gold,#d8be88)}
 .release-top-demo-total strong{color:var(--gold,#d8be88);font-size:20px;line-height:1.25}
 .release-top-demo-actions{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;color:#adc8ec;font-size:10px}
 .release-top-demo-actions>span{display:inline-flex;align-items:center;justify-content:center;min-height:24px;padding:0 8px;border:1px solid var(--line,#ffffff20);border-radius:8px;background:var(--panel,#111b2b)}
 .release-top-demo-toggle{gap:6px;color:var(--muted,#a6afc3)}
 .release-top-demo-toggle svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .release-top-demo-toggle .is-active{color:var(--gold,#d8be88)}
-@keyframes release-top-slide{0%,32%{transform:translateX(0)}49%,100%{transform:translateX(-50%)}}
-@keyframes release-top-dot{0%,32%{transform:translateX(0)}49%,100%{transform:translateX(11px)}}
-body.reduce-motion .release-top-demo-track,body.no-transitions .release-top-demo-track,body.reduce-motion .release-top-demo-dots::after,body.no-transitions .release-top-demo-dots::after{animation:none}
-@media(prefers-reduced-motion:reduce){.release-top-demo-track,.release-top-demo-dots::after{animation:none}}
+@keyframes release-top-slide{0%,34%{transform:translateX(0)}68%,100%{transform:translateX(-50%)}}
+@keyframes release-top-dot{0%,34%{transform:translateX(0)}68%,100%{transform:translateX(11px)}}
+.release-motion-preview{--release-motion-state:paused}
+.release-feature[aria-hidden="false"] .release-motion-preview{--release-motion-state:running}
+#modal:not([open]) .release-motion-preview{--release-motion-state:paused}
+.release-motion-preview [data-release-motion-part="element"],.release-motion-preview [data-release-motion-part="after"]::after{animation:var(--release-motion-keyframes) 3s cubic-bezier(.25,.7,.25,1) infinite alternate both var(--release-motion-state)}
+body.reduce-motion .release-motion-preview [data-release-motion-part="element"],body.no-transitions .release-motion-preview [data-release-motion-part="element"],body.reduce-motion .release-motion-preview [data-release-motion-part="after"]::after,body.no-transitions .release-motion-preview [data-release-motion-part="after"]::after{animation:none}
+@media(prefers-reduced-motion:reduce){.release-motion-preview [data-release-motion-part="element"],.release-motion-preview [data-release-motion-part="after"]::after{animation:none}}

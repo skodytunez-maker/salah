@@ -56,18 +56,21 @@ await registerAppWorker();await new Promise(r=>setTimeout(r,20));
 assert.equal(elements.length,startMajor+1,'Dismissal survives relaunch');
 assert.equal(hasSeenAnnouncement(major),true);
 delete upcoming.announcement;registration.waiting=null;values.delete('salah:update-announcement-seen-v2');
-// On a quiet launch the actual installed release opens once, without changing personal data.
+// On a quiet launch installed news stays unacknowledged until the reader confirms it.
 let releaseDialogs=0;serviceWorker.register=async()=>registration;navigator.onLine=true;
 values.delete('salah:update-last-seen-v1');
 await registerAppWorker({showRelease:release=>{releaseDialogs++;assert.equal(release.version,APP_ANNOUNCEMENT.version)}});
-assert.equal(releaseDialogs,1);assert.equal(values.get('salah:update-announcement-seen-v2'),String(APP_ANNOUNCEMENT.version));
-await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,1);
+assert.equal(releaseDialogs,1);assert.equal(hasSeenAnnouncement(),false);
+await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,2,'A launch without acknowledgement can show the news again');
+values.set('salah:update-announcement-seen-v2',String(APP_ANNOUNCEMENT.version));
+await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,2);
 values.delete('salah:update-last-seen-v1');values.delete('salah:update-announcement-seen-v2');
-await registerAppWorker({canShowRelease:()=>false,showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,1,'Onboarding must not be covered');
+await registerAppWorker({canShowRelease:()=>false,showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,2,'Onboarding must not be covered');
 values.set('salah:update-last-seen-v1',String(APP_VERSION));values.delete('salah:update-announcement-seen-v2');
-await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,1,'Migration must not repeat already seen news');
+await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,2,'Migration must not repeat already seen news');
 values.set('salah:update-last-seen-v1',String(APP_ANNOUNCEMENT.version-1));
-await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,2,'Users who skip a major release see it even on a later minor build');
+await registerAppWorker({showRelease:()=>releaseDialogs++});assert.equal(releaseDialogs,3,'Users who skip a major release see it even on a later minor build');
+values.set('salah:update-announcement-seen-v2',String(APP_ANNOUNCEMENT.version));
 assert.equal(values.get('salah:settings'),before[0][1]);assert.equal(values.get('salah:adhkar-progress-v2'),before[1][1]);
 // A build discovered after launch applies automatically at a resting screen, exactly once.
 const realNow=Date.now;let fakeNow=100000,safe=true,installChanged,updateFound,automaticBefore=automaticMessages;

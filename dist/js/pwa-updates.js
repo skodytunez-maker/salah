@@ -29,7 +29,7 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
  modal('<div class="release-dialog"><span class="eyebrow">SALAH · '+esc(releaseDate(safe.date))+'</span><h2 tabindex="-1" autofocus>'+(available?'Что изменится':'Что нового')+'</h2>'+(illustratedReleaseMarkup(safe.version,safe.changes)||'<ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'<button class="button secondary" type="button" data-close>Понятно</button></div>');
  bindIllustratedRelease(document.querySelector('.release-dialog'));
  if(typeof onClose==='function'){const dialog=document.getElementById('modal'),closed=()=>onClose();dialog.addEventListener('close',closed,{once:true});}
- if(!available&&acknowledgeAnnouncement){acknowledge(safe);document.querySelector('.release-dialog [data-close]')?.addEventListener('click',()=>window.dispatchEvent(new Event('salah:release-dismissed')),{once:true});}
+ if(!available&&acknowledgeAnnouncement)document.querySelector('.release-dialog [data-close]')?.addEventListener('click',()=>{acknowledge(safe);window.dispatchEvent(new Event('salah:release-dismissed'));},{once:true});
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
 export const nativeUpdateRuntime=()=>globalThis.Capacitor?.isNativePlatform?.()===true||Number.isSafeInteger(globalThis.__SALAH_NATIVE_BOOT__?.versionCode);
@@ -113,8 +113,8 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
   const quietStartup=startupUntouched&&document.visibilityState==='visible'&&Date.now()-startedAt<1000&&!document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]');
   finishStartup();watch(registration.installing);
   if(!requested){if(registration.waiting)void offer();else if(!hasSeenAnnouncement()){
-   // Show the installed release once; never replace an open form or dialog.
-   if(quietStartup&&canShowRelease()&&!document.getElementById?.('modal')?.open){showRelease(APP_ANNOUNCEMENT);acknowledge();}else if(canShowRelease())makeBanner({release:APP_ANNOUNCEMENT});
+   // Offer the installed release until acknowledged, without replacing an open form or dialog.
+   if(quietStartup&&canShowRelease()&&!document.getElementById?.('modal')?.open){showRelease(APP_ANNOUNCEMENT);}else if(canShowRelease())makeBanner({release:APP_ANNOUNCEMENT});
   }}
   registration.addEventListener('updatefound',()=>watch(registration.installing));
   async function check(force=false){
