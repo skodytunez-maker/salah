@@ -11,8 +11,15 @@ const artwork=kind=>'<img src="./'+awardArtwork(kind)+'" alt="">';
 const screenshot=(name,version=357)=>'<img class="release-screen-picture" src="./assets/updates/'+name+'-'+version+'.png" alt="">';
 const readerFigures=readers=>'<div class="release-new-readers release-roundup-readers">'+readers.map(([image,name])=>'<figure>'+portrait(image)+'<figcaption>'+esc(name)+'</figcaption></figure>').join('')+'</div>';
 const mapFeaturePicture=(holy=false)=>'<div class="release-map-picture">'+screenshot(holy?'holy-cities':'qibla-map',368)+'<small class="release-map-credit">'+(holy?'Tiles © Esri · Esri, Maxar, Earthstar Geographics, GIS User Community · © OpenStreetMap':'OpenFreeMap · OpenMapTiles · © OpenStreetMap')+'</small></div>';
+function topReciterPreview(){
+ const portraits=[['yasseraldossari.jpg','Ясир ад-Даусари','12:40:15'],['idrisabkar.png','Идрис Абкар','08:51:20']];
+ const slides=portraits.map(([file,name,time])=>'<figure>'+portrait(file)+'<figcaption><strong>'+esc(name)+'</strong><small>'+time+'</small></figcaption></figure>').join('');
+ return '<div class="release-top-demo"><div class="release-top-demo-card"><span class="release-top-demo-place">1 место</span><div class="release-top-demo-window"><div class="release-top-demo-track">'+slides+'</div></div><div class="release-top-demo-dots"></div><div class="release-top-demo-total"><small>Всего</small><strong>33:08:37</strong></div></div><div class="release-top-demo-actions"><span>Весь рейтинг</span><span class="release-top-demo-toggle"><svg class="is-active" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><svg viewBox="0 0 24 24"><path d="M20.8 4.8a5.4 5.4 0 0 0-7.6 0L12 6l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6l1.2 1.2L12 21l7.6-7.4 1.2-1.2a5.4 5.4 0 0 0 0-7.6Z"/></svg></span></div></div>';
+}
+
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'top-reciter-carousel',match:/^Топ SALAH: часы показывают/iu,title:'Листайте чтецов в Топе SALAH',art:topReciterPreview,where:'Коран → Чтецы → Топ SALAH. Переключатель справа от «Весь рейтинг».'},
  {id:'mushaf-reading-mode',match:/Мусхаф на весь экран/iu,title:'Мусхаф без рамок',art:()=>screenshot('mushaf-reading',460),where:'Коран → Мусхаф → кнопка разворота. Нажмите её ещё раз, чтобы вернуть панели и настройки.'},
  {id:'reciters-talib-dibirov',match:/Ахмад Талиб.*Мухаммад Дибиров/iu,title:'Пять новых голосов',art:()=>screenshot('new-reciters',460),where:'Коран → Чтецы. Ахмад Талиб, Мухаммад Дибиров, Камиль Самигуллин, Алижон кори и обучающее чтение Джанхонгира Неъматова.'},
  {id:'reading-adhkar-awards',match:/Пять новых наград/iu,title:'Чтение и азкары в вашей коллекции',art:()=>'<div class="release-new-milestones">'+artwork('reading1')+artwork('khatm')+artwork('adhkar30')+'</div>',where:'Мой аккаунт → Мои награды. В конце прочитанного джуза нажмите «Джуз прочитан»; для азкаров завершайте оба набора за день.'},

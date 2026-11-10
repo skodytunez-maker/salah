@@ -45,7 +45,16 @@ const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Из�
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
 root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Мусхаф без рамок'));assert.ok(root.textContent.includes('Пять новых голосов'));assert.ok(root.querySelector('img[src="./assets/updates/mushaf-reading-460.png"]'));assert.ok(root.querySelector('img[src="./assets/updates/new-reciters-460.png"]'));assert.ok(!root.textContent.includes('Ваши победы остаются с вами'));
+assert.equal(root.querySelectorAll('.release-feature').length,1);assert.ok(root.textContent.includes('Листайте чтецов в Топе SALAH'));
+const topPreview=root.querySelector('.release-top-demo'),topTrack=topPreview.querySelector('.release-top-demo-track');
+assert.equal(topTrack.querySelectorAll('img').length,2);
+assert.equal(topTrack.querySelectorAll('figure').length,2);
+assert.ok(!topTrack.querySelector('.release-top-demo-total'),'The combined time must stay outside the animated track');
+assert.equal(topPreview.querySelector('.release-top-demo-total strong').textContent,'33:08:37');
+assert.equal(topPreview.querySelectorAll('.release-top-demo-toggle svg').length,2);
+const releaseStyles=await fs.readFile(new URL('../dist/css/quran-awards.css',import.meta.url),'utf8');
+assert.match(releaseStyles,/\.release-top-demo-track\{[^}]*animation:release-top-slide 4\.8s [^}]+ both\}/);
+assert.match(releaseStyles,/prefers-reduced-motion:reduce\)\{\.release-top-demo-track,[^}]+animation:none/);
 for(const old of ['Восемь новых чтецов','Азкары в вашем ритме','Алфавит для скачивания','Онлайн-занятия','Буквы со звуком'])assert.ok(!root.textContent.includes(old));
 assert.equal(root.querySelectorAll('.release-coming-button:disabled').length,0);
 for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('img'),'Every current major feature card needs a real screenshot, portrait or artwork');
@@ -60,7 +69,7 @@ try{
  Date.now=()=>deadline-1000;bindReleaseHighlight(root);
  assert.equal(root.querySelector('[data-release-highlight]'),null,'No large update banner on Home');
  showAppRelease();assert.equal(releaseModal.open,true,'Current news remains available through the explicit update action');
- assert.ok(releaseModal.textContent.includes('Мусхаф без рамок'));assert.ok(releaseModal.textContent.includes('Пять новых голосов'));
+ assert.ok(releaseModal.textContent.includes('Листайте чтецов в Топе SALAH'));assert.ok(releaseModal.querySelector('.release-top-demo-track'));
  assert.ok(!releaseModal.textContent.includes('Большое обновление SALAH'));
  releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);
  assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Home stays clear after acknowledgement');

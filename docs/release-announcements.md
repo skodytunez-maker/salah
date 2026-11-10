@@ -583,3 +583,7 @@ Give a city or country drilldown a private browser Back entry so the system gest
 ## 471 — listening-time modes and podium reciter carousel
 
 The opt-in public Top response ranks by each participant’s combined listening time for the selected period and returns the per-reciter breakdown only for the podium. The compact clock/heart switch beside the full ranking selects combined or favorite-reciter time without rearranging the podium. Each podium card can page through its own reciters while its combined time remains visible. Existing clients can keep using the original response, and finalized winner selection continues to use the existing competition rules.
+
+## 472 — animated Top SALAH release news
+
+Announce the Top SALAH listening modes in one feature card. Animate a contained horizontal slide between existing catalog portraits with sample reciter times. The combined time stays fixed in the preview. Use the current SALAH colors and a static frame when app or system motion is reduced.
