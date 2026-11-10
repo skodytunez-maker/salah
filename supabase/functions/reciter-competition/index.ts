@@ -28,15 +28,38 @@ async function ensure(user:any,initialEnabled=true){const hash=await hashFor(use
  await tx`insert into salah_competition_private.legacy_days(user_id,day,reciter,seconds)select ${user.id}::uuid,m.day,m.reciter,case when exists(select 1 from salah_competition_private.totals t where t.user_id=${user.id}::uuid and t.reciter=m.reciter)then 0 else m.minutes::bigint*60+m.extra_seconds end from public.reciter_popularity_minutes m where listener_hash=${hash} on conflict(user_id,day,reciter)do nothing`;
  await tx`select public.competition_refresh()`;
 });}
-async function publicBoard(period:string,day:string,holders:any={}){
- const rows=await sql`select b.user_id,b.reciter,b.seconds,b.place,v.public_id as id,v.mode,
+async function publicBoard(period:string,day:string,holders:any={},withTotals=false){
+ const board=withTotals?sql`(
+  with heard as materialized (
+   select s.user_id,v.public_id,s.reciter,s.seconds,
+    sum(s.seconds) over(partition by s.user_id)::bigint total_seconds,
+    row_number() over(partition by s.user_id order by s.seconds desc,case when s.reciter=f.reciter then 0 else 1 end,s.reciter) favorite
+   from public.competition_scores(${period},${day}::date) s
+   join salah_competition_private.preferences p using(user_id)
+   join public.reciter_listener_visibility v using(user_id)
+   join auth.users u on u.id=s.user_id
+   left join salah_competition_private.favorite_state f on f.user_id=s.user_id and f.period=${period} and f.bucket=
+    case ${period} when 'all' then '1970-01-01'::date when 'week' then date_trunc('week',${day}::timestamp)::date when 'month' then date_trunc('month',${day}::timestamp)::date else ${day}::date end
+   where p.enabled and v.mode in ('initial','profile') and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)
+  ), ranked as (
+   select user_id,reciter,seconds,total_seconds,rank() over(order by total_seconds desc) place,
+    row_number() over(order by total_seconds desc,public_id) ordinal
+   from heard where favorite=1
+  ), podium as (
+   select h.user_id,json_agg(json_build_object('reciter',h.reciter,'seconds',h.seconds) order by h.favorite) reciters
+   from heard h join ranked r using(user_id) where r.ordinal<=3 group by h.user_id
+  )
+  select r.user_id,r.reciter,r.seconds,r.place,r.total_seconds,p.reciters from ranked r left join podium p using(user_id)
+ )`:sql`public.competition_board(${period},${day}::date)`;
+ const detailFields=withTotals?sql`,b.total_seconds,b.reciters`:sql``;
+ const rows=await sql`select b.user_id,b.reciter,b.seconds,b.place ${detailFields},v.public_id as id,v.mode,
  case when v.mode in ('initial','profile') and (u.banned_until is null or u.banned_until<=now()) then coalesce(least(45,greatest(0,ceil(extract(epoch from(live.latest+interval '45 seconds'-statement_timestamp())))))::int,0) else 0 end active_for_seconds,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
  case when v.mode='profile' then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
  case when v.mode='profile' then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars'and o.name=v.user_id::text||'/profile.jpg')else false end has_photo
- from public.competition_board(${period},${day}::date)b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id left join lateral(select max(lp.reported_at) latest from salah_competition_private.listener_presence lp join auth.sessions s on s.id=lp.session_id and s.user_id=lp.user_id where lp.user_id=b.user_id and lp.playing and lp.reported_at>statement_timestamp()-interval '45 seconds' and (s.not_after is null or s.not_after>now())) live on true order by b.place,v.public_id limit 1000`;
- const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],activeForSeconds:['initial','profile'].includes(r.mode)?Number(r.active_for_seconds)||0:0,seconds:Number(r.seconds),rank:Number(r.place),awards:[...(holders.week===r.user_id?['week']:[]),...(holders.month===r.user_id?['month']:[])]})),limited:rows.length===1000};
+ from ${board} b join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=b.user_id left join lateral(select max(lp.reported_at) latest from salah_competition_private.listener_presence lp join auth.sessions s on s.id=lp.session_id and s.user_id=lp.user_id where lp.user_id=b.user_id and lp.playing and lp.reported_at>statement_timestamp()-interval '45 seconds' and (s.not_after is null or s.not_after>now())) live on true order by b.place,v.public_id limit 1000`;
+ const labels=publicListenerRows(rows);return {items:rows.map((r:any,i:number)=>({...labels[i],activeForSeconds:['initial','profile'].includes(r.mode)?Number(r.active_for_seconds)||0:0,seconds:Number(r.seconds),rank:Number(r.place),...(withTotals?{totalSeconds:Number(r.total_seconds),...(Array.isArray(r.reciters)?{reciters:r.reciters.map((item:any)=>({reciter:item.reciter,seconds:Number(item.seconds)}))}:{})}:{}),awards:[...(holders.week===r.user_id?['week']:[]),...(holders.month===r.user_id?['month']:[])]})),limited:rows.length===1000};
 }
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
@@ -54,7 +77,7 @@ Deno.serve(async req=>{
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
   const holders=await currentTitleHolders(sql);
-  if(params.get('boards')==='1'){const boards:any={};for(const p of COMPETITION_PERIODS)boards[p]=await publicBoard(p,day,holders);let listeningTotals;try{listeningTotals=await loadListeningTotals(sql,day);}catch{/* Keep the existing board available if its summary fails. */}return reply({day,boards,...(listeningTotals?{listeningTotals}:{})});}
+  if(params.get('boards')==='1'){const boards:any={},withTotals=params.get('details')==='reciters';for(const p of COMPETITION_PERIODS){try{boards[p]=await publicBoard(p,day,holders,withTotals);}catch(error){if(!withTotals)throw error;boards[p]=await publicBoard(p,day,holders);}}let listeningTotals;try{listeningTotals=await loadListeningTotals(sql,day);}catch{/* Keep the existing board available if its summary fails. */}return reply({day,boards,...(listeningTotals?{listeningTotals}:{})});}
   return reply({period,day,...await publicBoard(period,day,holders)});
  }
  const user=await verified(req);if(!user)return reply({error:'sign_in_required'},401);

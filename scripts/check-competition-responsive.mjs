@@ -5,6 +5,7 @@ import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
+import{PGlite}from '../tests/staff/node_modules/@electric-sql/pglite/dist/index.js';
 import{stripTypeScriptTypes}from 'node:module';
 import{RECITERS,reciterHasSurah,adjacentReciterSurah}from '../dist/js/quran-reciters.js';
 import{safeListener,rankTime}from '../dist/js/reciter-ranking-core.js';
@@ -31,12 +32,74 @@ cache.set('day',[{...person,seconds:20}]);buttons.find(b=>b.dataset.competitionP
 buttons.find(b=>b.dataset.competitionPeriod==='week').onclick();buttons.find(b=>b.dataset.competitionPeriod==='month').onclick();deferred.get('month')([{...person,seconds:80}]);await flush();deferred.get('week')([{...person,seconds:50}]);await flush();assert.equal(shown[0].seconds,80,'A late previous-period response cannot replace the selected period');stop();assert.equal(handlers['salah:personal-listening-progress'],undefined);
 // Exercise the actual Edge handler with synthetic read-only SQL rows.
 const backend=await fs.readFile(new URL('../supabase/functions/reciter-competition/index.ts',import.meta.url),'utf8');let serve;const readPeriods=[];
-const sql=async(strings,...args)=>{if(strings.join('').includes('competition_scores'))return COMPETITION_PERIODS.map(period=>({period,seconds:'600'}));assert.ok(strings.join('').includes('competition_board'),'Public snapshots execute only read-only board and summary queries');readPeriods.push(args[0]);return[{...person,place:1,prefix:'AN',nickname:'PRIVATE-NEVER-PUBLISH',has_photo:false},{id:other,mode:'profile',initial:'A',prefix:'AL',nickname:'Public fixture',has_photo:false,reciter:'ar.alafasy',seconds:90,place:2}];};
+const db=new PGlite();
+const uid=n=>'00000000-0000-4000-8000-'+String(n).padStart(12,'0');
+await db.exec(`
+ create schema auth;create schema storage;create schema salah_competition_private;
+ create table auth.users(id uuid primary key,raw_user_meta_data jsonb,banned_until timestamptz,email_confirmed_at timestamptz,is_anonymous boolean);
+ create table auth.sessions(id uuid,user_id uuid,not_after timestamptz);
+ create table storage.objects(bucket_id text,name text);
+ create table public.reciter_listener_visibility(user_id uuid,public_id uuid,mode text);
+ create table salah_competition_private.preferences(user_id uuid,enabled boolean);
+ create table salah_competition_private.favorite_state(user_id uuid,period text,bucket date,reciter text);
+ create table salah_competition_private.listener_presence(user_id uuid,session_id uuid,reported_at timestamptz,playing boolean);
+ create table fixture_reciter_seconds(user_id uuid,reciter text,seconds bigint,heard_today boolean);
+ create function public.competition_scores(text,date) returns table(user_id uuid,reciter text,seconds bigint) language sql stable as
+ 'select s.user_id,s.reciter,s.seconds from fixture_reciter_seconds s where $1<>''day'' or s.heard_today';
+ insert into auth.users values
+ ${[1,2,3,4,5,6].map(i=>"('"+uid(i)+"','"+JSON.stringify({nickname:i===1?'PRIVATE-CAROUSEL-IDENTITY':'Fixture '+i})+"',null,now(),false)").join(',')};
+ insert into reciter_listener_visibility values
+ ${[1,2,3,4,5,6].map(i=>"('"+uid(i)+"','"+uid(i+100)+"','"+(i===1?'initial':i===5?'hidden':'profile')+"')").join(',')};
+ insert into salah_competition_private.preferences values
+ ${[1,2,3,4,5,6].map(i=>"('"+uid(i)+"',"+(i!==6)+")").join(',')};
+ insert into fixture_reciter_seconds values
+ ('${uid(1)}','ar.alafasy',100,true),('${uid(1)}','ar.yasseraldossaricontinuous',100,false),
+ ('${uid(2)}','ar.alafasy',150,true),('${uid(3)}','ar.alafasy',150,true),('${uid(4)}','ar.alafasy',70,true),
+ ('${uid(5)}','ar.alafasy',9999,true),('${uid(6)}','ar.alafasy',9999,true);
+ insert into salah_competition_private.favorite_state values ('${uid(1)}','all','1970-01-01','ar.yasseraldossaricontinuous');
+`);
+const sql=(strings,...args)=>{
+ const segments=[];let query='';
+ for(let i=0;i<strings.length;i++){
+  query+=strings[i];if(i===args.length)continue;
+  const value=args[i];
+  if(value?.query!==undefined){const offset=segments.length;query+=value.query.replace(/\$(\d+)/g,(_,index)=>'$'+(offset+Number(index)));segments.push(...value.segments);}
+  else{segments.push(value);query+='$'+segments.length;}
+ }
+ return {query,segments,then(resolve,reject){
+  const result=query.includes('ranked as (')?db.query(query,segments).then(r=>r.rows):Promise.resolve().then(()=>{
+   if(query.includes('competition_scores'))return COMPETITION_PERIODS.map(period=>({period,seconds:'600'}));
+   assert.ok(query.includes('competition_board'),'Public snapshots execute only read-only board and summary queries');readPeriods.push(segments[0]);
+   return[{...person,place:1,prefix:'AN',nickname:'PRIVATE-NEVER-PUBLISH',has_photo:false},{id:other,mode:'profile',initial:'A',prefix:'AL',nickname:'Public fixture',has_photo:false,reciter:'ar.alafasy',seconds:90,place:2}];
+  });
+  return result.then(resolve,reject);
+ }};
+};
 const edgeContext=vm.createContext({currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,createListeningTotalsLoader,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edgeContext);
 const testDay=listeningDayKey(Date.now());
 const response=await serve(new Request('https://fixture.invalid?boards=1&day='+testDay));assert.equal(response.status,200);const body=await response.json();assert.deepEqual(Object.keys(body.boards).sort(),['all','day','month','week']);assert.equal(readPeriods.length,4);assert.equal(body.listeningTotals.all,600);assert.ok(!JSON.stringify(body).includes('PRIVATE-NEVER-PUBLISH'));assert.equal(body.boards.all.items[0].initial,'AN');
 const legacy=await serve(new Request('https://fixture.invalid?period=week&day='+testDay));assert.equal((await legacy.json()).period,'week','Existing clients retain their original response');
+assert.equal(body.boards.all.items[0].totalSeconds,undefined,'The existing public board contract remains compatible');
+const richResponse=await serve(new Request('https://fixture.invalid?boards=1&details=reciters&day='+testDay));assert.equal(richResponse.status,200);
+const rich=await richResponse.json(),overall=rich.boards.all.items;
+assert.deepEqual(overall.map(x=>[x.id,x.rank,x.totalSeconds]),[[uid(101),1,200],[uid(102),2,150],[uid(103),2,150],[uid(104),4,70]]);
+assert.deepEqual(overall[0].reciters,[{reciter:'ar.yasseraldossaricontinuous',seconds:100},{reciter:'ar.alafasy',seconds:100}]);
+assert.equal(overall[0].reciter,'ar.yasseraldossaricontinuous','A favorite tie follows the existing saved preference');
+assert.equal(overall[0].seconds,100);assert.equal(overall[3].reciters,undefined,'Only podium entries expose the reciter breakdown');
+assert.equal(rich.boards.day.items[0].id,uid(102),'A different period uses its own scores and ranks');
+assert.ok(!JSON.stringify(rich).includes('PRIVATE-CAROUSEL-IDENTITY'));
+client.clearCompetitionCache();
+clientContext.fetch=async url=>{
+ assert.match(url,/details=reciters/);
+ const payload=structuredClone(rich);payload.boards.all.items[0].reciters.push({reciter:'unknown.fixture',seconds:9999},{reciter:'ar.alafasy',seconds:100});
+ return {ok:true,status:200,json:async()=>payload};
+};
+const parsedRich=await client.loadCompetition('all');
+assert.equal(parsedRich[0].totalSeconds,200);
+assert.deepEqual(JSON.parse(JSON.stringify(parsedRich[0].reciters)),overall[0].reciters,'The client strips unknown and duplicate reciters');
+assert.ok(!Object.hasOwn(parsedRich[0],'nickname'));
+await db.close();
 assert.equal(reciterHasSurah('ar.siratulloraupov',1),true);assert.equal(reciterHasSurah('ar.siratulloraupov',2),false);assert.equal(adjacentReciterSurah('ar.siratulloraupov',1,1),16);assert.equal(reciterHasSurah('ar.siratulloraupov',114),true);
 console.log('PASS: one four-period transport, cache/abort/privacy, delayed-result coalescing, instant warm switches, stale-period rejection, live seconds without duplicate credit or invented ranks, legacy Edge compatibility and verified Raupov availability.');
 

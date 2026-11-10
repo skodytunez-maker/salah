@@ -452,3 +452,22 @@ body.mushaf-reading .mushaf-print-meta {
   padding: 0 54px 0 4px;
 }
 body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mushaf-read-confirm{padding-inline:12px}body.mushaf-reading #quran-global-player{display:none!important}
+
+.competition-rating-actions{display:flex;align-items:center;gap:8px;margin-top:12px}
+.competition-rating-actions .rank-open-all{flex:1;min-width:0;margin:0}
+.competition-score-mode{flex:none;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 9px;border:1px solid var(--line,#ffffff20);border-radius:14px;background:var(--panel,#111b2b);color:var(--muted);cursor:pointer}
+.competition-score-mode svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.competition-score-mode .is-active{color:var(--gold,#d8be88)}
+.competition-reciter-carousel{width:100%;min-width:0}
+.competition-reciter-track{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none}
+.competition-reciter-track::-webkit-scrollbar{display:none}
+.competition-reciter-slide{flex:0 0 100%;min-width:0;box-sizing:border-box;padding:3px 2px 0;scroll-snap-align:start}
+.competition-reciter-time{display:block;color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums;min-height:1.5em}
+.competition-reciter-pager{min-height:22px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:10px}
+.competition-reciter-pager button{display:grid;place-items:center;min-width:18px;min-height:22px;border:0;padding:0;background:transparent;color:inherit;cursor:pointer}
+.competition-reciter-pager button:disabled{opacity:.35;cursor:default}
+.competition-reciter-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.competition-reciter-dot[aria-current="true"]{color:var(--gold,#d8be88)}
+.competition-score-mode:focus-visible,.competition-reciter-pager button:focus-visible{outline:2px solid var(--gold,#d8be88);outline-offset:1px}
+.competition-card .competition-time-emphasis{font-size:clamp(12px,3.6vw,17px);font-variant-numeric:tabular-nums}
+.competition-time-emphasis small{display:block;color:var(--muted);font-size:10px;font-weight:500;white-space:normal}

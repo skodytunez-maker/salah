@@ -19,7 +19,24 @@ create function public.competition_board(text,date) returns table(user_id uuid,r
 const migration=(await fs.readdir(new URL('../supabase/migrations/',import.meta.url))).find(x=>x.endsWith('_listener_playback_presence.sql'));
 await pg.exec(await fs.readFile(new URL('../supabase/migrations/'+migration,import.meta.url),'utf8'));
 await pg.query("insert into auth.users values($1,now(),false,null,'{\"nickname\":\"Fixture\"}')",[uid]);await pg.query('insert into auth.sessions values($1,$2,null)',[sid,uid]);await pg.query('insert into salah_competition_private.preferences values($1,true)',[uid]);await pg.query("insert into public.reciter_listener_visibility values($1,$2,'profile')",[uid,publicId]);
-const queries=[];function tag(connection){const sql=async(strings,...values)=>{const q=strings.reduce((s,p,i)=>s+(i?'$'+i:'')+p,'');queries.push(q);if(q.includes('pg_advisory_xact_lock'))return[];return(await connection.query(q,values)).rows;};sql.begin=fn=>connection.transaction(tx=>fn(tag(tx)));return sql;}
+const queries=[];
+function tag(connection){
+ const sql=(strings,...args)=>{
+  const values=[];let query='';
+  for(let i=0;i<strings.length;i++){
+   query+=strings[i];if(i===args.length)continue;
+   const value=args[i];
+   if(value?.query!==undefined){const offset=values.length;query+=value.query.replace(/\$(\d+)/g,(_,index)=>'$'+(offset+Number(index)));values.push(...value.values);}
+   else{values.push(value);query+='$'+values.length;}
+  }
+  return {query,values,then(resolve,reject){
+   queries.push(query);
+   const result=query.includes('pg_advisory_xact_lock')?Promise.resolve([]):connection.query(query,values).then(r=>r.rows);
+   return result.then(resolve,reject);
+  }};
+ };
+ sql.begin=fn=>connection.transaction(tx=>fn(tag(tx)));return sql;
+}
 const sql=tag(pg),db=createListenerPresenceDb(sql),user={id:uid,session:sid};const packet=(sequence,playing=true,t=tab)=>listenerPresencePacket({action:'presence',tab:t,sequence,playing});
 for(const data of [{action:'presence',tab,sequence:1,playing:true,user_id:uid},{action:'presence',tab:'bad',sequence:1,playing:true},{action:'presence',tab,sequence:-1,playing:true},{action:'presence',tab,sequence:1,playing:'true'}])assert.throws(()=>listenerPresencePacket(data));
 assert.equal((await db.update(user,packet(1))).playing,true);assert.equal((await db.update(user,packet(3,false))).accepted,true);assert.equal((await db.update(user,packet(2,true))).accepted,false);assert.equal((await pg.query('select playing from salah_competition_private.listener_presence')).rows[0].playing,false,'A delayed playing request cannot resurrect paused playback');

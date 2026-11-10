@@ -579,3 +579,7 @@ Temporarily remove the My Place and Now Listening actions from the ranking. Pres
 ## 470 — system Back in geography and manual award replay
 
 Give a city or country drilldown a private browser Back entry so the system gesture returns to the selected geography tab. Keep location and profile data out of browser history. Keep an explicitly requested award presentation open while automatic award scheduling runs. Preserve the current illustrated announcement, acknowledgement and expiry.
+
+## 471 — listening-time modes and podium reciter carousel
+
+The opt-in public Top response ranks by each participant’s combined listening time for the selected period and returns the per-reciter breakdown only for the podium. The compact clock/heart switch beside the full ranking selects combined or favorite-reciter time without rearranging the podium. Each podium card can page through its own reciters while its combined time remains visible. Existing clients can keep using the original response, and finalized winner selection continues to use the existing competition rules.
