@@ -11,6 +11,7 @@ import{canonicalAccountLocation}from '../dist/js/account-location.js';
 import{mountOwnerGeography}from '../dist/js/owner-geography.js';
 import{mountOwnerVisitors}from '../dist/js/owner-visitors.js';
 import{mountOwnerGeoMembers}from '../dist/js/owner-geo-members.js';
+import{createOwnerCardHistory}from '../dist/js/owner-card-navigation.js';
 const read=p=>readFile(new URL('../'+p,import.meta.url),'utf8');
 const access=await read('supabase/functions/owner-access/index.ts'),presence=await read('supabase/functions/account-presence/index.ts');
 const{createOwnerHandler,readOwnerGeoMembers,readOwnerGeography,summarizeOwnerGeography,validGeoSelection}=await import('data:text/javascript;base64,'+Buffer.from(access).toString('base64'));
@@ -75,6 +76,41 @@ assert.deepEqual(loadedPhotos.sort(),[id(1),id(2)].sort());
 assert.equal(avatarHost.querySelector('[data-member-avatar="'+id(1)+'"] img').getAttribute('src'),'blob:private-geography-fixture');
 const fallbackAvatar=avatarHost.querySelector('[data-member-avatar="'+id(2)+'"]');assert.equal(fallbackAvatar.querySelector('img'),null);assert.equal(fallbackAvatar.textContent,'БЕ');
 avatarMembers.dispose();assert.deepEqual(revokedPhotos,['blob:private-geography-fixture']);assert.equal(avatarHost.innerHTML,'');
+const historyWindow=new Window({url:'https://fixture.invalid/#admin'}),historyHost=historyWindow.document.createElement('div');
+historyWindow.document.body.append(historyHost);
+const visitsUrl='https://fixture.invalid/#admin?view=activity';
+historyWindow.history.pushState(null,'',visitsUrl);
+const historyGeo=mountOwnerGeography(historyHost,{
+ load:async days=>({...groupData,period:days}),
+ loadMembers:async(period,selection,page)=>({...body,period,selection,page})
+});
+await historyGeo.refresh(7);
+for(const tab of ['cities','countries']){
+ historyHost.querySelector('[data-geo-tab="'+tab+'"]').click();
+ historyHost.querySelector('.owner-geo-row').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.ok(historyHost.querySelector('[data-user]'));
+ assert.ok(historyWindow.history.state.salahOwnerGeography,'The geography drilldown gets its own system Back entry');
+ assert.equal(historyWindow.location.href,visitsUrl,'History does not store the private location');
+ if(tab==='cities'){
+  let closedProfiles=0;
+  const profile=createOwnerCardHistory({win:historyWindow,isActive:()=>true,dismiss:()=>{closedProfiles++;},profileUrl:()=> 'https://fixture.invalid/#admin?view=profile'});
+  assert.equal(profile.open(),true);
+  historyWindow.history.back();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(closedProfiles,1);assert.ok(historyHost.querySelector('[data-user]'),'Back from a profile keeps its source city');
+  profile.dispose();
+ }
+ historyWindow.history.back();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(historyWindow.location.href,visitsUrl,'The first native Back stays inside Visits');
+ assert.ok(historyHost.querySelector('.owner-geo-list'));
+ assert.equal(historyHost.querySelector('[data-geo-tab="'+tab+'"]').getAttribute('aria-pressed'),'true');
+ assert.equal(historyHost.querySelector('[data-user]'),null);
+ assert.equal(historyWindow.history.state?.salahOwnerGeography,undefined);
+}
+historyWindow.history.back();await new Promise(resolve=>setImmediate(resolve));
+assert.equal(historyWindow.location.hash,'#admin','The next system Back can leave Visits');
+historyGeo.dispose();await historyWindow.happyDOM.close();
 const visitors=mountOwnerVisitors(host,{load:async days=>({days,guests:1,accounts:22,startedAt:'2026-11-03T08:53:26Z',updatedAt:new Date().toISOString()})});await visitors.refresh(7);assert.equal(host.querySelector('.owner-visitor-explanation').hidden,true);host.querySelector('[data-visitor-help]').click();assert.equal(host.querySelector('.owner-visitor-explanation').hidden,false);visitors.dispose();await w.happyDOM.close();
 const build=spawnSync(process.execPath,['scripts/build-account-location.mjs','--check'],{encoding:'utf8',windowsHide:true});assert.equal(build.status,0,build.stderr);
 console.log('PASS: shared JS/SQL location normalization, legacy backfill preservation, selected-city country persistence, country/city aggregation and bounded exact member pages, namesake separation, injection resistance, owner/MFA/session gates, stale/disposed private lists, profile entry/back focus and compact guest explanation.');

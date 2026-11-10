@@ -47,6 +47,8 @@ const replayCode=replaySource.slice(replaySource.indexOf('function bindAwardRepl
 let releaseReplayImage;
 const replay=await fixture({imageGate:new Promise(resolve=>{releaseReplayImage=resolve;})});
 const replayDialog=replay.w.document.getElementById('modal');
+let onPlayback;
+replay.api.initAwardCelebrations({getAccount:()=>({signedIn:true,userId:id}),canShow:()=>false,playback:{subscribe:fn=>{onPlayback=fn;}}});
 replayDialog.innerHTML='<button data-award-celebrate>Посмотреть вручение</button>';
 const replayButton=replayDialog.querySelector('button');let restored=0,requests=0;
 const bindReplay=vm.runInNewContext(replayCode+';bindAwardReplay',{
@@ -61,7 +63,15 @@ assert.equal(replay.w.document.querySelector('.award-presentation'),null,'Closin
 replayDialog.showModal();await replayButton.onclick();
 assert.equal(requests,0,'An already displayed award can be replayed offline');
 assert.equal(replayDialog.open,false,'The collection closes before the presentation starts');
+replayDialog.dispatchEvent(new replay.w.Event('close'));
+replay.w.dispatchEvent(new replay.w.Event('salah:competition-updated'));
+onPlayback();
+assert.ok(replay.w.document.querySelector('.award-presentation'),'Automatic scheduling outside Home must not cancel a manual replay');
 assert.match(replay.w.document.querySelector('.award-presentation h2').textContent,/Лидер недели/);
 replay.w.document.querySelector('.award-presentation button').click();await replay.flush(420);
-assert.equal(restored,1);await replay.dispose();
+assert.equal(restored,1);
+await replay.api.showAwardCelebration(row('week'),{isActive:replay.isActive});
+replay.w.location.hash='#more';replay.w.dispatchEvent(new replay.w.Event('hashchange'));
+assert.equal(replay.w.document.querySelector('.award-presentation'),null,'Changing route still removes the presentation');
+await replay.dispose();
 console.log('PASS: permanent collection versus transferable Top title; all 15 real medals, dated replay, baseline/new-award queue, per-account deduplication, retry and late-account safety, reduced motion, keyboard/focus/inert restoration and dismissal.');
