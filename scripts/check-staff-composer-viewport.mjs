@@ -30,26 +30,26 @@ const browserFixture=async()=>{
  try{
   const {staffMessengerMarkup,mountStaffMessenger}=await import('/js/staff-messenger.js');
   const host=document.querySelector('.staff-content');host.innerHTML=staffMessengerMarkup();
-  const visual=new EventTarget();Object.assign(visual,{height:852,width:393,offsetTop:0,scale:1});Object.defineProperty(window,'visualViewport',{value:visual,configurable:true});
+  const fullHeight=window.innerHeight;const visual=new EventTarget();Object.assign(visual,{height:fullHeight,width:393,offsetTop:0,scale:1});Object.defineProperty(window,'visualViewport',{value:visual,configurable:true});
   const chat=host.querySelector('.staff-messenger'),controller=mountStaffMessenger(chat,{rooms:[],onRoom(){},onContact(){}});
   controller.showConversation({id:'fixture',title:'Личная переписка',kind:'direct'});
   const dialog=host.querySelector('dialog'),field=host.querySelector('textarea'),send=host.querySelector('.staff-send'),palette=host.querySelector('.staff-emoji'),push=host.querySelector('[data-staff-push-control]');
   push.innerHTML='<label>Уведомления сообщений <input type="checkbox" checked></label>';push.style.height='82px';
   field.value='Первая строка\nВторая строка\nТретья строка\nЧетвёртая строка';field.focus();field.dispatchEvent(new Event('input',{bubbles:true}));host.querySelector('[data-smile]').click();
   const settle=()=>new Promise(resolve=>setTimeout(resolve,50)),metrics=[];
-  for(const [width,height,top] of [[393,455,0],[320,340,12],[568,250,0],[393,620,20]]){
+  for(const [width,height,top] of [[393,455,0],[320,340,12],[568,250,0],[393,Math.max(330,fullHeight-160),20]]){
    document.documentElement.style.setProperty('--fixture-width',width+'px');document.documentElement.style.setProperty('--fixture-safe-top',width>500?'0px':'47px');document.documentElement.style.setProperty('--fixture-safe-bottom',width>500?'0px':'34px');
    Object.assign(visual,{width,height,offsetTop:top});visual.dispatchEvent(new Event('resize'));await settle();
    const bottom=height+top,box=dialog.getBoundingClientRect(),input=field.getBoundingClientRect(),button=send.getBoundingClientRect(),panel=palette.getBoundingClientRect();
    const row={width,height,top,dialogBottom:box.bottom,inputBottom:input.bottom,sendBottom:button.bottom,paletteHeight:panel.height,paletteScroll:palette.scrollHeight,paletteClient:palette.clientHeight};
    metrics.push(row);
-   if(!dialog.classList.contains('is-keyboard-open'))throw Error('Keyboard not detected');
+   if(!dialog.classList.contains('is-keyboard-open'))throw Error('Keyboard not detected: '+JSON.stringify({row,fullHeight,focused:document.activeElement?.tagName}));
    if(Math.abs(box.top-top)>1||Math.abs(box.bottom-bottom)>1)throw Error('Dialog escaped visual viewport: '+JSON.stringify(row));
    if(input.top<box.top||input.bottom>bottom-6||button.bottom>bottom-6||button.top<box.top||button.height<40)throw Error('Input or Send clipped by keyboard: '+JSON.stringify(row));
    if(getComputedStyle(push).display!=='none'||getComputedStyle(palette).overflowY!=='auto')throw Error('Composer fails compact/scrollable state');
    if(palette.hidden||panel.height<1)throw Error('Emoji picker disappeared');
   }
-  Object.assign(visual,{height:852,width:393,offsetTop:0});visual.dispatchEvent(new Event('resize'));await settle();
+  Object.assign(visual,{height:fullHeight,width:393,offsetTop:0});visual.dispatchEvent(new Event('resize'));await settle();
   if(dialog.classList.contains('is-keyboard-open')||!dialog.classList.contains('is-emoji-open'))throw Error('Emoji keyboard mode lost during native keyboard dismissal');
   if(field===document.activeElement||palette.hidden||host.querySelector('.staff-composer-row').nextElementSibling!==palette)throw Error('Emoji panel must replace the native keyboard below the input');
   host.querySelector('[data-emoji="🙂"]').click();await settle();
@@ -57,7 +57,7 @@ const browserFixture=async()=>{
   host.querySelector('[data-smile]').click();visual.height=455;visual.dispatchEvent(new Event('resize'));await settle();
   if(!palette.hidden||field!==document.activeElement||!dialog.classList.contains('is-keyboard-open'))throw Error('Keyboard toggle failed to return to native input');
   if(send.getBoundingClientRect().bottom>455-6)throw Error('Native keyboard mode clipped Send');
-  field.blur();visual.height=852;visual.dispatchEvent(new Event('resize'));await settle();
+  field.blur();visual.height=fullHeight;visual.dispatchEvent(new Event('resize'));await settle();
   if(dialog.classList.contains('is-keyboard-open')||getComputedStyle(push).display==='none'||!push.querySelector('input').checked)throw Error('Closing both keyboards did not restore notification setting');
   if(!field.value.includes('Четвёртая строка'))throw Error('Keyboard changes lost the draft');
   document.documentElement.style.setProperty('--fixture-width','393px');document.documentElement.style.setProperty('--fixture-safe-top','47px');host.querySelector('[data-smile]').click();await settle();
