@@ -4258,6 +4258,11 @@
       "path": "dist/assets/reciters/jahongirnematov-460-v2.webp",
       "gitBlobSha": "30ec172c26c67ec8a4e92161efd530dd572a5c55",
       "bytes": 86712
+    },
+    {
+      "path": "dist/assets/updates/chat-emojis-475.svg",
+      "gitBlobSha": "d8fd58be68fb463074a778e56af0a9331bdf3494",
+      "bytes": 8309
     }
   ],
   "incrementalEvidence": [
@@ -4334,6 +4339,14 @@
       ],
       "evidence": "docs/tyumen-november-2026.json",
       "baseCommit": "5e9d200aec519fbb7e7f53a15e2f3de8f5845798"
+    },
+    {
+      "date": "2026-11-11",
+      "paths": [
+        "dist/assets/updates/chat-emojis-475.svg"
+      ],
+      "evidence": "docs/release-announcements.md",
+      "baseCommit": "1d8e11b0feb8cf107e089bd1bfca796c29caeaa0"
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"
