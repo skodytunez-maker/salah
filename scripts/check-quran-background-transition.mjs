@@ -1,3 +1,4 @@
+import{createMediaSession}from '../dist/js/media-session.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createQuranSession} from '../dist/js/quran-session.js';
@@ -55,3 +56,29 @@ console.log('PASS: 7 → 8 starts on the same media element before any asynchron
  assert.equal(audio.playCalls,plays,'Manual pause remains authoritative after a chapter handoff');session.stop();assert.equal(nav.audioSession.type,'auto');
 }
 console.log('PASS: Daussari 113 → 114, foreground position retained, final completion releases category, queue restart and manual pause precedence.');
+
+{
+ const doc=new EventTarget();doc.hidden=true;doc.hasFocus=()=>false;
+ const win=new EventTarget(),nav={standalone:true,audioSession:{type:'auto'}};
+ const hints=[];let hint='none',audio,creates=0,controls={};
+ nav.mediaSession={metadata:null,get playbackState(){return hint;},set playbackState(value){hints.push(value);hint=value;},setActionHandler(name,fn){controls[name]=fn;},setPositionState(){}};
+ const session=createQuranSession({
+  media:createMediaSession({nav,Metadata:class{constructor(info){Object.assign(this,info);}}}),
+  loadCatalog:async()=>catalog,
+  createAudio:src=>{creates++;audio=new Audio(src);const original=audio.play.bind(audio);audio.play=()=>{if(audio.playCalls&&hint==='paused')return Promise.reject(Object.assign(Error('Background queue was reported paused'),{name:'NotAllowedError'}));return original();};return audio;},
+  createPlayer:opts=>createQuranPlayer({...opts,audioNavigator:nav,audioDocument:doc,audioWindow:win,loadTimings:async()=>null,getAudio:async()=>null})
+ });
+ await session.start(reciterRecording(catalog,90),'ar.idrisabkar');await flush();assert.equal(hint,'playing');hints.length=0;
+ for(let n=90;n<110;n++){
+  audio.currentTime=60;audio.ended=true;audio.paused=true;audio.onended();
+  await flush();
+  assert.equal(session.state.surah.number,n+1);
+  assert.equal(session.state.status,'playing','Background queue continues beyond the fourth chapter');
+  assert.equal(hint,'playing');
+ }
+ assert.equal(creates,1,'Twenty background boundaries retain one permitted audio element');
+ assert.ok(!hints.includes('paused'),'No synthetic system Pause during a loading chapter');
+ controls.pause();await flush();assert.equal(hint,'paused');assert.equal(session.state.status,'paused','Real system Pause remains authoritative');
+ session.stop();assert.equal(hint,'none');assert.equal(nav.audioSession.type,'auto');
+}
+console.log('PASS: twenty consecutive hidden chapter transitions keep MediaSession playing; one audio element; actual system Pause and Stop still win.');
