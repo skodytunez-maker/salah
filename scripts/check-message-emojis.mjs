@@ -15,8 +15,9 @@ assert.equal(toggle.type,'button');assert.equal(toggle.getAttribute('aria-contro
 text.value='ДоПосле';text.setSelectionRange(2,2);text.focus();toggle.click();
 panel.querySelector('[data-emoji="🙂"]').click();
 assert.equal(text.value,'До🙂После');assert.equal(text.selectionStart,4);assert.equal(changed,1);
-assert.equal(doc.activeElement,text,'Choosing an emoji returns to the existing keyboard');
+assert.notEqual(doc.activeElement,text,'Choosing an emoji must not summon the native keyboard');assert.equal(panel.hidden,false);assert.equal(toggle.getAttribute('aria-label'),'Показать клавиатуру');
 assert.equal(second.value,'','Other conversations are untouched');
+toggle.click();assert.equal(panel.hidden,true,'Keyboard toggle closes emojis');assert.equal(doc.activeElement,text);toggle.click();assert.equal(panel.hidden,false);assert.notEqual(doc.activeElement,text);assert.equal(form.querySelector('.salah-message-input-row').nextElementSibling,panel,'Custom keyboard is below the input row');
 text.setSelectionRange(2,4);text.dispatchEvent(new w.Event('select'));panel.querySelector('[data-emoji="🤍"]').click();assert.equal(text.value,'До🤍После','Emoji replaces the exact selection');
 text.maxLength=4;text.value='абв';text.setSelectionRange(3,3);text.dispatchEvent(new w.Event('select'));panel.querySelector('[data-emoji="🙂"]').click();assert.equal(text.value,'абв','Length limit never splits a Unicode emoji');assert.ok(panel.querySelector('[role=status]').textContent);
 text.maxLength=12;text.disabled=true;panel.querySelector('[data-emoji="🙂"]').click();assert.equal(text.value,'абв','Sending/disabled fields cannot mutate');text.disabled=false;
@@ -24,6 +25,7 @@ text.readOnly=true;panel.querySelector('[data-emoji="🙂"]').click();assert.equ
 const escape=new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true});text.dispatchEvent(escape);assert.equal(panel.hidden,true);assert.equal(toggle.getAttribute('aria-expanded'),'false');assert.equal(escape.defaultPrevented,true);
 toggle.click();form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(panel.hidden,true);assert.equal(text.value,'абв','Submitting only closes the palette; the sender owns the draft');
 toggle.click();panel.querySelector('[data-emoji-close]').click();assert.equal(panel.hidden,true);assert.equal(doc.activeElement,text,'Closing the palette returns to typing');
+text.focus();assert.equal(panel.hidden,true,'Tapping the input returns to the native keyboard');
 const literal='<img src=x onerror=alert(1)> 🙂 🤲 ❤️ & "';
 const rendered=messageTextMarkup(literal),host=doc.createElement('div');host.innerHTML=rendered;
 assert.equal(host.querySelector('img'),null);assert.equal(host.querySelectorAll('script,[onerror]').length,0);

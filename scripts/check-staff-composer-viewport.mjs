@@ -51,22 +51,30 @@ const browserFixture=async()=>{
    if(palette.hidden||panel.height<1)throw Error('Emoji picker disappeared');
   }
   Object.assign(visual,{height:852,width:393,offsetTop:0});visual.dispatchEvent(new Event('resize'));await settle();
-  if(dialog.classList.contains('is-keyboard-open')||getComputedStyle(push).display==='none'||!push.querySelector('input').checked)throw Error('Keyboard dismissal did not restore notification setting');
-  if(!field.value.includes('Четвёртая строка'))throw Error('Viewport changes lost the draft');
-  Object.assign(visual,{height:455,width:393,offsetTop:0});document.documentElement.style.setProperty('--fixture-width','393px');document.documentElement.style.setProperty('--fixture-safe-top','47px');visual.dispatchEvent(new Event('resize'));await settle();
-  result.dataset.pass='true';result.textContent=btoa(JSON.stringify(metrics));
- }catch(error){result.dataset.pass='false';result.textContent=btoa(String(error.stack||error));}
+  if(dialog.classList.contains('is-keyboard-open')||!dialog.classList.contains('is-emoji-open'))throw Error('Emoji keyboard mode lost during native keyboard dismissal');
+  if(field===document.activeElement||palette.hidden||host.querySelector('.staff-composer-row').nextElementSibling!==palette)throw Error('Emoji panel must replace the native keyboard below the input');
+  host.querySelector('[data-emoji="🙂"]').click();await settle();
+  if(field===document.activeElement||palette.hidden)throw Error('Selecting an emoji summoned the native keyboard');
+  host.querySelector('[data-smile]').click();visual.height=455;visual.dispatchEvent(new Event('resize'));await settle();
+  if(!palette.hidden||field!==document.activeElement||!dialog.classList.contains('is-keyboard-open'))throw Error('Keyboard toggle failed to return to native input');
+  if(send.getBoundingClientRect().bottom>455-6)throw Error('Native keyboard mode clipped Send');
+  field.blur();visual.height=852;visual.dispatchEvent(new Event('resize'));await settle();
+  if(dialog.classList.contains('is-keyboard-open')||getComputedStyle(push).display==='none'||!push.querySelector('input').checked)throw Error('Closing both keyboards did not restore notification setting');
+  if(!field.value.includes('Четвёртая строка'))throw Error('Keyboard changes lost the draft');
+  document.documentElement.style.setProperty('--fixture-width','393px');document.documentElement.style.setProperty('--fixture-safe-top','47px');host.querySelector('[data-smile]').click();await settle();
+  result.dataset.pass='true';result.textContent=btoa(JSON.stringify(metrics));await fetch('/result',{method:'POST',body:JSON.stringify({pass:true,metrics})});
+ }catch(error){result.dataset.pass='false';result.textContent=btoa(String(error.stack||error));await fetch('/result',{method:'POST',body:JSON.stringify({pass:false,error:String(error.stack||error)})});}
 };
 const fixture='<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/css/staff-cabinet.css"><link rel="stylesheet" href="/css/staff-messenger.css"><link rel="stylesheet" href="/css/message-emojis.css"><style>body{margin:0;background:#080f1b}.staff-content{width:var(--fixture-width,393px)}.staff-conversation-window.is-mobile{width:var(--fixture-width,393px)!important;max-width:var(--fixture-width,393px)!important}.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-conversation{padding-top:var(--fixture-safe-top,47px)}#layout-result{position:fixed;top:900px}</style><main class="staff-cabinet"><div class="staff-content"></div></main><script type="module">('+browserFixture.toString()+')();</script></html>';
 const types={'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.woff2':'font/woff2','.ttf':'font/ttf'};
-const dist=path.join(root,'dist');const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://fixture.invalid').pathname;if(pathname==='/fixture'){res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fixture);return;}const file=path.resolve(dist,'.'+decodeURIComponent(pathname));if(!file.startsWith(dist+path.sep)){res.writeHead(403).end();return;}const body=await fs.readFile(file);res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');res.end(body);}catch{res.writeHead(404).end();}});
+let browserResult=null;const requested=[];
+const dist=path.join(root,'dist');const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://fixture.invalid').pathname;requested.push(pathname);if(pathname==='/result'&&req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;if(body.length>50000)throw Error('Unexpected fixture payload');browserResult=JSON.parse(body);res.end('ok');return;}if(pathname==='/fixture'){res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fixture);return;}const file=path.resolve(dist,'.'+decodeURIComponent(pathname));if(!file.startsWith(dist+path.sep)){res.writeHead(403).end();return;}const body=await fs.readFile(file);res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');res.end(body);}catch{res.writeHead(404).end();}});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const temp=await fs.mkdtemp(path.join(os.tmpdir(),'salah-chat-viewport-')),screenshot=path.join(temp,'iphone-composer.png');
 try{
  const url='http://127.0.0.1:'+server.address().port+'/fixture';
- const {stdout}=await promisify(execFile)(chrome,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--disable-background-networking','--no-first-run','--hide-scrollbars','--window-size=393,852','--virtual-time-budget=6000','--user-data-dir='+path.join(temp,'chrome'),'--screenshot='+screenshot,'--dump-dom',url],{timeout:25000,maxBuffer:4000000});
- const match=stdout.match(/<pre id="layout-result" data-pass="(true|false)">([^<]*)<\/pre>/);
- assert.ok(match,'Browser fixture must finish rendering');const details=Buffer.from(match[2],'base64').toString();assert.equal(match[1],'true',details);
- console.log('PASS: real Chrome layout at 393/320/568 px, four keyboard viewport sizes/offsets, expanded textarea, reachable Send, scrollable emojis and restored notifications. '+details);
- if(process.env.RUNNER_TEMP)await fs.copyFile(screenshot,path.join(process.env.RUNNER_TEMP,'salah-chat-keyboard.png'));
+ const {stdout,stderr}=await promisify(execFile)(chrome,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--disable-background-networking','--no-first-run','--hide-scrollbars','--window-size=393,852','--virtual-time-budget=6000','--user-data-dir='+path.join(temp,'chrome'),'--disable-background-timer-throttling','--dump-dom',url],{timeout:25000,maxBuffer:4000000});
+ assert.ok(browserResult,'Browser fixture must report its result. Requests: '+JSON.stringify(requested)+' DOM: '+stdout.slice(-3500)+' Browser: '+stderr.slice(-1500));
+ assert.equal(browserResult.pass,true,browserResult.error);
+ console.log('PASS: real Chrome keyboard modes, four narrow viewport sizes/offsets, reachable input/Send, scrollable emojis and restored notifications. '+JSON.stringify(browserResult.metrics));
 }finally{await new Promise(resolve=>server.close(resolve));}

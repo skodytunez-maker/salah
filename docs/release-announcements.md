@@ -608,8 +608,10 @@ Add one shared palette of sixteen original gold line glyphs beside message input
 
 Use the feature-specific chat-emojis-475.svg composer illustration with an alternating selection highlight through release-motion-preview. Announce only this change as edition 475, ending 15 November 2026. Messaging permissions, attachments and account behavior retain their existing contracts.
 
-## 476 — keep the chat composer above the iPhone keyboard
+## 476 — messenger-style emoji keyboard and reachable Send
 
-Let the mobile composer shrink within the visual viewport. The emoji panel scrolls in the remaining space, while the input and Send row retain their height. Bound expanded text input by the available viewport height. Temporarily collapse notification controls and omit the home-indicator padding while the software keyboard is open; restore both after it closes.
+The smile button switches from native input to the custom emoji keyboard below the composer row. Selecting an emoji preserves the caret and draft without focusing the textarea or summoning the system keyboard. Tapping the textarea or the keyboard toggle returns to native input and hides the emoji panel. Notification controls collapse while either keyboard is active.
 
-Preserve announcement 475, its feature artwork, acknowledgment and expiry. Regression coverage tracks keyboard viewport height/offset and retained drafts, and measures actual Chrome geometry at narrow portrait and landscape widths with a simulated software keyboard and iPhone safe area.
+Let the mobile composer shrink within the visual viewport during keyboard animations. The emoji area scrolls in the remaining space, the input/Send row keeps its height, expanded text is capped by available height, and native keyboard mode omits home-indicator padding. Restore the notification setting when both keyboards close.
+
+Preserve announcement 475, acknowledgement and expiry. Update its existing composer illustration to match the input-above-panel layout. Regression coverage includes mutually exclusive keyboard modes, caret/draft retention, viewport offsets, and real Chrome geometry at narrow portrait/landscape sizes with a simulated keyboard and iPhone safe area.

@@ -42,5 +42,7 @@ body.staff-messenger-open #mobile-nav{display:none!important}
 .staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-emoji.salah-emoji-panel{flex:0 1 auto;min-height:0;overflow-y:auto}
 .staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-composer textarea{max-height:var(--staff-chat-input-max-height,124px)}
 .staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-pending-files{flex:0 1 auto;min-height:0;max-height:80px;overflow-y:auto}
-.staff-messenger .staff-conversation-window.is-keyboard-open [data-staff-push-control]{display:none}
+.staff-messenger .staff-conversation-window:is(.is-keyboard-open,.is-emoji-open) [data-staff-push-control]{display:none}
 .staff-cabinet .staff-messenger .staff-conversation-window.is-mobile.is-keyboard-open .staff-composer{padding-bottom:8px}
+
+.staff-cabinet .staff-messenger .staff-composer>.salah-emoji-panel{margin-top:8px}

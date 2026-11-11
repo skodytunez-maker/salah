@@ -3326,12 +3326,12 @@
     },
     {
       "path": "dist/assets/updates/chat-emojis-475.svg",
-      "gitBlobSha": "d8fd58be68fb463074a778e56af0a9331bdf3494",
-      "bytes": 8309,
+      "gitBlobSha": "1952cbe0fb33de3ea122a800c58b4eb3732ac746",
+      "bytes": 8301,
       "kind": "illustration",
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Original SALAH SVG composed in code for message emoji release 475; docs/release-announcements.md and dist/js/message-emojis.js.",
-      "note": "Original interface composition and original line glyphs. No external photograph, logo, icon library or publisher artwork is included."
+      "note": "Original interface composition and original line glyphs. No external photograph, logo, icon library or publisher artwork is included. Updated in 476 to show the input row above the emoji keyboard."
     }
   ],
   "wallpaperSets": [
