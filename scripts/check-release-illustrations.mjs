@@ -44,7 +44,8 @@ assert.equal(validatedRelease({version:372,date:'2026-10-18',changes:['Подд�
 const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
 assert.equal(root.querySelectorAll('.release-feature').length,2);assert.equal(root.querySelectorAll('img[src="x"]').length,0);assert.ok(!root.textContent.includes('owner private'));
 
-root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
+// Preserve the previous Top carousel's motion contract as a fixture.
+root.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,["Топ SALAH: часы показывают общее время, сердце — время любимого чтеца. В режиме часов листайте портреты внутри карточек пьедестала. Места пересчитываются по времени выбранного режима."]);
 assert.equal(root.querySelectorAll('.release-feature').length,1);assert.ok(root.textContent.includes('Листайте чтецов в Топе SALAH'));
 const topPreview=root.querySelector('.release-top-demo'),topTrack=topPreview.querySelector('.release-top-demo-track');
 assert.equal(topTrack.querySelectorAll('img').length,2);
@@ -76,7 +77,7 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- assert.ok(releaseModal.textContent.includes('Листайте чтецов в Топе SALAH'));assert.ok(releaseModal.querySelector('.release-top-demo-track'));
+ assert.ok(releaseModal.textContent.includes('Смайлики в стиле SALAH'));assert.ok(releaseModal.querySelector('.release-chat-demo.release-motion-preview [data-release-motion-part]'));assert.equal(releaseModal.querySelector('.release-top-demo-track'),null,'New announcement contains only its own feature');
  assert.ok(!releaseModal.textContent.includes('Большое обновление SALAH'));
  releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);assert.equal(hasSeenAnnouncement(),true,'Понятно acknowledges the news');
  assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Home stays clear after acknowledgement');
