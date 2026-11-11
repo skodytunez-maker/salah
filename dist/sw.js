@@ -213,7 +213,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":473,"date":"2026-11-10","changes":["Топ SALAH: часы показывают общее время, сердце — время любимого чтеца. В режиме часов листайте портреты внутри карточек пьедестала. Места пересчитываются по времени выбранного режима."],"announcement":{"version":472,"date":"2026-11-10","changes":["Топ SALAH: часы показывают общее время, сердце — время любимого чтеца. В режиме часов листайте портреты внутри карточек пьедестала. Места пересчитываются по времени выбранного режима."]}};
+const RELEASE={"version":474,"date":"2026-11-11","changes":["Топ SALAH: часы показывают общее время, сердце — время любимого чтеца. В режиме часов листайте портреты внутри карточек пьедестала. Места пересчитываются по времени выбранного режима."],"announcement":{"version":472,"date":"2026-11-10","changes":["Топ SALAH: часы показывают общее время, сердце — время любимого чтеца. В режиме часов листайте портреты внутри карточек пьедестала. Места пересчитываются по времени выбранного режима."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_LESSON_ACCOUNT'){event.waitUntil(lessonAccountMessage(event));return;}if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
