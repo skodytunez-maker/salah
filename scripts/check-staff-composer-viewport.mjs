@@ -4,8 +4,7 @@ import path from 'node:path';
 import os from 'node:os';
 import http from 'node:http';
 import {fileURLToPath} from 'node:url';
-import {execFile} from 'node:child_process';
-import {promisify} from 'node:util';
+import {spawn} from 'node:child_process';
 import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import {staffMessengerMarkup,mountStaffMessenger} from '../dist/js/staff-messenger.js';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -39,7 +38,7 @@ const browserFixture=async()=>{
   field.value='Первая строка\nВторая строка\nТретья строка\nЧетвёртая строка';field.focus();field.dispatchEvent(new Event('input',{bubbles:true}));host.querySelector('[data-smile]').click();
   const settle=()=>new Promise(resolve=>setTimeout(resolve,50)),metrics=[];
   for(const [width,height,top] of [[393,455,0],[320,340,12],[568,250,0],[393,620,20]]){
-   document.documentElement.style.setProperty('--fixture-width',width+'px');document.documentElement.style.setProperty('--fixture-safe-top',width>500?'0px':'47px');
+   document.documentElement.style.setProperty('--fixture-width',width+'px');document.documentElement.style.setProperty('--fixture-safe-top',width>500?'0px':'47px');document.documentElement.style.setProperty('--fixture-safe-bottom',width>500?'0px':'34px');
    Object.assign(visual,{width,height,offsetTop:top});visual.dispatchEvent(new Event('resize'));await settle();
    const bottom=height+top,box=dialog.getBoundingClientRect(),input=field.getBoundingClientRect(),button=send.getBoundingClientRect(),panel=palette.getBoundingClientRect();
    const row={width,height,top,dialogBottom:box.bottom,inputBottom:input.bottom,sendBottom:button.bottom,paletteHeight:panel.height,paletteScroll:palette.scrollHeight,paletteClient:palette.clientHeight};
@@ -65,16 +64,20 @@ const browserFixture=async()=>{
   result.dataset.pass='true';result.textContent=btoa(JSON.stringify(metrics));await fetch('/result',{method:'POST',body:JSON.stringify({pass:true,metrics})});
  }catch(error){result.dataset.pass='false';result.textContent=btoa(String(error.stack||error));await fetch('/result',{method:'POST',body:JSON.stringify({pass:false,error:String(error.stack||error)})});}
 };
-const fixture='<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/css/staff-cabinet.css"><link rel="stylesheet" href="/css/staff-messenger.css"><link rel="stylesheet" href="/css/message-emojis.css"><style>body{margin:0;background:#080f1b}.staff-content{width:var(--fixture-width,393px)}.staff-conversation-window.is-mobile{width:var(--fixture-width,393px)!important;max-width:var(--fixture-width,393px)!important}.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-conversation{padding-top:var(--fixture-safe-top,47px)}#layout-result{position:fixed;top:900px}</style><main class="staff-cabinet"><div class="staff-content"></div></main><script type="module">('+browserFixture.toString()+')();</script></html>';
+const fixture='<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/css/staff-cabinet.css"><link rel="stylesheet" href="/css/staff-messenger.css"><link rel="stylesheet" href="/css/message-emojis.css"><style>body{margin:0;background:#080f1b}.staff-content{width:var(--fixture-width,393px)}.staff-conversation-window.is-mobile{width:var(--fixture-width,393px)!important;max-width:var(--fixture-width,393px)!important}.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-conversation{padding-top:var(--fixture-safe-top,47px)}.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-composer{padding-bottom:var(--fixture-safe-bottom,34px)}#layout-result{position:fixed;top:900px}</style><main class="staff-cabinet"><div class="staff-content"></div></main><script type="module">('+browserFixture.toString()+')();</script></html>';
 const types={'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.woff2':'font/woff2','.ttf':'font/ttf'};
-let browserResult=null;const requested=[];
-const dist=path.join(root,'dist');const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://fixture.invalid').pathname;requested.push(pathname);if(pathname==='/result'&&req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;if(body.length>50000)throw Error('Unexpected fixture payload');browserResult=JSON.parse(body);res.end('ok');return;}if(pathname==='/fixture'){res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fixture);return;}const file=path.resolve(dist,'.'+decodeURIComponent(pathname));if(!file.startsWith(dist+path.sep)){res.writeHead(403).end();return;}const body=await fs.readFile(file);res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');res.end(body);}catch{res.writeHead(404).end();}});
+let browserResult=null,reportResult;const reported=new Promise(resolve=>reportResult=resolve);const requested=[];
+const dist=path.join(root,'dist');const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://fixture.invalid').pathname;requested.push(pathname);if(pathname==='/result'&&req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;if(body.length>50000)throw Error('Unexpected fixture payload');browserResult=JSON.parse(body);reportResult(browserResult);res.end('ok');return;}if(pathname==='/fixture'){res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fixture);return;}const file=path.resolve(dist,'.'+decodeURIComponent(pathname));if(!file.startsWith(dist+path.sep)){res.writeHead(403).end();return;}const body=await fs.readFile(file);res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');res.end(body);}catch{res.writeHead(404).end();}});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const temp=await fs.mkdtemp(path.join(os.tmpdir(),'salah-chat-viewport-')),screenshot=path.join(temp,'iphone-composer.png');
+const temp=await fs.mkdtemp(path.join(os.tmpdir(),'salah-chat-viewport-'));
+let browser,timer,browserLog='';
 try{
  const url='http://127.0.0.1:'+server.address().port+'/fixture';
- const {stdout,stderr}=await promisify(execFile)(chrome,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--disable-background-networking','--no-first-run','--hide-scrollbars','--window-size=393,852','--virtual-time-budget=6000','--user-data-dir='+path.join(temp,'chrome'),'--disable-background-timer-throttling','--dump-dom',url],{timeout:25000,maxBuffer:4000000});
- assert.ok(browserResult,'Browser fixture must report its result. Requests: '+JSON.stringify(requested)+' DOM: '+stdout.slice(-3500)+' Browser: '+stderr.slice(-1500));
+ browser=spawn(chrome,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--disable-background-networking','--disable-background-timer-throttling','--no-first-run','--hide-scrollbars','--window-size=393,852','--remote-debugging-port=0','--user-data-dir='+path.join(temp,'chrome'),url],{detached:true,stdio:['ignore','ignore','pipe']});
+ browser.stderr.on('data',chunk=>{browserLog=(browserLog+chunk).slice(-5000);});
+ const exited=new Promise((_,reject)=>{browser.once('error',reject);browser.once('exit',code=>{if(!browserResult)reject(Error('Chrome exited before rendering: '+code+' '+browserLog));});});
+ const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Browser fixture timed out. Requests: '+JSON.stringify(requested)+' '+browserLog)),25000);});
+ await Promise.race([reported,exited,timeout]);
  assert.equal(browserResult.pass,true,browserResult.error);
  console.log('PASS: real Chrome keyboard modes, four narrow viewport sizes/offsets, reachable input/Send, scrollable emojis and restored notifications. '+JSON.stringify(browserResult.metrics));
-}finally{await new Promise(resolve=>server.close(resolve));}
+}finally{clearTimeout(timer);if(browser?.pid)try{process.kill(-browser.pid,'SIGTERM');}catch{}server.closeAllConnections?.();await new Promise(resolve=>server.close(resolve));}
