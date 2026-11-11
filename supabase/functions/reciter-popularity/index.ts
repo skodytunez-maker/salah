@@ -1,3 +1,4 @@
+import{recordedMinuteDay}from './recorded-minute.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
 import postgres from 'npm:postgres@3.4.9';
 // Public aggregate reads; writes require a verified, confirmed Auth user and explicit consent.
@@ -70,9 +71,10 @@ Deno.serve(async req=>{
   await sql`insert into public.reciter_listener_visibility(user_id,listener_hash,mode) values(${user.id}::uuid,${hash},${body.profileMode}) on conflict(user_id) do update set listener_hash=excluded.listener_hash,public_id=case when reciter_listener_visibility.mode<>excluded.mode then gen_random_uuid() else reciter_listener_visibility.public_id end,mode=excluded.mode,updated_at=now()`;
   return reply({mode:body.profileMode});
  }
- if(!body||body.consent!==true||!allowedReciters.has(body.reciter)||typeof body.eventId!=='string'||!uuid.test(body.eventId)||Object.keys(body).some(k=>!['consent','reciter','eventId'].includes(k)))return reply({error:'invalid_input'},400);
+ if(!body||body.consent!==true||!allowedReciters.has(body.reciter)||typeof body.eventId!=='string'||!uuid.test(body.eventId)||Object.keys(body).some(k=>!['consent','reciter','eventId','occurredAt','timeZone'].includes(k)))return reply({error:'invalid_input'},400);
  const hash=await listenerCode(user.id);
-  const counted=await rpc('reciter_popularity_add',{p_listener:hash,p_reciter:body.reciter,p_event:body.eventId});
+  let day;try{day=recordedMinuteDay(body);}catch{return reply({error:'invalid_input'},400);}
+  const counted=await rpc('reciter_popularity_add',{p_listener:hash,p_reciter:body.reciter,p_event:body.eventId,...(day?{p_day:day}:{})});
   if(counted)await sql`insert into public.reciter_listener_visibility(user_id,listener_hash,mode) values(${user.id}::uuid,${hash},'initial') on conflict(user_id) do nothing`;
  return reply({ok:true,counted});
  }catch{return reply({error:'temporarily_unavailable'},503);}

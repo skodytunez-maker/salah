@@ -593,3 +593,11 @@ Announce the Top SALAH listening modes in one feature card. Animate a contained 
 The active illustrated news card alternates between its two portraits while the dialog is open. Future animated cards share the same alternating loop. Inactive cards pause and reduced-motion modes render a static frame. Record installed news acknowledgement on the «Понятно» button. Preserve announcement 472, artwork and expiry.
 
 Rank the heart view by the favorite reciter's time. The clock view continues to rank by the combined time. Reuse the existing favorite-reciter API when the overall board has been capped.
+
+## 474 — dated listening reports and background queue continuity
+
+Queue new minute reports with their actual completion timestamps and resolved time zone. The private dated RPC attributes deferred reports to the playback day, retaining idempotency, existing rate limits and the legacy three-argument RPC. Version the durable queue so ambiguous old reports cannot create fresh minutes on a later day. Preserve canonical personal totals and dated snapshots; do not alter existing user history.
+
+Keep the system playback hint active while the next chapter loads after an actively playing chapter. Manual pause, terminal completion and stop still release or pause normally. Regression coverage includes twenty hidden chapter transitions on the same media element and actual system controls. A real locked iPhone check remains required.
+
+Preserve announcement 472, its gallery artwork, acknowledgement and expiry. No congratulations feature is included.
