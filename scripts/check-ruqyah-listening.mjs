@@ -42,7 +42,7 @@ ruqyah.start('luhaidan-audio');await flush();await advance(65);
 assert.equal(totals('ar.muhammadalluhaidan'),65,'Ruqyah credits the real reader in My Top');
 assert.equal(reports.length,1,'A full minute reaches the shared Top SALAH queue');
 assert.equal(reports[0].reciter,'ar.muhammadalluhaidan');
-assert.deepEqual(Object.keys(reports[0]).sort(),['consent','eventId','reciter'],'No recording, verse or extra personal information is transmitted');
+assert.deepEqual(Object.keys(reports[0]).sort(),['consent','eventId','occurredAt','reciter','timeZone'],'Only the reciter, consent, idempotency key and playback-date metadata are transmitted');
 assert.equal(competition.getSnapshot().totals['ar.muhammadalluhaidan'],65,'Competition and hour awards use the same accumulated listening');
 ruqyah.pause();clock+=300000;await tick();assert.equal(totals('ar.muhammadalluhaidan'),65,'Paused time is excluded');
 ruqyah.seek(500);ruqyah.toggle();await flush();await advance(5);
