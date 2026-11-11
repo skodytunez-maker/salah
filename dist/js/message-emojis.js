@@ -31,7 +31,7 @@ export function mountMessageEmoji(input,{button=null,panel=null}={}){
  let start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
  const remember=()=>{start=input.selectionStart??input.value.length;end=input.selectionEnd??start;};
  const close=()=>{panel.hidden=true;button.setAttribute('aria-expanded','false');};
- const toggle=()=>{if(disposed||input.disabled||input.readOnly||button.disabled)return;remember();panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));};
+ const toggle=()=>{if(disposed||input.disabled||input.readOnly||button.disabled)return;remember();panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.scrollIntoView?.({block:'nearest',inline:'nearest'});};
  const hold=event=>{if(event.button!==undefined&&event.button!==0)return;remember();event.preventDefault();};
  const choose=event=>{
   const choice=event.target.closest('[data-emoji]');if(!choice||!panel.contains(choice)||disposed||input.disabled||input.readOnly||choice.disabled)return;
@@ -42,7 +42,7 @@ export function mountMessageEmoji(input,{button=null,panel=null}={}){
   const caret=start+value.length;input.setRangeText(value,start,end,'end');line.textContent='';input.focus({preventScroll:true});input.setSelectionRange(caret,caret);remember();input.dispatchEvent(new win.Event('input',{bubbles:true}));
  };
  const dismiss=event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();event.stopPropagation();close();button.focus({preventScroll:true});}};
- const shut=()=>{close();button.focus({preventScroll:true});};
+ const shut=()=>{const a=start,b=end;close();input.focus({preventScroll:true});input.setSelectionRange(a,b);remember();};
  button.addEventListener('pointerdown',hold);button.addEventListener('click',toggle);panel.addEventListener('pointerdown',hold);panel.addEventListener('click',choose);panel.querySelector('[data-emoji-close]').addEventListener('click',shut);
  for(const name of ['select','input','keyup','click'])input.addEventListener(name,remember);
  form.addEventListener('keydown',dismiss);form.addEventListener('submit',close);

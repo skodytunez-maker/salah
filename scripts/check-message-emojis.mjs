@@ -23,7 +23,7 @@ text.maxLength=12;text.disabled=true;panel.querySelector('[data-emoji="🙂"]').
 text.readOnly=true;panel.querySelector('[data-emoji="🙂"]').click();assert.equal(text.value,'абв');text.readOnly=false;
 const escape=new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true});text.dispatchEvent(escape);assert.equal(panel.hidden,true);assert.equal(toggle.getAttribute('aria-expanded'),'false');assert.equal(escape.defaultPrevented,true);
 toggle.click();form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(panel.hidden,true);assert.equal(text.value,'абв','Submitting only closes the palette; the sender owns the draft');
-toggle.click();panel.querySelector('[data-emoji-close]').click();assert.equal(panel.hidden,true);
+toggle.click();panel.querySelector('[data-emoji-close]').click();assert.equal(panel.hidden,true);assert.equal(doc.activeElement,text,'Closing the palette returns to typing');
 const literal='<img src=x onerror=alert(1)> 🙂 🤲 ❤️ & "';
 const rendered=messageTextMarkup(literal),host=doc.createElement('div');host.innerHTML=rendered;
 assert.equal(host.querySelector('img'),null);assert.equal(host.querySelectorAll('script,[onerror]').length,0);
