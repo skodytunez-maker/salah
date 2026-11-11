@@ -30,6 +30,7 @@ assert.equal(host.querySelector('img'),null);assert.equal(host.querySelectorAll(
 assert.equal(host.querySelectorAll('.salah-message-emoji').length,3);assert.ok(host.textContent.includes('<img src=x onerror=alert(1)>'));
 assert.equal(host.querySelector('.salah-message-emoji').getAttribute('aria-label'),'Улыбка');
 assert.ok(host.textContent.includes('🙂'),'Standard Unicode remains available for copying and old clients');
+host.innerHTML=messageTextMarkup('🙂'.repeat(200));assert.equal(host.querySelectorAll('.salah-message-emoji').length,128,'Custom SVG expansion stays bounded on long messages');assert.equal([...host.textContent].length,200,'The complete original message is retained');
 assert.ok(MESSAGE_EMOJIS.every(item=>messageEmojiIcon(item.value).includes('viewBox')));
 assert.equal(messageEmojiIcon('<script>'),'');assert.equal(new Set(MESSAGE_EMOJIS.map(x=>x.value)).size,16);
 host.innerHTML=chatBubble({id:'1',author_id:'a',author_name:'Имя',body:literal,created_at:'2026-11-11T12:00:00Z'},[],'a');
