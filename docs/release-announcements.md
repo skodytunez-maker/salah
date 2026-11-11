@@ -607,3 +607,11 @@ Preserve announcement 472, its gallery artwork, acknowledgement and expiry. No c
 Add one shared palette of sixteen original gold line glyphs beside message inputs in support requests, private/team conversations and student/teacher homework correspondence. Preserve drafts, caret/selection, input/change events, Unicode payloads and existing message length/disabled guards. Incoming messages safely escape text and display supported glyphs with accessible labels; older clients retain standard Unicode emoji.
 
 Use the feature-specific chat-emojis-475.svg composer illustration with an alternating selection highlight through release-motion-preview. Announce only this change as edition 475, ending 15 November 2026. Messaging permissions, attachments and account behavior retain their existing contracts.
+
+## 476 — messenger-style emoji keyboard and reachable Send
+
+The smile button switches from native input to the custom emoji keyboard below the composer row. Selecting an emoji preserves the caret and draft without focusing the textarea or summoning the system keyboard. Tapping the textarea or the keyboard toggle returns to native input and hides the emoji panel. Notification controls collapse while either keyboard is active.
+
+Let the mobile composer shrink within the visual viewport during keyboard animations. The emoji area scrolls in the remaining space, the input/Send row keeps its height, expanded text is capped by available height, and native keyboard mode omits home-indicator padding. Restore the notification setting when both keyboards close.
+
+Preserve announcement 475, acknowledgement and expiry. Update its existing composer illustration to match the input-above-panel layout. Regression coverage includes mutually exclusive keyboard modes, caret/draft retention, viewport offsets, and real Chrome geometry at narrow portrait/landscape sizes with a simulated keyboard and iPhone safe area.

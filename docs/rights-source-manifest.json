@@ -4261,8 +4261,8 @@
     },
     {
       "path": "dist/assets/updates/chat-emojis-475.svg",
-      "gitBlobSha": "d8fd58be68fb463074a778e56af0a9331bdf3494",
-      "bytes": 8309
+      "gitBlobSha": "1952cbe0fb33de3ea122a800c58b4eb3732ac746",
+      "bytes": 8301
     }
   ],
   "incrementalEvidence": [
@@ -4347,6 +4347,14 @@
       ],
       "evidence": "docs/release-announcements.md",
       "baseCommit": "1d8e11b0feb8cf107e089bd1bfca796c29caeaa0"
+    },
+    {
+      "date": "2026-11-12",
+      "paths": [
+        "dist/assets/updates/chat-emojis-475.svg"
+      ],
+      "evidence": "docs/release-announcements.md",
+      "baseCommit": "55ba61b8821fc4c7b36a8212a43d39e19c6951ec"
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"

@@ -25,28 +25,33 @@ export function mountMessageEmoji(input,{button=null,panel=null}={}){
  if(!input||!input.closest('form'))return {close(){},dispose(){}};
  if(mounted.has(input))return mounted.get(input);
  const doc=input.ownerDocument,win=doc.defaultView,form=input.closest('form');let wrapper=null,disposed=false;
- if(!button||!panel){wrapper=doc.createElement('div');wrapper.className='salah-message-composer';panel=doc.createElement('div');const row=doc.createElement('div');row.className='salah-message-input-row';button=doc.createElement('button');button.type='button';input.before(wrapper);wrapper.append(panel,row);row.append(input,button);}
+ if(!button||!panel){wrapper=doc.createElement('div');wrapper.className='salah-message-composer';panel=doc.createElement('div');const row=doc.createElement('div');row.className='salah-message-input-row';button=doc.createElement('button');button.type='button';input.before(wrapper);wrapper.append(row,panel);row.append(input,button);}
+ const composerRow=button.closest('.staff-composer-row');if(composerRow?.parentElement===form&&panel.parentElement===form)composerRow.after(panel);
  button.classList.add('salah-emoji-toggle');button.setAttribute('aria-label','Смайлики');button.setAttribute('title','Смайлики');button.innerHTML=messageEmojiIcon('🙂');
  panel.classList.add('salah-emoji-panel');panel.id='salah-message-emojis-'+(++sequence);panel.setAttribute('role','group');panel.setAttribute('aria-label','Смайлики SALAH');panel.innerHTML=messageEmojiPalette();panel.hidden=true;button.setAttribute('aria-controls',panel.id);button.setAttribute('aria-expanded','false');
  let start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
  const remember=()=>{start=input.selectionStart??input.value.length;end=input.selectionEnd??start;};
- const close=()=>{panel.hidden=true;button.setAttribute('aria-expanded','false');};
- const toggle=()=>{if(disposed||input.disabled||input.readOnly||button.disabled)return;remember();panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.scrollIntoView?.({block:'nearest',inline:'nearest'});};
- const hold=event=>{if(event.button!==undefined&&event.button!==0)return;remember();event.preventDefault();};
+ const keyboardIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 15h10"/></svg>';
+ const paint=()=>{const open=!panel.hidden;button.setAttribute('aria-expanded',String(open));button.setAttribute('aria-label',open?'Показать клавиатуру':'Смайлики');button.setAttribute('title',open?'Показать клавиатуру':'Смайлики');button.innerHTML=open?keyboardIcon:messageEmojiIcon('🙂');};
+ const announce=()=>form.dispatchEvent(new win.CustomEvent('salah:emoji-mode',{bubbles:true,detail:{open:!panel.hidden}}));
+ const close=()=>{const wasOpen=!panel.hidden;panel.hidden=true;paint();if(wasOpen)announce();};
+ const showKeyboard=()=>{const a=start,b=end;close();if(input.disabled||input.readOnly)return;input.focus({preventScroll:true});input.setSelectionRange(a,b);remember();};
+ const toggle=()=>{if(disposed||input.disabled||input.readOnly||button.disabled)return;if(!panel.hidden){showKeyboard();return;}remember();panel.hidden=false;paint();input.blur();button.focus({preventScroll:true});announce();};
+ const hold=event=>{if(event.button!==undefined&&event.button!==0)return;if(doc.activeElement===input||panel.hidden)remember();event.preventDefault();};
  const choose=event=>{
-  const choice=event.target.closest('[data-emoji]');if(!choice||!panel.contains(choice)||disposed||input.disabled||input.readOnly||choice.disabled)return;
+  const choice=event.target.closest('[data-emoji]');if(!choice||panel.hidden||!panel.contains(choice)||disposed||input.disabled||input.readOnly||choice.disabled)return;
   const value=choice.dataset.emoji;if(!byValue.has(value))return;
   start=Math.max(0,Math.min(start,input.value.length));end=Math.max(start,Math.min(end,input.value.length));
   const line=panel.querySelector('[role=status]');
   if(input.maxLength>=0&&input.value.length-(end-start)+value.length>input.maxLength){line.textContent='Достигнут предел длины сообщения.';return;}
-  const caret=start+value.length;input.setRangeText(value,start,end,'end');line.textContent='';input.focus({preventScroll:true});input.setSelectionRange(caret,caret);remember();input.dispatchEvent(new win.Event('input',{bubbles:true}));
+  const caret=start+value.length;input.setRangeText(value,start,end,'end');line.textContent='';input.setSelectionRange(caret,caret);remember();input.dispatchEvent(new win.Event('input',{bubbles:true}));
  };
  const dismiss=event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();event.stopPropagation();close();button.focus({preventScroll:true});}};
- const shut=()=>{const a=start,b=end;close();input.focus({preventScroll:true});input.setSelectionRange(a,b);remember();};
+ const shut=showKeyboard;
  button.addEventListener('pointerdown',hold);button.addEventListener('click',toggle);panel.addEventListener('pointerdown',hold);panel.addEventListener('click',choose);panel.querySelector('[data-emoji-close]').addEventListener('click',shut);
  for(const name of ['select','input','keyup','click'])input.addEventListener(name,remember);
- form.addEventListener('keydown',dismiss);form.addEventListener('submit',close);
- const controller={close,dispose(){if(disposed)return;disposed=true;close();button.removeEventListener('pointerdown',hold);button.removeEventListener('click',toggle);panel.removeEventListener('pointerdown',hold);panel.removeEventListener('click',choose);panel.querySelector('[data-emoji-close]').removeEventListener('click',shut);for(const name of ['select','input','keyup','click'])input.removeEventListener(name,remember);form.removeEventListener('keydown',dismiss);form.removeEventListener('submit',close);mounted.delete(input);if(wrapper&&wrapper.contains(input)){wrapper.before(input);wrapper.remove();}}};
+ input.addEventListener('focus',close);form.addEventListener('keydown',dismiss);form.addEventListener('submit',close);
+ const controller={close,isOpen:()=>!panel.hidden,dispose(){if(disposed)return;disposed=true;close();button.removeEventListener('pointerdown',hold);button.removeEventListener('click',toggle);panel.removeEventListener('pointerdown',hold);panel.removeEventListener('click',choose);panel.querySelector('[data-emoji-close]').removeEventListener('click',shut);for(const name of ['select','input','keyup','click'])input.removeEventListener(name,remember);input.removeEventListener('focus',close);form.removeEventListener('keydown',dismiss);form.removeEventListener('submit',close);mounted.delete(input);if(wrapper&&wrapper.contains(input)){wrapper.before(input);wrapper.remove();}}};
  mounted.set(input,controller);return controller;
 }
 export function mountMessageEmojis(root){const pickers=[...root.querySelectorAll('form textarea')].map(input=>mountMessageEmoji(input));return()=>pickers.forEach(picker=>picker.dispose());}
