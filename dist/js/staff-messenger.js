@@ -11,7 +11,13 @@ export function mountStaffMessenger(root,{rooms=[],contacts=[],onRoom,onContact,
  const ownsEntry=()=>history?.state?.[historyKey]===token;
  const stripMarker=()=>{if(history?.state?.[historyKey]){const state={...history.state};delete state[historyKey];history.replaceState(state,'',win.location.href);}};
  stripMarker();
- function viewport(){if(disposed)return;const box=root.getBoundingClientRect();narrow=(win.innerWidth||0)<720||box.width<600;const height=win.visualViewport?.height||win.innerHeight||800,top=win.visualViewport?.offsetTop||0;root.style.setProperty('--staff-conversation-height',Math.round(Math.min(740,height-100))+'px');dialog.style.setProperty('--staff-chat-viewport-height',Math.round(height)+'px');dialog.style.setProperty('--staff-chat-viewport-top',Math.round(top)+'px');const modal=narrow&&root.dataset.messengerView==='chat';doc.body.classList.toggle('staff-messenger-open',modal);dialog.classList.toggle('is-mobile',narrow);
+ let viewportWidth=0,restingHeight=0;
+ function viewport(){if(disposed)return;const box=root.getBoundingClientRect();narrow=(win.innerWidth||0)<720||box.width<600;const visual=win.visualViewport,height=visual?.height||win.innerHeight||800,top=visual?.offsetTop||0,width=visual?.width||win.innerWidth||box.width;
+  if(Math.abs(width-viewportWidth)>2){viewportWidth=width;restingHeight=win.innerHeight||height;}
+  restingHeight=Math.max(restingHeight,height);
+  const keyboard=narrow&&dialog.contains(doc.activeElement)&&(visual?.scale||1)<=1.05&&Math.max(restingHeight,win.innerHeight||height)-height>100;
+  dialog.classList.toggle('is-keyboard-open',keyboard);
+  dialog.style.setProperty('--staff-chat-input-max-height',Math.min(124,Math.max(46,Math.floor(height*.24)))+'px');root.style.setProperty('--staff-conversation-height',Math.round(Math.min(740,height-100))+'px');dialog.style.setProperty('--staff-chat-viewport-height',Math.round(height)+'px');dialog.style.setProperty('--staff-chat-viewport-top',Math.round(top)+'px');const modal=narrow&&root.dataset.messengerView==='chat';doc.body.classList.toggle('staff-messenger-open',modal);dialog.classList.toggle('is-mobile',narrow);
   if(modal){if(dialog.open&&!wasModal)dialog.close();if(!dialog.open){dialog.showModal();root.querySelector('[data-messenger-back]').focus({preventScroll:true});}wasModal=true;}
   else{if(dialog.open&&wasModal)dialog.close();wasModal=false;if(!narrow&&!dialog.open)dialog.show();if(narrow&&dialog.open)dialog.close();}
  }

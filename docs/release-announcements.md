@@ -607,3 +607,9 @@ Preserve announcement 472, its gallery artwork, acknowledgement and expiry. No c
 Add one shared palette of sixteen original gold line glyphs beside message inputs in support requests, private/team conversations and student/teacher homework correspondence. Preserve drafts, caret/selection, input/change events, Unicode payloads and existing message length/disabled guards. Incoming messages safely escape text and display supported glyphs with accessible labels; older clients retain standard Unicode emoji.
 
 Use the feature-specific chat-emojis-475.svg composer illustration with an alternating selection highlight through release-motion-preview. Announce only this change as edition 475, ending 15 November 2026. Messaging permissions, attachments and account behavior retain their existing contracts.
+
+## 476 — keep the chat composer above the iPhone keyboard
+
+Let the mobile composer shrink within the visual viewport. The emoji panel scrolls in the remaining space, while the input and Send row retain their height. Bound expanded text input by the available viewport height. Temporarily collapse notification controls and omit the home-indicator padding while the software keyboard is open; restore both after it closes.
+
+Preserve announcement 475, its feature artwork, acknowledgment and expiry. Regression coverage tracks keyboard viewport height/offset and retained drafts, and measures actual Chrome geometry at narrow portrait and landscape widths with a simulated software keyboard and iPhone safe area.

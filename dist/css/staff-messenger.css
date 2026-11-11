@@ -34,3 +34,13 @@ body.staff-messenger-open #mobile-nav{display:none!important}
 
 /* Each chat keeps a separate, reachable pin control. */
 .staff-room-item{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:stretch;border-bottom:1px solid rgba(176,196,225,.12)}.staff-room-item>.staff-chat-room{width:100%;min-width:0;border-bottom:0}.staff-room-pin{display:flex;align-items:center;justify-content:center;align-self:center;min-width:44px;min-height:44px;padding:10px;border:0;border-radius:12px;background:transparent;color:#78869c}.staff-room-pin svg{width:18px;height:18px}.staff-room-pin[aria-pressed="true"]{color:var(--gold,#d8c393)}.staff-room-pin:hover{background:rgba(216,195,147,.08)}.staff-room-pin:focus-visible{outline:2px solid var(--gold,#d8c393);outline-offset:-3px}
+
+/* The composer must fit inside the visual viewport, including the iOS keyboard. */
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-chat-messages{flex:1 1 0;min-height:0}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-composer{display:flex;flex-direction:column;flex:0 1 auto;min-height:0}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-composer-row{flex:0 0 auto;min-width:0}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-emoji.salah-emoji-panel{flex:0 1 auto;min-height:0;overflow-y:auto}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-composer textarea{max-height:var(--staff-chat-input-max-height,124px)}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile .staff-pending-files{flex:0 1 auto;min-height:0;max-height:80px;overflow-y:auto}
+.staff-messenger .staff-conversation-window.is-keyboard-open [data-staff-push-control]{display:none}
+.staff-cabinet .staff-messenger .staff-conversation-window.is-mobile.is-keyboard-open .staff-composer{padding-bottom:8px}
