@@ -601,3 +601,9 @@ Queue new minute reports with their actual completion timestamps and resolved ti
 Keep the system playback hint active while the next chapter loads after an actively playing chapter. Manual pause, terminal completion and stop still release or pause normally. Regression coverage includes twenty hidden chapter transitions on the same media element and actual system controls. A real locked iPhone check remains required.
 
 Preserve announcement 472, its gallery artwork, acknowledgement and expiry. No congratulations feature is included.
+
+## 475 — SALAH message emojis
+
+Add one shared palette of sixteen original gold line glyphs beside message inputs in support requests, private/team conversations and student/teacher homework correspondence. Preserve drafts, caret/selection, input/change events, Unicode payloads and existing message length/disabled guards. Incoming messages safely escape text and display supported glyphs with accessible labels; older clients retain standard Unicode emoji.
+
+Use the feature-specific chat-emojis-475.svg composer illustration with an alternating selection highlight through release-motion-preview. Announce only this change as edition 475, ending 15 November 2026. Messaging permissions, attachments and account behavior retain their existing contracts.

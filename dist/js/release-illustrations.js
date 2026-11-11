@@ -19,6 +19,7 @@ function topReciterPreview(){
 
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'message-emojis',match:/^Смайлики SALAH:/iu,title:'Смайлики в стиле SALAH',art:()=>'<div class="release-chat-demo release-motion-preview"><img class="release-chat-picture" src="./assets/updates/chat-emojis-475.svg" alt=""><span class="release-chat-selection" data-release-motion-part="element"></span></div>',where:'Нажмите улыбку рядом с полем сообщения. Смайлик добавится в выбранное место текста.'},
  {id:'top-reciter-carousel',match:/^Топ SALAH: часы показывают/iu,title:'Листайте чтецов в Топе SALAH',art:topReciterPreview,where:'Коран → Чтецы → Топ SALAH. Переключатель справа от «Весь рейтинг».'},
  {id:'mushaf-reading-mode',match:/Мусхаф на весь экран/iu,title:'Мусхаф без рамок',art:()=>screenshot('mushaf-reading',460),where:'Коран → Мусхаф → кнопка разворота. Нажмите её ещё раз, чтобы вернуть панели и настройки.'},
  {id:'reciters-talib-dibirov',match:/Ахмад Талиб.*Мухаммад Дибиров/iu,title:'Пять новых голосов',art:()=>screenshot('new-reciters',460),where:'Коран → Чтецы. Ахмад Талиб, Мухаммад Дибиров, Камиль Самигуллин, Алижон кори и обучающее чтение Джанхонгира Неъматова.'},

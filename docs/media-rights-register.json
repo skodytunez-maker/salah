@@ -3323,6 +3323,15 @@
       "rightsEvidence": "docs/reciter-portraits-460.json",
       "originUrl": null,
       "note": "AI-assisted background replacement and crop from the identity-labelled source photograph. Face, expression, pose and clothing requested unchanged. See provenance and public attribution page."
+    },
+    {
+      "path": "dist/assets/updates/chat-emojis-475.svg",
+      "gitBlobSha": "d8fd58be68fb463074a778e56af0a9331bdf3494",
+      "bytes": 8309,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH SVG composed in code for message emoji release 475; docs/release-announcements.md and dist/js/message-emojis.js.",
+      "note": "Original interface composition and original line glyphs. No external photograph, logo, icon library or publisher artwork is included."
     }
   ],
   "wallpaperSets": [
