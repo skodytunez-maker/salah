@@ -21,7 +21,7 @@ export function initGuestCompetition({getAccount,getClient,now=Date.now}){
   const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/guest-competition',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body),credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
   if(!response.ok){const error=Error('unavailable');error.status=response.status;throw error;}const result=await response.json();if(result.ok!==true)throw Error('unavailable');return result;
  }});
- const sync=()=>void tracker.sync();setInterval(sync,15000);
+ const sync=()=>void tracker.sync();setInterval(sync,15000);window.addEventListener('salah:personal-listening',sync);
  for(const name of ['salah:counter-status','online','pageshow'])window.addEventListener(name,()=>void tracker.sync({force:true}));
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});sync();
 }
