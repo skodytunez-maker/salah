@@ -1,4 +1,4 @@
-import{ownerVerified,verifyOwner,onOwnerChange}from './owner-auth.js';
+import{teamPreviewVerified as ownerVerified,verifyTeamPreviewAccess as verifyOwner,onTeamPreviewChange as onOwnerChange}from './team-preview-access.js';
 import{loadIndex,audioUrl}from './quran-data.js';
 import{reciterInfo,reciterHasSurah}from './quran-reciters.js';
 import{reciterRecording}from './quran-reciter-recording.js';
@@ -26,15 +26,15 @@ export async function showRadioPreview(host,{verify=()=>verifyOwner({verifySessi
  const current=()=>alive&&host.isConnected;
  const dispose=()=>{alive=false;clearInterval(guard);controller?.abort();off?.();root?.removeEventListener('click',onClick);root?.removeEventListener('change',onChange);root?.removeEventListener('keydown',onKey);};
  activeDispose=dispose;
- const denied=message=>{controller?.abort();host.innerHTML='<section class="panel radio-private"><h1>Радио SALAH</h1><p>'+esc(message)+'</p><a href="#admin">Вход владельца</a></section>';};
+ const denied=message=>{controller?.abort();host.innerHTML='<section class="panel radio-private"><h1>Радио SALAH</h1><p>'+esc(message)+'</p><a href="#staff">Вход команды</a></section>';};
  host.innerHTML='<section class="panel radio-private"><p role="status">Открываем радио…</p></section>';
  try{
-  if(!await verify()||!isOwner()){if(current())denied('Радио доступно владельцу после защищённого входа.');return dispose;}
+  if(!await verify()||!isOwner()){if(current())denied('Радио доступно владельцу и администраторам после защищённого входа.');return dispose;}
   if(!current())return dispose;
-  off=subscribe(()=>{if(current()&&!isOwner()){dispose();denied('Подтвердите вход владельца снова.');}});
+  off=subscribe(()=>{if(current()&&!isOwner()){dispose();denied('Подтвердите защищённый вход команды снова.');}});
   catalog=await load();if(!current()||!isOwner())return dispose;
   questions=radioQuizQuestions(catalog);
-  guard=setInterval(()=>{if(current()&&!isOwner()){dispose();denied('Подтвердите вход владельца снова.');}},5000);
+  guard=setInterval(()=>{if(current()&&!isOwner()){dispose();denied('Подтвердите защищённый вход команды снова.');}},5000);
  }catch{if(current())denied('Не удалось открыть радио. Проверьте соединение и повторите вход.');return dispose;}
  const time=seconds=>{const s=Math.floor(seconds);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
  const voiceName=id=>reciterInfo(id).name.replace(' · сура целиком','');
@@ -62,7 +62,7 @@ export async function showRadioPreview(host,{verify=()=>verifyOwner({verifySessi
  }
  function draw(){
   if(!current())return;
-  if(!isOwner()){dispose();denied('Подтвердите вход владельца снова.');return;}
+  if(!isOwner()){dispose();denied('Подтвердите защищённый вход команды снова.');return;}
   if(!root){
    host.innerHTML='<section class="radio-preview"><a class="radio-back" href="#home">‹ На главную</a><header class="radio-header"><div class="radio-brand"><span class="radio-brand-mark" aria-hidden="true">'+radioBeacon()+'</span><h1>Радио <span>SALAH</span></h1></div><p class="radio-subtitle">Соберите свою программу чтения.</p></header><nav class="radio-tabs" role="tablist" aria-label="Разделы радио">'+TABS.map(([key,label])=>'<button type="button" role="tab" id="radio-tab-'+key+'" data-radio-tab="'+key+'" aria-controls="radio-pane-'+key+'" aria-selected="'+(tab===key)+'" aria-pressed="'+(tab===key)+'" tabindex="'+(tab===key?'0':'-1')+'">'+label+'</button>').join('')+'</nav><div class="radio-pages">'+TABS.map(([key])=>'<div id="radio-pane-'+key+'" role="tabpanel" aria-labelledby="radio-tab-'+key+'" '+(tab===key?'':'hidden')+'></div>').join('')+'</div></section>';
    root=host.querySelector('.radio-preview');root.addEventListener('click',onClick);root.addEventListener('change',onChange);root.addEventListener('keydown',onKey);

@@ -1,3 +1,5 @@
+import{teamPreviewVerified,teamPreviewActor}from './team-preview-access.js';
+import{mountTeamLearningDemo,stopTeamLearningDemo}from './team-learning-demo.js';
 import{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive,preloadOwnerCourse}from './owner-learning-native.js';
 import{validNativeProgress}from './owner-native-progress.js';
 import{createOwnerFrameViewport}from './owner-frame-viewport.js';
@@ -22,7 +24,7 @@ const readNativeProgress=()=>{try{const v=JSON.parse(localStorage.getItem(native
 let active=null;
 export const ownerLearningBusy=()=>Boolean(active?.busy&&active.frame.isConnected);
 export const canContinueOwnerPreview=()=>ownerNativeActive()||Boolean(active?.frame.isConnected);
-export function stopOwnerLearningPreview(){stopOwnerNativePreview();stopOwnerFramePreview();}
+export function stopOwnerLearningPreview(){stopOwnerNativePreview();stopOwnerFramePreview();stopTeamLearningDemo();}
 function stopOwnerFramePreview(){
  if(!active)return;
  const previous=active;active=null;clearInterval(previous.timer);clearTimeout(previous.timeout);previous.stopAuth?.();previous.viewport?.dispose();window.removeEventListener('message',previous.listen);window.removeEventListener('visibilitychange',previous.foreground);
@@ -31,6 +33,10 @@ function stopOwnerFramePreview(){
 }
 export function mountOwnerLearningPreview(host,feature){
  const params=new URLSearchParams(location.hash.split('?')[1]||'');
+ if(feature==='teacher-preview'||feature==='online-lessons'&&teamPreviewActor()?.owner===false){stopOwnerFramePreview();stopOwnerNativePreview();return mountTeamLearningDemo(host,feature);}
+ stopTeamLearningDemo();
+ // Administrator course reads do not create owner iframe sessions.
+ if(feature==='muallim'&&teamPreviewVerified()&&teamPreviewActor()?.owner===false){stopOwnerFramePreview();return mountOwnerNativePreview(host,feature);}
  const sourceMode=feature==='muallim'&&(params.has('bookPage')||params.get('source')==='1'||params.get('practice')==='1');
  if(['muallim','live-stream'].includes(feature)&&!sourceMode){stopOwnerFramePreview();return mountOwnerNativePreview(host,feature);}
  stopOwnerNativePreview();
