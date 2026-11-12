@@ -19,24 +19,26 @@ export function createLiveListeningTotal(){
 export function createSharedListeningMotion(){let value=null;return{reset(){value=null;},tick(){return value;},sample(target,{key,server}={}){value=Number.isSafeInteger(target)&&target>=0&&Number.isSafeInteger(server)&&server>=0&&key?target:null;return value;}};}
 const validSeconds=seconds=>Number.isSafeInteger(seconds)&&seconds>=0;
 const summaryValue=seconds=>validSeconds(seconds)?formatListeningTime(seconds):'…';
+const numberDigits=(value,unit)=>[...String(value)].map((digit,place)=>'<span class="listening-digit" data-listening-place="'+unit+'-'+(String(value).length-place-1)+'"><span>'+digit+'</span></span>').join('');
+export function listeningCountMarkup(count){return '<strong data-listening-total data-listening-animated data-listening-seconds="'+count+'" aria-label="'+count+'"><span class="listening-time-visual" aria-hidden="true">'+numberDigits(count,'count')+'</span></strong>';}
 function sharedTimeMarkup(seconds){
  // Preserve the original text and spacing; animate digits and slightly reduce unit labels.
- return summaryValue(seconds).replace(/(\d+)(?= (ч|мин|с))/g,(part,number,unit)=>[...part].map((digit,place)=>'<span class="listening-digit" data-listening-place="'+unit+'-'+(part.length-place-1)+'"><span>'+digit+'</span></span>').join('')).replace(/ (ч|мин|с)(?= |$)/g,' <span class="listening-time-unit">$1</span>');
+ return summaryValue(seconds).replace(/(\d+)(?= (ч|мин|с))/g,(part,number,unit)=>numberDigits(part,unit)).replace(/ (ч|мин|с)(?= |$)/g,' <span class="listening-time-unit">$1</span>');
 }
 export function listeningSummaryMarkup(seconds,{personal=false}={}){
  const value=summaryValue(seconds);
  return '<div class="listening-summary'+(personal?' reciter-personal-total':'')+'" data-listening-summary><span>'+(personal?'Всего прослушано':'Вместе прослушали')+'</span><strong data-listening-total aria-live="off"'+(personal?'':' data-listening-animated data-listening-seconds="'+(validSeconds(seconds)?seconds:'')+'" aria-label="'+esc(value)+'"')+'>'+(personal?esc(value):'<span class="listening-time-visual" aria-hidden="true">'+sharedTimeMarkup(seconds)+'</span>')+'</strong></div>';
 }
-export function updateListeningSummary(host,seconds){
+export function updateListeningSummary(host,seconds,{count=false}={}){
  const element=host.querySelector('[data-listening-total]');if(!element)return;
  if(!element.hasAttribute('data-listening-animated')){const value=validSeconds(seconds)?formatListeningTime(seconds):'…';if(element.textContent!==value)element.textContent=value;return;}
- const value=summaryValue(seconds),previous=element.dataset.listeningSeconds;
+ const value=count?String(seconds):summaryValue(seconds),previous=element.dataset.listeningSeconds;
  if(value===element.getAttribute('aria-label'))return;
- const visual=element.querySelector('.listening-time-visual'),next=sharedTimeMarkup(seconds),template=element.ownerDocument.createElement('span');template.innerHTML=next;
+ const visual=element.querySelector('.listening-time-visual'),next=count?numberDigits(seconds,'count'):sharedTimeMarkup(seconds),template=element.ownerDocument.createElement('span');template.innerHTML=next;
  const oldDigits=[...visual.querySelectorAll('[data-listening-place]')],oldValues=new Map(oldDigits.map(digit=>[digit.dataset.listeningPlace,digit.textContent]));
  // Corrections, scope changes and a fresh snapshot replace the number quietly.
  // Only small forward steps animate, using the already measured total above.
- const animate=previous!==''&&validSeconds(seconds)&&seconds>Number(previous)&&seconds-Number(previous)<=10;
+ const animate=previous!==''&&validSeconds(seconds)&&(count?seconds!==Number(previous):seconds>Number(previous))&&Math.abs(seconds-Number(previous))<=10;
  if(!animate)visual.innerHTML=next;
  else{
   if(visual.textContent.replace(/\d/g,'#')!==value.replace(/\d/g,'#'))visual.innerHTML=next;

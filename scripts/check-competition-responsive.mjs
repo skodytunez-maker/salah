@@ -1,6 +1,6 @@
 import{reciterFilterTabs,recentReciters}from '../dist/js/quran-reciter-discovery.js';
 import{listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion}from '../dist/js/listening-summary.js';
-import{createListeningTotalsLoader}from '../supabase/functions/reciter-competition/listening-totals.mjs';
+import{readListeningTotals}from '../supabase/functions/reciter-competition/listening-totals.mjs';
 import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -75,7 +75,7 @@ const sql=(strings,...args)=>{
   return result.then(resolve,reject);
  }};
 };
-const edgeContext=vm.createContext({currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,createListeningTotalsLoader,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
+const edgeContext=vm.createContext({currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,readListeningTotals,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edgeContext);
 const testDay=listeningDayKey(Date.now());
 const response=await serve(new Request('https://fixture.invalid?boards=1&day='+testDay));assert.equal(response.status,200);const body=await response.json();assert.deepEqual(Object.keys(body.boards).sort(),['all','day','month','week']);assert.equal(readPeriods.length,4);assert.equal(body.listeningTotals.all,600);assert.ok(!JSON.stringify(body).includes('PRIVATE-NEVER-PUBLISH'));assert.equal(body.boards.all.items[0].initial,'AN');
@@ -89,6 +89,14 @@ assert.equal(overall[0].reciter,'ar.yasseraldossaricontinuous','A favorite tie f
 assert.equal(overall[0].seconds,100);assert.equal(overall[3].reciters,undefined,'Only podium entries expose the reciter breakdown');
 assert.equal(rich.boards.day.items[0].id,uid(102),'A different period uses its own scores and ranks');
 assert.ok(!JSON.stringify(rich).includes('PRIVATE-CAROUSEL-IDENTITY'));
+assert.equal(rich.listeningTotals.all,570,'The summary uses the same scores as all participant cards, not the legacy cached 600');
+assert.equal(rich.listeningTotals.day,470,'Every period has its own matching summary');
+assert.equal(rich.boards.all.listeningTotal,undefined,'The internal aggregate is not added to the board contract');
+await db.exec("update fixture_reciter_seconds set seconds=seconds+4 where user_id='"+uid(1)+"' and reciter='ar.alafasy'");
+const advanced=await (await serve(new Request('https://fixture.invalid?boards=1&details=reciters&day='+testDay))).json();
+assert.equal(advanced.boards.all.items[0].totalSeconds,204);
+assert.equal(advanced.listeningTotals.all,574,'Requests inside ten seconds cannot mix fresh cards with the previous aggregate');
+await db.exec("update fixture_reciter_seconds set seconds=seconds-4 where user_id='"+uid(1)+"' and reciter='ar.alafasy'");
 client.clearCompetitionCache();
 clientContext.fetch=async url=>{
  assert.match(url,/details=reciters/);
@@ -114,6 +122,24 @@ assert.equal(requestedBoardUrls.length,2,'A capped total board also needs the se
 assert.match(requestedBoardUrls[0],/details=reciters/);
 assert.doesNotMatch(requestedBoardUrls[1],/details=reciters/);
 assert.equal(fullFavorite[0].id,body.boards.all.items[0].id);
+// Aggregate before the 1000-row response cap.
+await db.exec(`
+ insert into auth.users select ('00000001-0000-4000-8000-'||lpad(i::text,12,'0'))::uuid,'{"nickname":"Cap fixture"}',null,now(),false from generate_series(1,1001)i;
+ insert into reciter_listener_visibility select id,id,'initial' from auth.users where id::text like '00000001-%';
+ insert into salah_competition_private.preferences select id,true from auth.users where id::text like '00000001-%';
+ insert into fixture_reciter_seconds select id,'ar.alafasy',1,true from auth.users where id::text like '00000001-%';
+`);
+const capped=await(await serve(new Request('https://fixture.invalid?boards=1&details=reciters&day='+testDay))).json();
+assert.equal(capped.boards.all.items.length,1000);
+assert.equal(capped.listeningTotals.all,1571,'The summary includes participants beyond the response cap');
+assert.ok(capped.listeningTotals.all>capped.boards.all.items.reduce((sum,p)=>sum+p.totalSeconds,0));
+await db.exec("update reciter_listener_visibility set mode='hidden'");
+const empty=await(await serve(new Request('https://fixture.invalid?boards=1&details=reciters&day='+testDay))).json();
+assert.equal(empty.boards.all.items.length,0);assert.equal(empty.listeningTotals.all,0,'Privacy removals immediately reset both values');
+await db.exec("update reciter_listener_visibility set mode='initial' where user_id='"+uid(1)+"';update fixture_reciter_seconds set seconds=case when reciter='ar.alafasy' then 19 else 0 end where user_id='"+uid(1)+"'");
+const photo=await(await serve(new Request('https://fixture.invalid?boards=1&details=reciters&day='+testDay))).json();
+assert.equal(photo.boards.day.items[0].totalSeconds,19);
+assert.equal(photo.listeningTotals.day,19,'The screenshot case must display 19 both above and inside the single participant card');
 await db.close();
 assert.equal(reciterHasSurah('ar.siratulloraupov',1),true);assert.equal(reciterHasSurah('ar.siratulloraupov',2),false);assert.equal(adjacentReciterSurah('ar.siratulloraupov',1,1),16);assert.equal(reciterHasSurah('ar.siratulloraupov',114),true);
 console.log('PASS: one four-period transport, cache/abort/privacy, delayed-result coalescing, instant warm switches, stale-period rejection, live seconds without duplicate credit or invented ranks, legacy Edge compatibility and verified Raupov availability.');

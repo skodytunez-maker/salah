@@ -3332,6 +3332,15 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Original SALAH SVG composed in code for message emoji release 475; docs/release-announcements.md and dist/js/message-emojis.js.",
       "note": "Original interface composition and original line glyphs. No external photograph, logo, icon library or publisher artwork is included. Updated in 476 to show the input row above the emoji keyboard."
+    },
+    {
+      "path": "dist/assets/updates/home-listening-478.svg",
+      "gitBlobSha": "f785a36f8dd3f14c3ddcf64dd1c9be6d3631d263",
+      "bytes": 1529,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "Original SALAH SVG composed in code for the Home listening indicator; docs/release-announcements.md.",
+      "note": "Original interface composition with original line geometry; no external photograph or icon library."
     }
   ],
   "wallpaperSets": [

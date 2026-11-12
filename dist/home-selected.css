@@ -139,3 +139,14 @@ body.reduce-motion .dhikr-passage{animation:none!important}
 .home-reading{width:100%;max-width:350px;margin:8px auto;text-align:left;border:1px solid rgba(213,193,145,.25);border-radius:18px;background:rgba(8,16,30,.86);padding:12px 14px;box-sizing:border-box}.home-reading h2{font-size:14px;margin:0 0 6px;color:#d5c191}.home-reading-link{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;color:#f3f0e7;text-decoration:none;padding:6px 0}.home-reading-link+.home-reading-link{border-top:1px solid rgba(213,193,145,.18)}.home-reading-link strong,.home-reading-link small{display:block}.home-reading-link strong{font-size:15px}.home-reading-link small{font-size:12px;color:#bcc5d4;margin-top:3px}.home-reading-link:focus-visible{outline:2px solid #d5c191;outline-offset:3px;border-radius:6px}
 /* Re-entering Home is navigation, not a new prayer-card reveal. */
 body.home-page .central-prayer{animation:none}
+
+.home-page .home-listening-now{position:relative;align-self:flex-end;flex:none;margin-top:-12px;margin-bottom:10px;z-index:20;display:inline-flex;align-items:center;gap:12px;padding:5px 7px;color:var(--gold,#cbbf9b);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
+.home-page .home-listening-now[hidden]{display:none!important}
+.home-listening-now svg{width:19px;height:19px;flex:none}
+.home-listening-now strong{font:inherit}
+
+.home-activity-count{display:inline-flex;align-items:center;gap:5px;flex:none;white-space:nowrap}
+
+button.home-activity-count{pointer-events:auto;background:none;border:0;border-radius:8px;color:inherit;font:inherit;padding:3px;min-height:32px;cursor:pointer}.owner-live-members{display:grid;gap:8px}.owner-live-member{display:block;padding:13px 15px;border:1px solid #344058;border-radius:13px;color:var(--text,#e7ecf4);text-decoration:none;background:#111c2e}
+
+.home-page .app-home-shell:has(.home-listening-now:not([hidden])){height:auto;min-height:100svh}.home-page .app-home-shell:has(.home-listening-now:not([hidden])) .app-home-top{margin-top:0}
