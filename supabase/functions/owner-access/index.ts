@@ -1,23 +1,3 @@
-export async function readOwnerLiveActivity(sql,kind,page=1){
- if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('invalid');
- const rows=await sql`with live as(
- select user_id,session_id from salah_competition_private.listener_presence where ${kind}='listening' and playing and reported_at>statement_timestamp()-interval '45 seconds'
- union all select user_id,session_id from salah_competition_private.activity_presence where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds'
- ), people as(
- select distinct v.public_id id,u.raw_user_meta_data->>'nickname' nickname
- from live join auth.sessions a on a.id=live.session_id and a.user_id=live.user_id
- join auth.users u on u.id=live.user_id join salah_competition_private.preferences p on p.user_id=u.id
- join public.reciter_listener_visibility v on v.user_id=u.id
- where (a.not_after is null or a.not_after>statement_timestamp()) and p.enabled and v.mode in('initial','profile')
- and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=statement_timestamp())
- ), all_people as(
- select id::text,nickname,false guest,null::text code from people
- union all select null::text,'Гость'::text,true,left(device_hash,6) from salah_visits_private.guest_activity_presence
- where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds' group by device_hash
- )select id,nickname,guest,code,count(*)over()::int total from all_people order by guest,lower(coalesce(nickname,'')),id,code limit 50 offset ${(page-1)*50}`;
- return{total:Number(rows[0]?.total||0),users:rows.map(row=>row.guest===true?{guest:true,code:row.code}:{id:String(row.id),nickname:typeof row.nickname==='string'?row.nickname:'Без ника'})};
-}
-
 // A title belongs to one winner of the latest finalized period, never to all
 // historical winners. Existing award records remain immutable history.
 export async function currentTitleHolders(sql){
@@ -63,6 +43,28 @@ export function canonicalAccountLocation(city,country=null){
  return{city:name||null,country:nation||null};
 }
 // END SHARED ACCOUNT LOCATION
+export async function readOwnerLiveActivity(sql,kind,page=1){
+ if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('invalid');
+ const rows=await sql`with live as(
+ select user_id,session_id from salah_competition_private.listener_presence where ${kind}='listening' and playing and reported_at>statement_timestamp()-interval '45 seconds'
+ union all select user_id,session_id from salah_competition_private.activity_presence where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds'
+ ), people as(
+ select distinct v.public_id id,u.raw_user_meta_data->>'nickname' nickname
+ from live join auth.sessions a on a.id=live.session_id and a.user_id=live.user_id
+ join auth.users u on u.id=live.user_id join salah_competition_private.preferences p on p.user_id=u.id
+ join public.reciter_listener_visibility v on v.user_id=u.id
+ where (a.not_after is null or a.not_after>statement_timestamp()) and p.enabled and v.mode in('initial','profile')
+ and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=statement_timestamp())
+ ), all_people as(
+ select id::text,nickname,false guest,null::text code from people
+ union all select null::text,'Гость'::text,true,left(device_hash,6) from salah_visits_private.guest_activity_presence
+ where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds' group by device_hash
+ )select id,nickname,guest,code,count(*)over()::int total from all_people order by guest,lower(coalesce(nickname,'')),id,code limit 50 offset ${(page-1)*50}`;
+ return{total:Number(rows[0]?.total||0),users:rows.map(row=>row.guest===true?{guest:true,code:row.code}:{id:String(row.id),nickname:typeof row.nickname==='string'?row.nickname:'Без ника'})};
+}
+
+
+
 export function validGeoSelection(kind,city,country){
  const clean=v=>typeof v==='string'&&v.trim()&&v.length<=160&&!/[\u0000-\u001f\u007f]/.test(v);
  if(kind==='country')return clean(country)&&!city?{kind,city:null,country:canonicalAccountLocation('?',country).country}:null;
