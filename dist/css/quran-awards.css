@@ -177,3 +177,7 @@ body.reduce-motion .release-motion-preview [data-release-motion-part="element"],
 .release-chat-demo{position:relative;width:min(100%,460px);margin-inline:auto;line-height:0}.release-chat-demo .release-chat-picture{display:block;width:100%;max-width:100%;height:auto;border-radius:20px}.release-chat-selection{position:absolute;left:11.74%;top:65.59%;width:8.26%;height:11.18%;box-sizing:border-box;border:1.5px solid var(--gold,#cbbf9b);border-radius:12px;--release-motion-keyframes:release-chat-select;pointer-events:none}@keyframes release-chat-select{0%,30%{transform:translateX(0)}70%,100%{transform:translateX(115.8%)}}
 
 .release-new-art:has(.release-chat-demo){height:auto;min-height:0;padding:0}.release-chat-demo .release-chat-picture{max-height:none}
+
+.release-home-listening-demo{position:relative;width:min(100%,460px);margin-inline:auto;line-height:0}.release-home-listening-demo .release-screen-picture{display:block;width:100%;height:auto;max-height:none}.release-home-listening-number{position:absolute;left:84%;top:7.4%;height:1.2em;overflow:clip;color:#cbbf9b;font:500 clamp(12px,3.4vw,20px)/1.2 'Manrope','Segoe UI',sans-serif}.release-home-listening-track{display:flex;flex-direction:column;--release-motion-keyframes:release-home-listening-digit}.release-home-listening-track>span{display:block;height:1.2em;line-height:1.2em}
+@keyframes release-home-listening-digit{0%,44%{transform:translateY(0)}54%,100%{transform:translateY(-50%)}}
+.release-new-art:has(.release-home-listening-demo){height:auto;min-height:0;padding:0}

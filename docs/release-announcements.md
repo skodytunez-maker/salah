@@ -621,3 +621,11 @@ Preserve announcement 475, acknowledgement and expiry. Update its existing compo
 Remove the Tafsir action and module mounting from the public Quran reader, and remove its availability card from legacy illustrated news. Keep the underlying module for a future explicit decision, without a public entry point. Preserve Quran text, translations, audio, bookmarks and progress. Preserve announcement 475, acknowledgement and expiry; this is a temporary availability change, not a new feature announcement.
 
 Record the deferred Quran radio with a host idea in docs/product-ideas.md. This release does not implement radio or include the separate pending competition-summary server fix.
+
+## 478 — compact live listening count on Home
+
+Show headphones and a count in the upper-right corner of Home, below the safe area. Hide the entire indicator for zero, failed/invalid requests, restricted mode and hidden documents. Poll only while Home is active; stale responses cannot revive a previous page. The aggregate covers distinct eligible signed-in accounts with a fresh playing report and active session, including anonymous display profiles; it does not identify anyone or count guests. Existing 45-second presence expiry applies when an OS suspends reporting.
+
+Reuse Top SALAH's digit renderer and CSS transition, including updates in both directions. Create announcement 478 with the feature-specific original home-listening-478.svg composition and a shared release-motion-preview digit loop (3 to 4 and back), paused when hidden, respecting reduced motion and acknowledged only on «Понятно».
+
+Deploy the new read-only listening-now Edge Function separately; no schema change or modification of stored minutes is needed. The pending competition-summary correction in PR 339 remains separate.

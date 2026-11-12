@@ -77,7 +77,7 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- assert.ok(releaseModal.textContent.includes('Смайлики в стиле SALAH'));assert.ok(releaseModal.querySelector('.release-chat-demo.release-motion-preview [data-release-motion-part]'));assert.equal(releaseModal.querySelector('.release-top-demo-track'),null,'New announcement contains only its own feature');
+ assert.ok(releaseModal.textContent.includes('Сейчас слушают Коран'));assert.ok(releaseModal.querySelector('.release-home-listening-demo.release-motion-preview [data-release-motion-part]'));assert.equal(releaseModal.querySelector('.release-top-demo-track'),null,'New announcement contains only its own feature');
  assert.ok(!releaseModal.textContent.includes('Большое обновление SALAH'));
  releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);assert.equal(hasSeenAnnouncement(),true,'Понятно acknowledges the news');
  assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Home stays clear after acknowledgement');

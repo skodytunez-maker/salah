@@ -4263,6 +4263,11 @@
       "path": "dist/assets/updates/chat-emojis-475.svg",
       "gitBlobSha": "1952cbe0fb33de3ea122a800c58b4eb3732ac746",
       "bytes": 8301
+    },
+    {
+      "path": "dist/assets/updates/home-listening-478.svg",
+      "gitBlobSha": "b8a19794e712f1416a6da6fa24b74ba7f3ab0658",
+      "bytes": 1781
     }
   ],
   "incrementalEvidence": [
@@ -4355,6 +4360,14 @@
       ],
       "evidence": "docs/release-announcements.md",
       "baseCommit": "55ba61b8821fc4c7b36a8212a43d39e19c6951ec"
+    },
+    {
+      "date": "2026-11-12",
+      "paths": [
+        "dist/assets/updates/home-listening-478.svg"
+      ],
+      "evidence": "docs/release-announcements.md",
+      "baseCommit": "af1895b5f5e2b344f8aecdd10e885da3805edaab"
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"
