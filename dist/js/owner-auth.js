@@ -172,3 +172,9 @@ export async function ownerGeoMembers(days,selection,page=1){
  const query=new URLSearchParams({mode:'geography-users',days:String(days),page:String(page),kind:selection.kind});if(selection.city)query.set('city',selection.city);if(selection.country)query.set('country',selection.country);
  return callOwner(data.session,'?'+query);
 }
+
+export async function ownerLiveActivity(kind,page=1){
+ if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('Неизвестный вид активности.');
+ const{data,error}=await authClient().auth.getSession();if(error)throw Error('Не удалось проверить вход.');
+ return callOwner(data.session,'?mode=live&kind='+kind+'&page='+page);
+}

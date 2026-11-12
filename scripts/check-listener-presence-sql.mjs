@@ -6,7 +6,7 @@ import {PGlite} from '../tests/staff/node_modules/@electric-sql/pglite/dist/inde
 import {listenerPresencePacket,createListenerPresenceDb} from '../supabase/functions/reciter-competition/listener-presence.mjs';
 import {publicListenerRows} from '../supabase/functions/reciter-competition/listener-labels.mjs';
 import * as core from '../supabase/functions/reciter-competition/core.mjs';
-import {createListeningTotalsLoader} from '../supabase/functions/reciter-competition/listening-totals.mjs';
+import {readListeningTotals} from '../supabase/functions/reciter-competition/listening-totals.mjs';
 const pg=new PGlite(),uid='11111111-1111-4111-8111-111111111111',sid='22222222-2222-4222-8222-222222222222',tab='33333333-3333-4333-8333-333333333333',tab2='44444444-4444-4444-8444-444444444444',publicId='55555555-5555-4555-8555-555555555555';
 await pg.exec(`create role anon;create role authenticated;create schema auth;create schema storage;create schema salah_competition_private;
 create table auth.users(id uuid primary key,email_confirmed_at timestamptz,is_anonymous boolean,banned_until timestamptz,raw_user_meta_data jsonb);
@@ -54,7 +54,7 @@ await pg.query('delete from auth.sessions where id=$1',[sid]);assert.equal((awai
 // Exercise the complete HTTP handler with a synthetic, locally validated auth response.
 await pg.query('insert into auth.sessions values($1,$2,null)',[sid,uid]);let serve;
 const token='fixture.'+Buffer.from(JSON.stringify({sub:uid,session_id:sid})).toString('base64url')+'.fixture';
-const edge=vm.createContext({...core,createListeningTotalsLoader,listenerPresencePacket,createListenerPresenceDb,publicListenerRows,postgres:()=>sql,Deno:{env:{get:()=> 'https://fixture.invalid'},serve:fn=>serve=fn},fetch:async()=>new Response(JSON.stringify({id:uid,email_confirmed_at:'2026-10-01',is_anonymous:false})),Request,Response,URL,JSON,Date,atob});
+const edge=vm.createContext({...core,readListeningTotals,listenerPresencePacket,createListenerPresenceDb,publicListenerRows,postgres:()=>sql,Deno:{env:{get:()=> 'https://fixture.invalid'},serve:fn=>serve=fn},fetch:async()=>new Response(JSON.stringify({id:uid,email_confirmed_at:'2026-10-01',is_anonymous:false})),Request,Response,URL,JSON,Date,atob});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edge);
 const request=(body,authorized=true)=>new Request('https://fixture.invalid/functions/v1/reciter-competition',{method:'POST',headers:{'Content-Type':'application/json',...(authorized?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body)});
 const callStart=queries.length;assert.equal((await serve(request({action:'presence',tab,sequence:1,playing:true}))).status,200);assert.ok(!queries.slice(callStart).some(q=>q.includes('competition_refresh')||q.includes('legacy')),'The HTTP route bypasses score initialization');

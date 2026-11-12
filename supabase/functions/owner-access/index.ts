@@ -1,3 +1,23 @@
+export async function readOwnerLiveActivity(sql,kind,page=1){
+ if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('invalid');
+ const rows=await sql`with live as(
+ select user_id,session_id from salah_competition_private.listener_presence where ${kind}='listening' and playing and reported_at>statement_timestamp()-interval '45 seconds'
+ union all select user_id,session_id from salah_competition_private.activity_presence where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds'
+ ), people as(
+ select distinct v.public_id id,u.raw_user_meta_data->>'nickname' nickname
+ from live join auth.sessions a on a.id=live.session_id and a.user_id=live.user_id
+ join auth.users u on u.id=live.user_id join salah_competition_private.preferences p on p.user_id=u.id
+ join public.reciter_listener_visibility v on v.user_id=u.id
+ where (a.not_after is null or a.not_after>statement_timestamp()) and p.enabled and v.mode in('initial','profile')
+ and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=statement_timestamp())
+ ), all_people as(
+ select id::text,nickname,false guest,null::text code from people
+ union all select null::text,'Гость'::text,true,left(device_hash,6) from salah_visits_private.guest_activity_presence
+ where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds' group by device_hash
+ )select id,nickname,guest,code,count(*)over()::int total from all_people order by guest,lower(coalesce(nickname,'')),id,code limit 50 offset ${(page-1)*50}`;
+ return{total:Number(rows[0]?.total||0),users:rows.map(row=>row.guest===true?{guest:true,code:row.code}:{id:String(row.id),nickname:typeof row.nickname==='string'?row.nickname:'Без ника'})};
+}
+
 // A title belongs to one winner of the latest finalized period, never to all
 // historical winners. Existing award records remain immutable history.
 export async function currentTitleHolders(sql){
@@ -84,7 +104,7 @@ const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const OWNER_RELEASES={salah:[{date:'2026-10-16',version:'339',changes:['Профили пользователей открываются из списка: фото, сохранённое время прослушивания, любимые чтецы и полученные награды.','Доступ к профилям и фото проверяется на сервере при каждом запросе: только владелец с действующей сессией и вторым фактором.']},{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readRankUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readRankUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,readLiveActivity=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -104,7 +124,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   const url=new URL(req.url);
   const mode=url.searchParams.get('mode')||'gate';
   if([...url.searchParams.keys()].some(key=>key!=='mode'&&key!=='days'&&key!=='page'&&key!=='ids'&&key!=='app'&&key!=='activityDay'&&key!=='kind'&&key!=='city'&&key!=='country'))return reply(400,{error:'invalid_parameters'});
-  if(['kind','city','country'].some(k=>url.searchParams.has(k))&&mode!=='geography-users')return reply(400,{error:'invalid_parameters'});
+  if(['city','country'].some(k=>url.searchParams.has(k))&&mode!=='geography-users'||url.searchParams.has('kind')&&!['geography-users','live'].includes(mode))return reply(400,{error:'invalid_parameters'});
   if(url.searchParams.has('activityDay')&&mode!=='user')return reply(400,{error:'invalid_parameters'});
   let claims;
   try{const checked=await getClaims(auth.slice(7));if(checked.error)return reply(401,{error:'invalid_session'});claims=checked.data?.claims;}
@@ -114,6 +134,15 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
   try{if(!isSessionActive||!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});}catch{return reply(503,{error:'auth_unavailable'});}
   const secondFactor=claims.aal==='aal2'&&user.factors?.some(factor=>factor.status==='verified'&&factor.factor_type==='totp');
   if(!secondFactor)return mode==='gate'?reply(200,{owner:false,mfaRequired:true}):reply(403,{error:'mfa_required'});
+  if(mode==='live'){
+   const kind=url.searchParams.get('kind'),page=Number(url.searchParams.get('page')||1);
+   if([...url.searchParams.keys()].some(k=>!['mode','kind','page'].includes(k))||!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)return reply(400,{error:'invalid_parameters'});
+   if(!readLiveActivity)return reply(503,{error:'activity_unavailable'});
+   try{const data=await readLiveActivity(kind,page);if(!Number.isSafeInteger(data.total)||data.total<0||!Array.isArray(data.users))throw Error('invalid');
+    const users=data.users.slice(0,50).filter(row=>row.guest===true?/^[a-f0-9]{6}$/i.test(row.code||''):/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.id||'')).map(row=>row.guest===true?{id:null,guest:true,nickname:'Гость '+row.code.toUpperCase()}:{id:row.id,nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника'});
+    return reply(200,{kind,page,total:data.total,users});
+   }catch{return reply(503,{error:'activity_unavailable'});}
+  }
   if(mode==='releases'){
    if(url.searchParams.has('ids')||url.searchParams.has('page')||url.searchParams.has('days'))return reply(400,{error:'invalid_parameters'});
    const app=url.searchParams.get('app')||'salah';if(!Object.hasOwn(OWNER_RELEASES,app))return reply(400,{error:'invalid_app'});
@@ -294,5 +323,5 @@ if(typeof Deno!=='undefined'){
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readRankUser:async id=>(await readOwnerUserSummaries(sql,1,id))[0]||null,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readRankUser:async id=>(await readOwnerUserSummaries(sql,1,id))[0]||null,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readLiveActivity:(kind,page)=>readOwnerLiveActivity(sql,kind,page),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid and (not_after is null or not_after>now())) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

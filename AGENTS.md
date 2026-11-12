@@ -12,3 +12,5 @@
 
 - Tafsir is temporarily removed from public use at the user's request. Do not restore public Tafsir entry points or promote its availability without an explicit new request.
 - Deferred product ideas are recorded in docs/product-ideas.md; recording an idea does not authorize implementation.
+
+- Home activity is anonymous for ordinary users: only aggregate listening, Quran reading and dhikr counts are public. Only the verified owner, through an endpoint requiring an active session and MFA, may open participant lists. Unregistered guests have no known name and must stay labelled as guests.

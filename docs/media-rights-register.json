@@ -3335,8 +3335,8 @@
     },
     {
       "path": "dist/assets/updates/home-listening-478.svg",
-      "gitBlobSha": "b8a19794e712f1416a6da6fa24b74ba7f3ab0658",
-      "bytes": 1781,
+      "gitBlobSha": "f785a36f8dd3f14c3ddcf64dd1c9be6d3631d263",
+      "bytes": 1529,
       "kind": "illustration",
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "Original SALAH SVG composed in code for the Home listening indicator; docs/release-announcements.md.",
