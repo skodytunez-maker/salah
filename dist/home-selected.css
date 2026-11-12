@@ -150,3 +150,8 @@ body.home-page .central-prayer{animation:none}
 button.home-activity-count{pointer-events:auto;background:none;border:0;border-radius:8px;color:inherit;font:inherit;padding:3px;min-height:32px;cursor:pointer}.owner-live-members{display:grid;gap:8px}.owner-live-member{display:block;padding:13px 15px;border:1px solid #344058;border-radius:13px;color:var(--text,#e7ecf4);text-decoration:none;background:#111c2e}
 
 .home-page .app-home-shell:has(.home-listening-now:not([hidden])){height:auto;min-height:100svh}.home-page .app-home-shell:has(.home-listening-now:not([hidden])) .app-home-top{margin-top:0}
+
+/* Lift the portrait timetable group as one unit; retain the activity row's status-fade clearance. */
+@media (max-width:599px) and (min-height:701px) and (orientation:portrait){
+ .home-page .app-home-shell:has(.central-prayer.timetable):has(.home-listening-now:not([hidden])) .home-prayer-center{position:relative;top:-20px}
+}

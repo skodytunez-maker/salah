@@ -1,5 +1,10 @@
 # SALAH release announcements
 
+## Version480 — portrait Home balance (12 November2026)
+
+Lift the existing Home prayer-center group by 20 CSS pixels on portrait phones at least 701px high while the live activity row and timetable are visible. SALAH, selected city, timetable and azkar suggestion move together; relative positioning preserves their dimensions, internal gaps and rendering without creating a transformed containing block. The activity row remains outside the shifted group, with the status-fade inset from479. Fixed audio player and navigation retain their viewport positions. Short phones, landscape, tablets, focus mode and activity-free Home keep their existing layout. Announcement479, its guest leaderboard artwork, acknowledgment and expiry remain unchanged for this cosmetic adjustment. Browser automation is disabled in Work settings; verify the final position on the user's iPhone after publication.
+
+
 ## Version479 — guests in the leaderboard and private app version (12 November2026)
 
 New guest listening starts after a successful anonymous enrollment. A private installation capability protects its ledger; public IDs and short guest labels are separate from device/capability hashes. The existing real-progress audio meter supplies measured seconds; pause, seek and unknown identity never invent time. Durable cumulative per-reciter/day snapshots are monotonic and bounded against elapsed server enrollment time. Public boards combine unclaimed guests and eligible accounts before ranking and before the 1000-row cap, with one matching shared summary for all periods. Ordinary profiles, locations and identity permissions stay unchanged; guest rows have no account-card link or photo.
