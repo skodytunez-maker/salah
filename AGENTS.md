@@ -9,3 +9,6 @@
 - Do not announce subscriptions, monthly financial support, billing or the YooKassa review/cancellation flow in public news until the user explicitly asks to announce them. This includes current, waiting-update and legacy release cards. Preserve the private review link and payment UI.
 
 - A user's prayer city, country, and geography derived from user locations are private. Other users’ location and geography reports are visible only to the verified owner through owner-only endpoints with active session and MFA. A user may view or change their own prayer city. Public rankings, public profiles, staff and support views must not expose another user's location.
+
+- Tafsir is temporarily removed from public use at the user's request. Do not restore public Tafsir entry points or promote its availability without an explicit new request.
+- Deferred product ideas are recorded in docs/product-ideas.md; recording an idea does not authorize implementation.
