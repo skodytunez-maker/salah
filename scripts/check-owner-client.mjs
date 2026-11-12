@@ -173,11 +173,11 @@ cards.app.querySelector('#owner-user-back').onclick();assert.equal(cards.app.que
 let open=true,closed=0,surface={};bindOwnerCardNavigation(surface,{dismiss:()=>{open=false;closed++},isOpen:()=>open});
 assert.equal(surface.onclick,null);assert.equal(surface.onpointerdown,null);assert.equal(surface.onpointerup,null);
 surface.onkeydown({key:'Escape',preventDefault(){}});assert.equal(open,false);assert.equal(closed,1);
-assert.doesNotMatch(ownerUserCard({nickname:'Health',appVersion:180,versionCheckedAt:'2026-10-06T10:00:00Z',lastSavedAt:'2026-10-06T09:00:00Z'}),/Версия SALAH|Синхронизация данных|Последний вход/);
+assert.doesNotMatch(ownerUserCard({nickname:'Health',appVersion:180,versionCheckedAt:'2026-10-06T10:00:00Z',lastSavedAt:'2026-10-06T09:00:00Z'}),/Синхронизация данных|Последний вход/);
 assert.match(ownerUserCard({nickname:'Legacy',appVersion:180}),/Последнее посещение/);
 console.log('PASS: profile content cannot dismiss the screen; explicit Back/Escape preserve focus and diagnostic states.');
 
-for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Версия проверена|Последнее сохранение|Проверено/.test(cardMarkup));if(notifications===null)assert.equal((cardMarkup.match(/is-unknown/g)||[]).length,2,'Unknown prayer and delivery states use the dark check');}
+for(const notifications of [null,{enabled:true,background:true,checkedAt:'bad'},{enabled:false,background:true,checkedAt:'2026-10-06T12:00:00Z'}]){let cardMarkup=ownerUserCard({nickname:'State',notifications});assert.equal((cardMarkup.match(/is-connected/g)||[]).length,0,'Unknown/disabled states cannot look connected');assert.ok(!/Последнее сохранение|Проверено/.test(cardMarkup));if(notifications===null)assert.equal((cardMarkup.match(/is-unknown/g)||[]).length,2,'Unknown prayer and delivery states use the dark check');}
 assert.equal((ownerUserCard({notifications:{enabled:true,background:false,permissionDenied:true,checkedAt:'2026-10-06T12:00:00Z'}}).match(/is-connected/g)||[]).length,1,'Namaz preference and delivery are separate');
 assert.match((await readFile(new URL('../dist/style.css',import.meta.url),'utf8')),/\.owner-notification-flag\.is-unknown svg\{stroke:#485572\}/,'Unknown notification checks use dark slate');
 console.log('PASS: compact green/dark checks keep enabled, disabled and unknown meanings accessible; technical times removed.');
@@ -284,3 +284,6 @@ for(const destination of ['home','users','tools']){
 }
 visitsReentry.location.hash='#more';visitsReentry.events.get('hashchange')();visitsReentry.location.hash='#admin?view=activity';await visitsReentry.showAdmin(visitsReentry.app);await settle();assert.equal(visitsReentry.app.querySelector('[data-selected-city]'),null);visitsReentry.app.ownerDispose();
 console.log('PASS: city → owner menu/users/system → Visits opens statistics; unchanged section route and profile source context are retained.');
+
+assert.match(ownerUserCard({nickname:'Health',appVersion:180,versionCheckedAt:'2026-10-06T10:00:00Z'}),/Версия SALAH<\/dt><dd>180<\/dd>/);
+assert.match(ownerUserCard({nickname:'Unknown',appVersion:180}),/Версия SALAH<\/dt><dd>Пока нет данных<\/dd>/);

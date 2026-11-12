@@ -140,7 +140,7 @@ body.reduce-motion .dhikr-passage{animation:none!important}
 /* Re-entering Home is navigation, not a new prayer-card reveal. */
 body.home-page .central-prayer{animation:none}
 
-.home-page .home-listening-now{position:relative;align-self:flex-end;flex:none;margin-top:-12px;margin-bottom:10px;z-index:20;display:inline-flex;align-items:center;gap:12px;padding:5px 7px;color:var(--gold,#cbbf9b);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
+.home-page .home-listening-now{position:relative;align-self:flex-end;flex:none;margin-top:min(24px,var(--salah-safe-top,0px));margin-bottom:10px;z-index:20;display:inline-flex;align-items:center;gap:12px;padding:5px 7px;color:var(--gold,#cbbf9b);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
 .home-page .home-listening-now[hidden]{display:none!important}
 .home-listening-now svg{width:19px;height:19px;flex:none}
 .home-listening-now strong{font:inherit}

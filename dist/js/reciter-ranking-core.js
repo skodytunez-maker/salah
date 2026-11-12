@@ -1,7 +1,7 @@
 
 export function rankListening(items){let previous=null,rank=0;return items.map((item,index)=>{if(item.seconds!==previous)rank=index+1;previous=item.seconds;return {...item,rank};});}
 export function rankTime(seconds){const value=Math.max(0,Math.floor(seconds||0)),hours=Math.floor(value/3600),minutes=Math.floor(value%3600/60),rest=value%60;return hours?hours+' ч '+minutes+' мин'+(rest?' '+rest+' с':''):minutes?minutes+' мин'+(rest?' '+rest+' с':''):value+' с';}
-export function safeListener(item){if(!item||!['initial','profile'].includes(item.mode)||!/^[-a-f0-9]{36}$/i.test(item.id||''))return null;const initial=Array.from(String(item.initial||'С')).slice(0,2).join('').toLocaleUpperCase('ru');return item.mode==='initial'?{id:item.id,mode:'initial',initial}:{id:item.id,mode:'profile',initial,nickname:String(item.nickname||'Слушатель').slice(0,40),hasPhoto:item.hasPhoto===true};}
+export function safeListener(item){if(!item||!['initial','profile'].includes(item.mode)||!/^[-a-f0-9]{36}$/i.test(item.id||''))return null;const initial=Array.from(String(item.initial||'С')).slice(0,2).join('').toLocaleUpperCase('ru');return item.mode==='initial'?{id:item.id,mode:'initial',initial}:{id:item.id,mode:'profile',initial,nickname:String(item.nickname||'Слушатель').slice(0,40),hasPhoto:item.hasPhoto===true,...(item.guest===true&&/^Гость [A-F0-9]{6}$/.test(item.nickname||'')?{guest:true,hasPhoto:false}:{})};}
 
 export function listenerRing(id){let hash=2166136261;for(const ch of String(id))hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;const hues=[42,167,205,265,24],hue=hues[hash%5]+((hash>>>3)%1800)/100-9,light=65+((hash>>>16)%700)/100;return 'hsl('+hue.toFixed(2)+' 45% '+light.toFixed(2)+'%)';}
 
