@@ -1,3 +1,4 @@
+import{initGuestCompetition,recordGuestListening}from './guest-competition.js';
 import{initListenerPresence}from './listener-presence.js';
 import{personalDataAllowed}from './audience.js';
 import{initCompetition}from './competition-client.js';
@@ -35,9 +36,9 @@ function sanitizedPersonal(data){const days={},cutoff=new Date();cutoff.setDate(
 export function personalListening(period='all'){const data=workingKey===localScope()&&working?working:sanitizedPersonal(read(localScope(),null));return period==='all'?data:{...data,totals:listeningPeriodTotals(data,period)};}
 export function personalTop(period='all'){return Object.entries(personalListening(period).totals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);}
 export {formatListeningTime,listeningDayKey};
-export function initReciterPopularity({playback,ruqyah=null,getAccount,getClient,now=Date.now}){if(initialized)return;initialized=true;account=getAccount;client=getClient;let dirty=false,lastFlush=0,currentUser=null,sending=false,pending=[],retryAt=0;
+export function initReciterPopularity({playback,ruqyah=null,getAccount,getClient,now=Date.now}){if(initialized)return;initialized=true;account=getAccount;client=getClient;initGuestCompetition({getAccount,getClient,now});let dirty=false,lastFlush=0,currentUser=null,sending=false,pending=[],retryAt=0;
  const flush=()=>{if(dirty&&workingKey&&working){lastFlush=now();if(write(workingKey,working)){dirty=false;window.dispatchEvent(new Event('salah:personal-listening'));}}};
- const localMeter=createListeningMeter({onProgress:(id,seconds)=>{if(!allowed.has(id)||!working)return;working.totals[id]=(working.totals[id]||0)+seconds;addListeningDay(working.days,id,seconds,now());dirty=true;window.dispatchEvent(new Event('salah:personal-listening-progress'));}}),sharedMeter=createListeningMeter({onMinute:(reciter,createdAt)=>{if(allowed.has(reciter)&&pending.length<120)pending.push({reciter,eventId:crypto.randomUUID(),consent:true,createdAt});}});
+ const localMeter=createListeningMeter({onProgress:(id,seconds)=>{if(!allowed.has(id)||!working)return;recordGuestListening(id,seconds,now());working.totals[id]=(working.totals[id]||0)+seconds;addListeningDay(working.days,id,seconds,now());dirty=true;window.dispatchEvent(new Event('salah:personal-listening-progress'));}}),sharedMeter=createListeningMeter({onMinute:(reciter,createdAt)=>{if(allowed.has(reciter)&&pending.length<120)pending.push({reciter,eventId:crypto.randomUUID(),consent:true,createdAt});}});
  const queueKey=()=> 'reciter-minute-queue-v2:'+currentUser;
  const persistQueue=()=>{if(currentUser)write(queueKey(),pending);};
  const savedQueue=()=>{const rows=read(queueKey(),[]);return Array.isArray(rows)?rows.filter(p=>allowed.has(p?.reciter)&&/^[a-f0-9-]{36}$/i.test(p?.eventId||'')&&p.consent===true&&Number.isFinite(p.createdAt)&&p.createdAt<=now()&&now()-p.createdAt<2592000000).slice(0,120):[];};

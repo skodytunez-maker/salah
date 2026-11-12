@@ -16,7 +16,7 @@ const avatar=p=>'<span class="competition-user-face" data-listening-person="'+es
 const leaderAwards=p=>{const kinds=[...new Set(Array.isArray(p.awards)?p.awards:[])].filter(k=>k==='week'||k==='month');return kinds.length?'<span class="competition-award-badges" data-count="'+kinds.length+'">'+kinds.map(k=>'<span class="competition-leader-award"><span class="competition-leader-picture competition-leader-'+k+'"><img src="'+awardArtwork(k)+'" alt=""></span><small>'+(k==='week'?'Лидер недели':'Лидер месяца')+'</small></span>').join('')+'</span>':'';};
 const person=(p,access)=>{
  const content='<span class="competition-person-identity">'+avatar(p)+'<strong>'+esc(label(p))+'</strong></span>'+leaderAwards(p);
- if(!access.owner&&p.id!==access.ownId)return '<span class="competition-person" style="cursor:default">'+content+'</span>';
+ if(p.guest||!access.owner&&p.id!==access.ownId)return '<span class="competition-person" style="cursor:default">'+content+'</span>';
  return '<button type="button" class="competition-person" data-competition-person="'+esc(p.id)+'" aria-label="'+esc(p.mode==='profile'?'Профиль: '+p.nickname:'Карточка слушателя')+'">'+content+'</button>';
 };
 const picture=p=>'<a class="competition-reciter" href="#quran?view=reciters&reciter='+encodeURIComponent(p.reciter)+'" aria-label="Слушать: '+esc(reciterInfo(p.reciter).name)+'"><img class="reciter-portrait" src="./'+esc(reciterInfo(p.reciter).portrait||'assets/person.svg')+'" alt="'+esc(reciterInfo(p.reciter).name)+'" loading="lazy"><small>'+esc(reciterInfo(p.reciter).name)+'</small></a>';

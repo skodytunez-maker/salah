@@ -1,3 +1,4 @@
+import{combinedPublicBoard}from '../supabase/functions/reciter-competition/guest-board.mjs';
 import{reciterFilterTabs,recentReciters}from '../dist/js/quran-reciter-discovery.js';
 import{listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion}from '../dist/js/listening-summary.js';
 import{readListeningTotals}from '../supabase/functions/reciter-competition/listening-totals.mjs';
@@ -58,6 +59,7 @@ await db.exec(`
  ('${uid(5)}','ar.alafasy',9999,true),('${uid(6)}','ar.alafasy',9999,true);
  insert into salah_competition_private.favorite_state values ('${uid(1)}','all','1970-01-01','ar.yasseraldossaricontinuous');
 `);
+await db.exec("create schema if not exists salah_visits_private;create table salah_visits_private.guest_activity_presence(device_hash text,kind text,active boolean,reported_at timestamptz);create table salah_competition_private.guest_players(public_id uuid,activity_hash text,claimed_by uuid);create function salah_competition_private.guest_scores(text,date)returns table(guest_id uuid,reciter text,seconds bigint)language sql as $$select null::uuid,null::text,0::bigint where false$$;");
 const sql=(strings,...args)=>{
  const segments=[];let query='';
  for(let i=0;i<strings.length;i++){
@@ -67,7 +69,7 @@ const sql=(strings,...args)=>{
   else{segments.push(value);query+='$'+segments.length;}
  }
  return {query,segments,then(resolve,reject){
-  const result=query.includes('ranked as (')?db.query(query,segments).then(r=>r.rows):Promise.resolve().then(()=>{
+  const result=query.includes('ranked as (')?(readPeriods.push(segments[0]),db.query(query,segments).then(r=>r.rows)):Promise.resolve().then(()=>{
    if(query.includes('competition_scores'))return COMPETITION_PERIODS.map(period=>({period,seconds:'600'}));
    assert.ok(query.includes('competition_board'),'Public snapshots execute only read-only board and summary queries');readPeriods.push(segments[0]);
    return[{...person,place:1,prefix:'AN',nickname:'PRIVATE-NEVER-PUBLISH',has_photo:false},{id:other,mode:'profile',initial:'A',prefix:'AL',nickname:'Public fixture',has_photo:false,reciter:'ar.alafasy',seconds:90,place:2}];
@@ -75,10 +77,10 @@ const sql=(strings,...args)=>{
   return result.then(resolve,reject);
  }};
 };
-const edgeContext=vm.createContext({currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,readListeningTotals,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
+const edgeContext=vm.createContext({combinedPublicBoard,currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,readListeningTotals,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edgeContext);
 const testDay=listeningDayKey(Date.now());
-const response=await serve(new Request('https://fixture.invalid?boards=1&day='+testDay));assert.equal(response.status,200);const body=await response.json();assert.deepEqual(Object.keys(body.boards).sort(),['all','day','month','week']);assert.equal(readPeriods.length,4);assert.equal(body.listeningTotals.all,600);assert.ok(!JSON.stringify(body).includes('PRIVATE-NEVER-PUBLISH'));assert.equal(body.boards.all.items[0].initial,'AN');
+const response=await serve(new Request('https://fixture.invalid?boards=1&day='+testDay));assert.equal(response.status,200);const body=await response.json();assert.deepEqual(Object.keys(body.boards).sort(),['all','day','month','week']);assert.equal(readPeriods.length,4);assert.equal(body.listeningTotals.all,570);assert.ok(!JSON.stringify(body).includes('PRIVATE-NEVER-PUBLISH'));assert.equal(body.boards.all.items.find(x=>x.id===uid(101)).initial,'P');
 const legacy=await serve(new Request('https://fixture.invalid?period=week&day='+testDay));assert.equal((await legacy.json()).period,'week','Existing clients retain their original response');
 assert.equal(body.boards.all.items[0].totalSeconds,undefined,'The existing public board contract remains compatible');
 const richResponse=await serve(new Request('https://fixture.invalid?boards=1&details=reciters&day='+testDay));assert.equal(richResponse.status,200);

@@ -63,9 +63,12 @@ doc.hidden=true;doc.dispatchEvent(new w.Event('visibilitychange'));assert.equal(
 doc.hidden=false;doc.dispatchEvent(new w.Event('visibilitychange'));await finish({count:4});assert.equal(host.textContent,'4');
 isOwner=true;ownerHook();assert.equal(host.firstElementChild.tagName,'BUTTON');host.firstElementChild.click();assert.deepEqual(opened,['count']);isOwner=false;ownerHook();assert.equal(host.firstElementChild.tagName,'SPAN','Other accounts have no interactive people list');
 controller.dispose();assert.ok(cancelled>0);assert.equal(host.hidden,true);
-const news=releaseIllustrations(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
+const news=releaseIllustrations(APP_ANNOUNCEMENT.version,['Главная: сейчас слушают Коран, читают и делают зикр.']);
 assert.match(news,/home-listening-478.svg/);assert.match(news,/data-release-motion-part="element"/);assert.match(news,/release-home-listening-track/);
 const app=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');assert.match(app,/homeListeningNow.mount\(null\)/);assert.match(app,/homeListeningNow.mount\(document.getElementById\('home-listening-now'\)\)/);
 const css=await fs.readFile(new URL('../dist/home-selected.css',import.meta.url),'utf8');assert.match(css,/home-listening-now\[hidden\]\{display:none!important/);
 await w.happyDOM.close();
 console.log('PASS: read-only private aggregate, distinct/anonymous/hidden/paused/stale/revoked sessions; zero and failure hiding; Top digit animation both ways; route cleanup, stale requests, hidden documents, restricted mode and looping feature news.');
+
+// The system fade ends at safeTop + min(40px,safeTop); even the short layout's 16px padding must clear it.
+assert.match(css,/margin-top:min\(24px,var\(--salah-safe-top,0px\)\)/);for(const safeTop of [0,20,44,59,62])assert.ok(safeTop+16+Math.min(24,safeTop)>=safeTop+Math.min(40,safeTop));

@@ -1,3 +1,4 @@
+import{combinedPublicBoard}from '../supabase/functions/reciter-competition/guest-board.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -37,11 +38,12 @@ function tag(connection){
  };
  sql.begin=fn=>connection.transaction(tx=>fn(tag(tx)));return sql;
 }
+await pg.exec("create schema if not exists salah_visits_private;create table salah_visits_private.guest_activity_presence(device_hash text,kind text,active boolean,reported_at timestamptz);create table salah_competition_private.guest_players(public_id uuid,activity_hash text,claimed_by uuid);create function salah_competition_private.guest_scores(text,date)returns table(guest_id uuid,reciter text,seconds bigint)language sql as $$select null::uuid,null::text,0::bigint where false$$;create table salah_competition_private.favorite_state(user_id uuid,period text,bucket date,reciter text);create function public.competition_scores(text,date)returns table(user_id uuid,reciter text,seconds bigint)language sql as $$select id,'ar.alafasy',120::bigint from auth.users$$;");
 const sql=tag(pg),db=createListenerPresenceDb(sql),user={id:uid,session:sid};const packet=(sequence,playing=true,t=tab)=>listenerPresencePacket({action:'presence',tab:t,sequence,playing});
 for(const data of [{action:'presence',tab,sequence:1,playing:true,user_id:uid},{action:'presence',tab:'bad',sequence:1,playing:true},{action:'presence',tab,sequence:-1,playing:true},{action:'presence',tab,sequence:1,playing:'true'}])assert.throws(()=>listenerPresencePacket(data));
 assert.equal((await db.update(user,packet(1))).playing,true);assert.equal((await db.update(user,packet(3,false))).accepted,true);assert.equal((await db.update(user,packet(2,true))).accepted,false);assert.equal((await pg.query('select playing from salah_competition_private.listener_presence')).rows[0].playing,false,'A delayed playing request cannot resurrect paused playback');
 assert.equal((await db.update(user,packet(4))).playing,true);assert.equal((await db.update(user,packet(1,true,tab2))).playing,true);await db.update(user,packet(5,false));
-const backend=await fs.readFile(new URL('../supabase/functions/reciter-competition/index.ts',import.meta.url),'utf8');const boardCode=backend.slice(backend.indexOf('async function publicBoard('),backend.indexOf('Deno.serve('));const ctx=vm.createContext({sql,publicListenerRows});vm.runInContext(stripTypeScriptTypes(boardCode)+'\nglobalThis.board=publicBoard;',ctx);
+const backend=await fs.readFile(new URL('../supabase/functions/reciter-competition/index.ts',import.meta.url),'utf8');const boardCode=backend.slice(backend.indexOf('async function publicBoard('),backend.indexOf('Deno.serve('));const ctx=vm.createContext({sql,publicListenerRows,combinedPublicBoard});vm.runInContext(stripTypeScriptTypes(boardCode)+'\nglobalThis.board=publicBoard;',ctx);
 let board=await ctx.board('all','2026-10-27');assert.equal(board.items[0].activeForSeconds,45,'Another playing tab retains status');assert.equal(board.items[0].seconds,120);const response=JSON.stringify(board);assert.ok(!response.includes(uid)&&!response.includes(sid)&&!response.includes(tab2),'Public status never contains account/session/tab IDs');
 await pg.query("update salah_competition_private.listener_presence set reported_at=now()-interval '46 seconds'");assert.equal((await ctx.board('all','2026-10-27')).items[0].activeForSeconds,0,'Lost connections expire');
 await db.update(user,packet(2,true,tab2));await pg.query("update public.reciter_listener_visibility set mode='initial'");const anonymous=(await ctx.board('all','2026-10-27')).items[0];assert.equal(anonymous.activeForSeconds,45);assert.ok(!anonymous.nickname&&!anonymous.hasPhoto,'Anonymous playback never exposes a name or photo');assert.equal((await db.update(user,packet(3,true,tab2))).playing,true);
@@ -54,7 +56,7 @@ await pg.query('delete from auth.sessions where id=$1',[sid]);assert.equal((awai
 // Exercise the complete HTTP handler with a synthetic, locally validated auth response.
 await pg.query('insert into auth.sessions values($1,$2,null)',[sid,uid]);let serve;
 const token='fixture.'+Buffer.from(JSON.stringify({sub:uid,session_id:sid})).toString('base64url')+'.fixture';
-const edge=vm.createContext({...core,readListeningTotals,listenerPresencePacket,createListenerPresenceDb,publicListenerRows,postgres:()=>sql,Deno:{env:{get:()=> 'https://fixture.invalid'},serve:fn=>serve=fn},fetch:async()=>new Response(JSON.stringify({id:uid,email_confirmed_at:'2026-10-01',is_anonymous:false})),Request,Response,URL,JSON,Date,atob});
+const edge=vm.createContext({...core,combinedPublicBoard,readListeningTotals,listenerPresencePacket,createListenerPresenceDb,publicListenerRows,postgres:()=>sql,Deno:{env:{get:()=> 'https://fixture.invalid'},serve:fn=>serve=fn},fetch:async()=>new Response(JSON.stringify({id:uid,email_confirmed_at:'2026-10-01',is_anonymous:false})),Request,Response,URL,JSON,Date,atob});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edge);
 const request=(body,authorized=true)=>new Request('https://fixture.invalid/functions/v1/reciter-competition',{method:'POST',headers:{'Content-Type':'application/json',...(authorized?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body)});
 const callStart=queries.length;assert.equal((await serve(request({action:'presence',tab,sequence:1,playing:true}))).status,200);assert.ok(!queries.slice(callStart).some(q=>q.includes('competition_refresh')||q.includes('legacy')),'The HTTP route bypasses score initialization');
