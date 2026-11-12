@@ -147,7 +147,7 @@ body.home-page .central-prayer{animation:none}
 
 .home-activity-count{display:inline-flex;align-items:center;gap:5px;flex:none;white-space:nowrap}
 
-button.home-activity-count{pointer-events:auto;background:none;border:0;border-radius:8px;color:inherit;font:inherit;padding:3px;min-height:32px;cursor:pointer}.owner-live-members{display:grid;gap:8px}.owner-live-member{display:block;padding:13px 15px;border:1px solid #344058;border-radius:13px;color:var(--text,#e7ecf4);text-decoration:none;background:#111c2e}
+button.home-activity-count{position:relative;pointer-events:auto;background:none;border:0;border-radius:8px;color:inherit;font:inherit;padding:3px;min-height:32px;cursor:pointer}button.home-activity-count::before{content:'';position:absolute;inset:-6px;border-radius:inherit}.owner-live-members{display:grid;gap:8px}.owner-live-member{display:block;padding:13px 15px;border:1px solid #344058;border-radius:13px;color:var(--text,#e7ecf4);text-decoration:none;background:#111c2e}
 
 .home-page .app-home-shell:has(.home-listening-now:not([hidden])){height:auto;min-height:100svh}.home-page .app-home-shell:has(.home-listening-now:not([hidden])) .app-home-top{margin-top:0}
 

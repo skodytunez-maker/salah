@@ -1,5 +1,5 @@
 .home-page .app-home-shell{position:relative}
-.home-radio-entry{position:absolute;left:0;top:calc(24px + min(24px,var(--salah-safe-top,0px)));z-index:21}
+.home-radio-entry{position:absolute;left:0;top:calc(24px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)));z-index:21}
 .home-radio-entry[hidden]{display:none!important}
 .home-radio-beacon{display:flex;align-items:center;gap:5px;min-height:44px;padding:3px 6px;color:#ef8f8a;text-decoration:none;font-size:12px;line-height:1.2}
 .home-radio-beacon svg{width:24px;height:24px;animation:radio-beacon-pulse 2.6s ease-in-out infinite}
@@ -55,3 +55,7 @@
 @keyframes radio-beacon-pulse{0%,100%{opacity:.6}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.home-radio-beacon svg{animation:none}}
 @media(max-width:360px){.radio-program,.radio-quiz-card{padding:18px 14px}.radio-preview h1{font-size:30px}}
+
+/* Align the left beacon with the activity row below the iPhone status fade. */
+@media(max-height:700px){.home-radio-entry{top:calc(16px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)))}}
+@media(orientation:landscape) and (max-height:600px){.home-radio-entry{top:calc(8px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)))}}

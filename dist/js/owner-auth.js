@@ -57,7 +57,9 @@ export async function verifyOwner({verifySession=false}={}){
    let result;try{result=await callOwner(checked.session)}catch(error){if(error.status===403){revoke();return false}throw error}
    if(started!==revision)continue;
    if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
-   const changed=!verified;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;if(changed)publish();return true;
+   // A grant can expire while the underlying session remains valid. Notify Home
+   // controls when a fresh server check restores it, including after backgrounding.
+   const changed=!ownerVerified()||verifiedUserId!==checked.session.user?.id;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;if(changed)publish();return true;
   }
   revoke();return false;
  })();
