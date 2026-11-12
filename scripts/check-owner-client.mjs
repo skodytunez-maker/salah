@@ -251,7 +251,7 @@ console.log('PASS: the selected owner user card exposes an accessible Write link
 
 await signOutOwner();await verifyOwner();globalThis.fetch=originalFetch;session={access_token:'renewal-fixture-token',user:{id:'11111111-1111-4111-8111-111111111111'}};allowed=true;needsMfa=false;await verifyOwner();
 const savedClock=Date.now,changesBeforeRenewal=changed;Date.now=()=>savedClock()+61000;
-try{assert.equal(ownerVerified(),false);authCallback('TOKEN_REFRESHED',session);assert.equal(changed,changesBeforeRenewal,'Same-account renewal does not collapse the disclosure');assert.equal(ownerVerified(),false,'A renewed token alone cannot extend owner authority');await verifyOwner();assert.equal(ownerVerified(),true);allowed=false;await verifyOwner();assert.equal(ownerVerified(),false,'A fresh server denial still revokes access');}finally{Date.now=savedClock;}
+try{assert.equal(ownerVerified(),false);authCallback('TOKEN_REFRESHED',session);assert.equal(changed,changesBeforeRenewal,'Same-account renewal does not collapse the disclosure');assert.equal(ownerVerified(),false,'A renewed token alone cannot extend owner authority');await verifyOwner();assert.equal(ownerVerified(),true);assert.equal(changed,changesBeforeRenewal+1,'Restoring an expired server grant immediately repaints Home controls');allowed=false;await verifyOwner();assert.equal(ownerVerified(),false,'A fresh server denial still revokes access');}finally{Date.now=savedClock;}
 console.log('PASS: expired owner grants require server recheck without token-renewal authority.');
 
 // Refresh from overview must recover users too; a failed quiet poll preserves a real snapshot.

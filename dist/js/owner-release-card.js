@@ -14,24 +14,25 @@ export function createOwnerReleaseCard({getState,verify,release,showRelease,stor
   const next=visible?userId+':'+release.version:'';if(next===signature)return;signature=next;
   host.innerHTML=visible?'<aside class="owner-home-update" aria-label="Обновление SALAH"><div><strong>SALAH обновлён</strong><span>'+esc(release.label)+' · '+esc(release.version)+'</span><button type="button" data-release-open>Что нового</button></div><button type="button" class="owner-home-update-close" data-release-close aria-label="Закрыть уведомление об обновлении">×</button></aside>':'';
   if(!visible)return;
-  const dismiss=()=>{if(getState().userId!==userId)return;dismissed.add(userId);try{storage.setItem(SEEN_PREFIX+userId,String(release.version));}catch{}stop();draw();};
+  const dismiss=()=>{if(getState().userId!==userId)return;dismissed.add(userId);try{storage.setItem(SEEN_PREFIX+userId,String(release.version));}catch{}draw();};
   host.querySelector('[data-release-close]').onclick=dismiss;
   host.querySelector('[data-release-open]').onclick=()=>{if(getState().ownerId!==userId)return;showRelease(release,{acknowledgeAnnouncement:false});dismiss();};
  }
  async function refresh({retry=false}={}){
   const state=getState(),id=state.signedIn?state.userId:null;
   if(id!==userId){epoch++;userId=id;attempted=false;knownOwner=false;pending=null;stop();}
-  draw();if(!active()||!id||seen(id)){stop();return;}
+  draw();if(!active()||!id){stop();return;}
   if(pending)return pending;
   if(!retry&&attempted)return;
   attempted=true;const started=epoch;
   const task=(async()=>{try{await verify();}catch{}finally{
    if(epoch!==started)return;
-   pending=null;knownOwner=getState().ownerId===id;draw();if(knownOwner)onVerified(id);stop();
-   // Renew only an unread, server-verified owner's card. Ordinary users have no polling.
-   if(active()&&getState().ownerId===id&&!seen(id))timer=schedule(()=>{timer=null;refresh({retry:true});},55000);
+   pending=null;knownOwner=getState().ownerId===id;draw();if(knownOwner&&!seen(id))onVerified(id);stop();
+   // Home owner controls outlive the news receipt. Renew before the 60s grant
+   // expires; ordinary accounts still have one check and no polling.
+   if(active()&&getState().ownerId===id)timer=schedule(()=>{timer=null;refresh({retry:true});},45000);
   }})();pending=task;return task;
  }
- function acknowledge(){if(!userId)return;dismissed.add(userId);try{storage.setItem(SEEN_PREFIX+userId,String(release.version));}catch{}stop();draw();}
+ function acknowledge(){if(!userId)return;dismissed.add(userId);try{storage.setItem(SEEN_PREFIX+userId,String(release.version));}catch{}draw();}
  return{mount(container){if(host!==container){host=container;signature='';}if(!host){stop();return;}return refresh({retry:knownOwner});},refresh,acknowledge,popupSeen(id){if(popupShown.has(id))return true;try{return Number(storage.getItem(POPUP_SEEN_PREFIX+id))>=release.version;}catch{return false;}},markPopupSeen(id){popupShown.add(id);try{storage.setItem(POPUP_SEEN_PREFIX+id,String(release.version));}catch{}}};
 }

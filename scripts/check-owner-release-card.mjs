@@ -15,7 +15,7 @@ state={...state,signedIn:true,userId:'ordinary',ownerId:null};await card.refresh
 state={...state,userId:'owner',ownerId:null};await card.refresh();assert.equal(host.hidden,true,'An owner-looking user ID is not authority');
 state.ownerId='owner';await card.refresh();assert.equal(host.hidden,false);assert.match(host.innerHTML,/SALAH обновлён/);
 host.querySelector('[data-release-open]').onclick();assert.equal(host.hidden,true);assert.equal(showed[0][1].acknowledgeAnnouncement,false);assert.equal(store.get('salah:update-announcement-seen-v2'),'173');assert.equal(store.get('salah:owner-home-release-seen-v1:owner'),'188');
-const remount=createOwnerReleaseCard(options);await remount.mount(node());assert.equal(requests,2,'Dismissed versions do not need authorization requests');
+const remountHost=node(),remount=createOwnerReleaseCard(options);await remount.mount(remountHost);assert.equal(requests,3,'A seen news receipt must not skip the Home owner check');assert.equal(remountHost.hidden,true,'Read news stays dismissed');assert.equal(timers.length,1,'Owner controls keep their renewal after read news');remount.mount(null);
 const nextHost=node(),next=createOwnerReleaseCard({...options,release:{...release,version:189}});await next.mount(nextHost);assert.equal(nextHost.hidden,false,'Next version reappears');assert.equal(timers.length,1);
 state.ownerId=null;await next.refresh();assert.equal(nextHost.hidden,true,'Revocation immediately hides the card');
 state={active:true,signedIn:false,userId:null,ownerId:null};await next.refresh();assert.equal(timers.length,0);
@@ -27,3 +27,18 @@ const pwa=await readFile(new URL('../dist/js/pwa-updates.js',import.meta.url),'u
 console.log('PASS: owner-only home release, ordinary-user request budget, account races, dismissal, next version, private/public receipts, storage failure and navigation cleanup.');
 
 const actualOwnerCall=(await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8')).split('\n').find(x=>x.startsWith('const ownerReleaseCard=createOwnerReleaseCard'));assert.ok(actualOwnerCall);function offerFixture({seen=false,dialogOpen=false}={}){let captured,closed,shown=[],marked=0,tasks=[];const location={hash:'#home'},dialog={open:dialogOpen,addEventListener(_e,fn){closed=fn;}},card={popupSeen:()=>false,markPopupSeen:()=>marked++,acknowledge(){}};runInNewContext(actualOwnerCall,{createOwnerReleaseCard:o=>{captured=o;return card;},counterSyncStatus:()=>({signedIn:true,userId:'owner'}),verifiedOwnerId:()=> 'owner',currentRoute:'home',location,settings:{onboarded:true},document:{hidden:false,getElementById:()=>dialog},APP_VERSION:321,APP_UPDATED_AT:'2026-10-13',APP_UPDATE_DATE:'13 октября',APP_CHANGES:['news'],APP_ANNOUNCEMENT:{version:321,date:'2026-10-13',changes:['news']},verifyOwner(){},showAppRelease:(r,o)=>shown.push({release:r,options:o}),hasSeenAnnouncement:()=>seen,setTimeout:fn=>tasks.push(fn)});captured.onVerified('owner');tasks.shift()();return{shown,get marked(){return marked;},leave(){dialog.open=false;closed();location.hash='#account';tasks.shift()();}};}const already=offerFixture({seen:true});assert.equal(already.shown.length,0,'Public news already viewed must not open again for the owner');assert.equal(already.marked,1);const fresh=offerFixture();assert.equal(fresh.shown[0].release.version,321,'Owner first view uses the illustrated public announcement');assert.equal(fresh.shown[0].options.acknowledgeAnnouncement,true);const departing=offerFixture({dialogOpen:true});departing.leave();assert.equal(departing.shown.length,0,'Closing a gift to navigate cannot reopen queued news on the account');console.log('PASS: actual owner callback coalesces public news and respects navigation after modal close.');
+
+// Reproduce the Home headphones/radio expiry after «Понятно». The receipt is
+// already stored, and the same mounted Home must remain interactive for minutes.
+let liveClock=0,verifiedAt=-Infinity,checks=0,offers=0,queued=[],liveSignedIn=true;
+const homeGate=createOwnerReleaseCard({
+ getState:()=>({active:true,signedIn:liveSignedIn,userId:liveSignedIn?'owner':null,ownerId:liveSignedIn&&liveClock-verifiedAt<60000?'owner':null}),
+ storage:{getItem:()=>String(release.version),setItem(){}},release,
+ verify:async()=>{checks++;verifiedAt=liveClock;},showRelease(){throw Error('Read news must not reopen');},onVerified:()=>offers++,
+ schedule:(fn,delay)=>{assert.equal(delay,45000);queued.push(fn);return fn;},cancel:fn=>{queued=queued.filter(item=>item!==fn);}
+});
+const liveHost=node();await homeGate.mount(liveHost);assert.equal(checks,1);assert.equal(liveHost.hidden,true);assert.equal(offers,0);
+homeGate.acknowledge();assert.equal(queued.length,1,'Acknowledgement preserves the owner renewal');
+for(let i=0;i<4;i++){liveClock+=45000;const pulse=queued.shift();await pulse();await new Promise(resolve=>setImmediate(resolve));assert.ok(liveClock-verifiedAt<60000,'Owner authority stays fresh across a three-minute Home visit');assert.equal(liveHost.hidden,true);assert.equal(offers,0);assert.equal(queued.length,1);}
+assert.equal(checks,5);liveSignedIn=false;await homeGate.refresh();assert.equal(queued.length,0,'Sign-out stops Home owner checks');homeGate.mount(null);
+console.log('PASS: read and acknowledged news cannot expire Home owner controls; one owner renewal runs before TTL, no repeated news and sign-out stops it.');
