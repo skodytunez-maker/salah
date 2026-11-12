@@ -1,11 +1,9 @@
 .home-page .app-home-shell{position:relative}
 .home-radio-entry{position:absolute;left:0;top:calc(24px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)));z-index:21}
 .home-radio-entry[hidden]{display:none!important}
-.home-radio-beacon{display:flex;align-items:center;gap:5px;min-height:44px;padding:3px 6px;color:#ef8f8a;text-decoration:none;font-size:12px;line-height:1.2}
+.home-radio-beacon{display:flex;align-items:center;gap:5px;min-height:44px;padding:3px 6px;color:#ff5454;text-decoration:none;font-size:12px;line-height:1.2}
 .home-radio-beacon svg{width:24px;height:24px;animation:radio-beacon-pulse 2.6s ease-in-out infinite}
-.home-radio-beacon small{display:block;color:var(--muted,#aab4c6);font-size:9px;margin-top:3px;letter-spacing:.05em}
 .radio-preview{max-width:650px;margin:auto;padding:0 0 24px}
-.radio-preview header{margin:22px 0}
 .radio-preview h1{font-family:Georgia,serif;font-weight:400;letter-spacing:.04em;margin:8px 0;font-size:34px}
 .radio-preview h2{font-family:Georgia,serif;font-weight:400;font-size:25px;margin:14px 0}
 .radio-preview button,.radio-preview a{touch-action:manipulation}
@@ -15,8 +13,8 @@
 .radio-tabs button{flex:1;min-height:44px;border:0;border-radius:13px;background:transparent;color:var(--muted,#b7bfce);font:inherit;font-size:14px;padding:8px 3px}
 .radio-tabs [aria-pressed="true"]{background:#253049;color:var(--gold,#d4c395)}
 .radio-air-card{text-align:center;border:1px solid #45506a;border-radius:28px;padding:24px 20px;background:radial-gradient(ellipse at 50% 10%,#263650,#111a2d 65%)}
-.radio-air-label{display:flex;align-items:center;justify-content:center;gap:8px;color:#ed9991;font-size:10px;letter-spacing:.12em}
-.radio-air-label svg{width:25px;height:25px}
+ .radio-air-label{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--gold,#cbbf9b);font-size:10px;letter-spacing:.12em}
+.radio-air-label svg{width:25px;height:25px;color:#ff5454}
 .radio-air-portrait{display:block;width:148px;height:148px;object-fit:cover;border-radius:50%;border:2px solid var(--gold,#cbbf9b);padding:4px;margin:24px auto 18px}
 .radio-air-card p{color:var(--muted,#b7bfce)}
 .radio-air-card>small{display:block;margin-top:16px;color:var(--muted,#b7bfce);font-size:12px}
@@ -52,10 +50,51 @@
 .radio-quiz-answer small{display:block;color:var(--muted,#aab4c6);margin-top:8px;font-size:12px}
 .radio-demo-note{font-size:12px;line-height:1.6;color:var(--muted,#aab4c6);margin:20px 0 0}
 .radio-private{padding:24px}
-@keyframes radio-beacon-pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes radio-beacon-pulse{0%,100%{opacity:.86}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.home-radio-beacon svg{animation:none}}
 @media(max-width:360px){.radio-program,.radio-quiz-card{padding:18px 14px}.radio-preview h1{font-size:30px}}
 
 /* Align the left beacon with the activity row below the iPhone status fade. */
 @media(max-height:700px){.home-radio-entry{top:calc(16px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)))}}
 @media(orientation:landscape) and (max-height:600px){.home-radio-entry{top:calc(8px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)))}}
+
+/* This section header must not inherit the application's horizontal toolbar. */
+.radio-preview>.radio-header{display:block;align-items:initial;height:auto;min-height:0;gap:0;border:0;padding:0;margin:18px 0 24px}
+.radio-brand{display:flex;align-items:center;gap:14px}
+.radio-brand-mark{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;border:1px solid #cbbf9b55;border-radius:15px;background:linear-gradient(145deg,#25334a,#152034);color:var(--gold,#cbbf9b)}
+.radio-brand-mark svg{width:26px;height:26px;color:#ff5454}
+.radio-header h1{margin:0;font-size:clamp(26px,7vw,36px);line-height:1.25;letter-spacing:0}
+.radio-header h1 span{font-size:.8em;letter-spacing:.09em;color:var(--gold,#cbbf9b)}
+.radio-subtitle{margin:10px 0 0 58px;font-size:13px;line-height:1.55;color:var(--muted,#aab4c6)}
+.radio-preview .radio-tabs{margin-top:0}
+.radio-tabs button{margin:0;transition:none}
+.radio-tabs button[aria-selected="true"]{background:#253049;color:var(--gold,#d4c395)}
+.radio-pages>[hidden]{display:none!important}
+.radio-preview .panel,.radio-preview .radio-air-card,.radio-pages>[role="tabpanel"]{animation:none;transition:none}
+.radio-program-heading>.eyebrow{font-size:10px;letter-spacing:.15em;color:var(--gold,#cbbf9b)}
+.radio-program-heading h2{margin:10px 0 12px;font-size:26px;line-height:1.3}
+.radio-program-heading p{font-size:13px;line-height:1.65;margin:0}
+.radio-program fieldset{border:0;border-radius:0;margin:22px 0 18px;padding:0;min-width:0}
+.radio-program legend{padding:0;margin-bottom:12px;font-size:12px;color:var(--muted,#aab4c6)}
+.radio-voices{display:grid;gap:8px}
+.radio-program fieldset .radio-voice{display:flex;align-items:center;gap:11px;min-height:62px;margin:0;padding:9px 12px;border:1px solid #39465e;border-radius:16px;background:#111c2f;cursor:pointer}
+.radio-voice:has(input:checked){border-color:#cbbf9b66;background:#1b2940}
+.radio-voice img{order:1;width:42px;height:42px;flex:none;object-fit:cover;border-radius:50%;border:1px solid #cbbf9b55}
+.radio-voice span{order:2;flex:1;min-width:0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.radio-program .radio-voice input{order:3;flex:none;width:19px;height:19px;margin:0;accent-color:var(--gold,#cbbf9b)}
+.radio-voice:focus-within{outline:2px solid var(--gold,#cbbf9b);outline-offset:2px}
+.radio-build-status{margin:4px 0 14px}
+.radio-build-status[hidden]{display:none!important}
+.radio-build-status .radio-progress{min-height:0;margin:0;font-size:13px;line-height:1.5}
+.radio-build-status progress{display:block;width:100%;height:5px;margin:11px 0 0;accent-color:var(--gold,#cbbf9b);border:0;border-radius:4px}
+.radio-build-status progress[hidden]{display:none!important}
+.radio-program-actions{display:flex;align-items:center;gap:10px}
+.radio-build-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;flex:1;min-height:50px;margin:0}
+.radio-build-button[aria-busy="true"]{opacity:.85;color:var(--gold,#cbbf9b)}
+.radio-program-actions>[data-cancel]{min-height:50px;margin:0}
+.radio-button-spinner{width:15px;height:15px;border:2px solid #cbbf9b44;border-top-color:var(--gold,#cbbf9b);border-radius:50%;animation:radio-button-spin .9s linear infinite;flex:none}
+.radio-program-summary{margin-top:22px}
+.radio-program-hint{font-size:12px;line-height:1.6;color:var(--muted,#aab4c6);margin:18px 0 0}
+.radio-quiz-result{color:var(--gold,#cbbf9b);font:36px Georgia,serif}
+@keyframes radio-button-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.radio-button-spinner{animation:none}}
