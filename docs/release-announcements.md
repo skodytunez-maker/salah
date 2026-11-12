@@ -615,3 +615,9 @@ The smile button switches from native input to the custom emoji keyboard below t
 Let the mobile composer shrink within the visual viewport during keyboard animations. The emoji area scrolls in the remaining space, the input/Send row keeps its height, expanded text is capped by available height, and native keyboard mode omits home-indicator padding. Restore the notification setting when both keyboards close.
 
 Preserve announcement 475, acknowledgement and expiry. Update its existing composer illustration to match the input-above-panel layout. Regression coverage includes mutually exclusive keyboard modes, caret/draft retention, viewport offsets, and real Chrome geometry at narrow portrait/landscape sizes with a simulated keyboard and iPhone safe area.
+
+## 477 — temporarily remove public Tafsir
+
+Remove the Tafsir action and module mounting from the public Quran reader, and remove its availability card from legacy illustrated news. Keep the underlying module for a future explicit decision, without a public entry point. Preserve Quran text, translations, audio, bookmarks and progress. Preserve announcement 475, acknowledgement and expiry; this is a temporary availability change, not a new feature announcement.
+
+Record the deferred Quran radio with a host idea in docs/product-ideas.md. This release does not implement radio or include the separate pending competition-summary server fix.
