@@ -284,3 +284,8 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
 #quran-global-player.is-expanded [data-nature-label]{display:block;justify-self:end;max-width:78px;padding:5px 8px;border:1px solid #ead6ab66;border-radius:999px;background:#0005;font:11px/1.2 Georgia,'Times New Roman',serif;white-space:nowrap;color:#f4f0e5}
 #quran-global-player.is-expanded [data-nature-label][hidden]{display:none}
 #quran-global-player.is-expanded[data-nature] .quran-player-heading>span,#quran-global-player.is-expanded[data-nature] .quran-playing-reader,#quran-global-player.is-expanded[data-nature]>.quran-playing-status,#quran-global-player.is-expanded[data-nature] .quran-player-progress{text-shadow:0 1px 6px #0009}
+/* Decorative motion stays between the photograph and the original controls. */
+#quran-global-player.is-expanded[data-nature]{isolation:isolate}
+#quran-global-player>.quran-nature-motion{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;z-index:-1;pointer-events:none;user-select:none;border-radius:inherit}
+#quran-global-player>.quran-nature-motion[hidden],#quran-global-player:not(.is-expanded)>.quran-nature-motion{display:none!important}
+@media(prefers-reduced-motion:reduce){#quran-global-player>.quran-nature-motion{display:none!important}}
