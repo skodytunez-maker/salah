@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version488 — retained player and compact phone controls (13 November2026)
+
+Local playback checkpoint restores the same Quran reciter, chapter, exact track offset and shuffled queue on pause after document/native restart, without playing audio or awarding listening time. Save synchronously immediately before an update reload and on page hide. Preserve expanded/compact presentation when visible. Explicit mini-player cross or right swipe stops playback and removes the checkpoint; collapsing the full player only changes presentation. Phone controls use the available safe-area viewport with a flexible portrait; settings and the queue may still scroll when opened. Announcement486 and acknowledgment remain unchanged for these fixes. Nature field-recording candidates and scenic artwork remain review-only. No server changes. Physical iPhone layout/update QA remains pending.
+
 ## Version487 — iPhone player swipe and one playback control (13 November2026)
 
 Native one-finger touch handling survives Safari pointer cancellation, ignores sliders and scrolled settings, and uses final touch-end coordinates. Header/portrait or empty player surface may dismiss downward from the top; upward portrait movement can scroll. Reset window scroll on opening. The heading is a div, avoiding the Quran-focus rule that hides all page header elements. Add a subtle grip. Remove the separate Stop button as requested, retaining the single play/pause control and remote/system Stop behavior. Remove the explicit bottom open-surah link at the user’s request; Quran navigation elsewhere stays intact. Preserve public announcement486, expiry and acknowledgment; no new news for this fix. No server changes. Actual iPhone gesture QA remains pending.

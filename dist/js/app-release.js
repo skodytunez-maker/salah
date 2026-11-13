@@ -1,4 +1,4 @@
-export const APP_VERSION=487;
+export const APP_VERSION=488;
 export const APP_UPDATED_AT='2026-11-13';
 export const APP_UPDATE_DATE='13 ноября 2026';
 export const APP_CHANGES=["Полный плеер: нажмите на портрет, название суры или стрелку. Крупный портрет, управление, таймер и фон природы — в отдельном окне. Свайп вниз по верхней части закрывает окно без остановки чтения. Громкость фона — до 100%."];

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{bindMiniPlayerDismiss}from '../dist/js/quran-mini-dismiss.js';
+const win=new Window(),doc=win.document,panel=doc.createElement('section');panel.innerHTML='<button class="quran-now-playing"><img></button><button data-toggle>Pause</button><input type="range">';doc.body.append(panel);let stopped=0,expanded=false,now=1000,opens=0;const portrait=panel.querySelector('img');panel.querySelector('.quran-now-playing').onclick=()=>opens++;
+const off=bindMiniPlayerDismiss(panel,{canStart:()=>!expanded,dismiss:()=>stopped++,now:()=>now});
+const pointer=(target,type,x,y)=>target.dispatchEvent(new win.PointerEvent(type,{bubbles:true,cancelable:true,pointerId:1,clientX:x,clientY:y,button:0,isPrimary:true}));
+const swipe=(target,dx,dy)=>{pointer(target,'pointerdown',100,100);pointer(panel,'pointermove',100+dx,100+dy);pointer(panel,'pointerup',100+dx,100+dy);};
+swipe(portrait,100,3);assert.equal(stopped,1);assert.equal(panel.style.getPropertyValue('--mini-drag-x'),'');portrait.click();assert.equal(opens,0,'The swipe cannot also open the player');now+=500;portrait.click();assert.equal(opens,1);
+swipe(portrait,-110,0);swipe(portrait,40,0);swipe(portrait,90,130);swipe(panel.querySelector('[data-toggle]'),110,0);swipe(panel.querySelector('input'),110,0);assert.equal(stopped,1,'Left, short, vertical and control gestures cannot close');expanded=true;swipe(portrait,120,0);assert.equal(stopped,1,'The full player keeps its independent down-swipe');expanded=false;
+const finger=(x,y,id=7)=>({identifier:id,clientX:x,clientY:y}),touch=(target,type,touches,changed=touches)=>{const e=new win.Event(type,{bubbles:true,cancelable:true});Object.defineProperties(e,{touches:{value:touches},changedTouches:{value:changed}});target.dispatchEvent(e);return e;};
+pointer(portrait,'pointerdown',100,100);touch(portrait,'touchstart',[finger(100,100)]);panel.dispatchEvent(new win.PointerEvent('pointercancel',{bubbles:true,pointerId:1}));assert.equal(touch(panel,'touchmove',[finger(200,102)]).defaultPrevented,true);touch(panel,'touchend',[],[finger(200,102)]);assert.equal(stopped,2,'Native touch survives Safari pointercancel');
+touch(portrait,'touchstart',[finger(100,100)]);touch(panel,'touchmove',[finger(150,100),finger(150,120,8)]);touch(panel,'touchend',[],[finger(230,100)]);assert.equal(stopped,2,'Second finger cancels dismissal');
+off();swipe(portrait,120,0);assert.equal(stopped,2);await win.happyDOM.close();console.log('PASS: explicit compact right-swipe dismissal, touch fallback, tap suppression, control/vertical/expanded guards and cleanup.');
