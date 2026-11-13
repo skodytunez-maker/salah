@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version489 — one nature-volume control (13 November2026)
+
+Remove the redundant quiet/medium/louder presets and their event/CSS branches at the user’s request. The existing continuous0–100% background slider and percentage output remain, preserving the stored level, source selection, timer and Quran audio session. Public announcement486, expiry and acknowledgment are unchanged. No server, recording or scenic artwork changes.
+
 ## Version488 — retained player and compact phone controls (13 November2026)
 
 Local playback checkpoint restores the same Quran reciter, chapter, exact track offset and shuffled queue on pause after document/native restart, without playing audio or awarding listening time. Save synchronously immediately before an update reload and on page hide. Preserve expanded/compact presentation when visible. Explicit mini-player cross or right swipe stops playback and removes the checkpoint; collapsing the full player only changes presentation. Phone controls use the available safe-area viewport with a flexible portrait; settings and the queue may still scroll when opened. Announcement486 and acknowledgment remain unchanged for these fixes. Nature field-recording candidates and scenic artwork remain review-only. Listening takes priority over inferred reading, and text behind an open dialog never reports reading. Observe player dialog open/close alongside app content so the transient reading stop is immediate for accounts and guests. No saved listening minutes or server changes. Physical iPhone layout/update QA remains pending.
