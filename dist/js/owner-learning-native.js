@@ -1,7 +1,7 @@
 import{teamPreviewVerified as ownerVerified,verifiedTeamPreviewId as verifiedOwnerId,teamPreviewAccessToken as ownerPreviewAccessToken,verifyTeamPreviewAccess as verifyOwner,onTeamPreviewChange as onOwnerChange}from './team-preview-access.js';
 import{showNativeMuallim}from './muallim-native.js';
 import{createOwnerCourseCache,validNativeCurriculum}from './owner-course-cache.js';
-const endpoint='https://desktop-jecm5lt.taila4556d.ts.net/api/muallim-course';
+const endpoint='https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/team-course';
 let active=null,cached=null,pending=null,generation=0;
 const courseCache=createOwnerCourseCache({ownerId:verifiedOwnerId});
 function hydrateCourse(){if(!cached&&ownerVerified())cached=courseCache.read();}

@@ -6,7 +6,7 @@ The existing owner gate and private `owner-access` endpoints are unchanged. Home
 
 Teacher cabinet and admin online lessons use synthetic examples and make no classroom, pupil, homework or LiveKit requests. Existing appointed teachers keep their real classroom access; the owner retains the existing private lesson iframe. An administrator never receives an owner iframe session.
 
-The private learning service needs the accompanying read-only course verifier and route patch before release. Only the native course GET accepts the new owner/admin gate; source-book endpoints retain their owner verifier. This gate does not create owner or teacher sessions. Each course read checks the authoritative staff gate again. No Supabase migrations or Edge Function deployments are required.
+The native course is delivered by the protected `team-course` Edge Function. Each GET checks the existing authoritative `staff-cabinet` gate again; the payload contains only the 51 course units and 4 blocks. The course data stays outside the public repository and web bundle. Owner/teacher classroom sessions and source-book endpoints are unchanged. No learning-service restart, table changes or Supabase migrations are required.
 
 The team-only news has five feature illustrations and uses the shared looping motion contract. It is shown only to verified eligible accounts. Only «Понятно» stores its account-bound acknowledgement. Escape/backdrop close does not consume it; Menu can reopen it. The public announcement remains edition 479 with its original deadline and receipt.
 
