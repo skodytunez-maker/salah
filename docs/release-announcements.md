@@ -653,3 +653,7 @@ Announcement 478 uses an original Home SVG plus a shared release-motion-preview 
 ## 484 — closed team feature introduction
 
 Public announcement 479, its deadline and acknowledgement remain unchanged. A separate account-bound animated gallery introduces Radio, the example teacher cabinet, Muallim Sani, the live-broadcast screen and online lessons only to the verified owner and active administrators with MFA. Teacher/lesson examples contain no real pupils or classroom data. Five dedicated SVG illustrations use the shared `release-motion-preview` alternating loop; inactive cards, hidden documents and reduced motion pause animation. Only «Понятно» acknowledges this team edition; Menu can reopen it. The existing owner-only activity lists and geography gates are unchanged.
+
+## 485 — Quran player timer and optional nature backgrounds
+
+Public edition 485 introduces two illustrated, looping cards: stop after 15/30/45/60 minutes or at the end of the current surah; and optional rain, wind, fire, forest or ocean textures with independent volume. Both use original SVG artwork and the shared active-card alternating motion. The background is off by default and follows Quran pause/stop. The artwork and animation stay in the existing dark/gold palette. Private team edition 484 is not reset; all-reciter radio selection is a closed-team improvement and is not announced to ordinary users. Device QA for locked-screen scheduling/audio remains pending.

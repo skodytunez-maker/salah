@@ -98,3 +98,4 @@
 .radio-quiz-result{color:var(--gold,#cbbf9b);font:36px Georgia,serif}
 @keyframes radio-button-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.radio-button-spinner{animation:none}}
+.radio-voice-tools{display:grid;gap:9px;margin:8px 0 14px}.radio-voice-tools>input{width:100%;min-height:44px;padding:10px 13px;border:1px solid #43516a;border-radius:12px;background:#0c1729;color:#e6ebf2;font-size:16px}.radio-voice-tools>div{display:flex;gap:10px}.radio-voice-tools button{min-height:40px;padding:7px 12px;border:1px solid #43516a;border-radius:10px;color:#d9c398;background:#18263b;font-size:12px}.radio-program .radio-voices{max-height:310px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}.radio-program .radio-voice[hidden]{display:none}.radio-voice-tools button:focus-visible,.radio-voice-tools input:focus-visible{outline:2px solid #d9c398;outline-offset:2px}
