@@ -1,3 +1,4 @@
+import{mountQuranPlayerExtras}from './quran-player-extras.js';
 import{printedPageForPosition}from './quran-mushaf-print.js';
 import{mushafUrl,mushafPreferences}from './quran-mushaf-core.js';
 import{reciterImageUrl}from './approved-catalog.js';
@@ -63,6 +64,7 @@ export function mountQuranPlayer(){
  };
  const routeChanged=()=>draw(quranPlayback.state);
  window.addEventListener('hashchange',routeChanged);window.addEventListener('salah:reciter-favorites',routeChanged);
+ const stopExtras=mountQuranPlayerExtras(panel,{playback:quranPlayback,ruqyah:ruqyahPlayback});
  const unsubscribe=quranPlayback.subscribe(draw),unsubscribeRuqyah=ruqyahPlayback.subscribe(()=>draw(quranPlayback.state));
- return()=>{disposed=true;document.removeEventListener('click',shufflePlaylist);unsubscribe();unsubscribeRuqyah();window.removeEventListener('hashchange',routeChanged);window.removeEventListener('salah:reciter-favorites',routeChanged);dockObserver?.disconnect();window.removeEventListener('resize',placeDock);globalThis.visualViewport?.removeEventListener('resize',placeDock);if(sheet.open)sheet.close();sheet.remove();panel.remove();document.body.style.removeProperty('--quran-audio-reserve');document.body.classList.remove('has-quran-audio');};
+ return()=>{disposed=true;stopExtras();document.removeEventListener('click',shufflePlaylist);unsubscribe();unsubscribeRuqyah();window.removeEventListener('hashchange',routeChanged);window.removeEventListener('salah:reciter-favorites',routeChanged);dockObserver?.disconnect();window.removeEventListener('resize',placeDock);globalThis.visualViewport?.removeEventListener('resize',placeDock);if(sheet.open)sheet.close();sheet.remove();panel.remove();document.body.style.removeProperty('--quran-audio-reserve');document.body.classList.remove('has-quran-audio');};
 }

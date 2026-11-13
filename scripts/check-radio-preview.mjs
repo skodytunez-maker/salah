@@ -1,3 +1,4 @@
+import{RADIO_VOICES,radioCandidateBatch,measureRadioTrack}from '../dist/js/radio-candidates.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -5,9 +6,10 @@ import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import {selectRadioProgram,shuffleRadio,measureRadioCandidates,probeRadioDuration} from '../dist/js/radio-program-core.js';
 import {radioQuizQuestions,initialRadioQuiz,stepRadioQuiz} from '../dist/js/radio-quiz-core.js';
 import {RECITERS,reciterInfo,reciterHasSurah} from '../dist/js/quran-reciters.js';
-import {audioUrl} from '../dist/js/quran-data.js';
+import {audioUrl,loadIndex} from '../dist/js/quran-data.js';
 import {reciterRecording} from '../dist/js/quran-reciter-recording.js';
 const index=JSON.parse(await fs.readFile(new URL('../dist/data/quran-index.json',import.meta.url),'utf8'));
+const originalFetch=globalThis.fetch;globalThis.fetch=async()=>Response.json(index);await loadIndex();globalThis.fetch=originalFetch;
 const ids=['ar.yasseraldossaricontinuous','ar.idrisabkar','ar.alafasycontinuous','ar.mahermuaiqlycontinuous'];
 for(const id of ids){assert.equal(reciterInfo(id).format,'surah');for(const s of index.surahs.slice(77))if(reciterHasSurah(id,s.number))assert.ok(audioUrl(reciterRecording(index,s.number).verses[0].number,id,s.number).startsWith('https:'));}
 let seed=42;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/2**32);
@@ -37,13 +39,14 @@ const context=vm.createContext({console,URLSearchParams,AbortController,Set,Map,
  loadIndex:async()=>{loads++;return index;},audioUrl,reciterInfo,reciterHasSurah,reciterRecording,
  quranPlayback:{start:async()=>{played++;}},reciterImageUrl:p=>'./'+p,
  esc:s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
- shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration,radioQuizQuestions,initialRadioQuiz,stepRadioQuiz,
+ RADIO_VOICES,radioCandidateBatch,measureRadioTrack,shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration,radioQuizQuestions,initialRadioQuiz,stepRadioQuiz,
  setInterval:fn=>{timers.add(fn);return fn;},clearInterval:fn=>timers.delete(fn)});
 vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context);
 await context.showRadioPreview(host);assert.ok(host.querySelector('a[href="#staff"]'));assert.equal(loads,0);assert.equal(host.querySelector('.radio-preview'),null);
 owner=true;await context.showRadioPreview(host);assert.ok(host.querySelector('.radio-preview'));assert.equal(played,0);assert.doesNotMatch(host.textContent,/макет|предпросмотр|закрытый просмотр/i);
 const stableHeader=host.querySelector('.radio-header'),stableTabs=[...host.querySelectorAll('[data-radio-tab]')];
 host.querySelector('[data-radio-tab="program"]').click();
+assert.equal(host.querySelectorAll('[name="radio-voice"]').length,RADIO_VOICES.length);host.querySelector('[data-voice-search]').value='Джанхонгир';host.querySelector('[data-voice-search]').dispatchEvent(new win.Event('input',{bubbles:true}));assert.equal(host.querySelectorAll('.radio-voice:not([hidden])').length,1);host.querySelector('[data-voice-search]').value='';host.querySelector('[data-voice-search]').dispatchEvent(new win.Event('input',{bubbles:true}));
 const retainedVoice=host.querySelector('[name="radio-voice"]');retainedVoice.click();assert.equal(retainedVoice.checked,false);
 host.querySelector('[data-radio-tab="air"]').click();
 host.querySelector('[data-radio-tab="program"]').click();assert.equal(host.querySelector('[name="radio-voice"]'),retainedVoice);assert.equal(retainedVoice.checked,false);

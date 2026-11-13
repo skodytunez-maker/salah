@@ -21,14 +21,15 @@ export function selectRadioProgram(recordings,{target=3600,random=Math.random}={
  const duration=ordered.reduce((sum,x)=>sum+x.duration,0);
  return {tracks:ordered,duration,target,complete:duration>=target-90};
 }
-export async function measureRadioCandidates(candidates,{probe,signal,onProgress=()=>{},concurrency=3}={}){
- const result=[];let cursor=0,done=0;
+export async function measureRadioCandidates(candidates,{probe,measure=null,signal,onProgress=()=>{},concurrency=3,minimumCandidates=Infinity,targetDuration=Infinity}={}){
+ const result=[];let cursor=0,done=0,seconds=0;
+ const enough=()=>done>=minimumCandidates&&seconds>=targetDuration;
  await Promise.all(Array.from({length:Math.min(3,Math.max(1,concurrency))},async()=>{
-  while(cursor<candidates.length&&!signal?.aborted){
+  while(cursor<candidates.length&&!signal?.aborted&&!enough()){
    const track=candidates[cursor++];let duration=null;
-   try{duration=await probe(track.url,signal);}catch{}
+   try{duration=await (measure?measure(track,signal):probe(track.url,signal));}catch{}
    if(signal?.aborted)break;
-   if(Number.isFinite(duration)&&duration>=10&&duration<=240)result.push({...track,duration});
+   if(Number.isFinite(duration)&&duration>=10&&duration<=240){result.push({...track,duration});seconds+=duration;}
    onProgress(++done,candidates.length);
   }
  }));
