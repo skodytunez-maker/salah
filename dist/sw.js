@@ -213,7 +213,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":485,"date":"2026-11-13","changes":["Таймер чтения: остановка через 15, 30, 45, 60 минут или в конце текущей суры. Настройка находится в раскрытом плеере.","Фон природы: дождь, ветер, костёр, лес и океан с отдельной тихой громкостью. Фон выключен по умолчанию и следует за паузой и остановкой чтения."],"announcement":{"version":485,"date":"2026-11-13","changes":["Таймер чтения: остановка через 15, 30, 45, 60 минут или в конце текущей суры. Настройка находится в раскрытом плеере.","Фон природы: дождь, ветер, костёр, лес и океан с отдельной тихой громкостью. Фон выключен по умолчанию и следует за паузой и остановкой чтения."]}};
+const RELEASE={"version":486,"date":"2026-11-13","changes":["Полный плеер: нажмите на портрет, название суры или стрелку. Крупный портрет, управление, таймер и фон природы — в отдельном окне. Свайп вниз по верхней части закрывает окно без остановки чтения."],"announcement":{"version":486,"date":"2026-11-13","changes":["Полный плеер: нажмите на портрет, название суры или стрелку. Крупный портрет, управление, таймер и фон природы — в отдельном окне. Свайп вниз по верхней части закрывает окно без остановки чтения."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_LESSON_ACCOUNT'){event.waitUntil(lessonAccountMessage(event));return;}if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 

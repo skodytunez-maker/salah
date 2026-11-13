@@ -190,9 +190,7 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 #quran-global-player.is-expanded .quran-global-controls button{width:48px;height:48px;border-radius:50%;background:transparent}
 #quran-global-player.is-expanded .quran-global-controls [data-toggle]{width:74px;height:74px;background:linear-gradient(145deg,#ead6ab,#c7ad76);color:#101c2d;box-shadow:0 7px 24px #0004,inset 0 1px #ffffff70}
 #quran-global-player.is-expanded .quran-global-controls [data-toggle] svg{width:30px;height:30px}
-#quran-global-player.is-expanded .quran-global-controls [data-close]{position:absolute;right:0;bottom:-50px;width:44px;height:44px;color:#8998af;z-index:1}
-#quran-global-player.is-expanded .quran-global-controls [data-close] svg{width:17px;height:17px}
-#quran-global-player.is-expanded .quran-player-reciter{padding-top:8px;padding-right:44px}
+#quran-global-player.is-expanded .quran-player-reciter{padding-top:8px}
 #quran-global-player.is-expanded .quran-player-reciter select{border-color:#43516a80;background:#ffffff04;font-size:12px;color:#bac7d8}
 #quran-global-player.is-expanded .quran-output-actions{grid-row:7;gap:8px;border-top:1px solid #ffffff0c;padding-top:18px}
 #quran-global-player.is-expanded .quran-handoff-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border-color:#d9c39826;background:transparent;font-size:11px}
@@ -209,3 +207,5 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 @keyframes player-window-enter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.quran-player-dialog[open]{animation:none}}
 body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog{animation:none;transition:none}
+
+#quran-global-player.is-expanded .quran-output-actions [data-close]{gap:6px;color:#aab8cc;border-color:#43516a80}#quran-global-player.is-expanded .quran-output-actions [data-close] svg{width:14px;height:14px;flex:none}
