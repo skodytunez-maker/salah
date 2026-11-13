@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version487 — iPhone player swipe and one playback control (13 November2026)
+
+Native one-finger touch handling survives Safari pointer cancellation, ignores sliders and scrolled settings, and uses final touch-end coordinates. Header/portrait or empty player surface may dismiss downward from the top; upward portrait movement can scroll. Reset window scroll on opening. The heading is a div, avoiding the Quran-focus rule that hides all page header elements. Add a subtle grip. Remove the separate Stop button as requested, retaining the single play/pause control and remote/system Stop behavior. Preserve public announcement486, expiry and acknowledgment; no new news for this fix. No server changes. Actual iPhone gesture QA remains pending.
+
 ## Version486 — full player window (13 November2026)
 
 The same unreleased edition also corrects the background balance: full0–100% nature gain, no extra0.4 attenuation, centred RMS-matched textures, and25/50/75 presets. Existing saved levels remain unchanged. Quran audio routing and source volume remain unchanged for native background continuity; device buttons control overall volume. The current full-player announcement includes the corrected range.
