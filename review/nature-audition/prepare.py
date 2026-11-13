@@ -127,17 +127,26 @@ def prepare(kind, folder):
     rms, peak = energy(stereo), max(abs(v) for v in stereo)
     if not math.isfinite(rms) or rms < 1e-6:
         raise ValueError("Silent or invalid excerpt")
-    gain = min(.06 / rms, .30 / peak)
+    trim = f"atrim=start={start}:duration={SECONDS},asetpts=PTS-STARTPTS"
+    softening = ""
+    original_crest = peak / rms
+    if original_crest > 10:
+        threshold = max(.001, min(.5, rms * 3))
+        softening = f",acompressor=threshold={threshold:.9f}:ratio=8:attack=1:release=120:knee=2.8:makeup=1:detection=peak:link=maximum"
+        softened = floats(command("ffmpeg", "-v", "error", "-i", str(original), "-af", trim + softening, "-ar", "48000", "-ac", "2", "-f", "f32le", "pipe:1"))
+        rms, peak = energy(softened), max(abs(v) for v in softened)
+    gain = min(.06 / rms, 32) if softening else min(.06 / rms, .30 / peak, 32)
     output = folder / "review"
     output.mkdir(exist_ok=True)
     wav, mp3 = output / (kind + ".wav"), output / (kind + ".mp3")
-    filters = f"atrim=start={start}:duration={SECONDS},asetpts=PTS-STARTPTS,volume={gain:.10f},afade=t=in:st=0:d=0.4,afade=t=out:st={SECONDS-.8}:d=0.8"
+    limiter = ",alimiter=limit=0.3:attack=3:release=120:level=false" if softening else ""
+    filters = f"{trim}{softening},volume={gain:.10f}{limiter},afade=t=in:st=0:d=0.4,afade=t=out:st={SECONDS-.8}:d=0.8"
     command("ffmpeg", "-v", "error", "-y", "-i", str(original), "-vn", "-af", filters, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s24le", str(wav))
     command("ffmpeg", "-v", "error", "-y", "-i", str(wav), "-c:a", "libmp3lame", "-b:a", "256k", "-ar", "48000", str(mp3))
     checked = decode(wav, rate=48000, channels=2)
     output_peak = max(abs(v) for v in checked)
     output_rms = energy(checked)
-    if output_peak > .301 or output_rms < max(1e-6, rms * gain * .5) or not SECONDS-.05 <= len(checked) / 96000 <= SECONDS+.05:
+    if output_peak > .301 or output_rms < max(.01, rms * gain * .25) or not SECONDS-.05 <= len(checked) / 96000 <= SECONDS+.05:
         raise ValueError("Output peak, non-silence or duration validation failed")
     encoded = mp3.read_bytes()
     if len(encoded) > 700000:
@@ -148,15 +157,16 @@ def prepare(kind, folder):
         "source_sha256": hashlib.sha256(original.read_bytes()).hexdigest(),
         "source_audio": [{k: v for k, v in stream.items() if k in ("codec_name", "sample_rate", "channels", "bits_per_sample", "bit_rate")} for stream in info["streams"] if stream.get("codec_type") == "audio"],
         "source_duration": duration, "start": start, "seconds": SECONDS,
-        "selection": selection, "linear_gain": gain,
-        "processing": "Linear gain only, short edge fades, stereo48kHz. No invented thunder, generated ambience, noise reduction or voice processing.",
+        "selection": selection, "linear_gain": gain, "original_crest_ratio": original_crest,
+        "transient_softening": bool(softening),
+        "processing": "Optional soft-knee compression and lookahead peak limiting for extreme source transients, linear gain, short edge fades, stereo48kHz. No invented thunder, generated ambience, noise reduction or voice processing.",
         "output_peak": output_peak, "output_rms": output_rms,
         "mp3_sha256": hashlib.sha256(encoded).hexdigest(), "mp3_bytes": len(encoded),
         "production_integrated": False, "human_listening_approved": False,
         "loop_approved": False, "blend_with_Quran_approved": False,
     }
     (output / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    (output / "CREDITS.md").write_text(f"# Nature audition only\n\n{source['title']} — {source['author']}\n\nSource: {source['page']}\n\nCC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/\n\n16-second excerpt, linear gain and fades. MP3 previews remain identified as previews; encoding a WAV does not recover an unavailable original. No Quran recording is redistributed or transformed. No production app files are changed. Listening and eventual loop/mix approval remain pending.\n", encoding="utf-8")
+    (output / "CREDITS.md").write_text(f"# Nature audition only\n\n{source['title']} — {source['author']}\n\nSource: {source['page']}\n\nCC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/\n\n16-second excerpt, optional peak softening, linear gain and fades. MP3 previews remain identified as previews; encoding a WAV does not recover an unavailable original. No Quran recording is redistributed or transformed. No production app files are changed. Listening and eventual loop/mix approval remain pending.\n", encoding="utf-8")
     print(json.dumps({k: report[k] for k in ("kind", "start", "source_duration", "output_peak", "output_rms", "mp3_sha256", "mp3_bytes")}))
 
 

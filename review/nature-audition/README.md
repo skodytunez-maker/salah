@@ -10,6 +10,6 @@ Sources were checked on 13 November 2026:
 - Gentle Rain Mix (2018), esh9419, public MP3 preview, CC0: https://freesound.org/people/esh9419/sounds/417616/
 - A Small Fire Crackling, ExplosiveTamale, public MP3 preview, CC0: https://freesound.org/people/ExplosiveTamale/sounds/448361/
 
-The samples preserve the recording's texture, using a selected excerpt, linear gain and short edge fades. The rain excerpt finder looks for low-frequency energy; this is not automatic proof that the event is thunder. The fire excerpt finder favors a lower crest factor; this is not proof that voices or harsh pops are absent. Human listening remains necessary.
+The samples use a selected excerpt, level matching and short edge fades. Extreme source transients receive soft-knee compression and lookahead peak limiting so individual pops do not set the entire bed's level. The rain excerpt finder looks for low-frequency energy; this is not automatic proof that the event is thunder. The fire excerpt finder favors a lower crest factor; this is not proof that voices or harsh pops are absent. Human listening remains necessary.
 
 MP3-derived candidates are previews, not recovered lossless originals. No Quran audio is copied, redistributed or transformed. The blend with live recitation and eventual loop seams must be reviewed separately before integration.
