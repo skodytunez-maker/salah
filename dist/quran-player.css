@@ -210,7 +210,7 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
 
 #quran-global-player.is-expanded .quran-output-actions [data-close]{gap:6px;color:#aab8cc;border-color:#43516a80}#quran-global-player.is-expanded .quran-output-actions [data-close] svg{width:14px;height:14px;flex:none}
 
-.quran-nature-presets{margin-top:16px}.quran-nature-presets button{flex:1}
+
 
 #quran-global-player.is-expanded .quran-player-heading{position:relative;height:auto;min-height:44px;border:0;padding:0;touch-action:pan-x pinch-zoom}#quran-global-player.is-expanded .quran-player-heading::before{content:"";position:absolute;top:-5px;left:calc(50% - 18px);width:36px;height:3px;border-radius:3px;background:#d9c39855}
 
