@@ -21,3 +21,17 @@ Additional CC0 review candidates:
 - sea_waves_soft_shenzhen_2020-05-30_iXY.wav, Archos: https://freesound.org/people/Archos/sounds/521602/
 
 Wind has only an eight-second audition because its source is short. No loop is invented. These sources have not passed human listening review; calmness, absence of speech and suitability under recitation remain unverified. This workflow batch prepares only wind, forest and ocean; completed rain and fire artifacts are retained in their earlier run.
+
+
+## Owner feedback and replacement auditions, 13 November 2026
+
+The owner prefers rain_soft for further review. This is a sound-character preference, not publication or blend approval. The first forest, wind and fire samples were rejected for unwanted noise; the first ocean sample was rejected because it resembles rain.
+
+Round two uses different recordings, fixed excerpts, no dynamic compression and at most eightfold linear gain. The previous forest sample needed 181x gain; the new round does not raise recordings to that extent. These choices do not prove that the new sources are free of noise. User listening remains pending.
+
+- Fireplace Burning — AugustSandberg, CC0: https://freesound.org/people/AugustSandberg/sounds/508844/
+- breeze.wav — keweldog, CC0: https://freesound.org/people/keweldog/sounds/181801/
+- Birds In Forest (Scotland) — BurghRecords, CC0: https://freesound.org/people/BurghRecords/sounds/490846/
+- Gentle Waves - Quiet Beach — amholma, CC0: https://freesound.org/people/amholma/sounds/376795/
+
+All four replacement sources are public MP3 previews. The original WAV files are not obtained. No app assets or production files are replaced. Do not merge or deploy this review branch.

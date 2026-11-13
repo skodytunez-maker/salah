@@ -56,6 +56,46 @@ SOURCES = {
         "url": "https://cdn.freesound.org/previews/521/521602_652422-hq.mp3",
         "source_type": "public MP3 preview of calm South China Sea waves recorded with Rode iXY, not the original WAV"
     },
+    "fire_v2": {
+        "title": "Fireplace Burning",
+        "author": "AugustSandberg",
+        "page": "https://freesound.org/people/AugustSandberg/sounds/508844/",
+        "url": "https://cdn.freesound.org/previews/508/508844_1934171-hq.mp3",
+        "source_type": "Public MP3 preview of pine wood in an indoor cabin fireplace; original stereo 96kHz/24-bit WAV is not obtained",
+        "start": 10,
+        "gain_limit": 8,
+        "peak_softening": false
+    },
+    "wind_v2": {
+        "title": "breeze.wav",
+        "author": "keweldog",
+        "page": "https://freesound.org/people/keweldog/sounds/181801/",
+        "url": "https://cdn.freesound.org/previews/181/181801_3153523-hq.mp3",
+        "source_type": "Public MP3 preview of a breeze through pine trees; original stereo 44.1kHz/16-bit WAV is not obtained",
+        "start": 20,
+        "gain_limit": 8,
+        "peak_softening": false
+    },
+    "forest_v2": {
+        "title": "Birds In Forest (Scotland)",
+        "author": "BurghRecords",
+        "page": "https://freesound.org/people/BurghRecords/sounds/490846/",
+        "url": "https://cdn.freesound.org/previews/490/490846_7241289-hq.mp3",
+        "source_type": "Public MP3 preview of forest birds and wind in trees; original stereo 44.1kHz/16-bit WAV is not obtained",
+        "start": 20,
+        "gain_limit": 8,
+        "peak_softening": false
+    },
+    "ocean_v2": {
+        "title": "Gentle Waves - Quiet Beach",
+        "author": "amholma",
+        "page": "https://freesound.org/people/amholma/sounds/376795/",
+        "url": "https://cdn.freesound.org/previews/376/376795_6128004-hq.mp3",
+        "source_type": "Public MP3 preview focused on small waves washing ashore in Destin Florida; original stereo 48kHz/24-bit WAV is not obtained",
+        "start": 30,
+        "gain_limit": 8,
+        "peak_softening": false
+    },
 }
 SECONDS = 16
 HOSTS = {"cdn.freesound.org", "upload.wikimedia.org"}
@@ -145,7 +185,11 @@ def prepare(kind, folder):
     duration = float(info["format"]["duration"])
     if not SECONDS <= duration <= 1200:
         raise ValueError("Unexpected source duration")
-    start, selection = choose_excerpt(original, kind, duration)
+    if "start" in source:
+        start = min(max(0, source["start"]), duration - SECONDS)
+        selection = "fixed representative excerpt; sound character and unwanted noise require user listening"
+    else:
+        start, selection = choose_excerpt(original, kind, duration)
     stereo = decode(original, rate=48000, channels=2, start=start, duration=SECONDS)
     rms, peak = energy(stereo), max(abs(v) for v in stereo)
     if not math.isfinite(rms) or rms < 1e-6:
@@ -153,7 +197,7 @@ def prepare(kind, folder):
     trim = f"atrim=start={start}:duration={SECONDS},asetpts=PTS-STARTPTS"
     softening = ""
     original_crest = peak / rms
-    if original_crest > 10:
+    if original_crest > 10 and source.get("peak_softening", True):
         threshold = max(.001, min(.5, rms * 3))
         softening = f",acompressor=threshold={threshold:.9f}:ratio=8:attack=1:release=120:knee=2.8:makeup=1:detection=peak:link=maximum"
         softened = floats(command("ffmpeg", "-v", "error", "-i", str(original), "-af", trim + softening, "-ar", "48000", "-ac", "2", "-f", "f32le", "pipe:1"))
@@ -181,9 +225,9 @@ def prepare(kind, folder):
         "source_sha256": hashlib.sha256(original.read_bytes()).hexdigest(),
         "source_audio": [{k: v for k, v in stream.items() if k in ("codec_name", "sample_rate", "channels", "bits_per_sample", "bit_rate")} for stream in info["streams"] if stream.get("codec_type") == "audio"],
         "source_duration": duration, "start": start, "seconds": SECONDS,
-        "selection": selection, "linear_gain": gain, "original_crest_ratio": original_crest,
+        "selection": selection, "linear_gain": gain, "gain_limit": gain_limit, "original_crest_ratio": original_crest,
         "transient_softening": bool(softening),
-        "processing": "Optional soft-knee compression and lookahead peak limiting for extreme source transients, linear gain, short edge fades, stereo48kHz. No invented thunder, generated ambience, noise reduction or voice processing.",
+        "processing": "Source-specific gain limit recorded in this report. Optional soft-knee compression and lookahead peak limiting for extreme source transients, linear gain, short edge fades, stereo48kHz. No invented thunder, generated ambience, noise reduction or voice processing.",
         "output_peak": output_peak, "output_rms": output_rms,
         "mp3_sha256": hashlib.sha256(encoded).hexdigest(), "mp3_bytes": len(encoded),
         "production_integrated": False, "human_listening_approved": False,
