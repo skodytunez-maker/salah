@@ -1,4 +1,4 @@
-name: Prepare selected nature loops
+name: Verify published nature release
 on:
   pull_request:
     paths:
@@ -7,25 +7,16 @@ on:
 permissions:
   contents: read
 jobs:
-  audition:
-    name: audition-${{ matrix.sound }}
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        sound: [rain, fire, forest, ocean, wind]
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Ensure audio converter
-        run: command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg)
-      - name: Prepare review sample
-        run: python3 review/nature-audition/master.py '${{ matrix.sound }}' '${{ runner.temp }}/nature-audition/${{ matrix.sound }}'
+      - name: Verify exact public release bytes
+        run: python3 review/nature-audition/verify-live-493.py '${{ runner.temp }}/salah-live-493.json'
       - uses: actions/upload-artifact@v4
         with:
-          name: nature-audition-${{ matrix.sound }}
-          path: ${{ runner.temp }}/nature-audition/${{ matrix.sound }}/review/
+          name: salah-live-493
+          path: ${{ runner.temp }}/salah-live-493.json
           retention-days: 14
           if-no-files-found: error
-      - name: Export audition for chat playback
-        run: python3 review/nature-audition/master.py '${{ matrix.sound }}' '${{ runner.temp }}/nature-audition/${{ matrix.sound }}' --emit
