@@ -35,3 +35,6 @@ Round two uses different recordings, fixed excerpts, no dynamic compression and 
 - Gentle Waves - Quiet Beach — amholma, CC0: https://freesound.org/people/amholma/sounds/376795/
 
 All four replacement sources are public MP3 previews. The original WAV files are not obtained. No app assets or production files are replaced. Do not merge or deploy this review branch.
+
+
+Round two fire and wind contain extreme peak-to-RMS ratios. Their revised auditions use fixed gain capped at eightfold and a lookahead peak limiter; no dynamic compression or noise reduction is applied. This controls isolated peaks without increasing the quiet bed beyond the stated gain cap. The forest and wave samples already passed without this processing.

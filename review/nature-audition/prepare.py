@@ -64,7 +64,8 @@ SOURCES = {
         "source_type": "Public MP3 preview of pine wood in an indoor cabin fireplace; original stereo 96kHz/24-bit WAV is not obtained",
         "start": 10,
         "gain_limit": 8,
-        "peak_softening": False
+        "peak_softening": False,
+        "peak_limit": True
     },
     "wind_v2": {
         "title": "breeze.wav",
@@ -74,7 +75,8 @@ SOURCES = {
         "source_type": "Public MP3 preview of a breeze through pine trees; original stereo 44.1kHz/16-bit WAV is not obtained",
         "start": 20,
         "gain_limit": 8,
-        "peak_softening": False
+        "peak_softening": False,
+        "peak_limit": True
     },
     "forest_v2": {
         "title": "Birds In Forest (Scotland)",
@@ -203,11 +205,12 @@ def prepare(kind, folder):
         softened = floats(command("ffmpeg", "-v", "error", "-i", str(original), "-af", trim + softening, "-ar", "48000", "-ac", "2", "-f", "f32le", "pipe:1"))
         rms, peak = energy(softened), max(abs(v) for v in softened)
     gain_limit = source.get("gain_limit", 32)
-    gain = min(.06 / rms, gain_limit) if softening else min(.06 / rms, .30 / peak, gain_limit)
+    peak_limit = bool(source.get("peak_limit", False))
+    gain = min(.06 / rms, gain_limit) if softening or peak_limit else min(.06 / rms, .30 / peak, gain_limit)
     output = folder / "review"
     output.mkdir(exist_ok=True)
     wav, mp3 = output / (kind + ".wav"), output / (kind + ".mp3")
-    limiter = ",alimiter=limit=0.3:attack=3:release=120:level=false" if softening else ""
+    limiter = ",alimiter=limit=0.3:attack=3:release=120:level=false" if softening or peak_limit else ""
     filters = f"{trim}{softening},volume={gain:.10f}{limiter},afade=t=in:st=0:d=0.4,afade=t=out:st={SECONDS-.8}:d=0.8"
     command("ffmpeg", "-v", "error", "-y", "-i", str(original), "-vn", "-af", filters, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s24le", str(wav))
     command("ffmpeg", "-v", "error", "-y", "-i", str(wav), "-c:a", "libmp3lame", "-b:a", "256k", "-ar", "48000", str(mp3))
@@ -226,7 +229,7 @@ def prepare(kind, folder):
         "source_audio": [{k: v for k, v in stream.items() if k in ("codec_name", "sample_rate", "channels", "bits_per_sample", "bit_rate")} for stream in info["streams"] if stream.get("codec_type") == "audio"],
         "source_duration": duration, "start": start, "seconds": SECONDS,
         "selection": selection, "linear_gain": gain, "gain_limit": gain_limit, "original_crest_ratio": original_crest,
-        "transient_softening": bool(softening),
+        "transient_softening": bool(softening), "peak_limiting": bool(softening) or peak_limit,
         "processing": "Source-specific gain limit recorded in this report. Optional soft-knee compression and lookahead peak limiting for extreme source transients, linear gain, short edge fades, stereo48kHz. No invented thunder, generated ambience, noise reduction or voice processing.",
         "output_peak": output_peak, "output_rms": output_rms,
         "mp3_sha256": hashlib.sha256(encoded).hexdigest(), "mp3_bytes": len(encoded),
