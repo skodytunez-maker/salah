@@ -1,7 +1,7 @@
 {
   "method": "Pillow PNG lossless optimize with unchanged color mode, dimensions, decoded pixel bytes and ICC profile; pixel equality asserted before each write. No gamma/sRGB/chromaticity metadata existed in these input files.",
   "reason": "Keep the complete Android web-update archive below the existing100MiB limit without reducing nature audio or wallpaper quality.",
-  "savedBytes": 3485189,
+  "savedBytes": 3930063,
   "files": [
     {
       "path": "dist/assets/awards/adhkar-30-v1.png",
@@ -233,6 +233,54 @@
       "gitBlobSha": "a4858465dd6ca9b4610e01c9580bcf91318507e7",
       "originalSha256": "26c802c63770c28a73fb8e313176e414f5ec9622f45a0737870e9002354bca91",
       "originalGitBlobSha": "3eb5c84366039d2cf4f10908b850c251cf9cdfb1"
+    },
+    {
+      "path": "dist/assets/prayer-poses.png",
+      "before": 1283672,
+      "after": 1177196,
+      "saved": 106476,
+      "zipSaved": 93788,
+      "pixelSha256": "7db663c2eb73cbfdc7ec02c1bf442be0c8878efc031efe92ce71ee53bc106a91",
+      "sha256": "67baa193f2d1bdba91d8082dc11b7800e0b3ef25ce0c8ed38497caf767b7debb",
+      "gitBlobSha": "ce5e75fb97f1205ddaa54413483e14e48a5bc546",
+      "originalSha256": "8a07f4c08c8fb4d54e5a1766787291409cc97bbc67e4e32da8fd1b0c295f4772",
+      "originalGitBlobSha": "fe001196a7c58fc7aad7dcc19eb9ca2cb0e35e96"
+    },
+    {
+      "path": "dist/assets/reciters/idrisabkar.png",
+      "before": 4085444,
+      "after": 4021660,
+      "saved": 63784,
+      "zipSaved": 67166,
+      "pixelSha256": "3b034cc14cb4c5160a804b62170200bd8dd53e0b585058a3992e9f9211123904",
+      "sha256": "5b7072621eadd08b9953d73e8a9c3f8085040c042e8e89535b17738872c94223",
+      "gitBlobSha": "dfdb582da7d55497da119e8db7b5101504e5c670",
+      "originalSha256": "7da6359d99e6dbfb940f632318528bb47fc783e1f4c848d2f767b082454e6155",
+      "originalGitBlobSha": "5dd49b92f68b8324aacc7667424d9197cc31e3e8"
+    },
+    {
+      "path": "dist/assets/reciters/raadalkurdi-v349.png",
+      "before": 2024732,
+      "after": 1801393,
+      "saved": 223339,
+      "zipSaved": 126373,
+      "pixelSha256": "b5758a7080beef1a6291d960b36ef596d9b73929129df819c88f0a25f7e9f50c",
+      "sha256": "536e249d1afce9387d9c556c8ce6b589d087b3122f158ce07b4ea96c7eb73391",
+      "gitBlobSha": "0a12c5e947d68fdf5b344f8c302f2e855060b3df",
+      "originalSha256": "642913c6680c274346587f58fe6050ee60c25ce921c0f3134b2094d555d5ee62",
+      "originalGitBlobSha": "34263858dac1fcf3983d1d6c73029a9d119ec524"
+    },
+    {
+      "path": "dist/assets/reciters/mahermuaiqly.png",
+      "before": 1151785,
+      "after": 1100510,
+      "saved": 51275,
+      "zipSaved": 51921,
+      "pixelSha256": "8c8b13fb190db4a78674f28b16118157cca3c4f70453eb103bd022408e2091bb",
+      "sha256": "bda70c4dd28c1c3283636a9476898003d7a2f00f5c43e6b3c8401d3a30b3d909",
+      "gitBlobSha": "eddcffaef7387fca57734d5d172325a8583081f0",
+      "originalSha256": "155078d2cc8523c9da1e54a7e051e512d89729880097d0731e5e0fff35739a38",
+      "originalGitBlobSha": "bd409f19aeb3890d81a76755dc937900e7ea6fbd"
     }
   ]
 }
