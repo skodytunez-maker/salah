@@ -16,7 +16,8 @@ await quranPlayback.start(await loadSurah(1),'ar.muhammadalluhaidan');await flus
 const panel=document.getElementById('quran-global-player'),dialog=document.querySelector('.quran-player-dialog');
 assert.equal(panel.hidden,false);assert.equal(panel.parentElement,dock,'Compact player shares the navigation viewport');assert.equal(nav.parentElement,dock);
 panel.querySelector('[data-expand]').click();assert.equal(dialog.open,true);
-const shuffle=panel.querySelector('[data-quran-shuffle]');assert.match(shuffle.textContent,/Перемешать/);
+const picker=panel.querySelector('.quran-player-reciter select');assert.equal(picker.closest('button'),null);assert.equal(panel.querySelectorAll('select').length,1);assert.equal(picker.getAttribute('aria-label'),'Сменить чтеца');picker.value='ar.badralturki';picker.dispatchEvent(new win.Event('change',{bubbles:true}));await flush();assert.equal(quranPlayback.state.reciter,'ar.badralturki','The gold name uses the existing real reciter-change handler');assert.equal(dialog.open,true,'Changing reader keeps the full player open');
+const shuffle=panel.querySelector('[data-quran-shuffle]');assert.match(shuffle.getAttribute('aria-label'),/Перемешать/);assert.ok(shuffle.querySelector('svg'),'Icon-only shuffle keeps its accessible label');
 shuffle.click();await flush();
 assert.equal(quranPlayback.state.playlist.tracks.length,114);
 assert.equal(dialog.open,true,'Generating from the full player keeps it open');

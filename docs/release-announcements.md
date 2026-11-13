@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version490 — centred phone player cascade (13 November2026)
+
+Fix the phone layout regression reported on iPhone after488: the reader stylesheet also supplies compact two-column positioning for the now-playing contents. Explicitly set the expanded phone grid to one full-width column and place portrait/title/reader/status in rows1–4 with centred alignment. Keep the flexible portrait height. The user selected the gold reader name itself as the native reciter picker without an arrow; remove the duplicate dropdown row and keep reader/status as independent siblings of the portrait/title button, with no nested interactive controls. Shuffle, TV and share use the existing gold outline style and accessible labels in one compact icon row. Add a CSS cascade regression using actual player markup and relevant rules from both reader/player stylesheets at375×667,393×852 and430×932; this is not a browser pixel-layout test. Announcement486, expiry and acknowledgment remain unchanged. No audio or backend changes; real iPhone visual confirmation remains pending.
+
 ## Version489 — one nature-volume control (13 November2026)
 
 Remove the redundant quiet/medium/louder presets and their event/CSS branches at the user’s request. The existing continuous0–100% background slider and percentage output remain, preserving the stored level, source selection, timer and Quran audio session. Public announcement486, expiry and acknowledgment are unchanged. No server, recording or scenic artwork changes.

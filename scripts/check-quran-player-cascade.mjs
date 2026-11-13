@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+const [readerCSS,playerCSS,bar]=await Promise.all(['dist/quran.css','dist/quran-player.css','dist/js/quran-player-bar.js'].map(p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8')));
+const expression=bar.match(/^\s*panel\.innerHTML=(.*);$/m)?.[1];assert.ok(expression);
+const markup=vm.runInNewContext(expression,{icon:()=>'',actionIcon:()=>'',previous:'',next:'',play:''});
+for(const[width,height]of [[375,667],[393,852],[430,932]]){
+ const w=new Window({width,height,url:'https://salah.invalid/#home'}),doc=w.document,style=doc.createElement('style');
+ // Normalize optional whitespace for HappyDOM's media-rule tokenizer.
+ style.textContent=(readerCSS+'\n'+playerCSS).replaceAll('@media(','@media (');doc.head.append(style);
+ const active=rules=>Array.from(rules).map(r=>r.media?(w.matchMedia(r.conditionText||r.media.mediaText).matches?active(r.cssRules):''):/quran-now-playing|quran-playing-portrait|quran-playing-reader|quran-player-reciter|quran-playing-status|quran-player-progress|quran-global-controls|quran-output-actions/.test(r.selectorText||'')?r.cssText:'').join('\n');style.textContent=active(style.sheet.cssRules);
+ const panel=doc.createElement('section');panel.id='quran-global-player';panel.className='quran-global-player is-expanded';panel.innerHTML=markup;doc.body.append(panel);
+ const now=panel.querySelector('.quran-now-playing'),computed=w.getComputedStyle(now);
+ assert.equal(computed.display,'grid');assert.match(computed.gridTemplateColumns,/^minmax\(0,\s*1fr\)$/,width+'px: the reader stylesheet must not inject mini-player columns');assert.equal(computed.justifyItems,'center');
+ for(const[selector,row]of [['.quran-playing-portrait','1'],['strong','2']]){const item=w.getComputedStyle(now.querySelector(selector));assert.equal(item.gridColumn,'1',width+'px '+selector+' stays in the same full-width column');assert.equal(item.gridRow,row,width+'px '+selector+' remains below the previous element');}
+ const picker=panel.querySelector('.quran-player-reciter'),status=panel.querySelector('.quran-playing-status');
+ assert.equal(w.getComputedStyle(picker).gridRow,'3');assert.equal(w.getComputedStyle(picker).gridColumn,'1');assert.equal(w.getComputedStyle(picker).justifySelf,'center');assert.equal(w.getComputedStyle(status).gridRow,'4');assert.equal(w.getComputedStyle(status).textAlign,'center');
+ assert.equal(picker.querySelector('select').getAttribute('aria-label'),'Сменить чтеца');assert.equal(picker.closest('button'),null,'The native name picker is never nested inside the open-player button');assert.equal(picker.querySelector('svg'),null,'The selected design has no arrow');
+ assert.equal(w.getComputedStyle(panel.querySelector('.quran-player-progress')).gridRow,'5');assert.equal(w.getComputedStyle(panel.querySelector('.quran-global-controls')).gridRow,'6');assert.equal(w.getComputedStyle(panel.querySelector('.quran-output-actions')).gridRow,'8');
+ for(const button of panel.querySelectorAll('.quran-output-actions button'))assert.ok(button.getAttribute('aria-label'),'Each icon has an accessible name');
+ panel.classList.remove('is-expanded');assert.match(w.getComputedStyle(now).gridTemplateColumns,/34px\s+minmax\(0,\s*1fr\)/,'The compact portrait/title layout still uses its own columns');
+ await w.happyDOM.close();
+}
+console.log('PASS: real player markup with both reader/player stylesheets keeps portrait/title and separate reader/status rows in one centred column across phone viewports; compact columns remain independent. CSS cascade check only, no pixel-layout claim.');
