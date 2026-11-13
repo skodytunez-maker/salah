@@ -196,7 +196,7 @@ def prepare(kind, folder):
     rms, peak = energy(stereo), max(abs(v) for v in stereo)
     if not math.isfinite(rms) or rms < 1e-6:
         raise ValueError("Silent or invalid excerpt")
-    trim = f"atrim=start={start}:duration={SECONDS},asetpts=PTS-STARTPTS"
+    trim = f"atrim=start={start}:duration={SECONDS},asetpts=PTS-STARTPTS,aresample=48000"
     softening = ""
     original_crest = peak / rms
     if original_crest > 10 and source.get("peak_softening", True):
