@@ -27,8 +27,8 @@ export const RECITER_ADDED_AT={
 "ar.alijonqori":"2026-11-05T00:00:00.000Z",
 "ar.jahongirnematov":"2026-11-05T00:00:00.000Z"
 };
-export const RECITER_PROMOTION_MS=3*86400000;
-export const RECITER_RECENT_MS=30*86400000;
+export const RECITER_PROMOTION_MS=7*86400000;
+export const RECITER_RECENT_MS=7*86400000;
 function addedAt(reciter){
  const value=RECITER_ADDED_AT[reciter?.id]??reciter?.addedAt;
  if(typeof value!=='string')return null;
@@ -43,6 +43,7 @@ export function orderReciterCatalog(reciters,favorites=[],now=Date.now()){
 }
 export function reciterFilterTabs(active,favoriteCount,reciters,now=Date.now()){
  const all=reciters.filter(r=>!r.variantOf).length,saved=Number.isSafeInteger(favoriteCount)&&favoriteCount>=0?Math.min(favoriteCount,all):0;
- const links=[['all','#quran?view=reciters','Все '+all],['new','#quran?view=reciters&filter=new','Новые '+recentReciters(reciters,now).length],['favorites','#quran?view=reciters&filter=favorites','Избранные '+saved],['ruqyah','#quran?view=reciters&filter=ruqyah','Рукъя']];
- return '<nav class="reciter-filter-tabs reciter-catalog-filter-tabs" aria-label="Каталог чтецов">'+links.map(([key,href,label])=>'<a href="'+href+'" aria-current="'+(active===key?'page':'false')+'">'+label+'</a>').join('')+'</nav>';
+ const fresh=recentReciters(reciters,now).length,current=active==='new'&&!fresh?'all':active;
+ const links=[['all','#quran?view=reciters','Все '+all],...(fresh?[['new','#quran?view=reciters&filter=new','Новые '+fresh]]:[]),['favorites','#quran?view=reciters&filter=favorites','Избранные '+saved],['ruqyah','#quran?view=reciters&filter=ruqyah','Рукъя']];
+ return '<nav class="reciter-filter-tabs reciter-catalog-filter-tabs" data-has-new="'+Boolean(fresh)+'" aria-label="Каталог чтецов">'+links.map(([key,href,label])=>'<a href="'+href+'" aria-current="'+(current===key?'page':'false')+'">'+label+'</a>').join('')+'</nav>';
 }
