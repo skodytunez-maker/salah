@@ -38,3 +38,13 @@ All four replacement sources are public MP3 previews. The original WAV files are
 
 
 Round two fire and wind contain extreme peak-to-RMS ratios. Their revised auditions use fixed gain capped at eightfold and a lookahead peak limiter; no dynamic compression or noise reduction is applied. This controls isolated peaks without increasing the quiet bed beyond the stated gain cap. The forest and wave samples already passed without this processing.
+
+
+## Third wind review
+
+Owner accepted the second-round fire, forest and waves for sound character, and prefers the second rain. Wind_v2 still has unwanted hiss and does not sound recognizably like wind to the owner. Two different natural wind recordings are prepared below; no claim of hiss removal or subjective approval is made. Both are CC0 public MP3 previews with original lossless files not obtained.
+
+- Wind blowing cereal crop.flac, BrodieSound: https://freesound.org/people/BrodieSound/sounds/579557/
+- Wind blowing in bush on Kitt Peak mountain, felix.blume: https://freesound.org/people/felix.blume/sounds/135193/
+
+No production nature recordings are integrated. These previews remain separate from the player-heading fix.

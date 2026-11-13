@@ -98,6 +98,28 @@ SOURCES = {
         "gain_limit": 8,
         "peak_softening": False
     },
+    "wind_field": {
+        "title": "Wind blowing cereal crop.flac",
+        "author": "BrodieSound",
+        "page": "https://freesound.org/people/BrodieSound/sounds/579557/",
+        "url": "https://cdn.freesound.org/previews/579/579557_1166611-hq.mp3",
+        "source_type": "Public MP3 preview of barley-field wind recorded with Rode NTG3 and Sound Devices 664; original FLAC not obtained",
+        "start": 20,
+        "gain_limit": 8,
+        "peak_softening": False,
+        "peak_limit": True
+    },
+    "wind_mountain": {
+        "title": "Wind blowing in bush on Kitt Peak mountain",
+        "author": "felix.blume",
+        "page": "https://freesound.org/people/felix.blume/sounds/135193/",
+        "url": "https://cdn.freesound.org/previews/135/135193_1661766-hq.mp3",
+        "source_type": "Public MP3 preview of natural wind close to foliage, Schoeps CCM41+CCM8 MS stereo; original WAV not obtained",
+        "start": 20,
+        "gain_limit": 8,
+        "peak_softening": False,
+        "peak_limit": True
+    },
 }
 SECONDS = 16
 HOSTS = {"cdn.freesound.org", "upload.wikimedia.org"}
