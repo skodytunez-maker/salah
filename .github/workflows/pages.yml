@@ -84,6 +84,7 @@ jobs:
           node scripts/check-native-widget.mjs
           node scripts/check-android-widget.mjs
           node scripts/check-android-update.mjs
+          node scripts/check-nature-video-assets.mjs
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -93,6 +94,8 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run sync:web
           node scripts/build-web-update.mjs
+      - name: Stage verified nature videos for Pages
+        run: node scripts/stage-nature-videos.mjs
       - name: Stage iPhone media return test for Pages
         run: cp -R tests/ios-media-return dist/media-return-test
       - name: Configure Pages
@@ -104,3 +107,4 @@ jobs:
       - name: Publish
         id: deployment
         uses: actions/deploy-pages@v5
+

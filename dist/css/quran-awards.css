@@ -207,7 +207,3 @@ body.reduce-motion .release-motion-preview [data-release-motion-part="element"],
 .release-nature-player>em{margin-top:15px;font-style:normal;font-size:10px;color:#e4ca92}
 @keyframes release-nature-scene{0%,25%{opacity:0}75%,100%{opacity:1}}
 
-.release-nature-rain{position:absolute;inset:-25px 0;pointer-events:none;opacity:0;background:repeating-linear-gradient(102deg,transparent 0 17px,#d9e6ed30 18px,transparent 19px 31px);mask-image:linear-gradient(transparent,#0009 25%,#000 60%,transparent);--release-motion-keyframes:release-nature-rain}
-.release-nature-warmth{position:absolute;left:65%;top:43%;width:40%;height:37%;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(ellipse,#f4943b40,transparent 68%);--release-motion-keyframes:release-nature-warmth}
-@keyframes release-nature-rain{0%{opacity:.45;transform:translateY(-12px)}25%{opacity:.3}75%,100%{opacity:0;transform:translateY(12px)}}
-@keyframes release-nature-warmth{0%,25%{opacity:0;transform:scale(.9)}75%{opacity:.6}100%{opacity:1;transform:scale(1.05)}}

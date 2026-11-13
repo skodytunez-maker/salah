@@ -5,6 +5,8 @@ import {deflateRawSync} from 'node:zlib';
 import {fileURLToPath} from 'node:url';
 import {APP_VERSION} from '../../dist/js/app-release.js';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+// Published nature clips stay outside APK/AAB and live-update archives, including re-staging.
+export const excludeFromWebBundle=name=>name==='mobile-updates'||name.startsWith('mobile-updates/')||/^assets\/player-nature-video-\d+(?:\/|$)/.test(name);
 export function crc32(bytes){let crc=0xffffffff;for(const b of bytes){crc^=b;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
 export function packZip(files){
  const chunks=[],central=[];let offset=0;
@@ -25,7 +27,7 @@ export async function buildWebUpdate(source,out,version=APP_VERSION){
  const files=[];
  async function walk(dir,prefix=''){for(const entry of (await fs.readdir(dir,{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){
   if(entry.isSymbolicLink())throw Error('Symlinks forbidden');const name=prefix+entry.name;
-  if(name==='mobile-updates'||name==='third-party/Android-NOTICES.txt')continue;
+  if(excludeFromWebBundle(name)||name==='third-party/Android-NOTICES.txt')continue;
   if(entry.isDirectory())await walk(path.join(dir,entry.name),name+'/');
   else {if(/[.](apk|aab|dex|jar|class|so|jks|keystore|p12|pfx)$/i.test(name)||entry.name.startsWith('.env'))throw Error('Private/native file forbidden');files.push({name,bytes:await fs.readFile(path.join(dir,entry.name))});}
  }}
@@ -42,3 +44,4 @@ export async function buildWebUpdate(source,out,version=APP_VERSION){
  return manifest;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))console.log(JSON.stringify(await buildWebUpdate(path.join(root,'www'),path.resolve(root,'../dist/mobile-updates'))));
+
