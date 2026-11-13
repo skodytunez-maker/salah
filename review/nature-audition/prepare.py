@@ -46,7 +46,8 @@ SOURCES = {
         "author": "nfsgit",
         "page": "https://freesound.org/people/nfsgit/sounds/121967/",
         "url": "https://cdn.freesound.org/previews/121/121967_78482-hq.mp3",
-        "source_type": "public MP3 preview of a quiet forest field recording with birds and insects, not the original WAV"
+        "source_type": "public MP3 preview of a quiet forest field recording with birds and insects, not the original WAV",
+        "gain_limit": 256
     },
     "ocean": {
         "title": "sea_waves_soft_shenzhen_2020-05-30_iXY.wav",
@@ -157,7 +158,8 @@ def prepare(kind, folder):
         softening = f",acompressor=threshold={threshold:.9f}:ratio=8:attack=1:release=120:knee=2.8:makeup=1:detection=peak:link=maximum"
         softened = floats(command("ffmpeg", "-v", "error", "-i", str(original), "-af", trim + softening, "-ar", "48000", "-ac", "2", "-f", "f32le", "pipe:1"))
         rms, peak = energy(softened), max(abs(v) for v in softened)
-    gain = min(.06 / rms, 32) if softening else min(.06 / rms, .30 / peak, 32)
+    gain_limit = source.get("gain_limit", 32)
+    gain = min(.06 / rms, gain_limit) if softening else min(.06 / rms, .30 / peak, gain_limit)
     output = folder / "review"
     output.mkdir(exist_ok=True)
     wav, mp3 = output / (kind + ".wav"), output / (kind + ".mp3")
@@ -169,7 +171,7 @@ def prepare(kind, folder):
     output_peak = max(abs(v) for v in checked)
     output_rms = energy(checked)
     if output_peak > .301 or output_rms < max(.01, rms * gain * .25) or not SECONDS-.05 <= len(checked) / 96000 <= SECONDS+.05:
-        raise ValueError("Output peak, non-silence or duration validation failed")
+        raise ValueError(f"Output validation failed: peak={output_peak}, rms={output_rms}, seconds={len(checked)/96000}, input_rms={rms}, gain={gain}")
     encoded = mp3.read_bytes()
     if len(encoded) > 700000:
         raise ValueError("Chat audition exceeds transport limit")

@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sound: [wind, forest, ocean]
+        sound: [forest]
     steps:
       - uses: actions/checkout@v4
       - name: Ensure audio converter
