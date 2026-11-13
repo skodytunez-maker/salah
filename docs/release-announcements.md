@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version491 — seven-day new-reciter discovery (13 November2026)
+
+Use the original first-publication timestamp for one consistent seven-day promotion and New filter. Do not reset dates on updates. Hide the New link completely when empty and let All/Favorites/Ruqyah fill its space. An expired New view or bookmarked link falls back to the complete All catalog, without removing readers or saved favorites. Existing minute/visibility refresh updates the view; a future batch restores the New link without switching an existing All view. Preserve announcement486 and acknowledgment/expiry; no separate news or server changes.
+
 ## Version490 — centred phone player cascade (13 November2026)
 
 Fix the phone layout regression reported on iPhone after488: the reader stylesheet also supplies compact two-column positioning for the now-playing contents. Explicitly set the expanded phone grid to one full-width column and place portrait/title/reader/status in rows1–4 with centred alignment. Keep the flexible portrait height. The user selected the gold reader name itself as the native reciter picker without an arrow; remove the duplicate dropdown row and keep reader/status as independent siblings of the portrait/title button, with no nested interactive controls. Shuffle, TV and share use the existing gold outline style and accessible labels in one compact icon row. Add a CSS cascade regression using actual player markup and relevant rules from both reader/player stylesheets at375×667,393×852 and430×932; this is not a browser pixel-layout test. Announcement486, expiry and acknowledgment remain unchanged. No audio or backend changes; real iPhone visual confirmation remains pending.
