@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {collectMobileLicenses,saveMobileLicenseReport} from './collect-licenses.mjs';
+import {excludeFromWebBundle} from './build-web-update.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const mobileRoot=path.resolve(here,'..');
@@ -16,7 +17,7 @@ const licenseEvidence=await collectMobileLicenses(mobileRoot);
 const platformNotices=await Promise.all(['Apache-2.0.txt','Cordova-NOTICE.txt'].map(async name=>({name,bytes:await fs.readFile(path.join(mobileRoot,'licenses',name))})));
 await fs.rm(target,{recursive:true,force:true});
 await fs.mkdir(target,{recursive:true});
-await fs.cp(source,target,{recursive:true,force:true,filter:src=>!src.startsWith(path.join(source,'mobile-updates'))});
+await fs.cp(source,target,{recursive:true,force:true,filter:src=>!excludeFromWebBundle(path.relative(source,src).split(path.sep).join('/'))});
 
 await fs.mkdir(path.join(target,'js/vendor'),{recursive:true});
 await fs.copyFile(runtime,path.join(target,'js/vendor/capacitor-core.js'));
@@ -42,3 +43,4 @@ await fs.writeFile(
 );
 
 console.log('SALAH native bundle copied to mobile/www; explicit Capacitor plugin registration installed.');
+

@@ -7,6 +7,8 @@ import {collectMobileLicenses,saveMobileLicenseReport} from '../scripts/collect-
 
 const fixture=await fs.mkdtemp(path.join(os.tmpdir(),'salah-license-fixture-'));
 const root=path.join(fixture,'mobile');
+// The copied packager imports the real ESM release module through the project root.
+await fs.writeFile(path.join(fixture,'package.json'),JSON.stringify({type:'module'}));
 const manifest={dependencies:{'@capacitor/core':'8.5.2'},devDependencies:{'@capacitor/android':'8.5.2','@capacitor/ios':'8.5.2'}};
 const lock={lockfileVersion:3,packages:{'':structuredClone(manifest)}};
 const fixtureMIT='MIT fixture notice\nPermission is hereby granted, free of charge, to test this collector.\n';
@@ -39,13 +41,15 @@ await fs.rename(path.join(root,'node_modules/@capacitor/core/LICENSE'),path.join
 await assert.rejects(collectMobileLicenses(root),/MIT license text is missing/);
 await put('scripts/collect-licenses.mjs',await fs.readFile(new URL('../scripts/collect-licenses.mjs',import.meta.url),'utf8'));
 await put('scripts/sync-web.mjs',await fs.readFile(new URL('../scripts/sync-web.mjs',import.meta.url),'utf8'));
+await put('scripts/build-web-update.mjs',await fs.readFile(new URL('../scripts/build-web-update.mjs',import.meta.url),'utf8'));
 await put('node_modules/@capacitor/core/dist/index.js','export const Capacitor={};\n');
 await put('native/native-entry.js','// Native entry fixture\n');
 const recovery=await fs.readFile(new URL('../native/native-startup-recovery.js',import.meta.url),'utf8');
 await put('native/native-startup-recovery.js',recovery);
 for(const name of ['Apache-2.0.txt','Cordova-NOTICE.txt'])await put('licenses/'+name,await fs.readFile(new URL('../licenses/'+name,import.meta.url),'utf8'));
 await put('www/previous-bundle.txt','Keep the previous generated bundle if validation fails.');
-await fs.mkdir(path.join(fixture,'dist'),{recursive:true});
+await fs.mkdir(path.join(fixture,'dist/js'),{recursive:true});
+await fs.writeFile(path.join(fixture,'dist/js/app-release.js'),await fs.readFile(new URL('../../dist/js/app-release.js',import.meta.url),'utf8'));
 await fs.writeFile(path.join(fixture,'dist/index.html'),'<script type="module" src="./js/app.js"></script>');
 const sync=()=>spawnSync(process.execPath,[path.join(root,'scripts/sync-web.mjs')],{cwd:root,encoding:'utf8'});
 const failed=sync();assert.equal(failed.status,1);assert.match(failed.stderr,/MIT license text is missing/);
@@ -61,4 +65,5 @@ await assert.rejects(collectMobileLicenses(root),/Unsafe dependency path/);delet
 lock.packages[''].dependencies['@capacitor/core']='8.5.1';await writeLock();
 await assert.rejects(collectMobileLicenses(root),/manifest and lockfile disagree/);
 console.log('PASS: locked versions, complete notices and README/UNLICENSE, deterministic report, optional platform packages, missing licenses, unsafe paths and protected bundle replacement.');
+
 

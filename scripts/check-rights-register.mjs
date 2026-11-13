@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import{fileURLToPath}from 'node:url';
 import{createHash}from 'node:crypto';
+import{validateNatureVideoAssets}from './stage-nature-videos.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=async file=>JSON.parse(await fs.readFile(path.join(root,file),'utf8'));
@@ -50,15 +51,17 @@ if(snapshot){
  async function scan(directory){
   for(const entry of await fs.readdir(directory,{withFileTypes:true})){
    const file=path.join(directory,entry.name);if(entry.isDirectory())await scan(file);
-   else if(/\.(png|jpe?g|webp|svg|ttf|woff2|mp3)$/i.test(entry.name))inventory.set(path.relative(root,file).split(path.sep).join('/'),{});
+   else if(/\.(png|jpe?g|webp|svg|ttf|woff2|mp3|mp4)$/i.test(entry.name))inventory.set(path.relative(root,file).split(path.sep).join('/'),{});
   }
  }
  await scan(path.join(root,'dist'));
+ // Lazy video files are published after native packaging, but still require the full media audit.
+ for(const video of await validateNatureVideoAssets())inventory.set('dist/'+video.publicPath,{sourcePath:video.repositoryPath});
 }
 validate(media,inventory);
 for(const entry of media.assets){
  if(snapshot)assert.equal(sourceFiles.get(entry.path)?.gitBlobSha,entry.gitBlobSha,'Snapshot fingerprint mismatch');
- else await fs.access(path.join(root,entry.path));
+ else await fs.access(path.join(root,inventory.get(entry.path)?.sourcePath||entry.path));
 }
 const components=new Set();
 for(const component of content.components){
