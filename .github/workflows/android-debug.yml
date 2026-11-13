@@ -5,12 +5,12 @@ on:
     paths:
       - 'mobile/**'
       - '.github/workflows/android-debug.yml'
-      - 'dist/js/app-release.js'
+      - 'dist/**'
   pull_request:
     paths:
       - 'mobile/**'
       - '.github/workflows/android-debug.yml'
-      - 'dist/js/app-release.js'
+      - 'dist/**'
 permissions:
   contents: read
 jobs:
@@ -35,6 +35,9 @@ jobs:
       - name: Copy SALAH web bundle
         working-directory: mobile
         run: npm run sync:web
+      - name: Verify complete Android update archive size
+        working-directory: mobile
+        run: node scripts/build-web-update.mjs
       - name: Upload npm license evidence
         uses: actions/upload-artifact@v4
         with:
