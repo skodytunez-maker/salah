@@ -213,3 +213,28 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
 .quran-nature-presets{margin-top:16px}.quran-nature-presets button{flex:1}
 
 #quran-global-player.is-expanded .quran-player-heading{position:relative;height:auto;min-height:44px;border:0;padding:0;touch-action:pan-x pinch-zoom}#quran-global-player.is-expanded .quran-player-heading::before{content:"";position:absolute;top:-5px;left:calc(50% - 18px);width:36px;height:3px;border-radius:3px;background:#d9c39855}
+
+/* The portrait absorbs the available height; transport and actions stay visible. */
+#quran-global-player.is-expanded [data-dismiss-player]{display:none}
+#quran-global-player:not(.is-expanded){translate:var(--mini-drag-x,0) 0;touch-action:pan-y pinch-zoom}
+@media(max-width:600px) and (min-height:600px){
+ .quran-player-dialog{padding:0}
+ #quran-global-player.is-expanded{box-sizing:border-box;height:100dvh;min-height:0;grid-template-rows:44px minmax(0,1fr) 48px 68px 44px auto auto;align-content:stretch;gap:clamp(6px,1dvh,10px);padding:calc(8px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+ #quran-global-player.is-expanded .quran-now-playing{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;align-content:stretch;overflow:visible}
+ #quran-global-player.is-expanded .quran-playing-portrait{box-sizing:border-box;width:auto;max-width:65vw;height:100%;max-height:240px;min-height:0;aspect-ratio:190/218;align-self:center;grid-row:1;border-radius:24px;margin:0;padding:4px}
+ #quran-global-player.is-expanded .quran-now-playing strong{margin-top:10px;font-size:clamp(21px,5.6vw,27px);line-height:1.25;text-align:center}
+ #quran-global-player.is-expanded .quran-playing-reader{margin-top:4px;font-size:13px;line-height:1.4;text-align:center}
+ #quran-global-player.is-expanded .quran-now-playing small{margin-top:4px;font-size:10px;line-height:1.5;text-align:center}
+ #quran-global-player.is-expanded .quran-player-progress{margin:0;align-self:center}
+ #quran-global-player.is-expanded .quran-global-controls{min-height:68px;gap:24px}
+ #quran-global-player.is-expanded .quran-global-controls [data-toggle]{width:66px;height:66px}
+ #quran-global-player.is-expanded .quran-player-reciter{padding:0;margin:0}
+ #quran-global-player.is-expanded .quran-player-reciter select{min-height:44px;height:44px;padding:8px 12px}
+ #quran-global-player.is-expanded .quran-extras-actions>button{min-height:44px;height:44px;padding:8px}
+ #quran-global-player.is-expanded .quran-output-actions{padding-top:8px;margin:0;flex-wrap:nowrap;align-items:center}
+ #quran-global-player.is-expanded .quran-handoff-button{min-height:44px;padding:8px 10px}
+ /* Open settings/queue and enlarged accessibility text retain normal scrolling. */
+ #quran-global-player.is-expanded:has(.quran-player-extras fieldset:not([hidden]),.quran-playlist-queue[open]:not([hidden])){height:auto;min-height:100dvh;grid-template-rows:44px auto 48px 68px 44px auto auto auto}
+ #quran-global-player.is-expanded:has(.quran-player-extras fieldset:not([hidden]),.quran-playlist-queue[open]:not([hidden])) .quran-now-playing{grid-template-rows:auto auto auto auto}
+ #quran-global-player.is-expanded:has(.quran-player-extras fieldset:not([hidden]),.quran-playlist-queue[open]:not([hidden])) .quran-playing-portrait{height:clamp(100px,20dvh,175px)}
+}
