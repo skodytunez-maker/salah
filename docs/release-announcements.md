@@ -2,7 +2,7 @@
 
 ## Version487 — iPhone player swipe and one playback control (13 November2026)
 
-Native one-finger touch handling survives Safari pointer cancellation, ignores sliders and scrolled settings, and uses final touch-end coordinates. Header/portrait or empty player surface may dismiss downward from the top; upward portrait movement can scroll. Reset window scroll on opening. The heading is a div, avoiding the Quran-focus rule that hides all page header elements. Add a subtle grip. Remove the separate Stop button as requested, retaining the single play/pause control and remote/system Stop behavior. Preserve public announcement486, expiry and acknowledgment; no new news for this fix. No server changes. Actual iPhone gesture QA remains pending.
+Native one-finger touch handling survives Safari pointer cancellation, ignores sliders and scrolled settings, and uses final touch-end coordinates. Header/portrait or empty player surface may dismiss downward from the top; upward portrait movement can scroll. Reset window scroll on opening. The heading is a div, avoiding the Quran-focus rule that hides all page header elements. Add a subtle grip. Remove the separate Stop button as requested, retaining the single play/pause control and remote/system Stop behavior. Remove the explicit bottom open-surah link at the user’s request; Quran navigation elsewhere stays intact. Preserve public announcement486, expiry and acknowledgment; no new news for this fix. No server changes. Actual iPhone gesture QA remains pending.
 
 ## Version486 — full player window (13 November2026)
 
