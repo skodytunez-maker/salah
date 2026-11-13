@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version492 — player heading clearance (13 November2026)
+
+Move only the expanded portrait-phone heading down by up to24px of the existing top safe inset, clear of the installed iPhone system blur. Relative positioning retains the approved portrait, title, gold reader picker, timeline and controls in their existing grid positions; landscape and desktop remain unchanged. Preserve announcement486, acknowledgment and expiry. No separate public news, backend changes, scenic art or replacement nature recordings. Confirm the native top-edge result on a real iPhone after release.
+
 ## Version491 — seven-day new-reciter discovery (13 November2026)
 
 Use the original first-publication timestamp for one consistent seven-day promotion and New filter. Do not reset dates on updates. Hide the New link completely when empty and let All/Favorites/Ruqyah fill its space. An expired New view or bookmarked link falls back to the complete All catalog, without removing readers or saved favorites. Existing minute/visibility refresh updates the view; a future batch restores the New link without switching an existing All view. Preserve announcement486 and acknowledgment/expiry; no separate news or server changes.
