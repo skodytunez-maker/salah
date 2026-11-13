@@ -40,7 +40,7 @@ const context=vm.createContext({console,URLSearchParams,AbortController,Set,Map,
  shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration,radioQuizQuestions,initialRadioQuiz,stepRadioQuiz,
  setInterval:fn=>{timers.add(fn);return fn;},clearInterval:fn=>timers.delete(fn)});
 vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context);
-await context.showRadioPreview(host);assert.ok(host.querySelector('a[href="#admin"]'));assert.equal(loads,0);assert.equal(host.querySelector('.radio-preview'),null);
+await context.showRadioPreview(host);assert.ok(host.querySelector('a[href="#staff"]'));assert.equal(loads,0);assert.equal(host.querySelector('.radio-preview'),null);
 owner=true;await context.showRadioPreview(host);assert.ok(host.querySelector('.radio-preview'));assert.equal(played,0);assert.doesNotMatch(host.textContent,/макет|предпросмотр|закрытый просмотр/i);
 const stableHeader=host.querySelector('.radio-header'),stableTabs=[...host.querySelectorAll('[data-radio-tab]')];
 host.querySelector('[data-radio-tab="program"]').click();
@@ -71,4 +71,4 @@ await context.showRadioPreview(host,{verify:async()=>{throw Error('offline');}})
 context.stopRadioPreview();win.happyDOM.abort();
 const app=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8'),auth=await fs.readFile(new URL('../dist/js/owner-auth.js',import.meta.url),'utf8');
 assert.ok(app.includes("else if(currentRoute==='radio')"));assert.ok(auth.includes("'#radio'"));assert.ok(app.includes("if(currentRoute!=='radio')stopRadioPreview()"));
-console.log('PASS: owner-only radio gates and revocation; stable tab/header/pane identity, retained reciter/quiz state, keyboard navigation, visible busy state, one scan, tab changes during work, cancellation/retry, measured programme and audition.');
+console.log('PASS: verified team radio gates and revocation; stable tab/header/pane identity, retained reciter/quiz state, keyboard navigation, visible busy state, one scan, tab changes during work, cancellation/retry, measured programme and audition.');

@@ -1,6 +1,6 @@
 import{mountLearningCabinetLink}from './learning-cabinet-link.js';
 import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview,preloadOwnerLearning}from './owner-learning-frame.js';
-import{ownerVerified}from './owner-auth.js';
+import{teamPreviewVerified as ownerVerified}from './team-preview-access.js';
 import{ownerLearningPreview}from './owner-learning-links.js';
 import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{showArabicAlphabet}from './arabic-alphabet.js';
@@ -42,7 +42,7 @@ const entries = [
 export function showKnowledge(container, { onStart,hash=globalThis.location?.hash||'',ownerAccess=ownerVerified(),learningUserId=null,mountCabinetLink=mountLearningCabinetLink } = {}) {
   const routeParams=new URLSearchParams(hash.split('?')[1]||'');
   const featureView=routeParams.get('view');
-  const preview=routeParams.get('preview')||(['online-lessons','muallim','live-stream'].includes(featureView)?featureView:null);
+  const preview=routeParams.get('preview')||(['online-lessons','muallim','live-stream','teacher-preview'].includes(featureView)?featureView:null);
   if(preview&&(ownerAccess||canContinueOwnerPreview())&&mountOwnerLearningPreview(container,preview))return;
   stopOwnerLearningPreview();
   if(ownerAccess)preloadOwnerLearning();
@@ -76,7 +76,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
         <p>${entry.description}</p>
         <span class="knowledge-action">${entry.action}${actionIcon('next')}</span>
       </a>`).join('')}
-      ${ownerAccess?'':'<h2 class="knowledge-coming-title">Скоро в SALAH</h2>'}
+      ${ownerAccess?'<a class="knowledge-card knowledge-owner-preview" href="#knowledge?view=teacher-preview"><div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-knowledge-online"></span></span><span class="knowledge-detail">Учебный пример</span></div><h2>Кабинет преподавателя</h2><p>Расписание, учебная группа, задания и пример обратной связи.</p><span class="knowledge-action">Познакомиться с кабинетом'+actionIcon('next')+'</span></a>':'<h2 class="knowledge-coming-title">Скоро в SALAH</h2>'}
       ${UPCOMING_KNOWLEDGE.map(entry => {const route=ownerLearningPreview(entry.id,ownerAccess);return route?`<a class="knowledge-card knowledge-owner-preview" data-upcoming="${entry.id}" href="${route.href}" aria-labelledby="upcoming-${entry.id}">
         <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">${route.detail}</span></div>
         <h2 id="upcoming-${entry.id}">${entry.title}</h2><p>${entry.description}</p>

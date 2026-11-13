@@ -1,7 +1,7 @@
-import{ownerVerified,verifiedOwnerId,ownerPreviewAccessToken,verifyOwner,onOwnerChange}from './owner-auth.js';
+import{teamPreviewVerified as ownerVerified,verifiedTeamPreviewId as verifiedOwnerId,teamPreviewAccessToken as ownerPreviewAccessToken,verifyTeamPreviewAccess as verifyOwner,onTeamPreviewChange as onOwnerChange}from './team-preview-access.js';
 import{showNativeMuallim}from './muallim-native.js';
 import{createOwnerCourseCache,validNativeCurriculum}from './owner-course-cache.js';
-const endpoint='https://desktop-jecm5lt.taila4556d.ts.net/api/muallim-course';
+const endpoint='https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/team-course';
 let active=null,cached=null,pending=null,generation=0;
 const courseCache=createOwnerCourseCache({ownerId:verifiedOwnerId});
 function hydrateCourse(){if(!cached&&ownerVerified())cached=courseCache.read();}
@@ -31,6 +31,6 @@ export function mountOwnerNativePreview(host,feature,{hash=location.hash}={}){
  if(feature==='muallim')hydrateCourse();
  if(ownerVerified()&&(feature==='live-stream'||cached)){draw(cached);return true;}
  root.innerHTML='<section class="alphabet-page native-course"><a class="alphabet-back" href="#knowledge">← Знания</a><h1>'+(feature==='muallim'?'Муаллим Сани':'Прямой эфир')+'</h1><p role="status">Открываем раздел…</p></section>';
- void(async()=>{try{await auth();draw(feature==='muallim'?await curriculum():null);}catch{if(active!==state||state.disposed)return;root.innerHTML='<section class="alphabet-page native-course"><a class="alphabet-back" href="#knowledge">← Знания</a><h1>Раздел пока недоступен</h1><p role="alert">Проверьте подключение и вход владельца.</p><button class="button secondary" type="button">Повторить</button></section>';root.querySelector('button').onclick=()=>{if(active===state){stopOwnerNativePreview();mountOwnerNativePreview(host,feature,{hash});}};}})();return true;
+ void(async()=>{try{await auth();draw(feature==='muallim'?await curriculum():null);}catch{if(active!==state||state.disposed)return;root.innerHTML='<section class="alphabet-page native-course"><a class="alphabet-back" href="#knowledge">← Знания</a><h1>Раздел пока недоступен</h1><p role="alert">Проверьте подключение и защищённый вход команды.</p><button class="button secondary" type="button">Повторить</button></section>';root.querySelector('button').onclick=()=>{if(active===state){stopOwnerNativePreview();mountOwnerNativePreview(host,feature,{hash});}};}})();return true;
 }
 onOwnerChange(()=>{if(!ownerVerified())stopOwnerNativePreview({clearCache:true});});

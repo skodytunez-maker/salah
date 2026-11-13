@@ -31,7 +31,8 @@ for(const img of host.querySelectorAll('.release-feature img'))await fs.access(n
 assert.ok(APP_VERSION>=395);
 // Verified owner access reveals only navigation to the private checks.
 showKnowledge(host,{hash:'#knowledge',ownerAccess:true});
-assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,3);
+assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,4);
+assert.ok(host.querySelector('a[href="#knowledge?view=teacher-preview"]'));
 assert.equal(host.querySelectorAll('.knowledge-coming-button').length,0);
 for(const link of host.querySelectorAll('.knowledge-owner-preview')){
  assert.equal(new URL(link.href).origin,'https://example.invalid');assert.ok(link.hash.startsWith('#knowledge?view='));
@@ -42,7 +43,7 @@ for(const link of host.querySelectorAll('.knowledge-owner-preview')){
 }
 assert.equal(host.querySelector('[data-upcoming="live-stream"] .knowledge-action').textContent.trim(),'Перейти к эфиру');
 assert.equal(host.querySelector('.knowledge-coming-title'),null,'Owner features are regular Knowledge cards, not Soon announcements');
-assert.deepEqual([...host.querySelectorAll('.knowledge-owner-preview')].map(link=>link.hash),['#knowledge?view=online-lessons','#knowledge?view=muallim','#knowledge?view=live-stream']);
+assert.deepEqual([...host.querySelectorAll('.knowledge-owner-preview')].map(link=>link.hash),['#knowledge?view=teacher-preview','#knowledge?view=online-lessons','#knowledge?view=muallim','#knowledge?view=live-stream']);
 showKnowledge(host,{hash:'#knowledge',ownerAccess:false});
 assert.equal(host.querySelectorAll('.knowledge-owner-preview').length,0);
 assert.equal(host.querySelectorAll('.knowledge-coming-button:disabled').length,3);
