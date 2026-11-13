@@ -1,10 +1,12 @@
 import{checkAccountSession,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 const eligible=actor=>actor&&actor.mfaRequired===false&&((actor.owner===true&&actor.role==='owner')||(actor.owner===false&&actor.role==='admin'));
 export async function requestTeamPreviewActor(token,{signal,fetcher=globalThis.fetch}={}){
- const response=await fetcher(OWNER_PROJECT_URL+'/functions/v1/staff-cabinet',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({action:'gate',args:{}}),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',redirect:'error',signal:signal||AbortSignal.timeout(10000)});
+ const controller=new AbortController(),abort=()=>controller.abort(),timer=setTimeout(abort,10000);if(signal?.aborted)abort();else signal?.addEventListener('abort',abort,{once:true});
+ try{const response=await fetcher(OWNER_PROJECT_URL+'/functions/v1/staff-cabinet',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({action:'gate',args:{}}),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',redirect:'error',signal:controller.signal});
  if([401,403].includes(response.status))return null;
  if(!response.ok)throw Error('Не удалось проверить доступ команды.');
  const result=await response.json();return result.data;
+ }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
 }
 export function createTeamPreviewAccess({checkSession=checkAccountSession,requestActor=requestTeamPreviewActor,now=Date.now,ttl=60000}={}){
  let actor=null,token=null,at=0,revision=0,pending=null;
@@ -28,7 +30,7 @@ export function createTeamPreviewAccess({checkSession=checkAccountSession,reques
     const changed=!verified()||actor?.id!==value.id||actor?.role!==value.role;
     actor=Object.freeze({id:value.id,owner:value.owner,role:value.role});token=session.access_token;at=now();
     if(changed)emit();return true;
-   }catch(error){const cancelled=controller.signal.aborted;if(ticket===revision)clear();if(cancelled)return false;throw error;}
+   }catch(error){const cancelled=controller.signal.aborted;if(ticket===revision&&pending===entry)clear();if(cancelled)return false;throw error;}
    finally{if(pending===entry)pending=null;}
   })();pending=entry;return entry.task;
  }
