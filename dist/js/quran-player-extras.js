@@ -13,6 +13,6 @@ export function mountQuranPlayerExtras(panel,{playback,ruqyah,createNature=creat
  volume.oninput=()=>void nature.setVolume(Number(volume.value));volume.onchange=()=>{write('quran-nature-volume',Number(volume.value));};
  const gesture=event=>{if(event.isTrusted&&nature.state.kind&&event.target.closest('[data-toggle]'))void nature.unlock();},resume=()=>{playback.checkSleepTimer();if(!doc.hidden&&nature.state.kind&&playback.state.status==='playing')void nature.unlock();};
  panel.addEventListener('pointerdown',gesture,{capture:true,passive:true});doc.addEventListener('visibilitychange',resume);win.addEventListener('pageshow',resume);win.addEventListener('focus',resume);
- const off=playback.subscribe(sync),offRuqyah=ruqyah.subscribe(sync);
- return()=>{disposed=true;off();offRuqyah();offNature();nature.destroy();panel.removeEventListener('pointerdown',gesture,true);doc.removeEventListener('visibilitychange',resume);win.removeEventListener('pageshow',resume);win.removeEventListener('focus',resume);root.remove();};
+ const off=playback.subscribe(sync),offRuqyah=ruqyah.subscribe(sync),offTimer=playback.subscribeSleepTimer?.(drawTimer)||(()=>{});
+ return()=>{disposed=true;off();offRuqyah();offTimer();offNature();nature.destroy();panel.removeEventListener('pointerdown',gesture,true);doc.removeEventListener('visibilitychange',resume);win.removeEventListener('pageshow',resume);win.removeEventListener('focus',resume);root.remove();};
 }
