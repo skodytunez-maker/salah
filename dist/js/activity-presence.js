@@ -18,7 +18,7 @@ export function initActivityPresence({playback}={}){
   const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/listening-now',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,...(!person.guest?{Authorization:'Bearer '+person.token}:{}),'Content-Type':'application/json'},body:JSON.stringify(body),signal:options.signal,keepalive:options.keepalive,credentials:'omit',referrerPolicy:'no-referrer'});
   if(!response.ok)throw Error('unavailable');
  };
- const reporter=createActivityReporter({getIdentity:identity,getView:()=>activityView(document,location),
+ const reporter=createActivityReporter({getIdentity:identity,getView:()=>activityView(document,location,playback?.state),
  eligible:()=>{if(!personalDataAllowed()||navigator.onLine===false)return false;const person=identity();if(person?.guest)return true;const own=competitionOwn();return popularityEnabled()&&own?.enabled===true&&['initial','profile'].includes(own.mode);},send});
  const sample=()=>{const person=identity(),device=person?.guest?person.device:null;
   if(device!==guestDevice){guestListener?.dispose();guestListener=null;guestDevice=device;
@@ -33,6 +33,8 @@ export function initActivityPresence({playback}={}){
  document.addEventListener('visibilitychange',sample);
  window.addEventListener('pagehide',()=>{reporter.stop();guestListener?.stop({keepalive:true});});
  playback?.subscribe(sample);
- new MutationObserver(sample).observe(document.getElementById('app'),{childList:true,subtree:true});
+ const observer=new MutationObserver(sample);observer.observe(document.getElementById('app'),{childList:true,subtree:true});
+ // The player lives outside #app. Its native dialog may cover the still-mounted text.
+ for(const dialog of document.querySelectorAll('dialog'))observer.observe(dialog,{attributes:true,attributeFilter:['open']});
  setInterval(sample,15000);sample();
 }

@@ -19,9 +19,9 @@ export function createActivityReporter({getIdentity,getView,eligible,send,now=Da
  }
  return{sample,stop(){lastDhikr=-Infinity;for(const kind of ['reading','dhikr'])post(kind,false);},counted(account){sample();if(account!==identity?.id)return;lastDhikr=now();sample();},dispose(){if(disposed)return;for(const kind of ['reading','dhikr'])post(kind,false);disposed=true;}};
 }
-export function activityView(doc,location){
- const visible=!doc.hidden,route=location.hash.split('?')[0];
- return{visible,reading:visible&&route==='#quran'&&!!doc.querySelector('.quran-reader .quran-verse,.mushaf-print-page'),
+export function activityView(doc,location,playback=null){
+ const visible=!doc.hidden,route=location.hash.split('?')[0],listening=['playing','loading'].includes(playback?.status),covered=!!doc.querySelector('dialog[open]');
+ return{visible,reading:visible&&!listening&&!covered&&route==='#quran'&&!!doc.querySelector('.quran-reader .quran-verse,.mushaf-print-page'),
  dhikr:visible&&route==='#adhkar'&&!!doc.querySelector('.adhkar-shell')};
 }
 
