@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Version493 — selected nature recordings and matching scenes (13 November2026)
+
+Five owner-selected real recordings replace synthesized textures: second rain, cabin fireplace (named Камин), Scottish forest, gentle beach waves and mountain-foliage wind. Each has its own full-player scene and clear palette; the approved rain landscape is retained. Keep original reciter portraits, approved grid, gold reader selector, timer and output buttons. Stereo48k MP3 loops use a two-second crossfade and a32-second repeated region, with independent0–100% mix, lazy decoding and a two-buffer cache. Default is off; downloads completed after pause, switch or dispose cannot start old audio. No Quran media routing, accounting or backend changes. Announcement493 contains only this feature, with actual scene pictures in the shared alternating motion preview, reduced-motion and acknowledgment behavior retained. Verify final sound blend/background behavior on a real iPhone after release.
+
 ## Version492 — player heading clearance (13 November2026)
 
 Move only the expanded tall portrait-phone heading down by up to24px of the existing top safe inset, clear of the installed iPhone system blur. Relative positioning retains the approved portrait, title, gold reader picker, timeline and controls in their existing grid positions; compact phones, landscape and desktop remain unchanged. Preserve announcement486, acknowledgment and expiry. No separate public news, backend changes, scenic art or replacement nature recordings. Confirm the native top-edge result on a real iPhone after release.

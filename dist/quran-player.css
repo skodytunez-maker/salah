@@ -273,3 +273,14 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
 @media(max-width:600px) and (min-height:740px) and (orientation:portrait){
  #quran-global-player.is-expanded .quran-player-heading{top:min(24px,var(--salah-safe-top,env(safe-area-inset-top,0px)))}
 }
+
+/* Selected nature scenes affect the backdrop only; the approved player grid stays put. */
+#quran-global-player.is-expanded[data-nature]{background-image:linear-gradient(180deg,#0008 0%,#0003 35%,#0006 54%,#000b 78%,#000d 100%),var(--quran-nature-art);background-size:cover;background-position:center;background-repeat:no-repeat}
+#quran-global-player.is-expanded[data-nature="rain"]{--quran-nature-art:url('./assets/player-nature-493/rain.jpg')}
+#quran-global-player.is-expanded[data-nature="wind"]{--quran-nature-art:url('./assets/player-nature-493/wind.jpg')}
+#quran-global-player.is-expanded[data-nature="fire"]{--quran-nature-art:url('./assets/player-nature-493/fire.jpg');background-position:70% center}
+#quran-global-player.is-expanded[data-nature="forest"]{--quran-nature-art:url('./assets/player-nature-493/forest.jpg')}
+#quran-global-player.is-expanded[data-nature="ocean"]{--quran-nature-art:url('./assets/player-nature-493/ocean.jpg')}
+#quran-global-player.is-expanded [data-nature-label]{display:block;justify-self:end;max-width:78px;padding:5px 8px;border:1px solid #ead6ab66;border-radius:999px;background:#0005;font:11px/1.2 Georgia,'Times New Roman',serif;white-space:nowrap;color:#f4f0e5}
+#quran-global-player.is-expanded [data-nature-label][hidden]{display:none}
+#quran-global-player.is-expanded[data-nature] .quran-player-heading>span,#quran-global-player.is-expanded[data-nature] .quran-playing-reader,#quran-global-player.is-expanded[data-nature]>.quran-playing-status,#quran-global-player.is-expanded[data-nature] .quran-player-progress{text-shadow:0 1px 6px #0009}

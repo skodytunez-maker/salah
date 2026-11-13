@@ -1,51 +1,73 @@
-export const NATURE_SOUNDS=Object.freeze([{id:'rain',name:'Дождь'},{id:'wind',name:'Ветер'},{id:'fire',name:'Костёр'},{id:'forest',name:'Лес'},{id:'ocean',name:'Океан'}]);
+import{NATURE_SOUNDS,natureRecording,loadNatureRecording}from './quran-nature-recordings.js';
+export{NATURE_SOUNDS};
 export const NATURE_MAX_VOLUME=100;
 export const NATURE_DEFAULT_VOLUME=25;
-const valid=kind=>NATURE_SOUNDS.some(sound=>sound.id===kind);
-// Locally generated sound textures: no downloads, songs or outside recordings.
-export function natureSamples(kind,{sampleRate=16000,seconds=24,random=Math.random}={}){
- if(!valid(kind))throw Error('Unknown nature sound');
- const data=new Float32Array(Math.ceil(sampleRate*seconds));let brown=0,pink=0,crackle=0;
- for(let i=0;i<data.length;i++){
-  const t=i/sampleRate,white=random()*2-1;brown=(brown+.025*white)/1.025;pink=.93*pink+.07*white;
-  let value=0;
-  if(kind==='rain')value=white*.23+pink*.52+brown*.7;
-  if(kind==='wind')value=(brown*3+pink*.12)*(.55+.22*Math.sin(t*.63)+.14*Math.sin(t*1.43));
-  if(kind==='ocean')value=(brown*2.3+pink*.6+white*.07)*(.35+.65*((1-Math.cos(t*Math.PI/4))/2)**1.8);
-  if(kind==='fire'){if(random()<.001)crackle=(random()*.5+.1);crackle*=.94;value=brown*1.2+pink*.14+white*crackle;}
-  if(kind==='forest'){
-   value=brown*.9+pink*.18;const phase=t%7.7;
-   if(phase>1.1&&phase<1.36){const p=(phase-1.1)/.26,envelope=Math.sin(Math.PI*p)**2;value+=Math.sin(2*Math.PI*(2300*(phase-1.1)+1900*(phase-1.1)**2))*envelope*.08;}
-  }
-  data[i]=value;
- }
- // Match texture levels before the user-controlled mix. Peak-only scaling
- // left wind/forest nearly inaudible beside mastered Quran recordings.
- let power=0,mean=0;for(const value of data)mean+=value;mean/=data.length;
- for(const value of data)power+=(value-mean)**2;
- const scale=Math.min(12,.14/Math.max(.00001,Math.sqrt(power/data.length)));
- for(let i=0;i<data.length;i++)data[i]=.8*Math.tanh((data[i]-mean)*scale/.8);
- const seam=Math.min(512,Math.floor(data.length/8));
- for(let i=0;i<seam;i++){const mix=i/(seam-1),end=data.length-seam+i;data[end]=data[end]*(1-mix)+data[i]*mix;}
- return{data,sampleRate,loopStart:seam/sampleRate};
-}
-export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,schedule=setTimeout,cancel=clearTimeout,generate=natureSamples,volume=NATURE_DEFAULT_VOLUME}={}){
- let context=null,source=null,gain=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,stopJob=null,selfSuspended=false,error=false;
- volume=Number.isInteger(volume)?Math.max(0,Math.min(NATURE_MAX_VOLUME,volume)):NATURE_DEFAULT_VOLUME;
- const listeners=new Set(),state=()=>({kind,volume,supported:typeof AudioContext==='function',playing:!!(kind&&wanted&&armed&&volume>0&&context?.state==='running'),error,systemPaused:!!(kind&&wanted&&armed&&context&&context.state!=='running'&&!selfSuspended)});
+export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,schedule=setTimeout,cancel=clearTimeout,load=loadNatureRecording,AbortController=globalThis.AbortController,volume=NATURE_DEFAULT_VOLUME}={}){
+ let context=null,gain=null,active=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,stopJob=null,selfSuspended=false,error=false,loading=false,job=null;
+ volume=Number.isInteger(volume)?Math.max(0,Math.min(100,volume)):25;
+ const listeners=new Set(),cache=new Map(),retiring=new Set();
+ const state=()=>({kind,volume,supported:typeof AudioContext==='function',loading,playing:!!(kind&&wanted&&armed&&volume>0&&active?.kind===kind&&context?.state==='running'),error,systemPaused:!!(kind&&wanted&&armed&&context&&context.state!=='running'&&!selfSuspended)});
  const emit=()=>{const s=state();for(const fn of listeners)try{fn(s);}catch{}};
- function stopSource(){try{source?.stop();source?.disconnect();}catch{}source=null;}
- function graph(){if(context&&context.state!=='closed')return;context=new AudioContext({latencyHint:'playback'});gain=context.createGain();gain.gain.value=0;gain.connect(context.destination);context.onstatechange=emit;}
- function makeSource(){stopSource();if(!kind||!context)return;const samples=generate(kind),buffer=context.createBuffer(1,samples.data.length,samples.sampleRate);buffer.getChannelData(0).set(samples.data);source=context.createBufferSource();source.buffer=buffer;source.loop=true;source.loopStart=samples.loopStart;source.loopEnd=buffer.duration;source.connect(gain);source.start(0,samples.loopStart);}
- function level(value,seconds=.15){if(!gain||!context)return;const p=gain.gain,t=context.currentTime;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else{p.cancelScheduledValues(t);p.setValueAtTime(p.value,t);}p.linearRampToValueAtTime(value,t+seconds);}
- async function sync(value=wanted){
-  if(disposed)return;wanted=!!value;const ticket=++revision;if(stopJob!==null)cancel(stopJob);stopJob=null;
-  if(kind&&wanted&&volume>0&&!armed&&!error&&typeof AudioContext==='function'){await unlock();return;}
-  if(!context||!armed||!kind){emit();return;}
-  if(!wanted||!volume){level(0,.1);emit();stopJob=schedule(()=>{stopJob=null;if(disposed||ticket!==revision)return;selfSuspended=true;void context.suspend().catch(()=>{});},140);return;}
-  try{if(context.state==='suspended'&&selfSuspended){selfSuspended=false;await context.resume();}if(disposed||ticket!==revision)return;if(context.state==='running'){level(volume/100);error=false;}emit();}catch{error=true;level(0,0);emit();}
+ function clearStop(){if(stopJob!==null)cancel(stopJob);stopJob=null;}
+ function ramp(param,value,seconds){const t=context.currentTime;if(param.cancelAndHoldAtTime)param.cancelAndHoldAtTime(t);else{param.cancelScheduledValues(t);param.setValueAtTime(param.value,t);}param.linearRampToValueAtTime(value,t+seconds);}
+ function level(value,seconds=.15){if(gain&&context)ramp(gain.gain,value,seconds);}
+ function disconnect(entry){try{entry.node.disconnect();entry.envelope.disconnect();}catch{}retiring.delete(entry);}
+ function stopSource(immediate=false){
+  const entry=active;active=null;if(!entry)return;
+  retiring.add(entry);entry.node.onended=()=>disconnect(entry);
+  try{if(immediate){entry.node.stop();disconnect(entry);}else{ramp(entry.envelope.gain,0,.08);entry.node.stop(context.currentTime+.1);}}catch{disconnect(entry);}
  }
- async function unlock(){if(disposed||!kind||typeof AudioContext!=='function'){emit();return;}const chosen=kind;try{graph();const resumed=context.resume();await resumed;if(disposed||kind!==chosen)return;armed=true;selfSuspended=false;error=false;if(!source)makeSource();await sync();}catch{if(!disposed&&kind===chosen){error=true;emit();}}}
- async function select(value){if(value!==null&&!valid(value))return false;kind=value;revision++;if(stopJob!==null)cancel(stopJob);stopJob=null;if(!kind){level(0,.08);stopSource();armed=false;if(context){selfSuspended=true;void context.suspend().catch(()=>{});}emit();return true;}error=false;try{if(context&&armed)makeSource();if(wanted)await unlock();else emit();}catch{error=true;emit();}return true;}
- return{select,unlock,sync,get state(){return state();},setVolume(value){if(!Number.isInteger(value)||value<0||value>NATURE_MAX_VOLUME)return;volume=value;return sync();},subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){disposed=true;revision++;if(stopJob!==null)cancel(stopJob);stopSource();listeners.clear();if(context){context.onstatechange=null;void context.close().catch(()=>{});}context=null;}};
+ function graph(){if(context&&context.state!=='closed')return;context=new AudioContext({latencyHint:'playback'});gain=context.createGain();gain.gain.value=0;gain.connect(context.destination);context.onstatechange=emit;}
+ function abortLoad(){if(job){job.controller?.abort();job=null;}loading=false;}
+ async function bufferFor(chosen){
+  if(cache.has(chosen)){const buffer=cache.get(chosen);cache.delete(chosen);cache.set(chosen,buffer);return buffer;}
+  if(job?.kind===chosen)return job.promise;
+  abortLoad();const task={kind:chosen,controller:typeof AbortController==='function'?new AbortController():null};
+  loading=true;job=task;emit();
+  task.promise=Promise.resolve().then(()=>load(chosen,context,{signal:task.controller?.signal})).then(buffer=>{
+   if(disposed||task.controller?.signal.aborted)throw Error('Cancelled nature load');
+   if(kind===chosen){cache.set(chosen,buffer);while(cache.size>2)cache.delete(cache.keys().next().value);}
+   return buffer;
+  }).finally(()=>{if(job===task){job=null;loading=false;emit();}});
+  return task.promise;
+ }
+ function makeSource(chosen,buffer){
+  stopSource();const entry=natureRecording(chosen),node=context.createBufferSource(),envelope=context.createGain();
+  envelope.gain.value=0;envelope.connect(gain);node.buffer=buffer;node.loop=true;node.loopStart=entry.loopStart;node.loopEnd=Math.min(entry.loopEnd,buffer.duration);node.connect(envelope);
+  active={kind:chosen,node,envelope};node.start(0,entry.loopStart);ramp(envelope.gain,1,.12);
+ }
+ function quiet(ticket){
+  level(0,.1);emit();if(!context)return;
+  stopJob=schedule(()=>{stopJob=null;if(disposed||ticket!==revision)return;selfSuspended=true;void context.suspend().catch(()=>{});},140);
+ }
+ async function sync(value=wanted){
+  if(disposed)return;wanted=!!value;const ticket=++revision;clearStop();
+  if(!kind||!wanted||!volume){if(context&&armed)quiet(ticket);else emit();return;}
+  if(error){emit();return;}
+  if(!armed){if(!error&&typeof AudioContext==='function')await unlock();else emit();return;}
+  try{
+   if(context.state==='suspended'&&selfSuspended){selfSuspended=false;await context.resume();}
+   if(disposed||ticket!==revision)return;
+   if(context.state!=='running'){emit();return;}
+   const chosen=kind,buffer=active?.kind===chosen?null:await bufferFor(chosen);
+   if(disposed||ticket!==revision||kind!==chosen||!wanted||!volume)return;
+   if(active?.kind!==chosen)makeSource(chosen,buffer);
+   level(volume/100);error=false;emit();
+  }catch{if(!disposed&&ticket===revision){error=true;loading=false;level(0,0);emit();}}
+ }
+ async function unlock(){
+  if(disposed||!kind||typeof AudioContext!=='function'){emit();return;}
+  const chosen=kind;
+  try{graph();const resumed=context.resume();await resumed;if(disposed||kind!==chosen)return;armed=true;selfSuspended=false;error=false;await sync();}
+  catch{if(!disposed&&kind===chosen){error=true;emit();}}
+ }
+ async function select(value){
+  if(value!==null&&!natureRecording(value))return false;
+  kind=value;revision++;clearStop();abortLoad();stopSource();error=false;
+  if(!kind){const ticket=revision;quiet(ticket);armed=false;return true;}
+  emit();if(wanted&&volume>0)await unlock();return true;
+ }
+ return{select,unlock,sync,get state(){return state();},setVolume(value){if(!Number.isInteger(value)||value<0||value>100)return;volume=value;return sync();},subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){
+  disposed=true;revision++;clearStop();abortLoad();stopSource(true);for(const entry of [...retiring]){try{entry.node.stop();}catch{}disconnect(entry);}cache.clear();listeners.clear();if(context){context.onstatechange=null;void context.close().catch(()=>{});}context=null;
+ }};
 }
