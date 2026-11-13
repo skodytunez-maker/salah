@@ -2,7 +2,7 @@
 
 ## Version492 — player heading clearance (13 November2026)
 
-Move only the expanded portrait-phone heading down by up to24px of the existing top safe inset, clear of the installed iPhone system blur. Relative positioning retains the approved portrait, title, gold reader picker, timeline and controls in their existing grid positions; landscape and desktop remain unchanged. Preserve announcement486, acknowledgment and expiry. No separate public news, backend changes, scenic art or replacement nature recordings. Confirm the native top-edge result on a real iPhone after release.
+Move only the expanded tall portrait-phone heading down by up to24px of the existing top safe inset, clear of the installed iPhone system blur. Relative positioning retains the approved portrait, title, gold reader picker, timeline and controls in their existing grid positions; compact phones, landscape and desktop remain unchanged. Preserve announcement486, acknowledgment and expiry. No separate public news, backend changes, scenic art or replacement nature recordings. Confirm the native top-edge result on a real iPhone after release.
 
 ## Version491 — seven-day new-reciter discovery (13 November2026)
 
