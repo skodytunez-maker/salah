@@ -267,3 +267,9 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
  #quran-global-player.is-expanded:has(.quran-player-extras fieldset:not([hidden]),.quran-playlist-queue[open]:not([hidden])){grid-template-rows:44px auto 36px auto 48px 68px auto auto auto}
  #quran-global-player.is-expanded:has(.quran-player-extras fieldset:not([hidden]),.quran-playlist-queue[open]:not([hidden])) .quran-now-playing{grid-template-rows:auto auto}
 }
+
+/* Keep only the player heading clear of the installed iPhone top-edge haze.
+   Relative positioning preserves the approved portrait, timeline and controls. */
+@media(max-width:600px) and (min-height:740px) and (orientation:portrait){
+ #quran-global-player.is-expanded .quran-player-heading{top:min(24px,var(--salah-safe-top,env(safe-area-inset-top,0px)))}
+}
