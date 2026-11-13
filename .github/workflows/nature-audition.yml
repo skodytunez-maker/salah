@@ -1,0 +1,31 @@
+name: Prepare nature audio auditions
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/nature-audition.yml'
+      - 'review/nature-audition/**'
+permissions:
+  contents: read
+jobs:
+  audition:
+    name: audition-${{ matrix.sound }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        sound: [rain_forest, rain_soft, fire]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure audio converter
+        run: command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg)
+      - name: Prepare review sample
+        run: python3 review/nature-audition/prepare.py '${{ matrix.sound }}' '${{ runner.temp }}/nature-audition/${{ matrix.sound }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nature-audition-${{ matrix.sound }}
+          path: ${{ runner.temp }}/nature-audition/${{ matrix.sound }}/review/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Export audition for chat playback
+        run: python3 review/nature-audition/prepare.py '${{ matrix.sound }}' '${{ runner.temp }}/nature-audition/${{ matrix.sound }}' --emit
