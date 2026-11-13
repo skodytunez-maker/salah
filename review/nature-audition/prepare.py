@@ -33,6 +33,28 @@ SOURCES = {
         "url": "https://cdn.freesound.org/previews/448/448361_4844765-hq.mp3",
         "source_type": "public MP3 preview of a small beach bonfire, not the original WAV",
     },
+    "wind": {
+        "title": "Gentle wind",
+        "author": "fthgurdy",
+        "page": "https://freesound.org/people/fthgurdy/sounds/528944/",
+        "url": "https://cdn.freesound.org/previews/528/528944_3302313-hq.mp3",
+        "source_type": "public MP3 preview of a very gentle countryside wind recording, not the original WAV",
+        "seconds": 8
+    },
+    "forest": {
+        "title": "Nord Odal quiet forest, birds, insects and leaf rustle",
+        "author": "nfsgit",
+        "page": "https://freesound.org/people/nfsgit/sounds/121967/",
+        "url": "https://cdn.freesound.org/previews/121/121967_78482-hq.mp3",
+        "source_type": "public MP3 preview of a quiet forest field recording with birds and insects, not the original WAV"
+    },
+    "ocean": {
+        "title": "sea_waves_soft_shenzhen_2020-05-30_iXY.wav",
+        "author": "Archos",
+        "page": "https://freesound.org/people/Archos/sounds/521602/",
+        "url": "https://cdn.freesound.org/previews/521/521602_652422-hq.mp3",
+        "source_type": "public MP3 preview of calm South China Sea waves recorded with Rode iXY, not the original WAV"
+    },
 }
 SECONDS = 16
 HOSTS = {"cdn.freesound.org", "upload.wikimedia.org"}
@@ -95,7 +117,7 @@ def choose_excerpt(path, kind, duration):
         if rms > 1e-6:
             peaks = max(abs(v) for v in window)
             candidates.append((peaks / rms, second))
-    return min(candidates)[1], "lower-crest-factor fire excerpt; voices and pop harshness require listening"
+    return min(candidates)[1], "lower-crest-factor nature excerpt; voices, species and transient harshness require listening"
 
 
 def download(source, target):
@@ -166,7 +188,7 @@ def prepare(kind, folder):
         "loop_approved": False, "blend_with_Quran_approved": False,
     }
     (output / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    (output / "CREDITS.md").write_text(f"# Nature audition only\n\n{source['title']} — {source['author']}\n\nSource: {source['page']}\n\nCC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/\n\n16-second excerpt, optional peak softening, linear gain and fades. MP3 previews remain identified as previews; encoding a WAV does not recover an unavailable original. No Quran recording is redistributed or transformed. No production app files are changed. Listening and eventual loop/mix approval remain pending.\n", encoding="utf-8")
+    (output / "CREDITS.md").write_text(f"# Nature audition only\n\n{source['title']} — {source['author']}\n\nSource: {source['page']}\n\nCC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/\n\n{SECONDS}-second excerpt, optional peak softening, linear gain and fades. MP3 previews remain identified as previews; encoding a WAV does not recover an unavailable original. No Quran recording is redistributed or transformed. No production app files are changed. Listening and eventual loop/mix approval remain pending.\n", encoding="utf-8")
     print(json.dumps({k: report[k] for k in ("kind", "start", "source_duration", "output_peak", "output_rms", "mp3_sha256", "mp3_bytes")}))
 
 
@@ -188,6 +210,7 @@ if __name__ == "__main__":
     sound, folder = sys.argv[1], pathlib.Path(sys.argv[2])
     if sound not in SOURCES:
         raise SystemExit("Unknown source")
+    SECONDS = SOURCES[sound].get("seconds", 16)
     if "--emit" in sys.argv[3:]:
         emit(sound, folder)
     else:

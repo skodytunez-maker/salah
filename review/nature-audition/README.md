@@ -13,3 +13,11 @@ Sources were checked on 13 November 2026:
 The samples use a selected excerpt, level matching and short edge fades. Extreme source transients receive soft-knee compression and lookahead peak limiting so individual pops do not set the entire bed's level. The rain excerpt finder looks for low-frequency energy; this is not automatic proof that the event is thunder. The fire excerpt finder favors a lower crest factor; this is not proof that voices or harsh pops are absent. Human listening remains necessary.
 
 MP3-derived candidates are previews, not recovered lossless originals. No Quran audio is copied, redistributed or transformed. The blend with live recitation and eventual loop seams must be reviewed separately before integration.
+
+Additional CC0 review candidates:
+
+- Gentle wind, fthgurdy: https://freesound.org/people/fthgurdy/sounds/528944/
+- Nord Odal quiet forest, birds, insects and leaf rustle, nfsgit: https://freesound.org/people/nfsgit/sounds/121967/
+- sea_waves_soft_shenzhen_2020-05-30_iXY.wav, Archos: https://freesound.org/people/Archos/sounds/521602/
+
+Wind has only an eight-second audition because its source is short. No loop is invented. These sources have not passed human listening review; calmness, absence of speech and suitability under recitation remain unverified. This workflow batch prepares only wind, forest and ocean; completed rain and fire artifacts are retained in their earlier run.
