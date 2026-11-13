@@ -131,13 +131,14 @@ def prepare(kind, folder):
     output = folder / "review"
     output.mkdir(exist_ok=True)
     wav, mp3 = output / (kind + ".wav"), output / (kind + ".mp3")
-    filters = f"volume={gain:.10f},afade=t=in:st=0:d=0.4,afade=t=out:st={SECONDS-.8}:d=0.8"
-    command("ffmpeg", "-v", "error", "-y", "-i", str(original), "-ss", str(start), "-t", str(SECONDS), "-vn", "-af", filters, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s24le", str(wav))
+    filters = f"atrim=start={start}:duration={SECONDS},asetpts=PTS-STARTPTS,volume={gain:.10f},afade=t=in:st=0:d=0.4,afade=t=out:st={SECONDS-.8}:d=0.8"
+    command("ffmpeg", "-v", "error", "-y", "-i", str(original), "-vn", "-af", filters, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s24le", str(wav))
     command("ffmpeg", "-v", "error", "-y", "-i", str(wav), "-c:a", "libmp3lame", "-b:a", "256k", "-ar", "48000", str(mp3))
     checked = decode(wav, rate=48000, channels=2)
     output_peak = max(abs(v) for v in checked)
-    if output_peak > .301 or not SECONDS-.05 <= len(checked) / 96000 <= SECONDS+.05:
-        raise ValueError("Output peak/duration validation failed")
+    output_rms = energy(checked)
+    if output_peak > .301 or output_rms < max(1e-6, rms * gain * .5) or not SECONDS-.05 <= len(checked) / 96000 <= SECONDS+.05:
+        raise ValueError("Output peak, non-silence or duration validation failed")
     encoded = mp3.read_bytes()
     if len(encoded) > 700000:
         raise ValueError("Chat audition exceeds transport limit")
@@ -149,7 +150,7 @@ def prepare(kind, folder):
         "source_duration": duration, "start": start, "seconds": SECONDS,
         "selection": selection, "linear_gain": gain,
         "processing": "Linear gain only, short edge fades, stereo48kHz. No invented thunder, generated ambience, noise reduction or voice processing.",
-        "output_peak": output_peak, "output_rms": energy(checked),
+        "output_peak": output_peak, "output_rms": output_rms,
         "mp3_sha256": hashlib.sha256(encoded).hexdigest(), "mp3_bytes": len(encoded),
         "production_integrated": False, "human_listening_approved": False,
         "loop_approved": False, "blend_with_Quran_approved": False,
