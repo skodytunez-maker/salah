@@ -1,0 +1,5 @@
+# Full player486
+
+The existing dock controls move into a native dialog; no audio or session is recreated. Portrait/title/arrow are equivalent entry points. Explicit open-surah link preserves reading navigation. Closing does not pause playback. Downward pointer dismissal starts only on the heading/portrait at the top of the window, with a96px threshold and vertical direction check; seeking, volume adjustment and scrolling settings are excluded. Cancelled gestures snap back; synthetic post-swipe click cannot reopen. Native close event checks the current open state to ignore a queued event after a quick reopen.
+
+Current dark/gold palette and tabular time numerals are retained. Full safe-area phone layout; scrollable short/landscape layouts; centred desktop modal. Timer and background controls stay in the same DOM across open/close. Dedicated behavior check includes actual dock wiring against playback stubs. No schema, backend, MediaSession artwork/deep-link or listening-accounting changes. Browser UI automation is disabled; physical-device verification remains required.
