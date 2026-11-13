@@ -12,7 +12,7 @@ export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{}}={}){
  closeButton.addEventListener('click',close);
  const onClose=()=>{if(!sheet.open)finish();};
  const onCancel=event=>{event.preventDefault();close();};
- const onBackdrop=event=>{if(event.target===sheet)close();};
+ const onBackdrop=event=>{if(event.target!==sheet)return;const r=sheet.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)close();};
  const down=event=>{if(!expanded||event.isPrimary===false||(event.button!=null&&event.button!==0)||sheet.scrollTop>0)return;const target=event.target.closest?.('.quran-player-heading,.quran-now-playing');if(!target||event.target.closest?.('[data-collapse]'))return;gesture={id:event.pointerId,x:event.clientX,y:event.clientY,dy:0};try{sheet.setPointerCapture?.(event.pointerId);}catch{}};
  const move=event=>{if(!gesture||event.pointerId!==gesture.id)return;const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)){resetGesture();return;}gesture.dy=Math.max(0,dy);if(dy>8&&dy>Math.abs(dx)){event.preventDefault();sheet.classList.add('is-dragging');sheet.style.setProperty('--player-drag-y',Math.min(dy,280)+'px');}};
  const up=event=>{if(!gesture||event.pointerId!==gesture.id)return;const dismiss=gesture.dy>=96&&gesture.dy>Math.abs(event.clientX-gesture.x)*1.4;resetGesture();if(dismiss){suppressClickUntil=Date.now()+400;close();}};
