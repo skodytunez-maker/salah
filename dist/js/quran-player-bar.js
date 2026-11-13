@@ -34,7 +34,7 @@ export function mountQuranPlayer(){
  toggle.onclick=()=>current().toggle();
  const reciterSelect=panel.querySelector('select');
  reciterSelect.onchange=async()=>{const reciter=reciterSelect.value;if(!reciterHasSurah(reciter,quranPlayback.state.surah?.number))return;const saved=write('quran-preferences',{...read('quran-preferences',{}),reciter});if(!saved)toast('Не удалось сохранить выбор чтеца');await quranPlayback.changeReciter(reciter)};
- const dismissPlayer=()=>current().stop();
+ const dismissPlayer=()=>{quranPlayback.stop();if(ruqyahPlayback.state.record)ruqyahPlayback.stop();};
  panel.querySelector('[data-dismiss-player]').onclick=dismissPlayer;
  const stopMiniDismiss=bindMiniPlayerDismiss(panel,{canStart:()=>!playerWindow.isOpen,dismiss:dismissPlayer});
  const range=panel.querySelector('input[type=range]');range.onchange=()=>current().seek(Number(range.value));
