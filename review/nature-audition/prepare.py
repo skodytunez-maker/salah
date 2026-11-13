@@ -64,7 +64,7 @@ SOURCES = {
         "source_type": "Public MP3 preview of pine wood in an indoor cabin fireplace; original stereo 96kHz/24-bit WAV is not obtained",
         "start": 10,
         "gain_limit": 8,
-        "peak_softening": false
+        "peak_softening": False
     },
     "wind_v2": {
         "title": "breeze.wav",
@@ -74,7 +74,7 @@ SOURCES = {
         "source_type": "Public MP3 preview of a breeze through pine trees; original stereo 44.1kHz/16-bit WAV is not obtained",
         "start": 20,
         "gain_limit": 8,
-        "peak_softening": false
+        "peak_softening": False
     },
     "forest_v2": {
         "title": "Birds In Forest (Scotland)",
@@ -84,7 +84,7 @@ SOURCES = {
         "source_type": "Public MP3 preview of forest birds and wind in trees; original stereo 44.1kHz/16-bit WAV is not obtained",
         "start": 20,
         "gain_limit": 8,
-        "peak_softening": false
+        "peak_softening": False
     },
     "ocean_v2": {
         "title": "Gentle Waves - Quiet Beach",
@@ -94,7 +94,7 @@ SOURCES = {
         "source_type": "Public MP3 preview focused on small waves washing ashore in Destin Florida; original stereo 48kHz/24-bit WAV is not obtained",
         "start": 30,
         "gain_limit": 8,
-        "peak_softening": false
+        "peak_softening": False
     },
 }
 SECONDS = 16
