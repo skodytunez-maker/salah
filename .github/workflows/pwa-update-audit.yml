@@ -1,0 +1,16 @@
+name: Verify published SALAH 495
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/pwa-update-audit.yml'
+      - 'review/nature-video/verify-live-495.py'
+permissions:
+  contents: read
+jobs:
+  public-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify deployed files, video ranges and Android update hash
+        run: python3 review/nature-video/verify-live-495.py
