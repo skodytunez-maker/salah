@@ -1,10 +1,11 @@
 export const NATURE_SOUNDS=Object.freeze([{id:'rain',name:'Дождь'},{id:'wind',name:'Ветер'},{id:'fire',name:'Костёр'},{id:'forest',name:'Лес'},{id:'ocean',name:'Океан'}]);
-export const NATURE_MAX_VOLUME=40;
+export const NATURE_MAX_VOLUME=100;
+export const NATURE_DEFAULT_VOLUME=25;
 const valid=kind=>NATURE_SOUNDS.some(sound=>sound.id===kind);
 // Locally generated sound textures: no downloads, songs or outside recordings.
 export function natureSamples(kind,{sampleRate=16000,seconds=24,random=Math.random}={}){
  if(!valid(kind))throw Error('Unknown nature sound');
- const data=new Float32Array(Math.ceil(sampleRate*seconds));let brown=0,pink=0,crackle=0,peak=0;
+ const data=new Float32Array(Math.ceil(sampleRate*seconds));let brown=0,pink=0,crackle=0;
  for(let i=0;i<data.length;i++){
   const t=i/sampleRate,white=random()*2-1;brown=(brown+.025*white)/1.025;pink=.93*pink+.07*white;
   let value=0;
@@ -16,16 +17,21 @@ export function natureSamples(kind,{sampleRate=16000,seconds=24,random=Math.rand
    value=brown*.9+pink*.18;const phase=t%7.7;
    if(phase>1.1&&phase<1.36){const p=(phase-1.1)/.26,envelope=Math.sin(Math.PI*p)**2;value+=Math.sin(2*Math.PI*(2300*(phase-1.1)+1900*(phase-1.1)**2))*envelope*.08;}
   }
-  data[i]=value;peak=Math.max(peak,Math.abs(value));
+  data[i]=value;
  }
- const seam=Math.min(512,Math.floor(data.length/8)),scale=peak>.8?.8/peak:1;
- for(let i=0;i<data.length;i++)data[i]*=scale;
+ // Match texture levels before the user-controlled mix. Peak-only scaling
+ // left wind/forest nearly inaudible beside mastered Quran recordings.
+ let power=0,mean=0;for(const value of data)mean+=value;mean/=data.length;
+ for(const value of data)power+=(value-mean)**2;
+ const scale=Math.min(12,.14/Math.max(.00001,Math.sqrt(power/data.length)));
+ for(let i=0;i<data.length;i++)data[i]=.8*Math.tanh((data[i]-mean)*scale/.8);
+ const seam=Math.min(512,Math.floor(data.length/8));
  for(let i=0;i<seam;i++){const mix=i/(seam-1),end=data.length-seam+i;data[end]=data[end]*(1-mix)+data[i]*mix;}
  return{data,sampleRate,loopStart:seam/sampleRate};
 }
-export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,schedule=setTimeout,cancel=clearTimeout,generate=natureSamples,volume=12}={}){
+export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,schedule=setTimeout,cancel=clearTimeout,generate=natureSamples,volume=NATURE_DEFAULT_VOLUME}={}){
  let context=null,source=null,gain=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,stopJob=null,selfSuspended=false,error=false;
- volume=Number.isInteger(volume)?Math.max(0,Math.min(NATURE_MAX_VOLUME,volume)):12;
+ volume=Number.isInteger(volume)?Math.max(0,Math.min(NATURE_MAX_VOLUME,volume)):NATURE_DEFAULT_VOLUME;
  const listeners=new Set(),state=()=>({kind,volume,supported:typeof AudioContext==='function',playing:!!(kind&&wanted&&armed&&volume>0&&context?.state==='running'),error,systemPaused:!!(kind&&wanted&&armed&&context&&context.state!=='running'&&!selfSuspended)});
  const emit=()=>{const s=state();for(const fn of listeners)try{fn(s);}catch{}};
  function stopSource(){try{source?.stop();source?.disconnect();}catch{}source=null;}
@@ -37,7 +43,7 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
   if(kind&&wanted&&volume>0&&!armed&&!error&&typeof AudioContext==='function'){await unlock();return;}
   if(!context||!armed||!kind){emit();return;}
   if(!wanted||!volume){level(0,.1);emit();stopJob=schedule(()=>{stopJob=null;if(disposed||ticket!==revision)return;selfSuspended=true;void context.suspend().catch(()=>{});},140);return;}
-  try{if(context.state==='suspended'&&selfSuspended){selfSuspended=false;await context.resume();}if(disposed||ticket!==revision)return;if(context.state==='running'){level(volume/100*.4);error=false;}emit();}catch{error=true;level(0,0);emit();}
+  try{if(context.state==='suspended'&&selfSuspended){selfSuspended=false;await context.resume();}if(disposed||ticket!==revision)return;if(context.state==='running'){level(volume/100);error=false;}emit();}catch{error=true;level(0,0);emit();}
  }
  async function unlock(){if(disposed||!kind||typeof AudioContext!=='function'){emit();return;}const chosen=kind;try{graph();const resumed=context.resume();await resumed;if(disposed||kind!==chosen)return;armed=true;selfSuspended=false;error=false;if(!source)makeSource();await sync();}catch{if(!disposed&&kind===chosen){error=true;emit();}}}
  async function select(value){if(value!==null&&!valid(value))return false;kind=value;revision++;if(stopJob!==null)cancel(stopJob);stopJob=null;if(!kind){level(0,.08);stopSource();armed=false;if(context){selfSuspended=true;void context.suspend().catch(()=>{});}emit();return true;}error=false;try{if(context&&armed)makeSource();if(wanted)await unlock();else emit();}catch{error=true;emit();}return true;}

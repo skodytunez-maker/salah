@@ -2,6 +2,8 @@
 
 ## Version486 — full player window (13 November2026)
 
+The same unreleased edition also corrects the background balance: full0–100% nature gain, no extra0.4 attenuation, centred RMS-matched textures, and25/50/75 presets. Existing saved levels remain unchanged. Quran audio routing and source volume remain unchanged for native background continuity; device buttons control overall volume. The current full-player announcement includes the corrected range.
+
 Portrait, surah title and arrow open the same native modal. The connected controls move, preserving the single audio session, playlist, timer and background controller. Phones use the full dynamic viewport and safe-area padding; desktop uses a centred window. Larger framed portrait, reader name, clear timeline and a gold main control retain the current palette. An explicit link still opens the current surah. Close arrow, Escape/backdrop and a downward swipe on the top section collapse without audio actions; ranges and scrolled settings never dismiss the window. Focus and body overflow are restored. Public announcement486 contains only this feature in a looping UI composition using the existing registered reciter portrait; private team announcement484 stays unchanged. Actual iPhone visual/swipe QA remains pending because browser automation is disabled in Work settings.
 
 ## Version480 — portrait Home balance (12 November2026)

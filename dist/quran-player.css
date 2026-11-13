@@ -209,3 +209,5 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog{animation:none;transition:none}
 
 #quran-global-player.is-expanded .quran-output-actions [data-close]{gap:6px;color:#aab8cc;border-color:#43516a80}#quran-global-player.is-expanded .quran-output-actions [data-close] svg{width:14px;height:14px;flex:none}
+
+.quran-nature-presets{margin-top:16px}.quran-nature-presets button{flex:1}
