@@ -34,11 +34,12 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
  function level(value,seconds=.15){if(!gain||!context)return;const p=gain.gain,t=context.currentTime;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else{p.cancelScheduledValues(t);p.setValueAtTime(p.value,t);}p.linearRampToValueAtTime(value,t+seconds);}
  async function sync(value=wanted){
   if(disposed)return;wanted=!!value;const ticket=++revision;if(stopJob!==null)cancel(stopJob);stopJob=null;
+  if(kind&&wanted&&volume>0&&!armed&&!error&&typeof AudioContext==='function'){await unlock();return;}
   if(!context||!armed||!kind){emit();return;}
   if(!wanted||!volume){level(0,.1);emit();stopJob=schedule(()=>{stopJob=null;if(disposed||ticket!==revision)return;selfSuspended=true;void context.suspend().catch(()=>{});},140);return;}
   try{if(context.state==='suspended'&&selfSuspended){selfSuspended=false;await context.resume();}if(disposed||ticket!==revision)return;if(context.state==='running'){level(volume/100*.4);error=false;}emit();}catch{error=true;level(0,0);emit();}
  }
  async function unlock(){if(disposed||!kind||typeof AudioContext!=='function'){emit();return;}const chosen=kind;try{graph();const resumed=context.resume();await resumed;if(disposed||kind!==chosen)return;armed=true;selfSuspended=false;error=false;if(!source)makeSource();await sync();}catch{if(!disposed&&kind===chosen){error=true;emit();}}}
- async function select(value){if(value!==null&&!valid(value))return false;kind=value;revision++;if(stopJob!==null)cancel(stopJob);stopJob=null;if(!kind){level(0,.08);stopSource();armed=false;if(context){selfSuspended=true;void context.suspend().catch(()=>{});}emit();return true;}try{if(context&&armed)makeSource();await unlock();}catch{error=true;emit();}return true;}
+ async function select(value){if(value!==null&&!valid(value))return false;kind=value;revision++;if(stopJob!==null)cancel(stopJob);stopJob=null;if(!kind){level(0,.08);stopSource();armed=false;if(context){selfSuspended=true;void context.suspend().catch(()=>{});}emit();return true;}error=false;try{if(context&&armed)makeSource();if(wanted)await unlock();else emit();}catch{error=true;emit();}return true;}
  return{select,unlock,sync,get state(){return state();},setVolume(value){if(!Number.isInteger(value)||value<0||value>NATURE_MAX_VOLUME)return;volume=value;return sync();},subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){disposed=true;revision++;if(stopJob!==null)cancel(stopJob);stopSource();listeners.clear();if(context){context.onstatechange=null;void context.close().catch(()=>{});}context=null;}};
 }
