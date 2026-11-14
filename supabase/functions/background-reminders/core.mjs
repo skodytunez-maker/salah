@@ -122,7 +122,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:5,features:['tahajjud','dhikr-inactivity','dhikr-daily'],publicKey:config.vapid.publicKey});}
    // One explicitly requested campaign. The date window and immutable hash prevent repeat broadcasts.
    if(action==='invite-setup'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
@@ -155,13 +155,13 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
       const {rows,events}=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
        if(event.kind==='dhikr'){
-        // A resumed reader or an opt-out during timetable fetching must cancel this send.
+        // Recheck opt-out and city changes after timetable fetching; activity never postpones a daily reminder.
         const fresh=await db.get(device.id);if(!fresh)continue;
         const latest=preferences(fresh.preferences);
         if(!dhikrAllowedAt(clock(),event.timeZone)||JSON.stringify({...latest,reminders:p.reminders,dhikrLastAt:p.dhikrLastAt})!==signature)continue;
-        if(!eventsFor(latest,rows,clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
+        if(!eventsFor(latest,rows,clock()).some(e=>e.kind==='dhikr'&&e.day===event.day&&e.at===event.at))continue;
         const previous=await db.lastDhikrSent(device.id);
-        if(previous&&clock()-previous<(latest.reminders.dhikr.days*24-2)*3600000)continue;
+        if(previous&&(cityDay(previous,latest.city.timezone)===event.day||clock()-previous<22*3600000))continue;
        }
        const hash=(event.kind==='dhikr'?'dhikr-':'')+await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
        const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;

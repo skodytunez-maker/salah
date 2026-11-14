@@ -12,7 +12,13 @@ data.set('salah:settings',JSON.stringify(prefs));
 data.set('salah:push-install-v1',JSON.stringify({id:'7e3c95b2-feba-4c41-9de4-1260d0201d11',token:'a'.repeat(64),saved:true,lastSync:0}));
 let outage=false,configOutage=false,waitForConfig=null,configCalls=0,waitForSave=null;
 globalThis.fetch=async(url,options)=>{assert.ok(url.startsWith('https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/background-reminders/'));if(outage)throw Error('offline');if(url.endsWith('/config')){configCalls++;if(configOutage)throw Error('config_unavailable');if(waitForConfig)await waitForConfig;}const body=options.body?JSON.parse(options.body):null;requests.push({url,body});if(waitForSave&&body?.preferences){const gate=waitForSave;waitForSave=null;await gate;}return new Response(JSON.stringify(url.endsWith('/config')?{publicKey:Buffer.from([4,...Array(64).fill(1)]).toString('base64url')}:{saved:true}),{status:200});};
-const {createPushReminders}=await import('../dist/js/push-reminders.js');
+const {createPushReminders,pushPreferences}=await import('../dist/js/push-reminders.js');
+data.set('salah:dhikr-last-use-v1',String(Date.now()));
+const dailyPreferences=pushPreferences({...prefs,reminders:{enabled:true,dhikr:{enabled:true,days:3,since:Date.now()-86400000}}});
+assert.equal(dailyPreferences.reminders.dhikr.days,1,'Legacy intervals use the fixed daily schedule');
+assert.equal(dailyPreferences.reminders.dhikr.enabled,true);
+assert.equal('dhikrLastAt' in dailyPreferences,false,'Daily push preferences do not upload unused activity timestamps');
+assert.equal(pushPreferences({...prefs,reminders:{enabled:true,dhikr:{enabled:false,days:2}}}).reminders.dhikr.enabled,false,'A saved daily-reminder opt-out is retained');
 const background=createPushReminders({getSettings:()=>prefs});
 for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
 assert.equal(permissionRequests,0,'Never prompt when opening the app');
@@ -95,6 +101,18 @@ try{
  assert.doesNotMatch(panel.innerHTML.match(/<button[^>]*data-push-diagnose[^>]*>/)[0],/disabled/,'A stalled platform API must release the checking button');
 }finally{navigator.serviceWorker.getRegistration=originalRegistration;globalThis.setTimeout=originalTimer;}
 console.log('PASS: diagnosis detects missing prerequisites, exposes no secrets, only reads configuration, never claims actual delivery, and recovers from a stalled platform API.');
+
+const timerBeforeActivity=globalThis.setTimeout;let activityTimers=0;
+globalThis.setTimeout=(fn,ms,...args)=>{if(ms===1200||ms===60000)activityTimers++;return timerBeforeActivity(fn,ms,...args);};
+try{
+ const beforeActivityRequests=requests.length;
+ window.dispatchEvent(new Event('salah:dhikr-activity'));
+ const activityStorage=new Event('storage');Object.defineProperty(activityStorage,'key',{value:'salah:dhikr-last-use-v1'});window.dispatchEvent(activityStorage);
+ for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(activityTimers,0,'Daily content does not schedule delivery synchronization when local dhikr activity changes');
+ assert.equal(requests.length,beforeActivityRequests);assert.equal(permissionRequests,0,'Activity cannot cause a repeat permission prompt');
+}finally{globalThis.setTimeout=timerBeforeActivity;}
+console.log('PASS: fixed daily preferences preserve opt-outs, omit activity timestamps and never re-sync or re-prompt because of local dhikr activity.');
 
 globalThis.Capacitor={isNativePlatform:()=>true};
 const nativeBackground=createPushReminders({getSettings:()=>prefs});
