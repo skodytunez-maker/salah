@@ -73,7 +73,8 @@ assert.equal((await db.apply(packet('snapshot',{totals:{[reciter]:100},days:{[da
 const resumed=await db.apply(packet('snapshot',{totals:{[reciter]:105},days:{[day]:{[reciter]:105}},timeZone:'UTC',resumeCredit:pauseToken}));
 assert.equal(resumed.creditPaused,false);
 assert.equal(resumed.creditRevision,3,'Three control snapshots carry three monotonically increasing acknowledgements');
-await db.apply(snapshot(105));
+assert.equal((await db.apply(snapshot(105))).creditPaused,false,'Later replies confirm the completed pause to other tabs');
+assert.equal((await db.apply(packet('register',{activity}))).creditPaused,false,'Registration retries return the current unpaused control state');
 assert.equal(Number((await pg.query('select seconds from salah_competition_private.guest_totals where guest_id=$1',[registered.id])).rows[0].seconds),60,'Resume and retry never catch up held minutes');
 await db.apply(snapshot(110));await db.apply(snapshot(105));
 assert.equal(Number((await pg.query('select seconds from salah_competition_private.guest_totals where guest_id=$1',[registered.id])).rows[0].seconds),65,'Only new post-resume seconds are credited');

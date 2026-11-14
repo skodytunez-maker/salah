@@ -22,7 +22,7 @@ export function createGuestRankDb(sql){return{async apply(packet,user=null){
   const publicResult={ok:true,id:player.public_id,nickname:alias.nickname,claimed:!!player.claimed_by};
   const [control]=await tx`select * from salah_competition_private.guest_credit_controls where guest_id=${player.public_id}::uuid for update`;
   const credited=control?await creditedSnapshot(tx,player.public_id):null;
-  if(credited){publicResult.creditTotals=credited.totals;publicResult.creditDays=credited.days;publicResult.creditRevision=Number(control.revision);}
+  if(credited){publicResult.creditTotals=credited.totals;publicResult.creditDays=credited.days;publicResult.creditRevision=Number(control.revision);publicResult.creditPaused=!!control.paused_at;publicResult.creditPauseToken=control.paused_at?control.pause_token:null;}
   if(control?.paused_at){publicResult.creditPaused=true;publicResult.creditPauseToken=control.pause_token;}
   if(packet.action==='register')return publicResult;
   if(packet.action==='claim'){
