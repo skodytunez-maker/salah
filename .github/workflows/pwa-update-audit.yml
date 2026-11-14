@@ -1,16 +1,16 @@
-name: Verify nature video delivery for 496
+name: Verify published SALAH 496
 on:
   pull_request:
     paths:
       - '.github/workflows/pwa-update-audit.yml'
-      - 'review/nature-video/verify-delivery-496.py'
+      - 'review/nature-video/verify-live-496.py'
 permissions:
   contents: read
 jobs:
-  delivery:
+  public-runtime:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - name: Verify native CORS, exact silent media and HTTP ranges
-        run: python3 review/nature-video/verify-delivery-496.py
+      - name: Verify deployed files, video ranges and Android update hash
+        run: python3 review/nature-video/verify-live-496.py
