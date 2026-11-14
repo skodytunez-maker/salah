@@ -1,5 +1,13 @@
 # SALAH release announcements
 
+## Version498 — fixed player boundaries and a quieter nature mix (14 November2026)
+
+Keep the expanded player window fixed during drag gestures; retain the deliberate downward-swipe close threshold without translating the entire sheet and exposing its backing. Disable native elastic overscroll on the player's scroll container and scope root overscroll locking to the open dialog. A single-touch edge guard blocks only unconsumed vertical drags at the top/bottom; interior and nested settings scrolling, horizontal sliders, native pickers, multi-touch and existing audio controls remain available. Restore prior scroll-lock state on close, failed open and disposal.
+
+Map the unchanged0–100% nature slider linearly to a maximum gain of0.9, so its displayed100% is90% of the previous maximum. Keep stored values, continuous adjustment, source recordings, Quran volume and audio routing intact. Test actual mix targets through pause/resume, zero, midscale and maximum.
+
+Keep all five videos, JPG wallpapers, source metadata and approved player grid unchanged. No server change, new public feature or announcement reset; announcement497, artwork, acknowledgment and expiry remain intact. Gesture/DOM and CSS cascade tests cover logical boundaries; actual iPhone elastic scrolling and the audible mix still require physical-device confirmation. The cancelled in-app reminder-list page is not included.
+
 ## Version497 — daily short reminders without an interval selector (14 November2026)
 
 Replace the two/three-day inactivity interval with one daily reminder around the selected city's Dhuhr, falling back to noon. A recent visit to azkar no longer suppresses it. Keep existing master/category opt-outs and the phone's notification permission; do not add permission prompts or automatically resubscribe disabled devices. Remove the interval selector while preserving existing enable/disable controls. New web subscriptions no longer upload an unused azkar-last-use timestamp or synchronize activity events.

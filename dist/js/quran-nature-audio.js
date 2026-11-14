@@ -2,6 +2,8 @@ import{NATURE_SOUNDS,natureRecording,loadNatureRecording}from './quran-nature-re
 export{NATURE_SOUNDS};
 export const NATURE_MAX_VOLUME=100;
 export const NATURE_DEFAULT_VOLUME=25;
+// Keep headroom in the nature mix without changing the user's 0–100 scale.
+const NATURE_MIX_CEILING=.9;
 export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,schedule=setTimeout,cancel=clearTimeout,load=loadNatureRecording,AbortController=globalThis.AbortController,volume=NATURE_DEFAULT_VOLUME}={}){
  let context=null,gain=null,active=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,stopJob=null,selfSuspended=false,error=false,loading=false,job=null;
  volume=Number.isInteger(volume)?Math.max(0,Math.min(100,volume)):25;
@@ -52,7 +54,7 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
    const chosen=kind,buffer=active?.kind===chosen?null:await bufferFor(chosen);
    if(disposed||ticket!==revision||kind!==chosen||!wanted||!volume)return;
    if(active?.kind!==chosen)makeSource(chosen,buffer);
-   level(volume/100);error=false;emit();
+   level(volume/100*NATURE_MIX_CEILING);error=false;emit();
   }catch{if(!disposed&&ticket===revision){error=true;loading=false;level(0,0);emit();}}
  }
  async function unlock(){
