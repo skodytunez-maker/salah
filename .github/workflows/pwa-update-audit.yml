@@ -1,9 +1,9 @@
-name: Verify published SALAH 498
+name: Verify published SALAH 499
 on:
   pull_request:
     paths:
       - '.github/workflows/pwa-update-audit.yml'
-      - 'review/verify-player-live-498.py'
+      - 'review/verify-guest-live-499.py'
 permissions:
   contents: read
 jobs:
@@ -12,5 +12,5 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - name: Verify release files, video ranges and Android update hash
-        run: python3 review/verify-player-live-498.py
+      - name: Verify public files, native update and privacy boundaries
+        run: python3 review/verify-guest-live-499.py
