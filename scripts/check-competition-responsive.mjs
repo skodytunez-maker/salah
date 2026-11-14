@@ -36,6 +36,7 @@ const backend=await fs.readFile(new URL('../supabase/functions/reciter-competiti
 const db=new PGlite();
 const uid=n=>'00000000-0000-4000-8000-'+String(n).padStart(12,'0');
 await db.exec(`
+ create role anon;create role authenticated;create role service_role bypassrls;
  create schema auth;create schema storage;create schema salah_competition_private;
  create table auth.users(id uuid primary key,raw_user_meta_data jsonb,banned_until timestamptz,email_confirmed_at timestamptz,is_anonymous boolean);
  create table auth.sessions(id uuid,user_id uuid,not_after timestamptz);
@@ -59,7 +60,9 @@ await db.exec(`
  ('${uid(5)}','ar.alafasy',9999,true),('${uid(6)}','ar.alafasy',9999,true);
  insert into salah_competition_private.favorite_state values ('${uid(1)}','all','1970-01-01','ar.yasseraldossaricontinuous');
 `);
-await db.exec("create schema if not exists salah_visits_private;create table salah_visits_private.guest_activity_presence(device_hash text,kind text,active boolean,reported_at timestamptz);create table salah_competition_private.guest_players(public_id uuid,activity_hash text,claimed_by uuid);create function salah_competition_private.guest_scores(text,date)returns table(guest_id uuid,reciter text,seconds bigint)language sql as $$select null::uuid,null::text,0::bigint where false$$;");
+await db.exec("create schema if not exists salah_visits_private;create table salah_visits_private.guest_activity_presence(device_hash text,kind text,active boolean,reported_at timestamptz);create table salah_competition_private.guest_players(public_id uuid primary key,activity_hash text,claimed_by uuid,created_at timestamptz default now());create function salah_competition_private.guest_scores(text,date)returns table(guest_id uuid,reciter text,seconds bigint)language sql as $$select null::uuid,null::text,0::bigint where false$$;");
+const aliasMigration=(await fs.readdir(new URL('../supabase/migrations/',import.meta.url))).find(x=>x.endsWith('_guest_stone_aliases.sql'));assert.ok(aliasMigration,'The public board fixture requires the private guest alias migration');
+await db.exec(await fs.readFile(new URL('../supabase/migrations/'+aliasMigration,import.meta.url),'utf8'));
 const sql=(strings,...args)=>{
  const segments=[];let query='';
  for(let i=0;i<strings.length;i++){

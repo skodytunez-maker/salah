@@ -1,3 +1,6 @@
+import{createListeningCreditPolicy,createCreditMinuteMeter}from '../dist/js/listening-credit-core.js';
+// The production credit policy runs with fixture time; this harness does not mount its UI.
+const createListeningCredit=({now})=>{const policy=createListeningCreditPolicy({now,timeZone:()=> 'UTC'});return{segments:(seconds,at)=>policy.segments(seconds,at),tick(){}};};
 import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -31,7 +34,7 @@ class Audio {
 }
 const ruqyah=createRuqyahSession({createAudio:()=>new Audio(),media:{update(){},clear(){}},focus(){},claim(){if(quran.status==='playing'){quran={...quran,status:'paused'};emitQuran();}}});
 const source=await fs.readFile(new URL('../dist/js/reciter-popularity.js',import.meta.url),'utf8');
-const context=vm.createContext({personalDataAllowed,initGuestCompetition(){},recordGuestListening(){},initListenerPresence:options=>assert.equal(options.playback,quranPlayback),initCompetition:options=>competition=options,read:(k,d)=>store.has(k)?store.get(k):d,write:(k,v)=>{store.set(k,structuredClone(v));return true;},esc:String,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',RECITERS,reciterInfo,createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodTotals,addListeningDay,Date,window:{addEventListener:(n,f)=>events.set(n,f),dispatchEvent(){}},document:{hidden:false,addEventListener(){}},navigator:{onLine:true},crypto:{randomUUID},Event:class{},setInterval:f=>tick=f,AbortSignal,fetch:async(_url,options)=>{reports.push(JSON.parse(options.body));return{ok:true,json:async()=>({ok:true,counted:true})};}});
+const context=vm.createContext({personalDataAllowed,createCreditMinuteMeter,createListeningCredit,initGuestCompetition(){},recordGuestListening(){},initListenerPresence:options=>assert.equal(options.playback,quranPlayback),initCompetition:options=>competition=options,read:(k,d)=>store.has(k)?store.get(k):d,write:(k,v)=>{store.set(k,structuredClone(v));return true;},esc:String,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',RECITERS,reciterInfo,createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodTotals,addListeningDay,Date,window:{addEventListener:(n,f)=>events.set(n,f),dispatchEvent(){}},document:{hidden:false,addEventListener(){}},navigator:{onLine:true},crypto:{randomUUID},Event:class{},setInterval:f=>tick=f,AbortSignal,fetch:async(_url,options)=>{reports.push(JSON.parse(options.body));return{ok:true,json:async()=>({ok:true,counted:true})};}});
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/^export \{.*\};?$/gm,'').replace(/export /g,'')+';({initReciterPopularity,personalListening});',context);
 api.initReciterPopularity({playback:quranPlayback,ruqyah,getAccount:()=>auth,getClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:auth.userId},access_token:'fixture'}}})}}),now:()=>clock});
 const flush=async()=>{for(let i=0;i<4;i++)await new Promise(r=>setImmediate(r));};
