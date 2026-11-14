@@ -1,81 +1,59 @@
-import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
-import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
-
+import assert from 'node:assert/strict';import fs from 'node:fs/promises';import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 const w=new Window({url:'https://salah.invalid/#home'});Object.assign(globalThis,{window:w,document:w.document,localStorage:w.localStorage});
-Object.defineProperty(w.navigator,'mediaSession',{configurable:true,get(){throw Error('Decorative video cannot touch the OS media session');}});
+Object.defineProperty(w.navigator,'mediaSession',{configurable:true,get(){throw Error('Decorative video must not claim media session');}});
 const{mountNatureMotion}=await import('../dist/js/quran-nature-motion.js');
-const BASE='https://skodytunez-maker.github.io/salah/assets/player-nature-video-495/';
-const flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
-let hidden=false,systemReduced=false,reduced=false,allocations=0;
-const mediaListeners=new Set();
+const BASE='https://skodytunez-maker.github.io/salah/assets/player-nature-video-495/',flush=async()=>{for(let i=0;i<10;i++)await Promise.resolve();};
+let hidden=false,reduced=false,systemReduced=false,nextFrame=0,nextTimer=0,destroyedCache=0;const mediaListeners=new Set(),timers=new Map(),videos=[],blobs=new Map(),warmCalls=[];
 Object.defineProperties(w.document,{hidden:{configurable:true,get:()=>hidden},visibilityState:{configurable:true,get:()=>hidden?'hidden':'visible'}});
 w.matchMedia=()=>({get matches(){return systemReduced;},addEventListener:(_type,fn)=>mediaListeners.add(fn),removeEventListener:(_type,fn)=>mediaListeners.delete(fn)});
 function mockVideo(){
- const node=w.document.createElement('video'),state={paused:true,ended:false,currentSrc:'',readyState:0,error:null},requests=[],attempts=[],listeners=new Map();
- let pauses=0,loads=0;
- for(const key of Object.keys(state))Object.defineProperty(node,key,{configurable:true,get:()=>state[key]});
+ const node=w.document.createElement('video'),s={paused:true,ended:false,currentSrc:'',readyState:0,error:null},requests=[],attempts=[],frames=new Map(),listeners=new Map();let pauses=0,loads=0;
+ for(const key of Object.keys(s))Object.defineProperty(node,key,{configurable:true,get:()=>s[key]});
  const add=node.addEventListener.bind(node),remove=node.removeEventListener.bind(node),set=node.setAttribute.bind(node);
- node.addEventListener=(type,fn,...rest)=>{if(!listeners.has(type))listeners.set(type,new Set());listeners.get(type).add(fn);add(type,fn,...rest);};
- node.removeEventListener=(type,fn,...rest)=>{listeners.get(type)?.delete(fn);remove(type,fn,...rest);};
- node.setAttribute=(name,value)=>{set(name,value);if(name==='src'){requests.push(value);state.currentSrc='';state.readyState=0;state.error=null;}};
- node.load=()=>{loads++;state.currentSrc='';state.readyState=0;state.error=null;state.paused=true;};
- node.pause=()=>{pauses++;state.paused=true;node.dispatchEvent(new w.Event('pause'));};
- node.play=()=>{state.paused=false;let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});attempts.push({resolve,reject,promise,url:node.getAttribute('src')});return promise;};
- return{node,state,requests,attempts,listeners,get pauses(){return pauses;},get loads(){return loads;}};
+ node.addEventListener=(type,fn,...rest)=>{if(!listeners.has(type))listeners.set(type,new Set());listeners.get(type).add(fn);add(type,fn,...rest);};node.removeEventListener=(type,fn,...rest)=>{listeners.get(type)?.delete(fn);remove(type,fn,...rest);};
+ node.setAttribute=(key,value)=>{set(key,value);if(key==='src'){requests.push(value);s.currentSrc='';s.readyState=0;s.error=null;}};
+ node.play=()=>{s.paused=false;let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});attempts.push({resolve,reject,promise});return promise;};
+ node.pause=()=>{pauses++;s.paused=true;node.dispatchEvent(new w.Event('pause'));};
+ node.load=()=>{loads++;s.paused=true;s.currentSrc='';s.readyState=0;s.error=null;};
+ node.requestVideoFrameCallback=fn=>{const id=++nextFrame;frames.set(id,fn);return id;};node.cancelVideoFrameCallback=id=>frames.delete(id);
+ const mock={node,s,requests,attempts,frames,listeners,get pauses(){return pauses;},get loads(){return loads;}};videos.push(mock);return node;
 }
-const panel=w.document.createElement('section');panel.dataset.nature='rain';panel.innerHTML='<button data-expand>Open player</button><button data-toggle>Reading</button><button data-nature="rain">Rain</button><button data-nature="forest">Forest</button><button data-nature="off">Off</button><input type="range">';w.document.body.append(panel);
-const create=mockVideo(),before=w.localStorage.length;
-const motion=mountNatureMotion(panel,{doc:w.document,win:w,isReduced:()=>reduced,createVideo:()=>{allocations++;return create.node;}});
-assert.equal(allocations,0,'Compact playback allocates no video and has no source/download');
-for(const change of [()=>{hidden=true;panel.classList.add('is-expanded');},()=>{hidden=false;reduced=true;},()=>{reduced=false;systemReduced=true;},()=>{systemReduced=false;panel.hidden=true;}]){
- change();motion.sync();assert.equal(allocations,0,'Hidden or reduced animation does not create/download media');
-}
-panel.hidden=false;motion.sync();assert.equal(allocations,1);assert.equal(create.attempts.length,1);assert.deepEqual(create.requests,[BASE+'rain.mp4']);
-const wrapper=panel.querySelector('.quran-nature-motion'),video=create.node;
-assert.equal(wrapper.tagName,'DIV');assert.equal(wrapper.children.length,1);assert.equal(wrapper.firstElementChild,video);assert.equal(wrapper.getAttribute('aria-hidden'),'true');assert.equal(wrapper.dataset.kind,'rain');assert.equal(wrapper.hasAttribute('data-ready'),false);
-for(const[key,value]of Object.entries({muted:true,defaultMuted:true,volume:0,playsInline:true,loop:true,controls:false,autoplay:false,preload:'none',tabIndex:-1,disablePictureInPicture:true,disableRemotePlayback:true}))assert.equal(video[key],value,key);
-assert.equal(video.getAttribute('x-webkit-airplay'),'deny');for(const attr of ['muted','playsinline','loop','disablepictureinpicture','disableremoteplayback'])assert.ok(video.hasAttribute(attr));
-function resource(kind){create.state.currentSrc=BASE+kind+'.mp4';create.state.readyState=2;create.state.error=null;create.state.paused=false;}
-resource('rain');video.dispatchEvent(new w.Event('loadeddata'));assert.equal(wrapper.hasAttribute('data-ready'),false,'Loaded but unconfirmed playback keeps the static backdrop');
-video.dispatchEvent(new w.Event('playing'));assert.equal(wrapper.hasAttribute('data-ready'),true);create.attempts[0].resolve();await flush();
-for(let i=0;i<20;i++)motion.sync();assert.equal(create.attempts.length,1,'Player state updates cannot start duplicate playback');
-const oldLoaded=[...create.listeners.get('loadeddata')][0],oldError=[...create.listeners.get('error')][0];
-panel.dataset.nature='fire';motion.sync();assert.equal(allocations,1,'Mode changes reuse one physical decoder');assert.equal(wrapper.dataset.kind,'fire');assert.equal(wrapper.hasAttribute('data-ready'),false);const firstFire=create.attempts.at(-1);event(panel.querySelector('[data-toggle]'),'click',50);const fireAttempt=create.attempts.at(-1);assert.notEqual(fireAttempt,firstFire,'An explicit gesture can restart a pending/stalled resource without a retry timer');
-panel.dataset.nature='ocean';motion.sync();const oceanAttempt=create.attempts.at(-1),pausesBeforeStale=create.pauses;
-firstFire.resolve();fireAttempt.resolve();await flush();assert.equal(create.pauses,pausesBeforeStale,'Stale play resolves must never pause the newer source');
-resource('rain');oldLoaded();oldError();video.dispatchEvent(new w.Event('loadeddata'));video.dispatchEvent(new w.Event('playing'));assert.equal(wrapper.hasAttribute('data-ready'),false,'Stale frame/playing events cannot reveal a different resource');
-create.state.error={code:4};video.dispatchEvent(new w.Event('error'));assert.equal(video.getAttribute('src'),BASE+'ocean.mp4','An old queued error cannot fail the new resource');
-resource('ocean');video.dispatchEvent(new w.Event('loadeddata'));assert.equal(wrapper.hasAttribute('data-ready'),false);video.dispatchEvent(new w.Event('playing'));oceanAttempt.resolve();await flush();assert.equal(wrapper.hasAttribute('data-ready'),true);
-panel.dataset.nature='forest';motion.sync();create.attempts.at(-1).reject(Error('NotAllowedError'));await flush();assert.equal(video.hasAttribute('src'),false);assert.equal(wrapper.hidden,true);assert.equal(wrapper.hasAttribute('data-ready'),false);
-const blockedBeforeOpen=create.attempts.length;panel.classList.remove('is-expanded');motion.sync();event(panel.querySelector('[data-expand]'),'click',500);assert.equal(create.attempts.length,blockedBeforeOpen,'The opener only arms a retry while still compact');panel.classList.add('is-expanded');motion.sync();assert.equal(create.attempts.length,blockedBeforeOpen+1,'Opening after an explicit trusted gesture permits one retry');create.attempts.at(-1).reject(Error('denied again'));await flush();
-const failedCount=create.attempts.length;
-for(let i=0;i<20;i++){panel.dataset.nature='forest';motion.sync();}await flush();assert.equal(create.attempts.length,failedCount,'Repeated same-kind mutations cannot retry rejected playback');
-hidden=true;w.document.dispatchEvent(new w.Event('visibilitychange'));hidden=false;w.document.dispatchEvent(new w.Event('visibilitychange'));w.dispatchEvent(new w.Event('pageshow'));assert.equal(create.attempts.length,failedCount,'Lifecycle changes cannot retry a failed kind');
-const forest=panel.querySelector('[data-nature=forest]'),range=panel.querySelector('input');
+const panel=w.document.createElement('section');panel.dataset.nature='rain';panel.dataset.natureVisual='video';panel.innerHTML='<button data-expand>Open</button><button data-toggle>Reading</button><button data-nature="forest">Forest</button><button data-nature-visual="photo">Photo</button><input type="range">';w.document.body.append(panel);
+let cacheOptions;const cache={get:kind=>blobs.get(kind)||null,warm:kind=>{assert.ok(cacheOptions.canWarm(),'Warming only follows current playing foreground');warmCalls.push(kind);},stop(){},retry(){},destroy(){destroyedCache++;}};
+const motion=mountNatureMotion(panel,{doc:w.document,win:w,isReduced:()=>reduced,createVideo:mockVideo,createCache:options=>{cacheOptions=options;return cache;},setTimer:(fn,ms)=>{assert.equal(ms,220);const id=++nextTimer;timers.set(id,fn);return id;},clearTimer:id=>timers.delete(id)});
+const runTimers=()=>{const callbacks=[...timers.values()];timers.clear();for(const fn of callbacks)fn();};
 function event(target,type,time=1000,trusted=true){const e=new w.Event(type,{bubbles:true});Object.defineProperty(e,'isTrusted',{value:trusted});Object.defineProperty(e,'timeStamp',{value:time});target.dispatchEvent(e);}
-event(forest,'pointerdown',1000,false);event(range,'change',1050,false);assert.equal(create.attempts.length,failedCount,'Synthetic events do not bypass failed autoplay');
-event(forest,'pointerdown',2000);assert.equal(create.attempts.length,failedCount+1,'Explicit trusted same-kind selection retries once');
-create.attempts.at(-1).reject(Error('still denied'));await flush();event(forest,'click',2100);assert.equal(create.attempts.length,failedCount+1,'One pointer gesture cannot retry again through its click');
-event(range,'change',2300);assert.equal(create.attempts.length,failedCount+2,'Explicit trusted change retries after failure');
-create.attempts.at(-1).reject(Error('denied'));await flush();event(forest,'click',4000);assert.equal(create.attempts.length,failedCount+3,'Keyboard-like trusted activation works without pointer events');
-resource('forest');video.dispatchEvent(new w.Event('playing'));create.attempts.at(-1).resolve();await flush();assert.equal(wrapper.hasAttribute('data-ready'),true);
-for(const mutate of [()=>{hidden=true;},()=>{reduced=true;},()=>{systemReduced=true;},()=>{panel.hidden=true;},()=>{panel.classList.remove('is-expanded');}]){
- mutate();const count=create.attempts.length;motion.sync();assert.equal(video.hasAttribute('src'),false);assert.equal(wrapper.hidden,true);assert.equal(create.state.paused,true);for(let i=0;i<5;i++)motion.sync();assert.equal(create.attempts.length,count,'No load while ineligible');
- hidden=false;reduced=false;systemReduced=false;panel.hidden=false;panel.classList.add('is-expanded');motion.sync();assert.equal(create.attempts.length,count+1);resource('forest');video.dispatchEvent(new w.Event('playing'));create.attempts.at(-1).resolve();await flush();
-}
-const bfcacheCount=create.attempts.length;w.dispatchEvent(new w.Event('pagehide'));assert.equal(video.hasAttribute('src'),false);motion.sync();assert.equal(create.attempts.length,bfcacheCount);w.dispatchEvent(new w.Event('pageshow'));assert.equal(create.attempts.length,bfcacheCount+1,'BFCache resumes only an eligible nonfailed scene');
-resource('forest');video.dispatchEvent(new w.Event('playing'));create.attempts.at(-1).resolve();await flush();
-systemReduced=true;for(const fn of mediaListeners)fn();assert.equal(video.hasAttribute('src'),false);systemReduced=false;for(const fn of mediaListeners)fn();assert.equal(create.attempts.length,bfcacheCount+2);
-const pending=create.attempts.at(-1),lateLoaded=[...create.listeners.get('loadeddata')][0],lateError=[...create.listeners.get('error')][0],requestCount=create.requests.length;
-motion.destroy();motion.destroy();assert.equal(panel.querySelector('.quran-nature-motion'),null);assert.equal(video.hasAttribute('src'),false);assert.equal(create.state.paused,true);assert.equal(mediaListeners.size,0);
-pending.resolve();lateLoaded();lateError();await flush();panel.dataset.nature='rain';w.document.dispatchEvent(new w.Event('visibilitychange'));w.dispatchEvent(new w.Event('pageshow'));event(range,'change',8000);assert.equal(create.requests.length,requestCount,'Disposed promises/events cannot resurrect playback');
-assert.equal(w.localStorage.length,before,'No writes to identity, settings or playback history');
-let unsupportedAttempts=0;const unsupported=mountNatureMotion(panel,{doc:w.document,win:w,createVideo:()=>{unsupportedAttempts++;return null;}});
-for(let i=0;i<8;i++)unsupported.sync();assert.equal(unsupportedAttempts,1,'Missing video support fails once, leaving the static scene');assert.equal(panel.querySelector('.quran-nature-motion'),null);unsupported.destroy();
-const source=await fs.readFile(new URL('../dist/js/quran-nature-motion.js',import.meta.url),'utf8');
-assert.doesNotMatch(source,/\b(?:Audio|AudioContext|claimPlayback|setForegroundAudio|createMediaSession|setInterval|setTimeout|requestAnimationFrame)\s*\(/,'No audio ownership, render loops or background retries');
-assert.doesNotMatch(source,/navigator\.mediaSession|\.currentTime\s*=/,'No media-session override or Quran seeking');
-assert.equal((source.match(/doc\.createElement\('video'\)/g)||[]).length,1);
-console.log('PASS: one selected-only silent inline video, hidden/compact/reduced source release, generation-safe readiness and stale events, bounded explicit retry, BFCache/settings lifecycle, static fallback and disposal without audio/session/history ownership. Mock-media lifecycle only, no device playback claim.');
-await w.happyDOM.close();
+function switchTo(kind){panel.dataset.nature=kind;motion.sync();}
+function selectedVideo(){return videos.find(v=>v.node.dataset.kind===panel.dataset.nature&&v.node.hasAttribute('src'));}
+function decode(v){v.s.currentSrc=v.node.getAttribute('src');v.s.readyState=2;v.s.error=null;v.s.paused=false;v.node.dispatchEvent(new w.Event('loadeddata'));v.node.dispatchEvent(new w.Event('playing'));}
+function present(v){decode(v);assert.equal(v.frames.size,1,'One one-shot compositor-frame callback per source');const callbacks=[...v.frames.values()];v.frames.clear();for(const fn of callbacks)fn(0,{});}
+assert.equal(videos.length,0);assert.equal(warmCalls.length,0);
+panel.classList.add('is-expanded');hidden=true;motion.sync();hidden=false;reduced=true;motion.sync();reduced=false;systemReduced=true;motion.sync();systemReduced=false;panel.dataset.natureVisual='photo';motion.sync();assert.equal(videos.length,0,'Hidden, reduced and Photo allocate no decoder/source');
+panel.dataset.natureVisual='video';motion.sync();assert.equal(videos.length,1);const rain=videos[0],wrapper=panel.querySelector('.quran-nature-motion');
+assert.equal(rain.requests[0],BASE+'rain.mp4','Cold selected mode starts canonical media immediately, without waiting for byte warming');
+for(const[key,value]of Object.entries({muted:true,defaultMuted:true,volume:0,playsInline:true,loop:true,controls:false,autoplay:false,preload:'none',tabIndex:-1,disablePictureInPicture:true,disableRemotePlayback:true}))assert.equal(rain.node[key],value);
+assert.equal(rain.node.getAttribute('x-webkit-airplay'),'deny');assert.equal(wrapper.hasAttribute('data-ready'),false);decode(rain);assert.equal(wrapper.hasAttribute('data-ready'),false,'loadeddata/playing still wait for actual compositor presentation');assert.equal(warmCalls.length,0);const firstCallback=[...rain.frames.values()][0];rain.frames.clear();firstCallback(0,{});assert.equal(wrapper.hasAttribute('data-ready'),true);assert.equal(rain.node.hasAttribute('data-visible'),true);assert.deepEqual(warmCalls,['rain']);
+const rainInitial=rain.attempts[0];
+switchTo('fire');assert.equal(videos.length,2);const fire=selectedVideo();assert.equal(rain.s.paused,true);assert.ok(rain.node.hasAttribute('src'));assert.ok(rain.node.hasAttribute('data-visible'),'Old prepared frame remains while incoming downloads');
+switchTo('rain');assert.equal(videos.length,2);assert.equal(rain.requests.length,1,'Quick A→B→A reuses prepared A without network source reload');assert.equal(rain.attempts.length,2,'A resumes even if its previous play promise never resolved');
+rainInitial.reject(Error('stale rejected playback'));await flush();assert.ok(rain.node.hasAttribute('src'),'Old attempt rejection cannot fail resumed A');assert.equal(wrapper.hasAttribute('data-ready'),true);
+decode(rain);rain.attempts.at(-1).resolve();await flush();
+switchTo('fire');const incoming=selectedVideo();const oldFirePromise=fire.attempts[0];decode(incoming);const frame=[...incoming.frames.values()][0];assert.ok(rain.node.hasAttribute('src'));assert.ok(rain.node.hasAttribute('data-visible'));frame(0,{});incoming.frames.clear();assert.ok(incoming.node.hasAttribute('data-visible'));assert.ok(rain.node.hasAttribute('data-visible'));assert.ok(rain.node.hasAttribute('src'),'Old source survives incoming readiness until crossfade finishes');runTimers();assert.equal(rain.node.hasAttribute('src'),false);assert.equal(incoming.node.dataset.layer,'front');
+const stale=[];for(const kind of ['ocean','forest','wind']){switchTo(kind);const v=selectedVideo();if(kind!=='wind')decode(v);stale.push({attempt:v.attempts.at(-1),callback:[...v.frames.values()][0],error:[...v.listeners.get('error')][0],mock:v});assert.ok(incoming.node.hasAttribute('src'));assert.ok(incoming.node.hasAttribute('data-visible'),'Rapid changes retain the last presented scene');assert.equal(videos.length,2);}
+const wind=selectedVideo(),windAttempt=wind.attempts.at(-1),requestsBeforeRetry=wind.requests.length,loadsBeforeRetry=wind.loads;
+event(panel.querySelector('input'),'change',2000);assert.equal(wind.requests.length,requestsBeforeRetry,'Explicit retry of a pending source does not reset src or network');assert.equal(wind.loads,loadsBeforeRetry);assert.notEqual(wind.attempts.at(-1),windAttempt);
+const pauseCount=wind.pauses;oldFirePromise.resolve();for(const old of stale.slice(0,-1)){old.attempt.resolve();old.callback(0,{});old.error();}windAttempt.reject(Error('superseded same-resource play'));await flush();assert.equal(wind.pauses,pauseCount,'Stale promises/frame/error events never pause the current back slot');assert.equal(incoming.node.hasAttribute('data-visible'),true);assert.equal(videos.length,2);
+decode(wind);const pausedFrame=[...wind.frames.values()][0];wind.frames.clear();wind.s.paused=true;wind.node.dispatchEvent(new w.Event('pause'));pausedFrame(0,{});assert.ok(incoming.node.hasAttribute('data-visible'),'A pause before presentation retains the previous scene');event(panel.querySelector('[data-toggle]'),'click',2600);decode(wind);assert.equal(wind.frames.size,1,'Retry after a consumed-but-paused frame callback can request a fresh frame');const windCallback=[...wind.frames.values()][0];windCallback(0,{});wind.frames.clear();wind.attempts.at(-1).resolve();await flush();runTimers();assert.equal(wind.node.dataset.layer,'front');assert.equal(incoming.node.hasAttribute('src'),false);
+blobs.set('wind','blob:warmed-wind');const windSources=wind.requests.length,windPlays=wind.attempts.length,warmedBeforePhoto=warmCalls.length;
+panel.dataset.natureVisual='photo';motion.sync();assert.equal(wrapper.hasAttribute('data-ready'),false,'Photo begins immediately through outer opacity');assert.ok(wind.node.hasAttribute('src'));assert.equal(wind.s.paused,true);assert.equal(timers.size,1);for(let i=0;i<8;i++)motion.sync();assert.equal(warmCalls.length,warmedBeforePhoto,'Photo does not warm bytes');
+panel.dataset.natureVisual='video';motion.sync();assert.equal(wind.requests.length,windSources,'Fast Photo→Video returns to the same retained source');assert.equal(wind.attempts.length,windPlays+1);decode(wind);wind.attempts.at(-1).resolve();await flush();
+panel.dataset.natureVisual='photo';motion.sync();runTimers();assert.equal(videos.filter(v=>v.node.hasAttribute('src')).length,0,'Photo unloads decoders after its finite fade');
+panel.dataset.natureVisual='video';motion.sync();const warmWind=selectedVideo();assert.equal(warmWind.node.getAttribute('src'),'blob:warmed-wind','Completed compressed bytes avoid canonical network on return');present(warmWind);warmWind.attempts.at(-1).resolve();await flush();runTimers();
+switchTo('forest');const failing=selectedVideo();failing.attempts.at(-1).reject(Error('NotAllowedError'));await flush();const failedAttempts=videos.reduce((n,v)=>n+v.attempts.length,0);for(let i=0;i<10;i++)motion.sync();assert.equal(timers.size,1,'Repeated failed-kind sync does not cancel old-frame cleanup');runTimers();assert.equal(videos.filter(v=>v.node.hasAttribute('src')).length,0);
+hidden=true;motion.sync();hidden=false;motion.sync();w.dispatchEvent(new w.Event('pageshow'));assert.equal(videos.reduce((n,v)=>n+v.attempts.length,0),failedAttempts,'No automatic retries after failure');
+const forestButton=panel.querySelector('[data-nature=forest]');event(forestButton,'pointerdown',3000,false);assert.equal(videos.reduce((n,v)=>n+v.attempts.length,0),failedAttempts);event(forestButton,'pointerdown',4000);const forestNow=selectedVideo(),forestAttempts=forestNow.attempts.length;event(forestButton,'click',4100);assert.equal(forestNow.attempts.length,forestAttempts,'Pointer and ensuing click are one explicit retry');present(forestNow);forestNow.attempts.at(-1).resolve();await flush();
+for(const change of [()=>{hidden=true;},()=>{reduced=true;},()=>{systemReduced=true;},()=>{panel.hidden=true;},()=>{panel.classList.remove('is-expanded');}]){change();motion.sync();assert.equal(videos.filter(v=>v.node.hasAttribute('src')).length,0);assert.equal(timers.size,0);const loads=videos.map(v=>v.loads);for(let i=0;i<8;i++)motion.sync();assert.deepEqual(videos.map(v=>v.loads),loads,'Inactive state ticks never repeatedly load/unload');hidden=false;reduced=false;systemReduced=false;panel.hidden=false;panel.classList.add('is-expanded');motion.sync();assert.ok(selectedVideo());assert.equal(videos.length,2);}
+w.dispatchEvent(new w.Event('pagehide'));assert.equal(videos.filter(v=>v.node.hasAttribute('src')).length,0);motion.sync();assert.equal(videos.filter(v=>v.node.hasAttribute('src')).length,0);w.dispatchEvent(new w.Event('pageshow'));assert.ok(selectedVideo());
+const late=selectedVideo();decode(late);const lateFrame=[...late.frames.values()][0],latePromise=late.attempts.at(-1),sourceCounts=videos.map(v=>v.requests.length);motion.destroy();motion.destroy();assert.equal(panel.querySelector('.quran-nature-motion'),null);assert.equal(timers.size,0);assert.equal(mediaListeners.size,0);assert.equal(destroyedCache,1);lateFrame(0,{});latePromise.resolve();await flush();assert.deepEqual(videos.map(v=>v.requests.length),sourceCounts);assert.equal(videos.filter(v=>v.node.hasAttribute('src')).length,0);
+const source=await fs.readFile(new URL('../dist/js/quran-nature-motion.js',import.meta.url),'utf8');assert.doesNotMatch(source,/\b(?:Audio|AudioContext|claimPlayback|setForegroundAudio|createMediaSession|setInterval|requestAnimationFrame)\s*\(/);assert.doesNotMatch(source,/navigator\.mediaSession|\.currentTime\s*=/);
+console.log('PASS: at most two silent visual slots, retained outgoing compositor frame, one-shot incoming frame readiness, rapid five-scene and same-resource promise races, finite fades, immediate Photo and warm return, explicit bounded retry, no inactive source churn, reduced/BFCache lifecycle and full cleanup. Mock-media tests, not physical-device playback QA.');await w.happyDOM.close();
