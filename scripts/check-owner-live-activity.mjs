@@ -3,11 +3,11 @@ import fs from 'node:fs/promises';
 const source=await fs.readFile(new URL('../supabase/functions/owner-access/index.ts',import.meta.url),'utf8');
 const{createOwnerHandler}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const owner='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7',id='11111111-1111-4111-8111-111111111111';
-let calls=0,aal='aal2',active=true;
+let calls=0,aal='aal2',active=true,guestNickname='Гость · Янтарь';
 const user={id:owner,email_confirmed_at:'2026-10-02',is_anonymous:false,factors:[{status:'verified',factor_type:'totp'}]};
 const handler=createOwnerHandler({getUser:async token=>token==='owner-private-token'?{data:{user}}:token==='ordinary-user-token'?{data:{user:{...user,id,user_metadata:{owner:true}}}}:{error:Error('invalid')},
  getClaims:async()=>({data:{claims:{sub:owner,iss:'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',aal,session_id:id}}}),isSessionActive:async()=>active,
- readLiveActivity:async(kind,page)=>{calls++;assert.equal(kind,'reading');assert.equal(page,1);return{total:2,users:[{id,nickname:'Private reader',country:'PRIVATE-GEOGRAPHY',token:'PRIVATE-TOKEN'},{guest:true,code:'abcdef',device:'PRIVATE-DEVICE'}]};}});
+ readLiveActivity:async(kind,page)=>{calls++;assert.equal(kind,'reading');assert.equal(page,1);return{total:2,users:[{id,nickname:'Private reader',country:'PRIVATE-GEOGRAPHY',token:'PRIVATE-TOKEN'},{guest:true,nickname:guestNickname,code:'abcdef',device:'PRIVATE-DEVICE',selectedCity:{city:'Тюмень',country:'Россия',reportedAt:'2026-11-15T00:00:00.000Z',latitude:'PRIVATE-COORDINATE'}}]};}});
 const request=(token,query='?mode=live&kind=reading',origin)=>new Request('https://fixture.invalid'+query,{headers:{...(token?{Authorization:'Bearer '+token}:{}),...(origin?{Origin:origin}:{})}});
 assert.equal((await handler(request(null))).status,401);
 assert.equal((await handler(request('ordinary-user-token'))).status,403);assert.equal(calls,0);
@@ -17,7 +17,8 @@ active=true;assert.equal((await handler(request('owner-private-token',undefined,
 assert.equal((await handler(request('owner-private-token','?mode=live&kind=reading&city=Private'))).status,400);
 assert.equal((await handler(request('owner-private-token','?mode=live&kind=unknown'))).status,400);assert.equal(calls,0);
 const response=await handler(request('owner-private-token'));assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store, private');
-assert.deepEqual(await response.json(),{kind:'reading',page:1,total:2,users:[{id,nickname:'Private reader'},{id:null,guest:true,nickname:'Гость ABCDEF'}]});assert.equal(calls,1);
+assert.deepEqual(await response.json(),{kind:'reading',page:1,total:2,users:[{id,nickname:'Private reader'},{id:null,guest:true,nickname:'Гость · Янтарь',selectedCity:{city:'Тюмень',country:'Россия',reportedAt:'2026-11-15T00:00:00.000Z'}}]});assert.equal(calls,1);
+for(const legacy of [undefined,'Гость ABCDEF','Гость · \nЯнтарь']){guestNickname=legacy;const fallback=await(await handler(request('owner-private-token'))).json();assert.equal(fallback.users[1].nickname,'Гость');assert.ok(!/abcdef|PRIVATE-DEVICE|PRIVATE-COORDINATE/.test(JSON.stringify(fallback)),'Unmatched or invalid aliases never fall back to raw hash/code labels');}
 assert.match(source,/not_after is null or not_after>now\(\)/);
 console.log('PASS: live people are returned only to the verified owner with MFA and an active session; forged roles, other accounts, bad origin and parameters are denied, private extra fields are excluded.');
 
@@ -29,8 +30,9 @@ const context=vm.createContext({ownerVerified:()=>verified,ownerNeedsMfa:()=>mfa
 const frontend=await fs.readFile(new URL('../dist/js/home-activity-members.js',import.meta.url),'utf8');
 const open=vm.runInContext(frontend.replace(/^import.*$/gm,'').replaceAll('export ','')+';showHomeActivity;',context);
 const flush=async()=>{for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));};
-await open('readers');assert.equal(peopleReads,1);pending.shift()({total:2,users:[{id,nickname:'<img src=x onerror=alert(1)>'},{id:null,guest:true,nickname:'Гость ABCDEF'}]});await flush();
+await open('readers');assert.equal(peopleReads,1);pending.shift()({total:2,users:[{id,nickname:'<img src=x onerror=alert(1)>'},{id:null,guest:true,nickname:'Гость · Янтарь',selectedCity:{city:'<img src=x onerror=alert(2)>',country:'Россия',reportedAt:'2026-11-15T00:00:00.000Z'}}]});await flush();
 assert.equal(content.querySelectorAll('img').length,0);assert.equal(content.querySelectorAll('.owner-live-member').length,2);assert.equal(content.querySelectorAll('a').length,0,'The activity list shows names without changing account navigation');
+assert.ok(content.textContent.includes('Выбранный город: <img src=x onerror=alert(2)>, Россия'),'The owner sees the explicitly selected city as escaped text');
 verified=false;for(const fn of [...listeners])fn();assert.equal(dlg.open,false);assert.equal(content.textContent,'','Losing the owner grant purges private names');
 const beforeReads=peopleReads;await open('readers');assert.equal(peopleReads,beforeReads,'Other accounts never read identities');
 mfa=true;await open('readers');assert.equal(w.location.hash,'#admin','The owner must complete MFA before seeing names');

@@ -2231,6 +2231,15 @@
       "rightsEvidence": "docs/release-announcements.md"
     },
     {
+      "path": "dist/assets/updates/guest-registration-499.svg",
+      "bytes": 2887,
+      "gitBlobSha": "569d9446f234781240d38cc0fc4e52ad59ee9fe9",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH vector browser-bound guest history and voluntary registration card authored in repository code for release499, using a fictional stone guest label. No external images, embedded fonts, icon library or private user data."
+    },
+    {
       "path": "dist/assets/updates/guest-top-479.svg",
       "gitBlobSha": "38faf3822303a1fa14d3ee294be9f34f0cf63c18",
       "bytes": 2417,
@@ -2342,6 +2351,15 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "SALAH preview screenshot captured2026-11-05 with actual460 modules; no account data.",
       "note": "Actual app catalog screenshot with four source-based AI portrait edits; Dibirov unchanged. Composite inherits source portrait conditions."
+    },
+    {
+      "path": "dist/assets/updates/night-credit-499.svg",
+      "bytes": 2992,
+      "gitBlobSha": "69cd51d2eee41dac1912cd280f939b830c6b4d5c",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH vector player and night-credit flow authored in repository code for release499: ongoing Quran audio,90-minute inactivity threshold,paused Top credit and voluntary confirmation. No external images, embedded fonts, icon library or private user data."
     },
     {
       "path": "dist/assets/updates/online-lessons-coming-395.svg",

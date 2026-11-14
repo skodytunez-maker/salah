@@ -66,6 +66,25 @@ for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature
 for(const img of root.querySelectorAll('img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 for(const change of APP_CHANGES)assert.ok(releaseFeatureForChange(change),'Assign feature-specific artwork before publishing: '+change);
 root.innerHTML=illustratedReleaseMarkup(APP_VERSION,APP_CHANGES);assert.equal(root.querySelectorAll('.release-feature').length,APP_CHANGES.length);for(const feature of root.querySelectorAll('.release-feature'))assert.ok(feature.querySelector('.release-new-art img'),'Current release notes need pictures, not generic book icons');for(const img of root.querySelectorAll('.release-new-art img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
+const public499=[
+ 'Ночной учёт: после 90 минут без действий приостанавливается только учёт в Топе. Чтение и личная история продолжаются. Кнопка «Я слушаю» возобновляет учёт.',
+ 'Регистрация для гостей: понятные имена вроде «Гость · Янтарь» и мягкое предложение сохранить прослушанное в профиле. Слушать Коран можно и без регистрации.'
+];
+assert.deepEqual(public499.map(releaseFeatureForChange),['night-credit-499','guest-registration-499']);
+root.innerHTML=illustratedReleaseMarkup(499,public499);const features499=[...root.querySelectorAll('.release-feature')];assert.equal(features499.length,2);
+assert.deepEqual(features499.map(feature=>feature.querySelector('h3').textContent),['Ночью чтение продолжается','Сохраните прослушанное']);
+assert.equal(root.querySelectorAll('.release-motion-preview').length,2,'Both499 public features use the shared looping animation');
+assert.ok(root.querySelector('.release-night-credit [data-release-motion-part]'));assert.ok(root.querySelector('.release-guest-registration [data-release-motion-part]'));
+assert.equal(root.querySelector('.release-night-credit strong').parentElement.style.opacity,'0','Reduced motion keeps the SVG paused-Top explanation visible instead of covering it with the resumed-state overlay');
+assert.doesNotMatch(root.textContent,/владел|админ|город|географ|местност|Своя атмосфера|Короткое напоминание/iu,'Only the two new public499 features belong in this news');
+for(const part of root.querySelectorAll('[data-release-motion-part]'))assert.ok(releaseStyles.includes('@keyframes '+part.style.getPropertyValue('--release-motion-keyframes')),'New parts reuse the shared stylesheet and its active/hidden/reduced-motion lifecycle');
+let total499ArtBytes=0;
+for(const [name,required]of [['night-credit-499',['90 мин','Топ SALAH','Учёт на паузе','Я слушаю','Чтение и личная история','Звук не ставится на паузу']],['guest-registration-499',['Этот браузер','Гость · Янтарь','Создать аккаунт или войти','Не сейчас','без регистрации']]]){
+ const file=new URL('../dist/assets/updates/'+name+'.svg',import.meta.url),art=await fs.readFile(file,'utf8');total499ArtBytes+=Buffer.byteLength(art);
+ assert.match(art,/<svg\b/);assert.match(art,/<title\b/);assert.match(art,/<desc\b/);for(const phrase of required)assert.ok(art.includes(phrase),name+': feature-specific illustration includes '+phrase);
+ assert.doesNotMatch(art,/<(?:script|animate|animateTransform|animateMotion|set|foreignObject)\b|(?:href|xlink:href)=["']https?:/iu,'No independent SVG animation or external media can bypass shared motion controls');
+}
+assert.ok(total499ArtBytes<16384,'Two vector illustrations leave the tight Android update budget intact');
 const deadline=Date.parse(APP_NEWS_UNTIL);assert.ok(releaseHighlightActive(deadline-1));assert.equal(releaseHighlightActive(deadline),false);assert.equal(releaseHighlightActive(deadline+86400000),false);assert.equal(releaseHighlightMarkup(deadline),'');
 const realNow=Date.now;
 for(const now of [deadline-1000,deadline,deadline+86400000])for(const home of [true,false])assert.equal(releaseHighlightMarkup(now,{home}),'','Obsolete promotion stays absent regardless of location, receipt or news deadline');
@@ -77,8 +96,13 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- assert.ok(releaseModal.textContent.includes('Короткое напоминание каждый день'));assert.ok(!releaseModal.textContent.includes('Своя атмосфера для чтения'));assert.ok(!releaseModal.textContent.includes('Чтение — на отдельном экране'));assert.ok(!releaseModal.textContent.includes('Остановить чтение вовремя'));assert.ok(!releaseModal.textContent.includes('Радио SALAH'));
- assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,1);assert.ok(releaseModal.querySelector('.release-daily-reminder.release-motion-preview [data-release-motion-part]'));assert.equal(releaseModal.querySelector('.release-top-demo-track'),null,'New announcement contains only its own feature');
+ if(APP_ANNOUNCEMENT.version===499){
+  assert.ok(releaseModal.textContent.includes('Ночью чтение продолжается'));assert.ok(releaseModal.textContent.includes('Сохраните прослушанное'));assert.ok(!releaseModal.textContent.includes('Короткое напоминание каждый день'));
+  assert.equal(releaseModal.querySelectorAll('.release-feature').length,2);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,2);assert.ok(releaseModal.querySelector('.release-night-credit [data-release-motion-part]'));assert.ok(releaseModal.querySelector('.release-guest-registration [data-release-motion-part]'));
+ }else{
+  assert.ok(releaseModal.textContent.includes('Короткое напоминание каждый день'));assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,1);assert.ok(releaseModal.querySelector('.release-daily-reminder.release-motion-preview [data-release-motion-part]'));
+ }
+ assert.ok(!releaseModal.textContent.includes('Своя атмосфера для чтения'));assert.ok(!releaseModal.textContent.includes('Чтение — на отдельном экране'));assert.ok(!releaseModal.textContent.includes('Остановить чтение вовремя'));assert.ok(!releaseModal.textContent.includes('Радио SALAH'));assert.equal(releaseModal.querySelector('.release-top-demo-track'),null,'New announcement contains only its own feature');
  assert.ok(!releaseModal.textContent.includes('Большое обновление SALAH'));
  releaseModal.querySelector('[data-close]').click();assert.equal(releaseModal.open,false);assert.equal(hasSeenAnnouncement(),true,'Понятно acknowledges the news');
  assert.equal(releaseHighlightMarkup(undefined,{home:true}),'','Home stays clear after acknowledgement');

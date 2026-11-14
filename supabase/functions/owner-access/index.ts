@@ -43,6 +43,13 @@ export function canonicalAccountLocation(city,country=null){
  return{city:name||null,country:nation||null};
 }
 // END SHARED ACCOUNT LOCATION
+function ownerGuestSelectedCity(value){
+ const clean=v=>typeof v==='string'&&v.trim()&&v.length<=160&&!/[\u0000-\u001f\u007f]/.test(v)?v.trim():null;
+ if(!value||!clean(value.city)||value.country!=null&&!clean(value.country))return null;
+ const stamp=value.reportedAt instanceof Date?value.reportedAt.getTime():typeof value.reportedAt==='string'&&value.reportedAt.length<=40?Date.parse(value.reportedAt):NaN;
+ if(!Number.isFinite(stamp))return null;
+ return{city:clean(value.city),country:value.country==null?null:clean(value.country),reportedAt:new Date(stamp).toISOString()};
+}
 export async function readOwnerLiveActivity(sql,kind,page=1){
  if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('invalid');
  const rows=await sql`with live as(
@@ -55,12 +62,16 @@ export async function readOwnerLiveActivity(sql,kind,page=1){
  join public.reciter_listener_visibility v on v.user_id=u.id
  where (a.not_after is null or a.not_after>statement_timestamp()) and p.enabled and v.mode in('initial','profile')
  and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=statement_timestamp())
+ ), live_guests as(
+ select device_hash from salah_visits_private.guest_activity_presence where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds' group by device_hash
  ), all_people as(
- select id::text,nickname,false guest,null::text code from people
- union all select null::text,'Гость'::text,true,left(device_hash,6) from salah_visits_private.guest_activity_presence
- where kind=${kind} and active and reported_at>statement_timestamp()-interval '45 seconds' group by device_hash
- )select id,nickname,guest,code,count(*)over()::int total from all_people order by guest,lower(coalesce(nickname,'')),id,code limit 50 offset ${(page-1)*50}`;
- return{total:Number(rows[0]?.total||0),users:rows.map(row=>row.guest===true?{guest:true,code:row.code}:{id:String(row.id),nickname:typeof row.nickname==='string'?row.nickname:'Без ника'})};
+ select id::text,nickname,false guest,null::text code,null::text selected_city,null::text selected_country,null::timestamptz selected_context_at from people
+ union all select null::text,coalesce(player.nickname,'Гость'),true,coalesce(left(player.public_id::text,6),left(g.device_hash,6)),context.selected_city,context.selected_country,context.selected_context_at
+ from live_guests g
+ left join lateral(select p.public_id,alias.nickname from salah_competition_private.guest_players p left join salah_competition_private.guest_aliases alias on alias.guest_id=p.public_id where p.activity_hash=g.device_hash and p.claimed_by is null order by p.created_at desc,p.public_id limit 1)player on true
+ left join lateral(select c.selected_city,c.selected_country,c.selected_context_at from salah_visits_private.guest_activity_presence c where c.device_hash=g.device_hash order by c.selected_context_at desc nulls last,c.reported_at desc,c.tab_id limit 1)context on true
+ )select id,nickname,guest,code,selected_city,selected_country,selected_context_at,count(*)over()::int total from all_people order by guest,lower(coalesce(nickname,'')),id,code limit 50 offset ${(page-1)*50}`;
+ return{total:Number(rows[0]?.total||0),users:rows.map(row=>{if(row.guest!==true)return{id:String(row.id),nickname:typeof row.nickname==='string'?row.nickname:'Без ника'};const selectedCity=ownerGuestSelectedCity({city:row.selected_city,country:row.selected_country,reportedAt:row.selected_context_at});return{guest:true,code:row.code,nickname:row.nickname,...(selectedCity?{selectedCity}:{})};})};
 }
 
 
@@ -141,7 +152,7 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    if([...url.searchParams.keys()].some(k=>!['mode','kind','page'].includes(k))||!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)return reply(400,{error:'invalid_parameters'});
    if(!readLiveActivity)return reply(503,{error:'activity_unavailable'});
    try{const data=await readLiveActivity(kind,page);if(!Number.isSafeInteger(data.total)||data.total<0||!Array.isArray(data.users))throw Error('invalid');
-    const users=data.users.slice(0,50).filter(row=>row.guest===true?/^[a-f0-9]{6}$/i.test(row.code||''):/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.id||'')).map(row=>row.guest===true?{id:null,guest:true,nickname:'Гость '+row.code.toUpperCase()}:{id:row.id,nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника'});
+    const users=data.users.slice(0,50).filter(row=>row.guest===true?/^[a-f0-9]{6}$/i.test(row.code||''):/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.id||'')).map(row=>{if(row.guest!==true)return{id:row.id,nickname:typeof row.nickname==='string'&&row.nickname.trim()?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):'Без ника'};const selectedCity=ownerGuestSelectedCity(row.selectedCity),nickname=typeof row.nickname==='string'&&row.nickname.startsWith('Гость · ')&&row.nickname.length<=40&&!/[\u0000-\u001f\u007f]/.test(row.nickname)?row.nickname:'Гость';return{id:null,guest:true,nickname,...(selectedCity?{selectedCity}:{})};});
     return reply(200,{kind,page,total:data.total,users});
    }catch{return reply(503,{error:'activity_unavailable'});}
   }

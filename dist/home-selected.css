@@ -155,3 +155,5 @@ button.home-activity-count{position:relative;pointer-events:auto;background:none
 @media (max-width:599px) and (min-height:701px) and (orientation:portrait){
  .home-page .app-home-shell:has(.central-prayer.timetable):has(.home-listening-now:not([hidden])) .home-prayer-center{position:relative;top:-20px}
 }
+
+.owner-live-member small{display:block;margin-top:4px;line-height:1.45}

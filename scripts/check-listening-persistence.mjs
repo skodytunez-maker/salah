@@ -1,3 +1,6 @@
+import{createListeningCreditPolicy,createCreditMinuteMeter}from '../dist/js/listening-credit-core.js';
+// The production credit policy runs with fixture time; this harness does not mount its UI.
+const createListeningCredit=({now})=>{const policy=createListeningCreditPolicy({now,timeZone:()=> 'UTC'});return{segments:(seconds,at)=>policy.segments(seconds,at),tick(){}};};
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -7,7 +10,7 @@ import{createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodT
 const source=await fs.readFile(new URL('../dist/js/reciter-popularity.js',import.meta.url),'utf8');
 const stored=new Map(),events={},documentEvents={},reciter='ar.alafasy',key='reciter-personal-listening-v1:fixture-user';
 let clock=new Date(2026,9,31,23,58,0).getTime(),sample,tick,writes=0,attempts=0,allowWrites=true,state={reciter,surah:{number:1},index:0,positionSeconds:0,status:'playing'};
-const context=vm.createContext({personalDataAllowed,initGuestCompetition(){},recordGuestListening(){},RECITERS,reciterInfo,createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodTotals,addListeningDay,Date,initListenerPresence(){},initCompetition(){},read:(k,d)=>stored.has(k)?structuredClone(stored.get(k)):d,write:(k,v)=>{if(k===key)attempts++;if(!allowWrites)return false;stored.set(k,structuredClone(v));if(k===key)writes++;return true;},esc:String,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',window:{addEventListener:(n,f)=>events[n]=f,dispatchEvent(){}},document:{hidden:false,addEventListener:(n,f)=>documentEvents[n]=f},navigator:{onLine:false},Event:class{},crypto:{randomUUID:()=> '11111111-1111-4111-8111-111111111111'},setInterval:f=>tick=f,AbortSignal});
+const context=vm.createContext({personalDataAllowed,createCreditMinuteMeter,createListeningCredit,initGuestCompetition(){},recordGuestListening(){},RECITERS,reciterInfo,createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodTotals,addListeningDay,Date,initListenerPresence(){},initCompetition(){},read:(k,d)=>stored.has(k)?structuredClone(stored.get(k)):d,write:(k,v)=>{if(k===key)attempts++;if(!allowWrites)return false;stored.set(k,structuredClone(v));if(k===key)writes++;return true;},esc:String,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',window:{addEventListener:(n,f)=>events[n]=f,dispatchEvent(){}},document:{hidden:false,addEventListener:(n,f)=>documentEvents[n]=f},navigator:{onLine:false},Event:class{},crypto:{randomUUID:()=> '11111111-1111-4111-8111-111111111111'},setInterval:f=>tick=f,AbortSignal});
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/^export \{.*\};?$/gm,'').replace(/export /g,'')+';({initReciterPopularity});',context);
 api.initReciterPopularity({playback:{get state(){return{...state};},subscribe:f=>{sample=f;f();}},getAccount:()=>({signedIn:true,userId:'fixture-user'}),getClient:()=>null,now:()=>clock});
 const advance=(seconds,status='playing')=>{clock+=seconds*1000;state.positionSeconds+=seconds;state.status=status;sample();};

@@ -1,4 +1,11 @@
 import{guestRankHash}from './core.mjs';
+import{applyGuestCreditControl}from './credit-control.mjs';
+async function creditedSnapshot(tx,id){
+ const totals=await tx`select reciter,seconds from salah_competition_private.guest_totals where guest_id=${id}::uuid`;
+ const rows=await tx`select day::text,reciter,seconds from salah_competition_private.guest_days where guest_id=${id}::uuid`;
+ const days={};for(const x of rows)(days[x.day]||={})[x.reciter]=Number(x.seconds);
+ return{totals:Object.fromEntries(totals.map(x=>[x.reciter,Number(x.seconds)])),days};
+}
 export function createGuestRankDb(sql){return{async apply(packet,user=null){
  const deviceHash=await guestRankHash('salah-guest-rank-v1:',packet.device),secretHash=await guestRankHash('salah-guest-rank-secret-v1:',packet.secret),activityHash=packet.action==='register'?await guestRankHash('salah-guest-v1:',packet.activity):null;
  return sql.begin(async tx=>{
@@ -11,7 +18,12 @@ export function createGuestRankDb(sql){return{async apply(packet,user=null){
   if(!player||player.secret_hash!==secretHash)throw Error('forbidden');
   const [rate]=await tx`update salah_competition_private.guest_players set attempts=case when rate_minute=date_trunc('minute',clock_timestamp())then attempts+1 else 1 end,rate_minute=date_trunc('minute',clock_timestamp()) where public_id=${player.public_id}::uuid and (rate_minute<>date_trunc('minute',clock_timestamp())or attempts<30) returning attempts`;
   if(!rate)return{ok:false,retry:true};
-  const publicResult={ok:true,id:player.public_id,nickname:'Гость '+player.public_id.replaceAll('-','').slice(0,6).toUpperCase(),claimed:!!player.claimed_by};
+  const [alias]=await tx`select salah_competition_private.ensure_guest_alias(${player.public_id}::uuid) nickname`;
+  const publicResult={ok:true,id:player.public_id,nickname:alias.nickname,claimed:!!player.claimed_by};
+  const [control]=await tx`select * from salah_competition_private.guest_credit_controls where guest_id=${player.public_id}::uuid for update`;
+  const credited=control?await creditedSnapshot(tx,player.public_id):null;
+  if(credited){publicResult.creditTotals=credited.totals;publicResult.creditDays=credited.days;publicResult.creditRevision=Number(control.revision);publicResult.creditPaused=!!control.paused_at;publicResult.creditPauseToken=control.paused_at?control.pause_token:null;}
+  if(control?.paused_at){publicResult.creditPaused=true;publicResult.creditPauseToken=control.pause_token;}
   if(packet.action==='register')return publicResult;
   if(packet.action==='claim'){
    const [valid]=await tx`select u.id from auth.users u join auth.sessions s on s.user_id=u.id where u.id=${user.id}::uuid and s.id=${user.session}::uuid and (s.not_after is null or s.not_after>now()) and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and (u.banned_until is null or u.banned_until<=now())`;
@@ -20,7 +32,15 @@ export function createGuestRankDb(sql){return{async apply(packet,user=null){
    return{...publicResult,claimed:true};
   }
   if(player.claimed_by)throw Error('claimed');
-  const snapshot=packet.snapshot,totals=Object.entries(snapshot.totals).map(([reciter,seconds])=>({reciter,seconds}));
+  let snapshot=packet.snapshot;
+  if(control){
+   const next=applyGuestCreditControl(control,snapshot,credited,packet.resumeCredit);
+   const [revision]=await tx`update salah_competition_private.guest_credit_controls set raw_totals=${tx.json(next.control.raw_totals)}::jsonb,raw_days=${tx.json(next.control.raw_days)}::jsonb,excluded_totals=${tx.json(next.control.excluded_totals)}::jsonb,excluded_days=${tx.json(next.control.excluded_days)}::jsonb,paused_at=case when ${next.resumed} then null else paused_at end,resumed_at=case when ${next.resumed} then clock_timestamp() else resumed_at end,updated_at=clock_timestamp(),revision=revision+1 where guest_id=${player.public_id}::uuid returning revision`;
+   publicResult.creditRevision=Number(revision.revision);
+   if(next.skip)return{...publicResult,creditPaused:next.paused,...(next.paused?{creditPauseToken:control.pause_token}:{creditPauseToken:null})};
+   snapshot=next.snapshot;
+  }
+  const totals=Object.entries(snapshot.totals).map(([reciter,seconds])=>({reciter,seconds}));
   const [{old_seconds}]=await tx`select coalesce(sum(seconds),0)::bigint old_seconds from salah_competition_private.guest_totals where guest_id=${player.public_id}::uuid`;
   const [{elapsed}]=await tx`select greatest(0,floor(extract(epoch from(clock_timestamp()-created_at))))::bigint elapsed from salah_competition_private.guest_players where public_id=${player.public_id}::uuid`;
   const [growth]=await tx`select coalesce(sum(greatest(x.seconds-coalesce(t.seconds,0),0)),0)::bigint value from jsonb_to_recordset(${tx.json(totals)}::jsonb)x(reciter text,seconds bigint)left join salah_competition_private.guest_totals t on t.guest_id=${player.public_id}::uuid and t.reciter=x.reciter`;
@@ -33,6 +53,7 @@ export function createGuestRankDb(sql){return{async apply(packet,user=null){
    if(invalid)throw Error('invalid_growth');
    await tx`insert into salah_competition_private.guest_days(guest_id,day,reciter,seconds)select ${player.public_id}::uuid,x.day,x.reciter,x.seconds from jsonb_to_recordset(${tx.json(days)}::jsonb)x(day date,reciter text,seconds integer)on conflict(guest_id,day,reciter)do update set seconds=greatest(guest_days.seconds,excluded.seconds)`;
   }
+  if(control){const accepted=await creditedSnapshot(tx,player.public_id);publicResult.creditTotals=accepted.totals;publicResult.creditDays=accepted.days;}
   return publicResult;
  });
 }};}
