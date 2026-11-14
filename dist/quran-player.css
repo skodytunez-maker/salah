@@ -172,7 +172,7 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 .quran-player-heading,.quran-playing-reader{display:none}
 #quran-global-player:not(.is-expanded) .quran-playing-portrait{grid-row:1/3;object-fit:cover;object-position:center 25%;margin:0}
 .quran-now-playing:focus-visible{outline:2px solid #d9c398;outline-offset:5px;border-radius:12px}
-.quran-player-dialog{inset:0;width:min(540px,calc(100% - 48px));height:fit-content;max-height:calc(100dvh - 48px);margin:auto;border-radius:30px;overscroll-behavior:contain;scrollbar-width:thin;transform:translateY(var(--player-drag-y,0));transition:transform 180ms ease-out;background:#0b1424}
+.quran-player-dialog{inset:0;width:min(540px,calc(100% - 48px));height:fit-content;max-height:calc(100dvh - 48px);margin:auto;border-radius:30px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:none;scrollbar-width:thin;transform:none;transition:transform 180ms ease-out;background:#0b1424}
 .quran-player-dialog.is-dragging{transition:none;user-select:none}
 .quran-player-dialog::backdrop{background:#030815d9;backdrop-filter:blur(12px)}
 #quran-global-player.is-expanded{padding:20px 30px 28px;gap:22px;background:radial-gradient(ellipse at 50% 20%,#24344b80,transparent 58%),#0b1424;min-height:100%;align-content:start}
@@ -206,7 +206,7 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 @media(prefers-reduced-motion:reduce){.quran-player-dialog{transition:none}.quran-player-dialog::backdrop{backdrop-filter:none}}
 .quran-player-dialog[open]{animation:player-window-enter 220ms cubic-bezier(.2,.7,.2,1)}
 .quran-player-dialog.is-dragging{animation:none}
-@keyframes player-window-enter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes player-window-enter{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.quran-player-dialog[open]{animation:none}}
 body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog{animation:none;transition:none}
 
@@ -299,3 +299,6 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
 
 /* The wallpaper preference shares the existing compact nature controls. */
 .quran-nature-visual{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;font-size:12px;color:#c4ccda}.quran-nature-visual .quran-extra-choices{flex-wrap:nowrap}.quran-nature-visual button{min-width:68px;min-height:38px;padding:8px 14px}
+
+/* Keep elastic page scrolling outside the open player; its settings still scroll inside. */
+html.quran-player-scroll-locked,body.has-player-window{overscroll-behavior:none}

@@ -1,4 +1,4 @@
-export const APP_VERSION=497;
+export const APP_VERSION=498;
 export const APP_UPDATED_AT='2026-11-14';
 export const APP_UPDATE_DATE='14 ноября 2026';
 export const APP_CHANGES=["Короткие напоминания: один зикр, аят или хадис каждый день около Зухра. 28 разных текстов с источниками, без выбора интервала и повторных запросов разрешения."];
