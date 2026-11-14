@@ -1,6 +1,6 @@
-export const APP_VERSION=496;
+export const APP_VERSION=497;
 export const APP_UPDATED_AT='2026-11-14';
 export const APP_UPDATE_DATE='14 ноября 2026';
-export const APP_CHANGES=["Обои и звуки природы: дождь, ветер, камин, лес и океан. Плавное переключение видеорежимов и выбор «Видео / Фото». Громкость фона настраивается отдельно."];
-export const APP_ANNOUNCEMENT={version:493,date:'2026-11-13',changes:APP_CHANGES};
-export const APP_NEWS_UNTIL='2026-11-17T23:59:59Z';
+export const APP_CHANGES=["Короткие напоминания: один зикр, аят или хадис каждый день около Зухра. 28 разных текстов с источниками, без выбора интервала и повторных запросов разрешения."];
+export const APP_ANNOUNCEMENT={version:497,date:'2026-11-14',changes:APP_CHANGES};
+export const APP_NEWS_UNTIL='2026-11-18T23:59:59Z';

@@ -1,5 +1,13 @@
 # SALAH release announcements
 
+## Version497 — daily short reminders without an interval selector (14 November2026)
+
+Replace the two/three-day inactivity interval with one daily reminder around the selected city's Dhuhr, falling back to noon. A recent visit to azkar no longer suppresses it. Keep existing master/category opt-outs and the phone's notification permission; do not add permission prompts or automatically resubscribe disabled devices. Remove the interval selector while preserving existing enable/disable controls. New web subscriptions no longer upload an unused azkar-last-use timestamp or synchronize activity events.
+
+Rotate 28 reviewed short texts by local calendar date, with source references and exact existing Quran translation excerpts; evidence is in docs/daily-reminder-sources-497.json. Use the same scheduler on foreground/native/background paths. Protect activation boundaries, daytime delivery, same-city-day/22h cooldown, stable event deduplication, stale city changes and late opt-out. The existing closed push tables, credentials, gateway allowlist, cron authorization, native support/staff/competition/classroom dispatch and private data boundaries are retained. No schema change or one-off broadcast.
+
+Announcement497 contains only this feature and an original notification-panel vector with a short banner animation using the shared alternating release-motion lifecycle. Respect reduced motion and acknowledge only after Понятно. Verify the self-contained generated background-reminders function before publishing it with existing verify_jwt=false and its own authentication, then read back the deployed source and verify its public configuration. Mock gateways do not contact real phones. Real device display/delivery remains a post-release check.
+
 ## Version496 — prepared video switches and a photo preference (14 November2026)
 
 Replace per-switch source teardown with at most two silent video slots. Keep the presented outgoing frame while a new mode prepares, reveal the incoming frame through a short fade, then release the outgoing decoder. Protect rapid changes, stale events, autoplay failures and interrupted fades. Prepare the other four exact495 clips sequentially after the active scene starts; retain only bounded compressed Blob URLs in memory for this player session, with no five-decoder pool or mandatory video precache. Pause warming and release decoders when hidden, compact, reduced or disposed; do not prefetch on save-data/slow connections. Initial unprepared media still depends on network delivery.

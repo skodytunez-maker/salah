@@ -22,4 +22,14 @@ const dst=buildNativeReminderPlan({enabled:true,prayers:{},adhkar:{morning:{enab
 assert.equal(dst.events.length,1,'Skipped DST minute is not silently shifted');
 assert.equal(dst.events[0].at,localTimestamp('2026-03-09','02:30',dstZone));
 const changed=buildNativeReminderPlan(prefs,{...context,cityKey:'other-city'},{now});assert.ok(changed.events.every(e=>!plan.events.some(old=>old.id===e.id)));
+const quietPrayers=Object.fromEntries(['Fajr','Dhuhr','Asr','Maghrib','Isha'].map(key=>[key,{atTime:false,beforeMinutes:0,adhan:false}]));
+const dailyPreferences={enabled:true,prayers:quietPrayers,dhikr:{enabled:true,days:3,since:localTimestamp('2026-10-07','08:00',zone)}};
+const dailyContext={...context,dhikrLastAt:now};
+const daily=buildNativeReminderPlan(dailyPreferences,dailyContext,{now,days:7});
+assert.equal(daily.events.length,7,'An enabled daily reminder is planned on each city calendar day without the old inactivity pause');
+assert.ok(daily.events.every(event=>event.kind==='dhikr'&&!event.adhan));
+assert.deepEqual(daily.events.map(event=>event.at),Array.from({length:7},(_,i)=>localTimestamp(shiftDay(today,i),'12:00',zone)));
+assert.equal(new Set(daily.events.map(event=>event.id)).size,7,'The native plan has one unique daily event per city day');
+assert.deepEqual(buildNativeReminderPlan({...dailyPreferences,dhikr:{...dailyPreferences.dhikr,enabled:false}},dailyContext,{now}).events,[],'An explicit category opt-out is not re-enabled');
+assert.deepEqual(buildNativeReminderPlan({...dailyPreferences,enabled:false},dailyContext,{now}).events,[],'Master off still clears all reminders');
 console.log('PASS: future-only native plan, distinct city identity, no duplicates, exact prayer/before phases, voice, Friday, disabled/stale/invalid inputs, bounded queue and DST gap. No alarms or permissions were installed.');

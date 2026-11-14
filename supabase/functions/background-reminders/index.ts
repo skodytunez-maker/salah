@@ -66,15 +66,46 @@ function tahajjudFor(now,{previous,today,next}={},chosenTime=''){
   return time===null?null:{kind:'last-third',time,nightStart,nightEnd,label:'Начало последней трети ночи'};
 }
 
+// Quran excerpts reuse SALAH's bundled ru.kuliev translation verbatim.
+// Hadith messages are short Russian renderings of meaning, not a new quoted edition.
+// Sources and the reviewed context of every excerpt: docs/daily-reminder-sources-497.json.
+const DAILY_REMINDER_MESSAGES=Object.freeze([
+ {id:'muslim-2137a',kind:'hadith',reference:'2137a',sourceLabel:'Муслим, 2137a',source:'https://sunnah.com/muslim:2137a',evidenceId:'muslim-2137a',text:'Любимые для Аллаха слова: «Субханаллах, альхамдулиллях, ля иляха илляллах, Аллаху акбар». Муслим, 2137a (смысл).'},
+ {id:'quran-2-152',kind:'quran',reference:'2:152',sourceLabel:'Коран, 2:152',source:'https://quran.com/al-baqarah/152',evidenceId:'quran-2-152',text:'«Поминайте Меня, и Я буду помнить о вас». Коран, 2:152.'},
+ {id:'quran-55-60',kind:'quran',reference:'55:60',sourceLabel:'Коран, 55:60',source:'https://quran.com/ar-rahman/60',evidenceId:'quran-55-60',text:'«Воздают ли за добро иначе, чем добром?» Коран, 55:60.'},
+ {id:'quran-3-8',kind:'quran',reference:'3:8',sourceLabel:'Коран, 3:8',source:'https://quran.com/ali-imran/8',evidenceId:'quran-3-8',text:'«Господь наш! Не уклоняй наши сердца в сторону после того, как Ты наставил нас на прямой путь, и даруй нам милость от Себя, ведь Ты - Дарующий!» Коран, 3:8.'},
+ {id:'quran-13-28',kind:'quran',reference:'13:28',sourceLabel:'Коран, 13:28',source:'https://quran.com/ar-rad/28',evidenceId:'quran-13-28',text:'«Разве не поминанием Аллаха утешаются сердца?» Коран, 13:28.'},
+ {id:'quran-4-36',kind:'quran',reference:'4:36',sourceLabel:'Коран, 4:36',source:'https://quran.com/an-nisa/36',evidenceId:'quran-4-36',text:'«Делайте добро родителям, родственникам, сиротам, беднякам». Коран, 4:36.'},
+ {id:'quran-94-6',kind:'quran',reference:'94:6',sourceLabel:'Коран, 94:6',source:'https://quran.com/ash-sharh/6',evidenceId:'quran-94-6',text:'«За каждой тягостью наступает облегчение». Коран, 94:6.'},
+ {id:'quran-20-114',kind:'quran',reference:'20:114',sourceLabel:'Коран, 20:114',source:'https://quran.com/taha/114',evidenceId:'quran-20-114',text:'«Господи! Приумножь мои знания». Коран, 20:114.'},
+ {id:'quran-14-7',kind:'quran',reference:'14:7',sourceLabel:'Коран, 14:7',source:'https://quran.com/ibrahim/7',evidenceId:'quran-14-7',text:'«Если вы будете благодарны, то Я одарю вас еще большим». Коран, 14:7.'},
+ {id:'quran-3-134',kind:'quran',reference:'3:134',sourceLabel:'Коран, 3:134',source:'https://quran.com/ali-imran/134',evidenceId:'quran-3-134',text:'«Воистину, Аллах любит творящих добро». Коран, 3:134.'},
+ {id:'quran-2-201',kind:'quran',reference:'2:201',sourceLabel:'Коран, 2:201',source:'https://quran.com/al-baqarah/201',evidenceId:'quran-2-201',text:'«Господь наш! Одари нас добром в этом мире и добром в Последней жизни и защити нас от мучений в Огне». Коран, 2:201.'},
+ {id:'quran-5-2',kind:'quran',reference:'5:2',sourceLabel:'Коран, 5:2',source:'https://quran.com/al-maidah/2',evidenceId:'quran-5-2',text:'«Помогайте друг другу в благочестии и богобоязненности, но не помогайте друг другу в грехе и посягательстве». Коран, 5:2.'},
+ {id:'quran-23-118',kind:'quran',reference:'23:118',sourceLabel:'Коран, 23:118',source:'https://quran.com/al-muminun/118',evidenceId:'quran-23-118',text:'«Господи, прости и помилуй, ведь Ты - Наилучший из милосердных!» Коран, 23:118.'},
+ {id:'quran-33-41',kind:'quran',reference:'33:41',sourceLabel:'Коран, 33:41',source:'https://quran.com/al-ahzab/41',evidenceId:'quran-33-41',text:'«О те, которые уверовали! Поминайте Аллаха многократно». Коран, 33:41.'},
+ {id:'muslim-2699a',kind:'hadith',reference:'2699a',sourceLabel:'Муслим, 2699a',source:'https://sunnah.com/muslim:2699a',evidenceId:'muslim-2699a',text:'Аллах помогает Своему рабу, пока тот помогает своему брату. Муслим, 2699a (смысл).'},
+ {id:'quran-39-53',kind:'quran',reference:'39:53',sourceLabel:'Коран, 39:53',source:'https://quran.com/az-zumar/53',evidenceId:'quran-39-53',text:'«Не отчаивайтесь в милости Аллаха». Коран, 39:53.'},
+ {id:'quran-1-5',kind:'quran',reference:'1:5',sourceLabel:'Коран, 1:5',source:'https://quran.com/al-fatihah/5',evidenceId:'quran-1-5',text:'«Тебе одному мы поклоняемся и Тебя одного молим о помощи». Коран, 1:5.'},
+ {id:'quran-17-24',kind:'quran',reference:'17:24',sourceLabel:'Коран, 17:24',source:'https://quran.com/al-isra/24',evidenceId:'quran-17-24',text:'Дуа за родителей: «Господи! Помилуй их, ведь они растили меня ребенком». Коран, 17:24.'},
+ {id:'quran-16-90',kind:'quran',reference:'16:90',sourceLabel:'Коран, 16:90',source:'https://quran.com/an-nahl/90',evidenceId:'quran-16-90',text:'«Воистину, Аллах повелевает блюсти справедливость, делать добро и одаривать родственников». Коран, 16:90.'},
+ {id:'quran-2-153',kind:'quran',reference:'2:153',sourceLabel:'Коран, 2:153',source:'https://quran.com/al-baqarah/153',evidenceId:'quran-2-153',text:'«О те, которые уверовали! Обратитесь за помощью к терпению и намазу. Воистину, Аллах - с терпеливыми». Коран, 2:153.'},
+ {id:'quran-25-63',kind:'quran',reference:'25:63',sourceLabel:'Коран, 25:63',source:'https://quran.com/al-furqan/63',evidenceId:'quran-25-63',text:'«А рабами Милостивого являются те, которые ступают по земле смиренно». Коран, 25:63.'},
+ {id:'quran-21-87',kind:'quran',reference:'21:87',sourceLabel:'Коран, 21:87',source:'https://quran.com/al-anbya/87',evidenceId:'quran-21-87',text:'«Нет божества, кроме Тебя! Пречист Ты! Воистину, я был одним из беззаконников!» Коран, 21:87.'},
+ {id:'quran-7-56',kind:'quran',reference:'7:56',sourceLabel:'Коран, 7:56',source:'https://quran.com/al-araf/56',evidenceId:'quran-7-56',text:'«Воистину, милость Аллаха близка к творящим добро». Коран, 7:56.'},
+ {id:'quran-49-10',kind:'quran',reference:'49:10',sourceLabel:'Коран, 49:10',source:'https://quran.com/al-hujurat/10',evidenceId:'quran-49-10',text:'«Воистину, верующие - братья. Посему примиряйте братьев и бойтесь Аллаха, - быть может, вы будете помилованы». Коран, 49:10.'},
+ {id:'quran-3-159',kind:'quran',reference:'3:159',sourceLabel:'Коран, 3:159',source:'https://quran.com/ali-imran/159',evidenceId:'quran-3-159',text:'«Когда же ты примешь решение, то уповай на Аллаха, ведь Аллах любит уповающих». Коран, 3:159.'},
+ {id:'quran-28-77',kind:'quran',reference:'28:77',sourceLabel:'Коран, 28:77',source:'https://quran.com/al-qasas/77',evidenceId:'quran-28-77',text:'«Твори добро, подобно тому, как Аллах сотворил добро для тебя». Коран, 28:77.'},
+ {id:'quran-2-186',kind:'quran',reference:'2:186',sourceLabel:'Коран, 2:186',source:'https://quran.com/al-baqarah/186',evidenceId:'quran-2-186',text:'«Если Мои рабы спросят тебя обо Мне, то ведь Я близок и отвечаю на зов молящегося, когда он взывает ко Мне». Коран, 2:186.'},
+ {id:'quran-99-7',kind:'quran',reference:'99:7',sourceLabel:'Коран, 99:7',source:'https://quran.com/az-zalzalah/7',evidenceId:'quran-99-7',text:'«Тот, кто сделал добро весом в мельчайшую частицу, увидит его». Коран, 99:7.'}
+].map(Object.freeze));
+
 // Short excerpts; the hadith wording below is a Russian rendering of its meaning.
-const DHIKR_MESSAGES=[
- {text:'«Поминайте Меня, и Я буду помнить о вас». Коран, 2:152.',source:'https://quran.com/ru/al-baqarah/152'},
- {text:'Любимые для Аллаха слова: «Субханаллах, альхамдулиллях, ля иляха илляллах, Аллаху акбар». Муслим, 2137a.',source:'https://sunnah.com/muslim:2137a'}
-];
+const DHIKR_MESSAGES=DAILY_REMINDER_MESSAGES;
 const DHIKR_ACTIVITY_KEY='salah:dhikr-last-use-v1';
 const DHIKR_DAY=86400000;
 function dhikrTimestamp(value){return Number.isSafeInteger(value)&&value>0&&value<4102444800000?value:0;}
-function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:value?.days===2?2:3,time:'12:00',mode:'prayer',prayer:'Dhuhr',since:dhikrTimestamp(value?.since)};}
+function normalizeDhikrReminder(value){return {enabled:value?.enabled===true,days:1,time:'12:00',mode:'prayer',prayer:'Dhuhr',since:dhikrTimestamp(value?.since)};}
 function dhikrAllowedAt(at,zone){
  try{const parts=new Intl.DateTimeFormat('en',{timeZone:zone,hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date(at));const hour=Number(parts.find(p=>p.type==='hour')?.value);return hour>=8&&hour<22;}catch{return false;}
 }
@@ -83,23 +114,20 @@ function markDhikrActivity(now=Date.now(),storage=globalThis.localStorage,target
  if(!dhikrTimestamp(now))return false;
  try{storage.setItem(DHIKR_ACTIVITY_KEY,String(Math.max(now,readDhikrActivity(storage))));target?.dispatchEvent(new Event('salah:dhikr-activity'));return true;}catch{return false;}
 }
-// The time refers to use of SALAH, never to a claim about worship outside the app.
+// Daily calendar scheduling is independent of activity inside or outside SALAH.
+// Keep the lastUse argument for older callers; it never postpones a daily reminder.
 function dhikrEventForDay(value,lastUse,day,zone,{localTimestamp,shiftDay,cityDay,timingsFor=()=>null}){
- const row=normalizeDhikrReminder(value),baseline=Math.max(row.since,dhikrTimestamp(lastUse));
- if(!row.enabled||!baseline)return null;
- const threshold=baseline+row.days*DHIKR_DAY;
- let firstDay;try{firstDay=cityDay(threshold,zone);}catch{return null;}
+ const row=normalizeDhikrReminder(value),baseline=row.since;
+ if(!row.enabled||!baseline||!shiftDay(day,0)||!DHIKR_MESSAGES.length)return null;
+ try{cityDay(baseline,zone);}catch{return null;}
  // Use the selected timetable's Dhuhr; unavailable or out-of-window times fall back to noon.
  const timeFor=date=>{let raw;try{raw=timingsFor(date)?.Dhuhr;}catch{}const prayer=typeof raw==='number'?raw:typeof raw==='string'?Date.parse(raw):NaN;
-  return Number.isFinite(prayer)&&cityDay(prayer,zone)===date&&dhikrAllowedAt(prayer,zone)?prayer:localTimestamp(date,row.time,zone);};
- let firstAt=timeFor(firstDay);
- if(!Number.isFinite(firstAt))return null;
- if(firstAt<threshold){firstDay=shiftDay(firstDay,1);firstAt=timeFor(firstDay);}
- const dayGap=(Date.parse(day+'T12:00:00Z')-Date.parse(firstDay+'T12:00:00Z'))/DHIKR_DAY;
- if(!Number.isInteger(dayGap)||dayGap<0||dayGap%row.days!==0)return null;
+  try{if(Number.isFinite(prayer)&&cityDay(prayer,zone)===date&&dhikrAllowedAt(prayer,zone))return prayer;}catch{}
+  return localTimestamp(date,row.time,zone);};
  const at=timeFor(day);
- if(!Number.isFinite(at)||at<threshold)return null;
- const slot=(dayGap/row.days)%DHIKR_MESSAGES.length;
+ if(!Number.isFinite(at)||at<baseline||!dhikrAllowedAt(at,zone))return null;
+ const calendarIndex=Math.floor(Date.parse(day+'T00:00:00Z')/DHIKR_DAY);
+ const slot=((calendarIndex%DHIKR_MESSAGES.length)+DHIKR_MESSAGES.length)%DHIKR_MESSAGES.length;
  return {id:JSON.stringify(['dhikr',day,at]),day,kind:'dhikr',key:'return',phase:'at',at,timeZone:zone,adhan:false,message:DHIKR_MESSAGES[slot].text};
 }
 
@@ -517,7 +545,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
   try{
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
-   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:4,features:['tahajjud','dhikr-inactivity'],publicKey:config.vapid.publicKey});}
+   if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:5,features:['tahajjud','dhikr-inactivity','dhikr-daily'],publicKey:config.vapid.publicKey});}
    // One explicitly requested campaign. The date window and immutable hash prevent repeat broadcasts.
    if(action==='invite-setup'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
@@ -550,13 +578,13 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
       const {rows,events}=await grouped.get(signature);
       for(const event of dueEvents(events,clock())){
        if(event.kind==='dhikr'){
-        // A resumed reader or an opt-out during timetable fetching must cancel this send.
+        // Recheck opt-out and city changes after timetable fetching; activity never postpones a daily reminder.
         const fresh=await db.get(device.id);if(!fresh)continue;
         const latest=preferences(fresh.preferences);
         if(!dhikrAllowedAt(clock(),event.timeZone)||JSON.stringify({...latest,reminders:p.reminders,dhikrLastAt:p.dhikrLastAt})!==signature)continue;
-        if(!eventsFor(latest,rows,clock()).some(e=>e.kind==='dhikr'&&e.at===event.at))continue;
+        if(!eventsFor(latest,rows,clock()).some(e=>e.kind==='dhikr'&&e.day===event.day&&e.at===event.at))continue;
         const previous=await db.lastDhikrSent(device.id);
-        if(previous&&clock()-previous<(latest.reminders.dhikr.days*24-2)*3600000)continue;
+        if(previous&&(cityDay(previous,latest.city.timezone)===event.day||clock()-previous<22*3600000))continue;
        }
        const hash=(event.kind==='dhikr'?'dhikr-':'')+await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
        const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
