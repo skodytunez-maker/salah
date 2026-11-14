@@ -29,6 +29,9 @@ create table salah_visits_private.guest_activity_presence(device_hash text,kind 
 create table salah_visits_private.activity_budgets(bucket timestamptz primary key,hits integer);
 create table salah_visits_private.activity_daily_budgets(day date primary key,hits integer);`);
 await pg.exec(await fs.readFile(new URL('../supabase/guest-competition.sql',import.meta.url),'utf8'));
+await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114225107_guest_credit_controls.sql',import.meta.url),'utf8'));
+await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114230244_guest_credit_revision.sql',import.meta.url),'utf8'));
+await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114230126_guest_stone_aliases.sql',import.meta.url),'utf8'));
 for(const u of [user,other]){
  await pg.query("insert into auth.users values($1,now(),false,null,'{\"nickname\":\"Private account\"}')",[u.id]);await pg.query('insert into auth.sessions values($1,$2,null)',[u.session,u.id]);
  await pg.query('insert into salah_competition_private.preferences values($1,true)',[u.id]);await pg.query("insert into public.reciter_listener_visibility values($1,$2,'initial',null)",[u.id,randomUUID()]);
@@ -41,7 +44,7 @@ function tag(connection){
  sql.json=JSON.stringify;sql.begin=fn=>connection.transaction(tx=>fn(tag(tx)));return sql;
 }
 const sql=tag(pg),db=createGuestRankDb(sql),packet=(action,extra={})=>guestRankPacket({action,device,secret,...extra});
-const registered=await db.apply(packet('register',{activity}));assert.match(registered.nickname,/^Гость [A-F0-9]{6}$/);assert.ok(!JSON.stringify(registered).includes(secret));
+const registered=await db.apply(packet('register',{activity}));assert.match(registered.nickname,/^Гость · [А-ЯЁ]/u);assert.ok(!JSON.stringify(registered).includes(secret));
 assert.equal((await db.apply(packet('register',{activity}))).id,registered.id,'Registration retries use one player');
 await assert.rejects(db.apply(guestRankPacket({action:'register',device,activity,secret:'b'.repeat(64)})),/forbidden/);
 await pg.query("update salah_competition_private.guest_players set created_at=now()-interval '120 seconds'");
@@ -54,8 +57,29 @@ await assert.rejects(db.apply(snapshot(60,{[secondDay]:{[reciter]:60}})),/invali
 let board=await combinedPublicBoard(sql,'all',day,{},true);assert.equal(board.listeningTotal,79);assert.equal(board.items[0].guest,true);assert.equal(board.items[0].rank,1);assert.equal(board.items[0].totalSeconds,60);assert.equal(board.items[1].totalSeconds,19);
 assert.ok(!JSON.stringify(board).includes(secret)&&!JSON.stringify(board).includes(device)&&!JSON.stringify(board).includes(user.id)&&!JSON.stringify(board).includes('Private account'));
 const guest=safeListener(board.items[0]);assert.equal(guest.guest,true);assert.equal(guest.hasPhoto,false);
+assert.match(board.items[0].nickname,/^Гость [A-F0-9]{6}$/,'Old clients retain a safe legacy guest label');
+assert.equal(board.items[0].guestDisplayName,registered.nickname,'Public and owner views share one persisted stone name');
+assert.equal(guest.nickname,registered.nickname,'Updated clients show the friendly display name');
 const html=competitionMarkup(board.items,{owner:true},'total');assert.ok(!html.includes('data-competition-person="'+registered.id+'"'),'Guest rows do not open a nonexistent account card');
 const headHash=await guestRankHash('salah-guest-v1:',activity);await pg.query("insert into salah_visits_private.guest_activity_presence values($1,'listening',true,now())",[headHash]);assert.equal((await combinedPublicBoard(sql,'all',day,{},true)).items[0].activeForSeconds,45);
+const pauseToken=randomUUID();
+await pg.query('insert into salah_competition_private.guest_credit_controls(guest_id,paused_at,pause_token)values($1,now(),$2)',[registered.id,pauseToken]);
+assert.equal((await db.apply(packet('register',{activity}))).creditPauseToken,pauseToken);
+assert.equal((await db.apply(snapshot(90))).creditPaused,true);
+assert.equal(Number((await pg.query('select seconds from salah_competition_private.guest_totals where guest_id=$1',[registered.id])).rows[0].seconds),60,'Held cumulative snapshot preserves credited seconds');
+await pg.query('update salah_competition_private.guest_totals set seconds=100 where guest_id=$1',[registered.id]);
+assert.equal(Number((await pg.query('select seconds from salah_competition_private.guest_totals where guest_id=$1',[registered.id])).rows[0].seconds),60,'Database guard also rejects stale-instance writes');
+assert.equal((await db.apply(packet('snapshot',{totals:{[reciter]:100},days:{[day]:{[reciter]:100}},timeZone:'UTC',resumeCredit:randomUUID()}))).creditPaused,true,'Wrong acknowledgement cannot resume');
+const resumed=await db.apply(packet('snapshot',{totals:{[reciter]:105},days:{[day]:{[reciter]:105}},timeZone:'UTC',resumeCredit:pauseToken}));
+assert.equal(resumed.creditPaused,false);
+assert.equal(resumed.creditRevision,3,'Three control snapshots carry three monotonically increasing acknowledgements');
+await db.apply(snapshot(105));
+assert.equal(Number((await pg.query('select seconds from salah_competition_private.guest_totals where guest_id=$1',[registered.id])).rows[0].seconds),60,'Resume and retry never catch up held minutes');
+await db.apply(snapshot(110));await db.apply(snapshot(105));
+assert.equal(Number((await pg.query('select seconds from salah_competition_private.guest_totals where guest_id=$1',[registered.id])).rows[0].seconds),65,'Only new post-resume seconds are credited');
+await pg.query('delete from salah_competition_private.guest_credit_controls where guest_id=$1',[registered.id]);
+await pg.query('update salah_competition_private.guest_totals set seconds=60 where guest_id=$1',[registered.id]);
+await pg.query('update salah_competition_private.guest_days set seconds=60 where guest_id=$1',[registered.id]);
 await db.apply(packet('claim'),user);await db.apply(packet('claim'),user);
 await assert.rejects(db.apply(packet('claim'),other),/claimed/);await assert.rejects(db.apply(snapshot(70)),/claimed/);
 for(const period of ['day','week','month','all']){const transferred=await combinedPublicBoard(sql,period,day,{},true);assert.equal(transferred.items.length,1);assert.equal(transferred.items[0].guest,undefined);assert.equal(transferred.items[0].totalSeconds,79);assert.equal(transferred.listeningTotal,79,'Ownership transfer conserves the shared total');}

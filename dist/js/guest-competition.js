@@ -6,10 +6,10 @@ import{guestActivityId}from './activity-presence-core.js';
 let tracker=null;
 export const guestCompetitionOwn=period=>tracker?.own(period)||null;
 export const recordGuestListening=(id,seconds,at)=>{void tracker?.progress(id,seconds,at).catch(()=>{});};
-export function initGuestCompetition({getAccount,getClient,now=Date.now}){
+export function initGuestCompetition({getAccount,getClient,now=Date.now,credit=null}){
  if(tracker||!personalDataAllowed())return;
  const account=()=>personalDataAllowed()?getAccount():null;
- tracker=createGuestCompetitionTracker({getAccount:account,now,
+ tracker=createGuestCompetitionTracker({getAccount:account,now,credit,
  readState:()=>read('guest-competition-v1',null),writeState:s=>write('guest-competition-v1',s),
  randomSecret:()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join(''),
  activityDevice:()=>guestActivityId(getAccount(),localStorage),
@@ -22,6 +22,7 @@ export function initGuestCompetition({getAccount,getClient,now=Date.now}){
   if(!response.ok){const error=Error('unavailable');error.status=response.status;throw error;}const result=await response.json();if(result.ok!==true)throw Error('unavailable');return result;
  }});
  const sync=()=>void tracker.sync();setInterval(sync,15000);window.addEventListener('salah:personal-listening',sync);
+ window.addEventListener('salah:listening-credit-action',()=>{const device=read('guest-competition-v1',null)?.device;if(device&&credit?.resumeToken('guest:'+device))void tracker.sync({force:true});});
  for(const name of ['salah:counter-status','online','pageshow'])window.addEventListener(name,()=>void tracker.sync({force:true}));
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});sync();
 }

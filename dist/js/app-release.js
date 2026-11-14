@@ -1,6 +1,6 @@
-export const APP_VERSION=498;
-export const APP_UPDATED_AT='2026-11-14';
-export const APP_UPDATE_DATE='14 ноября 2026';
-export const APP_CHANGES=["Короткие напоминания: один зикр, аят или хадис каждый день около Зухра. 28 разных текстов с источниками, без выбора интервала и повторных запросов разрешения."];
-export const APP_ANNOUNCEMENT={version:497,date:'2026-11-14',changes:APP_CHANGES};
-export const APP_NEWS_UNTIL='2026-11-18T23:59:59Z';
+export const APP_VERSION=499;
+export const APP_UPDATED_AT='2026-11-15';
+export const APP_UPDATE_DATE='15 ноября 2026';
+export const APP_CHANGES=["Ночной учёт: с 23:00 до 07:00 после 1,5 часа без действий зачёт в Топе приостанавливается. Чтение и личная история продолжаются; действие в приложении возобновляет учёт.","Регистрация для гостей: вместо кодов — постоянные названия камней, одинаковые в Топе и списке активности. В разделе Корана можно создать аккаунт, чтобы надёжнее сохранить свою историю."];
+export const APP_ANNOUNCEMENT={version:499,date:'2026-11-15',changes:APP_CHANGES};
+export const APP_NEWS_UNTIL='2026-11-19T23:59:59Z';

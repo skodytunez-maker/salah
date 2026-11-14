@@ -32,9 +32,9 @@ export function createListeningNowHandler(sql,{verified=async()=>null}={}){
   if(req.method!=='POST')return reply({error:'method'},405);
   try{
    if(!/^application\/json(?:;|$)/i.test(req.headers.get('Content-Type')||''))return reply({error:'json_required'},415);
-   if(Number(req.headers.get('Content-Length'))>1024)return reply({error:'body'},413);
+   if(Number(req.headers.get('Content-Length'))>2048)return reply({error:'body'},413);
    const reader=req.body?.getReader();if(!reader)return reply({error:'body'},400);const parts=[];let size=0;
-   try{while(true){const{done,value}=await reader.read();if(done)break;size+=value.length;if(size>1024){await reader.cancel();return reply({error:'body'},413);}parts.push(value);}}finally{reader.releaseLock();}
+   try{while(true){const{done,value}=await reader.read();if(done)break;size+=value.length;if(size>2048){await reader.cancel();return reply({error:'body'},413);}parts.push(value);}}finally{reader.releaseLock();}
    const bytes=new Uint8Array(size);let at=0;for(const part of parts){bytes.set(part,at);at+=part.length;}let body;try{body=JSON.parse(new TextDecoder().decode(bytes));}catch{return reply({error:'body'},400);}
    if(body?.action==='guest-activity'){
     if(!guestActivityOrigin(req.headers.get('Origin')))return reply({error:'forbidden'},403);

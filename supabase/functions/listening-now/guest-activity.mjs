@@ -1,9 +1,15 @@
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const origins=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);
 export const guestActivityOrigin=origin=>origins.has(origin);
+function selectedContext(value){
+ if(value===null)return null;
+ const clean=v=>typeof v==='string'&&v.length<=160&&!/[\u0000-\u001f\u007f]/.test(v)&&v.trim()?v.trim().replace(/\s+/g,' '):null;
+ if(!value||Array.isArray(value)||Object.keys(value).some(k=>!['city','country'].includes(k))||!clean(value.city)||value.country!==undefined&&value.country!==null&&!clean(value.country))throw Error('invalid_guest_context');
+ return{city:clean(value.city),country:value.country==null?null:clean(value.country)};
+}
 export function guestActivityPacket(body){
- if(!body||Array.isArray(body)||Object.keys(body).some(k=>!['action','device','kind','tab','sequence','active'].includes(k))||body.action!=='guest-activity'||!uuid.test(body.device||'')||!uuid.test(body.tab||'')||!['listening','reading','dhikr'].includes(body.kind)||!Number.isSafeInteger(body.sequence)||body.sequence<0||body.sequence>2147483647||typeof body.active!=='boolean')throw Error('invalid_guest_activity');
- return{device:body.device.toLowerCase(),kind:body.kind,tab:body.tab,sequence:body.sequence,active:body.active};
+ if(!body||Array.isArray(body)||Object.keys(body).some(k=>!['action','device','kind','tab','sequence','active','selectedCity'].includes(k))||body.action!=='guest-activity'||!uuid.test(body.device||'')||!uuid.test(body.tab||'')||!['listening','reading','dhikr'].includes(body.kind)||!Number.isSafeInteger(body.sequence)||body.sequence<0||body.sequence>2147483647||typeof body.active!=='boolean')throw Error('invalid_guest_activity');
+ return{device:body.device.toLowerCase(),kind:body.kind,tab:body.tab,sequence:body.sequence,active:body.active,...(Object.hasOwn(body,'selectedCity')?{selectedCity:selectedContext(body.selectedCity)}:{})};
 }
 export async function guestActivityHash(device){
  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('salah-guest-v1:'+device));
@@ -24,7 +30,8 @@ export function createGuestActivityDb(sql){return{async update(packet){
   }
   const[prior]=await tx`select sequence from salah_visits_private.guest_activity_presence where device_hash=${hash} and kind=${packet.kind} and tab_id=${packet.tab}::uuid`;
   if(!prior){const[n]=await tx`select count(*)::int n from salah_visits_private.guest_activity_presence where device_hash=${hash}`;if(n.n>=32)return{ok:false,retry:true};}
-  const rows=await tx`insert into salah_visits_private.guest_activity_presence(device_hash,kind,tab_id,sequence,active) values(${hash},${packet.kind},${packet.tab}::uuid,${packet.sequence},${packet.active})on conflict(device_hash,kind,tab_id)do update set sequence=excluded.sequence,active=excluded.active,reported_at=clock_timestamp()where guest_activity_presence.sequence<excluded.sequence returning active`;
+  const contextProvided=Object.hasOwn(packet,'selectedCity');
+  const rows=await tx`insert into salah_visits_private.guest_activity_presence(device_hash,kind,tab_id,sequence,active,selected_city,selected_country,selected_context_at) values(${hash},${packet.kind},${packet.tab}::uuid,${packet.sequence},${packet.active},${packet.selectedCity?.city||null},${packet.selectedCity?.country||null},case when ${contextProvided} then clock_timestamp() else null end)on conflict(device_hash,kind,tab_id)do update set sequence=excluded.sequence,active=excluded.active,reported_at=clock_timestamp(),selected_city=case when ${contextProvided} then excluded.selected_city else guest_activity_presence.selected_city end,selected_country=case when ${contextProvided} then excluded.selected_country else guest_activity_presence.selected_country end,selected_context_at=case when ${contextProvided} then excluded.selected_context_at else guest_activity_presence.selected_context_at end where guest_activity_presence.sequence<excluded.sequence returning active`;
   return{ok:true,accepted:rows.length===1,active:rows[0]?.active===true};
  });
 }};}

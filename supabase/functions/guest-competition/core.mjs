@@ -4,10 +4,11 @@ export const guestRankOrigin=value=>['https://skodytunez-maker.github.io','capac
 export async function guestRankHash(domain,value){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(domain+value));return Array.from(new Uint8Array(bytes),n=>n.toString(16).padStart(2,'0')).join('');}
 export function guestRankPacket(body,now=Date.now()){
  if(!body||Array.isArray(body)||!['register','snapshot','claim'].includes(body.action)||!uuid.test(body.device||'')||!/^[a-f0-9]{64}$/.test(body.secret||''))throw Error('invalid');
- const fields=body.action==='snapshot'?['action','device','secret','totals','days','timeZone']:body.action==='register'?['action','device','secret','activity']:['action','device','secret'];
+ const fields=body.action==='snapshot'?['action','device','secret','totals','days','timeZone','resumeCredit']:body.action==='register'?['action','device','secret','activity']:['action','device','secret'];
  if(Object.keys(body).some(k=>!fields.includes(k)))throw Error('invalid');
  if(body.action==='register'&&!uuid.test(body.activity||''))throw Error('invalid');
- return{activity:body.activity?.toLowerCase(),action:body.action,device:body.device.toLowerCase(),secret:body.secret,...(body.action==='snapshot'?{snapshot:competitionSnapshot({action:'snapshot',device:body.device,totals:body.totals,days:body.days,timeZone:body.timeZone},now)}:{})};
+ if(body.resumeCredit!==undefined&&!uuid.test(body.resumeCredit))throw Error('invalid');
+ return{activity:body.activity?.toLowerCase(),action:body.action,device:body.device.toLowerCase(),secret:body.secret,...(body.action==='snapshot'?{resumeCredit:body.resumeCredit,snapshot:competitionSnapshot({action:'snapshot',device:body.device,totals:body.totals,days:body.days,timeZone:body.timeZone},now)}:{})};
 }
 export function createGuestRankHandler(db,{verified=async()=>null}={}){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'apikey,authorization,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};

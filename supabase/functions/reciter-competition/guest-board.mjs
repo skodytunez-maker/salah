@@ -12,9 +12,9 @@ export async function combinedPublicBoard(sql,period,day,holders={},withTotals=f
  left join salah_competition_private.favorite_state f on f.user_id=s.user_id and f.period=${period} and f.bucket=case ${period} when 'all'then '1970-01-01'::date when 'week'then date_trunc('week',${day}::timestamp)::date when 'month'then date_trunc('month',${day}::timestamp)::date else ${day}::date end
  where p.enabled and v.mode in('initial','profile') and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)
  union all
- select null::uuid,g.public_id,'profile',true,s.reciter,s.seconds,null::text,'Г','Г','Гость '||upper(left(replace(g.public_id::text,'-',''),6)),false,
+ select null::uuid,g.public_id,'profile',true,s.reciter,s.seconds,null::text,'Г','Г',coalesce(alias.nickname,'Гость'),false,
  coalesce((select least(45,greatest(0,ceil(extract(epoch from(max(a.reported_at)+interval '45 seconds'-statement_timestamp())))))::int from salah_visits_private.guest_activity_presence a where a.device_hash=g.activity_hash and a.kind='listening' and a.active and a.reported_at>statement_timestamp()-interval '45 seconds'),0)
- from salah_competition_private.guest_scores(${period},${day}::date)s join salah_competition_private.guest_players g on g.public_id=s.guest_id where g.claimed_by is null
+ from salah_competition_private.guest_scores(${period},${day}::date)s join salah_competition_private.guest_players g on g.public_id=s.guest_id left join salah_competition_private.guest_aliases alias on alias.guest_id=g.public_id where g.claimed_by is null
  ), heard as(
  select *,sum(seconds)over(partition by id)::bigint total_seconds,row_number()over(partition by id order by seconds desc,case when reciter=preferred then 0 else 1 end,reciter)favorite from source
  ), ranked as (
@@ -25,7 +25,8 @@ export async function combinedPublicBoard(sql,period,day,holders={},withTotals=f
  )
  select r.*,p.reciters,sum(r.total_seconds)over()listening_total from ranked r left join podium p using(id)order by r.place,r.id limit 1000`;
  const labels=publicListenerRows(rows.filter(r=>!r.guest)),byId=new Map(labels.map(r=>[r.id,r]));
- return{items:rows.map(r=>({...((r.guest)?{id:r.id,mode:'profile',initial:'Г',nickname:r.nickname,hasPhoto:false,guest:true}:byId.get(r.id)),
+ // Old clients require the legacy nickname to retain their non-clickable guest flag.
+ return{items:rows.map(r=>({...((r.guest)?{id:r.id,mode:'profile',initial:'Г',nickname:'Гость '+String(r.id).slice(0,6).toUpperCase(),guestDisplayName:r.nickname,hasPhoto:false,guest:true}:byId.get(r.id)),
  reciter:r.reciter,seconds:Number(r.seconds),rank:Number(r.place),activeForSeconds:Number(r.active_for_seconds)||0,
  ...(withTotals?{totalSeconds:Number(r.total_seconds),...(Array.isArray(r.reciters)?{reciters:r.reciters.map(x=>({reciter:x.reciter,seconds:Number(x.seconds)}))}:{})}:{}),
  awards:r.guest?[]:[...(holders.week===r.user_id?['week']:[]),...(holders.month===r.user_id?['month']:[])]})),

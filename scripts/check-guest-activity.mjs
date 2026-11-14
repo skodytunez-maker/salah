@@ -7,14 +7,17 @@ import {readListeningNow,createListeningNowHandler} from '../supabase/functions/
 import {guestActivityId} from '../dist/js/activity-presence-core.js';
 import {emitTransientDhikrPresence} from '../dist/js/adhkar-activity.js';
 const device='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',other='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',tab='cccccccc-cccc-4ccc-8ccc-cccccccccccc';
-const pg=new PGlite();await pg.exec(`create role anon;create role authenticated;create schema auth;create schema salah_competition_private;create schema salah_visits_private;
+const pg=new PGlite();await pg.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create schema salah_competition_private;create schema salah_visits_private;
 create table auth.users(id uuid primary key,raw_user_meta_data jsonb,email_confirmed_at timestamptz,is_anonymous bool,banned_until timestamptz);
 create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);
 create table salah_competition_private.preferences(user_id uuid,enabled bool);
 create table reciter_listener_visibility(user_id uuid,public_id uuid,mode text);
 create table salah_competition_private.listener_presence(user_id uuid,session_id uuid,playing bool,reported_at timestamptz);
-create table salah_competition_private.listener_presence_limits(user_id uuid primary key,minute bigint,attempts int);`);
+create table salah_competition_private.listener_presence_limits(user_id uuid primary key,minute bigint,attempts int);
+create table salah_competition_private.guest_players(public_id uuid primary key,activity_hash text,claimed_by uuid,created_at timestamptz default now());`);
 await pg.exec(await fs.readFile(new URL('../supabase/activity-presence.sql',import.meta.url),'utf8'));
+await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114225043_guest_selected_city_context.sql',import.meta.url),'utf8'));
+await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114230126_guest_stone_aliases.sql',import.meta.url),'utf8'));
 function tag(conn){const sql=(strings,...args)=>{let query=strings[0];args.forEach((_,i)=>query+='$'+(i+1)+strings[i+1]);return{then(resolve,reject){return(query.includes('pg_advisory_xact_lock')?Promise.resolve([]):conn.query(query,args).then(r=>r.rows)).then(resolve,reject);}};};sql.begin=fn=>conn.transaction(tx=>fn(tag(tx)));return sql;}
 const sql=tag(pg),db=createGuestActivityDb(sql),packet=(sequence,active=true,kind='listening',id=device,t=tab)=>guestActivityPacket({action:'guest-activity',device:id,kind,tab:t,sequence,active});
 assert.throws(()=>guestActivityPacket({...packet(1),user_id:device}));
@@ -34,7 +37,7 @@ assert.equal((await handler(req({...packet(4),unknown:true}))).status,400);
 assert.equal((await handler(req(packet(4,true,'reading')))).status,200);
 const response=await handler(new Request('https://fixture.invalid'));assert.deepEqual(Object.keys(await response.json()).sort(),['count','dhikr','readers']);
 const raw=await(await handler(new Request('https://fixture.invalid'))).text();assert.ok(!raw.includes(device)&&!raw.includes(tab)&&!raw.includes(await guestActivityHash(device)),'Public reads expose no device IDs or hashes');
-assert.equal((await handler(req({action:'guest-activity',device:'x'.repeat(2000)}))).status,413);
+assert.equal((await handler(req({action:'guest-activity',device:'x'.repeat(3000)}))).status,413);
 await pg.query("update salah_visits_private.guest_activity_presence set reported_at=now()-interval '46 seconds'");assert.deepEqual(await readListeningNow(sql),{count:0,readers:0,dhikr:0});
 await pg.query('update salah_visits_private.activity_limits set attempts=120');assert.equal((await db.update(packet(5))).retry,true);
 for(const role of ['anon','authenticated']){await pg.exec('set role '+role);await assert.rejects(pg.query('select * from salah_visits_private.guest_activity_presence'),/permission denied/);await pg.exec('reset role');}

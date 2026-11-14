@@ -2,6 +2,7 @@ import{ownerLiveActivity,verifyOwner,ownerVerified,ownerNeedsMfa,onOwnerChange}f
 import{counterSyncStatus}from './counter-account.js';
 import{modal,closeModal,esc,toast}from './ui.js';
 const labels={count:['listening','Слушают Коран'],readers:['reading','Читают Коран'],dhikr:['dhikr','Делают зикр']};
+const guestCity=user=>{const value=user.selectedCity,clean=v=>typeof v==='string'&&v.trim()&&v.length<=160&&!/[\u0000-\u001f\u007f]/.test(v)?v.trim():null;if(!value||!clean(value.city))return 'Город не передан';return 'Выбранный город: '+clean(value.city)+(clean(value.country)?', '+clean(value.country):'');};
 export async function showHomeActivity(key){
  if(!labels[key])return;if(!ownerVerified()){let allowed=false;try{allowed=await verifyOwner();}catch(error){toast(error.message||'Не удалось проверить доступ.');return;}if(!allowed||!ownerVerified()){if(ownerNeedsMfa())location.hash='#admin';return;}}
  const account=counterSyncStatus().userId,doc=document;let closed=false,generation=0,page=1,busy=false,timer=null;
@@ -16,7 +17,7 @@ export async function showHomeActivity(key){
   try{const data=await ownerLiveActivity(labels[key][0],page);if(!active()||ticket!==generation)return;
    if(!data.users.length&&page>1){page=1;busy=false;await refresh();return;}
    const area=root.querySelector('[data-home-members-content]');
-   area.innerHTML='<p class="muted">Сейчас: '+data.total+'</p>'+(data.users.length?'<div class="owner-live-members">'+data.users.map(user=>user.guest?'<span class="owner-live-member">'+esc(user.nickname)+' <small class="muted">Без регистрации</small></span>':'<span class="owner-live-member">'+esc(user.nickname)+'</span>').join('')+'</div>':'<p>Сейчас никого нет.</p>')+(data.total>50?'<div class="button-row"><button class="text-button" data-live-prev '+(page===1?'disabled':'')+'>Назад</button><span>'+page+'</span><button class="text-button" data-live-next '+(page*50>=data.total?'disabled':'')+'>Далее</button></div>':'');
+   area.innerHTML='<p class="muted">Сейчас: '+data.total+'</p>'+(data.users.length?'<div class="owner-live-members">'+data.users.map(user=>user.guest?'<span class="owner-live-member">'+esc(user.nickname)+' <small class="muted">Без регистрации</small><small class="muted">'+esc(guestCity(user))+'</small></span>':'<span class="owner-live-member">'+esc(user.nickname)+'</span>').join('')+'</div>':'<p>Сейчас никого нет.</p>')+(data.total>50?'<div class="button-row"><button class="text-button" data-live-prev '+(page===1?'disabled':'')+'>Назад</button><span>'+page+'</span><button class="text-button" data-live-next '+(page*50>=data.total?'disabled':'')+'>Далее</button></div>':'');
    area.querySelectorAll('a').forEach(link=>link.onclick=()=>{clear();closeModal();});
    const prev=area.querySelector('[data-live-prev]'),next=area.querySelector('[data-live-next]');
    if(prev)prev.onclick=()=>{page--;void refresh();};if(next)next.onclick=()=>{page++;void refresh();};

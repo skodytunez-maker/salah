@@ -10,7 +10,7 @@ export function cachedCompetition(period='all',{mode='total'}={}){const entry=(m
 export function competitionListeningTotal(period='all'){return boards.get(listeningDayKey(Date.now())+':'+period)?.totalSeconds??null;}
 export function clearCompetitionCache(){boards.clear();favoriteBoards.clear();for(const request of boardRequests.values())request.controller.abort();boardRequests.clear();}
 export function preloadCompetition(){return loadCompetition('all').catch(()=>[]);}
-let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
+let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,credit=null,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
 export const competitionOwn=()=>own&&scope===account().userId?own:null;
 export const competitionAvatar=id=>endpoint+'?avatar='+encodeURIComponent(id);
 const announce=()=>window.dispatchEvent(new Event('salah:competition-updated'));
@@ -21,7 +21,7 @@ async function request(body=null,{signal,keepalive=false}={}){
  await new Promise(resolve=>setTimeout(resolve,0));if(account().userId!==user)throw Error('Аккаунт изменился');
  const{data,error}=await client().auth.getSession();if(error||data?.session?.user?.id!==user||account().userId!==user)throw Error('Войдите в аккаунт');
  const response=await fetch(endpoint+(body?'':'?own=true&day='+listeningDayKey(Date.now())+'&participation='+(enabled()?'on':'off')),{method:body?'POST':'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),credentials:'omit',referrerPolicy:'no-referrer',signal:signal||AbortSignal.timeout(15000),keepalive});
- if(account().userId!==user)throw Error('Аккаунт изменился');if(!response.ok){const error=Error(response.status===429?'Повторим синхронизацию чуть позже':'Не удалось сохранить. Проверьте соединение.');error.status=response.status;throw error;}return response.json();
+ if(account().userId!==user)throw Error('Аккаунт изменился');if(!response.ok){const error=Error(response.status===429?'Повторим синхронизацию чуть позже':'Не удалось сохранить. Проверьте соединение.');error.status=response.status;throw error;}const result=await response.json();if(account().userId!==user)throw Error('Аккаунт изменился');credit?.receive('account:'+user,result,{resumeCredit:body?.resumeCredit});return result;
 }
 export const sendCompetitionPresence=(packet,options)=>request(packet,options);
 export async function refreshCompetitionOwn({force=false}={}){
@@ -85,10 +85,10 @@ export async function syncCompetitionNow(force=false){
   if(!own||Date.now()-lastOwn>60000)await refreshCompetitionOwn();if(!own?.enabled||own.mode==='hidden')return;
   const source=snapshot(),totals=Object.fromEntries(Object.entries(source.totals||{}).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0).map(([id,n])=>[id,Math.floor(n)]));
   const days=Object.fromEntries(Object.entries(source.days||{}).map(([day,rows])=>[day,Object.fromEntries(Object.entries(rows).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0).map(([id,n])=>[id,Math.floor(n)]))]));
-  const signature=JSON.stringify({totals,days});if(!Object.keys(totals).length||signature===lastSignature&&!force||Date.now()-lastUpload<15000)return;
-  await request({action:'snapshot',device:deviceId(),totals,days,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'});if(user!==account().userId)return;lastSignature=signature;lastUpload=Date.now();await refreshCompetitionOwn({force:true});
+  const resumeCredit=credit?.resumeToken('account:'+user),signature=JSON.stringify({totals,days,resumeCredit});if(!Object.keys(totals).length||signature===lastSignature&&!force||!resumeCredit&&Date.now()-lastUpload<15000)return;
+  await request({action:'snapshot',device:deviceId(),totals,days,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC',...(resumeCredit?{resumeCredit}:{})});if(user!==account().userId)return;lastSignature=signature;lastUpload=Date.now();await refreshCompetitionOwn({force:true});
  }catch{retryAt=Date.now()+15000;}})();inflight=task;try{await task;}finally{if(inflight===task)inflight=null;}
 }
-export function initCompetition({getAccount,getClient,getSnapshot,isEnabled}){if(!personalDataAllowed()||initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;
- setInterval(()=>void syncCompetitionNow(),15000);window.addEventListener('salah:personal-listening',()=>void syncCompetitionNow());window.addEventListener('online',()=>void syncCompetitionNow());window.addEventListener('salah:counter-status',()=>void syncCompetitionNow());window.addEventListener('salah:popularity-updated',()=>{lastOwn=0;void syncCompetitionNow();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCompetitionNow();});void syncCompetitionNow();
+export function initCompetition({getAccount,getClient,getSnapshot,isEnabled,credit:creditPolicy=null}){if(!personalDataAllowed()||initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;credit=creditPolicy;
+ setInterval(()=>void syncCompetitionNow(),15000);window.addEventListener('salah:listening-credit-action',()=>void syncCompetitionNow());window.addEventListener('salah:personal-listening',()=>void syncCompetitionNow());window.addEventListener('online',()=>void syncCompetitionNow());window.addEventListener('salah:counter-status',()=>void syncCompetitionNow());window.addEventListener('salah:popularity-updated',()=>{lastOwn=0;void syncCompetitionNow();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCompetitionNow();});void syncCompetitionNow();
 }

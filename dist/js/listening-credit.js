@@ -1,0 +1,13 @@
+import{createListeningCreditPolicy}from './listening-credit-core.js';
+import{read,write,settings}from './storage.js';
+export function createListeningCredit({getAccount,now=Date.now,beforeAction=()=>{},doc=document,win=window}={}){
+ let active=false,settling=false,previous='';const source=()=>{const auth=getAccount();return auth?.signedIn&&auth.userId?'account:'+auth.userId:'guest:'+(read('guest-competition-v1',null)?.device||'device');};
+ const aside=doc.createElement('aside');aside.className='listening-credit-notice';aside.hidden=true;aside.setAttribute('role','status');aside.setAttribute('aria-live','polite');aside.innerHTML='<div><strong>Учёт в Топе приостановлен</strong><p data-credit-explanation></p></div><button type="button" class="button" data-credit-resume>Я слушаю</button>';doc.body.append(aside);
+ const zone=()=>settings.city?.timezone||Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
+ const draw=()=>{const host=doc.querySelector('.quran-player-dialog[open]')||doc.body;if(aside.parentNode!==host)host.append(aside);const state=policy.status(),signature=JSON.stringify({...state,active});if(signature===previous)return;previous=signature;aside.hidden=!active||!state.paused;aside.querySelector('[data-credit-explanation]').textContent=(state.night?'Ночью 1,5 часа не было действий. ':'')+'Чтение и личная история продолжаются.';aside.querySelector('button').textContent=state.pending?'Подтверждаем…':'Я слушаю';win.dispatchEvent(new Event('salah:listening-credit-status'));};
+ const settle=()=>{if(settling)return;settling=true;try{beforeAction();}finally{settling=false;}};
+ const policy=createListeningCreditPolicy({now,timeZone:zone,source,readState:()=>read('listening-credit-policy-v1',null),writeState:value=>write('listening-credit-policy-v1',value),changed:draw});
+ const action=event=>{if(event.isTrusted!==true||doc.hidden||event.repeat||event.isPrimary===false||event.button!=null&&event.button!==0)return;settle();policy.action(now());win.dispatchEvent(new Event('salah:listening-credit-action'));};
+ doc.addEventListener('pointerdown',action,{capture:true,passive:true});doc.addEventListener('keydown',action,{capture:true,passive:true});aside.querySelector('button').addEventListener('click',action);
+ return{segments:(seconds,at)=>policy.segments(seconds,at),tick(value){active=!!value;draw();},paused:key=>policy.paused(key),resumeToken:key=>policy.resumeToken(key),receive(key,result,options){settle();policy.receive(key,result,options);draw();},destroy(){doc.removeEventListener('pointerdown',action,true);doc.removeEventListener('keydown',action,true);aside.remove();}};
+}
