@@ -1,4 +1,4 @@
-name: Build SALAH iOS simulator
+name: Verify SALAH iOS simulator and device archive
 on:
   workflow_dispatch:
   push:
@@ -33,6 +33,7 @@ jobs:
           node scripts/check-native-widget.mjs
           node scripts/check-android-widget.mjs
           node scripts/check-ios-widget.mjs --fixture "$RUNNER_TEMP/salah-widget-fixture.json"
+          node mobile/tests/ios-archive.mjs
       - name: Run Swift widget model tests
         run: |
           swiftc mobile/native/ios/PrayerWidgetModel.swift mobile/tests/ios/main.swift -o "$RUNNER_TEMP/salah-widget-tests"
@@ -96,4 +97,22 @@ jobs:
         with:
           name: salah-ios-native-evidence
           path: mobile/reports/
+          if-no-files-found: error
+
+      - name: Build unsigned iPhone Release archive
+        working-directory: mobile
+        run: |
+          set -euo pipefail
+          if [ -d ios/App/App.xcworkspace ]; then
+            xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/salah-ios-device-build" -archivePath "$RUNNER_TEMP/SALAH-unsigned.xcarchive" CODE_SIGNING_ALLOWED=NO -onlyUsePackageVersionsFromResolvedFile archive
+          else
+            xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/salah-ios-device-build" -archivePath "$RUNNER_TEMP/SALAH-unsigned.xcarchive" CODE_SIGNING_ALLOWED=NO -onlyUsePackageVersionsFromResolvedFile archive
+          fi
+      - name: Inspect device archive, binaries and packaged notices
+        run: node mobile/scripts/inspect-ios-archive.mjs "$RUNNER_TEMP/SALAH-unsigned.xcarchive"
+      - name: Upload unsigned device build report
+        uses: actions/upload-artifact@v4
+        with:
+          name: salah-ios-device-preflight
+          path: mobile/reports/ios-device-preflight.json
           if-no-files-found: error
