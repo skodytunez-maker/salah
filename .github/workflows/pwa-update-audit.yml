@@ -1,0 +1,16 @@
+name: Verify nature video delivery for 496
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/pwa-update-audit.yml'
+      - 'review/nature-video/verify-delivery-496.py'
+permissions:
+  contents: read
+jobs:
+  delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify native CORS, exact silent media and HTTP ranges
+        run: python3 review/nature-video/verify-delivery-496.py
