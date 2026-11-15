@@ -1,5 +1,15 @@
 # SALAH release announcements
 
+## Version500 — current activity, device Qibla location and November correction (15 November2026)
+
+Give the verified owner a current app-state view for signed-in accounts and guests, protected by an active session and MFA. Report the visible section, recent trusted action and independently measured player state alongside the separate Top-credit status. A manual or night credit pause does not stop playback reporting. Hiding the page preserves recently advancing audio; an explicit pause/stop is distinguished from an expired or missing signal, which remains unknown. Do not infer sleep or collect input contents, message text or a navigation history.
+
+Use the device's actual geolocation fix and its reported accuracy for Qibla on that device. Keep precise coordinates local and separate from the selected prayer city and owner activity reports. Preserve the location-permission flow. Guest display initials come from the stone name, for example «ОН» for «Оникс» and «ЯН» for «Янтарь», while persistent guest aliases and account boundaries remain intact.
+
+Replace the old November basis with the user's explicitly dated Tyumen November2026 photo. Two independent transcriptions agree on all210values; correct97cells by one minute each. Preserve both Asr columns, personal table corrections, other months and other cities. Refresh foreground/server timetable caches and verify PDF, widget and reminder plans against the corrected source. The photograph remains unedited; its printed method is recorded without claiming separate external official verification.
+
+This maintenance edition creates no new public news or artwork. Preserve announcement499, its two animated cards, expiry and existing «Понятно» acknowledgement; do not reopen dismissed news. Physical-device background playback and Qibla accuracy still require device checks; fresh telemetry must not be presented as a delivery guarantee.
+
 ## Version499 — guest context, stone aliases and night credit (15 November2026)
 
 Introduce an updated-client rule for guests and signed-in accounts: between23:00 and07:00 in the selected prayer city's timezone, stop new competition credit after90minutes without a trusted visible app action. Keep playback, timer, nature mix, all media assets and full local personal listening history continuous. Store competition-eligible totals/days separately, seed existing history once, split suspended callbacks at credit boundaries and settle pending media progress before a fresh action; withheld seconds must not return after a reload, later snapshot or authenticated guest transfer. Show a contextual «Я слушаю» notice; do not claim guaranteed lock-screen notification delivery or infer sleep. Legacy clients need499 before the new rule and interaction acknowledgements work.

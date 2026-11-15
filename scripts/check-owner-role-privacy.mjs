@@ -10,9 +10,9 @@ for(const role of ['admin','moderator','teacher']){
  const handler=createOwnerHandler({
   getUser:async()=>({data:{user:{id,email_confirmed_at:'2026-11-02',app_metadata:{role,owner:true},user_metadata:{role,owner:true},factors:[{factor_type:'totp',status:'verified'}]}}}),
   getClaims:async()=>({data:{claims:{sub:id,session_id:session,iss:'https://kbltwszfvphgbxdbczsb.supabase.co/auth/v1',aal:'aal2',role,owner:true}}}),
-  isSessionActive:async()=>true,readUsers:forbiddenRead,readProfiles:forbiddenRead,readUser:forbiddenRead,readAvatar:forbiddenRead,fetcher:forbiddenRead
+  isSessionActive:async()=>true,readUsers:forbiddenRead,readProfiles:forbiddenRead,readUser:forbiddenRead,readAvatar:forbiddenRead,readAppState:forbiddenRead,fetcher:forbiddenRead
  });
- for(const query of ['mode=gate','mode=users&page=1','mode=user&ids='+id,'mode=user-avatar&ids='+id,'mode=profiles&ids='+id,'mode=stats&days=7','mode=releases']){
+ for(const query of ['mode=gate','mode=users&page=1','mode=user&ids='+id,'mode=user-avatar&ids='+id,'mode=profiles&ids='+id,'mode=stats&days=7','mode=releases','mode=app-state&page=1']){
   const response=await handler(new Request('https://example.invalid?'+query,{headers:{Authorization:'Bearer verified-fixture-token',Origin:'https://skodytunez-maker.github.io'}}));
   assert.equal(response.status,403,role+' denied '+query);
   assert.deepEqual(await response.json(),{error:'owner_only'});
@@ -20,7 +20,7 @@ for(const role of ['admin','moderator','teacher']){
  }
  assert.equal(reads,0,role+' cannot trigger private reads, including photos, city and Quran checkpoint');
  const actor={id,role,owner:false,permissions:['support','reciters','wallpapers']};
- assert.ok(!staffTabs(actor).some(([key])=>['users','overview','activity','team'].includes(key)));
+ assert.ok(!staffTabs(actor).some(([key])=>['users','overview','activity','current','team'].includes(key)));
  assert.ok(!/Пользователи|owner-panel-users|#admin/.test(staffShell(actor,'messages')),'Staff interface never renders owner user directory');
 }
 console.log('PASS: admin, moderator and teacher denied every owner-data endpoint before reads, even with MFA and forged owner claims; no user-directory staff navigation.');

@@ -34,11 +34,11 @@ export function ownerVerified(){return verified&&Date.now()-verifiedAt<60000;}
 export function verifiedOwnerId(){return ownerVerified()?verifiedUserId:null;}
 export function ownerNeedsMfa(){return mfaRequired;}
 export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}
-async function callOwner(session,query='',{binary=false}={}){
+async function callOwner(session,query='',{binary=false,signal=null}={}){
  if(!session?.access_token)throw Error('Войдите в аккаунт владельца.');
  let response;
- try{for(let attempt=0;attempt<(query?2:1);attempt++){try{response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(query?15000:8000)});if(![502,504].includes(response.status)||attempt||!query)break;}catch(error){if(attempt||!query)throw error;}await new Promise(resolve=>setTimeout(resolve,400));}}
- catch{revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
+ try{for(let attempt=0;attempt<(query?2:1);attempt++){try{if(signal?.aborted)throw Error('cancelled');const timeout=AbortSignal.timeout(query?15000:8000),requestSignal=signal&&typeof AbortSignal.any==='function'?AbortSignal.any([signal,timeout]):timeout;response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:requestSignal});if(signal?.aborted)throw Error('cancelled');if(![502,504].includes(response.status)||attempt||!query)break;}catch(error){if(signal?.aborted||attempt||!query)throw error;}await new Promise(resolve=>setTimeout(resolve,400));}}
+ catch{if(signal?.aborted)throw Object.assign(Error('Запрос отменён.'),{name:'AbortError'});revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
  if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Object.assign(Error('Вход истёк. Войдите снова.'),{status:401});if(response.status===403){const denied=Error('Этот аккаунт не имеет доступа к кабинету.');denied.status=403;throw denied;}if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
  return binary?response.blob():response.json();
 }
@@ -179,4 +179,10 @@ export async function ownerLiveActivity(kind,page=1){
  if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('Неизвестный вид активности.');
  const{data,error}=await authClient().auth.getSession();if(error)throw Error('Не удалось проверить вход.');
  return callOwner(data.session,'?mode=live&kind='+kind+'&page='+page);
+}
+
+export async function ownerAppActivity(page=1,{signal}={}){
+ if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error('Неизвестная страница.');
+ const{data,error}=await authClient().auth.getSession();if(error)throw Error('Не удалось проверить вход.');
+ return callOwner(data.session,'?mode=app-state&page='+page,{signal});
 }

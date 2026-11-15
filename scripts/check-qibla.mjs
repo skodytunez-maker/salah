@@ -56,6 +56,15 @@ assert.equal(presentation.update({hasHeading:true,heading:359.2,signedError:90.8
 assert.deepEqual(presentation.update({hasHeading:true,heading:1,signedError:89}),{north:-361,target:89},'North crossing must rotate 2 degrees, not a full circle');
 for(const heading of [.9,1.1,1.2,.8])assert.equal(presentation.update({hasHeading:true,heading,signedError:90-heading}),null);
 assert.deepEqual(presentation.update({hasHeading:true,heading:2,signedError:88}),{north:-362,target:88},'Slow deliberate motion is not frozen');
+const retargetedPresentation=createCompassPresentation();
+assert.deepEqual(retargetedPresentation.update({hasHeading:true,heading:359,signedError:179}),{north:-359,target:179});
+retargetedPresentation.retarget();
+assert.equal(retargetedPresentation.update({hasHeading:false}),null,'A waiting sensor state keeps a pending GPS retarget');
+assert.deepEqual(retargetedPresentation.update({hasHeading:true,heading:1,signedError:-179}),{north:-361,target:181},'GPS retargeting crosses north and the target boundary continuously instead of spinning a full circle');
+retargetedPresentation.retarget();
+assert.deepEqual(retargetedPresentation.update({hasHeading:true,heading:1,signedError:-169}),{north:-361,target:191},'A changed GPS bearing updates the closest target angle despite the heading deadband');
+assert.equal(retargetedPresentation.update({hasHeading:true,heading:1.1,signedError:-169.1}),null,'The normal deadband resumes after retargeting');
+assert.deepEqual(retargetedPresentation.update({hasHeading:true,heading:2,signedError:-170}),{north:-362,target:190},'Ordinary heading updates keep the new target and unwrapped north');
 const stableStates=[];let stableListener,stableHaptics=0;
 const stableController=createCompassController({bearing:90,onState:s=>stableStates.push(s),onHaptic:()=>stableHaptics++,environment:{...gentleEnvironment,subscribe:fn=>{stableListener=fn;return()=>stableListener=null;}}});
 await stableController.enable();now=1000;stableListener({...level,webkitCompassHeading:90});flush();assert.equal(stableHaptics,1);

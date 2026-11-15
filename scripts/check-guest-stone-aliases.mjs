@@ -9,18 +9,22 @@ const pg=new PGlite(),schema='salah_competition_private';
 await pg.exec(`create role anon;create role authenticated;create role service_role bypassrls;
 create schema ${schema};create table ${schema}.guest_players(public_id uuid primary key,claimed_by uuid,created_at timestamptz not null);
 grant select on ${schema}.guest_players to service_role;`);
-const previous=[randomUUID(),randomUUID(),randomUUID()];
-for(let i=0;i<previous.length;i++)await pg.query(`insert into ${schema}.guest_players values($1,null,$2)`,[previous[i],new Date(1000*(i+1)).toISOString()]);
+// Insert out of ID order, including two equal creation times. Assignment timestamps
+// may legitimately tie, so they are never used to infer the order of assignment.
+const previous=['33333333-3333-4333-8333-333333333333','22222222-2222-4222-8222-222222222222','00000000-0000-4000-8000-000000000000','11111111-1111-4111-8111-111111111111'];
+const createdAt=[1000,2000,3000,2000];
+for(let i=0;i<previous.length;i++)await pg.query(`insert into ${schema}.guest_players values($1,null,$2)`,[previous[i],new Date(createdAt[i]).toISOString()]);
 await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114230126_guest_stone_aliases.sql',import.meta.url),'utf8'));
-const aliases=async()=>((await pg.query(`select * from ${schema}.guest_aliases order by assigned_at,guest_id`)).rows);
+const aliases=async()=>((await pg.query(`select * from ${schema}.guest_aliases order by guest_id`)).rows);
 const ensure=async id=>(await pg.query(`select ${schema}.ensure_guest_alias($1) as nickname`,[id])).rows[0].nickname;
 const add=async()=>{const id=randomUUID();await pg.query(`insert into ${schema}.guest_players values($1,null,now())`,[id]);return id;};
-assert.deepEqual((await aliases()).map(row=>row.nickname),['Гость · Янтарь','Гость · Сапфир','Гость · Нефрит'],'The migration backfills each pre-existing ledger in deterministic creation order');
+const backfilled=new Map((await aliases()).map(row=>[row.guest_id,row.nickname]));
+assert.deepEqual(previous.map(id=>backfilled.get(id)),['Гость · Янтарь','Гость · Нефрит','Гость · Агат','Гость · Сапфир'],'Backfill assigns by creation time, then public ID for equal creation times, independently of insertion order or assigned_at ties');
 const before=(await aliases()).find(row=>row.guest_id===previous[0]);
 assert.equal(await ensure(previous[0]),before.nickname);assert.equal(await ensure(previous[0]),before.nickname);
 const after=(await aliases()).find(row=>row.guest_id===previous[0]);assert.deepEqual(after,before,'Retries never rename or re-date an assigned alias');
 assert.equal(await ensure(randomUUID()),null,'The helper cannot enroll an unknown guest');
-assert.equal((await aliases()).length,3);
+assert.equal((await aliases()).length,4);
 for(let i=0;i<80;i++)assert.match(await ensure(await add()),/^Гость · [А-ЯЁ]/);
 const at=async ordinal=>{await pg.query(`select setval('${schema}.guest_alias_sequence',$1::bigint,false)`,[String(ordinal)]);return ensure(await add());};
 assert.equal(await at(1057),'Гость · Тихий светлый янтарь','The third naming tier stays friendly after all simple adjective/stone combinations');

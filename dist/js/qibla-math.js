@@ -101,15 +101,17 @@ export function createDirectionTracker({ tau = 120, enter = 2, exit = 3.5, rearm
 /** Keep the last drawing during unreliable samples; sub-degree noise does not
  * move the whole compass. Both rings share a single, unwrapped heading. */
 export function createCompassPresentation({ deadband = .4 } = {}) {
-  let heading = null, north = null, target = null;
+  let heading = null, north = null, target = null, retargeted = false;
   return {
+    retarget() { retargeted = true; },
     update(state) {
       if (!state.hasHeading || !Number.isFinite(state.heading) || !Number.isFinite(state.signedError)) return null;
       const delta = heading === null ? 0 : signedAngleDifference(heading, state.heading);
-      if (heading !== null && Math.abs(delta) < deadband) return null;
+      if (!retargeted && heading !== null && Math.abs(delta) < deadband) return null;
       north = north === null ? -state.heading : north - delta;
-      target = target === null ? state.signedError : target - delta;
+      target = target === null ? state.signedError : retargeted ? target + signedAngleDifference(target, state.signedError) : target - delta;
       heading = state.heading;
+      retargeted = false;
       return { north, target };
     }
   };

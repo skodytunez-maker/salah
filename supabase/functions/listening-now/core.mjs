@@ -1,6 +1,7 @@
 import{guestActivityPacket,guestActivityOrigin,createGuestActivityDb}from './guest-activity.mjs';
 // Public responses contain aggregates only. Account writes require a verified session; guest writes use bounded anonymous packets.
 import{activityPresencePacket,createActivityPresenceDb}from './activity-presence.mjs';
+import{appStatePacket,createAppStateDb}from './app-state.mjs';
 export async function readListeningNow(sql){
  const rows=await sql`with live as (
  select user_id,session_id,'listening'::text kind from salah_competition_private.listener_presence where playing and reported_at>statement_timestamp()-interval '45 seconds'
@@ -24,7 +25,7 @@ export async function readListeningNow(sql){
  return result;
 }
 export function createListeningNowHandler(sql,{verified=async()=>null}={}){
- const db=createActivityPresenceDb(sql),guestDb=createGuestActivityDb(sql);
+ const db=createActivityPresenceDb(sql),guestDb=createGuestActivityDb(sql),appDb=createAppStateDb(sql);
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'apikey,authorization,content-type,x-client-info','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Cache-Control':'no-store','Content-Type':'application/json','X-Content-Type-Options':'nosniff'};
  const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers});
  return async req=>{if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
@@ -40,6 +41,12 @@ export function createListeningNowHandler(sql,{verified=async()=>null}={}){
     if(!guestActivityOrigin(req.headers.get('Origin')))return reply({error:'forbidden'},403);
     let packet;try{packet=guestActivityPacket(body);}catch{return reply({error:'invalid_guest_activity'},400);}
     const result=await guestDb.update(packet);return reply(result,result.retry?429:200);
+   }
+   if(['app-state','guest-state'].includes(body?.action)){
+    if(body.action==='guest-state'&&!guestActivityOrigin(req.headers.get('Origin')))return reply({error:'forbidden'},403);
+    let packet;try{packet=appStatePacket(body);}catch{return reply({error:'invalid_app_state'},400);}
+    const user=packet.guest?null:await verified(req);if(!packet.guest&&!user)return reply({error:'sign_in_required'},401);
+    const result=await appDb.update(packet,user);return reply(result,result.retry?429:200);
    }
    const user=await verified(req);if(!user)return reply({error:'sign_in_required'},401);
    let packet;try{packet=activityPresencePacket(body);}catch{return reply({error:'invalid_activity'},400);}

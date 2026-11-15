@@ -11,7 +11,8 @@ import{createListeningMeter,formatListeningTime,listeningDayKey,listeningPeriodT
 import{createCreditMinuteMeter}from './listening-credit-core.js';
 import{createListeningCredit}from './listening-credit.js';
 const KEY='reciter-popularity-consent-v1',endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-popularity';
-let account=()=>({signedIn:false}),client=()=>null,cache=null,loaded=0,inflight=null,initialized=false;
+let account=()=>({signedIn:false}),client=()=>null,cache=null,loaded=0,inflight=null,initialized=false,currentCredit=null;
+export const listeningCreditPaused=()=>currentCredit?currentCredit.paused():null;
 const rankingData=new Map();let selectedGlobalPeriod='month';
 const allowed={has:id=>RECITERS.some(r=>!r.variantOf&&r.id===id)};
 export const popularityEnabled=()=>personalDataAllowed()&&!!account().signedIn&&!!account().userId&&read(KEY+':'+account().userId,true)===true;
@@ -39,7 +40,7 @@ export function personalListening(period='all'){const data=workingKey===localSco
 export function personalTop(period='all'){return Object.entries(personalListening(period).totals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);}
 export {formatListeningTime,listeningDayKey};
 export function initReciterPopularity({playback,ruqyah=null,getAccount,getClient,now=Date.now}){if(initialized)return;initialized=true;account=getAccount;client=getClient;let dirty=false,creditDirty=false,queueDirty=false,eligible=null,eligibleKey=null,lastFlush=0,currentUser=null,sending=false,pending=[],retryAt=0;
- const credit=createListeningCredit({getAccount,now,beforeAction:()=>{sample();flush();}});initGuestCompetition({getAccount,getClient,now,credit});
+ const credit=createListeningCredit({getAccount,now,beforeAction:()=>{sample();flush();}});currentCredit=credit;initGuestCompetition({getAccount,getClient,now,credit});
  const flush=()=>{if(creditDirty&&eligibleKey&&eligible&&write(eligibleKey,{...eligible,version:1}))creditDirty=false;if(dirty&&workingKey&&working){lastFlush=now();if(write(workingKey,working)){dirty=false;window.dispatchEvent(new Event('salah:personal-listening'));}}};
  const sharedMeter=createCreditMinuteMeter({onMinute:(reciter,createdAt)=>{if(allowed.has(reciter)&&pending.length<120){pending.push({reciter,eventId:crypto.randomUUID(),consent:true,createdAt});queueDirty=true;}}});
  const localMeter=createListeningMeter({onProgress:(id,seconds)=>{if(!allowed.has(id)||!working)return;working.totals[id]=(working.totals[id]||0)+seconds;addListeningDay(working.days,id,seconds,now());dirty=true;

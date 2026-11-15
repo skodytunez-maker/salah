@@ -22,21 +22,22 @@ export function initActivityPresence({playback}={}){
  };
  const reporter=createActivityReporter({getIdentity:identity,getView:()=>activityView(document,location,playback?.state),
  eligible:()=>{if(!personalDataAllowed()||navigator.onLine===false)return false;const person=identity();if(person?.guest)return true;const own=competitionOwn();return popularityEnabled()&&own?.enabled===true&&['initial','profile'].includes(own.mode);},send});
- const sample=()=>{const person=identity(),device=person?.guest?person.device:null;
+ const sample=(options={})=>{const person=identity(),device=person?.guest?person.device:null;
   if(device!==guestDevice){guestListener?.dispose();guestListener=null;guestDevice=device;
    guestHolder=null;
    if(device&&playback){const holder={identity:person};guestHolder=holder;guestListener=createPlaybackPresenceReporter({getState:()=>playback.state,getUserId:()=>device,isEligible:()=>identity()?.scope==='guest:'+device&&navigator.onLine!==false,send:(packet,options)=>send({action:'guest-activity',kind:'listening',tab:packet.tab,sequence:packet.sequence,active:packet.playing},{...options,identity:holder.identity})});}
   }
   if(guestHolder&&person?.guest)guestHolder.identity=person;
-  reporter.sample();guestListener?.sample();
+  reporter.sample();guestListener?.sample({force:options.force===true,keepalive:options.keepalive===true||document.hidden});
  };
  accountAuthClient().auth.onAuthStateChange((_event,value)=>{revision++;session=value;setTimeout(sample,0);});
  const before=revision;setTimeout(()=>{void accountAuthClient().auth.getSession().then(({data,error})=>{if(!error&&before===revision){session=data.session;sample();}}).catch(()=>{});},0);
  window.addEventListener('salah:dhikr-presence-counted',event=>{const current=identity(),account=event.detail?.account;if(current?.guest&&account==='guest')reporter.counted(current.id);else reporter.counted(account);});
- for(const name of ['hashchange','online','pageshow','salah:counter-status','salah:competition-updated','salah:listener-visibility','salah:popularity-consent','salah:settings-changed'])window.addEventListener(name,sample);
- document.addEventListener('visibilitychange',sample);
- window.addEventListener('pagehide',()=>{reporter.stop();guestListener?.stop({keepalive:true});});
- playback?.subscribe(sample);
+ for(const name of ['hashchange','online','salah:counter-status','salah:competition-updated','salah:listener-visibility','salah:popularity-consent','salah:settings-changed'])window.addEventListener(name,sample);
+ window.addEventListener('pageshow',()=>sample({force:true}));
+ document.addEventListener('visibilitychange',()=>sample({force:true,keepalive:document.hidden}));
+ window.addEventListener('pagehide',()=>{reporter.stop();guestListener?.sample({force:true,keepalive:true});});
+ playback?.subscribe(()=>sample());
  const observer=new MutationObserver(sample);observer.observe(document.getElementById('app'),{childList:true,subtree:true});
  // The player lives outside #app. Its native dialog may cover the still-mounted text.
  for(const dialog of document.querySelectorAll('dialog'))observer.observe(dialog,{attributes:true,attributeFilter:['open']});

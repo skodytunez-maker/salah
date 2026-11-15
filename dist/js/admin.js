@@ -1,5 +1,6 @@
 import{mountOwnerReturnCampaign}from './owner-return.js';
 import{mountOwnerVisitors}from './owner-visitors.js';
+import{mountOwnerCurrentActivity}from './owner-current-activity.js';
 import{mountOwnerGeography}from './owner-geography.js';
 import{ownerActivityView,bindOwnerActivity}from './owner-activity.js';
 import{ownerUserRow}from './owner-user-list.js';
@@ -13,7 +14,7 @@ import{notificationLabels}from './notification-status.js';
 import{competitionProfilePreview}from './competition-view.js';
 import{ownerUserCard,ownerUserCardPreview,validOwnerUserId,bindOwnerNotificationInfo,bindOwnerAwardHistory}from './owner-user-card.js';
 import{createOwnerUserDetail}from './owner-user-detail.js';
-import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerGeography,ownerGeoMembers,ownerVisitors,ownerUsers,ownerRankUser,ownerReleases,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
+import{ownerVerified,verifyOwner,signInOwner,signOutOwner,ownerStatistics,ownerGeography,ownerGeoMembers,ownerVisitors,ownerAppActivity,ownerUsers,ownerRankUser,ownerReleases,ownerNeedsMfa,ownerMfaFactors,enrollOwnerMfa,verifyOwnerMfa,onOwnerChange}from './owner-auth.js';
 let screen=0,period=7;
 
 async function showMfa(app,active,options){
@@ -90,6 +91,7 @@ export async function showAdmin(app,options={}){
  const geography=mountOwnerGeography(app.querySelector('#owner-geography-content'),{load:ownerGeography,loadMembers:ownerGeoMembers,onUser:(user,button)=>openUser(user,button),isActive:()=>active()&&ownerVerified()});
  mountOwnerErrorSummary(app.querySelector('.admin-intro'),{isActive:active});
  if(!active())return;const workspace=mountOwnerWorkspace(app,{isActive:active,onSelect:view=>selectView(view)});
+ const currentActivity=mountOwnerCurrentActivity(app.querySelector('#owner-panel-current'),{load:ownerAppActivity,isActive:()=>active()&&ownerVerified(),subscribe:onOwnerChange});
  globalThis.window?.dispatchEvent?.(new Event('salah:support-status-refresh'));
  const history=app.querySelector('#owner-release-toggle'),historyContent=app.querySelector('#owner-release-content');let historyOpen=false;
  history.onclick=async()=>{historyOpen=!historyOpen;history.setAttribute('aria-expanded',String(historyOpen));historyContent.hidden=!historyOpen;
@@ -98,7 +100,7 @@ export async function showAdmin(app,options={}){
    historyContent.innerHTML=data.releases.slice(0,12).map(row=>'<div><strong>'+esc(row.date)+(row.version?' · '+esc(row.version):'')+'</strong><ul>'+(Array.isArray(row.changes)?row.changes:[]).filter(x=>typeof x==='string').slice(0,8).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>').join('');historyContent.dataset.loaded='1';
   }catch(error){if(active()&&historyOpen)historyContent.textContent=error.message;}
  };
- const panels=Object.fromEntries(['home','users','activity','teachers','team','tools'].map(view=>[view,app.querySelector('#owner-panel-'+view)])),tabs=Array.from(app.querySelectorAll('[data-view]'));
+ const panels=Object.fromEntries(['home','users','activity','current','teachers','team','tools'].map(view=>[view,app.querySelector('#owner-panel-'+view)])),tabs=Array.from(app.querySelectorAll('[data-view]'));
  const entryHash=location.hash,entryParams=new URLSearchParams(entryHash.split('?')[1]||'');
  const requestedView=entryParams.get('view'),listenerId=requestedView==='profile'&&validOwnerUserId(entryParams.get('listener'))?entryParams.get('listener'):null;const initialView=requestedView==='overview'?'activity':requestedView;let selectedView=initialView==='profile'?'users':Object.hasOwn(panels,initialView)?initialView:'home',usersPage=1,usersLoad=0,usersBusy=false,usersLoaded=false,usersSnapshot=[],selectedUser=null,profileOpener=null;
  const cardArea=app.querySelector('#owner-panel-users');cardArea.insertAdjacentHTML('beforeend','<section class="owner-profile-screen" id="owner-user-detail" hidden><header class="owner-profile-navigation"><button type="button" class="text-button" id="owner-user-back">'+actionLabel('back','Пользователи')+'</button><button type="button" class="text-button" id="owner-user-refresh">Обновить</button></header><div id="owner-user-card"></div><p class="muted owner-card-status" id="owner-user-card-status" role="status" aria-live="polite"></p></section>');
@@ -147,14 +149,14 @@ export async function showAdmin(app,options={}){
  let listAvatars=null,avatarLoading=null,avatarBusy=false,avatarAgain=false,avatarScrollTimer=null;
  const hydrateUserAvatars=async()=>{if(!active()||selectedView!=='users'||selectedUser)return;if(avatarBusy){avatarAgain=true;return;}avatarBusy=true;try{if(!listAvatars){avatarLoading??=import('./owner-team-avatars.js');const {createStaffAvatarManager}=await avatarLoading;if(!active()||selectedView!=='users'||selectedUser)return;listAvatars=createStaffAvatarManager({isActive:()=>active()&&selectedView==='users'&&!selectedUser,includeNode:node=>{const r=node.getBoundingClientRect();return r.height>0&&r.bottom>=-120&&r.top<(window.innerHeight||800)+120;}});}await listAvatars.hydrate(app.querySelector('#owner-users-list'));}catch{}finally{avatarBusy=false;if(avatarAgain){avatarAgain=false;void hydrateUserAvatars();}}};
  const avatarScroll=()=>{if(!active()||selectedView!=='users'||selectedUser||avatarScrollTimer!==null)return;avatarScrollTimer=setTimeout(()=>{avatarScrollTimer=null;void hydrateUserAvatars();},100);};window.addEventListener('scroll',avatarScroll,{passive:true,capture:true});
- const selectView=view=>{if(view==='overview')view='activity';if(!Object.hasOwn(panels,view))view='home';if(!workspace.canLeave(view))return false;if(selectedView==='activity'&&view!=='activity')geography.resetView();workspace.select(view);if(view!=='users'&&selectedUser)cardHistory.back();selectedView=view;if(view!=='users'){listAvatars?.dispose();listAvatars=null;}else void hydrateUserAvatars();for(const [name,panel]of Object.entries(panels))panel.hidden=name!==view;for(const tab of tabs){const selected=tab.dataset.view===view;tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');}app.querySelector('#owner-periods').hidden=view!=='activity';if(view==='users'&&usersLoad>0)void readUsers(true);return true;};
+ const selectView=view=>{if(view==='overview')view='activity';if(!Object.hasOwn(panels,view))view='home';if(!workspace.canLeave(view))return false;if(selectedView==='activity'&&view!=='activity')geography.resetView();workspace.select(view);if(view!=='users'&&selectedUser)cardHistory.back();selectedView=view;currentActivity.setActive(view==='current');if(view!=='users'){listAvatars?.dispose();listAvatars=null;}else void hydrateUserAvatars();for(const [name,panel]of Object.entries(panels))panel.hidden=name!==view;for(const tab of tabs){const selected=tab.dataset.view===view;tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');}app.querySelector('#owner-periods').hidden=view!=='activity';if(view==='users'&&usersLoad>0)void readUsers(true);return true;};
  tabs.forEach((tab,index)=>{tab.onclick=()=>workspace.navigate(tab.dataset.view);tab.onkeydown=event=>{const target=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowRight'?(index+1)%tabs.length:event.key==='ArrowLeft'?(index+tabs.length-1)%tabs.length:null;if(target===null)return;event.preventDefault();workspace.navigate(tabs[target].dataset.view);if(tabs[target].getAttribute('aria-selected')==='true')tabs[target].focus();};});
  selectView(selectedView);
  const presenceTimer=setInterval(()=>{if(!active()){app.ownerDispose?.();return;}if(!listenerId&&!document.hidden&&selectedView==='users')void readUsers(true);},30000);
  const closePolling=()=>{if(!active())app.ownerDispose?.();};window.addEventListener('hashchange',closePolling);
  app.ownerHandleRoute=hash=>{if(!active()||!ownerVerified()||hash.split('?')[0]!=='#admin'||listenerId&&hash!==entryHash)return false;const requested=new URLSearchParams(hash.split('?')[1]||'').get('view')||'home';if(requested==='profile')return !!selectedUser;const target=requested==='overview'?'activity':Object.hasOwn(panels,requested)?requested:'home';if(target!==selectedView)selectView(target);return true;};
  const stopRankAccess=listenerId?onOwnerChange(()=>{if(active()&&!ownerVerified()){rankRequest++;clearRankCard('Подтвердите вход владельца.');refreshButton.disabled=false;}}):()=>{};
- app.ownerDispose=()=>{rankRequest++;stopRankAccess();stopOwnerReturn();visitors.dispose();geography.dispose();stopActivity();delete app.ownerHandleRoute;document.body?.classList.remove('owner-profile-page');listAvatars?.dispose();listAvatars=null;if(avatarScrollTimer!==null)clearTimeout(avatarScrollTimer);window.removeEventListener('scroll',avatarScroll,true);workspace.dispose();profileDetail.dispose();privateProfile={};cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
+ app.ownerDispose=()=>{rankRequest++;stopRankAccess();stopOwnerReturn();visitors.dispose();geography.dispose();currentActivity.dispose();stopActivity();delete app.ownerHandleRoute;document.body?.classList.remove('owner-profile-page');listAvatars?.dispose();listAvatars=null;if(avatarScrollTimer!==null)clearTimeout(avatarScrollTimer);window.removeEventListener('scroll',avatarScroll,true);workspace.dispose();profileDetail.dispose();privateProfile={};cardHistory.dispose();clearInterval(presenceTimer);window.removeEventListener('hashchange',closePolling);};
  let load=0;
  const readStats=async()=>{
   void visitors.refresh(period);

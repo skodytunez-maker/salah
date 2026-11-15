@@ -31,7 +31,7 @@ write('tyumen-first-asr-v1',{'2026-10-01':{time:'2026-10-01T15:26:00+05:00',kind
 const loaded=await loadMonth('2026-10-01',true);
 assert.equal(remoteCalls,0,'Published October must remain available offline, even on force refresh');
 assert.deepEqual(loaded['2026-09-30'].timings,historical.days['2026-09-30'].timings);
-assert.ok(cacheKey().includes('tyumen-table-v2'));
+assert.ok(cacheKey().includes('tyumen-table-v3'));
 for(const day of days){
  settings.school=0;
  assert.equal(timingsFor(day,loaded).Asr,Date.parse(table.days[day].asrFirst),day+' first Asr');
