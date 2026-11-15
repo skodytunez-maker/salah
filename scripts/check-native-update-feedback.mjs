@@ -13,6 +13,7 @@ for(const updater of [null,{check:async()=>{throw Error('bridge failed');}},{che
  assert.equal(await checkNativeUpdate(updater),'native-unavailable');
 assert.equal(await checkNativeUpdate({check:()=>new Promise(()=>{})},{timeoutMs:5}),'loading','A stalled native download cannot strand the button');
 navigator.onLine=false;assert.equal(await checkNativeUpdate({check:()=>{throw Error('Must not be called offline');}}),'offline');navigator.onLine=true;
+let nativeCalls=0;document.documentElement={dataset:{}};for(const key of ['quranDownload','quranTextDownload','mushafDownload']){document.documentElement.dataset[key]='active';assert.equal(await checkNativeUpdate({check:async()=>{nativeCalls++;return{status:'current'};}}),'loading');delete document.documentElement.dataset[key];}document.querySelector=selector=>selector==='[data-prayer-offline-busy]'?{}:null;assert.equal(await checkNativeUpdate({check:async()=>{nativeCalls++;return{status:'current'};}}),'loading');assert.equal(nativeCalls,0,'Downloads must block invoking the native updater, not merely hide feedback');document.querySelector=()=>null;assert.equal(await checkNativeUpdate({check:async()=>{nativeCalls++;return{status:'current'};}}),'current');assert.equal(nativeCalls,1);
 globalThis.Capacitor={isNativePlatform:()=>true,Plugins:{}};
 await registerAppWorker();assert.equal(await checkAppUpdate(),'native-unavailable');assert.equal(registrations,0);
 globalThis.Capacitor.Plugins.SalahLiveUpdate={check:async()=>({status:'native-required'})};

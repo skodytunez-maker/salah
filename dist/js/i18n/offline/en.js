@@ -1,0 +1,20 @@
+export default Object.freeze({
+ 'offlineUi.mushafTitle':'The whole Quran offline',
+ 'offlineUi.mushafNote':'Save all 604 pages on this device. Files already verified will be kept when you resume downloading.',
+ 'offlineUi.mushafAppearance':'Offline reading uses the Arabic text and a built-in font. Lettering and line breaks differ from the printed Mushaf; the verses remain unchanged.',
+ 'offlineUi.checking':'Checking saved texts…',
+ 'offlineUi.ready':'All 604 pages are saved. You can read without internet.',
+ 'offlineUi.paused':'Download paused: {count} / 114 surahs. You can resume.',
+ 'offlineUi.progress':'Verifying and saving: {count} / 114 surahs.',
+ 'offlineUi.available':'Surahs saved: {count} / 114. Full download: {size} MB.',
+ 'offlineUi.quota':'Not enough storage. Saved parts are kept; free up space and resume.',
+ 'offlineUi.storage':'Offline storage is unavailable in this browser.',
+ 'offlineUi.failed':'The download could not finish. Saved parts are kept; try resuming.',
+ 'offlineUi.download':'Download the whole Quran',
+ 'offlineUi.resume':'Resume download',
+ 'offlineUi.pause':'Pause download',
+ 'offlineUi.read':'Read offline',
+ 'offlineUi.printed':'Printed view',
+ 'offlineUi.offlineCaption':'Offline view · Arabic text',
+ 'offlineUi.fallbackCaption':'Printed font unavailable · Arabic text'
+});

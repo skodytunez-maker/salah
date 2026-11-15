@@ -40,6 +40,7 @@ root.innerHTML=illustratedReleaseMarkup(349);assert.equal(root.querySelectorAll(
 for(const version of [335,339,340,341,372,999]){root.innerHTML=illustratedReleaseMarkup(version,['Поддержка SALAH: кнопка отмены подписки. Приём платежей пока выключен.']);assert.doesNotMatch(root.textContent,/подписк|поддержк|оплат|плат[её]ж|списани|yookassa/iu);}
 const {publicReleaseChanges,validatedRelease}=await import('../dist/js/pwa-updates.js');
 assert.deepEqual(publicReleaseChanges(['Улучшен мусхаф','Подписка SALAH','Кнопка отмены и отвязки способа оплаты','ЮKassa: проверка','owner private']),['Улучшен мусхаф']);
+assert.deepEqual(publicReleaseChanges(['Расписание намаза доступно без интернета.','Намаз: сохранение расписания.','Автоматическое списание средств.']),['Расписание намаза доступно без интернета.','Намаз: сохранение расписания.']);
 assert.equal(validatedRelease({version:372,date:'2026-10-18',changes:['Поддержка SALAH: кнопка отмены подписки']}),null);
 
 const future=illustratedReleaseMarkup(350,['<img src=x onerror=alert(1)>','Изменение','owner private']);root.innerHTML=future;
@@ -97,7 +98,13 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- if(APP_ANNOUNCEMENT.version===501){
+ if(APP_ANNOUNCEMENT.version===502){
+  assert.equal(releaseModal.querySelectorAll('.release-feature').length,3);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,3);assert.equal(releaseModal.querySelectorAll('.release-offline-preview [data-release-motion-part]').length,3);
+  releaseModal.querySelector('[data-release-next]').click();const selected=releaseModal.querySelector('.release-feature[aria-hidden="false"]'),picture=selected.querySelector('img'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();
+  for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(releaseModal.querySelector('.release-feature[aria-hidden="false"]'),selected);assert.equal(selected.querySelector('img'),picture);assert.equal(selected.querySelector('h3').textContent,t('offlineReleaseUi.prayerTitle'));assert.equal(doc.activeElement,confirmation);assert.equal(hasSeenAnnouncement(),false);}
+  setInterfaceLanguage('ru');assert.ok(releaseModal.textContent.includes('Коран всегда рядом'));assert.ok(releaseModal.textContent.includes('Расписание без сети'));assert.ok(releaseModal.textContent.includes('Ваше скачанное чтение'));assert.doesNotMatch(releaseModal.textContent,/SALAH на вашем языке|Переводы смыслов с источниками|Ночью чтение продолжается|Сохраните прослушанное/);
+  for(const name of['quran-offline-502','prayer-offline-502','audio-offline-502']){const svg=await fs.readFile(new URL('../dist/assets/updates/'+name+'.svg',import.meta.url),'utf8');assert.match(svg,/<title\b/);assert.match(svg,/<desc\b/);assert.doesNotMatch(svg,/<(?:script|animate|animateTransform|animateMotion|set|foreignObject)\b|(?:href|xlink:href)=["']https?:/iu);assert.ok(Buffer.byteLength(svg)<10000);}
+ }else if(APP_ANNOUNCEMENT.version===501){
   assert.equal(releaseModal.querySelectorAll('.release-feature').length,2);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,2);assert.ok(releaseModal.querySelectorAll('.release-interface-preview [data-release-motion-part]').length===2);
   releaseModal.querySelector('[data-release-next]').click();const selected=releaseModal.querySelector('.release-feature[aria-hidden="false"]'),picture=selected.querySelector('img'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();
   for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(releaseModal.querySelector('.release-feature[aria-hidden="false"]'),selected);assert.equal(selected.querySelector('img'),picture);assert.equal(releaseModal.querySelector('[data-release-page]').textContent,'2/2');assert.equal(selected.querySelector('h3').textContent,t('releaseUi.translationsTitle'));assert.equal(doc.activeElement,confirmation);assert.equal(hasSeenAnnouncement(),false);}

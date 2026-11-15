@@ -1,20 +1,43 @@
 import{settings}from './storage.js';
 import{natureVideoUrl,createNatureVideoCache}from './quran-nature-video-cache.js';
+import{NATURE_SOUNDS}from './quran-nature-recordings.js';
+import{loadDecodedImage}from './image-presentation.js';
 
 const TRANSITION_MS=220;
 // Two visual slots share no audio ownership. Only compressed bytes may stay warm while closed.
-export function mountNatureMotion(panel,{doc=document,win=window,isReduced=()=>settings.motion||settings.transitions===false,createVideo=()=>doc.createElement('video'),createCache=createNatureVideoCache,setTimer=(fn,ms)=>win.setTimeout(fn,ms),clearTimer=id=>win.clearTimeout(id)}={}){
+export function mountNatureMotion(panel,{doc=document,win=window,isReduced=()=>settings.motion||settings.transitions===false,createVideo=()=>doc.createElement('video'),createCache=createNatureVideoCache,loadPhoto=loadDecodedImage,setTimer=(fn,ms)=>win.setTimeout(fn,ms),clearTimer=id=>win.clearTimeout(id)}={}){
  let disposed=false,pageHidden=false,wrapper=null,chosen=null,visual=null,front=null,pending=null,retiring=null,failedKind=null,generation=0,retireTimer=null,photoTimer=null,lastPointer=null;
+ let photoJob=null,photoRevision=0,failedPhoto=null;
+ const decodedPhotos=new Map();
  const slots=[],media=win.matchMedia?.('(prefers-reduced-motion: reduce)');
  const selected=()=>natureVideoUrl(panel.dataset.nature)?panel.dataset.nature:null;
  const picture=()=>panel.dataset.natureVisual==='photo';
- const baseEligible=()=>!disposed&&!pageHidden&&!doc.hidden&&doc.visibilityState!=='hidden'&&panel.isConnected&&!panel.hidden&&panel.classList.contains('is-expanded')&&!!selected()&&!media?.matches&&!isReduced();
+ const photoEligible=()=>!disposed&&!pageHidden&&!doc.hidden&&doc.visibilityState!=='hidden'&&panel.isConnected&&!panel.hidden&&panel.classList.contains('is-expanded')&&!!selected();
+ const baseEligible=()=>photoEligible()&&!media?.matches&&!isReduced();
  const eligible=()=>baseEligible()&&!picture();
  const owns=entry=>!disposed&&entry.slot.entry===entry;
  const desired=entry=>owns(entry)&&entry.kind===selected()&&eligible();
  const resource=entry=>entry.slot.video.currentSrc===entry.url;
  const ready=entry=>resource(entry)&&entry.slot.video.readyState>=2&&!entry.slot.video.paused;
  const cache=createCache({canWarm:()=>eligible()&&!!front&&front.kind===selected()&&front.presented&&front.started&&!front.slot.video.paused,connection:()=>win.navigator?.connection});
+ function cancelPhotoRequest(){if(photoJob){photoRevision++;photoJob.controller.abort();photoJob=null;}}
+ function commitPhoto(kind,image){
+  if(!photoEligible()||selected()!==kind||!image?.complete||!image.naturalWidth||!image.naturalHeight)return false;
+  decodedPhotos.delete(kind);decodedPhotos.set(kind,image);while(decodedPhotos.size>2)decodedPhotos.delete(decodedPhotos.keys().next().value);
+  if(panel.dataset.naturePhoto!==kind)panel.dataset.naturePhoto=kind;
+  if(picture())fadeToPicture();return true;
+ }
+ function preparePhoto(kind){
+  if(!photoEligible()||!kind)return;
+  const saved=decodedPhotos.get(kind);if(saved){commitPhoto(kind,saved);return;}
+  if(photoJob?.kind===kind||failedPhoto===kind)return;
+  cancelPhotoRequest();const ticket=++photoRevision,controller=new AbortController(),job={kind,controller};photoJob=job;
+  const src=NATURE_SOUNDS.find(sound=>sound.id===kind)?.wallpaper;if(!src)return;
+  Promise.resolve().then(()=>loadPhoto(src,{signal:controller.signal,createImage:()=>doc.createElement('img')})).then(image=>{
+   if(disposed||photoJob!==job||ticket!==photoRevision||controller.signal.aborted)return;
+   if(!commitPhoto(kind,image))throw Error('Nature photo unavailable');
+  }).catch(()=>{if(!disposed&&photoJob===job&&ticket===photoRevision&&!controller.signal.aborted)failedPhoto=kind;}).finally(()=>{if(photoJob===job)photoJob=null;});
+ }
  function wrapperReady(value){if(wrapper){wrapper.hidden=false;wrapper.toggleAttribute('data-ready',!!value);}}
  function unload(slot){
   const entry=slot.entry;if(!entry&&!slot.video.hasAttribute('src'))return;
@@ -85,10 +108,11 @@ export function mountNatureMotion(panel,{doc=document,win=window,isReduced=()=>s
  }
  function sync(){
   const next=selected(),nextVisual=picture()?'photo':'video';
-  if(next!==chosen){chosen=next;failedKind=null;cache.stop();cancelPending();finishRetire();if(front)hold(front);}
-  if(nextVisual!==visual){visual=nextVisual;failedKind=null;}
+  if(next!==chosen){chosen=next;failedKind=null;failedPhoto=null;cancelPhotoRequest();cache.stop();cancelPending();finishRetire();if(front)hold(front);if(!next)delete panel.dataset.naturePhoto;}
+  if(nextVisual!==visual){visual=nextVisual;failedKind=null;failedPhoto=null;}
+  if(!photoEligible())cancelPhotoRequest();else preparePhoto(next);
   if(!baseEligible()){cache.stop();clearSources();return;}
-  if(picture()){fadeToPicture();return;}
+  if(picture()){if(panel.dataset.naturePhoto===next)fadeToPicture();else{cache.stop();cancelPending();finishRetire();if(front)hold(front);}return;}
   if(failedKind===next)return;
   cancelPhoto();
   if(front?.kind===next&&front.presented){cancelPending();wrapperReady(true);front.slot.video.dataset.layer='front';if(front.slot.video.paused&&front.resumeAllowed)play(front);else warm();return;}
@@ -96,7 +120,7 @@ export function mountNatureMotion(panel,{doc=document,win=window,isReduced=()=>s
   cancelPending();start(next);
  }
  function retry(){
-  if(disposed||!selected())return;failedKind=null;cache.retry?.(selected());
+  if(disposed||!selected())return;failedKind=null;failedPhoto=null;preparePhoto(selected());cache.retry?.(selected());
   if(!eligible())return;
   if(front?.kind===selected()&&front.started&&!front.slot.video.paused&&!front.slot.video.error)return;
   if(pending?.kind===selected()){if(pending.started&&ready(pending))maybePresent(pending);else{pending.attempting=false;play(pending);}return;}
@@ -110,10 +134,10 @@ export function mountNatureMotion(panel,{doc=document,win=window,isReduced=()=>s
  const click=event=>{const node=target(event);if(!node)return;const recent=lastPointer&&lastPointer.node===node&&event.timeStamp-lastPointer.time>=0&&event.timeStamp-lastPointer.time<1200;lastPointer=null;if(!recent)retry();};
  const changed=event=>{if(event.isTrusted&&panel.contains(event.target))retry();},cancelled=()=>{lastPointer=null;};
  const observer=typeof win.MutationObserver==='function'?new win.MutationObserver(sync):null;observer?.observe(panel,{attributes:true,attributeFilter:['class','hidden','data-nature','data-nature-visual']});
- const hidePage=()=>{pageHidden=true;cache.stop();clearSources();},showPage=()=>{pageHidden=false;sync();};
+ const hidePage=()=>{pageHidden=true;cancelPhotoRequest();cache.stop();clearSources();},showPage=()=>{pageHidden=false;sync();};
  doc.addEventListener('visibilitychange',sync);win.addEventListener('pagehide',hidePage);win.addEventListener('pageshow',showPage);win.addEventListener('salah:settings-changed',sync);
  panel.addEventListener('pointerdown',pointer,{capture:true,passive:true});panel.addEventListener('click',click,true);panel.addEventListener('change',changed,true);panel.addEventListener('pointercancel',cancelled,true);
  if(media?.addEventListener)media.addEventListener('change',sync);else media?.addListener?.(sync);
  sync();
- return{sync,destroy(){if(disposed)return;disposed=true;cache.stop();clearSources();cache.destroy();observer?.disconnect();doc.removeEventListener('visibilitychange',sync);win.removeEventListener('pagehide',hidePage);win.removeEventListener('pageshow',showPage);win.removeEventListener('salah:settings-changed',sync);panel.removeEventListener('pointerdown',pointer,true);panel.removeEventListener('click',click,true);panel.removeEventListener('change',changed,true);panel.removeEventListener('pointercancel',cancelled,true);if(media?.removeEventListener)media.removeEventListener('change',sync);else media?.removeListener?.(sync);wrapper?.remove();wrapper=null;lastPointer=null;}};
+ return{sync,destroy(){if(disposed)return;disposed=true;cancelPhotoRequest();decodedPhotos.clear();delete panel.dataset.naturePhoto;cache.stop();clearSources();cache.destroy();observer?.disconnect();doc.removeEventListener('visibilitychange',sync);win.removeEventListener('pagehide',hidePage);win.removeEventListener('pageshow',showPage);win.removeEventListener('salah:settings-changed',sync);panel.removeEventListener('pointerdown',pointer,true);panel.removeEventListener('click',click,true);panel.removeEventListener('change',changed,true);panel.removeEventListener('pointercancel',cancelled,true);if(media?.addEventListener)media.removeEventListener('change',sync);else media?.removeListener?.(sync);wrapper?.remove();wrapper=null;lastPointer=null;}};
 }

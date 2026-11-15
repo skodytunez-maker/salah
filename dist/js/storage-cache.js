@@ -2,13 +2,15 @@ import{t,translateUi,getLocale,subscribeLanguage}from './i18n.js';
 import{offlineAudioStore}from './quran-offline-store.js';
 import{quranDownloadQueue}from './quran-downloads.js';
 import{quranPlayback}from './quran-session.js';
+import{pauseTextDownloads}from './quran-data.js';
+import{mushafOfflineDownload}from './quran-mushaf-offline.js';
 import{esc,modal,closeModal,toast}from './ui.js';
 // Only reproducible public downloads: never the app shell, account caches or personal storage.
-export const CLEARABLE_CACHES=Object.freeze(['salah-quran-text-v1','salah-quran-timing-v1','salah-quran-recognition-v1','salah-quran-recognition-v2','salah-quran-tafsir-v1','salah-landmarks-v1','salah-builtin-wallpapers-v1']);
-export async function clearAppCache({audioStore=offlineAudioStore,cacheStorage=globalThis.caches,downloads=quranDownloadQueue,playback=quranPlayback}={}){
- await downloads.pause();playback.stop();
+export const CLEARABLE_CACHES=Object.freeze(['salah-quran-text-v1','salah-quran-mushaf-v1','salah-quran-timing-v1','salah-quran-recognition-v1','salah-quran-recognition-v2','salah-quran-tafsir-v1','salah-landmarks-v1','salah-builtin-wallpapers-v1']);
+export async function clearAppCache({audioStore=offlineAudioStore,cacheStorage=globalThis.caches,downloads=quranDownloadQueue,playback=quranPlayback,textDownloads=pauseTextDownloads,mushafDownloads=mushafOfflineDownload}={}){
+ await Promise.all([downloads.pause(),mushafDownloads.pause(),textDownloads()]);playback.stop();
  const tasks=[Promise.resolve().then(()=>audioStore.clearAll()),...CLEARABLE_CACHES.map(name=>Promise.resolve().then(()=>cacheStorage?.delete(name)))];
- const results=await Promise.allSettled(tasks);downloads.reset();
+ const results=await Promise.allSettled(tasks);downloads.reset();mushafDownloads.reset();
  const failure=results.find(r=>r.status==='rejected');if(failure)throw failure.reason;
 }
 let detachCacheSettings=null;

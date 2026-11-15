@@ -1,7 +1,8 @@
 import{t}from './i18n.js';
 import{uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute}from './ui.js';
 import{actionIcon,actionLabel}from './action-icons.js';
-import{skyObjects,previewClock,skyProjectionFrame,projectSkyObjects}from './wallpapers.js';
+import{wallpapers,skyObjects,previewClock,skyProjectionFrame,projectSkyObjects}from './wallpapers.js';
+import{loadDecodedImage,watchDecodedImages}from './image-presentation.js';
 import{loadLandmark}from './landmarks.js';
 import{applyWallpaperLayout}from './wallpaper-layout.js';
 import{settings}from './storage.js';
@@ -12,6 +13,26 @@ export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REF
 let skyAnimation=null,lastSkySample=null,lastSkyStamp=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null;
+// Retain decoded sources while their exact URLs are used by the CSS layers.
+let builtinKey=null,builtinRequest=null,builtinState='idle',builtinImages=[];
+function pendingScene(scene,value){for(const data of [scene.dataset,document.body.dataset]){const key=data===scene.dataset?'imagePending':'sceneImagePending';if(value){if(data[key]!=='true')data[key]='true';}else if(data[key])delete data[key];}}
+function clearBuiltinStyles(scene){for(const name of ['.scene-night','.scene-day']){const node=scene.querySelector(name);if(node)node.style.backgroundImage='';}const sky=scene.querySelector('.scene-sky'),effect=document.getElementById('weather-layer');for(const node of [sky,effect])if(node){node.style.maskImage='';node.style.webkitMaskImage='';}}
+function prepareBuiltin(scene,home,tablet){
+ const kind=settings.wallpaper,key=kind+':'+tablet;if(key!==builtinKey){builtinRequest?.abort();builtinRequest=null;builtinKey=key;builtinState='idle';}
+ scene.dataset.wallpaper=kind;document.body.dataset.wallpaper=kind;pendingScene(scene,builtinState!=='ready');
+ if(!home||builtinState!=='idle')return;const controller=new AbortController();builtinRequest=controller;builtinState='loading';
+ const source=wallpapers.find(item=>item.id===kind)||wallpapers[0],groups=kind==='new-york'&&tablet?[
+  ['./assets/window-new-york-night-tablet-v1.webp',source.night],['./assets/window-new-york-day-tablet-v1.webp',source.day],['./assets/window-sky-mask-tablet-v1.svg','./assets/window-sky-mask.svg'],['./assets/window-weather-mask-tablet-v1.svg','./assets/window-weather-mask.svg']
+ ]:[[source.night],[source.day],...(kind==='new-york'?[['./assets/window-sky-mask.svg'],['./assets/window-weather-mask.svg']]:[])];
+ const load=async choices=>{for(const url of choices)try{return{url,image:await loadDecodedImage(url,{signal:controller.signal})};}catch(error){if(controller.signal.aborted)throw error;}throw Error('Wallpaper unavailable');};
+ void Promise.all(groups.map(load)).then(images=>{
+  if(controller.signal.aborted||builtinRequest!==controller||settings.wallpaper!==kind||!scene.isConnected)return;
+  builtinImages=images;const night=scene.querySelector('.scene-night'),day=scene.querySelector('.scene-day'),sky=scene.querySelector('.scene-sky'),effect=document.getElementById('weather-layer');
+  if(night)night.style.backgroundImage='url("'+images[0].url+'")';if(day)day.style.backgroundImage='url("'+images[1].url+'")';
+  for(const [node,image]of [[sky,images[2]],[effect,images[3]]])if(node){const mask=image?'url("'+image.url+'")':'';node.style.maskImage=mask;node.style.webkitMaskImage=mask;}
+  builtinRequest=null;builtinState='ready';pendingScene(scene,false);layoutScene(scene);
+ }).catch(()=>{if(!controller.signal.aborted&&builtinRequest===controller){controller.abort();builtinRequest=null;builtinState='error';}});
+}
 function wallpaperCaption(scene){
  let caption=scene.querySelector('.wallpaper-caption');
  if(!caption){caption=document.createElement('span');caption.className='wallpaper-caption';scene.append(caption)}
@@ -42,10 +63,6 @@ function keepLandmarkSurface(scene){
  scene.dataset.wallpaper='landmark';document.body.dataset.wallpaper='landmark';
  if(!landmarkUrls.length)neutralLandmark(scene);
 }
-function discardDisplayedLandmark(scene){
- if(!landmarkUrls.length){neutralLandmark(scene);return}
- releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];neutralLandmark(scene);
-}
 function prepareLandmark(scene,home){
  const selected=settings.wallpaper==='landmark';
  const viewportWidth=document.documentElement?.clientWidth||window.innerWidth||0,viewportHeight=window.innerHeight||0;
@@ -56,34 +73,36 @@ function prepareLandmark(scene,home){
   // While another landmark is loading, keep the currently decoded city visible.
   // Do not flash the bundled mosque wallpaper between two explicit city choices.
   if(!selected)clearLandmark(scene);
+  else{builtinRequest?.abort();builtinRequest=null;builtinKey=null;builtinState='idle';builtinImages=[];clearBuiltinStyles(scene);pendingScene(scene,!landmarkUrls.length);}
  }
  if(selected)keepLandmarkSurface(scene);
- else{scene.dataset.wallpaper=settings.wallpaper;document.body.dataset.wallpaper=scene.dataset.wallpaper}
+ else prepareBuiltin(scene,home,Math.min(viewportWidth,viewportHeight)>=600);
  landmarkNote();if(key===null||!home||landmarkState!=='idle')return;
  const controller=new AbortController();landmarkRequest=controller;landmarkState='loading';landmarkNote();
  loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity,tablet}).then(async result=>{
   if(controller.signal.aborted)return;
-  if(result.status!=='ready'){landmarkRequest=null;landmarkState=result.status;discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote();return}
+  if(result.status!=='ready'){landmarkRequest=null;landmarkState=result.status;keepLandmarkSurface(scene);landmarkNote();return}
   const urls=result.blobs.map(blob=>URL.createObjectURL(blob));
   try{
-   const images=await Promise.all(urls.slice(0,2).map(async url=>{const image=new Image();image.src=url;await image.decode();return image}));
+   const images=await Promise.all(urls.map((url,i)=>loadDecodedImage(url,{signal:controller.signal}).catch(error=>{error.assetKey=['day','night','mask'][i];throw error;})));
    if(controller.signal.aborted){releaseLandmarkUrls(urls);return}
    const previous=landmarkUrls;
    // Swap only after both photographs are decoded, then release the old city.
    for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');
    landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight,fitSubject:result.entry.fitSubject===true,focalX:result.entry.focalX,focalY:result.entry.focalY,fillViewport:result.entry.fillViewport===true};landmarkRequest=null;landmarkState='ready';
    scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
+   pendingScene(scene,false);
    layoutScene(scene);releaseLandmarkUrls(previous);landmarkNote();
   }
-  catch{releaseLandmarkUrls(urls);if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote()}}
- }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';discardDisplayedLandmark(scene);keepLandmarkSurface(scene);landmarkNote()}});
+  catch(error){releaseLandmarkUrls(urls);if(!controller.signal.aborted){if(error.assetKey)void loadLandmark.invalidate?.(result.entry,error.assetKey);landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}}
+ }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}});
 }
-window.addEventListener('online',()=>{if(landmarkState==='offline'){landmarkState='idle';inactiveContext=null}});
+window.addEventListener('online',()=>{if(landmarkState==='offline')landmarkState='idle';if(builtinState==='error')builtinState='idle';inactiveContext=null});
 export function startScenePreview(){stopWeatherPreview();previewStarted=performance.now();previewOverride=null}
 function stopScenePreview(){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewOverride=null;document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview')}
 function sceneLayer(){
  let scene=document.getElementById('home-scene');
- if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-sky"><div class="scene-sky-plane"><span class="scene-sun"></span><span class="scene-moon"><img src="./assets/window-moon.webp" alt="" width="160" height="160"></span></div></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene)}
+ if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.dataset.imagePending='true';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-sky"><div class="scene-sky-plane"><span class="scene-sun"></span><span class="scene-moon"><img data-image-pending src="./assets/window-moon.webp" alt="" width="160" height="160"></span></div></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene);watchDecodedImages(scene,{fallback:null});}
  return scene;
 }
 

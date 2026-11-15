@@ -3,7 +3,8 @@ import{esc}from './ui.js';
 // This is a display preference, never an authorization grant or a public announcement receipt.
 const SEEN_PREFIX='salah:owner-home-release-seen-v1:';
 const POPUP_SEEN_PREFIX='salah:owner-update-popup-seen-v1:';
-export function createOwnerReleaseCard({getState,verify,release,showRelease,storage=globalThis.localStorage,schedule=setTimeout,cancel=clearTimeout,onVerified=()=>{}}){
+export function createOwnerReleaseCard({getState,verify,release,showRelease,storage,schedule=setTimeout,cancel=clearTimeout,onVerified=()=>{}}){
+ if(storage===undefined)try{storage=globalThis.localStorage;}catch{storage=null;}
  let host=null,userId=null,attempted=false,pending=null,epoch=0,timer=null,signature='',dismissed=new Set(),knownOwner=false,popupShown=new Set();
  const stop=()=>{if(timer!==null)cancel(timer);timer=null;};
  const seen=id=>{if(dismissed.has(id))return true;try{return Number(storage.getItem(SEEN_PREFIX+id))>=release.version;}catch{return false;}};

@@ -1,0 +1,20 @@
+export default Object.freeze({
+ 'offlineUi.mushafTitle':'Den ganzen Koran offline lesen',
+ 'offlineUi.mushafNote':'Alle 604 Seiten auf diesem Gerät speichern. Bereits geprüfte Dateien bleiben erhalten, wenn Sie den Download fortsetzen.',
+ 'offlineUi.mushafAppearance':'Die Offlineansicht nutzt den arabischen Text und eine integrierte Schrift. Schriftbild und Zeilenumbrüche unterscheiden sich vom gedruckten Mushaf; die Verse bleiben unverändert.',
+ 'offlineUi.checking':'Gespeicherte Texte werden geprüft…',
+ 'offlineUi.ready':'Alle 604 Seiten sind gespeichert. Sie können ohne Internet lesen.',
+ 'offlineUi.paused':'Download angehalten: {count} / 114 Suren. Sie können ihn fortsetzen.',
+ 'offlineUi.progress':'Prüfen und speichern: {count} / 114 Suren.',
+ 'offlineUi.available':'Gespeicherte Suren: {count} / 114. Gesamter Download: {size} MB.',
+ 'offlineUi.quota':'Nicht genug Speicherplatz. Gespeicherte Teile bleiben erhalten; schaffen Sie Platz und setzen Sie den Download fort.',
+ 'offlineUi.storage':'Offlinespeicher ist in diesem Browser nicht verfügbar.',
+ 'offlineUi.failed':'Der Download konnte nicht abgeschlossen werden. Gespeicherte Teile bleiben erhalten; versuchen Sie, ihn fortzusetzen.',
+ 'offlineUi.download':'Ganzen Koran herunterladen',
+ 'offlineUi.resume':'Download fortsetzen',
+ 'offlineUi.pause':'Download anhalten',
+ 'offlineUi.read':'Offline lesen',
+ 'offlineUi.printed':'Druckansicht',
+ 'offlineUi.offlineCaption':'Offlineansicht · arabischer Text',
+ 'offlineUi.fallbackCaption':'Druckschrift nicht verfügbar · arabischer Text'
+});

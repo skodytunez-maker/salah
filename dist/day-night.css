@@ -2,6 +2,7 @@
 #home-scene{display:none;position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--scene-day:0;--scene-dawn:0;--scene-dusk:0;background:#061020}
 .home-page #home-scene{display:block}
 .home-page:before{display:none}
+#home-scene[data-image-pending=true]>.scene-night,#home-scene[data-image-pending=true]>.scene-day,#home-scene[data-image-pending=true]>.scene-sky,#home-scene img[data-image-pending],body[data-scene-image-pending=true] #weather-layer{visibility:hidden}
 #home-scene>div{position:absolute;inset:0;pointer-events:none}
 .scene-night,.scene-day{background-size:cover;background-position:85% center;background-repeat:no-repeat}
 .scene-night{background-image:url('./assets/night-mosque.webp')}

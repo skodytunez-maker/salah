@@ -4328,6 +4328,21 @@
       "path": "dist/assets/updates/quran-translations-501.svg",
       "bytes": 1859,
       "gitBlobSha": "c360416f6d223041934b9255274d902aac564dcc"
+    },
+    {
+      "path": "dist/assets/updates/quran-offline-502.svg",
+      "bytes": 2182,
+      "gitBlobSha": "57413177d98f172b95802e948967372c9c4c3436"
+    },
+    {
+      "path": "dist/assets/updates/prayer-offline-502.svg",
+      "bytes": 3074,
+      "gitBlobSha": "bf94ad99e54ebe0cd1d4c0b73d2a2ba0133ce448"
+    },
+    {
+      "path": "dist/assets/updates/audio-offline-502.svg",
+      "bytes": 2147,
+      "gitBlobSha": "5146c3caa08865e62f957c6e0b79f3fc6247ff46"
     }
   ],
   "incrementalEvidence": [
@@ -4493,6 +4508,17 @@
       "evidence": "docs/release-announcements.md",
       "baseCommit": "af9eb43dc72a49d0edc07b5b572bb3df57c51573",
       "note": "Original release501 SVG source is present in this candidate commit. Exact final-file Git blob fingerprints are recorded in entries and media-rights-register; origin support is not a claim of exclusive copyright."
+    },
+    {
+      "date": "2026-11-15",
+      "paths": [
+        "dist/assets/updates/quran-offline-502.svg",
+        "dist/assets/updates/prayer-offline-502.svg",
+        "dist/assets/updates/audio-offline-502.svg"
+      ],
+      "evidence": "docs/release-announcements.md",
+      "baseCommit": "e1ffe4fefa669623026ed3ab959db42c04e2ee4d",
+      "note": "Original release502 SVG sources and exact final Git blob fingerprints are recorded in entries and media-rights-register. Shared release-motion overlays animate only the active visible card and respect reduced motion."
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"

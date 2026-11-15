@@ -15,12 +15,12 @@ const chosen=()=>{const current=quranPlayback.state;const id=current.surah?curre
 export function mushafListeningOptions(){
  return '<h2>'+uiLeaf('quranUi.mushafListening')+'</h2><label>'+uiLeaf('quranUi.mushafReciter')+'<select id="mushaf-reciter">'+reciterOptions(chosen(),read('quran-reciter-favorites',[]))+'</select></label><label class="mushaf-follow-setting"><input type="checkbox" id="mushaf-auto-follow"> '+uiLeaf('quranUi.mushafAutoFollow')+'</label><p class="mushaf-listening-help">'+uiLeaf('quranUi.mushafListeningHelp')+'</p>';
 }
-export function mountMushafListening(host,{page,index,getEdition,getLines,getFollow,setFollow,navigate,getTheme=()=> 'night',setTheme=()=>{},openColors=()=>{},playback=quranPlayback,load=loadSurah}){
+export function mountMushafListening(host,{page,index,getEdition,getLines,getFollow,setFollow,navigate,getTheme=()=> 'night',setTheme=()=>{},openColors=()=>{},pageForPosition=printedPageForPosition,playback=quranPlayback,load=loadSurah}){
  const paper=host.querySelector('.mushaf-paper'),anchor=host.querySelector('.mushaf-tools'),select=host.querySelector('#mushaf-reciter'),check=host.querySelector('#mushaf-auto-follow');
  const panel=document.createElement('div');panel.className='mushaf-listening';panel.innerHTML='<div class="mushaf-actions" role="group" '+uiAttribute('quranUi.mushafActionsLabel')+'><button type="button" id="mushaf-listen" disabled>'+actionIcon('play')+'<span>'+esc(t('quranUi.mushafListen'))+'</span></button><button type="button" id="mushaf-theme-toggle"></button><button type="button" id="mushaf-colors" aria-haspopup="dialog" aria-controls="mushaf-colors-dialog"><span class="mushaf-colors-symbol" aria-hidden="true"><i></i><i></i><i></i></span>'+uiLeaf('quranUi.mushafColors')+'</button></div><div class="mushaf-listening-detail"><div class="mushaf-listening-copy"><button type="button" id="mushaf-listening-reciter"></button><small id="mushaf-listening-status" role="status" aria-live="polite"></small></div><button type="button" id="mushaf-follow-current" hidden>'+uiLeaf('quranUi.mushafReturnAyah')+'</button></div>';anchor.after(panel);
  let closed=false,starting=0,selected=chosen(),observedReciter=playback.state.reciter,lastHighlighted=null,lastScrolled=null,edition=getEdition(),loaded=false;
  const handed=arrival?.page===page&&arrival.edition===edition&&Date.now()<=arrival.until?arrival:null;arrival=null;
- let follower=createMushafFollower({page,edition,automatic:handed?.automatic,manual:handed?.automatic===false});
+ let follower=createMushafFollower({page,edition,automatic:handed?.automatic,manual:handed?.automatic===false,pageForVerse:pageForPosition});
  const button=panel.querySelector('#mushaf-listen'),caption=button.querySelector('span'),status=panel.querySelector('#mushaf-listening-status'),reader=panel.querySelector('#mushaf-listening-reciter'),resume=panel.querySelector('#mushaf-follow-current');
  const themeButton=panel.querySelector('#mushaf-theme-toggle');
  const themeLabel=()=>setUiAttribute(themeButton,'aria-label',getTheme()==='night'?'quranUi.mushafLightAria':'quranUi.mushafDarkAria');
@@ -48,7 +48,7 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
   resume.hidden=!point||mode.following&&!!mode.key;
   labelState={moving,caption:moving?'quranUi.mushafPause':point&&keys.includes(point.key)&&selected===state.reciter?'quranUi.mushafResume':'quranUi.mushafListen',message:!loaded?'quranUi.mushafPageOpening':!available?'quranUi.mushafNoRecording':state.status==='error'&&state.timingStatus==='unavailable'?'quranUi.mushafTimingUnavailable':point?'quranUi.mushafAtAyah':state.status==='loading'?'quranUi.mushafLoadingAudio':state.surah&&state.timingStatus==='unavailable'||first&&!canSync(selected,first[0])?'quranUi.mushafWholeNoHighlight':'quranUi.mushafFromPage',params:point?{name:index.surahs[point.surah-1].name,number:point.ayah}:{},suffix:point?(mode.held?'quranUi.mushafFollowPaused':state.status==='paused'?'quranUi.mushafPaused':null):null};paintLabels();
   if(mode.key!==lastHighlighted){
-   paper.querySelectorAll('.mushaf-print-word').forEach(word=>word.classList.toggle('is-playing-ayah',word.dataset.verse===mode.key));
+   paper.querySelectorAll('.mushaf-print-word,.mushaf-ayah[data-verse]').forEach(word=>word.classList.toggle('is-playing-ayah',word.dataset.verse===mode.key));
    lastHighlighted=mode.key;
   }
   if(mode.following&&mode.key&&state.status==='playing')scrollToAyah(mode.key);
@@ -80,7 +80,7 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
  };
  reader.onclick=()=>{host.querySelector('.mushaf-options').open=true;select.focus();};
  check.onchange=()=>{setFollow(check.checked);if(check.checked)follower.resume();else follower.suspend();draw(playback.state);};
- resume.onclick=()=>{setFollow(true);follower.resume();lastScrolled=null;const point=mushafAudioPosition(playback.state);if(point&&!pageKeys().includes(point.key)){const target=printedPageForPosition(point.surah,point.ayah,getEdition());if(target&&target!==page){arrival={page:target,edition:getEdition(),automatic:true,until:Date.now()+10000};navigate(target);return;}}draw(playback.state);if(point)scrollToAyah(point.key,true);};
+ resume.onclick=()=>{setFollow(true);follower.resume();lastScrolled=null;const point=mushafAudioPosition(playback.state);if(point&&!pageKeys().includes(point.key)){const target=pageForPosition(point.surah,point.ayah,getEdition());if(target&&target!==page){arrival={page:target,edition:getEdition(),automatic:true,until:Date.now()+10000};navigate(target);return;}}draw(playback.state);if(point)scrollToAyah(point.key,true);};
  // Let only the action row stick, without changing its place above playback details.
  const toolbar=panel.querySelector('.mushaf-actions');panel.before(toolbar);
  const paintLanguage=()=>{if(closed)return;translateQuranUi(host);translateUi(host);translateReciterGroups(select);themeLabel();paintLabels();};
@@ -91,11 +91,11 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
   setPage(target){
    if(closed||target===page&&edition===getEdition())return;page=target;edition=getEdition();loaded=false;lastHighlighted=null;lastScrolled=null;
    const handed=arrival?.page===page&&arrival.edition===edition&&Date.now()<=arrival.until?arrival:null;arrival=null;
-   follower=createMushafFollower({page,edition,automatic:handed?.automatic,manual:handed?.automatic===false});
+   follower=createMushafFollower({page,edition,automatic:handed?.automatic,manual:handed?.automatic===false,pageForVerse:pageForPosition});
   },
   refresh(){
    if(closed)return;const lines=getLines();loaded=!!lines;lastHighlighted=null;lastScrolled=null;
-   if(edition!==getEdition()){edition=getEdition();follower=createMushafFollower({page,edition});}
+   if(edition!==getEdition()){edition=getEdition();follower=createMushafFollower({page,edition,pageForVerse:pageForPosition});}
    if(loaded){const keys=pageKeys(),first=keys[0]?.split(':').map(Number);for(const option of select.options)option.disabled=!!first&&!reciterHasSurah(option.value,first[0]);follower.loaded(keys,playback.state);}
    draw(playback.state);
   },

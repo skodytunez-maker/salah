@@ -30,6 +30,8 @@ jobs:
         run: npx --yes pnpm@11.25.0 --dir tests/staff install --frozen-lockfile --ignore-scripts
       - name: Verify SALAH files
         run: |
+          node scripts/check-change-scope.mjs
+          node scripts/check-change-scope-selftest.mjs
           node scripts/build-push-function.mjs --check
           node scripts/check-push.mjs
           node scripts/check-push-client.mjs

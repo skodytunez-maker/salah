@@ -69,7 +69,14 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
   if(!kind){const ticket=revision;quiet(ticket);armed=false;return true;}
   emit();if(wanted&&volume>0)await unlock();return true;
  }
- return{select,unlock,sync,get state(){return state();},setVolume(value){if(!Number.isInteger(value)||value<0||value>100)return;volume=value;return sync();},subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){
+ function halt(){
+  if(disposed)return;wanted=false;armed=false;revision++;clearStop();abortLoad();stopSource(true);
+  for(const entry of [...retiring]){try{entry.node.stop();}catch{}disconnect(entry)}
+  level(0,0);error=false;
+  if(context&&context.state!=='closed'){selfSuspended=true;try{void context.suspend().catch(()=>{})}catch{}}
+  emit();
+ }
+ return{select,unlock,sync,halt,get state(){return state();},setVolume(value){if(!Number.isInteger(value)||value<0||value>100)return;volume=value;return sync();},subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){
   disposed=true;revision++;clearStop();abortLoad();stopSource(true);for(const entry of [...retiring]){try{entry.node.stop();}catch{}disconnect(entry);}cache.clear();listeners.clear();if(context){context.onstatechange=null;void context.close().catch(()=>{});}context=null;
  }};
 }

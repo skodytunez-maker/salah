@@ -11,8 +11,8 @@ export function mushafPageForPosition(surah,ayah=1){if(!Number.isInteger(surah)|
 export function mushafPreferences(value){return {size:[26,30,34,40,46].includes(value?.size)?value.size:30,theme:value?.theme==='paper'?'paper':'night',edition:value?.editionChosen===true&&value?.edition==='madani'?'madani':'tajweed',editionChosen:value?.editionChosen===true,follow:value?.follow!==false};}
 // A mushaf is bound on the right: the next sheet is turned to the right.
 export function mushafSwipe(start,end){if(!start||!end||![start.x,start.y,end.x,end.y].every(Number.isFinite))return 0;const x=end.x-start.x,y=end.y-start.y;return Math.abs(x)>=70&&Math.abs(x)>Math.abs(y)*1.5?(x>0?1:-1):0;}
-export function mushafPageMarkup(groups,index,escape){
- return groups.map(({surah,verses})=>(verses[0].ayah===1?'<h2 class="mushaf-surah" lang="ar" dir="rtl">'+escape(index.surahs[surah-1].arabicName)+'</h2>':'')+'<p class="mushaf-text" dir="rtl" lang="ar">'+verses.map(v=>'<span class="mushaf-ayah" data-mushaf-verse="'+surah+':'+v.ayah+'"><span class="mushaf-ayah-text">'+escape(v.arabic)+'</span><bdi class="mushaf-ayah-number" aria-label="Аят '+v.ayah+'">'+String(v.ayah).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d])+'</bdi></span>').join(' ')+'</p>').join('');
+export function mushafPageMarkup(groups,index,escape,ayahLabel='Аят'){
+ return groups.map(({surah,verses})=>(verses[0].ayah===1?'<h2 class="mushaf-surah" lang="ar" dir="rtl">'+escape(index.surahs[surah-1].arabicName)+'</h2>':'')+'<p class="mushaf-text" dir="rtl" lang="ar">'+verses.map(v=>'<span class="mushaf-ayah" data-mushaf-verse="'+surah+':'+v.ayah+'" data-verse="'+surah+':'+v.ayah+'"><span class="mushaf-ayah-text">'+escape(v.arabic)+'</span><bdi class="mushaf-ayah-number" data-ayah-number="'+v.ayah+'" aria-label="'+escape(ayahLabel)+' '+v.ayah+'">'+String(v.ayah).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d])+'</bdi></span>').join(' ')+'</p>').join('');
 }
 export async function loadMushafPage(page,loadSurah){
  if(!validMushafPage(page))throw Error('Такой страницы нет');

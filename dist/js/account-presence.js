@@ -22,7 +22,8 @@ export async function postPresence(request,url,options){
 let initialized=false;
 export function initAccountPresence(){if(initialized)return;initialized=true;let tab,sequence=0;try{tab=sessionStorage.getItem('salah-presence-tab')||crypto.randomUUID();sequence=Number(sessionStorage.getItem('salah-presence-sequence'))||0;sessionStorage.setItem('salah-presence-tab',tab)}catch{tab=crypto.randomUUID()}
  const nextSequence=()=>{sequence++;try{sessionStorage.setItem('salah-presence-sequence',String(sequence))}catch{}return sequence;};let stop=()=>{},token=null,revision=0;
- const context=createReadingContext({storage:localStorage});
+ let readingStorage=null;try{readingStorage=globalThis.localStorage;}catch{}
+ const context=createReadingContext({storage:readingStorage});
  window.addEventListener('salah:reading-checkpoint',event=>context.record(event.detail));
  const auth=accountAuthClient().auth;
  const request=createAuthTransport();
