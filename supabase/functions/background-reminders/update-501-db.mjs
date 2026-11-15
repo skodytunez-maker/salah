@@ -64,10 +64,12 @@ export function createUpdate501Db(sql){
   async update501Arm(now){
    if(now>=UPDATE_501_UNTIL)return{version:501,expired:true,armed:false};
    return sql.begin(async tx=>{
-    const inserted=await tx`insert into salah_push_private.cache(key,rows,expires_at)values(${UPDATE_501_CACHE},${JSON.stringify({state:'armed',version:501,armedAt:update501Iso(now),until:update501Iso(UPDATE_501_UNTIL)})}::jsonb,${update501Iso(UPDATE_501_RECEIPTS_UNTIL)}::timestamptz)on conflict(key)do nothing returning key`;
+    // These values are already serialized. Give postgres.js a text parameter
+    // before the database parses JSON, avoiding its jsonb string serializer.
+    const inserted=await tx`insert into salah_push_private.cache(key,rows,expires_at)values(${UPDATE_501_CACHE},${JSON.stringify({state:'armed',version:501,armedAt:update501Iso(now),until:update501Iso(UPDATE_501_UNTIL)})}::text::jsonb,${update501Iso(UPDATE_501_RECEIPTS_UNTIL)}::timestamptz)on conflict(key)do nothing returning key`;
     if(!inserted.length)return{version:501,armed:false,alreadyArmed:true};
     const rows=await update501Audience(tx,now),jobs=rows.map(row=>({user:row.user,device:row.device,channel:row.channel,timeZone:row.timeZone,state:'pending'}));
-    if(jobs.length)await tx`insert into salah_push_private.cache(key,rows,expires_at)select ${UPDATE_501_JOB}||(j->>'user'),j,${update501Iso(UPDATE_501_RECEIPTS_UNTIL)}::timestamptz from jsonb_array_elements(${JSON.stringify(jobs)}::jsonb)j on conflict(key)do nothing`;
+    if(jobs.length)await tx`insert into salah_push_private.cache(key,rows,expires_at)select ${UPDATE_501_JOB}||(j->>'user'),j,${update501Iso(UPDATE_501_RECEIPTS_UNTIL)}::timestamptz from jsonb_array_elements(${JSON.stringify(jobs)}::text::jsonb)j on conflict(key)do nothing`;
     return{version:501,armed:true,recipients:jobs.length,until:update501Iso(UPDATE_501_UNTIL)};
    });
   },
@@ -85,14 +87,14 @@ export function createUpdate501Db(sql){
     const current=await matching(tx,user,job,now);
     if(!current){await tx`update salah_push_private.cache set rows=rows||' {"state":"skipped"}'::jsonb where key=${UPDATE_501_JOB+user} and rows->>'state'='pending'`;return false;}
     if(!returnAllowedAt(now,current.timeZone))return false;
-    const claimed=await tx`update salah_push_private.cache set rows=rows||${JSON.stringify({state:'attempted',attemptedAt:update501Iso(now)})}::jsonb where key=${UPDATE_501_JOB+user} and rows->>'state'='pending' returning key`;
+    const claimed=await tx`update salah_push_private.cache set rows=rows||${JSON.stringify({state:'attempted',attemptedAt:update501Iso(now)})}::text::jsonb where key=${UPDATE_501_JOB+user} and rows->>'state'='pending' returning key`;
     return claimed.length===1;
    });
   },
   async update501Active(user,now){const job=await snapshot(sql,user);return job?.state==='attempted'?matching(sql,user,job,now):null;},
   async update501Complete(user,state){
    if(!['sent','expired','failed','skipped'].includes(state))throw Error('invalid_update_501_state');
-   await sql`update salah_push_private.cache set rows=rows||${JSON.stringify({state})}::jsonb where key=${UPDATE_501_JOB+user} and rows->>'state'='attempted'`;
+   await sql`update salah_push_private.cache set rows=rows||${JSON.stringify({state})}::text::jsonb where key=${UPDATE_501_JOB+user} and rows->>'state'='attempted'`;
   }
  };
 }

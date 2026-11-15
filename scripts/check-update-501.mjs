@@ -13,7 +13,10 @@ await pg.exec("create role anon;create role authenticated;create role service_ro
 const migration=(await readFile(new URL('../supabase/migrations/2026100201_background_reminders.sql',import.meta.url),'utf8')).replace('create extension if not exists pgcrypto with schema extensions;','').replace("default encode(extensions.gen_random_bytes(32),'hex')","default 'fixture-secret'");
 await pg.exec(migration);
 function tag(connection){
- const sql=(parts,...values)=>{let text='';for(let i=0;i<parts.length;i++){text+=parts[i];if(i<values.length)text+='$'+(i+1)}return connection.query(text,values).then(result=>result.rows)};
+ // postgres@3.4.9 uses the server-inferred json/jsonb serializer even for a
+ // JavaScript string. Model that boundary, so pre-serialized JSON cannot
+ // accidentally become a JSON string scalar instead of an object or array.
+ const sql=(parts,...values)=>{let text='';for(let i=0;i<parts.length;i++){text+=parts[i];if(i<values.length)text+='$'+(i+1)}const wire=values.map((value,i)=>/^::jsonb\b/.test(parts[i+1])?JSON.stringify(value):value);return connection.query(text,wire).then(result=>result.rows)};
  sql.begin=work=>connection.transaction(tx=>work(tag(tx)));return sql;
 }
 const db=createUpdate501Db(tag(pg)),sub={endpoint:'https://web.push.apple.com/fixture',keys:{p256dh:Buffer.from([4,...Array(64).fill(1)]).toString('base64url'),auth:Buffer.alloc(16,1).toString('base64url')}};
