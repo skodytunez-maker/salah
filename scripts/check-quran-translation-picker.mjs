@@ -1,24 +1,38 @@
 import assert from 'node:assert/strict';
+import{readFile}from 'node:fs/promises';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{mountQuranTranslationPicker}from '../dist/js/quran-translation-picker.js';
 import{setInterfaceLanguage,translateUi,t}from '../dist/js/i18n.js';
-import{UI_LANGUAGE_CODES}from '../dist/js/interface-languages.js';
+import{UI_LANGUAGES,UI_LANGUAGE_CODES,languageInfo}from '../dist/js/interface-languages.js';
 const win=new Window({url:'https://salah.invalid/salah/#quran?surah=1'}),doc=win.document;
 Object.assign(globalThis,{window:win,document:doc});
 doc.body.innerHTML='<button id="open">Open</button><input id="draft" value="Личный текст"><dialog id="modal"><div id="modal-content"></div></dialog>';
 const dialog=doc.getElementById('modal');dialog.showModal=()=>{dialog.open=true;};dialog.close=()=>{dialog.open=false;dialog.dispatchEvent(new win.Event('close'));};
-const rows=[{id:'quranenc.azeri_musayev',language:'az',author:'Əlixan Musayev',version:'1.0.4',script:'Latn',source:'https://quranenc.com/en/browse/azeri_musayev'},{id:'quranenc.uzbek_sadiq',language:'uz',author:'Муҳаммад Содиқ Муҳаммад Юсуф',version:'1.0.1',script:'Cyrl',source:'https://quranenc.com/en/browse/uzbek_sadiq'}];
+const manifest=JSON.parse(await readFile(new URL('../dist/data/quran-translation-manifest.json',import.meta.url),'utf8'));
+const rows=manifest.editions.map(({id,language,author,version,script,source})=>({id,language,author,version,script,source})),originalRows=JSON.stringify(rows),flags={ru:'🇷🇺',az:'🇦🇿',en:'🇬🇧',de:'🇩🇪',tg:'🇹🇯',uz:'🇺🇿',kk:'🇰🇿'};
+const style=doc.createElement('style');style.textContent=await readFile(new URL('../dist/quran.css',import.meta.url),'utf8');doc.head.append(style);
 let selected='ru.kuliev',selections=0,downloads=0,finish=null,fail=false,activeSignal=null;
 const library={list:async()=>rows,saveAll:async(id,{onProgress,signal})=>{downloads++;activeSignal=signal;onProgress(3,114);await new Promise(resolve=>finish=resolve);if(fail)throw Error('offline');if(signal.aborted)throw new DOMException('Aborted','AbortError');onProgress(114,114);}};
 const button=doc.getElementById('open'),draft=doc.getElementById('draft');
 const dispose=mountQuranTranslationPicker(button,{library,getSelected:()=>selected,onSelect:async(id,{signal})=>{selections++;activeSignal=signal;if(fail)throw Error('unavailable');selected=id;return true;}});
 const turns=async()=>{await Promise.resolve();await Promise.resolve();await Promise.resolve();};
 setInterfaceLanguage('ru');button.click();await turns();
-assert.equal(dialog.open,true);assert.equal(doc.querySelectorAll('[data-translation-select]').length,3);
+assert.equal(dialog.open,true);assert.equal(doc.querySelectorAll('[data-translation-select]').length,rows.length+1);
 assert.equal(selections,0);assert.equal(downloads,0,'Opening the list does not select or download an edition');
 const pane=doc.querySelector('.quran-translation-picker'),select=doc.querySelector('[data-translation-select="quranenc.azeri_musayev"]'),download=doc.querySelector('[data-translation-download="quranenc.uzbek_sadiq"]');
+const assertRows=()=>{
+ const allRows=[{id:'ru.kuliev',language:'ru',author:'Эльмир Кулиев',bundled:true},...rows];
+ assert.equal(pane.querySelectorAll('.quran-translation-flag').length,allRows.length);assert.equal(pane.querySelectorAll('[data-translation-download]').length,rows.length);assert.equal(pane.querySelectorAll('.quran-translation-source').length,rows.length);
+ for(const row of allRows){
+  const control=pane.querySelector('[data-translation-select="'+row.id+'"]'),choice=control.closest('.quran-translation-choice'),flag=control.querySelector('.quran-translation-flag'),name=control.querySelector('strong'),nameOnly=name.cloneNode(true);nameOnly.querySelectorAll('[aria-hidden="true"]').forEach(node=>node.remove());
+  assert.equal(flag.textContent,flags[row.language]);assert.equal(flag.getAttribute('aria-hidden'),'true');assert.equal(flag.getAttribute('dir'),'ltr');assert.equal(flag.querySelector('button,a,input'),null);assert.equal(flag.hasAttribute('tabindex'),false);assert.equal(win.getComputedStyle(flag).display,'inline-block');assert.match(win.getComputedStyle(flag).marginInlineEnd,/^0?\.45rem$/);
+  assert.equal(nameOnly.textContent,UI_LANGUAGES.find(info=>info.code===row.language).name+(row.language==='uz'?' · '+t('quranTranslations.cyrillic'):''));assert.equal(name.getAttribute('lang'),row.language);assert.equal(name.getAttribute('dir'),'ltr');assert.equal(control.querySelector('small').textContent,row.author);assert.equal(control.getAttribute('aria-pressed'),String(selected===row.id));assert.equal(control.querySelector('.quran-translation-check').textContent,selected===row.id?'✓':'');
+  if(!row.bundled){const source=choice.querySelector('.quran-translation-source'),download=choice.querySelector('[data-translation-download]');assert.equal(source.href,row.source);assert.equal(source.textContent,'QuranEnc.com · '+t('quranTranslations.version',{version:row.version}));assert.equal(download.dataset.translationDownload,row.id);assert.equal(download.getAttribute('aria-label'),t('quranTranslations.download'));assert.equal(win.getComputedStyle(download).minWidth,'44px');assert.equal(win.getComputedStyle(download).minHeight,'44px');}
+ }
+ assert.equal(win.getComputedStyle(pane).textAlign,'start');assert.equal(JSON.stringify(rows),originalRows,'Decoration cannot mutate source-edition metadata');
+};
 select.focus();
-for(const language of UI_LANGUAGE_CODES){setInterfaceLanguage(language);translateUi(doc);assert.equal(doc.querySelector('.quran-translation-picker'),pane);assert.equal(doc.querySelector('[data-translation-select="quranenc.azeri_musayev"]'),select);assert.equal(doc.activeElement,select);assert.match(pane.textContent,/Əlixan Musayev/);assert.match(pane.textContent,/Муҳаммад Содиқ/);assert.equal(pane.querySelector('h2').textContent,t('quranTranslations.title'));assert.equal(draft.value,'Личный текст');}
+for(const language of UI_LANGUAGE_CODES){setInterfaceLanguage(language);doc.documentElement.dir=languageInfo(language).direction;translateUi(doc);assert.equal(doc.querySelector('.quran-translation-picker'),pane);assert.equal(doc.querySelector('[data-translation-select="quranenc.azeri_musayev"]'),select);assert.equal(doc.activeElement,select);assert.match(pane.textContent,/Əlixan Musayev/);assert.match(pane.textContent,/Муҳаммад Содиқ/);assert.equal(pane.querySelector('h2').textContent,t('quranTranslations.title'));assert.equal(draft.value,'Личный текст');assertRows();}
 assert.equal(selections,0);assert.equal(downloads,0);
 fail=true;await select.onclick();assert.equal(selected,'ru.kuliev');assert.equal(dialog.open,true);assert.equal(pane.querySelector('[data-translation-status]').textContent,t('quranTranslations.failed'));
 fail=false;await select.onclick();assert.equal(selected,'quranenc.azeri_musayev');assert.equal(dialog.open,false);
@@ -50,4 +64,4 @@ const stopSelections=mountQuranTranslationPicker(raceButton,{getSelected:()=>sel
 raceButton.click();await turns();const oldSelection=doc.querySelector('[data-translation-select="quranenc.azeri_musayev"]'),oldSelectionTask=oldSelection.onclick();await turns();dialog.close();raceButton.click();await turns();const newSelection=doc.querySelector('[data-translation-select="quranenc.uzbek_sadiq"]'),newSelectionTask=newSelection.onclick();await turns();const selectionPane=doc.querySelector('.quran-translation-picker');
 selectionsPending[0].resolve();await oldSelectionTask;assert.equal(selectedAfterRace,'ru.kuliev');assert.equal(dialog.open,true,'An old successful selection promise cannot close the new picker');assert.equal(doc.querySelector('.quran-translation-picker'),selectionPane);assert.equal(newSelection.disabled,true);await oldSelection.onclick();assert.equal(selectionsPending.length,2);selectionsPending[1].resolve();await newSelectionTask;assert.equal(selectedAfterRace,'quranenc.uzbek_sadiq');assert.equal(dialog.open,false);stopSelections();
 setInterfaceLanguage('ru');await win.happyDOM.close();
-console.log('PASS: author/script/version list, independent source selection, all-eight in-place labels, retained focus/draft, explicit-only downloads, retry, close-to-cancel and stale-dialog isolation.');
+console.log('PASS: decorative language flags across all real editions, unchanged accessible names/authors/versions/sources/selection, RTL and 44px downloads, all-eight in-place labels, retained focus/draft, explicit-only downloads, retry, close-to-cancel and stale-dialog isolation.');

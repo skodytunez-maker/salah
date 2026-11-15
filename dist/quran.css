@@ -485,6 +485,7 @@ body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mush
 .quran-translation-choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.2rem .5rem;padding:.8rem;border:1px solid var(--line,#34415a);border-radius:1rem}
 .quran-translation-select{display:flex;align-items:center;gap:.65rem;min-width:0;text-align:start;border:0;background:transparent;box-shadow:none;padding:.2rem;color:inherit}
 .quran-translation-select strong,.quran-translation-select small{display:block;white-space:normal;overflow-wrap:anywhere}
+.quran-translation-flag{display:inline-block;margin-inline-end:.45rem;line-height:1;vertical-align:middle;font-size:1.1em}
 .quran-translation-select small{margin-top:.3rem;opacity:.75}
 .quran-translation-check{width:1.1rem;flex:none;color:var(--gold,#dbc08e)}
 .quran-translation-download{align-self:center;padding:.6rem;min-width:44px;min-height:44px}

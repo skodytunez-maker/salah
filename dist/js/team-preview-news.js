@@ -46,8 +46,8 @@ export function createTeamPreviewNews({verified=teamPreviewVerified,userId=verif
 }
 // Keep the permanent team entry inside its cabinet. This controller never
 // schedules a popup by itself and keeps the existing verified access checks.
-export function mountTeamPreviewNewsEntry(host,{verified=teamPreviewVerified,subscribe=onTeamPreviewChange,create=createTeamPreviewNews}={}){
- const news=create({verified,canShow:()=>false});
+export function mountTeamPreviewNewsEntry(host,{verified=teamPreviewVerified,userId=verifiedTeamPreviewId,subscribe=onTeamPreviewChange,create=createTeamPreviewNews}={}){
+ const news=create({verified,userId,subscribe,canShow:()=>false});
  host.innerHTML='<button type="button" class="staff-action" data-team-preview-news>'+teamLeaf('newsSections')+'</button>';
  const button=host.querySelector('[data-team-preview-news]');button.onclick=()=>{if(verified())news.open();};
  const paint=()=>{host.hidden=!verified();};paint();const off=subscribe(paint),stop=news.start();

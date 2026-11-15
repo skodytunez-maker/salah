@@ -55,7 +55,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "reason": "Integrate the requested offline settings, remove the unwanted About credit rows and general Menu team row."
+      "reason": "Integrate the requested offline settings and visible interface-language section, remove the unwanted About credit rows and general Menu team row."
     },
     {
       "path": "dist/js/competition-view.js",
@@ -330,6 +330,10 @@
       "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
     },
     {
+      "path": "dist/js/quran-translation-picker.js",
+      "reason": "Owner-requested decorative country flags for Quran translation languages; preserve authors, sources, selection, downloads and accessible names."
+    },
+    {
       "path": "dist/js/quran.js",
       "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
     },
@@ -344,6 +348,10 @@
     {
       "path": "dist/js/release-illustrations.js",
       "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
+    },
+    {
+      "path": "dist/js/settings-screens.js",
+      "reason": "Owner-requested visible Language settings row with one existing chooser and stable explicit section routes; preserve form drafts and offline schedule mounts."
     },
     {
       "path": "dist/js/staff-cabinet.js",
@@ -435,11 +443,15 @@
     },
     {
       "path": "scripts/check-interface-shell.mjs",
-      "reason": "Integrate the requested offline settings, remove the unwanted About credit rows and general Menu team row."
+      "reason": "Integrate the requested offline settings and visible interface-language section, remove the unwanted About credit rows and general Menu team row."
     },
     {
       "path": "scripts/check-knowledge-coming-soon.mjs",
       "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
+    },
+    {
+      "path": "scripts/check-menu-screens.mjs",
+      "reason": "Owner-requested visible Language settings row with one existing chooser and stable explicit section routes; preserve form drafts and offline schedule mounts."
     },
     {
       "path": "scripts/check-native-update-feedback.mjs",
@@ -455,7 +467,7 @@
     },
     {
       "path": "scripts/check-public-language.mjs",
-      "reason": "Integrate the requested offline settings, remove the unwanted About credit rows and general Menu team row."
+      "reason": "Integrate the requested offline settings and visible interface-language section, remove the unwanted About credit rows and general Menu team row."
     },
     {
       "path": "scripts/check-quran-dismiss-resume.mjs",
@@ -502,6 +514,10 @@
       "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
     },
     {
+      "path": "scripts/check-quran-translation-picker.mjs",
+      "reason": "Owner-requested decorative country flags for Quran translation languages; preserve authors, sources, selection, downloads and accessible names."
+    },
+    {
       "path": "scripts/check-reciter-discovery.mjs",
       "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
     },
@@ -512,6 +528,10 @@
     {
       "path": "scripts/check-scene-load.mjs",
       "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
+    },
+    {
+      "path": "scripts/check-team-news-placement.mjs",
+      "reason": "Regression for cabinet-only permanent team news placement, verified actor access, cold entry, expiry and revocation; preserve automatic in-app announcements."
     },
     {
       "path": "scripts/check-team-preview-motion.mjs",
