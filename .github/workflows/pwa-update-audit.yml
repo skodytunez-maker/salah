@@ -1,16 +1,32 @@
-name: Verify published SALAH 499
+name: Verify published SALAH 500
 on:
   pull_request:
     paths:
       - '.github/workflows/pwa-update-audit.yml'
-      - 'review/verify-guest-live-499.py'
+      - 'review/verify-owner-state-500.py'
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: 'Read-only verification phase'
+        type: choice
+        options: [november, full]
+        default: full
 permissions:
   contents: read
 jobs:
+  november-public-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact November JSON and raw 2026 source before scheduler rollout
+        run: python3 review/verify-owner-state-500.py --november-ready-only
   public-runtime:
+    needs: november-public-source
+    if: github.event_name != 'workflow_dispatch' || inputs.phase == 'full'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - name: Verify public files, native update and privacy boundaries
-        run: python3 review/verify-guest-live-499.py
+        run: python3 review/verify-owner-state-500.py
