@@ -1,3 +1,5 @@
+import{t,subscribeLanguage}from './i18n.js';
+import{uiMessage,setUiMessage,setUiAttribute}from './ui.js';
 import{teamPreviewVerified,teamPreviewActor}from './team-preview-access.js';
 import{mountTeamLearningDemo,stopTeamLearningDemo}from './team-learning-demo.js';
 import{mountOwnerNativePreview,stopOwnerNativePreview,ownerNativeActive,preloadOwnerCourse}from './owner-learning-native.js';
@@ -8,9 +10,9 @@ import{claimPlayback}from './media-playback-focus.js';
 export const preloadOwnerLearning=()=>preloadOwnerCourse();
 const origin='https://desktop-jecm5lt.taila4556d.ts.net';
 const entries=Object.freeze({
- 'online-lessons':{title:'Онлайн-занятия',view:'lessons'},
- muallim:{title:'Муаллим Сани',view:'muallim'},
- 'live-stream':{title:'Прямой эфир',view:'live-preview'}
+ 'online-lessons':{title:'Онлайн-занятия',titleKey:'classroomUi.onlineLessons',view:'lessons'},
+ muallim:{title:'Муаллим Сани',titleKey:'classroomUi.muallimTitle',view:'muallim'},
+ 'live-stream':{title:'Прямой эфир',titleKey:'classroomUi.liveStream',view:'live-preview'}
 });
 const progressKey='salah:muallim-sani-progress';
 const lessonIds=new Set(['letters','joining','fatha','kasra','damma','vowels','sukun','tanwin','madd','leen','shadda','hamza','article','pause','review']);
@@ -27,7 +29,7 @@ export const canContinueOwnerPreview=()=>ownerNativeActive()||Boolean(active?.fr
 export function stopOwnerLearningPreview(){stopOwnerNativePreview();stopOwnerFramePreview();stopTeamLearningDemo();}
 function stopOwnerFramePreview(){
  if(!active)return;
- const previous=active;active=null;clearInterval(previous.timer);clearTimeout(previous.timeout);previous.stopAuth?.();previous.viewport?.dispose();window.removeEventListener('message',previous.listen);window.removeEventListener('visibilitychange',previous.foreground);
+ const previous=active;active=null;clearInterval(previous.timer);clearTimeout(previous.timeout);previous.stopAuth?.();previous.stopLanguage?.();previous.viewport?.dispose();window.removeEventListener('message',previous.listen);window.removeEventListener('visibilitychange',previous.foreground);
  try{previous.frame.contentWindow?.postMessage({type:'salah:owner-preview-leave',nonce:previous.nonce},origin);}catch{}
  previous.frame.remove();
 }
@@ -45,28 +47,28 @@ export function mountOwnerLearningPreview(host,feature){
  if(active?.feature===feature&&active.frame.isConnected)return true;
  stopOwnerLearningPreview();
  const nonce=crypto.randomUUID(),shell=document.createElement('section');shell.className='owner-learning-shell';shell.setAttribute('aria-busy','true');
- const back=document.createElement('a');back.href='#knowledge';back.className='alphabet-back';back.textContent='← Знания';
- const eyebrow=document.createElement('span');eyebrow.className='knowledge-eyebrow';eyebrow.textContent='ЗАКРЫТАЯ ПРОВЕРКА';
- const title=document.createElement('h1');title.textContent=entry.title;
- const status=document.createElement('p');status.className='owner-learning-status';status.setAttribute('role','status');status.textContent='Открываем раздел…';
- const frame=document.createElement('iframe');frame.className='owner-learning-frame';frame.title=entry.title+' · закрытая проверка';frame.hidden=true;
+ const back=document.createElement('a');back.href='#knowledge';back.className='alphabet-back';setUiMessage(back,uiMessage('classroomUi.backKnowledge'));
+ const eyebrow=document.createElement('span');eyebrow.className='knowledge-eyebrow';setUiMessage(eyebrow,uiMessage('classroomUi.privateTest'));
+ const title=document.createElement('h1');setUiMessage(title,uiMessage(entry.titleKey));
+ const status=document.createElement('p');status.className='owner-learning-status';status.setAttribute('role','status');setUiMessage(status,uiMessage('classroomUi.openingSection'));
+ const frame=document.createElement('iframe');frame.className='owner-learning-frame';setUiAttribute(frame,'title','classroomUi.privateFrame',{name:t(entry.titleKey)});frame.hidden=true;
  frame.setAttribute('allow','camera; microphone; display-capture; fullscreen; clipboard-write; autoplay');
  frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-presentation allow-popups allow-popups-to-escape-sandbox');
  frame.referrerPolicy='no-referrer';
  const sourceParams=new URLSearchParams();if(sourceMode){for(const key of ['bookPage','source','practice'])if(params.has(key))sourceParams.set(key,params.get(key));}
  frame.src=origin+'/embed#nonce='+nonce+'&view='+entry.view+(sourceParams.size?'&'+sourceParams:'');
- const retry=document.createElement('button');retry.type='button';retry.className='button secondary';retry.textContent='Повторить подключение';retry.hidden=true;
- const context={frame,nonce,feature,busy:false,ready:false,loaded:false,failed:false,tokenSending:false,timer:null,listen:null};active=context;
- const fail=message=>{if(active!==context)return;clearTimeout(context.timeout);context.failed=true;frame.hidden=true;shell.setAttribute('aria-busy','false');status.hidden=false;status.textContent=message;retry.hidden=false;};
- const expire=()=>{if(active!==context||context.loaded)return;if(document.hidden)return;fail(context.ready?'Не удалось подтвердить доступ. Повторите подключение.':'Сервис занятий сейчас не отвечает. Повторите подключение через несколько секунд.');};
+ const retry=document.createElement('button');retry.type='button';retry.className='button secondary';setUiMessage(retry,uiMessage('classroomUi.retryConnection'));retry.hidden=true;
+ const context={frame,nonce,feature,busy:false,ready:false,loaded:false,failed:false,tokenSending:false,timer:null,listen:null};active=context;context.stopLanguage=subscribeLanguage(()=>{if(active===context)setUiAttribute(frame,'title','classroomUi.privateFrame',{name:t(entry.titleKey)})});
+ const fail=message=>{if(active!==context)return;clearTimeout(context.timeout);context.failed=true;frame.hidden=true;shell.setAttribute('aria-busy','false');status.hidden=false;setUiMessage(status,message);retry.hidden=false;};
+ const expire=()=>{if(active!==context||context.loaded)return;if(document.hidden)return;fail(context.ready?uiMessage('classroomUi.accessFailed'):uiMessage('classroomUi.serviceNotResponding'));};
  const wait=()=>{clearTimeout(context.timeout);if(active===context&&!context.loaded&&!context.failed)context.timeout=setTimeout(expire,20000);};
  context.foreground=()=>{if(!document.hidden)wait();};window.addEventListener('visibilitychange',context.foreground);
  retry.onclick=async()=>{
   if(!shell.isConnected||active&&active!==context||retry.disabled)return;retry.disabled=true;
   try{if(!ownerVerified())await verifyOwner({verifySession:true});if(!shell.isConnected||active&&active!==context)return;
-   if(!ownerVerified()){status.textContent='Подтвердите вход в аккаунт владельца и откройте раздел ещё раз.';return;}
+   if(!ownerVerified()){setUiMessage(status,uiMessage('classroomUi.ownerConfirmReopen'));return;}
    stopOwnerLearningPreview();mountOwnerLearningPreview(host,feature);
-  }catch{if(shell.isConnected)status.textContent='Не удалось подтвердить вход владельца. Попробуйте ещё раз.';}
+  }catch{if(shell.isConnected)setUiMessage(status,uiMessage('classroomUi.ownerCheckFailed'));}
   finally{retry.disabled=false;}
  };
  context.stopAuth=onOwnerChange(()=>{if(active===context&&!ownerVerified())stopOwnerLearningPreview();});
@@ -85,13 +87,13 @@ export function mountOwnerLearningPreview(host,feature){
    if(active!==context||!frame.isConnected||!ownerVerified())return;
    frame.contentWindow.postMessage({type:'salah:owner-preview-token',nonce,token:access,progress:readProgress(),bookProgress:readBookProgress(),nativeProgress:readNativeProgress()},origin);
   }catch{
-   if(active===context){fail('Подтвердите вход в аккаунт владельца и повторите подключение.');stopOwnerFramePreview();}
+   if(active===context){fail(uiMessage('classroomUi.ownerConfirmRetry'));stopOwnerFramePreview();}
   }finally{context.tokenSending=false;}
  };
  context.listen=event=>{
   if(active!==context||event.origin!==origin||event.source!==frame.contentWindow||event.data?.nonce!==nonce)return;
   const value=event.data;
-  if(value.type==='salah:owner-preview-ready'){if(!context.ready){context.ready=true;context.failed=false;status.hidden=false;status.textContent='Подтверждаем доступ владельца…';shell.setAttribute('aria-busy','true');retry.hidden=true;wait();}void token();}
+  if(value.type==='salah:owner-preview-ready'){if(!context.ready){context.ready=true;context.failed=false;status.hidden=false;setUiMessage(status,uiMessage('classroomUi.ownerConfirming'));shell.setAttribute('aria-busy','true');retry.hidden=true;wait();}void token();}
   else if(value.type==='salah:owner-preview-loaded'&&context.ready){context.loaded=true;context.failed=false;frame.hidden=false;shell.setAttribute('aria-busy','false');status.hidden=true;retry.hidden=true;clearTimeout(context.timeout);}
   else if(value.type==='salah:owner-preview-busy'&&typeof value.busy==='boolean'){context.busy=value.busy;if(value.busy)claimPlayback('owner-lesson');}
   else if(value.type==='salah:owner-preview-progress'&&validOwnerCourseProgress(value.value)){
@@ -104,12 +106,12 @@ export function mountOwnerLearningPreview(host,feature){
   else if(value.type==='salah:owner-preview-native-progress'&&validNativeProgress(value.value)){
    try{localStorage.setItem(nativeProgressKey,JSON.stringify(value.value));}catch{frame.contentWindow.postMessage({type:'salah:owner-preview-storage-error',nonce},origin);}
   }
-  else if(value.type==='salah:owner-preview-error'){context.loaded=false;fail('Не удалось открыть закрытый раздел. Проверьте вход владельца и повторите подключение.');}
+  else if(value.type==='salah:owner-preview-error'){context.loaded=false;fail(uiMessage('classroomUi.privateSectionFailed'));}
   else if(value.type==='salah:owner-preview-navigate'&&['#knowledge','#knowledge?view=alphabet','#knowledge?preview=muallim'].includes(value.hash)){location.hash=value.hash;}
  };
  window.addEventListener('message',context.listen);
  context.timer=setInterval(()=>{if(!document.hidden&&context.loaded)void token();},20000);
- frame.addEventListener('error',()=>{context.loaded=false;fail('Сервис занятий сейчас недоступен. Повторите подключение через несколько секунд.');});
+ frame.addEventListener('error',()=>{context.loaded=false;fail(uiMessage('classroomUi.serviceUnavailable'));});
  shell.append(back,eyebrow,title,status,retry,frame);host.replaceChildren(shell);return true;
 }
 

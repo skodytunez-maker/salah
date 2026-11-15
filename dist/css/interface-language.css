@@ -1,0 +1,13 @@
+.interface-language-setting{display:grid;gap:10px;margin-block:0 18px;min-width:0}
+.interface-language-setting select{width:100%;min-width:0;max-width:100%;unicode-bidi:plaintext}
+html[dir="rtl"] :is(.settings-group-body,.settings-screen-back,.settings-grid,.page-head,.menu-list){text-align:start}
+/* Playback and numeric axes keep their meaning in every interface language. */
+html[dir="rtl"] :is(.quran-global-controls,.quran-player-progress,.quran-mini-progress,.quran-nature-volume input,.quran-global-player input[type="range"],.central-row time,.central-digits,.schedule-time time,.prayer-offset-time){direction:ltr;unicode-bidi:isolate}
+html[dir="rtl"] .quran-player-progress [data-time]{text-align:left}
+html[dir="rtl"] .quran-player-progress [data-duration]{text-align:right}
+html[dir="rtl"] .quran-player-reciter select{text-align:center}
+html[dir="rtl"] .central-row>span{text-align:start}
+html[dir="rtl"] .central-row time{text-align:end}
+html[dir="rtl"] .interface-language-setting{text-align:start}
+html[dir="rtl"] :is(.quran-playing-reader,.quran-now-playing strong){unicode-bidi:plaintext}
+html[dir="rtl"] .sidebar{inset:0 0 0 auto;border-right:0;border-left:1px solid var(--line)}

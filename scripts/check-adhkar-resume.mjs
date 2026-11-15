@@ -1,6 +1,10 @@
 import{createDhikrFeedback}from '../dist/js/dhikr-feedback.js';
 import{preloadPronunciation}from '../dist/js/pronunciation-preload.js';
 import{SHORT_DHIKR_PRESETS,DEFAULT_SHORT_DHIKR,shortDhikr}from '../dist/js/short-dhikr.js';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import * as practiceUi from '../dist/js/practice-i18n.js';
+import{ADHKAR_UI_SOURCE,ADHKAR_TEXT_KEYS,adhkarGroupKey,adhkarGroupLabel,adhkarGroupLeaf}from '../dist/js/adhkar-ui.js';
+const uiDocument=new Window({url:'https://salah.invalid/'}).document;
 
 import {createDhikrCompletionGate} from '../dist/js/adhkar-completion.js';
 import {markDhikrActivity} from '../dist/js/dhikr-reminder.js';
@@ -40,6 +44,7 @@ class Element {
   set textContent(value){this.text=String(value);this.children=[]}
   get textContent(){return this.text+this.children.map(child=>child.textContent).join('')}
   setAttribute(name,value){this.attributes[name]=String(value)}
+  getAttribute(name){return this.attributes[name]??null}
   removeAttribute(name){delete this.attributes[name]}
   get isConnected(){return true}
   getClientRects(){return this.hidden?[]:[{}]}
@@ -72,7 +77,7 @@ function browser({hash='#adhkar',storage=new Storage(),items=catalogue,day='2026
     forward(){if(historyIndex<entries.length-1){historyIndex++;window.dispatchEvent(new Event('popstate'));window.dispatchEvent(new Event('hashchange'))}}
    },addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},setTimeout:(fn,ms)=>{counterTimers.set(++timerSequence,fn);return timerSequence;},clearTimeout:id=>counterTimers.delete(id),scrollTo(_x,y){scroll=y}};
   let audioBusy=false,pauseRegistered=null;
-  const context=createContext({createDhikrFeedback,recordAdhkarRound:()=>{},emitAdhkarActivity:()=>{},emitTransientDhikrPresence:()=>{},location,window,document:{body,querySelector:selector=>container.querySelector(selector),getElementById:id=>container.querySelector('#'+id)},localStorage:storage,URLSearchParams,Event,Date,console,
+  const context=createContext({...practiceUi,uiHtml:html=>practiceUi.uiHtml(html,uiDocument),ADHKAR_UI_SOURCE,ADHKAR_TEXT_KEYS,adhkarGroupKey,adhkarGroupLabel,adhkarGroupLeaf,createDhikrFeedback,recordAdhkarRound:()=>{},emitAdhkarActivity:()=>{},emitTransientDhikrPresence:()=>{},location,window,document:{body,querySelector:selector=>container.querySelector(selector),getElementById:id=>container.querySelector('#'+id)},localStorage:storage,URLSearchParams,Event,Date,console,
     bindNativeCardSwipe:()=>()=>{},createDhikrCompletionGate:()=>createDhikrCompletionGate({now:clock}),
     markDhikrActivity:()=>markDhikrActivity(Date.now(),storage,window),
     navigator:{locks:{request:async(_key,fn)=>{if(deferredLock){const gate=deferredLock;deferredLock=null;await gate}return fn()}},vibrate(){}},

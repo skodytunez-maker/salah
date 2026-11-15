@@ -11,7 +11,7 @@ assert.equal(inviteEligible({...base,reminders:{enabled:true,jumuah:{enabled:fal
 const initial=standardReminderPreferences();assert.equal(initial.enabled,true);assert.deepEqual(initial.jumuah,{enabled:true,time:'10:00'});
 assert.ok(Object.values(initial.prayers).every(p=>p.atTime&&!p.adhan&&!p.beforeMinutes));assert.equal(initial.adhkar.morning.enabled,false);assert.equal(initial.tahajjud.enabled,false);assert.equal(initial.dhikr.enabled,false);
 let values=new Map(),storage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)};
-function container(){let controls=new Map();return {isConnected:true,html:'',writes:0,get innerHTML(){return this.html},set innerHTML(v){this.html=v;this.writes++;controls=new Map([...v.matchAll(/data-invite-(enable|dismiss)/g)].map(m=>['[data-invite-'+m[1]+']',{}]));},querySelector:s=>controls.get(s)||null};}
+function container(){let controls=new Map();return {isConnected:true,html:'',writes:0,get innerHTML(){return this.html},set innerHTML(v){this.html=v;this.writes++;controls=new Map([...v.matchAll(/data-invite-(enable|dismiss)/g)].map(m=>['[data-invite-'+m[1]+']',{attributes:new Map(),setAttribute(name,value){this.attributes.set(name,String(value));},removeAttribute(name){this.attributes.delete(name);},getAttribute(name){return this.attributes.get(name)??null;}}]));},querySelector:s=>controls.get(s)||null};}
 let state=base,enabled=0,opened=0,resolveEnable;
 let card=container(),invite=createNotificationInvite({getState:()=>state,storage,enable:()=>{enabled++;return new Promise(r=>resolveEnable=r)},openSettings:()=>opened++});
 invite.mount(card);assert.match(card.innerHTML,/Намазы и Джума/);assert.equal(enabled,0,'Rendering never enables delivery or requests permission');

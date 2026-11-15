@@ -745,3 +745,13 @@ Public announcement 479, its deadline and acknowledgement remain unchanged. A se
 ## 485 — Quran player timer and optional nature backgrounds
 
 Public edition 485 introduces two illustrated, looping cards: stop after 15/30/45/60 minutes or at the end of the current surah; and optional rain, wind, fire, forest or ocean textures with independent volume. Both use original SVG artwork and the shared active-card alternating motion. The background is off by default and follows Quran pause/stop. The artwork and animation stay in the existing dark/gold palette. Private team edition 484 is not reset; all-reciter radio selection is a closed-team improvement and is not announced to ordinary users. Device QA for locked-screen scheduling/audio remains pending.
+# 501 — interface languages and authored Quran meaning translations
+
+Two new public cards only: choosing an interface language and choosing a Quran meaning translation with its author/source. The original, dedicated SVGs depict these actual controls. Both use the existing alternating `release-motion-preview` lifecycle, pause while hidden and respect reduced motion. Showing or closing the dialog does not acknowledge it; only the confirmation button does. Historical announcements and their prior receipts remain intact.
+
+The interface supports Russian, English, Azerbaijani, Tajik, Uzbek in Latin script, Kazakh, German and Arabic. Arabic UI uses RTL; playback axes, input values, prayer codes and source Arabic remain correctly isolated. Language changes update explicit UI leaves without remounting forms or playback. Canonical user messages/names/cities and teacher-authored content are not machine-translated.
+
+Quran translations are a separate choice. Preserve the bundled Kuliev edition, and add seven pinned QuranEnc editions with publisher author/version/source/notes metadata. The two Uzbek meaning translations are the publisher's Cyrillic editions, independently of Latin Uzbek UI. Do not claim access to Khattab, Ayati or a Latin Uzbek text without separate verified sources. Downloads retain original text and notes and are checked against the pinned source manifest before use. Tafsir remains unavailable to the public. Religious daily reminder texts remain the reviewed source texts; only the surrounding notification UI and event frames are localized.
+
+No billing, staff, owner geography, previous reciter, nature wallpaper or radio announcement is included in the new public gallery. This is a release candidate until the owner approves publication; server reminder-locale deployment is part of that publication step.
+

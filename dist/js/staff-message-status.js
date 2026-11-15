@@ -1,3 +1,6 @@
+import{t,subscribeLanguage}from './i18n.js';
+import{uiMessage,setUiMessage,setUiAttribute}from './ui.js';
+import{paintStaffUi}from './staff-ui.js';
 import{staffRequest}from './staff-transport.js';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const STORAGE='salah:staff-message-cursor';
@@ -16,7 +19,7 @@ export function createStaffMessageStatus({getUserId,request=staffRequest,documen
  let actor=null,snapshot=null,controller=null,generation=0,lastCheck=0,blockedUntil=0,again=false,cursor=null,stopped=false,noticeTimer=null;
  try{storageRef??=globalThis.sessionStorage;}catch{}
  const removeNotice=()=>{clearTimeout(noticeTimer);noticeTimer=null;documentRef?.querySelector('[data-staff-message-notice]')?.remove();};
- function paint(){for(const badge of documentRef?.querySelectorAll('[data-staff-message-count]')||[]){const count=actor&&getUserId()===actor?snapshot?.pending||0:0;badge.hidden=!count;badge.textContent=count>99?'99+':String(count);badge.setAttribute('aria-label','Непрочитанные сообщения команды: '+count);}}
+ function paint(){for(const badge of documentRef?.querySelectorAll('[data-staff-message-count]')||[]){const count=actor&&getUserId()===actor?snapshot?.pending||0:0;badge.hidden=!count;badge.textContent=count>99?'99+':String(count);setUiAttribute(badge,'aria-label','staffUi.statusUnread',{count});}}
  function reset(user){generation++;controller?.abort();controller=null;again=false;actor=user;snapshot=null;lastCheck=0;blockedUntil=0;cursor=null;removeNotice();try{const saved=JSON.parse(storageRef?.getItem(STORAGE)||'null');if(saved?.actor===user&&UUID.test(saved.id||'')&&Number.isSafeInteger(saved.order))cursor=saved;}catch{}paint();}
  function announce(latest){
   if(!latest||cursor&&(latest.order<cursor.order||latest.order===cursor.order&&latest.id<=cursor.id))return;
@@ -24,8 +27,8 @@ export function createStaffMessageStatus({getUserId,request=staffRequest,documen
   const open=documentRef?.querySelector('[data-staff-open-room="'+latest.room+'"]');if(open?.querySelector('[data-message="'+latest.id+'"]'))return;
   removeNotice();if(!documentRef?.body)return;
   const banner=documentRef.createElement('aside');banner.dataset.staffMessageNotice='';banner.className='support-message-notice staff-message-notice';banner.setAttribute('role','status');
-  const link=documentRef.createElement('a');link.href=(documentRef?.querySelector('.owner-workspace')?'#admin?view=team&room=':'#staff?room=')+latest.room;link.textContent='Новое сообщение команды';link.onclick=e=>{banner.remove();if(['#staff','#admin'].includes(windowRef?.location?.hash?.split('?')[0])){e.preventDefault();windowRef.dispatchEvent(new CustomEvent('salah:staff-message-open',{detail:{room:latest.room}}));}};
-  const close=documentRef.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление о сообщении команды');close.onclick=()=>banner.remove();banner.append(link,close);documentRef.body.append(banner);
+  const link=documentRef.createElement('a');link.href=(documentRef?.querySelector('.owner-workspace')?'#admin?view=team&room=':'#staff?room=')+latest.room;setUiMessage(link,uiMessage('staffUi.statusNewMessage'));link.onclick=e=>{banner.remove();if(['#staff','#admin'].includes(windowRef?.location?.hash?.split('?')[0])){e.preventDefault();windowRef.dispatchEvent(new CustomEvent('salah:staff-message-open',{detail:{room:latest.room}}));}};
+  const close=documentRef.createElement('button');close.type='button';close.textContent='×';setUiAttribute(close,'aria-label','staffUi.statusCloseNotice');close.onclick=()=>banner.remove();banner.append(link,close);documentRef.body.append(banner);
   noticeTimer=setTimeout(()=>{banner.remove();noticeTimer=null;},12000);
  }
  async function refresh({force=false}={}){
@@ -38,6 +41,8 @@ export function createStaffMessageStatus({getUserId,request=staffRequest,documen
  }
  const changed=()=>void refresh(),force=()=>void refresh({force:true}),visible=()=>{if(documentRef?.visibilityState!=='hidden')force();};
  windowRef?.addEventListener('salah:counter-status',changed);windowRef?.addEventListener('salah:staff-messages-refresh',force);windowRef?.addEventListener('salah:staff-messages-paint',paint);documentRef?.addEventListener('visibilitychange',visible);windowRef?.addEventListener('online',force);
+ // A locale repaint must not announce the same incoming message again.
+ const offLanguage=subscribeLanguage(()=>{paint();const banner=documentRef?.querySelector('[data-staff-message-notice]');if(banner){banner.setAttribute('aria-live','off');paintStaffUi(banner);}});
  const timer=interval(changed,10000);
- return{refresh,paint,stop(){stopped=true;generation++;controller?.abort();clear(timer);windowRef?.removeEventListener('salah:counter-status',changed);windowRef?.removeEventListener('salah:staff-messages-refresh',force);windowRef?.removeEventListener('salah:staff-messages-paint',paint);documentRef?.removeEventListener('visibilitychange',visible);windowRef?.removeEventListener('online',force);snapshot=null;removeNotice();paint();}};
+ return{refresh,paint,stop(){offLanguage();stopped=true;generation++;controller?.abort();clear(timer);windowRef?.removeEventListener('salah:counter-status',changed);windowRef?.removeEventListener('salah:staff-messages-refresh',force);windowRef?.removeEventListener('salah:staff-messages-paint',paint);documentRef?.removeEventListener('visibilitychange',visible);windowRef?.removeEventListener('online',force);snapshot=null;removeNotice();paint();}};
 }

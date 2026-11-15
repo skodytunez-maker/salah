@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{t,translateUi,setInterfaceLanguage}from '../dist/js/i18n.js';
+setInterfaceLanguage('ru');
 const saved=new Map();globalThis.localStorage={getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,v)};
 const store=await import('../dist/js/storage.js');const {settings,updateSettings,normalizeSettings}=store;
 const home={name:'Тюмень',country:'Россия',latitude:57.15,longitude:65.53,timezone:'Asia/Yekaterinburg'},away={name:'Медина',country:'Саудовская Аравия',latitude:24.47,longitude:39.61,timezone:'Asia/Riyadh'};
 const w=new Window(),doc=w.document,host=doc.createElement('main');doc.body.append(host);let chosen,changes=[],before=0;
-const ctx=vm.createContext({settings,updateSettings,esc:s=>String(s),toast:()=>{},closeModal:()=>{},openCityDialog:(city,onSelect)=>{chosen=onSelect;},window:w});
+const ctx=vm.createContext({settings,updateSettings,t,translateUi,esc:s=>String(s),toast:()=>{},closeModal:()=>{},openCityDialog:(city,onSelect)=>{chosen=onSelect;},window:w});
 const source=await fs.readFile(new URL('../dist/js/travel-mode.js',import.meta.url),'utf8');
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({travelCitySelection,travelActivation,isTravelSwipe,mountTravelSettings,travelHomeMarkup,bindTravelHome});',ctx);
 const hooks={onBeforeChange(){before++;},onChange(change){changes.push(change);}};
@@ -28,4 +30,12 @@ for(const [dx,dy,ms]of [[40,0,200],[100,150,200],[100,0,2000]])assert.equal(api.
 const {createBackup,validateBackup}=await import('../dist/js/backup.js');const personal={length:saved.size,key:i=>[...saved.keys()][i],getItem:k=>saved.get(k)??null};const backup=createBackup({storage:personal,settings,history:{}});assert.deepEqual(validateBackup(backup).backup.settings,settings);
 // The real app uses the active settings city for widget, day and all reminder context.
 const app=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');for(const anchor of ['bindTravelHome(app,travelHooks)','onBeforeChange(){reminders.reset();calendarRequestId++;days={}','if(cityChanged)refresh(false,false)','syncNativePrayerWidget({city:settings.city','getSettings:()=>settings','updateSettings(travelCitySelection({...settings.city,timezone}))'])assert.ok(app.includes(anchor),anchor);
+// Execute the real app hooks as well as checking their integration. Replacing
+// adjacent UI functions must never remove the reset/refresh declaration.
+const hookStart=app.indexOf('const travelHooks='),hookEnd=app.indexOf('function cityDialog',hookStart);assert.ok(hookStart>=0&&hookEnd>hookStart);
+let reminderResets=0,homeRenders=0;const refreshCalls=[];
+const hookContext=vm.createContext({reminders:{reset(){reminderResets++}},calendarRequestId:3,days:{saved:true},weatherRequestId:7,weatherBusy:true,weather:{saved:true},lastWeatherCheck:999,currentRoute:'home',refresh:(...args)=>refreshCalls.push(args),home:()=>homeRenders++});
+vm.runInContext(app.slice(hookStart,hookEnd)+';globalThis.hooks=travelHooks;',hookContext);hookContext.hooks.onBeforeChange();
+assert.equal(reminderResets,1);assert.equal(hookContext.calendarRequestId,4);assert.equal(Object.keys(hookContext.days).length,0);assert.equal(hookContext.weatherRequestId,8);assert.equal(hookContext.weatherBusy,false);assert.equal(hookContext.weather,null);assert.equal(hookContext.lastWeatherCheck,0);
+hookContext.hooks.onChange({cityChanged:true});assert.deepEqual(refreshCalls,[[false,false]]);hookContext.hooks.onChange({cityChanged:false});assert.equal(homeRenders,1);hookContext.currentRoute='settings';hookContext.hooks.onChange({cityChanged:false});assert.equal(homeRenders,1);
 await w.happyDOM.close();console.log('PASS: two validated localities, persistence and backup, active timezone, independent home, disable restores home, edit slots, horizontal swipe vs scroll/pinch, click suppression and real notification/widget integration.');

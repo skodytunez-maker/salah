@@ -1,3 +1,4 @@
+import{ownerDateMessageLeaf,ownerPercentLeaf,uiNumberLeaf,ownerMessage,ownerLeaf,ownerText,ownerMarkup,ownerError,ownerHeading,ownerDate,ownerDateLeaf,ownerPaint,watchOwnerUi,stopOwnerUi,uiMessage,uiLeaf,uiSet,uiRaw,uiAttrs,uiAttribute,uiAttributeAttrs,t,getLocale}from './owner-i18n.js';
 import{esc}from './ui.js';
 import{ownerUserRow}from './owner-user-list.js';
 import{createStaffAvatarManager}from './owner-team-avatars.js';
@@ -16,9 +17,9 @@ export function mountOwnerGeoMembers(host,{load,isActive=()=>true,onBack=()=>{},
  const stopAvatars=()=>{avatars?.dispose();avatars=null;win.removeEventListener('scroll',onAvatarScroll,true);if(avatarFrame!==null){win.cancelAnimationFrame(avatarFrame);avatarFrame=null;}};
 
  const render=(message='')=>{
-  if(!alive()){stopAvatars();host.innerHTML='';return;}
+  if(!alive()){stopAvatars();ownerPaint(host,'');return;}
   const label=selection.kind==='city'?[selection.city,selection.country].filter(Boolean).join(', '):selection.country;
-  host.innerHTML='<button type="button" class="text-button owner-geo-back" id="owner-geo-back" data-geo-back>← География</button><h3 class="owner-geo-members-title">'+esc(label)+'</h3><p class="owner-geo-note">Аккаунты за '+(period===1?'24 часа':period+' дней')+(model?' · '+model.total.toLocaleString('ru-RU'):'')+'</p><p role="status" aria-live="polite" class="owner-geo-status">'+esc(message)+'</p>'+(model?'<div class="owner-user-rows">'+model.users.map(user=>ownerUserRow(user)).join('')+'</div>'+(!model.users.length?'<p class="owner-geo-note">За этот период пользователей нет.</p>':'')+(model.total>50?'<div class="owner-geo-pagination"><button type="button" class="text-button" data-geo-prev '+(page===1?'disabled':'')+'>Назад</button><span>'+page+' / '+Math.ceil(model.total/50)+'</span><button type="button" class="text-button" data-geo-next '+(page*50>=model.total?'disabled':'')+'>Далее</button></div>':''):'')+'<button type="button" class="text-button owner-geo-members-refresh" data-geo-refresh>Обновить</button>';
+  ownerPaint(host,"<button type=\"button\" class=\"text-button owner-geo-back\" id=\"owner-geo-back\" data-geo-back data-i18n=\"ownerUi.backGeography\">← География</button><h3 class=\"owner-geo-members-title\" lang=\"\" dir=\"auto\" translate=\"no\">"+esc(label)+'</h3><p class="owner-geo-note">'+(period===1?ownerLeaf('Аккаунты за 24 часа'):uiLeaf('ownerUi.accountsOverDays','Аккаунты за {count} дней',{count:period}))+(model?' · '+uiNumberLeaf(model.total):'')+'</p><p role="status" aria-live="polite" class="owner-geo-status">'+ownerLeaf(message)+'</p>'+(model?'<div class="owner-user-rows">'+model.users.map(user=>ownerUserRow(user)).join('')+'</div>'+(!model.users.length?"<p class=\"owner-geo-note\" data-i18n=\"ownerUi.noPeriodUsers\">За этот период пользователей нет.</p>":'')+(model.total>50?'<div class="owner-geo-pagination"><button type="button" class="text-button" data-geo-prev '+(page===1?'disabled':'')+"><span data-i18n=\"common.back\">Назад</span></button><span>"+page+' / '+Math.ceil(model.total/50)+'</span><button type="button" class="text-button" data-geo-next '+(page*50>=model.total?'disabled':'')+"><span data-i18n=\"ownerUi.next\">Далее</span></button></div>":''):'')+"<button type=\"button\" class=\"text-button owner-geo-members-refresh\" data-geo-refresh data-i18n=\"ownerUi.refresh\">Обновить</button>");
   host.querySelector('[data-geo-back]').onclick=onBack;host.querySelector('[data-geo-refresh]').onclick=refresh;
   host.querySelectorAll('[data-user]').forEach(button=>button.onclick=()=>{const user=model.users.find(u=>u.id===button.dataset.user);if(user)onUser(user,button);});
   if(model?.users.length&&!avatars){
@@ -28,7 +29,7 @@ export function mountOwnerGeoMembers(host,{load,isActive=()=>true,onBack=()=>{},
   hydrateAvatars();
   const prev=host.querySelector('[data-geo-prev]'),next=host.querySelector('[data-geo-next]');if(prev)prev.onclick=()=>{page--;model=null;void refresh();};if(next)next.onclick=()=>{page++;model=null;void refresh();};
  };
- const clear=()=>{generation++;model=null;stopAvatars();host.innerHTML='';};
+ const clear=()=>{generation++;model=null;stopAvatars();ownerPaint(host,'');};
  const refresh=async()=>{const version=++generation;render(model?'Обновляем…':'Загружаем пользователей…');try{const result=await load(period,selection,page);if(version!==generation||!alive())return;model=geoMembersModel(result,period,selection,page);render();}catch(e){if(version!==generation||disposed)return;if(e?.status===401||e?.status===403||!alive()){clear();onDenied();return;}render(model?'Не удалось обновить. Показан последний список.':'Не удалось загрузить пользователей.');}};
  return{open(next,days){stopAvatars();selection={...next};period=days;page=1;model=null;return refresh();},refresh,clear,dispose(){clear();disposed=true;}};
 }

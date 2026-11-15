@@ -1,4 +1,5 @@
 import {buildReminderEvents,localTimestamp,normalizeReminders,shiftDay} from './reminder-events.js';
+import {reminderNotificationText} from './notification-language.js';
 
 // Pure planning only: this module never requests permissions, writes storage,
 // installs alarms or claims that native delivery is connected.
@@ -19,7 +20,7 @@ export function buildNativeReminderPlan(preferences,context,{now=Date.now(),days
   const events=buildReminderEvents(settings,{...context,today,tomorrow:shiftDay(today,1)});
   for(const event of events){
    if(typeof event.id!=='string'||event.id.length>1024||!Number.isFinite(event.at)||event.at<=now||event.at>=end)continue;
-   unique.set(event.id,{id:event.id,at:event.at,kind:event.kind,key:event.key,title:'SALAH',message:event.message,adhan:event.kind==='prayer'&&event.phase==='at'&&event.adhan===true,voice:settings.voice});
+   unique.set(event.id,{id:event.id,at:event.at,kind:event.kind,key:event.key,title:'SALAH',message:reminderNotificationText(event,context.language),adhan:event.kind==='prayer'&&event.phase==='at'&&event.adhan===true,voice:settings.voice});
   }
  }
  const ordered=[...unique.values()].sort((a,b)=>a.at-b.at||a.id.localeCompare(b.id));

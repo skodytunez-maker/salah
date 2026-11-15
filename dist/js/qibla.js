@@ -4,6 +4,8 @@ import { renderQiblaView } from './qibla-view.js';
 import { bearing as qiblaBearing } from './prayers.js';
 import { createSensorAccess, createAutomaticSensorAccess, createQiblaLocationController } from './qibla-access.js';
 import { magneticDeclination } from './geomagnetism.js';
+import{uiSet,uiRaw,uiParts,uiAttribute,uiNumber,watchPracticeUi}from './practice-i18n.js';
+import{qiblaPart,QIBLA_UI_SOURCE}from './qibla-ui.js';
 
 export const SENSOR_ACCESS_MESSAGE='Для определения направления Киблы требуется доступ к датчикам устройства.';
 
@@ -180,7 +182,7 @@ export function createCompassController({bearing,declination=0,onState,onHaptic=
   return {enable,stop,destroy,setTarget,get enabled(){return enabled}};
 }
 
-function setText(element,value){if(element&&element.textContent!==value)element.textContent=value;}
+function setText(element,value){const part=qiblaPart(value);if(part&&typeof part==='object')uiSet(element,part.key,part.fallback,part.parameters);else uiRaw(element,value);}
 
 export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environment,createLocation=createQiblaLocationController,locationOptions={},mountMap=mountQiblaMap}={}){
   const cityBearing=qiblaBearing(city?.latitude,city?.longitude),hasCity=Number.isFinite(cityBearing),doc=container.ownerDocument;
@@ -190,7 +192,8 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
   const mapToggle=container.querySelector('#qibla-map-toggle'),compassPanel=container.querySelector('#qibla-compass-panel'),mapPanel=container.querySelector('#qibla-map-panel');
   const stage=container.querySelector('#qibla-stage'),instruction=container.querySelector('#qibla-instruction'),check=container.querySelector('#qibla-check'),error=container.querySelector('#qibla-error'),status=container.querySelector('#sensor-state');
   const locationLabel=container.querySelector('.qibla-location'),locationStatus=container.querySelector('#qibla-location-state'),locate=container.querySelector('#qibla-locate'),bearingLabel=container.querySelector('.qibla-bearing');
-  const presentation=createCompassPresentation();let retryAvailable=false;
+  const presentation=createCompassPresentation();let retryAvailable=false,lastError=null;
+  const stopLanguage=watchPracticeUi(container,()=>{if(lastError!==null)uiRaw(error,uiNumber(lastError,{maximumFractionDigits:1})+'°');});
   const alive=()=>!disposed&&stage.isConnected&&container.querySelector('#qibla-stage')===stage;
   const sensorState=state=>{
     if(!alive())return;
@@ -204,18 +207,18 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
       stage.style.setProperty('--compass-rotation',rotation.north+'deg');
     }
     setText(instruction,state.instruction);
-    setText(error,state.error===null?'—':state.error.toLocaleString('ru-RU',{maximumFractionDigits:1})+'°');
+    lastError=state.error;uiRaw(error,state.error===null?'—':uiNumber(state.error,{maximumFractionDigits:1})+'°');
     setText(status,state.message);
     retryAvailable=['permission-required','denied','unavailable'].includes(state.phase);
     stage.classList.toggle('needs-access',retryAvailable);
     stage.toggleAttribute('aria-hidden',!retryAvailable);
-    if(retryAvailable){stage.setAttribute('role','button');stage.setAttribute('tabindex','0');stage.setAttribute('aria-label',state.phase==='unavailable'?'Повторить определение направления':'Разрешить датчики компаса');}
-    else{stage.removeAttribute('role');stage.removeAttribute('tabindex');stage.removeAttribute('aria-label');}
+    if(retryAvailable){stage.setAttribute('role','button');stage.setAttribute('tabindex','0');uiAttribute(stage,'aria-label',state.phase==='unavailable'?'qiblaUi.retryDirection':'qiblaUi.allowSensors',state.phase==='unavailable'?'Повторить определение направления':'Разрешить датчики компаса');}
+    else{stage.removeAttribute('role');stage.removeAttribute('tabindex');stage.removeAttribute('aria-label');stage.removeAttribute('data-i18n-aria-label');}
   };
   function target(point){
     const bearing=qiblaBearing(point?.latitude,point?.longitude);
     setText(bearingLabel,Number.isFinite(bearing)?Math.round(bearing)%360+'°':'—');
-    if(!Number.isFinite(bearing)){controller?.destroy();controller=null;lastTarget=null;retryAvailable=false;stage.classList.remove('has-heading','is-aligned','needs-access');stage.setAttribute('aria-hidden','true');for(const name of ['role','tabindex','aria-label'])stage.removeAttribute(name);check.hidden=true;setText(error,'—');setText(instruction,Number.isFinite(point?.latitude)?'Направление для этой точки не определено':'Определите место или выберите город');setText(status,'Направление появится после определения места.');return;}
+    if(!Number.isFinite(bearing)){controller?.destroy();controller=null;lastTarget=null;retryAvailable=false;lastError=null;stage.classList.remove('has-heading','is-aligned','needs-access');stage.setAttribute('aria-hidden','true');for(const name of ['role','tabindex','aria-label','data-i18n-aria-label'])stage.removeAttribute(name);check.hidden=true;setText(error,'—');setText(instruction,Number.isFinite(point?.latitude)?'Направление для этой точки не определено':'Определите место или выберите город');setText(status,'Направление появится после определения места.');return;}
     const declination=magneticDeclination(point.latitude,point.longitude),signature=[bearing,declination].join(':');
     if(signature===lastTarget)return;lastTarget=signature;presentation.retarget();
     if(controller)controller.setTarget(bearing,declination);
@@ -231,20 +234,20 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
     if(devicePosition){
       const metres=devicePosition.coords.accuracy,known=Number.isFinite(metres)&&metres>0,poor=known&&metres>100;
       setText(locationLabel,state.error?'Последнее определённое местоположение':poor?'Приблизительное местоположение устройства':'Ваше местоположение');
-      setText(locationStatus,(known?'Точность устройства ±'+Math.ceil(metres)+' м. ':'Точность устройства не указана. ')+(state.error||poor?'Нажмите «Моё место», чтобы уточнить.':'Точка используется только в этом разделе.'));
+      uiParts(locationStatus,[known?{key:'qiblaUi.deviceAccuracy',fallback:QIBLA_UI_SOURCE.deviceAccuracy,parameters:{metres:Math.ceil(metres)}}:qiblaPart('Точность устройства не указана. '),qiblaPart(state.error||poor?'Нажмите «Моё место», чтобы уточнить.':'Точка используется только в этом разделе.')]);
       if(chooseCity)chooseCity.hidden=true;
       target(devicePosition.coords);mapHandle?.setPosition?.(devicePosition);
     }else{
       setText(locationLabel,fallbackLabel());if(chooseCity)chooseCity.hidden=hasCity;
       const reason=state.error?.restricted?'Определение места недоступно в этом режиме.':state.error?.code===1?'Доступ к местоположению закрыт.':state.error?.code===3?'Не удалось получить свежую точку вовремя.':'Не удалось определить текущее место.';
-      setText(locationStatus,reason+' '+(hasCity?'Показан расчёт от центра выбранного города.':'Выберите город для приблизительного расчёта.')+(state.error?.restricted?'':' Можно повторить кнопкой «Моё место».'));
+      uiParts(locationStatus,[qiblaPart(reason),' ',qiblaPart(hasCity?'Показан расчёт от центра выбранного города.':'Выберите город для приблизительного расчёта.'),...(state.error?.restricted?[]:[' ',qiblaPart('Можно повторить кнопкой «Моё место».')])]);
       target(hasCity?city:null);mapHandle?.setPosition?.(null);
     }
   }});
   const startLocation=()=>{if(alive()&&!doc.hidden)void location.start().catch(()=>{});};
   if(locate)locate.onclick=startLocation;
   if(mapToggle)mapToggle.onclick=()=>{
-    if(!alive())return;const show=mapPanel.hidden;mapPanel.hidden=!show;compassPanel.hidden=show;mapToggle.dataset.mode=show?'map':'compass';mapToggle.setAttribute('aria-pressed',String(show));mapToggle.setAttribute('aria-label',show?'Вернуться к компасу':'Открыть карту Киблы');mapToggle.querySelector('span').textContent=show?'Компас':'Карта';
+    if(!alive())return;const show=mapPanel.hidden;mapPanel.hidden=!show;compassPanel.hidden=show;mapToggle.dataset.mode=show?'map':'compass';mapToggle.setAttribute('aria-pressed',String(show));uiAttribute(mapToggle,'aria-label',show?'qiblaUi.backCompass':'qiblaUi.openMap',show?'Вернуться к компасу':'Открыть карту Киблы');setText(mapToggle.querySelector('span'),show?'Компас':'Карта');
     if(show){controller?.stop();mapHandle=mountMap(mapPanel,{city,position:devicePosition,getPosition:()=>location.retry()});}
     else{mapHandle?.destroy();mapHandle=null;void controller?.enable({retry:true});}
   };
@@ -253,5 +256,5 @@ export function mountQibla(container,{city,onChooseCity,haptics=()=>true,environ
   stage.addEventListener('keydown',event=>{if(retryAvailable&&['Enter',' '].includes(event.key)){event.preventDefault();retry();}});
   const visibility=()=>{if(doc.hidden)location.stop();else startLocation();};doc.addEventListener('visibilitychange',visibility);
   setText(locationLabel,fallbackLabel());target(hasCity?city:null);startLocation();
-  return {get controller(){return controller;},destroy(){if(disposed)return;disposed=true;doc.removeEventListener('visibilitychange',visibility);location.destroy();mapHandle?.destroy();controller?.destroy();}};
+  return {get controller(){return controller;},destroy(){if(disposed)return;disposed=true;stopLanguage();doc.removeEventListener('visibilitychange',visibility);location.destroy();mapHandle?.destroy();controller?.destroy();}};
 }

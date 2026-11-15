@@ -18,3 +18,9 @@ await slow.accountChanged();statusHold=true;const oldEnable=slow.enable();while(
 currentSession=null;const signOut=slow.accountChanged();releaseStatus({supported:true,enabled:false});await oldEnable;await signOut;
 assert.equal(latePrompts,0,'late status result cannot prompt or enable after sign-out');assert.equal(lateSaves,0);slow.stop();
 console.log('PASS delayed native status cannot enable or register an old account after logout');
+const signedOut=createNativeSupportClient({plugin,getSession:async()=>null,register:async()=>{throw Error('signed-out registration must not run')}});
+await signedOut.accountChanged();assert.deepEqual(await signedOut.enable(),{ready:false,reason:'sign_in_required',message:'Войдите в аккаунт.'});signedOut.stop();
+let unsupportedPrompts=0,unsupportedSaves=0;
+const unsupported=createNativeSupportClient({plugin:{...plugin,getStatus:async()=>({supported:false,enabled:false}),enable:async()=>unsupportedPrompts++},getSession:async()=>({user:{id:uid,email_confirmed_at:'2026-10-08'},access_token:'test-only'}),register:async()=>unsupportedSaves++});
+await unsupported.accountChanged();assert.deepEqual(await unsupported.enable(),{ready:false,reason:'google_services_unavailable',message:'На этом устройстве недоступна служба уведомлений Google.'});assert.equal(unsupportedPrompts,0);assert.equal(unsupportedSaves,0);unsupported.stop();
+console.log('PASS known native setup reasons preserve canonical feedback without prompting or registration');

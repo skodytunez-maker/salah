@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Тарҷумаи маъноҳои Қуръон",
+  "quranTranslations.choose": "Тарҷумаро интихоб кунед",
+  "quranTranslations.included": "Дар барнома мавҷуд аст",
+  "quranTranslations.download": "Боргирии тарҷума",
+  "quranTranslations.downloading": "Боргирӣ: {done} аз {total}",
+  "quranTranslations.saved": "Бе интернет дастрас аст",
+  "quranTranslations.version": "Нусхаи {version}",
+  "quranTranslations.source": "Манбаъ",
+  "quranTranslations.notes": "Эзоҳҳои тарҷума",
+  "quranTranslations.latin": "Хати лотинӣ",
+  "quranTranslations.cyrillic": "Хати кириллӣ",
+  "quranTranslations.loading": "Тарҷума бор мешавад…",
+  "quranTranslations.unavailable": "Рӯйхати тарҷумаҳо бор нашуд. Интернетро санҷида, боз кӯшиш кунед.",
+  "quranTranslations.failed": "Тарҷумаи санҷидашуда бор нашуд. Интихоби пешина нигоҳ дошта шуд.",
+  "quranTranslations.saveFailed": "Интихоби тарҷума захира нашуд.",
+  "quranTranslations.downloadFailed": "Тамоми тарҷума захира нашуд. Сураҳои боршуда нигоҳ дошта шуданд; боз кӯшиш кунед.",
+  "quranTranslations.separate": "Забони меню ва тарҷумаи Қуръон ҷудогона интихоб мешаванд.",
+  "quranTranslations.searchSource": "Ҷустуҷӯ дар тарҷумаи {author}",
+  "quranTranslations.credit": "Тарҷума: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Матни арабӣ: Tanzil, Uthmani. Хати мусҳаф: QCF; аломатгузории эҳтиётии таҷвид: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Қуръон, {name} ({surah}:{ayah})."
+});

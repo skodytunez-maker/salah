@@ -1,3 +1,4 @@
+import{uiError}from '../dist/js/ui.js';
 import{createAuthLock}from '../dist/js/auth-transport.js';
 import{personalDataAllowed}from '../dist/js/audience.js';
 import assert from 'node:assert/strict';
@@ -20,7 +21,7 @@ for(let i=0;i<3;i++){
   signOut:async()=>({error:null})
  };
  const location={hash:'#account'};routes.push(location);
- const context=createContext({syncLessonNotificationAccount:value=>lessonMarkers.push(value),personalDataAllowed,createAuthLock,location,Date:{now:()=>now},createSessionGuard,createAuthTransport:()=>()=>{},localStorage:{getItem:()=>session?JSON.stringify(session):null},document:{addEventListener(){}},setInterval:()=>0,window:{supabase:{createClient:()=>({auth})},addEventListener:(type,fn)=>{if(type==='storage')storageListeners.push(fn);}},setTimeout:fn=>{queue.push(fn);return queue.length;},fetch:async()=>{gates++;return allow?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});},AbortSignal,Error,URLSearchParams});
+ const context=createContext({uiError,syncLessonNotificationAccount:value=>lessonMarkers.push(value),personalDataAllowed,createAuthLock,location,Date:{now:()=>now},createSessionGuard,createAuthTransport:()=>()=>{},localStorage:{getItem:()=>session?JSON.stringify(session):null},document:{addEventListener(){}},setInterval:()=>0,window:{supabase:{createClient:()=>({auth})},addEventListener:(type,fn)=>{if(type==='storage')storageListeners.push(fn);}},setTimeout:fn=>{queue.push(fn);return queue.length;},fetch:async()=>{gates++;return allow?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});},AbortSignal,Error,URLSearchParams});
  const tab=new Script(executable).runInContext(context);tab.accountAuthClient();tab.initOwnerAccess(()=>{});tabs.push(tab);
 }
 await tabs[0].verifyOwner({verifySession:true});

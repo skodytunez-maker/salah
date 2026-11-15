@@ -1,3 +1,5 @@
+import{t}from './i18n.js';
+import{uiError}from './ui.js';
 import{settings,read,write}from './storage.js';
 
 const minute=60000;
@@ -5,21 +7,21 @@ export const WEATHER_REFRESH_INTERVAL=5*minute;
 const cacheAge=WEATHER_REFRESH_INTERVAL,maxAge=120*minute,clockTolerance=5*minute;
 const pending=new Map();
 const codes={
- 0:['Ясно','clear'],1:['Преимущественно ясно','clear'],2:['Переменная облачность','clouds'],3:['Пасмурно','overcast'],
- 45:['Туман','fog'],48:['Изморозь и туман','fog'],
- 51:['Небольшая морось','rain'],53:['Морось','rain'],55:['Сильная морось','rain'],
- 56:['Замерзающая морось','rain'],57:['Сильная замерзающая морось','rain'],
- 61:['Небольшой дождь','rain'],63:['Дождь','rain'],65:['Сильный дождь','rain'],
- 66:['Ледяной дождь','rain'],67:['Сильный ледяной дождь','rain'],
- 71:['Небольшой снег','snow'],73:['Снег','snow'],75:['Сильный снег','snow'],77:['Снежные зёрна','snow'],
- 80:['Небольшой ливень','rain'],81:['Ливень','rain'],82:['Сильный ливень','rain'],
- 85:['Снежный ливень','snow'],86:['Сильный снежный ливень','snow'],
- 95:['Гроза','storm'],96:['Гроза с градом','storm'],97:['Сильная гроза','storm'],99:['Сильная гроза с градом','storm']
+ 0:['weatherUi.clear','clear'],1:['weatherUi.mainlyClear','clear'],2:['weatherUi.partlyCloudy','clouds'],3:['weatherUi.overcast','overcast'],
+ 45:['weatherUi.fog','fog'],48:['weatherUi.rimeFog','fog'],
+ 51:['weatherUi.lightDrizzle','rain'],53:['weatherUi.drizzle','rain'],55:['weatherUi.heavyDrizzle','rain'],
+ 56:['weatherUi.freezingDrizzle','rain'],57:['weatherUi.heavyFreezingDrizzle','rain'],
+ 61:['weatherUi.lightRain','rain'],63:['weatherUi.rain','rain'],65:['weatherUi.heavyRain','rain'],
+ 66:['weatherUi.freezingRain','rain'],67:['weatherUi.heavyFreezingRain','rain'],
+ 71:['weatherUi.lightSnow','snow'],73:['weatherUi.snow','snow'],75:['weatherUi.heavySnow','snow'],77:['weatherUi.snowGrains','snow'],
+ 80:['weatherUi.lightShowers','rain'],81:['weatherUi.showers','rain'],82:['weatherUi.heavyShowers','rain'],
+ 85:['weatherUi.snowShowers','snow'],86:['weatherUi.heavySnowShowers','snow'],
+ 95:['weatherUi.thunderstorm','storm'],96:['weatherUi.thunderHail','storm'],97:['weatherUi.heavyThunderstorm','storm'],99:['weatherUi.heavyThunderHail','storm']
 };
 const bounded=(value,min,max)=>Number.isFinite(value)&&value>=min&&value<=max;
 const clamp=value=>Math.max(0,Math.min(1,value));
 
-export function weatherName(code){return codes[code]?.[0]||'Нет данных'}
+export function weatherName(code){return t(codes[code]?.[0]||'weatherUi.noData')}
 
 function coordinates(city){
  const latitude=city?.latitude,longitude=city?.longitude;
@@ -68,9 +70,9 @@ async function requestWeather(point,key){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
  try{
   const response=await fetch('https://api.open-meteo.com/v1/forecast?'+query,{signal:controller.signal,cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer'});
-  if(!response.ok)throw Error('Погода временно недоступна');
+  if(!response.ok)throw uiError('weatherUi.providerUnavailable');
   const json=await response.json(),current=json?.current;
-  if(!current||json.utc_offset_seconds!==0)throw Error('Нет данных погоды');
+  if(!current||json.utc_offset_seconds!==0)throw uiError('weatherUi.providerNoData');
   const value={
    temperature_2m:current.temperature_2m,apparent_temperature:current.apparent_temperature,
    weather_code:current.weather_code,cloud_cover:current.cloud_cover,precipitation:current.precipitation,
@@ -78,8 +80,8 @@ async function requestWeather(point,key){
    dataAt:utcTimestamp(current.time),fetchedAt:Date.now(),locationKey:key,source:'Open-Meteo',windUnit:'м/с'
   };
   const units=json.current_units;
-  if(units&&(units.temperature_2m!=='°C'||units.apparent_temperature!=='°C'||units.cloud_cover!=='%'||units.precipitation!=='mm'||units.wind_speed_10m!=='m/s'))throw Error('Нет данных погоды');
-  if(!validWeather(value)||!weatherFrame(value,value.fetchedAt).fresh)throw Error('Нет свежих данных погоды');
+  if(units&&(units.temperature_2m!=='°C'||units.apparent_temperature!=='°C'||units.cloud_cover!=='%'||units.precipitation!=='mm'||units.wind_speed_10m!=='m/s'))throw uiError('weatherUi.providerNoData');
+  if(!validWeather(value)||!weatherFrame(value,value.fetchedAt).fresh)throw uiError('weatherUi.providerNoFresh');
   write(key,value);
   return value;
  }finally{clearTimeout(timer)}

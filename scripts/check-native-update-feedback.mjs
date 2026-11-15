@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
+import{t}from '../dist/js/i18n.js';
 import {checkNativeUpdate,registerAppWorker,checkAppUpdate,updateStatusMessage} from '../dist/js/pwa-updates.js';
 const original=Object.getOwnPropertyDescriptor(globalThis,'navigator');
 let registrations=0;
@@ -26,11 +27,11 @@ const begin=app.indexOf("document.getElementById('check-update').onclick=async()
 const end=app.indexOf("document.getElementById('release-notes')",begin);
 assert.ok(begin>=0&&end>begin);
 const callback=app.slice(begin,end),messages=[];
-const label={textContent:'Обновить'},button={disabled:false,isConnected:true,querySelector:()=>label};
+const labelAttributes=new Map(),label={textContent:'Обновить',setAttribute:(key,value)=>labelAttributes.set(key,String(value))},button={disabled:false,isConnected:true,querySelector:()=>label};
 for(const status of ['current','loading','offline','native-unavailable','native-required','rolled-back']){
- vm.runInNewContext(callback,{document:{getElementById:()=>button},checkAppUpdate:async()=>status,updateStatusMessage,toast:message=>messages.push(message)});
+ vm.runInNewContext(callback,{t,document:{getElementById:()=>button},checkAppUpdate:async()=>status,updateStatusMessage,toast:message=>messages.push(message)});
  const operation=button.onclick();assert.equal(button.disabled,true);await operation;
- assert.equal(button.disabled,false);assert.equal(label.textContent,'Обновить');assert.equal(messages.at(-1),updateStatusMessage(status));
+ assert.equal(button.disabled,false);assert.equal(label.textContent,'Обновить');assert.equal(labelAttributes.get('data-i18n'),'settingsExtra.update');assert.equal(messages.at(-1),updateStatusMessage(status));
 }
 delete globalThis.Capacitor;delete globalThis.document;
 if(original)Object.defineProperty(globalThis,'navigator',original);else delete globalThis.navigator;

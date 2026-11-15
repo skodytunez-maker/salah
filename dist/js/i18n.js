@@ -1,0 +1,10 @@
+import{createTranslator,translateUiElements}from './i18n-core.js';
+import{UI_CATALOGUES}from './i18n-catalogues.js';
+const translator=createTranslator(UI_CATALOGUES);
+export const t=(key,parameters)=>translator.t(key,parameters);
+export const getLanguage=()=>translator.getLanguage();
+export const getLocale=()=>translator.getLocale();
+export const getDirection=()=>translator.getDirection();
+export const setInterfaceLanguage=code=>translator.setLanguage(code);
+export const subscribeLanguage=listener=>translator.subscribe(listener);
+export const translateUi=root=>translateUiElements(root,translator);

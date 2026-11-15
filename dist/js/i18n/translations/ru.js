@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Перевод смыслов Корана",
+  "quranTranslations.choose": "Выбрать перевод",
+  "quranTranslations.included": "В приложении",
+  "quranTranslations.download": "Скачать перевод",
+  "quranTranslations.downloading": "Скачиваем: {done} из {total}",
+  "quranTranslations.saved": "Доступен без интернета",
+  "quranTranslations.version": "Версия {version}",
+  "quranTranslations.source": "Источник",
+  "quranTranslations.notes": "Примечания к переводу",
+  "quranTranslations.latin": "Латиница",
+  "quranTranslations.cyrillic": "Кириллица",
+  "quranTranslations.loading": "Загружаем перевод…",
+  "quranTranslations.unavailable": "Не удалось загрузить список переводов. Проверьте интернет и повторите.",
+  "quranTranslations.failed": "Не удалось загрузить проверенный перевод. Сохранён прежний выбор.",
+  "quranTranslations.saveFailed": "Не удалось сохранить выбор перевода.",
+  "quranTranslations.downloadFailed": "Не удалось сохранить весь перевод. Загруженные суры сохранены; можно повторить.",
+  "quranTranslations.separate": "Язык меню и перевод Корана выбираются отдельно.",
+  "quranTranslations.searchSource": "Поиск по переводу: {author}",
+  "quranTranslations.credit": "Перевод: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Арабский текст: Tanzil, Uthmani. Начертание мусхафа: QCF; запасная разметка таджвида: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Коран, {name} ({surah}:{ayah})."
+});

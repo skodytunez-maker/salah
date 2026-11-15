@@ -1,11 +1,13 @@
+import{ownerMessage,ownerLeaf,ownerText,ownerMarkup,ownerError,ownerHeading,ownerDate,ownerDateLeaf,ownerPaint,watchOwnerUi,stopOwnerUi,uiMessage,uiLeaf,uiSet,uiRaw,uiAttrs,uiAttribute,uiAttributeAttrs,t,getLocale}from './owner-i18n.js';
 import{supportNotice,clearSupportNotice}from './support-notice.js';
 export function createOwnerSupportStatus({getOwnerId,getRpc,root=globalThis.document,windowRef=globalThis.window,documentRef=globalThis.document}){
+ const stopLanguage=watchOwnerUi(root);
  let snapshot=null,controller=null,revision=0,lastCheck=0,again=false;
  function paint(){
   const id=getOwnerId();
   for(const dot of root.querySelectorAll('[data-owner-support-status]')){
    const known=Boolean(id&&snapshot?.owner===id);dot.hidden=!known;
-   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');dot.setAttribute('aria-label',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены');dot.setAttribute('title',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены')}
+   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');uiAttribute(dot,'aria-label',waiting?'ownerUi.unreadMessages':'ownerUi.allMessagesRead',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены');uiAttribute(dot,'title',waiting?'ownerUi.unreadMessages':'ownerUi.allMessagesRead',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены')}
   }
  }
  async function refresh({force=false}={}){
@@ -28,6 +30,6 @@ export function createOwnerSupportStatus({getOwnerId,getRpc,root=globalThis.docu
  windowRef?.addEventListener?.('salah:support-status-refresh',changed);
  documentRef?.addEventListener?.('visibilitychange',visible);
  const timer=setInterval(()=>void refresh(),30000);
- return{refresh,stop(){revision++;again=false;controller?.abort();controller=null;clearInterval(timer);windowRef?.removeEventListener?.('salah:support-status-refresh',changed);documentRef?.removeEventListener?.('visibilitychange',visible);snapshot=null;paint()}};
+ return{refresh,stop(){stopLanguage();revision++;again=false;controller?.abort();controller=null;clearInterval(timer);windowRef?.removeEventListener?.('salah:support-status-refresh',changed);documentRef?.removeEventListener?.('visibilitychange',visible);snapshot=null;paint()}};
 }
 

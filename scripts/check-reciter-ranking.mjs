@@ -1,3 +1,4 @@
+import{rankingUiContext}from './lib/ranking-language-fixture.mjs';
 import{reciterImageUrl}from '../dist/js/approved-catalog.js';
 import{publicListenerRows}from '../supabase/functions/reciter-popularity/listener-labels.mjs';
 
@@ -13,7 +14,7 @@ assert.deepEqual(Object.keys(anonymous).sort(),['id','initial','mode']);assert.o
 assert.equal(safeListener({id:'bad',mode:'profile'}),null);assert.equal(safeListener({id:'11111111-1111-4111-8111-111111111111',mode:'hidden'}),null);
 const source=await fs.readFile(new URL('../dist/js/reciter-ranking-view.js',import.meta.url),'utf8');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const context=vm.createContext({reciterImageUrl,RECITERS,reciterInfo,rankListening,rankTime,listenerRing,assignListenerRings,medalForRank,read:()=>({}),write:()=>true,esc,rankingListeners:()=>[anonymous],publicListenerPhoto:()=>{throw Error('Anonymous photo must never be requested');},modal(){},closeModal(){}});
+const context=vm.createContext(rankingUiContext({reciterImageUrl,RECITERS,reciterInfo,rankListening,rankTime,listenerRing,assignListenerRings,medalForRank,read:()=>({}),write:()=>true,esc,rankingListeners:()=>[anonymous],publicListenerPhoto:()=>{throw Error('Anonymous photo must never be requested');},modal(){},closeModal(){}}));
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({rankingMarkup});',context);
 const ids=RECITERS.filter(r=>!r.variantOf).slice(0,8).map(r=>r.id);const markup=api.rankingMarkup(ids,{seconds:id=>900-ids.indexOf(id)*60,global:true});
 assert.equal((markup.match(/rank-podium-card/g)||[]).length,3);assert.equal((markup.match(/rank-list-row/g)||[]).length,2);assert.match(markup,/Весь рейтинг/);assert.ok(!markup.includes('Must stay private'));assert.ok(!markup.includes('?avatar='));
@@ -25,7 +26,7 @@ console.log('PASS: tied places, exact time, five-place podium, full ranking sear
 
 const collision=publicListenerRows([{reciter:'a',id:'one',mode:'initial',initial:'S',prefix:'SA',nickname:'Private first',has_photo:true},{reciter:'b',id:'two',mode:'initial',initial:'S',prefix:'SI',nickname:'Private second',has_photo:true}]);assert.deepEqual(collision.map(p=>p.initial),['SA','SI']);assert.ok(!JSON.stringify(collision).includes('Private'));assert.ok(!JSON.stringify(collision).includes('hasPhoto'));const samePerson=publicListenerRows([{reciter:'a',id:'one',mode:'initial',initial:'S',prefix:'SA'},{reciter:'b',id:'one',mode:'initial',initial:'S',prefix:'SA'}]);assert.deepEqual(samePerson.map(p=>p.initial),['S','S']);assert.equal(safeListener({id:'11111111-1111-4111-8111-111111111111',mode:'initial',initial:'SH'}).initial,'SH');console.log('PASS: distinct listener collisions use two letters; one account across readers does not create a false collision.');
 
-assert.equal((client.match(/role="switch"/g)||[]).length,1);assert.ok(!client.includes('listener-show-profile'));assert.match(client,/join.onclick=.*save\('initial'\)/);console.log('PASS: one anonymity switch, hidden identity remains hidden until explicit enrollment.');
+assert.equal((client.match(/role=\\?"switch\\?"/g)||[]).length,1);assert.ok(!client.includes('listener-show-profile'));assert.match(client,/join.onclick=.*save\('initial'\)/);console.log('PASS: one anonymity switch, hidden identity remains hidden until explicit enrollment.');
 
 assert.equal(rankTime(1982),'33 мин 2 с');assert.match(edge,/on conflict\(user_id\) do nothing/);assert.match(edge,/sum\(minutes::bigint\*60\+extra_seconds\)/);console.log('PASS: exact correction seconds and existing identity preference preservation.');
 

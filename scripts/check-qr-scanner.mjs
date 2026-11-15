@@ -25,8 +25,9 @@ class Element{
  constructor(tag){this.tag=tag;this.children=[];this.dataset={};this.hidden=false;this.readyState=2;this.videoWidth=20;this.videoHeight=20;}
  append(el){el.parent=this;this.children.push(el);}
  remove(){if(this.parent)this.parent.children=this.parent.children.filter(x=>x!==this);}
- set innerHTML(v){this.nodes={video:new Element('video'),'[role=status]':new Element('p'),button:new Element('button')};}
+ set innerHTML(v){this.nodes={h2:new Element('h2'),video:new Element('video'),'[role=status]':new Element('p'),button:new Element('button')};}
  querySelector(s){return this.nodes[s];}
+ setAttribute(name,value){(this.attributes??={})[name]=String(value);}
  async play(){}
  requestVideoFrameCallback(fn){this.frameReady=fn;return 1;}
  cancelVideoFrameCallback(){this.frameReady=null;}

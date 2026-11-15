@@ -2,6 +2,8 @@ import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,ownerVerified}from '
 import{supportNotice}from './support-notice.js';
 import{createNativeSupportClient}from './native-support-core.js';
 import{settings}from './storage.js';
+import{uiMessage}from './ui.js';
+const setupFeedback=Object.freeze({sign_in_required:'staffUi.errorSignIn',google_services_unavailable:'staffUi.pushGoogleUnavailable'});
 const nativeNotificationZone=()=>{const value=settings.city?.timezone||Intl.DateTimeFormat().resolvedOptions().timeZone;try{new Intl.DateTimeFormat('en',{timeZone:value}).format(0);return value;}catch{return 'UTC';}};
 let client=null;
 export function initNativeSupportNotifications(){
@@ -22,6 +24,6 @@ export function initNativeSupportNotifications(){
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh();});window.addEventListener('online',refresh);window.addEventListener('salah:settings-changed',()=>void client.sync().catch(()=>{}));refresh();return client;
 }
 export async function enableNativeSupportNotifications(){
- const value=initNativeSupportNotifications();if(!value)return {ready:false,message:'Для фоновых уведомлений об ответах обновите приложение.'};
- try{await value.accountChanged();return await value.enable();}catch(error){return {ready:false,message:error?.message?.includes('notifications_denied')?'Разрешите уведомления SALAH в настройках телефона.':'Не удалось подключить уведомления. Проверьте интернет и повторите попытку.'};}
+ const value=initNativeSupportNotifications();if(!value)return {ready:false,message:'Для фоновых уведомлений об ответах обновите приложение.',uiMessage:uiMessage('nativeSupportUi.updateApp')};
+ try{await value.accountChanged();const result=await value.enable();return result?.ready||!Object.hasOwn(setupFeedback,result?.reason)?result:{...result,uiMessage:uiMessage(setupFeedback[result.reason])};}catch(error){return {ready:false,message:error?.message?.includes('notifications_denied')?'Разрешите уведомления SALAH в настройках телефона.':'Не удалось подключить уведомления. Проверьте интернет и повторите попытку.',uiMessage:uiMessage(error?.code==='notifications_denied'||error?.message==='notifications_denied'?'staffUi.pushPermission':'nativeSupportUi.connectRetryInternet')};}
 }

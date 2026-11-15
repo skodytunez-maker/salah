@@ -17,5 +17,5 @@ for(const offset of [-1,1])assert.equal(upcomingIslamicDates('2026-10-04',offset
 assert.deepEqual(upcomingIslamicDates('2026-02-30'),[]);
 assert.equal(remainingDaysLabel(0),'Сегодня');assert.equal(remainingDaysLabel(1),'Завтра');assert.equal(remainingDaysLabel(21),'Через 21 день');
 const source=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
-assert.ok(source.includes("event.uncertaintyDays?' · ±'"));assert.ok(source.includes('remainingDaysLabel(event.daysLeft,event.uncertaintyDays)'));
+assert.ok(source.includes("event.uncertaintyDays?uiLeaf('calendarUi.uncertaintyDays',{count:event.uncertaintyDays})"));assert.ok(source.includes('remainingDaysMessage(event.daysLeft,event.uncertaintyDays)'));
 console.log('PASS: Ramadan ±1 day, approximate countdown, near-date window, saved Hijri offset and unchanged other occasions.');

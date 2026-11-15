@@ -1,0 +1,8 @@
+export default Object.freeze({
+  "releaseUi.languagesTitle": "SALAH өз тіліңізде",
+  "releaseUi.languagesText": "Мәзір, плеер, күнтізбе және кабинеттер сегіз тілде қолжетімді. Арабша интерфейс оңнан солға қарай көрсетіледі.",
+  "releaseUi.languagesWhere": "Мәзір → Баптаулар → Қолданба тілі.",
+  "releaseUi.translationsTitle": "Дереккөздері көрсетілген мағына аудармалары",
+  "releaseUi.translationsText": "Аударманы қолданба тілінен бөлек таңдаңыз. Әрқайсысының авторы, нұсқасы және дереккөзі бар; жүктелген сүрелер интернетсіз қолжетімді.",
+  "releaseUi.translationsWhere": "Құран → сүрені ашыңыз → Аударма."
+});

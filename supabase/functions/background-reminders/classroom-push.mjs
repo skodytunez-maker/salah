@@ -3,7 +3,7 @@ export function classroomPushEvent(row,now){
  const at=Number(row?.at),startsAt=Number(row?.starts_at);
  if(!/^[0-9a-f-]{36}$/i.test(row?.user_id||'')||!CLASSROOM_ID.test(row?.lesson_id||'')||!Number.isFinite(at)||!Number.isFinite(startsAt)||at>now||now-at>=300000||startsAt<=now||typeof row.title!=='string'||row.title.length>100||!Number.isInteger(row.revision))return null;
  let time;try{time=new Intl.DateTimeFormat('ru-RU',{timeZone:row.time_zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(startsAt);}catch{return null;}
- return{kind:'classroom',user:row.user_id,hash:'classroom-'+Array.from(row.lesson_id,c=>c.charCodeAt(0).toString(16)).join('')+'-'+at.toString(16),at,startsAt,lessonId:row.lesson_id,revision:row.revision,message:'Сегодня в '+time+' занятие: '+row.title};
+ return{kind:'classroom',user:row.user_id,hash:'classroom-'+Array.from(row.lesson_id,c=>c.charCodeAt(0).toString(16)).join('')+'-'+at.toString(16),at,startsAt,lessonId:row.lesson_id,revision:row.revision,lessonTime:time,lessonTitle:row.title,message:'Сегодня в '+time+' занятие: '+row.title};
 }
 export async function dispatchClassroomPush({db,send,clock}){
  if(!db.classroomEvents||!db.classroomActive)return 0;

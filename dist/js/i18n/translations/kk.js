@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Құран мағыналарының аудармасы",
+  "quranTranslations.choose": "Аударманы таңдаңыз",
+  "quranTranslations.included": "Қолданбада бар",
+  "quranTranslations.download": "Аударманы жүктеу",
+  "quranTranslations.downloading": "Жүктелуде: {done}/{total}",
+  "quranTranslations.saved": "Интернетсіз қолжетімді",
+  "quranTranslations.version": "{version} нұсқасы",
+  "quranTranslations.source": "Дереккөз",
+  "quranTranslations.notes": "Аудармаға ескертпелер",
+  "quranTranslations.latin": "Латын жазуы",
+  "quranTranslations.cyrillic": "Кирилл жазуы",
+  "quranTranslations.loading": "Аударма жүктелуде…",
+  "quranTranslations.unavailable": "Аудармалар тізімі жүктелмеді. Интернетті тексеріп, қайталап көріңіз.",
+  "quranTranslations.failed": "Тексерілген аударма жүктелмеді. Алдыңғы таңдау сақталды.",
+  "quranTranslations.saveFailed": "Аударма таңдауын сақтау мүмкін болмады.",
+  "quranTranslations.downloadFailed": "Аударма толық сақталмады. Жүктелген сүрелер сақталды; қайталап көруге болады.",
+  "quranTranslations.separate": "Мәзір тілі мен Құран аудармасы бөлек таңдалады.",
+  "quranTranslations.searchSource": "{author} аудармасы бойынша іздеу",
+  "quranTranslations.credit": "Аударма: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Арабша мәтін: Tanzil, Uthmani. Мұсхаф қарпі: QCF; қосымша тәжуид белгілері: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Құран, {name} ({surah}:{ayah})."
+});

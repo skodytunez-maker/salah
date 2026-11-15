@@ -45,7 +45,7 @@ assert.ok(!weatherSource.includes("landmarkState!=='ready'?'mosque'"),'Landmark 
 assert.match(weatherSource,/keep the currently decoded city visible/i,'City switch keeps the previous decoded landmark until the next one is ready');
 assert.match(weatherSource,/Swap only after both photographs are decoded/i,'Landmark swap must happen only after decode');
 const picker=await readFile(new URL('../dist/js/landmark-settings.js',import.meta.url),'utf8');
-assert.ok(picker.includes("new Intl.Collator('ru'"),'Wallpaper labels use Russian alphabetical order');
+assert.ok(picker.includes('new Intl.Collator(getLocale()'),'Wallpaper labels use the current interface language for alphabetical order');
 assert.ok(picker.includes('wallpapers.filter'),'Built-in wallpapers share the city picker');
 assert.ok(picker.includes('landmarkCity:city'),'City choices retain a separate saved city selection');
 assert.ok(picker.includes("'#wallpaper-select'"),'All wallpapers use the compact selector');

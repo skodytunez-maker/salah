@@ -277,6 +277,22 @@
       ],
       "findings": "Runtime public resource API; no full edition redistributed in the app repository. Source text is displayed unchanged as text, without generated paraphrase or translation. QUL describes developer use but resource-specific publisher/translator rights evidence is not supplied by this integration. Do not infer that the mirror code license covers the Russian translations.",
       "nextAction": "Retain resource/source/version attribution and cache contents without rewriting; obtain any resource-specific publisher/translator permission required for redistribution."
+    },
+    {
+      "id": "quranenc-meaning-translations",
+      "selectors": [
+        "dist/data/quran-translation-manifest.json",
+        "dist/js/quran-translations.js",
+        "scripts/fixtures/quran-translations/azeri_musayev-1.json"
+      ],
+      "status": "provider-terms-and-fields-recorded",
+      "evidence": [
+        "docs/quran-translation-sources-501.json",
+        "https://quranenc.com/en/home",
+        "https://quranenc.com/en/home/api"
+      ],
+      "findings": "Seven named publisher editions use unchanged original-script API text and footnotes, with translator/publisher/version/source credits. All 798 surah responses and the displayed metadata are pinned in the source manifest; the full meaning corpus is fetched lazily rather than packaged. The included test fixture is an unmodified source API response. QuranEnc permits redistribution subject to its published conditions; this is a provider-terms record, not ownership clearance.",
+      "nextAction": "Keep the original text and notes, author/publisher/source/version attribution and the published usage conditions. Check publisher updates before refreshing a pinned edition; do not replace it with a similarly named text or assume another provider's translation license applies."
     }
   ],
   "originalLearningDocuments": [

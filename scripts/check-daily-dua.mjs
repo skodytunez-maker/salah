@@ -1,6 +1,9 @@
 import{duaThemeGrid}from '../dist/js/daily-dua-themes.js';
 import{duaRecording}from '../dist/js/daily-dua-recordings.js';
 import{duaAudioMarkup,mountDuaPronunciation}from '../dist/js/dua-pronunciation.js';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{uiMessage,uiLeaf,uiSet,uiRaw,uiParts,uiAttribute,uiAttributeAttrs,uiHtml,watchPracticeUi}from '../dist/js/practice-i18n.js';
+import{duaCategoryKey,duaCategoryLabel,duaCategoryLeaf}from '../dist/js/daily-dua-ui.js';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Script,createContext} from 'node:vm';
@@ -44,11 +47,12 @@ const executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:
 const adhkarSource=await readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 const adhkarHistorySource=adhkarSource.slice(adhkarSource.indexOf("const adhkarParentKey="),adhkarSource.indexOf('function rememberView('));
 function browser(hash='#adhkar?view=duas',storage=new Storage(),fetchImpl=async()=>({ok:true,json:async()=>structuredClone(catalogue)}),{trail=[],adhkarHistory=false}={}){
- const host=new Element(),body=new Element('body'),notices=[],events=new Map(),entries=[...trail.map(hash=>({hash,state:null})),{hash,state:null}];let at=entries.length-1,module;
+ const dom=new Window({url:'https://salah.invalid/'}),document=dom.document,host=document.createElement('main'),body=document.body,notices=[],events=new Map(),entries=[...trail.map(hash=>({hash,state:null})),{hash,state:null}];body.append(host);let at=entries.length-1,module;
+ const markup=Object.getOwnPropertyDescriptor(dom.Element.prototype,'innerHTML');host.writes=0;Object.defineProperty(host,'innerHTML',{get(){return markup.get.call(this)},set(value){this.writes++;markup.set.call(this,value)}});
  const location={get hash(){return entries[at].hash},set hash(hash){entries[at].hash=hash}};
  const win={addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn)},removeEventListener(type,fn){events.set(type,(events.get(type)||[]).filter(f=>f!==fn))},dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event)},scrollTo(){}};
  win.history={get state(){return entries[at].state},replaceState(state,_title,url){entries[at]={hash:url??location.hash,state}},pushState(state,_title,url){entries.splice(at+1);entries.push({hash:url,state});at++},back(){if(at){at--;win.dispatchEvent(new Event('popstate'));win.dispatchEvent(new Event('hashchange'))}},forward(){if(at<entries.length-1){at++;win.dispatchEvent(new Event('popstate'));win.dispatchEvent(new Event('hashchange'))}}};
- const context=createContext({duaThemeGrid,duaRecording,duaAudioMarkup,mountDuaPronunciation,document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Event,window:win,
+ const context=createContext({duaThemeGrid,duaRecording,duaAudioMarkup,mountDuaPronunciation,uiMessage,uiLeaf,uiSet,uiRaw,uiParts,uiAttribute,uiAttributeAttrs,uiHtml:html=>uiHtml(html,document),watchPracticeUi,duaCategoryKey,duaCategoryLabel,duaCategoryLeaf,document,location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Event,window:win,
   read:(key,fallback)=>{try{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)}catch{return fallback}},
   write:(key,value)=>{storage.setItem('salah:'+key,JSON.stringify(value));return true},
   esc:value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),toast:value=>notices.push(value),
@@ -90,8 +94,8 @@ assert.equal(page.select('[data-dua-passage="arabic"]').textContent,qunut.varian
 assert.equal(page.select('[data-dua-passage="transliteration"]').textContent,qunut.variants[1].transliteration);
 assert.equal(page.select('.dua-meaning p').textContent,qunut.variants[1].translation);
 assert.equal(page.host?.querySelector?.('.dua-source a')??null,null);
-assert.equal(page.select('[data-dua-variant="hanafi"]').attributes['aria-pressed'],'true');
-assert.equal(page.select('[data-dua-variant="hasan"]').attributes['aria-pressed'],'false');
+assert.equal(page.select('[data-dua-variant="hanafi"]').getAttribute('aria-pressed'),'true');
+assert.equal(page.select('[data-dua-variant="hasan"]').getAttribute('aria-pressed'),'false');
 assert.match(page.location.hash,/variant=hanafi/);
 const arabic=page.select('[data-dua-text="arabic"]');arabic.checked=true;arabic.onchange({target:arabic});
 await page.select('[data-dua-variant="hasan"]').click();assert.equal(page.select('[data-dua-passage="arabic"]').hidden,false,'Text display preferences survive switching');

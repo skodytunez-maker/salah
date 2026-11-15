@@ -1,3 +1,5 @@
+import{uiLeaf,uiAttribute,bindUiLanguage,setUiMessage,uiMessage,uiError,setUiAttribute}from './ui.js';
+import{t,translateUi,getLocale,subscribeLanguage}from './i18n.js';
 import{personalDataAllowed}from './audience.js';
 import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 const KEY='salah:diagnostics-v1';
@@ -45,5 +47,5 @@ export function createErrorReporter({version,win=globalThis.window,doc=globalThi
  return{enabled:()=>enabled,setEnabled(value){try{storage.setItem(KEY,value?'true':'false');enabled=!!value;}catch{enabled=false;return false;}if(!enabled){pending.clear();slowWindow=[];networkWindow=[];clearTimer(timer);timer=null;}return true;},flush,dispose(){disposed=true;pending.clear();clearTimer(timer);observer?.disconnect();win?.removeEventListener?.('error',error,true);win?.removeEventListener?.('unhandledrejection',rejection);doc?.removeEventListener?.('visibilitychange',resume);win?.removeEventListener?.('online',resume);}};
 }
 export function mountDiagnosticSetting(container,reporter){
- const panel=document.createElement('details');panel.className='settings-extra diagnostic-setting';panel.innerHTML='<summary>Отчёты о сбоях</summary><div class="diagnostic-setting-body"><label class="switch-row"><span>Сообщать о сбоях</span><input type="checkbox" aria-label="Сообщать о сбоях"></label><p class="muted">При включении SALAH автоматически сообщает о возникающих сбоях. Это не проверка по кнопке. Без текста ошибок и личных данных.</p><p role="status"></p></div>';container.append(panel);const input=panel.querySelector('input');input.checked=reporter.enabled();input.onchange=()=>{if(!reporter.setEnabled(input.checked)){input.checked=false;panel.querySelector('[role=status]').textContent='Не удалось сохранить настройку.';}};
+ const panel=document.createElement('details');panel.className='settings-extra diagnostic-setting';panel.innerHTML=("<summary>"+uiLeaf("extraUi.diagnosticTitle")+"</summary><div class=\"diagnostic-setting-body\"><label class=\"switch-row\"><span>"+uiLeaf("extraUi.diagnosticLabel")+"</span><input type=\"checkbox\" "+uiAttribute("extraUi.diagnosticLabel",{},"aria-label")+"></label><p class=\"muted\">"+uiLeaf("extraUi.diagnosticDescription")+"</p><p role=\"status\"></p></div>");container.append(panel);bindUiLanguage(panel);const input=panel.querySelector('input');input.checked=reporter.enabled();input.onchange=()=>{if(!reporter.setEnabled(input.checked)){input.checked=false;setUiMessage(panel.querySelector('[role=status]'),uiMessage('extraUi.settingSaveFailed'));}};
 }

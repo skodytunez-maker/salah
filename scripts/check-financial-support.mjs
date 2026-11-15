@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
+import*as languageUi from '../dist/js/ui.js';
+import*as language from '../dist/js/i18n.js';
 import {validateCustomSupportAmount,monthlySupportMarkup} from '../dist/js/financial-support.js';
 
 const require=createRequire(new URL('../tests/staff/package.json',import.meta.url));
@@ -9,7 +11,7 @@ const {Window}=require('happy-dom');
 const window=new Window({url:'https://fixture.invalid/#support-salah'}),host=window.document.createElement('main');window.document.body.append(host);
 const source=await fs.readFile(new URL('../dist/js/financial-support.js',import.meta.url),'utf8');
 const esc=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
-const context=vm.createContext({Intl,Number,String,Object,title:name=>'<h1>'+name+'</h1>',esc,mountSupportSubscription:()=>{}});
+const context=vm.createContext({...languageUi,...language,Intl,Number,String,Object,title:name=>'<h1>'+name+'</h1>',esc,mountSupportSubscription:()=>{}});
 const module=vm.runInContext(source.replace(/^import.*$/gm,'').replaceAll('export ','')+';({mountFinancialSupport,monthlySupportMarkup})',context);
 module.mountFinancialSupport(host);
 const radios=[...host.querySelectorAll('input[type=radio]')],custom=host.querySelector('#monthly-support-custom-amount'),total=host.querySelector('output');

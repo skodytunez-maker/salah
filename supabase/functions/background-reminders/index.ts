@@ -2,6 +2,40 @@
 import postgres from 'npm:postgres@3.4.9';
 import webpush from 'npm:web-push@3.6.7';
 
+// Delivery text only. Language never participates in reminder IDs or instants.
+// Reviewed Quran/hadith excerpts stay in their source edition; UI labels are not
+// used to manufacture a translation of religious content.
+const NOTIFICATION_LANGUAGES=Object.freeze(['ru','en','az','tg','uz','kk','de','ar']);
+const NOTIFICATION_COPY=Object.freeze({
+ ru:{prayers:{Fajr:'Фаджр',Dhuhr:'Зухр',Asr:'Аср',Maghrib:'Магриб',Isha:'Иша'},genitive:{Fajr:'Фаджра',Dhuhr:'Зухра',Asr:'Асра',Maghrib:'Магриба',Isha:'Иша'},before:'До {prayer} осталось {minutes} минут',at:'Наступило время {prayer}',morning:'Время утренних азкаров',evening:'Время вечерних азкаров',tahajjud:'Тахаджуд: началась последняя треть ночи',jumuah:'Сегодня Джума',test:'Фоновые уведомления SALAH подключены.',staff:'Новое сообщение команды',support:'Новый ответ в обращении',classroom:'Сегодня в {time} занятие: {title}'},
+ en:{prayers:{Fajr:'Fajr',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Isha'},before:'{prayer} begins in {minutes} minutes',at:'It is time for {prayer}',morning:'Time for morning adhkar',evening:'Time for evening adhkar',tahajjud:'Tahajjud: the last third of the night has begun',jumuah:'Today is Jumuah',test:'Test: SALAH background notifications are connected.',staff:'New team message',support:'New reply to your support request',classroom:'Your lesson today at {time}: {title}'},
+ az:{prayers:{Fajr:'Sübh',Dhuhr:'Zöhr',Asr:'Əsr',Maghrib:'Məğrib',Isha:'İşa'},before:'{prayer} namazına {minutes} dəqiqə qalıb',at:'{prayer} namazının vaxtıdır',morning:'Səhər zikrlərinin vaxtıdır',evening:'Axşam zikrlərinin vaxtıdır',tahajjud:'Təhəccüd: gecənin son üçdə biri başlayıb',jumuah:'Bu gün cümədir',test:'Yoxlama: SALAH fon bildirişləri qoşulub.',staff:'Komandadan yeni mesaj',support:'Müraciətinizə yeni cavab',classroom:'Bu gün saat {time} dərs: {title}'},
+ tg:{prayers:{Fajr:'Бомдод',Dhuhr:'Пешин',Asr:'Аср',Maghrib:'Шом',Isha:'Хуфтан'},before:'То намози {prayer} {minutes} дақиқа мондааст',at:'Вақти намози {prayer} расид',morning:'Вақти азкори субҳ',evening:'Вақти азкори шом',tahajjud:'Таҳажҷуд: сеяки охири шаб оғоз шуд',jumuah:'Имрӯз ҷумъа аст',test:'Санҷиш: огоҳиномаҳои заминавии SALAH пайваст шудаанд.',staff:'Паёми нави даста',support:'Ҷавоби нав ба муроҷиати шумо',classroom:'Дарси имрӯза соати {time}: {title}'},
+ uz:{prayers:{Fajr:'Bomdod',Dhuhr:'Peshin',Asr:'Asr',Maghrib:'Shom',Isha:'Xufton'},before:'{prayer} namoziga {minutes} daqiqa qoldi',at:'{prayer} namozi vaqti kirdi',morning:'Tonggi zikrlar vaqti',evening:'Kechki zikrlar vaqti',tahajjud:'Tahajjud: tunning oxirgi uchdan bir qismi boshlandi',jumuah:'Bugun juma',test:'Sinov: SALAH fon bildirishnomalari ulangan.',staff:'Jamoadan yangi xabar',support:'Murojaatingizga yangi javob',classroom:'Bugun soat {time} dagi dars: {title}'},
+ kk:{prayers:{Fajr:'Таң',Dhuhr:'Бесін',Asr:'Екінті',Maghrib:'Ақшам',Isha:'Құптан'},before:'{prayer} намазына {minutes} минут қалды',at:'{prayer} намазының уақыты кірді',morning:'Таңғы зікірлердің уақыты',evening:'Кешкі зікірлердің уақыты',tahajjud:'Тәһәжжүд: түннің соңғы үштен бірі басталды',jumuah:'Бүгін жұма',test:'Тексеру: SALAH фондық хабарландырулары қосылды.',staff:'Топтан жаңа хабарлама',support:'Өтінішіңізге жаңа жауап',classroom:'Бүгін сағат {time} сабақ: {title}'},
+ de:{prayers:{Fajr:'Fadschr',Dhuhr:'Dhuhr',Asr:'Asr',Maghrib:'Maghrib',Isha:'Ischa'},before:'{prayer} beginnt in {minutes} Minuten',at:'Es ist Zeit für {prayer}',morning:'Zeit für die morgendlichen Adhkar',evening:'Zeit für die abendlichen Adhkar',tahajjud:'Tahadschud: Das letzte Drittel der Nacht hat begonnen',jumuah:'Heute ist Dschumua',test:'Test: SALAH-Hintergrundbenachrichtigungen sind verbunden.',staff:'Neue Teamnachricht',support:'Neue Antwort auf Ihre Supportanfrage',classroom:'Ihr Unterricht heute um {time}: {title}'},
+ ar:{prayers:{Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'},before:'بقي {minutes} دقيقة على صلاة {prayer}',at:'حان وقت صلاة {prayer}',morning:'حان وقت أذكار الصباح',evening:'حان وقت أذكار المساء',tahajjud:'التهجد: بدأ الثلث الأخير من الليل',jumuah:'اليوم يوم الجمعة',test:'اختبار: تم تفعيل إشعارات SALAH في الخلفية.',staff:'رسالة جديدة من الفريق',support:'رد جديد على طلب الدعم',classroom:'درسك اليوم الساعة {time}: {title}'}
+});
+function notificationLanguage(value){return NOTIFICATION_LANGUAGES.includes(value)?value:'ru';}
+function reminderNotificationText(event,language='ru'){
+ const code=notificationLanguage(language),copy=NOTIFICATION_COPY[code];
+ if(!event||typeof event!=='object')return '';
+ if(code==='ru'&&typeof event.message==='string'&&event.message)return event.message;
+ let template,parameters={};
+ if(event.kind==='prayer'&&Object.hasOwn(copy.prayers,event.key)){
+  parameters.prayer=(copy.genitive||copy.prayers)[event.key];
+  if(event.phase==='at')template=copy.at;
+  else if(/^before:(5|10|15|30)$/.test(event.phase||'')){template=copy.before;parameters.minutes=Number(event.phase.slice(7));}
+ }else if(event.kind==='adhkar'&&['morning','evening'].includes(event.key))template=copy[event.key];
+ else if(['tahajjud','jumuah','test','staff','support'].includes(event.kind))template=copy[event.kind];
+ else if(event.kind==='classroom'&&typeof event.lessonTitle==='string'&&typeof event.lessonTime==='string'){
+  template=copy.classroom;parameters={time:event.lessonTime,title:event.lessonTitle};
+ }
+ if(!template)return typeof event.message==='string'?event.message:'';
+ // These strings are plain text. DOM callers use textContent or escape them.
+ return template.replace(/\{(prayer|minutes|time|title)\}/g,(_,key)=>String(parameters[key]));
+}
+
 // Shared by the web timetable and the background reminder service.
 const TYUMEN_SOURCES=['auto','calendar','al-hakk'];
 function normalizeTyumenSource(value){return TYUMEN_SOURCES.includes(value)?value:'auto'}
@@ -310,7 +344,7 @@ function classroomPushEvent(row,now){
  const at=Number(row?.at),startsAt=Number(row?.starts_at);
  if(!/^[0-9a-f-]{36}$/i.test(row?.user_id||'')||!CLASSROOM_ID.test(row?.lesson_id||'')||!Number.isFinite(at)||!Number.isFinite(startsAt)||at>now||now-at>=300000||startsAt<=now||typeof row.title!=='string'||row.title.length>100||!Number.isInteger(row.revision))return null;
  let time;try{time=new Intl.DateTimeFormat('ru-RU',{timeZone:row.time_zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(startsAt);}catch{return null;}
- return{kind:'classroom',user:row.user_id,hash:'classroom-'+Array.from(row.lesson_id,c=>c.charCodeAt(0).toString(16)).join('')+'-'+at.toString(16),at,startsAt,lessonId:row.lesson_id,revision:row.revision,message:'Сегодня в '+time+' занятие: '+row.title};
+ return{kind:'classroom',user:row.user_id,hash:'classroom-'+Array.from(row.lesson_id,c=>c.charCodeAt(0).toString(16)).join('')+'-'+at.toString(16),at,startsAt,lessonId:row.lesson_id,revision:row.revision,lessonTime:time,lessonTitle:row.title,message:'Сегодня в '+time+' занятие: '+row.title};
 }
 async function dispatchClassroomPush({db,send,clock}){
  if(!db.classroomEvents||!db.classroomActive)return 0;
@@ -467,6 +501,7 @@ function preferences(value){
  try{new Intl.DateTimeFormat('en',{timeZone:c.timezone}).format(0);}catch{fail(400,'Недопустимый часовой пояс');}
  if(![1,2,3,4,5,13].includes(value.method)||![0,1].includes(value.school)||![1,2,3].includes(value.highLatitude))fail(400,'Недопустимый расчёт');
  if(value.tyumenTimeSource!==undefined&&!TYUMEN_SOURCES.includes(value.tyumenTimeSource))fail(400,'Недопустимый источник расписания');
+ if(value.language!==undefined&&!NOTIFICATION_LANGUAGES.includes(value.language))fail(400,'Недопустимый язык уведомлений');
  const tyumenTimeSource=normalizeTyumenSource(value.tyumenTimeSource);
  const offsets={},tableOffsets={},mosqueTimes={};
  for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;const tableN=value.tableOffsets?.[key]??0;if(!Number.isInteger(tableN)||Math.abs(tableN)>60)fail(400,'Недопустимая поправка');tableOffsets[key]=tableN;
@@ -474,7 +509,7 @@ function preferences(value){
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders,...(reminders.enabled&&reminders.dhikr.enabled?{dhikrLastAt:dhikrTimestamp(value.dhikrLastAt)}:{})};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,language:notificationLanguage(value.language),reminders,...(reminders.enabled&&reminders.dhikr.enabled?{dhikrLastAt:dhikrTimestamp(value.dhikrLastAt)}:{})};
 }
 function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
@@ -524,7 +559,7 @@ async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+function notification(event,now){return {title:'SALAH',body:reminderNotificationText(event,event.language),language:notificationLanguage(event.language),tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null,firebaseReturnSender=null}){
  async function sendOwnerReturn(device,event){
@@ -534,7 +569,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
   catch(error){return [404,410].includes(error.statusCode)?'expired':'retry';}
  }
  async function send(device,event){
-  try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
+  try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification({...event,language:notificationLanguage(event.language??device.preferences?.language)},now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else if(event.kind==='staff')await db.staffPushExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
@@ -587,7 +622,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
         if(previous&&(cityDay(previous,latest.city.timezone)===event.day||clock()-previous<22*3600000))continue;
        }
        const hash=(event.kind==='dhikr'?'dhikr-':'')+await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
-       const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
+       const result=await send(device,{...event,hash,message:reminderNotificationText(event,p.language),language:p.language});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
        if(result==='expired')break;
       }
      }
@@ -619,7 +654,7 @@ function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSend
     const rows=needsSchedule?await scheduleRows(p,clock(),{cache:db.cache,fetcher}):{};
     const today=cityDay(clock(),p.city.timezone),ready=PRAYER_KEYS.every(key=>Number.isFinite(serverTimings(today,rows,p)?.[key]));
     if(needsSchedule&&!ready)fail(503,'На эту дату нет проверенного расписания');
-    if(!device){const welcome={hash:'connected-'+clock(),at:clock(),kind:'test',message:'Фоновые уведомления SALAH подключены.'};if(await send({id:auth.id,subscription:sub},welcome)!=='sent')fail(400,'Телефон не подтвердил доставку. Повторите подключение.');}
+    if(!device){const welcome={hash:'connected-'+clock(),at:clock(),kind:'test',message:'Фоновые уведомления SALAH подключены.'};if(await send({id:auth.id,subscription:sub,preferences:p},welcome)!=='sent')fail(400,'Телефон не подтвердил доставку. Повторите подключение.');}
     await db.upsert({id:auth.id,token_hash:tokenHash,endpoint_hash:endpointHash,subscription:sub,preferences:p,now:clock()});
     return reply({saved:true,enabled:p.reminders.enabled});
    }
@@ -661,7 +696,7 @@ const db={
 
  async config(){const [row]=await sql`select vapid,cron_secret from salah_push_private.config where id=1`;return row;},
  async ensureConfig(generate){let row=await this.config();if(!row)throw Error('migration-required');if(!row.vapid){const keys=generate();await sql`update salah_push_private.config set vapid=${sql.json(keys)} where id=1 and vapid is null`;row=await this.config();}return row;},
- async classroomEvents(now){return sql`select distinct on(l.id,d.id) l.id as lesson_id,l.revision,l.details->>'title' as title,l.details->>'timeZone' as time_zone,extract(epoch from l.reminder_at)*1000 as at,extract(epoch from l.starts_at)*1000 as starts_at,e.user_id,d.id,d.subscription from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id and e.reminders_enabled join auth.users u on u.id=e.user_id and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and(u.banned_until is null or u.banned_until<=now()) join public.app_notification_status n on n.user_id=e.user_id and n.permission='granted' join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id and d.subscription is not null where l.state in('planned','live') and l.reminder_at<=to_timestamp(${now}/1000.0) and l.reminder_at>to_timestamp(${now}/1000.0)-interval '5 minutes' and l.starts_at>to_timestamp(${now}/1000.0) and d.updated_at>to_timestamp(${now}/1000.0)-interval '90 days' and n.checked_at>to_timestamp(${now}/1000.0)-interval '30 days' and not exists(select 1 from public.app_notification_status newer where newer.push_device_id=d.id and newer.user_id<>e.user_id and newer.checked_at>=n.checked_at) order by l.id,d.id limit 100`;},
+ async classroomEvents(now){return sql`select distinct on(l.id,d.id) l.id as lesson_id,l.revision,l.details->>'title' as title,l.details->>'timeZone' as time_zone,extract(epoch from l.reminder_at)*1000 as at,extract(epoch from l.starts_at)*1000 as starts_at,e.user_id,d.id,d.subscription,d.preferences from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id and e.reminders_enabled join auth.users u on u.id=e.user_id and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and(u.banned_until is null or u.banned_until<=now()) join public.app_notification_status n on n.user_id=e.user_id and n.permission='granted' join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id and d.subscription is not null where l.state in('planned','live') and l.reminder_at<=to_timestamp(${now}/1000.0) and l.reminder_at>to_timestamp(${now}/1000.0)-interval '5 minutes' and l.starts_at>to_timestamp(${now}/1000.0) and d.updated_at>to_timestamp(${now}/1000.0)-interval '90 days' and n.checked_at>to_timestamp(${now}/1000.0)-interval '30 days' and not exists(select 1 from public.app_notification_status newer where newer.push_device_id=d.id and newer.user_id<>e.user_id and newer.checked_at>=n.checked_at) order by l.id,d.id limit 100`;},
  async classroomActive(device,id,revision){const[r]=await sql`select exists(select 1 from salah_classroom_private.lessons l join salah_classroom_private.enrollments e on e.lesson_id=l.id and e.reminders_enabled join auth.users u on u.id=e.user_id and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false) and(u.banned_until is null or u.banned_until<=now()) join public.app_notification_status n on n.user_id=e.user_id and n.permission='granted' join auth.sessions s on s.id=n.session_id and s.user_id=n.user_id join salah_push_private.devices d on d.id=n.push_device_id where l.id=${id} and l.revision=${revision} and d.id=${device}::uuid and d.subscription is not null and l.state in('planned','live') and l.reminder_at<=now() and l.reminder_at>now()-interval '5 minutes' and l.starts_at>now() and n.checked_at>now()-interval '30 days' and not exists(select 1 from public.app_notification_status newer where newer.push_device_id=d.id and newer.user_id<>e.user_id and newer.checked_at>=n.checked_at)) as active`;return r?.active===true;},
  async get(id){const [row]=await sql`select id,token_hash,subscription,preferences from salah_push_private.devices where id=${id}::uuid`;return row;},
  async count(){const [row]=await sql`select count(*)::int as n from salah_push_private.devices`;return row.n;},

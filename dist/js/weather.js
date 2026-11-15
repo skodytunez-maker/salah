@@ -1,3 +1,5 @@
+import{t}from './i18n.js';
+import{uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute}from './ui.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{skyObjects,previewClock,skyProjectionFrame,projectSkyObjects}from './wallpapers.js';
 import{loadLandmark}from './landmarks.js';
@@ -13,8 +15,8 @@ let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',l
 function wallpaperCaption(scene){
  let caption=scene.querySelector('.wallpaper-caption');
  if(!caption){caption=document.createElement('span');caption.className='wallpaper-caption';scene.append(caption)}
- const name=scene.dataset.wallpaper==='landmark'&&landmarkEntry?landmarkEntry.name:scene.dataset.wallpaper==='new-york'?'Нью-Йорк':'';
- if(caption.textContent!==name)caption.textContent=name;
+ const name=scene.dataset.wallpaper==='landmark'&&landmarkEntry?landmarkEntry.name:scene.dataset.wallpaper==='new-york'?t('landmarkUi.newYork'):'';
+ if(scene.dataset.wallpaper==='new-york')caption.setAttribute('data-i18n','landmarkUi.newYork');else caption.removeAttribute('data-i18n');if(caption.textContent!==name)caption.textContent=name;
  if(caption.hidden!==!name)caption.hidden=!name;
 }
 let skyProjectionContext=null,skyProjectionKey=null;
@@ -31,7 +33,7 @@ window.addEventListener('resize',()=>{
  if(layoutResize!==null)return;
  layoutResize=requestAnimationFrame(()=>{layoutResize=null;const scene=document.getElementById('home-scene');if(scene){prepareLandmark(scene,document.body.classList.contains('home-page'));layoutScene(scene)}});
 });
-function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';note.textContent=landmarkState==='loading'?'Загружаем фон города…':landmarkState==='unavailable'?'Фон для этого города ещё готовится.':'Для первой загрузки фона нужен интернет.'}
+function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';setUiMessage(note,uiMessage(landmarkState==='loading'?'weatherUi.cityLoading':landmarkState==='unavailable'?'weatherUi.cityPreparing':'weatherUi.cityInternet'))}
 function stopLandmarkRequest(){landmarkRequest?.abort();landmarkRequest=null}
 function releaseLandmarkUrls(urls){for(const url of urls)URL.revokeObjectURL(url)}
 function neutralLandmark(scene){landmarkEntry=null;landmarkGeometry=null;wallpaperCaption(scene);delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
@@ -120,8 +122,8 @@ function paintWeather(effect,now,weather,frame,home,scene){
  effect.style.setProperty('--weather-snow',active&&view.kind==='snow'?String(view.precipitation):'0');
  effect.style.setProperty('--weather-mist',active?(view.kind==='fog'?'.55':view.kind==='overcast'?'.12':'0'):'0');
  if(weatherPreview!==null&&!document.getElementById('weather-preview-controls')){
-  const controls=document.createElement('div');controls.id='weather-preview-controls';controls.className='scene-preview-controls weather-preview-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Просмотр погоды');
-  controls.innerHTML='<span>Погода · просмотр</span>'+[['clear','Ясно','☼'],['clouds','Облачно','☁'],['rain','Дождь','☂'],['snow','Снег','❄'],['close','Завершить просмотр погоды','×']].map(([value,label,icon])=>'<button type="button" data-weather-preview="'+value+'" aria-label="'+label+'">'+icon+'</button>').join('');
+  const controls=document.createElement('div');controls.id='weather-preview-controls';controls.className='scene-preview-controls weather-preview-controls';controls.setAttribute('role','group');setUiAttribute(controls,'aria-label','weatherUi.previewLabel');
+  controls.innerHTML='<span>'+uiLeaf('weatherUi.preview')+'</span>'+[['clear','weatherUi.clear','☼'],['clouds','weatherUi.cloudy','☁'],['rain','weatherUi.rain','☂'],['snow','weatherUi.snow','❄'],['close','weatherUi.finishPreview','×']].map(([value,label,icon])=>'<button type="button" data-weather-preview="'+value+'" '+uiAttribute(label)+'>'+icon+'</button>').join('');
   controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{if(button.dataset.weatherPreview==='close')stopWeatherPreview();else weatherPreview=button.dataset.weatherPreview;atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls);
  }
  for(const button of document.querySelectorAll('[data-weather-preview]'))button.setAttribute('aria-pressed',String(button.dataset.weatherPreview===weatherPreview));
@@ -162,7 +164,7 @@ export function atmosphere(now,times,weather){
  const sky=skyObjects(now,times,skyMode,preview&&previewOverride===null?Math.min(performance.now()-previewStarted,19999):null,settings.city);
  paintSky(scene,sky,previewStarted!==null?performance.now():now);
  for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));
- if(preview&&!document.getElementById('scene-preview-controls')){const controls=document.createElement('div');controls.id='scene-preview-controls';controls.className='scene-preview-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label','Просмотр фона');controls.innerHTML='<span>Фон</span><button type="button" data-scene-preview="day" aria-label="Посмотреть дневной фон">☼</button><button type="button" data-scene-preview="night" aria-label="Посмотреть ночной фон">☾</button><button type="button" data-scene-preview="auto" aria-label="Показать смену суток">'+actionIcon('play')+'</button><button type="button" data-scene-preview="close" aria-label="Завершить просмотр смены дня и ночи">×</button>';controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{const choice=button.dataset.scenePreview;if(choice==='close')stopScenePreview();else{previewOverride=choice==='auto'?null:choice;if(choice==='auto')previewStarted=performance.now()}atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls)}
+ if(preview&&!document.getElementById('scene-preview-controls')){const controls=document.createElement('div');controls.id='scene-preview-controls';controls.className='scene-preview-controls';controls.setAttribute('role','group');setUiAttribute(controls,'aria-label','weatherUi.backgroundPreview');controls.innerHTML='<span>'+uiLeaf('weatherUi.background')+'</span><button type="button" data-scene-preview="day" '+uiAttribute('weatherUi.dayPreview')+'>☼</button><button type="button" data-scene-preview="night" '+uiAttribute('weatherUi.nightPreview')+'>☾</button><button type="button" data-scene-preview="auto" '+uiAttribute('weatherUi.transitionPreview')+'>'+actionIcon('play')+'</button><button type="button" data-scene-preview="close" '+uiAttribute('weatherUi.finishTransition')+'>×</button>';controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{const choice=button.dataset.scenePreview;if(choice==='close')stopScenePreview();else{previewOverride=choice==='auto'?null:choice;if(choice==='auto')previewStarted=performance.now()}atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls)}
  if(preview)for(const button of document.querySelectorAll('[data-scene-preview]'))button.setAttribute('aria-pressed',String(button.dataset.scenePreview===(previewOverride||'auto')));
  if(settings.backgroundMode!=='dark'){layer.style.filter='brightness('+(.76+frame.day*.55)+')';layer.style.background='radial-gradient(ellipse at 75% 25%,rgba(69,90,151,'+(.04+frame.day*.12)+'),transparent 60%),linear-gradient(160deg,#10182b,#060914 75%)'}else{layer.style.filter='';layer.style.background=''}
  paintWeather(effect,now,weather,frame,home,scene);smoothPreview();

@@ -1,4 +1,5 @@
 import { esc } from './ui.js';
+import{uiAttrs}from './practice-i18n.js';
 
 // The controller owns the heading, alignment state and light intensity.
 // The SVG is decorative; the instruction and angles provide the same information in text.
@@ -55,22 +56,22 @@ const rug = `<svg class="qibla-rug" viewBox="0 0 340 340" aria-hidden="true" foc
 export function renderQiblaView({ cityName = '', bearing, hasCity = false } = {}) {
   const angle = Number.isFinite(bearing) ? `${Math.round((bearing % 360 + 360) % 360) % 360}°` : '—';
   return `<section class="qibla-page" aria-labelledby="qibla-title">
-    <div class="qibla-head"><div><h1 id="qibla-title">Кибла</h1><p class="qibla-location">${hasCity ? 'Центр выбранного города: '+esc(cityName) : 'Текущее место не определено'}</p></div></div>
-    <div class="qibla-location-tools"><button type="button" class="text-button" id="qibla-locate">Моё место</button><p id="qibla-location-state" role="status" aria-live="polite">Определяем текущее местоположение…</p></div>
+    <div class="qibla-head"><div><h1 id="qibla-title" data-i18n="menu.qibla">Кибла</h1><p class="qibla-location"${uiAttrs(hasCity?'qiblaUi.cityCenter':'qiblaUi.locationUnknown',hasCity?{city:cityName}:{})}>${hasCity ? 'Центр выбранного города: '+esc(cityName) : 'Текущее место не определено'}</p></div></div>
+    <div class="qibla-location-tools"><button type="button" class="text-button" id="qibla-locate" data-i18n="qiblaUi.myLocation">Моё место</button><p id="qibla-location-state" role="status" aria-live="polite" data-i18n="qiblaUi.findingLocation">Определяем текущее местоположение…</p></div>
     <div class="qibla-card" id="qibla-compass-panel">
       <div id="qibla-stage" class="qibla-stage" style="--qibla-rotation:0deg;--compass-rotation:0deg;--qibla-light:0" aria-hidden="true">
         <span class="qibla-phone-axis"></span>
         <div class="qibla-compass"><div class="qibla-ticks"></div><span class="qibla-north">N</span><span class="qibla-east">E</span><span class="qibla-south">S</span><span class="qibla-west">W</span></div>
         <div class="qibla-orientation">${rug}</div>
       </div>
-      <div class="qibla-guidance" role="status" aria-live="polite" aria-atomic="true"><svg id="qibla-check" class="qibla-check" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" hidden><path d="m4 9 3.1 3.1L14 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><p id="qibla-instruction">Определяем направление Киблы</p></div>
-      <p class="qibla-light-hint">Чем точнее направление, тем ярче становится свет.</p>
-      <div class="qibla-readouts"><div><span class="qibla-readout-label">Угол Киблы</span><strong class="qibla-bearing">${hasCity ? angle : '—'}</strong><span class="qibla-readout-note">от географического севера</span></div><div><span class="qibla-readout-label">Отклонение телефона</span><strong id="qibla-error">—</strong><span class="qibla-readout-note">от направления Киблы</span></div></div>
-      <p id="sensor-state" class="qibla-sensor-state" role="status">Для определения направления Киблы требуется доступ к датчикам устройства.</p>
-      ${hasCity ? '' : '<button class="button qibla-enable" id="qibla-city">Выбрать город</button>'}
+      <div class="qibla-guidance" role="status" aria-live="polite" aria-atomic="true"><svg id="qibla-check" class="qibla-check" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" hidden><path d="m4 9 3.1 3.1L14 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><p id="qibla-instruction" data-i18n="qiblaUi.findingDirection">Определяем направление Киблы</p></div>
+      <p class="qibla-light-hint" data-i18n="qiblaUi.lightHint">Чем точнее направление, тем ярче становится свет.</p>
+      <div class="qibla-readouts"><div><span class="qibla-readout-label" data-i18n="qiblaUi.bearingLabel">Угол Киблы</span><strong class="qibla-bearing" dir="ltr">${hasCity ? angle : '—'}</strong><span class="qibla-readout-note" data-i18n="qiblaUi.fromTrueNorth">от географического севера</span></div><div><span class="qibla-readout-label" data-i18n="qiblaUi.phoneDeviation">Отклонение телефона</span><strong id="qibla-error" dir="ltr">—</strong><span class="qibla-readout-note" data-i18n="qiblaUi.fromQibla">от направления Киблы</span></div></div>
+      <p id="sensor-state" class="qibla-sensor-state" role="status" data-i18n="qiblaUi.sensorAccess">Для определения направления Киблы требуется доступ к датчикам устройства.</p>
+      ${hasCity ? '' : '<button class="button qibla-enable" id="qibla-city" data-i18n="home.selectCity">Выбрать город</button>'}
       <p class="qibla-signature"><span>SALAH</span><small>by Saadi Kobilov</small></p>
     </div>
     <div class="qibla-map-panel" id="qibla-map-panel" hidden></div>
-    <button type="button" class="qibla-map-toggle" id="qibla-map-toggle" aria-label="Открыть карту Киблы" aria-pressed="false" data-mode="compass"><svg class="qibla-map-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15"/></svg><svg class="qibla-compass-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span>Карта</span></button>
+    <button type="button" class="qibla-map-toggle" id="qibla-map-toggle" aria-label="Открыть карту Киблы" data-i18n-aria-label="qiblaUi.openMap" aria-pressed="false" data-mode="compass"><svg class="qibla-map-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15"/></svg><svg class="qibla-compass-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span data-i18n="qiblaUi.map">Карта</span></button>
   </section>`;
 }

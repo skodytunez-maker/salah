@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install pinned local DOM test dependencies
+        run: npx --yes pnpm@11.25.0 --dir tests/staff install --frozen-lockfile --ignore-scripts
       - name: Verify scene, phone regression and mobile foundation
         run: |
           node scripts/check-pages.mjs

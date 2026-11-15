@@ -1,3 +1,4 @@
+import{uiError}from './ui.js';
 import{dateKey}from './prayers.js';
 import{syncLessonNotificationAccount}from './lesson-notification-account.js';
 import{personalDataAllowed}from './audience.js';
@@ -13,9 +14,9 @@ function publish(){for(const fn of listeners)fn();}
 function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;if(changed)publish();}
 const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support','#radio'].includes(location.hash.split('?')[0])||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash));
 function authClient(){
- if(!personalDataAllowed())throw Error('Личные данные защищены: аккаунт в этом режиме недоступен.');
+ if(!personalDataAllowed())throw uiError('ownerAuthUi.restricted');
  if(!client){
-  if(!window.supabase?.createClient)throw Error('Сервис входа пока недоступен.');
+  if(!window.supabase?.createClient)throw uiError('ownerAuthUi.unavailable');
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000,lock:createAuthLock({TimeoutError:window.supabase.NavigatorLockAcquireTimeoutError,fallbackLock:window.supabase.processLock})}});
   client.auth.onAuthStateChange((event,session)=>{
    syncLessonNotificationAccount(session?.user?.email_confirmed_at&&!session.user.is_anonymous?session.user.id:null);
@@ -35,11 +36,11 @@ export function verifiedOwnerId(){return ownerVerified()?verifiedUserId:null;}
 export function ownerNeedsMfa(){return mfaRequired;}
 export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}
 async function callOwner(session,query='',{binary=false,signal=null}={}){
- if(!session?.access_token)throw Error('Войдите в аккаунт владельца.');
+ if(!session?.access_token)throw uiError('ownerAuthUi.signIn');
  let response;
  try{for(let attempt=0;attempt<(query?2:1);attempt++){try{if(signal?.aborted)throw Error('cancelled');const timeout=AbortSignal.timeout(query?15000:8000),requestSignal=signal&&typeof AbortSignal.any==='function'?AbortSignal.any([signal,timeout]):timeout;response=await fetch(OWNER_PROJECT_URL+'/functions/v1/owner-access'+query,{method:'GET',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+session.access_token},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:requestSignal});if(signal?.aborted)throw Error('cancelled');if(![502,504].includes(response.status)||attempt||!query)break;}catch(error){if(signal?.aborted||attempt||!query)throw error;}await new Promise(resolve=>setTimeout(resolve,400));}}
- catch{if(signal?.aborted)throw Object.assign(Error('Запрос отменён.'),{name:'AbortError'});revoke();throw Error('Не удалось проверить доступ. Проверьте интернет.');}
- if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Object.assign(Error('Вход истёк. Войдите снова.'),{status:401});if(response.status===403){const denied=Error('Этот аккаунт не имеет доступа к кабинету.');denied.status=403;throw denied;}if(response.status===503&&query)throw Error('Статистика ещё не подключена.');throw Error('Сервис кабинета временно недоступен.');}
+ catch{if(signal?.aborted)throw Object.assign(uiError('ownerAuthUi.cancelled'),{name:'AbortError'});revoke();throw uiError('ownerAuthUi.verifyFailed');}
+ if(!response.ok){if(response.status===401||response.status===403||!query)revoke();if(response.status===401)throw Object.assign(uiError('ownerAuthUi.expired'),{status:401});if(response.status===403){const denied=uiError('ownerAuthUi.denied');denied.status=403;throw denied;}if(response.status===503&&query)throw uiError('ownerAuthUi.statsUnavailable');throw uiError('ownerAuthUi.workspaceUnavailable');}
  return binary?response.blob():response.json();
 }
 export async function verifyOwner({verifySession=false}={}){
@@ -52,7 +53,7 @@ export async function verifyOwner({verifySession=false}={}){
    const started=revision;
    const checked=await checkAccountSession({force:verifySession&&attempt===0});
    if(started!==revision)continue;
-   if(checked.state==='unavailable'||checked.state==='changed')throw Object.assign(Error('Не удалось проверить вход. Повторите, когда восстановится соединение.'),{status:503});
+   if(checked.state==='unavailable'||checked.state==='changed')throw Object.assign(uiError('ownerAuthUi.sessionUnavailable'),{status:503});
    if(checked.state!=='valid'||!checked.session){revoke();return false;}
    let result;try{result=await callOwner(checked.session)}catch(error){if(error.status===403){revoke();return false}throw error}
    if(started!==revision)continue;
@@ -67,45 +68,45 @@ export async function verifyOwner({verifySession=false}={}){
 }
 export async function signInOwner(email,password){
  const {error}=await authClient().auth.signInWithPassword({email:email.trim(),password});
- if(error)throw Error('Не удалось войти. Проверьте почту и пароль.');
- if(!await verifyOwner()&&!mfaRequired)throw Error('Не удалось подтвердить доступ владельца. Попробуйте снова.');
+ if(error)throw uiError('accountUi.credentialsInvalid');
+ if(!await verifyOwner()&&!mfaRequired)throw uiError('ownerAuthUi.ownerVerifyFailed');
 }
 
 export async function ownerMfaFactors(){
- if(!mfaRequired)throw Error('Сначала войдите в аккаунт владельца.');
+ if(!mfaRequired)throw uiError('ownerAuthUi.signInFirst');
  const {data,error}=await authClient().auth.mfa.listFactors();
- if(error)throw Error('Не удалось проверить Google Authenticator. Повторите попытку.');
+ if(error)throw uiError('ownerAuthUi.factorCheckFailed');
  return (data.totp||[]).filter(factor=>factor.status==='verified');
 }
 export async function enrollOwnerMfa(){
- if(!mfaRequired||!await verifyOwner()&&!mfaRequired)throw Error('Сначала войдите в аккаунт владельца.');
+ if(!mfaRequired||!await verifyOwner()&&!mfaRequired)throw uiError('ownerAuthUi.signInFirst');
  const {data,error}=await authClient().auth.mfa.enroll({factorType:'totp',friendlyName:'SALAH '+Date.now(),issuer:'SALAH'});
- if(error)throw Error('Не удалось подготовить привязку. Повторите попытку.');
+ if(error)throw uiError('ownerAuthUi.enrolFailed');
  return data;
 }
 export async function verifyOwnerMfa(factorId,code){
- if(!mfaRequired)throw Error('Сначала войдите в аккаунт владельца.');
- if(!/^[0-9]{6}$/.test(code))throw Error('Введите шесть цифр из Google Authenticator.');
+ if(!mfaRequired)throw uiError('ownerAuthUi.signInFirst');
+ if(!/^[0-9]{6}$/.test(code))throw uiError('ownerAuthUi.enterCode');
  const {error}=await authClient().auth.mfa.challengeAndVerify({factorId,code});
- if(error)throw Error('Код не подошёл. Введите новый код из Google Authenticator.');
- if(!await verifyOwner())throw Error('Не удалось подтвердить защищённый вход. Попробуйте снова.');
+ if(error)throw uiError('ownerAuthUi.invalidCode');
+ if(!await verifyOwner())throw uiError('ownerAuthUi.mfaFailed');
 }
 
 export async function signOutOwner(){
  revision++;revoke();
  const {error}=await authClient().auth.signOut({scope:'local'});
- if(error)throw Error('Не удалось завершить вход. Проверьте интернет и повторите.');
+ if(error)throw uiError('ownerAuthUi.signOutFailed');
  publish();
 }
 export async function ownerStatistics(days=7){
- if(![1,7,30].includes(days))throw Error('Неизвестный период.');
+ if(![1,7,30].includes(days))throw uiError('ownerAuthUi.period');
  const {data,error}=await authClient().auth.getSession();
- if(error)throw Error('Войдите снова.');
+ if(error)throw uiError('deviceUi.signIn');
  return callOwner(data.session,'?mode=stats&days='+days);
 }
 export async function ownerGeography(days=7){
- if(![1,7,30].includes(days))throw Error('Неизвестный период.');
- const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ if(![1,7,30].includes(days))throw uiError('ownerAuthUi.period');
+ const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
  return callOwner(data.session,'?mode=geography&days='+days);
 }
 export function initOwnerAccess(onChanged){
@@ -130,59 +131,59 @@ export function initOwnerAccess(onChanged){
 export const accountAuthClient=()=>authClient();
 export const checkAccountSession=createSessionGuard({getAuth:()=>authClient().auth});
 
-export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error("Неизвестная страница.");const {data,error}=await authClient().auth.getSession();if(error)throw Error("Войдите снова.");return callOwner(data.session,"?mode=users&page="+page);}
+export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw uiError('ownerAuthUi.page');const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');return callOwner(data.session,"?mode=users&page="+page);}
 
 export async function ownerRankUser(id){
- if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный участник рейтинга.');
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw uiError('ownerAuthUi.rankingUser');
  const {data,error}=await authClient().auth.getSession();
- if(error)throw Error('Войдите снова.');
+ if(error)throw uiError('deviceUi.signIn');
  const result=await callOwner(data.session,'?mode=rank-user&ids='+encodeURIComponent(id));
  return result.user;
 }
 
 export async function ownerUserDetails(id){
- if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
- const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw uiError('ownerAuthUi.user');
+ const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
  return callOwner(data.session,'?mode=user&ids='+encodeURIComponent(id)+'&activityDay='+encodeURIComponent(dateKey()));
 }
 export async function ownerUserAvatar(id){
- if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw Error('Неизвестный пользователь.');
- const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw uiError('ownerAuthUi.user');
+ const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
  const blob=await callOwner(data.session,'?mode=user-avatar&ids='+encodeURIComponent(id),{binary:true});
- if(blob.type!=='image/jpeg'||blob.size<3||blob.size>200000)throw Error('Фото недоступно.');
- const bytes=new Uint8Array(await blob.slice(0,3).arrayBuffer());if(bytes[0]!==255||bytes[1]!==216||bytes[2]!==255)throw Error('Фото недоступно.');
+ if(blob.type!=='image/jpeg'||blob.size<3||blob.size>200000)throw uiError('ownerAuthUi.photo');
+ const bytes=new Uint8Array(await blob.slice(0,3).arrayBuffer());if(bytes[0]!==255||bytes[1]!==216||bytes[2]!==255)throw uiError('ownerAuthUi.photo');
  return blob;
 }
 
-export async function ownerReleases(){const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');return callOwner(data.session,'?mode=releases');}
+export async function ownerReleases(){const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');return callOwner(data.session,'?mode=releases');}
 
 export async function ownerPreviewAccessToken(){
- if(!ownerVerified())throw Error('Подтвердите вход владельца.');
+ if(!ownerVerified())throw uiError('ownerAuthUi.confirmOwner');
  const {data,error}=await authClient().auth.getSession(),session=data?.session;
- if(error||!session?.access_token||session.user?.id!==verifiedOwnerId())throw Error('Подтвердите вход владельца.');
+ if(error||!session?.access_token||session.user?.id!==verifiedOwnerId())throw uiError('ownerAuthUi.confirmOwner');
  return session.access_token;
 }
 
 export async function ownerVisitors(days=7){
- if(![1,7,30].includes(days))throw Error('Неизвестный период.');
- const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ if(![1,7,30].includes(days))throw uiError('ownerAuthUi.period');
+ const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
  return callOwner(data.session,'?mode=visitors&days='+days);
 }
 
 export async function ownerGeoMembers(days,selection,page=1){
- const {data,error}=await authClient().auth.getSession();if(error)throw Error('Войдите снова.');
+ const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
  const query=new URLSearchParams({mode:'geography-users',days:String(days),page:String(page),kind:selection.kind});if(selection.city)query.set('city',selection.city);if(selection.country)query.set('country',selection.country);
  return callOwner(data.session,'?'+query);
 }
 
 export async function ownerLiveActivity(kind,page=1){
- if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw Error('Неизвестный вид активности.');
- const{data,error}=await authClient().auth.getSession();if(error)throw Error('Не удалось проверить вход.');
+ if(!['listening','reading','dhikr'].includes(kind)||!Number.isSafeInteger(page)||page<1||page>10000)throw uiError('ownerAuthUi.activityKind');
+ const{data,error}=await authClient().auth.getSession();if(error)throw uiError('ownerAuthUi.checkFailed');
  return callOwner(data.session,'?mode=live&kind='+kind+'&page='+page);
 }
 
 export async function ownerAppActivity(page=1,{signal}={}){
- if(!Number.isSafeInteger(page)||page<1||page>10000)throw Error('Неизвестная страница.');
- const{data,error}=await authClient().auth.getSession();if(error)throw Error('Не удалось проверить вход.');
+ if(!Number.isSafeInteger(page)||page<1||page>10000)throw uiError('ownerAuthUi.page');
+ const{data,error}=await authClient().auth.getSession();if(error)throw uiError('ownerAuthUi.checkFailed');
  return callOwner(data.session,'?mode=app-state&page='+page,{signal});
 }

@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{setInterfaceLanguage,t,translateUi}from '../dist/js/i18n.js';
+import{UI_LANGUAGE_CODES}from '../dist/js/interface-languages.js';
+const win=new Window({url:'https://salah.invalid/salah/#settings'}),doc=win.document;
+Object.assign(globalThis,{window:win,document:doc,localStorage:win.localStorage,location:win.location});
+globalThis.matchMedia=()=>({matches:false});globalThis.isSecureContext=true;globalThis.PushManager=function(){};
+let permissionRequests=0,settingsWrites=0,posts=0;
+globalThis.Notification={permission:'granted',requestPermission:async()=>{permissionRequests++;return 'granted';}};
+Object.defineProperty(globalThis,'navigator',{configurable:true,value:{userAgent:'Chrome',platform:'Win32',languages:['ru'],serviceWorker:{getRegistration:async()=>({active:true,pushManager:{getSubscription:async()=>null}})}}});
+globalThis.fetch=async(_url,options={})=>{if(options.method==='POST')posts++;return new Response(JSON.stringify({publicKey:Buffer.from([4,...Array(64).fill(1)]).toString('base64url')}));};
+const{createReminders}=await import('../dist/js/reminders.js');
+const host=doc.createElement('main');doc.body.append(host);
+let settings={uiLanguage:'ru',city:{name:'Тюмень',latitude:57.15,longitude:65.52,timezone:'Asia/Yekaterinburg'},reminders:{enabled:true,voice:'mansour',prayers:{Fajr:{atTime:true,beforeMinutes:15}},adhkar:{morning:{enabled:true,mode:'time',time:'07:00'}},dhikr:{enabled:false}}};
+const reminders=createReminders({getSettings:()=>settings,updateSettings:patch=>{settingsWrites++;settings={...settings,...patch};return true;},getContext:()=>({today:'2026-11-15',cityKey:'fixture',timeZone:settings.city.timezone,timingsFor:()=>({})})});
+reminders.mountSettings(host);for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
+const time=host.querySelector('[data-reminder-control="morning-time"]'),voice=host.querySelector('[data-reminder-control="voice"]'),advance=host.querySelector('[data-reminder-control="all-before"]'),prayer=host.querySelector('[data-reminder-control="Fajr-at"]'),details=host.querySelector('.reminder-adhkar');
+time.value='08:47';voice.value='mishary';details.open=true;time.focus();const before=JSON.stringify(settings.reminders);
+for(const language of UI_LANGUAGE_CODES){
+ settings={...settings,uiLanguage:language};setInterfaceLanguage(language);translateUi(doc);win.dispatchEvent(new win.Event('salah:interface-language-changed'));
+ assert.equal(host.querySelector('[data-reminder-control="morning-time"]'),time);assert.equal(host.querySelector('[data-reminder-control="voice"]'),voice);assert.equal(host.querySelector('[data-reminder-control="all-before"]'),advance);assert.equal(doc.activeElement,time);
+ assert.equal(time.value,'08:47');assert.equal(voice.value,'mishary');assert.equal(details.open,true);assert.equal(JSON.stringify(settings.reminders),before);
+ assert.equal(prayer.getAttribute('aria-label'),t('notifyUi.prayerStart',{prayer:t('home.fajr')}));
+ assert.equal(host.querySelector('h2').textContent,t('notifyUi.title'));
+ assert.equal(advance.querySelector('[value="15"]').textContent,t('notifyUi.minutesBefore',{minutes:15}));
+ assert.equal(host.querySelector('[data-reminder-control="morning-mode"] [value="prayer"]').textContent,t('notifyUi.withFajr'));
+ assert.equal(host.querySelector('option span'),null,'Options retain valid text-only DOM');
+ assert.equal(settingsWrites,0);assert.equal(permissionRequests,0);assert.equal(posts,0);
+}
+reminders.destroy();setInterfaceLanguage('ru');await win.happyDOM.close();
+console.log('PASS: notification labels and dynamic prayer ARIA switch in place across eight locales, retaining focused time/voice drafts and expanded sections, without settings writes, permission prompts or unsolicited delivery.');

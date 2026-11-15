@@ -1,3 +1,4 @@
+import{uiLeaf,uiMessage}from '../dist/js/ui.js';
 
 import assert from 'node:assert/strict';
 import{appSharingMarkup}from '../dist/js/app-sharing.js';
@@ -5,6 +6,9 @@ import {Script,createContext} from 'node:vm';
 import {readFile,readdir} from 'node:fs/promises';
 import {validOwnerUserId} from '../dist/js/owner-user-card.js';
 import {createOwnerSupportStatus} from '../dist/js/owner-support-status.js';
+import{t,setInterfaceLanguage}from '../dist/js/i18n.js';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+setInterfaceLanguage('ru');
 const dots=[{hidden:true,attributes:{},setAttribute(k,v){this.attributes[k]=v}}],events={},doc={visibilityState:'visible',addEventListener(){},removeEventListener(){}};
 let owner=null,pending=1,calls=0,failure=false,resolve;
 const rpc=(name,args)=>({abortSignal:async()=>{calls++;assert.equal(name,'support_owner_status');assert.deepEqual(args,{p_app:'salah'});if(resolve)return new Promise(done=>resolve(done));return failure?{error:{code:'42501'}}:{data:{pending,unanswered:1}}}});
@@ -20,8 +24,8 @@ owner='owner-two';const before=calls;doc.visibilityState='hidden';await status.r
 const bind=await readFile(new URL('../dist/js/support.js',import.meta.url),'utf8');
 let verified=false,answer=false,mfa=false,verifyPending=null,mounts=[];
 globalThis.location={hash:'#support'};
-globalThis.__supportFixture={validOwnerUserId,prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
-const source="const {prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title,validOwnerUserId}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
+globalThis.__supportFixture={t,uiLeaf,uiMessage,validOwnerUserId,prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
+const source="const {t,uiLeaf,uiMessage,prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title,validOwnerUserId}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
 const {showSupport,stopSupport}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const app={dataset:{},isConnected:true,innerHTML:'',querySelector:()=>({})};
 await showSupport(app);assert.equal(mounts.at(-1).owner,false);assert.ok(app.innerHTML.includes('Обращения в поддержку'));
@@ -38,10 +42,13 @@ assert.ok(migration.includes('public.support_actor(true)'));assert.ok(migration.
 const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 const menuSource=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf("\nwindow.addEventListener('salah:counter-status'"));
 for(const owner of [true,false]){
- const menuApp={innerHTML:''},context=createContext({teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',appSharingMarkup,bindAppSharing(){}});
+ const menuApp={innerHTML:''},context=createContext({t,teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',appSharingMarkup,bindAppSharing(){}});
  new Script(menuSource+';more();').runInContext(context);
  assert.equal(menuApp.innerHTML.includes('menu-helper-badge'),owner,'Helper badge only appears for the verified owner');
  const label=owner?'Обращения пользователей':'Обращения в поддержку',attribute=owner?'data-owner-support-status':'data-user-support-status';
- assert.ok(menuApp.innerHTML.includes(label+'</span><span class="support-state-dot" '+attribute),'Each account sees its own dot directly on the Menu support row');
+ const dom=new Window({url:'https://fixture.invalid/#more'});dom.document.body.innerHTML=menuApp.innerHTML;
+ const row=dom.document.querySelector('a[href="'+(owner?'#support?owner=1':'#support')+'"]'),caption=row.querySelector('.menu-item-label'),dot=row.querySelector('.support-state-dot');
+ assert.equal(caption.textContent,label);assert.equal(caption.nextElementSibling,dot,'Each account sees its dot directly beside the Menu support label');assert.equal(dot.hasAttribute(attribute),true);assert.equal(dot.hasAttribute(owner?'data-user-support-status':'data-owner-support-status'),false,'Owner and ordinary-account status roles stay separate');
+ await dom.happyDOM.close();
 }
 console.log('PASS: owner-only red/green menu status, no false green/offline leaks, owner reply mode, MFA and cancelled page transitions.');

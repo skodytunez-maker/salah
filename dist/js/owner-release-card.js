@@ -1,3 +1,4 @@
+import{ownerMessage,ownerLeaf,ownerText,ownerMarkup,ownerError,ownerHeading,ownerDate,ownerDateLeaf,ownerPaint,watchOwnerUi,stopOwnerUi,uiMessage,uiLeaf,uiSet,uiRaw,uiAttrs,uiAttribute,uiAttributeAttrs,t,getLocale}from './owner-i18n.js';
 import{esc}from './ui.js';
 // This is a display preference, never an authorization grant or a public announcement receipt.
 const SEEN_PREFIX='salah:owner-home-release-seen-v1:';
@@ -12,7 +13,7 @@ export function createOwnerReleaseCard({getState,verify,release,showRelease,stor
   const state=getState(),visible=state.active&&state.signedIn&&state.userId===userId&&state.ownerId===userId&&!!userId&&!seen(userId);
   host.hidden=!visible;
   const next=visible?userId+':'+release.version:'';if(next===signature)return;signature=next;
-  host.innerHTML=visible?'<aside class="owner-home-update" aria-label="Обновление SALAH"><div><strong>SALAH обновлён</strong><span>'+esc(release.label)+' · '+esc(release.version)+'</span><button type="button" data-release-open>Что нового</button></div><button type="button" class="owner-home-update-close" data-release-close aria-label="Закрыть уведомление об обновлении">×</button></aside>':'';
+  ownerPaint(host,visible?"<aside class=\"owner-home-update\" aria-label=\"Обновление SALAH\" data-i18n-aria-label=\"ownerUi.salahUpdate\"><div><strong data-i18n=\"ownerUi.salahUpdated\">SALAH обновлён</strong><span>"+esc(release.label)+' · '+esc(release.version)+"</span><button type=\"button\" data-release-open data-i18n=\"ownerUi.whatsNew\">Что нового</button></div><button type=\"button\" class=\"owner-home-update-close\" data-release-close aria-label=\"Закрыть уведомление об обновлении\" data-i18n-aria-label=\"ownerUi.closeUpdateNotice\">×</button></aside>":'');
   if(!visible)return;
   const dismiss=()=>{if(getState().userId!==userId)return;dismissed.add(userId);try{storage.setItem(SEEN_PREFIX+userId,String(release.version));}catch{}draw();};
   host.querySelector('[data-release-close]').onclick=dismiss;

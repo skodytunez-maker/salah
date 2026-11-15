@@ -1,3 +1,5 @@
+import{subscribeLanguage}from './i18n.js';
+import{setUiAttribute}from './ui.js';
 import{supportNotice,clearSupportNotice}from './support-notice.js';
 export function createUserSupportStatus({getUserId,getRpc,root=globalThis.document,windowRef=globalThis.window,documentRef=globalThis.document}){
  let snapshot=null,controller=null,revision=0,lastCheck=0,again=false;
@@ -5,7 +7,7 @@ export function createUserSupportStatus({getUserId,getRpc,root=globalThis.docume
   const id=getUserId();
   for(const dot of root.querySelectorAll('[data-user-support-status]')){
    const known=Boolean(id&&snapshot?.user===id);dot.hidden=!known||snapshot.pending===0;
-   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');dot.setAttribute('aria-label',waiting?'Есть новый ответ поддержки':'Нет новых ответов');dot.setAttribute('title',waiting?'Есть новый ответ поддержки':'Нет новых ответов')}
+   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');setUiAttribute(dot,'aria-label',waiting?'extraUi.supportHasReply':'extraUi.supportNone');setUiAttribute(dot,'title',waiting?'extraUi.supportHasReply':'extraUi.supportNone')}
   }
  }
  async function refresh({force=false}={}){
@@ -28,7 +30,8 @@ export function createUserSupportStatus({getUserId,getRpc,root=globalThis.docume
  windowRef?.addEventListener?.('salah:support-status-refresh',changed);
  windowRef?.addEventListener?.('salah:counter-status',changed);
  documentRef?.addEventListener?.('visibilitychange',visible);
+ const stopLanguage=subscribeLanguage(paint);
  const timer=setInterval(()=>void refresh(),30000);
- return{refresh,stop(){revision++;again=false;controller?.abort();controller=null;clearInterval(timer);windowRef?.removeEventListener?.('salah:support-status-refresh',changed);windowRef?.removeEventListener?.('salah:counter-status',changed);documentRef?.removeEventListener?.('visibilitychange',visible);snapshot=null;paint()}};
+ return{refresh,stop(){stopLanguage();revision++;again=false;controller?.abort();controller=null;clearInterval(timer);windowRef?.removeEventListener?.('salah:support-status-refresh',changed);windowRef?.removeEventListener?.('salah:counter-status',changed);documentRef?.removeEventListener?.('visibilitychange',visible);snapshot=null;paint()}};
 }
 

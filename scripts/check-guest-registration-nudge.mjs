@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{setInterfaceLanguage,t}from '../dist/js/i18n.js';
 const w=new Window({url:'https://salah.invalid/#home'});
 Object.assign(globalThis,{window:w,document:w.document,localStorage:w.localStorage});
 const{initGuestRegistrationNudge,guestRegistrationEligible,GUEST_REGISTRATION_NUDGE_KEY:KEY,GUEST_REGISTRATION_NUDGE_DELAY:WEEK,GUEST_REGISTRATION_LISTENING_SECONDS:MIN}=await import('../dist/js/guest-registration-nudge.js');
@@ -31,6 +32,7 @@ assert.match(card().textContent,/Сохраните прослушанное/);a
 assert.equal(card().querySelector('form,dialog,input,[autofocus]'),null,'The card neither collects data nor opens a modal');
 for(let i=0;i<12;i++)nudge.refresh();await flush();assert.equal(w.document.querySelectorAll('.guest-registration-nudge').length,1);
 assert.equal(writes.length,0,'Rendering does not alter settings, counters or the cooldown');
+const retainedCard=card(),registration=card().querySelector('[data-guest-registration-open]');for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(card(),retainedCard);assert.equal(card().querySelector('[data-guest-registration-open]'),registration);assert.equal(registration.textContent,t('extraUi.nudgeOpen'));assert.equal(writes.length,0);assert.equal(w.location.hash,'#home');}setInterfaceLanguage('ru');
 card().querySelector('[data-guest-registration-dismiss]').click();await flush();assert.equal(card(),null);assert.equal(stored.get(KEY),String(at));
 at+=WEEK-1;nudge.refresh();assert.equal(card(),null);at++;nudge.refresh();assert.ok(card());
 hidden=true;w.document.dispatchEvent(new w.Event('visibilitychange'));await flush();assert.equal(card(),null);hidden=false;nudge.refresh();assert.ok(card());
