@@ -154,6 +154,7 @@ client.clearCompetitionCache();let retryCalls=0;clientContext.fetch=async()=>{re
 console.log('PASS: shared leaderboard request retries a temporary gateway failure once.');
 
 // A locally measured but not-yet-uploaded tail must survive a real page remount.
+own={id,enabled:true,mode:'initial'};
 pageContext.location.hash='#quran?view=reciters&filter=salah-top&period=week';
 cache.set('week',[{...person,seconds:7*3600+32*60}]);local=7*3600+32*60;
 let closeReading=page.mountCompetition(host,()=>'<h1>Коран</h1>');

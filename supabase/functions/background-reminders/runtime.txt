@@ -2,6 +2,7 @@ import postgres from 'npm:postgres@3.4.9';
 import webpush from 'npm:web-push@3.6.7';
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,idle_timeout:20,connect_timeout:10,prepare:false});
 const db={
+ ...createUpdate501Db(sql),
  async ownerReturnJobs(now){
   const at=new Date(now).toISOString();
   await sql`update salah_return_private.campaigns set state='expired'where state in('draft','queued')and expires_at<=${at}::timestamptz`;
@@ -58,6 +59,6 @@ const db={
   async put(key,rows,expires){await sql`insert into salah_push_private.cache(key,rows,expires_at) values(${key},${sql.json(rows)},to_timestamp(${expires}/1000.0)) on conflict(key) do update set rows=excluded.rows,expires_at=excluded.expires_at`;}
  }
 };
-let firebaseSender=null,firebaseReturnSender=null;
-try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw){const credential=JSON.parse(raw);firebaseSender=createFirebaseSupportSender({credential});firebaseReturnSender=createFirebaseOwnerReturnSender({credential});}}catch{}
-Deno.serve(createPushHandler({db,webpush,firebaseSender,firebaseReturnSender}));
+let firebaseSender=null,firebaseReturnSender=null,firebaseUpdateSender=null;
+try{const raw=Deno.env.get('FIREBASE_SUPPORT_SERVICE_ACCOUNT');if(raw){const credential=JSON.parse(raw);firebaseSender=createFirebaseSupportSender({credential});firebaseReturnSender=createFirebaseOwnerReturnSender({credential});firebaseUpdateSender=createFirebaseUpdate501Sender({credential});}}catch{}
+Deno.serve(createPushHandler({db,webpush,firebaseSender,firebaseReturnSender,firebaseUpdateSender}));

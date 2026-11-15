@@ -1,7 +1,7 @@
 import{t,translateUi,subscribeLanguage}from './i18n.js';
 import{uiLeaf,uiAttribute}from './ui.js';
 import{reciterFilterTabs,recentReciters}from './quran-reciter-discovery.js';
-import{listeningSummaryMarkup,updateListeningSummary,translateListeningSummary,createLiveListeningTotal,createSharedListeningMotion}from './listening-summary.js';
+import{listeningSummaryMarkup,updateListeningSummary,translateListeningSummary,createLiveListeningTotal,createLiveCompetitionRows,createSharedListeningMotion}from './listening-summary.js';
 import{personalDataAllowed,showRestrictedFeature}from './audience.js';
 import{captureCompetitionLayout,animateCompetitionChange}from './competition-motion.js';
 import{showAwardWinners}from './quran-awards.js';
@@ -12,8 +12,9 @@ import{ownerVerified,ownerNeedsMfa,verifyOwner}from './owner-auth.js';
 import{RECITERS}from './quran-reciters.js';
 import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-favorites.js';
 import{RANK_INTENTION_PHRASES}from './reciter-ranking-core.js';
-import{listenerPrivacyMarkup,bindPopularConsent,personalListening}from './reciter-popularity.js';
-import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompetition,clearCompetitionCache,competitionOwn,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
+import{listenerPrivacyMarkup,bindPopularConsent}from './reciter-popularity.js';
+import{guestCompetitionOwn}from './guest-competition.js';
+import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompetition,clearCompetitionCache,competitionOwn,localCompetitionTotals,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes,competitionScoreModeButton}from './competition-view.js';
 import{renderRankingTimes,rankingErrorMessage}from './ranking-ui.js';
 export function mountCompetition(host,heading){
@@ -21,11 +22,12 @@ export function mountCompetition(host,heading){
  const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false,ownerCheck=null,mode='total';
  const selectedReciters=new Map();
  if(!['day','week','month','all'].includes(period))period='all';
- const periods=[['day','rankingUi.day'],['week','rankingUi.week'],['month','rankingUi.month'],['all','rankingUi.allTime']],liveTotal=createLiveListeningTotal(),sharedMotion=createSharedListeningMotion();
+ const periods=[['day','rankingUi.day'],['week','rankingUi.week'],['month','rankingUi.month'],['all','rankingUi.allTime']],liveTotal=createLiveListeningTotal(),liveRows=createLiveCompetitionRows(),sharedMotion=createSharedListeningMotion();
  // Both counters already include this device's history: compare them, never add
  // a page-local delta to the cloud result. Saved pending time survives remounts;
  // time from other devices appears when the confirmed board refreshes.
- function displayRows(){const own=competitionOwn();if(!own)return rows;const totals=personalListening(period).totals;return rows.map(row=>row.id===own.id&&mode==='total'&&row.totalSeconds===undefined?{...row,seconds:Math.max(row.seconds,Math.floor(totals[row.reciter]||0))}:row);}
+ function previewState(){const registered=competitionOwn(),own=registered||guestCompetitionOwn(period),{signedIn}=counterSyncStatus();return{own,totals:registered?localCompetitionTotals(period):own?.totals||{},eligible:!!(own?.enabled===true&&['initial','profile'].includes(own.mode)&&(signedIn&&registered||!signedIn&&own.guest)),key:(own?.id||'none')+':'+period+':'+new Date().toDateString()};}
+ function displayRows(state=previewState()){return liveRows.sample(rows,state.own,state.totals,state);}
  function checkRankOwner(){
   const {signedIn,userId}=counterSyncStatus();
   if(!signedIn||!userId){ownerCheck=null;return;}
@@ -36,8 +38,12 @@ export function mountCompetition(host,heading){
    check.allowed=allowed||ownerNeedsMfa();draw();
   }).catch(()=>{if(ownerCheck===check)ownerCheck=null;});
  }
- function draw(){if(closed)return;const shown=displayRows(),own=competitionOwn(),{signedIn:signed,userId}=counterSyncStatus(),count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
- const target=liveTotal.sample(competitionListeningTotal(period),personalListening(period).totals,{key:own?.id+':'+period+':'+new Date().toDateString(),eligible:signed&&own?.enabled===true&&['initial','profile'].includes(own.mode)});
+ function draw(){if(closed)return;const preview=previewState(),shown=displayRows(preview),own=competitionOwn(),{signedIn:signed,userId}=counterSyncStatus(),count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
+ const confirmedTotal=competitionListeningTotal(period),confirmedOwn=rows.find(row=>row.id===preview.own?.id),shownOwn=shown.find(row=>row.id===preview.own?.id);
+ let target=liveTotal.sample(confirmedTotal,preview.totals,preview);
+ // A detailed board and its aggregate come from the same response. Apply the
+ // exact same self-only preview to both instead of independently rounding it.
+ if(preview.eligible&&Number.isSafeInteger(confirmedTotal)&&confirmedOwn?.totalSeconds!==undefined&&shownOwn)target=confirmedTotal+Math.max(0,shownOwn.totalSeconds-confirmedOwn.totalSeconds);
  if(resetMotionOnDraw){sharedMotion.reset();if(!refreshing)resetMotionOnDraw=false;}
  const total=sharedMotion.sample(target,{server:competitionListeningTotal(period),key:(own?.id||'guest')+':'+period+':'+new Date().toDateString()+':'+signed+':'+own?.enabled+':'+own?.mode});
  const access={owner:!!(signed&&ownerCheck?.userId===userId&&ownerCheck?.allowed),ownId:signed?own?.id:null};
@@ -59,7 +65,7 @@ export function mountCompetition(host,heading){
  }
  async function act(action){if(busy)return;busy=true;draw();try{await action();}catch(e){toast(rankingErrorMessage(e));}finally{busy=false;draw();}}
  async function refresh(force=false){if(closed||document.hidden)return;if(refreshing?.period===period&&refreshing.mode===mode)return refreshing.task;const selected=period,scoreMode=mode,token=++generation,entry={period:selected,mode:scoreMode,task:null};refreshing=entry;entry.task=(async()=>{try{const data=await loadCompetition(selected,{force,mode:scoreMode});if(closed||token!==generation)return;rows=data;loading=false;error=false;}catch{if(closed||token!==generation)return;loading=false;error=true;}finally{if(refreshing===entry)refreshing=null;}draw();})();return entry.task;}
- const privacyUpdate=()=>{clearCompetitionCache();liveTotal.reset();sharedMotion.reset();generation++;refreshing=null;const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh(true);};
+ const privacyUpdate=()=>{clearCompetitionCache();liveTotal.reset();liveRows.reset();sharedMotion.reset();generation++;refreshing=null;const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh(true);};
  const ownUpdate=()=>{void refresh();},authUpdate=()=>{checkRankOwner();draw();void refreshCompetitionOwn().catch(()=>{});void refresh();},visible=()=>{resetMotionOnDraw=true;sharedMotion.reset();if(!document.hidden){checkRankOwner();void refresh(true);}};
  window.addEventListener('salah:listener-visibility',privacyUpdate);window.addEventListener('salah:competition-updated',ownUpdate);window.addEventListener('salah:guest-competition-updated',authUpdate);window.addEventListener('salah:popularity-updated',authUpdate);window.addEventListener('salah:counter-status',authUpdate);document.addEventListener('visibilitychange',visible);
  const progress=()=>{if(!closed&&!document.hidden)draw();};window.addEventListener('salah:personal-listening-progress',progress);

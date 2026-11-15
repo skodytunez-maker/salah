@@ -1,5 +1,6 @@
 import{dispatchClassroomPush}from './classroom-push.mjs';
 import{dispatchOwnerReturns}from './owner-return.mjs';
+import{dispatchUpdate501,UPDATE_501_UNTIL}from './update-501.mjs';
 import{returnAllowedAt}from '../../../dist/js/owner-return-core.js';
 import{dispatchCompetitionPush}from './competition-push.mjs';
 import{dispatchStaffPush}from './staff-push.mjs';
@@ -105,7 +106,13 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
 }
 export function notification(event,now){return {title:'SALAH',body:reminderNotificationText(event,event.language),language:notificationLanguage(event.language),tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
-export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null,firebaseReturnSender=null}){
+export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null,firebaseReturnSender=null,firebaseUpdateSender=null}){
+ async function sendUpdate501(device,event){
+  if(!event||clock()>=UPDATE_501_UNTIL||!returnAllowedAt(clock(),device.timeZone)||event.expiresAt<=clock())return 'failed';
+  if(device.channel==='native'){const fresh=await db.update501Active(device.user,clock());return fresh&&firebaseUpdateSender?firebaseUpdateSender({token:fresh.nativeToken,timeZone:fresh.timeZone},event):'failed';}
+  try{const config=await db.config(),fresh=await db.update501Active(device.user,clock());if(!fresh||!returnAllowedAt(clock(),fresh.timeZone)||event.expiresAt<=clock())return 'failed';await webpush.sendNotification(subscription(fresh.subscription),JSON.stringify(event),{vapidDetails:{subject:PUBLIC_APP,publicKey:config.vapid.publicKey,privateKey:config.vapid.privateKey},TTL:Math.max(1,Math.floor((event.expiresAt-clock())/1000)),urgency:'normal',timeout:8000});return 'sent';}
+  catch(error){return [404,410].includes(error.statusCode)?'expired':'failed';}
+ }
  async function sendOwnerReturn(device,event){
   if(!event||!returnAllowedAt(clock(),event.timeZone)||event.expiresAt<=clock())return 'retry';
   if(device.channel==='native')return firebaseReturnSender?firebaseReturnSender({user_id:device.user,token:device.nativeToken},event):'retry';
@@ -125,6 +132,12 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
    if(origin&&origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');
    if(request.method==='OPTIONS'){if(origin!==PUSH_ORIGIN)fail(403,'Этот адрес не разрешён');return new Response(null,{status:204,headers});}
    if(action==='config'&&request.method==='GET'){const config=await db.ensureConfig(()=>webpush.generateVAPIDKeys());return reply({version:1,remindersVersion:5,features:['tahajjud','dhikr-inactivity','dhikr-daily'],publicKey:config.vapid.publicKey});}
+   if(['update-501-preview','update-501-arm'].includes(action)&&request.method==='POST'){
+    const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
+    if(origin||!secret||await digest(secret)!==await digest(config.cron_secret))fail(401,'Доступ запрещён');
+    if(clock()>=UPDATE_501_UNTIL)fail(410,'Кампания обновления завершена');
+    return reply(action==='update-501-preview'?await db.update501Preview(clock()):await db.update501Arm(clock()));
+   }
    // One explicitly requested campaign. The date window and immutable hash prevent repeat broadcasts.
    if(action==='invite-setup'&&request.method==='POST'){
     const config=await db.config(),secret=request.headers.get('X-Salah-Cron');
@@ -173,6 +186,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
      // A dead push gateway must not hold up all other phones.
      await Promise.all(Array.from({length:Math.min(8,devices.length)},async()=>{while(cursor<devices.length&&clock()-started<95000){const device=devices[cursor++];await deliverDevice(device);}}));
      try{delivered+=await dispatchOwnerReturns({db,send:sendOwnerReturn,clock});}catch{console.warn('owner_return_unavailable');}
+     try{delivered+=await dispatchUpdate501({db,send:sendUpdate501,clock,nativeReady:typeof firebaseUpdateSender==='function'});}catch{console.warn('update_501_unavailable');}
      await db.cleanup(clock());return reply({delivered});
     }finally{await db.release();}
    }
