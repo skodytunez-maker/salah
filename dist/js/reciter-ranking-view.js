@@ -1,6 +1,7 @@
 import{t}from './i18n.js';
 import{uiLeaf,uiAttribute,uiTextAttributes}from './ui.js';
 import{reciterImageUrl}from './approved-catalog.js';
+import{watchDecodedImages}from './image-presentation.js';
 import{read,write}from './storage.js';
 
 import{esc,closeModal}from './ui.js';
@@ -9,7 +10,7 @@ import{rankListening,listenerRing,assignListenerRings,medalForRank}from './recit
 import{rankingListeners,publicListenerPhoto}from './reciter-popularity.js';
 import{rankingTime,rankingModal}from './ranking-ui.js';
 let activeEntries=[],activeGlobal=false,duplicateInitials=new Set(),ringColors={};
-const face=r=>'<img class="reciter-portrait" src="'+esc(reciterImageUrl(r.portrait))+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
+const face=r=>'<img class="reciter-portrait" data-image-pending src="'+esc(reciterImageUrl(r.portrait))+'" alt="'+esc(r.name)+'" loading="lazy" decoding="async">';
 function listeners(id){const people=rankingListeners(id);if(!people.length)return '';return "<div class=\"rank-listeners\" "+uiAttribute("rankingUi.listeners",{},"aria-label")+">"+people.map((p,index)=>'<button type="button" class="rank-listener'+(duplicateInitials.has(p.initial)?' rank-listener-collision':'')+'" style="--listener-ring:'+(ringColors[p.id]||listenerRing(p.id))+'" data-listener-reciter="'+esc(id)+'" data-listener-index="'+index+'" '+(p.mode==='profile'?'aria-label="'+esc(p.nickname)+'"':uiAttribute('rankingUi.anonymousListener'))+'><span>'+esc(p.initial)+'</span>'+(p.mode==='profile'&&p.hasPhoto?'<img src="'+esc(publicListenerPhoto(p.id))+'" alt="" loading="lazy">':'')+'</button>').join('')+'</div>';}
 const row=e=>'<article class="reciter-card rank-list-row" data-personal-reciter="'+esc(e.id)+'" data-personal-reciter="'+esc(e.id)+'"><a href="#quran?view=reciters&reciter='+encodeURIComponent(e.id)+'"><span class="rank-row-number">'+e.rank+'</span>'+face(reciterInfo(e.id))+'<strong>'+esc(reciterInfo(e.id).name)+'</strong><span class="rank-row-time" data-rank-ui-seconds="'+e.seconds+'" data-rank-ui-text>'+esc(rankingTime(e.seconds))+'</span></a>'+listeners(e.id)+'</article>';
 export function rankingMarkup(ids,{seconds,query='',global=false,leader='',leaderKey='rankingUi.leader'}){
@@ -22,6 +23,7 @@ export function rankingMarkup(ids,{seconds,query='',global=false,leader='',leade
  return "<section class=\"rank-showcase\" "+uiAttribute("rankingUi.firstFive",{},"aria-label")+"><div class=\"rank-podium rank-podium-"+podium.length+'">'+podium.map((e,i)=>'<article class="reciter-card rank-podium-card rank-slot-'+(i+1)+' rank-medal-'+medalForRank(e.rank)+'"><a href="#quran?view=reciters&reciter='+encodeURIComponent(e.id)+'"><span class="rank-place" '+uiTextAttributes('rankingUi.place',{rank:e.rank})+'>'+esc(t('rankingUi.place',{rank:e.rank}))+'</span>'+face(reciterInfo(e.id))+'<strong>'+esc(reciterInfo(e.id).name)+'</strong><div class="rank-result"><span>'+(i===0?(leader?esc(leader):uiLeaf(leaderKey)):uiLeaf('rankingUi.listened'))+'</span><b data-rank-ui-seconds="'+e.seconds+'" data-rank-ui-text>'+esc(rankingTime(e.seconds))+'</b></div></a>'+(global?listeners(e.id):'')+'</article>').join('')+'</div>'+(ties?"<p class=\"rank-tie-note\">"+uiLeaf("rankingUi.tiesShared")+"</p>":'')+'<div class="rank-next">'+entries.slice(3,5).map(row).join('')+"</div><button type=\"button\" class=\"button secondary rank-open-all\" id=\"rank-open-all\">"+uiLeaf("rankingUi.allRanking")+"<span>"+entries.length+'</span></button></section>';
 }
 export function bindRankingView(host){
+ watchDecodedImages(host);
  host.querySelectorAll('.rank-listener img').forEach(image=>image.onerror=()=>image.remove());
  host.querySelectorAll('[data-listener-reciter]').forEach(button=>button.onclick=()=>{
   const listener=rankingListeners(button.dataset.listenerReciter)[Number(button.dataset.listenerIndex)];if(!listener)return;

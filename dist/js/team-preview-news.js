@@ -11,8 +11,20 @@ export const TEAM_PREVIEW_NEWS=Object.freeze({version:484,cards:[
  {id:'lessons',title:'Онлайн-занятия',text:'Познакомьтесь с экраном занятия: видео преподавателя и учебный материал. Для администраторов открыт учебный пример без реальных учеников.',where:'Знания → Онлайн-занятия',href:'#knowledge?view=online-lessons'}
 ]});
 const key=id=>'salah:team-features-understood-v1:'+id;
-export function teamPreviewNewsMarkup(){return '<div class="release-gallery"><div class="release-gallery-strip" tabindex="0" '+teamAttr('newsSections',{},'aria-label')+'>'+TEAM_PREVIEW_NEWS.cards.map(card=>'<article class="release-feature"><div class="release-new-art release-team-art" aria-hidden="true"><div class="release-team-demo release-team-'+card.id+' release-motion-preview"><img src="./assets/updates/team-'+card.id+'-484.svg" alt=""><span class="release-team-focus" data-release-motion-part="element"></span></div></div><h3 lang="ru" dir="ltr" translate="no">'+esc(card.title)+'</h3><p lang="ru" dir="ltr" translate="no">'+esc(card.text)+'</p><p class="release-feature-note" lang="ru" dir="ltr" translate="no">'+esc(card.where)+'</p></article>').join('')+'</div><div class="release-gallery-controls"><button type="button" data-release-prev '+teamAttr('previousCard',{},'aria-label')+'><img src="./assets/arrow-left.svg" alt=""></button><span data-release-page aria-live="polite">1/5</span><button type="button" data-release-next '+teamAttr('nextCard',{},'aria-label')+'><img src="./assets/arrow-left.svg" alt=""></button></div></div>';}
-export function createTeamPreviewNews({verified=teamPreviewVerified,userId=verifiedTeamPreviewId,subscribe=onTeamPreviewChange,storage=globalThis.localStorage,show=modal,doc=document,win=window,schedule=setTimeout,cancel=clearTimeout,canShow=()=>true}={}){
+const teamMotionMarkup=id=>{
+ if(id==='radio'){
+  const heights=[15,28,43,22,51,35,17,39,25,46,18,30],from=[.7,.95,.6,.85,.65,.95,.7,.65,.9,.6,.85,.7],middle=[1,.6,.95,.65,1,.6,.95,1,.65,.9,.6,1],to=[.65,1,.7,1,.6,.9,.65,.7,1,.7,.95,.65];
+  return '<span class="release-team-equalizer">'+heights.map((height,index)=>'<span class="release-team-eq-bar" data-release-motion-part="element" style="left:'+((4+index*22)/260*100)+'%;height:'+(height/58*100)+'%;--team-eq-from:'+from[index]+';--team-eq-middle:'+middle[index]+';--team-eq-to:'+to[index]+'"></span>').join('')+'</span>';
+ }
+ if(id==='teacher')return '<span class="release-team-teacher-check"><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="14.5" fill="#29384f" stroke="#bba87d"/><path class="release-team-check-stroke" data-release-motion-part="element" d="m7 15 5 5 10-11" fill="none" stroke="#dfca96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+ if(id==='muallim')return '<span class="release-team-muallim-progress"><span data-release-motion-part="element"></span></span>';
+ if(id==='live')return '<span class="release-team-live-indicator"><svg viewBox="0 0 20 20" aria-hidden="true"><circle class="release-team-live-ring" data-release-motion-part="element" cx="10" cy="10" r="8.5" fill="none" stroke="#d8c493"/><circle cx="10" cy="10" r="3" fill="#d8c493"/></svg></span>';
+ if(id==='lessons')return '<span class="release-team-lesson-focus"><span class="release-team-lesson-cursor" data-release-motion-part="element"></span></span>';
+ return '';
+};
+export function teamPreviewNewsMarkup(){return '<div class="release-gallery"><div class="release-gallery-strip" tabindex="0" '+teamAttr('newsSections',{},'aria-label')+'>'+TEAM_PREVIEW_NEWS.cards.map(card=>'<article class="release-feature"><div class="release-new-art release-team-art" aria-hidden="true"><div class="release-team-demo release-team-'+card.id+' release-motion-preview"><img src="./assets/updates/team-'+card.id+'-484.svg" alt="">'+teamMotionMarkup(card.id)+'</div></div><h3 lang="ru" dir="ltr" translate="no">'+esc(card.title)+'</h3><p lang="ru" dir="ltr" translate="no">'+esc(card.text)+'</p><p class="release-feature-note" lang="ru" dir="ltr" translate="no">'+esc(card.where)+'</p></article>').join('')+'</div><div class="release-gallery-controls"><button type="button" data-release-prev '+teamAttr('previousCard',{},'aria-label')+'><img src="./assets/arrow-left.svg" alt=""></button><span data-release-page aria-live="polite">1/5</span><button type="button" data-release-next '+teamAttr('nextCard',{},'aria-label')+'><img src="./assets/arrow-left.svg" alt=""></button></div></div>';}
+export function createTeamPreviewNews({verified=teamPreviewVerified,userId=verifiedTeamPreviewId,subscribe=onTeamPreviewChange,storage,show=modal,doc=document,win=window,schedule=setTimeout,cancel=clearTimeout,canShow=()=>true}={}){
+ if(storage===undefined)try{storage=globalThis.localStorage;}catch{storage=null;}
  let timer=null,openedFor=null,off=null,stopped=false,cleanup=null;const memory=new Set();
  const seen=id=>{if(memory.has(id))return true;try{return Number(storage.getItem(key(id)))>=TEAM_PREVIEW_NEWS.version;}catch{return false;}};
  function open(){
@@ -31,4 +43,13 @@ export function createTeamPreviewNews({verified=teamPreviewVerified,userId=verif
   timer=schedule(()=>{timer=null;if(!doc.hidden&&verified()&&!seen(userId())&&canShow()&&!open())timer=schedule(refresh,1500);},650);
  }
  return{open,refresh,start(){stopped=false;off=subscribe(refresh);win.addEventListener('hashchange',refresh);doc.addEventListener('visibilitychange',refresh);win.addEventListener('salah:release-dismissed',refresh);refresh();return()=>{stopped=true;off?.();if(timer!==null)cancel(timer);win.removeEventListener('hashchange',refresh);doc.removeEventListener('visibilitychange',refresh);win.removeEventListener('salah:release-dismissed',refresh);cleanup?.();};}};
+}
+// Keep the permanent team entry inside its cabinet. This controller never
+// schedules a popup by itself and keeps the existing verified access checks.
+export function mountTeamPreviewNewsEntry(host,{verified=teamPreviewVerified,subscribe=onTeamPreviewChange,create=createTeamPreviewNews}={}){
+ const news=create({verified,canShow:()=>false});
+ host.innerHTML='<button type="button" class="staff-action" data-team-preview-news>'+teamLeaf('newsSections')+'</button>';
+ const button=host.querySelector('[data-team-preview-news]');button.onclick=()=>{if(verified())news.open();};
+ const paint=()=>{host.hidden=!verified();};paint();const off=subscribe(paint),stop=news.start();
+ return()=>{off?.();stop?.();button.onclick=null;host.replaceChildren();};
 }

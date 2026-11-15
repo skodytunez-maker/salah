@@ -36,9 +36,11 @@ export function showAppRelease(release=APP_ANNOUNCEMENT,{available=false,acknowl
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
 export const nativeUpdateRuntime=()=>globalThis.Capacitor?.isNativePlatform?.()===true||Number.isSafeInteger(globalThis.__SALAH_NATIVE_BOOT__?.versionCode);
+export function downloadUpdateBlocked(doc=globalThis.document){const dataset=doc?.documentElement?.dataset;return['quranDownload','quranTextDownload','mushafDownload'].some(key=>dataset?.[key]==='active')||!!doc?.querySelector?.('[data-prayer-offline-busy]');}
 export function updateStatusMessage(status){return ({current:t('pwaUi.current'),loading:t('pwaUi.loading'),offline:t('pwaUi.offline'),unavailable:t('pwaUi.unavailable'), 'native-unavailable':t('pwaUi.nativeUnavailable'), 'native-required':t('pwaUi.nativeRequired'), 'rolled-back':t('pwaUi.rolledBack')})[status]||'';}
 export async function checkNativeUpdate(updater,{force=false,timeoutMs=20000}={}){
  if(navigator.onLine===false)return 'offline';
+ if(downloadUpdateBlocked())return 'loading';
  if(typeof updater?.check!=='function')return 'native-unavailable';
  let timer;
  try{
@@ -62,7 +64,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  }
  if(!('serviceWorker' in navigator))return;
  manualCheck=null;
- let requested=false,reloaded=false,applyQueued=false,reloadPending=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
+ let requested=false,automaticRequested=false,reloaded=false,applyQueued=false,reloadPending=false,banner=null,lastCheck=0,checking=null,checkTimer=null,offerWorker=null,dismissedWorker=null;
  const startedAt=Date.now();let startupUntouched=true,lastInteraction=-Infinity;
  const cancelStartup=()=>{startupUntouched=false;lastInteraction=Date.now()};
  const inputs=['pointerdown','touchstart','keydown'];
@@ -71,9 +73,13 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  const finishStartup=()=>{startupUntouched=false};
  const watched=new WeakSet();
  let stopBannerLanguage=null;const clearBanner=()=>{stopBannerLanguage?.();stopBannerLanguage=null;banner?.remove();banner=null;};
- const blocked=()=>document.documentElement?.dataset?.qrLogin==='active'||document.documentElement?.dataset?.quranDownload==='active'||!canApplyUpdate();
- const finishReload=async()=>{if(!reloadPending||reloaded||blocked())return;reloaded=true;if(!await reloadAfterUpdate(()=>!blocked()))reloaded=false;};
- const requestApply=()=>{if(blocked()){applyQueued=true;return false;}applyQueued=false;requested=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else{reloadPending=true;void finishReload();}return true;};
+ const blocked=()=>document.documentElement?.dataset?.qrLogin==='active'||downloadUpdateBlocked()||!canApplyUpdate();
+ const automaticReloadSafe=()=>!blocked()&&document.visibilityState==='visible'&&Date.now()-lastInteraction>=5000&&!document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')&&!document.querySelector?.('dialog[open],.founder-welcome,.series-celebration')&&canAutoUpdate();
+ const canFinishReload=()=>!blocked()&&(!automaticRequested||automaticReloadSafe());
+ // Activation and its fade can race with a new edit, reader or download. The
+ // automatic request keeps waiting for the same safe state at both boundaries.
+ const finishReload=async()=>{if(!reloadPending||reloaded||!canFinishReload())return;reloaded=true;if(!await reloadAfterUpdate(canFinishReload))reloaded=false;};
+ const requestApply=()=>{automaticRequested=false;if(blocked()){applyQueued=true;return false;}applyQueued=false;requested=true;if(registration.waiting)registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});else{reloadPending=true;void finishReload();}return true;};
  let registration;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
   if(requested&&!reloaded){reloadPending=true;void finishReload();}
@@ -107,8 +113,8 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    makeBanner({release:(!force?release.announcement:release)||{version:APP_VERSION+1,date:'',changes:[t('pwaUi.fallback')]},available:true});
   }
   function applyAutomatically(){
-   if(blocked()||requested||!registration.waiting||!navigator.serviceWorker.controller||document.visibilityState!=='visible'||Date.now()-lastInteraction<5000||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||document.querySelector?.('dialog[open],.founder-welcome,.series-celebration')||!canAutoUpdate())return false;
-   try{requested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});return true;}catch{requested=false;return false;}
+   if(requested||!registration.waiting||!navigator.serviceWorker.controller||!automaticReloadSafe())return false;
+   try{requested=true;automaticRequested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});return true;}catch{requested=false;automaticRequested=false;return false;}
   }
   function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&!applyAutomatically())void offer();});if(worker.state==='installed'&&!applyAutomatically())void offer();}
   // A downloaded update can activate later too, once the app is at a safe resting screen.

@@ -25,13 +25,14 @@ const ctx=vm.createContext({app,document:doc,window:win,location:win.location,se
  teamPreviewVerified:()=>false,bindAppSharing(){},appSharingMarkup:()=>'<div class="app-share-row">Пригласить друзей</div>',mountMenuAvatar(){},
  reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){},tick(){}},usesAlHakk:()=>false,tyumenSourceSettings:()=>'',prayers,methods:{3:'Muslim World League',5:'Egyptian General Authority'},
  prayerOffsetValues:()=>settings.offsets,timingsFor:()=>times,dateKey:()=>day,formatTime:time=>Number.isFinite(time)?'08:00':'—',nativeUpdateRuntime:()=>false,APP_VERSION:500,APP_UPDATED_AT:'2026-11-15',APP_UPDATE_DATE:'15 ноября 2026',
- cityDialog(){},ensureTahajjudDays:async()=>{},mountAmbientSettings(){},mountLandmarkSettings(){},mountCacheSettings(){},mountTravelSettings(){},travelHooks:{},mountSoftDepthSetting(){},mountDiagnosticSetting(){},personalDataAllowed:()=>true,errorReporter:{},
+ cityDialog(){},ensureTahajjudDays:async()=>{},mountAmbientSettings(){},mountLandmarkSettings(){},mountPrayerOffline(){},mountCacheSettings(){},mountTravelSettings(){},travelHooks:{},mountSoftDepthSetting(){},mountDiagnosticSetting(){},personalDataAllowed:()=>true,errorReporter:{},
  weatherLabel:()=>'',weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},updateSettings,toast(){},refresh(){renders++;},render(){renders++;},tick:null,
  calendarRequestId:0,currentDay:day,lastTick:clock,loading:false,days:{[day]:{timings:Object.fromEntries(Object.entries(times).map(([key,value])=>[key,new Date(value).toISOString()]))}},
  adhkarPeriod:()=> 'morning',adhkarHomeCard:adhkarCard,updateAdhkarPeriod(){},canResumePreviousEvening:()=>false,nextPrayer:()=>next,homeEvent:(_now,value)=>value,
  countdown:()=> '00:01:40',asrInfo:()=>null,tahajjudEntry:()=>({text:'01:30',label:'Личный текст расчёта'}),atmosphere(){},weather:null,lastWeatherCheck:0,WEATHER_REFRESH_INTERVAL:60000,weatherBusy:false,refreshWeather(){},
  Date:class extends Date{static now(){return clock;}}
 });
+ctx.uiLeaf=(await import('../dist/js/ui.js')).uiLeaf;
 vm.runInContext(source.slice(source.indexOf('const settingsIconPaths='),source.indexOf("let historyPeriod='month'")),ctx);
 vm.runInContext(source.split(/\r?\n/).find(line=>line.startsWith('const routes=')),ctx);
 for(const name of ['nav','settingsPage','tick','updateSettingsTranslations'])vm.runInContext(source.split(/\r?\n/).find(line=>line.startsWith('function '+name+'(')),ctx);

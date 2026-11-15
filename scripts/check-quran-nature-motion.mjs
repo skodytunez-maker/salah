@@ -20,7 +20,7 @@ function mockVideo(){
 }
 const panel=w.document.createElement('section');panel.dataset.nature='rain';panel.dataset.natureVisual='video';panel.innerHTML='<button data-expand>Open</button><button data-toggle>Reading</button><button data-nature="forest">Forest</button><button data-nature-visual="photo">Photo</button><input type="range">';w.document.body.append(panel);
 let cacheOptions;const cache={get:kind=>blobs.get(kind)||null,warm:kind=>{assert.ok(cacheOptions.canWarm(),'Warming only follows current playing foreground');warmCalls.push(kind);},stop(){},retry(){},destroy(){destroyedCache++;}};
-const motion=mountNatureMotion(panel,{doc:w.document,win:w,isReduced:()=>reduced,createVideo:mockVideo,createCache:options=>{cacheOptions=options;return cache;},setTimer:(fn,ms)=>{assert.equal(ms,220);const id=++nextTimer;timers.set(id,fn);return id;},clearTimer:id=>timers.delete(id)});
+const motion=mountNatureMotion(panel,{doc:w.document,win:w,isReduced:()=>reduced,createVideo:mockVideo,loadPhoto:async()=>({complete:true,naturalWidth:640,naturalHeight:960}),createCache:options=>{cacheOptions=options;return cache;},setTimer:(fn,ms)=>{assert.equal(ms,220);const id=++nextTimer;timers.set(id,fn);return id;},clearTimer:id=>timers.delete(id)});
 const runTimers=()=>{const callbacks=[...timers.values()];timers.clear();for(const fn of callbacks)fn();};
 function event(target,type,time=1000,trusted=true){const e=new w.Event(type,{bubbles:true});Object.defineProperty(e,'isTrusted',{value:trusted});Object.defineProperty(e,'timeStamp',{value:time});target.dispatchEvent(e);}
 function switchTo(kind){panel.dataset.nature=kind;motion.sync();}

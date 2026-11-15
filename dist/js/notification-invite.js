@@ -12,7 +12,8 @@ export function standardReminderPreferences(value){
  for(const key of PRAYER_KEYS)next.prayers[key].atTime=true;
  return next;
 }
-export function createNotificationInvite({getState,enable,openSettings=()=>{},storage=globalThis.localStorage}){
+export function createNotificationInvite({getState,enable,openSettings=()=>{},storage}){
+ if(storage===undefined)try{storage=globalThis.localStorage;}catch{storage=null;}
  let host=null,signature='',busy=false,finished=false,message='',connected=false;
  const seen=()=>{try{return ['dismissed','connected'].includes(storage.getItem(INVITE_KEY));}catch{return true;}};
  const remember=value=>{try{storage.setItem(INVITE_KEY,value);return true;}catch{return false;}};

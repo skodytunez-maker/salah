@@ -1,0 +1,20 @@
+export default Object.freeze({
+ 'offlineUi.mushafTitle':'Bütün Quran internetsiz',
+ 'offlineUi.mushafNote':'604 səhifənin hamısını bu cihazda saxlayın. Yükləməni davam etdirəndə artıq yoxlanmış fayllar saxlanılır.',
+ 'offlineUi.mushafAppearance':'Oflayn görünüş ərəb mətnindən və daxili şriftdən istifadə edir. Hərflərin görünüşü və sətirlər çap müshəfindən fərqlənir; ayələrin mətni dəyişmir.',
+ 'offlineUi.checking':'Saxlanmış mətnlər yoxlanılır…',
+ 'offlineUi.ready':'604 səhifənin hamısı saxlanılıb. İnternetsiz oxuya bilərsiniz.',
+ 'offlineUi.paused':'Yükləmə dayandırılıb: {count} / 114 surə. Davam etdirə bilərsiniz.',
+ 'offlineUi.progress':'Yoxlanılır və saxlanılır: {count} / 114 surə.',
+ 'offlineUi.available':'Saxlanmış surələr: {count} / 114. Tam paket: {size} MB.',
+ 'offlineUi.quota':'Yaddaşda kifayət qədər yer yoxdur. Saxlanmış hissələr qalır; yer boşaldıb davam edin.',
+ 'offlineUi.storage':'Bu brauzerdə oflayn yaddaş əlçatan deyil.',
+ 'offlineUi.failed':'Yükləməni tamamlamaq mümkün olmadı. Saxlanmış hissələr qalır; davam etməyə çalışın.',
+ 'offlineUi.download':'Bütün Quranı yüklə',
+ 'offlineUi.resume':'Yükləməyə davam et',
+ 'offlineUi.pause':'Yükləməni dayandır',
+ 'offlineUi.read':'İnternetsiz oxu',
+ 'offlineUi.printed':'Çap görünüşü',
+ 'offlineUi.offlineCaption':'Oflayn görünüş · ərəb mətni',
+ 'offlineUi.fallbackCaption':'Çap şrifti əlçatan deyil · ərəb mətni'
+});

@@ -1,0 +1,23 @@
+# Saved prayer timetables
+
+Settings → Data contains a separate Prayer times offline control and a link to Sources. Opening the control makes no calendar prefetch request. The user explicitly saves the current city-local month and the following 11 months. Calculated cities reuse the existing Aladhan monthly calendar endpoint, selected coordinates, method, Asr school and high-latitude rule. Requests run sequentially; complete verified cached months are skipped on resume.
+
+The existing private local-storage prayer-cache keys remain unchanged, so ordinary app updates retain saved schedules. Cached rows must match the selected city coordinates/calculation cache, saved timezone and selected source. Timezone aliases are compared canonically. Each available day must contain all six ISO instants; a Tyumen first-Asr selection additionally requires its verified first-Asr value. Missing dates, invalid rows and gaps are excluded from coverage rather than filled or approximated.
+
+Coverage shows complete months and exact contiguous ranges, including the year. The window follows the saved city's timezone and rolls forward with the calendar. An old-only cache is removable but is not described as currently available offline. Changing city, source or calculation choices shows that selection's actual cache rather than a previous city's completion state. Personal calculation/table offsets continue to be applied locally by the existing timingsFor logic.
+
+Tyumen saves only published rows from the chosen calendar/Al-Hakk source. The currently bundled calendar has October and November 2026; the combined published sources also have September and December 2026. No January or later timetable is invented. First-Asr supplements use the existing approved/bundled values or existing Aladhan calculation path for a published date; they never replace the Hanafi column or introduce a new timetable date. The UI explicitly distinguishes the published-date limit from a full 12-month calculated timetable.
+
+Normal prayer loading now reads a valid saved Tyumen day before trying network access. Calculated full months likewise load from storage without a request. The existing countdown, next-prayer calculation and month/year-boundary lookup run on these local instants. Saving a timetable does not grant notification permission, change server reminder subscriptions or guarantee delivery of push notifications without connectivity.
+
+Partial downloads remain available after an interruption. Opening settings after a restart checks actual saved rows; Continue only fetches incomplete months. Cancellation, leaving the settings view, a city/configuration change or intentional removal aborts the current download. Late ignored-abort responses cannot resurrect a removed cache. Requests capture their original configuration and cannot write under a newly selected city's key. Online responses with a different timezone are rejected rather than shown as that selection's times. Storage failure reports an incomplete save and keeps other existing local data.
+
+Remove saved timetable deletes only the selected prayer-cache entry. It preserves other cities, settings, prayer history, accounts, Quran texts/audio and unrelated cache data. Automatic app reload waits while the prayer save control is busy; an intentional update still leaves completed months in normal persistent storage. Browser/device storage removal remains an intentional loss of locally saved data.
+
+The interface has 22 strings in RU, EN, AZ, TG, UZ, KK, DE and AR. Language changes update display leaves and localized date/number parameters without remounting the component, restarting downloads or changing saved city names.
+
+## Validation
+
+scripts/check-prayer-offline.mjs uses the actual prayer/controller/UI modules with blocked or controlled network responses and persistent local storage. It covers 12-month explicit prefetch, resume of one incomplete month, partial-date gaps, offline year rollover and countdown, saved timezone/year boundaries, wrong-zone online rejection, in-flight timezone isolation, city/method/school/high-latitude changes, cancellation/removal, storage quota failure, approved Tyumen-only dates, module-update persistence and all eight live UI languages. Synthetic Aladhan fixtures are test data, not published prayer times.
+
+Existing Tyumen October/November/source checks continue to verify approved values, both Asr columns, explicit corrections, source isolation, server/widget/reminder equivalence and month-boundary Fajr. No source tables, calculation constants, notification/server code, service worker or release metadata are changed by this feature's implementation files.

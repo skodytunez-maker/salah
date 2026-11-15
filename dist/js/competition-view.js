@@ -1,3 +1,4 @@
+import{watchDecodedImages}from './image-presentation.js';
 import{t}from './i18n.js';
 import{uiLeaf,uiAttribute,uiTextAttributes}from './ui.js';
 import{read,write}from './storage.js';
@@ -22,7 +23,7 @@ const person=(p,access)=>{
  if(p.guest||!access.owner&&p.id!==access.ownId)return '<span class="competition-person" style="cursor:default">'+content+'</span>';
  return '<button type="button" class="competition-person" data-competition-person="'+esc(p.id)+'" '+uiAttribute(p.mode==='profile'?'rankingUi.profileName':'rankingUi.listenerCard',p.mode==='profile'?{name:p.nickname}:{})+'>'+content+'</button>';
 };
-const picture=p=>'<a class="competition-reciter" href="#quran?view=reciters&reciter='+encodeURIComponent(p.reciter)+'" '+uiAttribute('rankingUi.listenName',{name:reciterInfo(p.reciter).name})+'><img class="reciter-portrait" src="./'+esc(reciterInfo(p.reciter).portrait||'assets/person.svg')+'" alt="'+esc(reciterInfo(p.reciter).name)+'" loading="lazy"><small>'+esc(reciterInfo(p.reciter).name)+'</small></a>';
+const picture=p=>'<a class="competition-reciter" href="#quran?view=reciters&reciter='+encodeURIComponent(p.reciter)+'" '+uiAttribute('rankingUi.listenName',{name:reciterInfo(p.reciter).name})+'><img class="reciter-portrait" data-image-pending src="./'+esc(reciterInfo(p.reciter).portrait||'assets/person.svg')+'" alt="'+esc(reciterInfo(p.reciter).name)+'" loading="lazy"><small>'+esc(reciterInfo(p.reciter).name)+'</small></a>';
 const podiumTime=seconds=>{const value=Math.max(0,Math.floor(seconds||0));return Math.floor(value/3600)+':'+String(Math.floor(value%3600/60)).padStart(2,'0')+':'+String(value%60).padStart(2,'0');};
 const score=(person,mode)=>mode==='total'?person.totalSeconds??person.seconds:person.seconds;
 const reciterTime=item=>'<span class="competition-reciter-time" data-competition-reciter-time="'+esc(item.reciter)+'" data-rank-ui-seconds="'+item.seconds+'" data-rank-ui-aria aria-label="'+esc(rankingTime(item.seconds))+'">'+esc(podiumTime(item.seconds))+'</span>';
@@ -65,6 +66,7 @@ export function competitionMarkup(rows,access={},mode='total'){
  return "<section class=\"competition-showcase\" "+uiAttribute("rankingUi.firstFiveListeners",{},"aria-label")+"><div class=\"competition-podium competition-podium-"+top.length+'">'+podium+'</div><div class="competition-next">'+entries.slice(3,5).map(p=>row(p,access,mode)).join('')+'</div>'+(top.some((p,i)=>i&&p.rank===top[i-1].rank)?'<p class="rank-tie-note">'+uiLeaf(mode==='total'&&hasTotals?'rankingUi.tiesTotalTime':'rankingUi.tiesTime')+'</p>':'')+"<div class=\"competition-rating-actions\"><button type=\"button\" class=\"button secondary rank-open-all\" id=\"competition-all\">"+uiLeaf("rankingUi.allRanking")+"<span>"+entries.length+'</span></button>'+(showModes?competitionScoreModeButton(mode):'')+'</div></section>';
 }
 export function bindCompetitionView(host,access={},mode='total',selected=new Map(),toggleMode=()=>{}){
+ watchDecodedImages(host);
  if(mode==='total')bindPodiumReciters(host,selected);
  const toggle=host.querySelector('[data-competition-score-mode]');if(toggle)toggle.onclick=toggleMode;
  host.querySelectorAll('.competition-user-face img').forEach(image=>image.onerror=()=>image.remove());

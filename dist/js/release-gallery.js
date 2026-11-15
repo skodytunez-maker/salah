@@ -1,4 +1,5 @@
 import{bindUiLanguage,setUiAttribute}from './ui.js';
+import{getDirection,translateUi}from './i18n.js';
 import{releaseIllustrations,isPublicReleaseChange}from './release-illustrations.js';
 const alphabetNews="<article class=\"release-feature\"><div class=\"release-alphabet-preview\"><div><span lang=\"ar\" dir=\"rtl\">ب</span><small>Отдельно</small></div><div><span lang=\"ar\" dir=\"rtl\">بـ</span><small>В начале</small></div><div><span lang=\"ar\" dir=\"rtl\">ـبـ</span><small>В середине</small></div><div><span lang=\"ar\" dir=\"rtl\">ـب</span><small>В конце</small></div></div><h3>Арабский алфавит</h3><p>28 букв и их формы в слове. Правила соединения, короткая практика и отметки повторения.</p><p>Откройте «Знания → Арабский алфавит».</p></article>";
 import{awardArtwork}from './quran-awards-core.js';
@@ -14,10 +15,11 @@ export function illustratedReleaseMarkup(version,changes=[]){if(version===335)re
  '</div><div class="release-gallery-controls"><button type="button" data-release-prev aria-label="Предыдущая карточка"><img src="./assets/arrow-left.svg" alt=""></button><span data-release-page aria-live="polite">1/'+([325,326,327,328,329,330,333,334].includes(version)?7:6)+'</span><button type="button" data-release-next aria-label="Следующая карточка"><img src="./assets/arrow-left.svg" alt=""></button></div></div>';}
 export function bindIllustratedRelease(root){
  const strip=root.querySelector('.release-gallery-strip');if(!strip)return;
- setUiAttribute(strip,'aria-label','teamUi.newsSections');const previous=root.querySelector('[data-release-prev]'),following=root.querySelector('[data-release-next]');if(previous)setUiAttribute(previous,'aria-label','teamUi.previousCard');if(following)setUiAttribute(following,'aria-label','teamUi.nextCard');bindUiLanguage(root);
+ const cards=[...strip.children];strip.dir='ltr';
+ setUiAttribute(strip,'aria-label','teamUi.newsSections');const previous=root.querySelector('[data-release-prev]'),following=root.querySelector('[data-release-next]');if(previous)setUiAttribute(previous,'aria-label','teamUi.previousCard');if(following)setUiAttribute(following,'aria-label','teamUi.nextCard');bindUiLanguage(root,()=>{for(const card of cards)card.dir=getDirection();translateUi(root);});
  const doc=root.ownerDocument,dialog=root.closest('dialog'),visibility=()=>{for(const motion of root.querySelectorAll('.release-motion-preview')){if(doc.hidden)motion.style.setProperty('--release-motion-state','paused');else motion.style.removeProperty('--release-motion-state');}};
  if(dialog){doc.addEventListener('visibilitychange',visibility);dialog.addEventListener('close',()=>doc.removeEventListener('visibilitychange',visibility),{once:true});visibility();}
- const cards=[...strip.children],prev=root.querySelector('[data-release-prev]'),next=root.querySelector('[data-release-next]'),page=root.querySelector('[data-release-page]');let index=0;
+ const prev=root.querySelector('[data-release-prev]'),next=root.querySelector('[data-release-next]'),page=root.querySelector('[data-release-page]');let index=0;if(page)page.dir='ltr';
  if(cards.length<2||!prev||!next||!page){for(const card of cards){card.inert=false;card.setAttribute('aria-hidden','false');}return;}
  const reflect=()=>{prev.disabled=index===0;next.disabled=index===cards.length-1;page.textContent=(index+1)+'/'+cards.length;cards.forEach((c,i)=>{c.inert=i!==index;c.setAttribute('aria-hidden',String(i!==index));});};
  const move=n=>{index=Math.max(0,Math.min(cards.length-1,n));reflect();strip.scrollTo({left:index*(strip.clientWidth+12),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});};

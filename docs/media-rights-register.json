@@ -3636,6 +3636,33 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/release-announcements.md",
       "note": "Original SALAH SVG interface illustration authored in repository code for release501: the separate Quran meaning-translation chooser with Noor International author, QuranEnc/version credit and download control. No external images, embedded font files, copied third-party app artwork or private user data."
+    },
+    {
+      "path": "dist/assets/updates/quran-offline-502.svg",
+      "bytes": 2182,
+      "gitBlobSha": "57413177d98f172b95802e948967372c9c4c3436",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH release502 SVG interface illustration authored directly in repository code: offline Quran save/read progress, saved prayer-calendar coverage, or saved recitation library. Uses original panel geometry and decorative lines, not copied third-party app artwork or religious quotations. No embedded or external images/fonts/private user data; origin support does not claim exclusive copyright."
+    },
+    {
+      "path": "dist/assets/updates/prayer-offline-502.svg",
+      "bytes": 3074,
+      "gitBlobSha": "bf94ad99e54ebe0cd1d4c0b73d2a2ba0133ce448",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH release502 SVG interface illustration authored directly in repository code: offline Quran save/read progress, saved prayer-calendar coverage, or saved recitation library. Uses original panel geometry and decorative lines, not copied third-party app artwork or religious quotations. No embedded or external images/fonts/private user data; origin support does not claim exclusive copyright."
+    },
+    {
+      "path": "dist/assets/updates/audio-offline-502.svg",
+      "bytes": 2147,
+      "gitBlobSha": "5146c3caa08865e62f957c6e0b79f3fc6247ff46",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH release502 SVG interface illustration authored directly in repository code: offline Quran save/read progress, saved prayer-calendar coverage, or saved recitation library. Uses original panel geometry and decorative lines, not copied third-party app artwork or religious quotations. No embedded or external images/fonts/private user data; origin support does not claim exclusive copyright."
     }
   ],
   "wallpaperSets": [

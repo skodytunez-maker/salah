@@ -34,10 +34,14 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
  async function cache(){try{return await cacheStorage?.open(LANDMARK_CACHE)}catch{return null}}
  async function publicFile(url,signal,{type,limit}){
   abort(signal);const store=await cache();let response=await store?.match(url).catch(()=>null);
-  if(!response){response=await fetcher(url,{signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!response.ok)throw Error('Landmark download failed');}
+  const complete=value=>value?.status===200&&value.type!=='opaque'&&!value.headers.has('Content-Range');
+  if(response&&!complete(response)){await store?.delete(url).catch(()=>{});response=null;}
+  if(!response)response=await fetcher(url,{signal,credentials:'omit',referrerPolicy:'no-referrer'});
+  if(!complete(response))throw Error('Landmark download failed');
   const contentType=response.headers.get('Content-Type')||'';
   if(!type.test(contentType))throw Error('Unexpected landmark format');
   const bytes=await response.clone().arrayBuffer();abort(signal);if(bytes.byteLength>limit)throw Error('Landmark too large');
+  const length=response.headers.get('Content-Length');if(length&&!response.headers.has('Content-Encoding')&&Number(length)!==bytes.byteLength)throw Error('Incomplete landmark');
   if(store)await store.put(url,response.clone()).catch(()=>{});
   return response;
  }
@@ -66,6 +70,7 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   return {status:'ready',entry:selected,blobs};
  };
  load.catalogue=entries;
+ load.invalidate=async(entry,key)=>{if(!entry||!['day','night','mask'].includes(key)||!validAssets(entry,entry.id))return;const store=await cache();await store?.delete(new URL(entry[key],base).href).catch(()=>{});};
  return load;
 }
 export const loadLandmark=createLandmarkLoader({overlay:applyApprovedWallpapers});

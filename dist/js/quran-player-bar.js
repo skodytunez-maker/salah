@@ -3,6 +3,7 @@ import{bindMiniPlayerDismiss}from './quran-mini-dismiss.js';
 import{mountPlayerWindow}from './quran-player-window.js';
 import{mountQuranPlayerExtras}from './quran-player-extras.js';
 import{reciterImageUrl}from './approved-catalog.js';
+import{createImagePresenter}from './image-presentation.js';
 import{ruqyahPlayback}from './ruqyah-session.js';
 import{ruqyahDuration}from './ruqyah-catalog.js';
 import{showTvOutput}from './tv-output.js';
@@ -10,6 +11,7 @@ import{actionIcon}from './action-icons.js';
 import{showListeningShare}from './quran-listen-share.js';
 import{RECITER_FAVORITES_KEY}from './quran-reciter-favorites.js';
 import{quranPlayback}from './quran-session.js';
+import{markListeningDismissed}from './quran-listening-progress.js';
 import{RECITERS,reciterInfo,reciterHasSurah,groupedReciters}from './quran-reciters.js';
 import{read,write}from './storage.js';
 import{toast}from './ui.js';
@@ -26,7 +28,8 @@ export function mountQuranPlayer(){
  function placeDock(){const nav=document.getElementById('mobile-nav'),rect=nav?.getBoundingClientRect(),navStyle=nav?getComputedStyle(nav):null,navVisible=rect&&rect.height>0&&navStyle.display!=='none';const offset=playerDockOffset(innerHeight,{top:rect?.top,height:rect?.height,bottom:parseFloat(navStyle?.bottom),visible:!!navVisible});panel.style.setProperty('--quran-dock-bottom',offset+'px');document.body.style.setProperty('--quran-audio-reserve',(offset+88)+'px');}
  window.addEventListener('resize',placeDock);globalThis.visualViewport?.addEventListener('resize',placeDock);const dockObserver=typeof ResizeObserver==='function'?new ResizeObserver(placeDock):null;const navElement=document.getElementById('mobile-nav');if(navElement)dockObserver?.observe(navElement);
 
- const nowPlaying=panel.querySelector('.quran-now-playing'),toggle=panel.querySelector('[data-toggle]');
+ const nowPlaying=panel.querySelector('.quran-now-playing'),toggle=panel.querySelector('[data-toggle]'),portraitPresenter=createImagePresenter(nowPlaying.querySelector('.quran-playing-portrait'));
+ const imageOnline=()=>void portraitPresenter.retry();window.addEventListener('online',imageOnline);
  panel.querySelector('[data-share]').onclick=showListeningShare;
  const current=()=>ruqyahPlayback.state.record?ruqyahPlayback:quranPlayback;
  panel.querySelector('[data-tv]').onclick=()=>showTvOutput({requestAudio:()=>current().requestOutput()});
@@ -35,7 +38,7 @@ export function mountQuranPlayer(){
  toggle.onclick=()=>current().toggle();
  const reciterSelect=panel.querySelector('select');
  reciterSelect.onchange=async()=>{const reciter=reciterSelect.value;if(!reciterHasSurah(reciter,quranPlayback.state.surah?.number))return;const saved=write('quran-preferences',{...read('quran-preferences',{}),reciter});if(!saved)toast(t('player.reciterSaveFailed'));await quranPlayback.changeReciter(reciter)};
- const dismissPlayer=()=>{quranPlayback.stop();if(ruqyahPlayback.state.record)ruqyahPlayback.stop();};
+ const dismissPlayer=()=>{const hadQuran=!!quranPlayback.state.surah&&!ruqyahPlayback.state.record;quranPlayback.stop();if(hadQuran)markListeningDismissed();if(ruqyahPlayback.state.record)ruqyahPlayback.stop();};
  panel.querySelector('[data-dismiss-player]').onclick=dismissPlayer;
  const stopMiniDismiss=bindMiniPlayerDismiss(panel,{canStart:()=>!playerWindow.isOpen,dismiss:dismissPlayer});
  const range=panel.querySelector('input[type=range]');range.onchange=()=>current().seek(Number(range.value));
@@ -64,9 +67,9 @@ export function mountQuranPlayer(){
   panel.classList.toggle('is-ruqyah',!!record);const playingState=record?ruqyah:state,duration=playingState.durationSeconds||0,position=playingState.positionSeconds||0;range.disabled=!duration||playingState.canSeek===false;range.max=String(duration||1);range.value=String(duration?Math.min(position,duration):0);panel.querySelector('[data-time]').textContent=!record&&!duration?'…':ruqyahDuration(position)||'0:00';panel.querySelector('[data-duration]').textContent=ruqyahDuration(duration)||(record||playingState.durationStatus==='unavailable'?'—':'…');panel.querySelector('.quran-player-progress').hidden=!!record&&!duration;panel.querySelector('.quran-mini-progress i').style.width=(duration?Math.max(0,Math.min(100,position/duration*100)):0)+'%';panel.dataset.elapsed=ruqyahDuration(position)||'0:00';panel.dataset.duration=ruqyahDuration(duration)||'…';
   panel.querySelector('.quran-player-reciter').classList.toggle('is-readonly',!!record);reciterSelect.disabled=!!record;reciterSelect.hidden=!!record;panel.querySelector('[data-share]').hidden=!!record;panel.querySelector('[data-quran-shuffle]').hidden=!!record;
   paintLabels(state);const prevButton=panel.querySelector('[data-previous]'),nextButton=panel.querySelector('[data-next]');prevButton.innerHTML=record?icon('<path d="M5 8a8 8 0 1 1-1 9M5 3v5h5"/><text x="8" y="15" fill="currentColor" stroke="none" font-size="8">10</text>'):previous;nextButton.innerHTML=record?icon('<path d="M19 8a8 8 0 1 0 1 9M19 3v5h-5"/><text x="8" y="15" fill="currentColor" stroke="none" font-size="8">10</text>'):next;
-  if(record){const r=reciterInfo(record.reciter);panel.querySelector('.quran-playing-reader').textContent=r.name;nowPlaying.querySelector('strong').textContent=record.title;nowPlaying.querySelector('img').src=reciterImageUrl(r.portrait);const active=['playing','loading'].includes(ruqyah.status);toggle.innerHTML=active?pause:play;prevButton.disabled=nextButton.disabled=false;return;}
+  if(record){const r=reciterInfo(record.reciter);panel.querySelector('.quran-playing-reader').textContent=r.name;nowPlaying.querySelector('strong').textContent=record.title;void portraitPresenter.set(reciterImageUrl(r.portrait));const active=['playing','loading'].includes(ruqyah.status);toggle.innerHTML=active?pause:play;prevButton.disabled=nextButton.disabled=false;return;}
   nowPlaying.querySelector('strong').textContent=state.meta.name;panel.querySelector('.quran-playing-reader').textContent=reciterInfo(state.reciter).name;
-  const favorites=read(RECITER_FAVORITES_KEY,[]),portrait=nowPlaying.querySelector('.quran-playing-portrait');portrait.src=reciterImageUrl(reciterInfo(state.reciter).portrait);const catalogKey=state.surah.number+'|'+state.reciter+'|'+JSON.stringify(favorites);if(reciterSelect.dataset.catalog!==catalogKey){reciterSelect.dataset.catalog=catalogKey;reciterSelect.replaceChildren(...groupedReciters(favorites).map(group=>{const optgroup=document.createElement('optgroup');optgroup.label=['favorites','other','makkah','madinah'].includes(group.id)?t('player.group.'+group.id):group.name;if(['favorites','other','makkah','madinah'].includes(group.id))optgroup.dataset.playerGroup=group.id;for(const r of group.reciters){const option=document.createElement('option');option.value=r.id;option.disabled=!reciterHasSurah(r.id,state.surah.number);option.dataset.playerReader=r.name;option.textContent=r.name+(option.disabled?' · '+t('player.noRecording'):'');option.selected=r.id===state.reciter;optgroup.append(option);}return optgroup;}))}
+  const favorites=read(RECITER_FAVORITES_KEY,[]);void portraitPresenter.set(reciterImageUrl(reciterInfo(state.reciter).portrait));const catalogKey=state.surah.number+'|'+state.reciter+'|'+JSON.stringify(favorites);if(reciterSelect.dataset.catalog!==catalogKey){reciterSelect.dataset.catalog=catalogKey;reciterSelect.replaceChildren(...groupedReciters(favorites).map(group=>{const optgroup=document.createElement('optgroup');optgroup.label=['favorites','other','makkah','madinah'].includes(group.id)?t('player.group.'+group.id):group.name;if(['favorites','other','makkah','madinah'].includes(group.id))optgroup.dataset.playerGroup=group.id;for(const r of group.reciters){const option=document.createElement('option');option.value=r.id;option.disabled=!reciterHasSurah(r.id,state.surah.number);option.dataset.playerReader=r.name;option.textContent=r.name+(option.disabled?' · '+t('player.noRecording'):'');option.selected=r.id===state.reciter;optgroup.append(option);}return optgroup;}))}
   panel.querySelector('[data-share]').disabled=!['playing','paused'].includes(state.status);
   const playing=['playing','loading'].includes(state.status);toggle.innerHTML=playing?pause:play;
   panel.querySelector('[data-previous]').disabled=!state.canPrevious;panel.querySelector('[data-next]').disabled=!state.canNext;
@@ -77,5 +80,5 @@ export function mountQuranPlayer(){
  const stopExtras=mountQuranPlayerExtras(panel,{playback:quranPlayback,ruqyah:ruqyahPlayback});
  const unsubscribe=quranPlayback.subscribe(draw),unsubscribeRuqyah=ruqyahPlayback.subscribe(()=>draw(quranPlayback.state));
  const recovery=initQuranSessionRecovery({playback:quranPlayback,getExpanded:()=>playerWindow.isOpen,restoreExpanded:()=>{if(!ruqyahPlayback.state.record)playerWindow.open();}});
- return()=>{stopLanguage();recovery.destroy();stopMiniDismiss();playerWindow.destroy();stopExtras();document.removeEventListener('click',shufflePlaylist);unsubscribe();unsubscribeRuqyah();window.removeEventListener('hashchange',routeChanged);window.removeEventListener('salah:reciter-favorites',routeChanged);dockObserver?.disconnect();window.removeEventListener('resize',placeDock);globalThis.visualViewport?.removeEventListener('resize',placeDock);panel.remove();document.body.style.removeProperty('--quran-audio-reserve');document.body.classList.remove('has-quran-audio');};
+ return()=>{portraitPresenter.destroy();window.removeEventListener('online',imageOnline);stopLanguage();recovery.destroy();stopMiniDismiss();playerWindow.destroy();stopExtras();document.removeEventListener('click',shufflePlaylist);unsubscribe();unsubscribeRuqyah();window.removeEventListener('hashchange',routeChanged);window.removeEventListener('salah:reciter-favorites',routeChanged);dockObserver?.disconnect();window.removeEventListener('resize',placeDock);globalThis.visualViewport?.removeEventListener('resize',placeDock);panel.remove();document.body.style.removeProperty('--quran-audio-reserve');document.body.classList.remove('has-quran-audio');};
 }

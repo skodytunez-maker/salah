@@ -21,26 +21,31 @@ async function verifiedResponse(response,hash,validate){
  validate?.(result);
  return {bytes,result}
 }
-async function verifiedFile(path,hash,{validate,cachedFirst=false,requireStored=false,timeoutMs=0}={}){
+function checkTextDownload(signal){if(signal?.aborted)throw new DOMException('Загрузка приостановлена','AbortError');}
+async function verifiedFile(path,hash,{validate,cachedFirst=false,requireStored=false,timeoutMs=0,signal}={}){
+ checkTextDownload(signal);
  const url=new URL(path,location.href).href;let cache=null,cached=null;
  if('caches'in window)try{cache=await caches.open(TEXT_CACHE)}catch{}
  if(requireStored&&!cache)throw Error('Офлайн-хранилище недоступно');
  if(cache)try{const response=await cache.match(url);if(response)cached=await verifiedResponse(response,hash,validate)}catch{/* An old or damaged file cannot be used as Quran text. */}
- if(cachedFirst&&cached)return cached.result;
+ checkTextDownload(signal);if(cachedFirst&&cached)return cached.result;
  let file;
  const controller=timeoutMs?new AbortController():null,timer=controller?setTimeout(()=>controller.abort(),timeoutMs):null;
- try{file=await verifiedResponse(await fetch(url,{cache:'no-cache',...(controller?{signal:controller.signal}:{})}),hash,validate)}catch(error){if(cached)return cached.result;throw error}finally{if(timer)clearTimeout(timer)}
+ const abort=()=>controller?.abort();if(controller)signal?.addEventListener('abort',abort,{once:true});
+ try{file=await verifiedResponse(await fetch(url,{cache:'no-cache',...((controller?.signal||signal)?{signal:controller?.signal||signal}:{})}),hash,validate)}catch(error){checkTextDownload(signal);if(cached)return cached.result;throw error}finally{if(timer)clearTimeout(timer);signal?.removeEventListener('abort',abort)}
+ checkTextDownload(signal);
  if(cache)try{
   // Keep the original verified bytes: serializing JSON again can change its hash.
   await cache.put(url,new Response(file.bytes,{headers:{'Content-Type':'application/json'}}));
   if(requireStored)await verifiedResponse(await cache.match(url),hash,validate);
- }catch{if(requireStored)throw Error('Не удалось сохранить тексты. Проверьте свободное место.')}
+ }catch(error){if(requireStored)throw Error('Не удалось сохранить тексты. Проверьте свободное место.',{cause:error})}
+ checkTextDownload(signal);
  return file.result
 }
 function verifySurah(data,meta){if(data.number!==meta.number||data.verses?.length!==meta.ayahs||data.verses.some((v,i)=>v.ayah!==i+1||!Number.isInteger(v.number)||!Number.isInteger(v.juz)||v.juz<1||v.juz>30||!v.arabic||!v.translation||!v.transliteration))throw Error('Неполный текст суры')}
 function verifySearch(rows,index){if(!Array.isArray(rows)||rows.length!==6236||rows.some(v=>!validPosition(index,v)||typeof v.text!=='string'))throw Error('Поиск недоступен')}
 function verifyReading(data,meta,surah){if(data?.edition!=='salah-reading-v2'||data.number!==meta.number||data.sourceSha256!==meta.sha256||data.verses?.length!==surah.verses.length||data.verses.some((v,i)=>v.ayah!==surah.verses[i].ayah||v.arabicKey!==arabicReadingKey(surah.verses[i].arabic)||typeof v.text!=='string'||!v.text.trim()))throw Error('Транскрипция не соответствует арабскому тексту')}
-async function loadReading(surah,meta,{requireStored=false}={}){if(!meta.readingSha256)return surah;const data=await verifiedFile('./data/quran-reading/'+meta.number+'.json',meta.readingSha256,{validate:data=>verifyReading(data,meta,surah),cachedFirst:true,requireStored,timeoutMs:3000});return {...surah,salahReading:data}}
+async function loadReading(surah,meta,{requireStored=false,signal}={}){if(!meta.readingSha256)return surah;const data=await verifiedFile('./data/quran-reading/'+meta.number+'.json',meta.readingSha256,{validate:data=>verifyReading(data,meta,surah),cachedFirst:true,requireStored,timeoutMs:3000,signal});return {...surah,salahReading:data}}
 export async function loadSurah(number){
  const index=await loadIndex();const meta=index.surahs[number-1];if(!meta||meta.number!==number)throw Error('Неизвестная сура');
  if(!surahPromises.has(number))surahPromises.set(number,verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta),cachedFirst:true}).then(async data=>{try{return await loadReading(data,meta)}catch{return data}}).catch(e=>{surahPromises.delete(number);throw e}));
@@ -52,15 +57,31 @@ export async function loadSearch(){
 export function searchSurahs(index,query){const q=normalizeQuery(query);return index.surahs.filter(s=>[s.name,s.arabicName,s.englishName,s.meaning,String(s.number)].some(x=>normalizeQuery(x).includes(q)))}
 export function searchTranslation(rows,query,limit=50){const q=normalizeQuery(query);return rows.filter(v=>normalizeQuery(v.text).includes(q)).slice(0,limit)}
 export async function offlineTextCount(index){
- if(!('caches'in window))return 0;const cache=await caches.open(TEXT_CACHE);let count=0;
- for(const surah of index.surahs)try{const response=await cache.match(new URL('./data/quran/'+surah.number+'.json',location.href).href);if(response){const stored=await verifiedResponse(response,surah.sha256,data=>verifySurah(data,surah));if(surah.readingSha256)await verifiedResponse(await cache.match(new URL('./data/quran-reading/'+surah.number+'.json',location.href).href),surah.readingSha256,data=>verifyReading(data,surah,stored.result));count++}}catch{}return count
+ return(await offlineTextStatus(index,{includeSearch:false})).count;
 }
-export async function saveAllTexts(index,onProgress){
- if(!('caches'in window))throw Error('Офлайн-хранилище недоступно');let next=1,done=0;
- const results=await Promise.allSettled(Array.from({length:3},async()=>{while(next<=114){const number=next++,meta=index.surahs[number-1];const source=await verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta),cachedFirst:true,requireStored:true});await loadReading(source,meta,{requireStored:true});onProgress(++done)}}));
+export async function offlineTextStatus(index,{includeSearch=true}={}){
+ const totalBytes=index.totalBytes+(index.transcriptionBytes||0)+(index.searchBytes||0);if(!('caches'in window))return{count:0,search:false,bytes:0,totalBytes,complete:false};
+ const cache=await caches.open(TEXT_CACHE);let count=0,bytes=0,search=false;
+ for(const meta of index.surahs)try{
+  const stored=await verifiedResponse(await cache.match(new URL('./data/quran/'+meta.number+'.json',location.href).href),meta.sha256,data=>verifySurah(data,meta));bytes+=stored.bytes.byteLength;
+  if(meta.readingSha256){const reading=await verifiedResponse(await cache.match(new URL('./data/quran-reading/'+meta.number+'.json',location.href).href),meta.readingSha256,data=>verifyReading(data,meta,stored.result));bytes+=reading.bytes.byteLength;}count++;
+ }catch{/* A missing or damaged file is never reported as downloaded. */}
+ if(includeSearch)try{const stored=await verifiedResponse(await cache.match(new URL('./data/quran-search.json',location.href).href),index.searchSha256,rows=>verifySearch(rows,index));bytes+=stored.bytes.byteLength;search=true;}catch{}
+ return{count,search,bytes,totalBytes,complete:count===114&&search};
+}
+const activeTextDownloads=new Set();
+const reflectTextDownloads=()=>{const dataset=globalThis.document?.documentElement?.dataset;if(dataset){if(activeTextDownloads.size)dataset.quranTextDownload='active';else delete dataset.quranTextDownload;}};
+export async function pauseTextDownloads(){const active=[...activeTextDownloads];for(const entry of active)entry.controller.abort();await Promise.allSettled(active.map(entry=>entry.task));}
+export function saveAllTexts(index,onProgress,options={}){
+ const controller=new AbortController(),abort=()=>controller.abort();if(options.signal?.aborted)controller.abort();else options.signal?.addEventListener('abort',abort,{once:true});
+ const entry={controller,task:null};entry.task=storeAllTexts(index,onProgress,{signal:controller.signal}).finally(()=>{options.signal?.removeEventListener('abort',abort);activeTextDownloads.delete(entry);reflectTextDownloads();});activeTextDownloads.add(entry);reflectTextDownloads();return entry.task;
+}
+async function storeAllTexts(index,onProgress,{signal}={}){
+ checkTextDownload(signal);if(!('caches'in window))throw Error('Офлайн-хранилище недоступно');let next=1,done=0;
+ const results=await Promise.allSettled(Array.from({length:3},async()=>{while(next<=114){checkTextDownload(signal);const number=next++,meta=index.surahs[number-1];const source=await verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta),cachedFirst:true,requireStored:true,timeoutMs:20000,signal});await loadReading(source,meta,{requireStored:true,signal});checkTextDownload(signal);onProgress?.(++done)}}));
  const failed=results.find(result=>result.status==='rejected');if(failed)throw failed.reason;
  // The translation search is part of offline reading, so save it with the texts.
- await verifiedFile('./data/quran-search.json',index.searchSha256,{validate:rows=>verifySearch(rows,index),cachedFirst:true,requireStored:true});
+ checkTextDownload(signal);await verifiedFile('./data/quran-search.json',index.searchSha256,{validate:rows=>verifySearch(rows,index),cachedFirst:true,requireStored:true,timeoutMs:20000,signal});
 }
 export function audioUrl(number,reciter,surahNumber){if(!Number.isInteger(number)||number<1||number>6236)throw Error('Неизвестная аудиозапись');const r=reciterInfo(reciter);if(r.format==='surah'){if(!Number.isInteger(surahNumber)||surahNumber<1||surahNumber>114||!reciterHasSurah(reciter,surahNumber))throw Error('Неизвестная сура');if(r.surahUrls){const url=r.surahUrls[surahNumber];if(typeof url!=='string'||!url.startsWith('https://'))throw Error('Неизвестная аудиозапись');return url}return r.server+String(surahNumber).padStart(3,'0')+'.mp3'}if(r.folder){const s=numberToPosition(number);return 'https://everyayah.com/data/'+r.folder+'/'+String(s.surah).padStart(3,'0')+String(s.ayah).padStart(3,'0')+'.mp3'}return 'https://cdn.islamic.network/quran/audio/128/'+reciter+'/'+number+'.mp3'}
 export function downloadAudioUrl(number,reciter,surahNumber){

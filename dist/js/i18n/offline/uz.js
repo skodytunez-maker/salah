@@ -1,0 +1,20 @@
+export default Object.freeze({
+ 'offlineUi.mushafTitle':'Butun Qur’on internetsiz',
+ 'offlineUi.mushafNote':'Barcha 604 sahifani shu qurilmada saqlang. Yuklashni davom ettirganda tekshirilgan fayllar saqlanib qoladi.',
+ 'offlineUi.mushafAppearance':'Oflayn ko‘rinish arabcha matn va ichki shriftdan foydalanadi. Harflar va satrlar bosma mushafdan farq qiladi; oyatlar matni o‘zgarmaydi.',
+ 'offlineUi.checking':'Saqlangan matnlar tekshirilmoqda…',
+ 'offlineUi.ready':'Barcha 604 sahifa saqlandi. Internetsiz o‘qishingiz mumkin.',
+ 'offlineUi.paused':'Yuklash to‘xtatildi: {count} / 114 sura. Davom ettirishingiz mumkin.',
+ 'offlineUi.progress':'Tekshirilmoqda va saqlanmoqda: {count} / 114 sura.',
+ 'offlineUi.available':'Saqlangan suralar: {count} / 114. To‘liq paket: {size} MB.',
+ 'offlineUi.quota':'Xotirada joy yetarli emas. Saqlangan qismlar qoladi; joy bo‘shatib, davom ettiring.',
+ 'offlineUi.storage':'Bu brauzerda oflayn xotira mavjud emas.',
+ 'offlineUi.failed':'Yuklash tugallanmadi. Saqlangan qismlar qoladi; davom ettirib ko‘ring.',
+ 'offlineUi.download':'Butun Qur’onni yuklash',
+ 'offlineUi.resume':'Yuklashni davom ettirish',
+ 'offlineUi.pause':'Yuklashni to‘xtatib turish',
+ 'offlineUi.read':'Internetsiz o‘qish',
+ 'offlineUi.printed':'Bosma ko‘rinish',
+ 'offlineUi.offlineCaption':'Oflayn ko‘rinish · arabcha matn',
+ 'offlineUi.fallbackCaption':'Bosma shrift mavjud emas · arabcha matn'
+});
