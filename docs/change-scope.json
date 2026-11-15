@@ -1,567 +1,59 @@
 {
   "schema": 1,
-  "version": 502,
-  "baseCommit": "4ae0cb77f635f4b7afa6eda8637f7c321e18143a",
-  "baseTree": "104ddb73fb349716e5cff23b71338b23d95716c0",
-  "note": "This is the reviewed scope, not a general permission to change neighboring screens. Extend it only for an authorized task; notify the owner before necessary changes to another section. Tests and compiled catalogues count as dependencies, not new product features.",
+  "version": 503,
+  "baseCommit": "6db967061befd4ad46101f1ced9373f8b35ff778",
+  "baseTree": "6a53aa0740aaf76df01924bee972f99c137288f6",
+  "note": "Only this minor release is authorized. The complete baseline is the published502 commit, not the previous release allowlist. Extend the exact scope only for an authorized task; preserve unrelated local files and all earlier approved behavior.",
   "allowed": [
     {
-      "path": ".github/workflows/pages.yml",
-      "reason": "Run the reviewed scope guard and its negative regressions before every production publication."
-    },
-    {
-      "path": "AGENTS.md",
-      "reason": "Owner instructions: scope isolation and fewer external update pushes."
-    },
-    {
-      "path": "dist/assets/updates/audio-offline-502.svg",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "dist/assets/updates/prayer-offline-502.svg",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "dist/assets/updates/quran-offline-502.svg",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "dist/css/app-bootstrap.css",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "dist/css/team-preview.css",
-      "reason": "Requested cabinet placement and contained news animation; correct RTL gallery navigation."
-    },
-    {
-      "path": "dist/day-night.css",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
       "path": "dist/index.html",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "dist/js/account-presence.js",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "dist/js/app-bootstrap.js",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
+      "reason": "Remove only the owner-requested visible personal founder credit from the public shell; preserve SALAH branding and application bootstrap."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
+      "reason": "Advance the minor release to503 without resetting the current502 announcement identifier, acknowledgement, expiry or cards."
     },
     {
       "path": "dist/js/app.js",
-      "reason": "Integrate the requested offline settings and visible interface-language section, remove the unwanted About credit rows and general Menu team row."
+      "reason": "Owner-requested temporary removal of the personal Instagram link and visible by Saadi Kobilov credit; preserve SALAH Instagram, sources, existing routes and settings."
     },
     {
-      "path": "dist/js/competition-view.js",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
+      "path": "dist/js/calendar-pdf.js",
+      "reason": "Remove only the exact visible by Saadi Kobilov calendar byline requested by the owner; preserve prayer values, layout and source attribution."
     },
     {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n-source-catalogues.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/ar.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/az.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/de.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/en.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/index.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/kk.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/ru.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/tg.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offline/uz.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/ar.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/az.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/de.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/en.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/index.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/kk.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/ru.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/tg.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/uz.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/ar.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/az.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/de.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/en.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/index.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/kk.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/ru.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/tg.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/offlineaudio/uz.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/ar.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/az.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/de.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/en.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/index.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/kk.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/ru.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/tg.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/i18n/prayerOffline/uz.js",
-      "reason": "Explicit eight-language captions and compiled catalogues for the requested offline features."
-    },
-    {
-      "path": "dist/js/image-presentation.js",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "dist/js/landmarks.js",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "dist/js/notification-invite.js",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "dist/js/offline-release-news.js",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "dist/js/owner-release-card.js",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "dist/js/prayer-offline-ui.js",
-      "reason": "Requested offline schedule with exact city, timezone and published-date coverage."
-    },
-    {
-      "path": "dist/js/prayer-offline.js",
-      "reason": "Requested offline schedule with exact city, timezone and published-date coverage."
-    },
-    {
-      "path": "dist/js/prayers.js",
-      "reason": "Requested offline schedule with exact city, timezone and published-date coverage."
-    },
-    {
-      "path": "dist/js/pwa-updates.js",
-      "reason": "Safe automatic updates and global download/form/audio interruption guards; in-app notices preserved."
-    },
-    {
-      "path": "dist/js/quran-data.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-downloads.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-listening-progress.js",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "dist/js/quran-mushaf-core.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-mushaf-listening.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-mushaf-offline.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-mushaf.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-nature-audio.js",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "dist/js/quran-nature-motion.js",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "dist/js/quran-player-bar.js",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "dist/js/quran-player-extras.js",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "dist/js/quran-reciter-library.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/quran-session.js",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "dist/js/quran-translation-picker.js",
-      "reason": "Owner-requested decorative country flags for Quran translation languages; preserve authors, sources, selection, downloads and accessible names."
-    },
-    {
-      "path": "dist/js/quran.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/reciter-ranking-view.js",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "dist/js/release-gallery.js",
-      "reason": "Requested cabinet placement and contained news animation; correct RTL gallery navigation."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "dist/js/settings-screens.js",
-      "reason": "Owner-requested visible Language settings row with one existing chooser and stable explicit section routes; preserve form drafts and offline schedule mounts."
-    },
-    {
-      "path": "dist/js/staff-cabinet.js",
-      "reason": "Requested cabinet placement and contained news animation; correct RTL gallery navigation."
-    },
-    {
-      "path": "dist/js/storage-cache.js",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "dist/js/team-preview-news.js",
-      "reason": "Requested cabinet placement and contained news animation; correct RTL gallery navigation."
-    },
-    {
-      "path": "dist/js/weather.js",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
+      "path": "dist/js/qibla-view.js",
+      "reason": "Remove only the owner-requested visible founder credit in Qibla; preserve device location, compass, accuracy and privacy behavior."
     },
     {
       "path": "dist/owner.html",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "dist/quran-player.css",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "dist/quran.css",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
+      "reason": "Remove only the owner-requested visible personal founder credit from the owner shell; preserve owner authentication and application bootstrap."
     },
     {
       "path": "dist/share.html",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
+      "reason": "Keep the shared shell consistent with the requested temporary personal-credit removal; preserve the existing sharing and bootstrap behavior."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Cache the new release runtime modules/artwork; preserve downloaded stores and existing media routes."
+      "reason": "Advance the release cache version to503 while preserving existing downloaded stores, asset inventory and request handling."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "CI guard preserves unrelated baseline files and rejects unreviewed added/changed files."
+      "reason": "Replace the previous release scope with this exact minor-release allowlist and the complete immutable published502 baseline; preserve unrelated files."
     },
     {
-      "path": "docs/image-presentation-stability.md",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "docs/media-rights-register.json",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "docs/prayer-offline-502.md",
-      "reason": "Requested offline schedule with exact city, timezone and published-date coverage."
-    },
-    {
-      "path": "docs/quran-offline-502.md",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "docs/rights-source-manifest.json",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "scripts/check-app-bootstrap.mjs",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "scripts/check-bootstrap-storage.mjs",
-      "reason": "Confirmed startup/blocked-module/denied-storage failure: independent manual recovery while preserving working screens, receipts, invitations and existing account/activity initialization."
-    },
-    {
-      "path": "scripts/check-change-scope-selftest.mjs",
-      "reason": "CI guard preserves unrelated baseline files and rejects unreviewed added/changed files."
-    },
-    {
-      "path": "scripts/check-change-scope.mjs",
-      "reason": "CI guard preserves unrelated baseline files and rejects unreviewed added/changed files."
-    },
-    {
-      "path": "scripts/check-image-presentation.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-image-response.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-interface-shell.mjs",
-      "reason": "Integrate the requested offline settings and visible interface-language section, remove the unwanted About credit rows and general Menu team row."
-    },
-    {
-      "path": "scripts/check-knowledge-coming-soon.mjs",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "scripts/check-menu-screens.mjs",
-      "reason": "Owner-requested visible Language settings row with one existing chooser and stable explicit section routes; preserve form drafts and offline schedule mounts."
-    },
-    {
-      "path": "scripts/check-native-update-feedback.mjs",
-      "reason": "Safe automatic updates and global download/form/audio interruption guards; in-app notices preserved."
-    },
-    {
-      "path": "scripts/check-player-language.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-prayer-offline.mjs",
-      "reason": "Requested offline schedule with exact city, timezone and published-date coverage."
+      "path": "scripts/check-listening-credit-client.mjs",
+      "reason": "Bind the real listeningPeriodTotals Date.now dependency to the test clock so guest-day assertions remain deterministic after midnight; no production credit behavior changes."
     },
     {
       "path": "scripts/check-public-language.mjs",
-      "reason": "Integrate the requested offline settings and visible interface-language section, remove the unwanted About credit rows and general Menu team row."
-    },
-    {
-      "path": "scripts/check-quran-dismiss-resume.mjs",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "scripts/check-quran-library-language.mjs",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "scripts/check-quran-mushaf-offline.mjs",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "scripts/check-quran-mushaf.mjs",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "scripts/check-quran-nature-audio.mjs",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "scripts/check-quran-nature-motion.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-quran-nature-photo.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-quran-player-cascade.mjs",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "scripts/check-quran-player-extras.mjs",
-      "reason": "Reported player close/restart bug: retain Ocean selection, reveal complete portraits and resume the explicitly dismissed matching source at its exact listening position."
-    },
-    {
-      "path": "scripts/check-quran-player-window.mjs",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "scripts/check-quran-saved-library.mjs",
-      "reason": "Requested offline Quran/audio, verified persistent storage, cache removal and unavailable-translation isolation."
-    },
-    {
-      "path": "scripts/check-quran-translation-picker.mjs",
-      "reason": "Owner-requested decorative country flags for Quran translation languages; preserve authors, sources, selection, downloads and accessible names."
-    },
-    {
-      "path": "scripts/check-reciter-discovery.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-release-illustrations.mjs",
-      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
-    },
-    {
-      "path": "scripts/check-scene-load.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
-    },
-    {
-      "path": "scripts/check-team-news-placement.mjs",
-      "reason": "Regression for cabinet-only permanent team news placement, verified actor access, cold entry, expiry and revocation; preserve automatic in-app announcements."
-    },
-    {
-      "path": "scripts/check-team-preview-motion.mjs",
-      "reason": "Requested cabinet placement and contained news animation; correct RTL gallery navigation."
-    },
-    {
-      "path": "scripts/check-team-preview-ui.mjs",
-      "reason": "Requested cabinet placement and contained news animation; correct RTL gallery navigation."
-    },
-    {
-      "path": "scripts/check-tyumen-sources.mjs",
-      "reason": "Requested offline schedule with exact city, timezone and published-date coverage."
-    },
-    {
-      "path": "scripts/check-update-activation-race.mjs",
-      "reason": "Safe automatic updates and global download/form/audio interruption guards; in-app notices preserved."
-    },
-    {
-      "path": "scripts/check-updates.mjs",
-      "reason": "Safe automatic updates and global download/form/audio interruption guards; in-app notices preserved."
-    },
-    {
-      "path": "scripts/lib/ranking-language-fixture.mjs",
-      "reason": "Requested weak-network stability: reveal complete decoded images, preserve geometry/assets and reject partial/stale image responses; Top image presentation does not change scores."
+      "reason": "Adapt only the visible personal-credit regression to the authorized temporary removal; keep source, language and unrelated content assertions."
     }
   ],
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "The existing Pages workflow refreshes the official imam schedule before verification."
+      "reason": "The unchanged Pages workflow refreshes the official imam schedule before verification."
     }
   ],
   "baseline": [
@@ -595,7 +87,7 @@
     },
     {
       "path": ".github/workflows/pages.yml",
-      "sha": "6ec1fd4e1bdbc4bec9e9c27f8e053d8e64e3c842"
+      "sha": "ebc73a7bf0b9ddb408199d415d38caaded5c0e6a"
     },
     {
       "path": ".github/workflows/rights-audit.yml",
@@ -615,7 +107,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "aad8afdc011787a4b3ebbfef74eb2d1a9aa13d59"
+      "sha": "339617c07c297ce5236a91ab96021198fc47d886"
     },
     {
       "path": "ANALYTICS.md",
@@ -1582,6 +1074,10 @@
       "sha": "21ba9795ec7feb2c40730f0ba8141644e0525670"
     },
     {
+      "path": "dist/assets/updates/audio-offline-502.svg",
+      "sha": "5146c3caa08865e62f957c6e0b79f3fc6247ff46"
+    },
+    {
       "path": "dist/assets/updates/chat-emojis-475.svg",
       "sha": "1952cbe0fb33de3ea122a800c58b4eb3732ac746"
     },
@@ -1682,12 +1178,20 @@
       "sha": "f6588463a7542d56f8d7581f272bea33e495b9d9"
     },
     {
+      "path": "dist/assets/updates/prayer-offline-502.svg",
+      "sha": "bf94ad99e54ebe0cd1d4c0b73d2a2ba0133ce448"
+    },
+    {
       "path": "dist/assets/updates/qibla-map-363.png",
       "sha": "bbb502874b17faa1f91bb312b8675318223b0ea3"
     },
     {
       "path": "dist/assets/updates/qibla-map-368.png",
       "sha": "1250a202f201ac9da14e35731d7ef89e796513f0"
+    },
+    {
+      "path": "dist/assets/updates/quran-offline-502.svg",
+      "sha": "57413177d98f172b95802e948967372c9c4c3436"
     },
     {
       "path": "dist/assets/updates/quran-reader-357.png",
@@ -1818,6 +1322,10 @@
       "sha": "7b896ff4d8ecfe59ed124a8391625fb33e10d786"
     },
     {
+      "path": "dist/css/app-bootstrap.css",
+      "sha": "ef85246e1711e946e6b5830242a9771276572eac"
+    },
+    {
       "path": "dist/css/arabic-alphabet.css",
       "sha": "e97fa4f87685e18ccba3bb9f900edf14627a5d79"
     },
@@ -1907,7 +1415,7 @@
     },
     {
       "path": "dist/css/team-preview.css",
-      "sha": "4be52de9d7d8d778c0375a30253141ba77b1e5bb"
+      "sha": "2ca889aa618811eca6f2a385bebb5c9722f5441e"
     },
     {
       "path": "dist/daily-dua.css",
@@ -2943,7 +2451,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "5ab26e7c9aedfac90904fdd593de2b48fb572258"
+      "sha": "136f648ff6cf030f33a69ccf7e5f7e75740590a0"
     },
     {
       "path": "dist/delete-account.html",
@@ -2975,7 +2483,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha": "2b0f71339e0141bdfdb9a50e892dab7efa196429"
+      "sha": "2f86dbaee814d8cb9abf4be9597aa06d5301c11b"
     },
     {
       "path": "dist/iphone.css",
@@ -3007,7 +2515,7 @@
     },
     {
       "path": "dist/js/account-presence.js",
-      "sha": "b7152a6dcd90148b371494578e018cca74c49fe9"
+      "sha": "4bb91b720b0ed4574c1daba7158bd8dee2102935"
     },
     {
       "path": "dist/js/account-reading-context.js",
@@ -3090,12 +2598,16 @@
       "sha": "feb1238d9182da96c6605fed0cd2e1f44a3af5df"
     },
     {
+      "path": "dist/js/app-bootstrap.js",
+      "sha": "b0d15bbe0fd6776b99bb501290ad3a93a7827121"
+    },
+    {
       "path": "dist/js/app-recover.js",
       "sha": "d00f12579dfd1f8734da11f7f82ee98484b9892d"
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "7865a03d07a8e10c39566166e3166837a6f2fcec"
+      "sha": "b5ef661c2feca85e74cd936d7ead681dfb36f90b"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3115,7 +2627,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "159ec04a8bdd0068def579b431e3ef8e8644bb26"
+      "sha": "6a5b1fb312ffc22534eff5ccd0c5c7ae805155e7"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -3223,7 +2735,7 @@
     },
     {
       "path": "dist/js/competition-view.js",
-      "sha": "294c0e1bdcfe8e180f08810193dad262cad22161"
+      "sha": "5e75d0a17bfa8765d3685fe7f24e2ddf89d975e7"
     },
     {
       "path": "dist/js/counter-account.js",
@@ -3379,39 +2891,39 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "7a78f6c0eb12bdf6124ccd516116b212cd95df77"
+      "sha": "8cbec84f8ca2f45c87d653bac34c7c606f9a5963"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "496474bbafe8b777622d862c87d9540dac456784"
+      "sha": "5f80b68b43bc0e5338ca868cd975dc04e2cdc975"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "b731d3c57a5df6e8e1ec16d00070b2cc5cefd3a3"
+      "sha": "084836f1844352182204edae940c353935986a59"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "6d7648ad3c9950a597d8b0f6f452a00231c6a6e8"
+      "sha": "bae1f3665689a88cfcc896f59cb2a2b2db5ba2a2"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "6d007bbb7fc24ed9b42faf18c61a8ce298ac0857"
+      "sha": "d169a2916c4179ac11b3748a359aaef6a5fdb917"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "3e6c4ab09da03c0b47cb59e60e42c1516dbc7965"
+      "sha": "37c1f221ac4d7439b1991a804cda3a434be1f726"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "415c48f03fab4117fb907b56bb9edeb3780a3e9f"
+      "sha": "d720e159d71565a7e67d1bbdad212fe2ff3871bf"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "e5f86689eec23e532ea490745f6ad3d81d6c6efd"
+      "sha": "0cff4ecb38e7cd7b35649971e1d1efb9b27aea7f"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
-      "sha": "788ae4120416884351db7881cb5a81fa451f1d5c"
+      "sha": "804af4d00dec3e6b681e0f4294b2005d66389616"
     },
     {
       "path": "dist/js/i18n.js",
@@ -3690,6 +3202,114 @@
       "sha": "4114c19d35efdcbb0f74eba43897f15cbe11eff4"
     },
     {
+      "path": "dist/js/i18n/offline/ar.js",
+      "sha": "7d9719549a8bee610bc793234f4b3b788c386a1b"
+    },
+    {
+      "path": "dist/js/i18n/offline/az.js",
+      "sha": "03f8ce6c700e60e99b3cae5f60573e6f567d6aad"
+    },
+    {
+      "path": "dist/js/i18n/offline/de.js",
+      "sha": "18aa7d6a84311e9ebe570ff5a3e0a1420e4d6dc0"
+    },
+    {
+      "path": "dist/js/i18n/offline/en.js",
+      "sha": "de8b6d9f546b02bbaedb3fb2e80db252786fc614"
+    },
+    {
+      "path": "dist/js/i18n/offline/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/offline/kk.js",
+      "sha": "2f422ae8e489b2a57fc0994fbd66425cdc640d1a"
+    },
+    {
+      "path": "dist/js/i18n/offline/ru.js",
+      "sha": "6209ce831b24364f18bdbce1dade4048650ef9a9"
+    },
+    {
+      "path": "dist/js/i18n/offline/tg.js",
+      "sha": "a8521441eafede324e6f86201c9f938d96164d6d"
+    },
+    {
+      "path": "dist/js/i18n/offline/uz.js",
+      "sha": "7f4f46e424d195700c191d50135eb99b0e29cfd6"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/ar.js",
+      "sha": "8ca0fcd74c2adddeaddd5e854be2352fc700a7f0"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/az.js",
+      "sha": "ddda3858a27e9917749f4036d085a9c97fe5bbbc"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/de.js",
+      "sha": "988e83c779af5ca62bc5d81738e518d495e686f9"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/en.js",
+      "sha": "8482325677755c29221826222573ef4fa657debd"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/kk.js",
+      "sha": "a12523824bea68ada4dc92ffd8de206212cb3ef0"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/ru.js",
+      "sha": "a587f5ad940c8df9a393dbf0a34a069ed707ef25"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/tg.js",
+      "sha": "010641b16a2c742dc458cc525db35cbafc98b368"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/uz.js",
+      "sha": "9721240962f2a6f9250b80bae14ec0abe9b100c7"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/ar.js",
+      "sha": "61ae1bc41d59193728be6d0acfb910964a0ce7ca"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/az.js",
+      "sha": "5e2bbab31f79aa6f1334ce826da826421f555f0c"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/de.js",
+      "sha": "cd185c236841a6eee85f4e6f0df94298c23763cf"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/en.js",
+      "sha": "ae3d3712bb975680bb470f38fe08dd2279178f20"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/kk.js",
+      "sha": "264e4f1c7e9cdf9d719b493f2ee068356e3e5807"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/ru.js",
+      "sha": "32ab1e1324ac1c57ac33e85cd736227947666180"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/tg.js",
+      "sha": "3238d381458f43beea50e3039a20516a481c711a"
+    },
+    {
+      "path": "dist/js/i18n/offlineaudio/uz.js",
+      "sha": "f230655db7db186578c8c126285962f7eb4e120d"
+    },
+    {
       "path": "dist/js/i18n/owner/ar.js",
       "sha": "19b9debcad80bd96b7827710f093546530c2349e"
     },
@@ -3760,6 +3380,42 @@
     {
       "path": "dist/js/i18n/practice/uz.js",
       "sha": "8ffd3c460e5803ee5610b56000cd618d70ad4eb0"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/ar.js",
+      "sha": "471ad1e569b63c91be5490cde82af4f2edbc4007"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/az.js",
+      "sha": "dfd9a83b3c32639429a353360b4e0f401fa43ab0"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/de.js",
+      "sha": "1607cf64a81c026723777b31d13290671c1dc5ce"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/en.js",
+      "sha": "21838f0a6f37a44918493cb2b87040f58cb627fd"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/kk.js",
+      "sha": "53c88bf4450dced6c955b2bbd60cb21cf02b58df"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/ru.js",
+      "sha": "9c60b137c74d1c91fd6af273f36953c79465548e"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/tg.js",
+      "sha": "6ac9940ccb9d974d705563915f13c64f600f7983"
+    },
+    {
+      "path": "dist/js/i18n/prayerOffline/uz.js",
+      "sha": "d3f0161eb9cc0009a72a226c8d37bf86ac4cd9a8"
     },
     {
       "path": "dist/js/i18n/public/ar.js",
@@ -4098,6 +3754,10 @@
       "sha": "d6a440744ec1a3d9f90be4890e9ba0d4b9496326"
     },
     {
+      "path": "dist/js/image-presentation.js",
+      "sha": "a45250ef97166be423a6eda8f7056ce8300be5bf"
+    },
+    {
       "path": "dist/js/interface-languages.js",
       "sha": "796290f65fdc41a6732a61ee71b8eb891fa752f6"
     },
@@ -4123,7 +3783,7 @@
     },
     {
       "path": "dist/js/landmarks.js",
-      "sha": "35a412cceeaa89a370d4b4d3ef51026a17690bc5"
+      "sha": "287aba3d2dc9005dbddee1dd27915993803a5fbe"
     },
     {
       "path": "dist/js/language-settings.js",
@@ -4259,7 +3919,7 @@
     },
     {
       "path": "dist/js/notification-invite.js",
-      "sha": "aa857aa3cbaebe52e51dba6029169cb8c0273d94"
+      "sha": "2204a765c0a1f417dc7a7a062d5f297a3c3d903f"
     },
     {
       "path": "dist/js/notification-language.js",
@@ -4272,6 +3932,10 @@
     {
       "path": "dist/js/notification-ui.js",
       "sha": "f2f011673568bf58a78405941e4db3d681a2d54e"
+    },
+    {
+      "path": "dist/js/offline-release-news.js",
+      "sha": "e5042825105b2fa90d1ee26400fecf12b954eeaf"
     },
     {
       "path": "dist/js/orientation.js",
@@ -4343,7 +4007,7 @@
     },
     {
       "path": "dist/js/owner-release-card.js",
-      "sha": "069d75a5ada1c10db9ca4983fe0fffdafde0bc3d"
+      "sha": "1456138bac76c72e2277965121dce0d75e148005"
     },
     {
       "path": "dist/js/owner-return-core.js",
@@ -4394,8 +4058,16 @@
       "sha": "cb0367275355a6dfa8b02882da1de86f52200d70"
     },
     {
+      "path": "dist/js/prayer-offline-ui.js",
+      "sha": "d979d991c6b87e7efdda652521651e08c4373c40"
+    },
+    {
+      "path": "dist/js/prayer-offline.js",
+      "sha": "1e61a7f20b603d7c4ddaa8cba7657baabe913b71"
+    },
+    {
       "path": "dist/js/prayers.js",
-      "sha": "18242345628925078a05e94c32b63581019defb9"
+      "sha": "1a777b0dd9351a6b1d8d2c4be5e0f77959eccd16"
     },
     {
       "path": "dist/js/pronunciation-preload.js",
@@ -4407,7 +4079,7 @@
     },
     {
       "path": "dist/js/pwa-updates.js",
-      "sha": "1271d4644be3212fa5c66197623c113f4414c2ed"
+      "sha": "202d57924a63e68adbdfc13e9659ca3d196ca231"
     },
     {
       "path": "dist/js/qibla-access.js",
@@ -4479,11 +4151,11 @@
     },
     {
       "path": "dist/js/quran-data.js",
-      "sha": "efa99f539b9d62b3ba1da98d8c76bbdc5d1b91ae"
+      "sha": "2f10d6b23acfdcfb9a6017419445579003851bac"
     },
     {
       "path": "dist/js/quran-downloads.js",
-      "sha": "40f1c664a17fdd930847efdea22ba7f4f3d85bec"
+      "sha": "d676f0f160ada55bbe9ddabe51eab41326856c48"
     },
     {
       "path": "dist/js/quran-duration.js",
@@ -4499,7 +4171,7 @@
     },
     {
       "path": "dist/js/quran-listening-progress.js",
-      "sha": "915052300e136dbaa66751ea3a7ab9cca6e0e2d4"
+      "sha": "f960956aaf0e3d166590a931173a59ab136f70b4"
     },
     {
       "path": "dist/js/quran-mini-dismiss.js",
@@ -4511,7 +4183,7 @@
     },
     {
       "path": "dist/js/quran-mushaf-core.js",
-      "sha": "615e1c2240403a894697e3810e132ae71d9776ba"
+      "sha": "354727248bdf1ac9b1edbf61a78fd298fcfabe9f"
     },
     {
       "path": "dist/js/quran-mushaf-follow.js",
@@ -4519,7 +4191,11 @@
     },
     {
       "path": "dist/js/quran-mushaf-listening.js",
-      "sha": "e9f77a1d25033e533be4e202752f717cf0ed6d8d"
+      "sha": "7dbe82a5fab09d4aa73344138888be2848400e49"
+    },
+    {
+      "path": "dist/js/quran-mushaf-offline.js",
+      "sha": "fc3b0445ef944077032b30ec0dba2055047bdb1e"
     },
     {
       "path": "dist/js/quran-mushaf-page-cache.js",
@@ -4539,15 +4215,15 @@
     },
     {
       "path": "dist/js/quran-mushaf.js",
-      "sha": "f41c3e629e753e0cdcc44ef24513b4ddf65a4ff6"
+      "sha": "65f0d6a92fc2afada2b3b58e8840e22190bf5bf4"
     },
     {
       "path": "dist/js/quran-nature-audio.js",
-      "sha": "2614ed2c45ca794876b14667971c012efc3a55f5"
+      "sha": "6199a35821b9a50cfa519ed9bf528f5bca51c6d2"
     },
     {
       "path": "dist/js/quran-nature-motion.js",
-      "sha": "fce748928fededcf4ababa616cc264c9a9ef3f7e"
+      "sha": "c308a4d215dfc9e4911c74c6c817dae4b5a403c8"
     },
     {
       "path": "dist/js/quran-nature-recordings.js",
@@ -4567,11 +4243,11 @@
     },
     {
       "path": "dist/js/quran-player-bar.js",
-      "sha": "29f4a4135cd3e0ae3e53e6cefd832726778946f4"
+      "sha": "5e75bb340af3f50e786f300bc25c93ae57c0a4a3"
     },
     {
       "path": "dist/js/quran-player-extras.js",
-      "sha": "6e386e23b88947a5bdcfdd2faad35da5ad793f5b"
+      "sha": "b0eeaee7e8f3c2974a5be8f07d0e2ea52f5dfca2"
     },
     {
       "path": "dist/js/quran-player-window.js",
@@ -4607,7 +4283,7 @@
     },
     {
       "path": "dist/js/quran-reciter-library.js",
-      "sha": "5132266f58c50b5c832063d1493dfdab9e1c6344"
+      "sha": "5e601258d8be11498eb44b29b9ef1eb45d8d6b3a"
     },
     {
       "path": "dist/js/quran-reciter-recording.js",
@@ -4643,7 +4319,7 @@
     },
     {
       "path": "dist/js/quran-session.js",
-      "sha": "99ec2783221a2489c58972ab3e3a1f921296df5e"
+      "sha": "6e47869909aeb0550a2d3eb118317a0f35612c3b"
     },
     {
       "path": "dist/js/quran-sleep-timer.js",
@@ -4663,7 +4339,7 @@
     },
     {
       "path": "dist/js/quran-translation-picker.js",
-      "sha": "f9860e67335df5596d34825a6b9b5db95892e064"
+      "sha": "84c86faaabd1904517c4551fcf0304201486331c"
     },
     {
       "path": "dist/js/quran-translations.js",
@@ -4675,7 +4351,7 @@
     },
     {
       "path": "dist/js/quran.js",
-      "sha": "a51648fe5df9c48a60386a6ab544ba48c985f0d7"
+      "sha": "e02299129061ce9d7a905c7086ab988197ebbecc"
     },
     {
       "path": "dist/js/radio-candidates.js",
@@ -4723,11 +4399,11 @@
     },
     {
       "path": "dist/js/reciter-ranking-view.js",
-      "sha": "d06b74faa16b63063127a1fc8c1c264461b08597"
+      "sha": "b8beac2a23b70921f64f2db5511f933e03803da6"
     },
     {
       "path": "dist/js/release-gallery.js",
-      "sha": "ce448893d7c75552fab6954ff5bb30f10a2c6ebe"
+      "sha": "4694cdaf12a965092dfbc6039af13c7497cb3df0"
     },
     {
       "path": "dist/js/release-highlight.js",
@@ -4735,7 +4411,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "a3a2fb44bdb07c7374a135b63a299fd15c52649b"
+      "sha": "b54ab49e800bd2637c61ec92cbbb8bb88879954b"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -4767,7 +4443,7 @@
     },
     {
       "path": "dist/js/settings-screens.js",
-      "sha": "6e4e80cb8b90af3f3867ad3d76b5d73814ecc3ac"
+      "sha": "8f0f7f3b0749b185d990b956097799a5e1bc86bc"
     },
     {
       "path": "dist/js/short-dhikr.js",
@@ -4783,7 +4459,7 @@
     },
     {
       "path": "dist/js/staff-cabinet.js",
-      "sha": "9c865e70499df24acf1ebc0e71debcf6f832b6f3"
+      "sha": "b7fdcebecc660a9c6c7cd1fcb5253998a7d0d78a"
     },
     {
       "path": "dist/js/staff-markup.js",
@@ -4815,7 +4491,7 @@
     },
     {
       "path": "dist/js/storage-cache.js",
-      "sha": "6e3f93f3cb01b364545171f9b0ca1a502ba70be5"
+      "sha": "c776bb01d7c51dcf3663a4878b1878403de07980"
     },
     {
       "path": "dist/js/storage.js",
@@ -4887,7 +4563,7 @@
     },
     {
       "path": "dist/js/team-preview-news.js",
-      "sha": "37f9362148ea83c2c37994e45dc0f9f37c2f8949"
+      "sha": "8876812d4e010dc65d3330bf112aa61ad53184ce"
     },
     {
       "path": "dist/js/team-ui.js",
@@ -5051,7 +4727,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "e502d27afa3a7510737c6de469c49577ff28dda7"
+      "sha": "c31753507676add99969cf4ad619b9c948e098b7"
     },
     {
       "path": "dist/knowledge.css",
@@ -5079,7 +4755,7 @@
     },
     {
       "path": "dist/owner.html",
-      "sha": "86a303b54fb2ce9ebdac8f5431f130d045be91a1"
+      "sha": "c87c443161d008fa74ace0b734a6419e18709755"
     },
     {
       "path": "dist/privacy.html",
@@ -5091,11 +4767,11 @@
     },
     {
       "path": "dist/quran-player.css",
-      "sha": "8545cc13d99f019a00338db75fa13f9ef061081c"
+      "sha": "f61adbc4c1e63c23269194a0aa69dd9df65ceabe"
     },
     {
       "path": "dist/quran.css",
-      "sha": "13db03e895bd8e98906681bfc3965c3c61181187"
+      "sha": "7d3b3f46ab9fd143b66fd4f3eaf80edc94bb41b3"
     },
     {
       "path": "dist/reciter-portrait-credits.html",
@@ -5111,7 +4787,7 @@
     },
     {
       "path": "dist/share.html",
-      "sha": "0f66c32863e0de91f4106d666f145038bc63dfe2"
+      "sha": "c2cdf82114fcbc50bcfcd8ed74ad5ef7f9f861e4"
     },
     {
       "path": "dist/soft-depth.css",
@@ -5123,7 +4799,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "a1579ae6eeba3390cc64ceb2eafb0e70ad1e989b"
+      "sha": "39c86f9885c75fa59ddeb696b9eb39edbaf208c6"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5578,6 +5254,10 @@
       "sha": "39d6304806b50d3695266e37bcdf34eba72f6eda"
     },
     {
+      "path": "docs/change-scope.json",
+      "sha": "df6f7dd0be8e71cbe5ede885ba4a59a843ab06ba"
+    },
+    {
       "path": "docs/city-wallpapers-20261016.json",
       "sha": "f142e268b0ea409ddfa34a78f4a93cacaa8a8f2d"
     },
@@ -5654,6 +5334,10 @@
       "sha": "29156d13efd8758d3c899e135317fd92bf6a9655"
     },
     {
+      "path": "docs/image-presentation-stability.md",
+      "sha": "567e91a73e33f1894f568aca2f342cb9ec9dfb25"
+    },
+    {
       "path": "docs/images/tablet-landscape.jpg",
       "sha": "a811f62bf2ddb50d726dcd377c00f0c6253b3728"
     },
@@ -5687,7 +5371,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "a533f4427e0b23f71e2ebb0068f5cd3221b3f37b"
+      "sha": "cb737ffd1887d0641fbb217d213bdd4231968d3f"
     },
     {
       "path": "docs/native-reminders-262.json",
@@ -5736,6 +5420,10 @@
     {
       "path": "docs/player-window-486.md",
       "sha": "334fe3a9a38c15a730e2ab2037d2357e05f84434"
+    },
+    {
+      "path": "docs/prayer-offline-502.md",
+      "sha": "c7fea41a343ac76f0bb01bf42518db5342d26472"
     },
     {
       "path": "docs/private-classrooms-417.md",
@@ -5808,6 +5496,10 @@
     {
       "path": "docs/quran-mushaf-print-352.json",
       "sha": "c354a8fb2a519f8144ffc667ba963dc3f1e131bb"
+    },
+    {
+      "path": "docs/quran-offline-502.md",
+      "sha": "56602a69d127aee84382fc32d806bf9ab53960d7"
     },
     {
       "path": "docs/quran-ruqyah-256.json",
@@ -5895,7 +5587,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "5d51051871df483de77a43f2284c06e551873849"
+      "sha": "14227826e11c4a16421ccc859fe0dccead17bec8"
     },
     {
       "path": "docs/release-artwork.md",
@@ -5911,7 +5603,7 @@
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "sha": "e4d57620aa6aeee39ba3d18bc6fde3982521631b"
+      "sha": "3b5609b0231742911268b1799765462d5a854970"
     },
     {
       "path": "docs/ruqyah-listening-336.md",
@@ -6434,6 +6126,10 @@
       "sha": "b653bc0a0967fbb620315543d4d72749cee7653d"
     },
     {
+      "path": "scripts/check-app-bootstrap.mjs",
+      "sha": "a569062f98a5b5c93aff25d203a028a9e79d2080"
+    },
+    {
       "path": "scripts/check-app-sharing.mjs",
       "sha": "765b0be9ed56c0b2b33b83ef52c4b68888cada7d"
     },
@@ -6490,6 +6186,10 @@
       "sha": "c5155628c0d9f0b2e9f288c64be50fd139e8bb5d"
     },
     {
+      "path": "scripts/check-bootstrap-storage.mjs",
+      "sha": "0a8d52479c452ea280c7020c64d5985c1b52d5f5"
+    },
+    {
       "path": "scripts/check-broadcast-audio.mjs",
       "sha": "65c2fadf56da8750b7ac2a42c867ab8b25dbd190"
     },
@@ -6500,6 +6200,14 @@
     {
       "path": "scripts/check-calendar-occasions.mjs",
       "sha": "ef69a2810900ca48877848f90f9f2bce891458a3"
+    },
+    {
+      "path": "scripts/check-change-scope-selftest.mjs",
+      "sha": "538b321686a1930b05839bf81fc04d4fdc549de6"
+    },
+    {
+      "path": "scripts/check-change-scope.mjs",
+      "sha": "935a24f474f8564c898f185f091ae4adefeaf54e"
     },
     {
       "path": "scripts/check-city.mjs",
@@ -6662,6 +6370,14 @@
       "sha": "4c2b4a2379e1695876b11c6e4d2a6edc60ca600a"
     },
     {
+      "path": "scripts/check-image-presentation.mjs",
+      "sha": "74f168ec5c7e87262a869426a1df3a2521f58c9f"
+    },
+    {
+      "path": "scripts/check-image-response.mjs",
+      "sha": "893fb9aa5874dc568a1969d0ca2b183584b35b8b"
+    },
+    {
       "path": "scripts/check-interface-catalogues.mjs",
       "sha": "98ace767189b6630239cf1c9c956e830ff82cb0f"
     },
@@ -6679,7 +6395,7 @@
     },
     {
       "path": "scripts/check-interface-shell.mjs",
-      "sha": "f425347c83308fcd0223d8a0b228175aef1feaac"
+      "sha": "e72bc83dcec3d71eb812ce0fb98d7c232a122334"
     },
     {
       "path": "scripts/check-ios-widget.mjs",
@@ -6691,7 +6407,7 @@
     },
     {
       "path": "scripts/check-knowledge-coming-soon.mjs",
-      "sha": "dcd0718c17759f34d84d56e51487bba4f65f2401"
+      "sha": "c014aa45afea64a79badb373393cdc886808f903"
     },
     {
       "path": "scripts/check-knowledge-repeat-navigation.mjs",
@@ -6779,7 +6495,7 @@
     },
     {
       "path": "scripts/check-menu-screens.mjs",
-      "sha": "32085d00dbb052554a1c5358f5ea2b9359151f6b"
+      "sha": "1f00a6729ee15af435c7c8856835edb8444a3e60"
     },
     {
       "path": "scripts/check-message-emojis.mjs",
@@ -6843,7 +6559,7 @@
     },
     {
       "path": "scripts/check-native-update-feedback.mjs",
-      "sha": "d292e03300ada0ad4cf2928f535b97accfefb4de"
+      "sha": "984ab2ef3ad490de2d6aa95f1219470dcb82a7e4"
     },
     {
       "path": "scripts/check-native-widget.mjs",
@@ -6971,7 +6687,7 @@
     },
     {
       "path": "scripts/check-player-language.mjs",
-      "sha": "6fbe215baec198182e81fd155207364fe905b626"
+      "sha": "e18f382776905bb32fe7d16876b38347971870a3"
     },
     {
       "path": "scripts/check-practice-content-i18n.mjs",
@@ -6980,6 +6696,10 @@
     {
       "path": "scripts/check-practice-i18n.mjs",
       "sha": "fa744c0f669520feb08b021ac345ed24d58e0a7b"
+    },
+    {
+      "path": "scripts/check-prayer-offline.mjs",
+      "sha": "93844e90bd946c8c0e97ca78893e23afd28c06b4"
     },
     {
       "path": "scripts/check-presence-background.mjs",
@@ -7003,7 +6723,7 @@
     },
     {
       "path": "scripts/check-public-language.mjs",
-      "sha": "2dcbb3dc721389d042c4cab50b13ba04aa91e4cc"
+      "sha": "90a1e6daac6533b7c26e32d5bc332b0ca2765810"
     },
     {
       "path": "scripts/check-push-bundle.mjs",
@@ -7070,6 +6790,10 @@
       "sha": "35d3730f3a6b1b69c4494657ffa33af942f14825"
     },
     {
+      "path": "scripts/check-quran-dismiss-resume.mjs",
+      "sha": "5d11185398c3206b0826900476d903d51bf7fbc3"
+    },
+    {
       "path": "scripts/check-quran-downloads.mjs",
       "sha": "869d7c2934c3abf6d4718a22e0f1c59596ad1c0e"
     },
@@ -7083,7 +6807,7 @@
     },
     {
       "path": "scripts/check-quran-library-language.mjs",
-      "sha": "53ef9b4764e8114535ad54199530f8b4afdaf5aa"
+      "sha": "353e1f01aa90cef1ad978714000e7c5a51636e61"
     },
     {
       "path": "scripts/check-quran-listen-share.mjs",
@@ -7102,16 +6826,24 @@
       "sha": "0c8907d37a8a6892557216395b0065c05e5867f4"
     },
     {
+      "path": "scripts/check-quran-mushaf-offline.mjs",
+      "sha": "1195de51db488c585941d9b18b3ea1d98fd218cd"
+    },
+    {
       "path": "scripts/check-quran-mushaf.mjs",
-      "sha": "a423faced6059f9193270dec3909c7e7d0999c1a"
+      "sha": "07de08828f2074249d2fe712b57cfcf0987aefab"
     },
     {
       "path": "scripts/check-quran-nature-audio.mjs",
-      "sha": "b563ebadb7270a69a8f4eea35ba0e1f49359671d"
+      "sha": "0676e259927ee2379e732e6c47eaad4be2a7744c"
     },
     {
       "path": "scripts/check-quran-nature-motion.mjs",
-      "sha": "14b7250d2785efbc0988994cb5668676eb860eda"
+      "sha": "ee8ad1ab1f02c9f4774d47c33c142d08712ead76"
+    },
+    {
+      "path": "scripts/check-quran-nature-photo.mjs",
+      "sha": "91e32446babde7cebb77d21f5474ee3a642d2df4"
     },
     {
       "path": "scripts/check-quran-nature-video-cache.mjs",
@@ -7119,7 +6851,7 @@
     },
     {
       "path": "scripts/check-quran-player-cascade.mjs",
-      "sha": "00ea0e4a528b95de81aef0b34ef71ffdf4e3f86e"
+      "sha": "ff37cd9573b9b274977cd0b46f09e3cd8f2fdff0"
     },
     {
       "path": "scripts/check-quran-player-dock.mjs",
@@ -7127,11 +6859,11 @@
     },
     {
       "path": "scripts/check-quran-player-extras.mjs",
-      "sha": "b5c10a9953597c4ae0ee8f8c400e249a3f2226fe"
+      "sha": "46d1cacac2a0abb7ec72bb44dfb4932d283c21cb"
     },
     {
       "path": "scripts/check-quran-player-window.mjs",
-      "sha": "0ab0d3a35c7ecb3b3bfc64a705abe91ddab74772"
+      "sha": "67eee640f626b85e46e70b88669abf6c1421cb3f"
     },
     {
       "path": "scripts/check-quran-playlist-ui.mjs",
@@ -7170,6 +6902,10 @@
       "sha": "6fedd36ba3d78744e9f52afdfbf2e51ba87c9723"
     },
     {
+      "path": "scripts/check-quran-saved-library.mjs",
+      "sha": "3cba246c70e226f0d6236f8c2039aca98640f684"
+    },
+    {
       "path": "scripts/check-quran-session-recovery.mjs",
       "sha": "f5dd186da1c6326812420028a7047aa51c5c2efc"
     },
@@ -7195,7 +6931,7 @@
     },
     {
       "path": "scripts/check-quran-translation-picker.mjs",
-      "sha": "5d57c64bfd3e9913471e8821d0d9a42ff734f245"
+      "sha": "b3cefe2dee080d2d51f57e824dc11097a2c2510b"
     },
     {
       "path": "scripts/check-quran-translations.mjs",
@@ -7223,7 +6959,7 @@
     },
     {
       "path": "scripts/check-reciter-discovery.mjs",
-      "sha": "d8b99801f1ad383e03375fc0f62f5437049e5dae"
+      "sha": "4d108dbcc43145ce1111d1af3f23bf6fe7bce7e5"
     },
     {
       "path": "scripts/check-reciter-expansion-418.mjs",
@@ -7255,7 +6991,7 @@
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
-      "sha": "1c07a7f53218bf6595de344cbea214d58f7d3994"
+      "sha": "21658b2813d601701c9beca1dd456cbd481c8358"
     },
     {
       "path": "scripts/check-rights-register.mjs",
@@ -7267,7 +7003,7 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "451f7c697c82666007cb84536816bbfeb63b221a"
+      "sha": "548430dc502099f80e08639843de7630072ae62f"
     },
     {
       "path": "scripts/check-security.mjs",
@@ -7410,12 +7146,20 @@
       "sha": "8eddfe1550d6af7c7efb13a104ee697b28cd5df1"
     },
     {
+      "path": "scripts/check-team-news-placement.mjs",
+      "sha": "c82c532bb7906d75330b35e9fd4eacff5b61f57d"
+    },
+    {
       "path": "scripts/check-team-preview-access.mjs",
       "sha": "94880ea4c800c999bdac9a52fcfeb7ece8bacb33"
     },
     {
+      "path": "scripts/check-team-preview-motion.mjs",
+      "sha": "8d8d79026f82ba85a3f39f4376b8c909f056932a"
+    },
+    {
       "path": "scripts/check-team-preview-ui.mjs",
-      "sha": "20c715695ff06ea843a898cc8a998336be302e80"
+      "sha": "e7ef43b400eacef9e9279d94b8aeec02aad5761a"
     },
     {
       "path": "scripts/check-transcription.mjs",
@@ -7439,7 +7183,7 @@
     },
     {
       "path": "scripts/check-tyumen-sources.mjs",
-      "sha": "950172d1fabb466d29f5dbcd958497694252204b"
+      "sha": "9a4d79d28360f117279f67bdc819336c45625a71"
     },
     {
       "path": "scripts/check-umrah.mjs",
@@ -7450,8 +7194,12 @@
       "sha": "7eb0839bbe34371edd2a3577339fdff668e49968"
     },
     {
+      "path": "scripts/check-update-activation-race.mjs",
+      "sha": "8a6762583ef1981bbc642f54e68ecd6dbb62852a"
+    },
+    {
       "path": "scripts/check-updates.mjs",
-      "sha": "b66997452a80d9467d5ec02bbfdf4e88ec7debdf"
+      "sha": "abf405e12f565e8dfdd62f8622964f2f88714726"
     },
     {
       "path": "scripts/check-user-support.mjs",
@@ -7479,7 +7227,7 @@
     },
     {
       "path": "scripts/lib/ranking-language-fixture.mjs",
-      "sha": "874e10f856b0fad70349ce5c16c2391e1b1cfa4d"
+      "sha": "2a6ae8d58b9c4d385c6c2b08498640150f38dfa4"
     },
     {
       "path": "scripts/prepare-quran-reading.py",
