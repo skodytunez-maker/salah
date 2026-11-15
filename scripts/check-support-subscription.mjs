@@ -4,6 +4,8 @@ import {execFileSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import {fileURLToPath} from 'node:url';
+import{getLocale,translateUi}from '../dist/js/i18n.js';
+import{uiLeaf,uiMessage,setUiMessage,bindUiLanguage}from '../dist/js/ui.js';
 import {createBillingHandler,subscriptionView} from '../supabase/functions/support-billing/core.mjs';
 const u='11111111-1111-4111-8111-111111111111';
 let reads=0,unlinks=0;const active={status:'active',amount_rub:150,method_id:'private-token-never-return',method_type:'bank_card',card_last4:'1234',next_charge_at:'2026-11-14T10:00:00Z'};
@@ -25,7 +27,7 @@ window.document.body.innerHTML='<main><section data-support-subscription></secti
 const host=window.document.querySelector('main'),source=await fs.readFile(new URL('../dist/js/support-subscription.js',import.meta.url),'utf8');
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let fail=false;const fetcher=async(url,options)=>{fetchCalls++;assert.equal(url,'https://fixture.invalid/functions/v1/support-billing');if(options.method==='POST'){assert.deepEqual(JSON.parse(options.body),{action:'unlink'});if(fail)return new Response('',{status:503});return Response.json({status:'cancelled',method:null,nextChargeAt:null,paymentEnabled:false,unlinked:true});}return Response.json({status:'active',amount:150,method:{type:'bank_card',last4:'1234'},nextChargeAt:'2026-11-14T10:00:00Z',paymentEnabled:false});};
-const context=vm.createContext({Intl,Number,String,Object,Date,Set,Error,Promise,JSON,setTimeout,AbortSignal,window,document:window.document,location:window.location,fetch:fetcher,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'public-test',esc,modal:html=>{window.document.querySelector('#test-modal').innerHTML=html;window.document.querySelector('[data-close]').onclick=()=>{closed++;window.document.querySelector('#test-modal').innerHTML='';};},closeModal:()=>{closed++;window.document.querySelector('#test-modal').innerHTML='';}});
+const context=vm.createContext({getLocale,translateUi,uiLeaf,uiMessage,setUiMessage,bindUiLanguage,Intl,Number,String,Object,Date,Set,Error,Promise,JSON,setTimeout,AbortSignal,window,document:window.document,location:window.location,fetch:fetcher,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'public-test',esc,modal:html=>{window.document.querySelector('#test-modal').innerHTML=html;window.document.querySelector('[data-close]').onclick=()=>{closed++;window.document.querySelector('#test-modal').innerHTML='';};},closeModal:()=>{closed++;window.document.querySelector('#test-modal').innerHTML='';}});
 const mod=vm.runInContext(source.replace(/^import.*$/gm,'').replaceAll('export ','')+';({mountSupportSubscription,subscriptionMarkup,createSubscriptionRequest})',context);
 const client=()=>({auth:{getSession:async()=>({data:{session:{user:{id:u},access_token:'synthetic-session'}}})}}),account=()=>state;
 const settle=async()=>{for(let i=0;i<4;i++)await new Promise(r=>setTimeout(r,10));};

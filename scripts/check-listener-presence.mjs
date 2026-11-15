@@ -1,3 +1,4 @@
+import{rankingUiContext}from './lib/ranking-language-fixture.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -28,7 +29,7 @@ hold=false;user='two';reporter.sample();await flush();const before=calls.length;
 reporter.stop({keepalive:true});await flush();assert.equal(calls.at(-1).options.keepalive,true);assert.equal(calls.at(-1).packet.playing,false);reporter.dispose();
 
 const win=new Window(),host=win.document.createElement('div');win.document.body.append(host);let clock=100000;
-const context=vm.createContext({read:(_key,fallback)=>fallback,write(){},esc:x=>String(x).replaceAll('"','&quot;'),rankTime,listenerRing,assignListenerRings,medalForRank,awardArtwork,reciterInfo,competitionAvatar:id=>'https://fixture.invalid/'+id,Date:class extends Date{static now(){return clock;}},document:win.document,window:win,performance:win.performance,requestAnimationFrame:()=>1,setTimeout,clearTimeout});
+const context=vm.createContext(rankingUiContext({read:(_key,fallback)=>fallback,write(){},esc:x=>String(x).replaceAll('"','&quot;'),rankTime,listenerRing,assignListenerRings,medalForRank,awardArtwork,reciterInfo,competitionAvatar:id=>'https://fixture.invalid/'+id,Date:class extends Date{static now(){return clock;}},document:win.document,window:win,performance:win.performance,requestAnimationFrame:()=>1,setTimeout,clearTimeout}));
 const source=await fs.readFile(new URL('../dist/js/competition-view.js',import.meta.url),'utf8');
 vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+'\nglobalThis.api={competitionMarkup,updateCompetitionTimes};',context);
 const rows=[{id:'a',mode:'profile',nickname:'Fixture',photo:true,seconds:10,rank:1,reciter:'ar.alafasy',listeningUntil:clock+45000},{id:'b',mode:'initial',initial:'B',seconds:9,rank:2,reciter:'ar.alafasy',listeningUntil:clock+45000}];
@@ -37,7 +38,7 @@ const card=host.firstElementChild;clock+=45001;context.api.updateCompetitionTime
 win.happyDOM.abort();
 // A slow response or a warm cache cannot restart the server's short lease.
 let requestClock=Date.parse('2026-10-27T08:00:00Z'),networkDelay=5000,active=45,mode='profile';
-const clientContext=vm.createContext({personalDataAllowed:()=>true,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',RECITERS,safeListener,listeningDayKey,read:(_k,d)=>d,write(){},Date:class extends Date{static now(){return requestClock;}},Intl,AbortController,AbortSignal,setTimeout,clearTimeout,fetch:async()=>{requestClock+=networkDelay;return{ok:true,json:async()=>({day:listeningDayKey(requestClock),boards:Object.fromEntries(['all','day','week','month'].map(p=>[p,{items:[{id:'11111111-1111-4111-8111-111111111111',nickname:'Fixture',initial:'F',mode,reciter:'ar.alafasy',seconds:120,rank:1,activeForSeconds:active}]}]))})};},window:{dispatchEvent(){}},Event:class{}});
+const clientContext=vm.createContext(rankingUiContext({personalDataAllowed:()=>true,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture',RECITERS,safeListener,listeningDayKey,read:(_k,d)=>d,write(){},Date:class extends Date{static now(){return requestClock;}},Intl,AbortController,AbortSignal,setTimeout,clearTimeout,fetch:async()=>{requestClock+=networkDelay;return{ok:true,json:async()=>({day:listeningDayKey(requestClock),boards:Object.fromEntries(['all','day','week','month'].map(p=>[p,{items:[{id:'11111111-1111-4111-8111-111111111111',nickname:'Fixture',initial:'F',mode,reciter:'ar.alafasy',seconds:120,rank:1,activeForSeconds:active}]}]))})};},window:{dispatchEvent(){}},Event:class{}}));
 const clientSource=await fs.readFile(new URL('../dist/js/competition-client.js',import.meta.url),'utf8');vm.runInContext(clientSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+'\nglobalThis.api={loadCompetition,clearCompetitionCache,cachedCompetition};',clientContext);
 let began=requestClock;let loaded=await clientContext.api.loadCompetition('all');assert.equal(loaded[0].listeningUntil,began+45000);assert.equal(clientContext.api.cachedCompetition('all')[0].listeningUntil,began+45000,'Reading cache does not extend the status');
 for(const value of [46,-1,'45',null]){clientContext.api.clearCompetitionCache();active=value;assert.equal((await clientContext.api.loadCompetition('all'))[0].listeningUntil,0);}

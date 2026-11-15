@@ -34,7 +34,7 @@ export function createDhikrFeedback({read,write,haptic=()=>true,environment=()=>
  }
  function markup(){
   const audio=supportsSound(),vibration=supportsVibration();
-  return '<div class="dhikr-feedback-options" role="group" aria-label="Отклик счётчика"><label><input id="dhikr-feedback-sound" type="checkbox" '+(soundOn()&&audio?'checked ':'')+(audio?'':'disabled ')+'> Звук нажатия</label><label><input id="dhikr-feedback-vibration" type="checkbox" '+(vibrationOn()&&vibration?'checked ':'')+(vibration?'':'disabled ')+'> Вибрация</label>'+(vibration?'':'<p class="muted">Вибрация недоступна в этом браузере.</p>')+'</div>';
+  return '<div class="dhikr-feedback-options" role="group" aria-label="Отклик счётчика" data-i18n-aria-label="adhkarUi.counterFeedback"><label><input id="dhikr-feedback-sound" type="checkbox" '+(soundOn()&&audio?'checked ':'')+(audio?'':'disabled ')+'> <span data-i18n="adhkarUi.tapSound">Звук нажатия</span></label><label><input id="dhikr-feedback-vibration" type="checkbox" '+(vibrationOn()&&vibration?'checked ':'')+(vibration?'':'disabled ')+'> <span data-i18n="adhkarUi.vibration">Вибрация</span></label>'+(vibration?'':'<p class="muted" data-i18n="adhkarUi.vibrationUnavailable">Вибрация недоступна в этом браузере.</p>')+'</div>';
  }
  function bind(host){
   for(const [id,key]of [['sound','dhikr-sound'],['vibration','dhikr-vibration']]){

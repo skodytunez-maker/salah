@@ -1,3 +1,4 @@
+import{uiAttrs,uiLeaf,watchPracticeUi}from './practice-i18n.js';
 import{mountLearningCabinetLink}from './learning-cabinet-link.js';
 import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview,preloadOwnerLearning}from './owner-learning-frame.js';
 import{teamPreviewVerified as ownerVerified}from './team-preview-access.js';
@@ -8,6 +9,9 @@ import{showAllahNames}from './allah-names.js';
 import{actionIcon,actionLabel}from './action-icons.js';
 import{read}from './storage.js';
 import{savedLesson,courseName,courseLength}from './learning-state.js';
+let stopKnowledgeLanguage=()=>{};
+const cardKey=(id,field)=>'knowledgeUi.cards.'+id.replace(/-([a-z])/g,(_,letter)=>letter.toUpperCase())+'.'+field;
+const resumeTitleKey=kind=>['basic','wudu'].includes(kind)?cardKey(kind,'title'):'home.'+kind;
 const entries = [
   {kind:'names',icon:'knowledge-names',title:'Имена Аллаха',description:'Арабское написание, краткие значения и тест для повторения.',detail:'99 имён',action:'Изучать имена',href:'#knowledge?view=names'},
   {kind:'alphabet',icon:'knowledge-alphabet',title:'Арабский алфавит',description:'28 букв и их формы в начале, середине и конце слова.',detail:'28 букв',action:'Изучить буквы',href:'#knowledge?view=alphabet'},
@@ -48,8 +52,8 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   if(ownerAccess)preloadOwnerLearning();
   const view=new URLSearchParams(hash.split('?')[1]||'').get('view');
   if(view!=='names')delete container.dataset.namesHash;
-  if(view==='names'){delete container.dataset.alphabetHash;if(container.dataset.namesHash!==hash||!container.querySelector('.names-page')){showAllahNames(container,{hash});container.dataset.namesHash=hash;}return;}
-  if(view==='alphabet'){if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
+  if(view==='names'){stopKnowledgeLanguage();stopKnowledgeLanguage=()=>{};delete container.dataset.alphabetHash;if(container.dataset.namesHash!==hash||!container.querySelector('.names-page')){showAllahNames(container,{hash});container.dataset.namesHash=hash;}return;}
+  if(view==='alphabet'){stopKnowledgeLanguage();stopKnowledgeLanguage=()=>{};if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
   delete container.dataset.alphabetHash;
   const saved=savedLesson(read('learning-progress',null));
   const catalogKey=JSON.stringify([learningUserId,ownerAccess,saved]);
@@ -58,33 +62,33 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title"${learningUserId?' aria-busy="true"':''}>
     <div class="page-head knowledge-head">
       <div>
-        <span class="knowledge-eyebrow">УЧИТЬСЯ И ПОВТОРЯТЬ</span>
-        <h1 id="knowledge-title">Знания</h1>
-        <p class="knowledge-intro">В своём темпе. По одному шагу.</p>
+        <span class="knowledge-eyebrow" data-i18n="knowledgeUi.eyebrow">УЧИТЬСЯ И ПОВТОРЯТЬ</span>
+        <h1 id="knowledge-title" data-i18n="nav.knowledge">Знания</h1>
+        <p class="knowledge-intro" data-i18n="knowledgeUi.intro">В своём темпе. По одному шагу.</p>
       </div>
     </div>
-    ${learningUserId?'<p class="muted knowledge-access-status" role="status" data-learning-access-status>Открываем знания…</p>':''}
+    ${learningUserId?'<p class="muted knowledge-access-status" role="status" data-learning-access-status data-i18n="knowledgeUi.loading">Открываем знания…</p>':''}
     <div data-knowledge-content${learningUserId?' hidden':''}>
-    ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail">Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
+    ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow" data-i18n="knowledgeUi.resume">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong${uiAttrs(resumeTitleKey(saved.kind))}>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail"${uiAttrs('knowledgeUi.stepOf',{step:saved.index+1,total:courseLength(saved.kind)})}>Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
     <div class="knowledge-cards">
       ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'} ${entry.external?'target="_blank" rel="noopener noreferrer"':''}>
         <div class="knowledge-card-top">
           <span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span>
-          <span class="knowledge-detail">${entry.detail}</span>
+          <span class="knowledge-detail"${uiAttrs(cardKey(entry.kind,'detail'))}>${entry.detail}</span>
         </div>
-        <h2>${entry.title}</h2>
-        <p>${entry.description}</p>
-        <span class="knowledge-action">${entry.action}${actionIcon('next')}</span>
+        <h2${uiAttrs(cardKey(entry.kind,'title'))}>${entry.title}</h2>
+        <p${uiAttrs(cardKey(entry.kind||entry.id,'description'))}>${entry.description}</p>
+        <span class="knowledge-action">${uiLeaf(cardKey(entry.kind,'action'),entry.action)}${actionIcon('next')}</span>
       </a>`).join('')}
-      ${ownerAccess?'<a class="knowledge-card knowledge-owner-preview" href="#knowledge?view=teacher-preview"><div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-knowledge-online"></span></span><span class="knowledge-detail">Учебный пример</span></div><h2>Кабинет преподавателя</h2><p>Расписание, учебная группа, задания и пример обратной связи.</p><span class="knowledge-action">Познакомиться с кабинетом'+actionIcon('next')+'</span></a>':'<h2 class="knowledge-coming-title">Скоро в SALAH</h2>'}
+      ${ownerAccess?'<a class="knowledge-card knowledge-owner-preview" href="#knowledge?view=teacher-preview"><div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-knowledge-online"></span></span><span class="knowledge-detail" data-i18n="knowledgeUi.previewDetail">Учебный пример</span></div><h2 data-i18n="knowledgeUi.teacherTitle">Кабинет преподавателя</h2><p data-i18n="knowledgeUi.teacherDescription">Расписание, учебная группа, задания и пример обратной связи.</p><span class="knowledge-action">'+uiLeaf('knowledgeUi.teacherAction','Познакомиться с кабинетом')+''+actionIcon('next')+'</span></a>':'<h2 class="knowledge-coming-title" data-i18n="knowledgeUi.comingTitle">Скоро в SALAH</h2>'}
       ${UPCOMING_KNOWLEDGE.map(entry => {const route=ownerLearningPreview(entry.id,ownerAccess);return route?`<a class="knowledge-card knowledge-owner-preview" data-upcoming="${entry.id}" href="${route.href}" aria-labelledby="upcoming-${entry.id}">
-        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">${route.detail}</span></div>
-        <h2 id="upcoming-${entry.id}">${entry.title}</h2><p>${entry.description}</p>
-        <span class="knowledge-action">${route.label}${actionIcon('next')}</span>
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail"${uiAttrs(cardKey(entry.id,'previewDetail'))}>${route.detail}</span></div>
+        <h2 id="upcoming-${entry.id}"${uiAttrs(cardKey(entry.id,'title'))}>${entry.title}</h2><p${uiAttrs(cardKey(entry.kind||entry.id,'description'))}>${entry.description}</p>
+        <span class="knowledge-action">${uiLeaf(cardKey(entry.id,'previewAction'),route.label)}${actionIcon('next')}</span>
       </a>`:`<article class="knowledge-card knowledge-card-coming" data-upcoming="${entry.id}" aria-labelledby="upcoming-${entry.id}">
-        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail">Готовим для вас</span></div>
-        <h2 id="upcoming-${entry.id}">${entry.title}</h2><p id="upcoming-${entry.id}-description">${entry.description}</p>
-        <button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description">Скоро</button>
+        <div class="knowledge-card-top"><span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span><span class="knowledge-detail" data-i18n="knowledgeUi.preparing">Готовим для вас</span></div>
+        <h2 id="upcoming-${entry.id}"${uiAttrs(cardKey(entry.id,'title'))}>${entry.title}</h2><p id="upcoming-${entry.id}-description"${uiAttrs(cardKey(entry.id,'description'))}>${entry.description}</p>
+        <button class="button knowledge-coming-button" type="button" disabled aria-describedby="upcoming-${entry.id}-description" data-i18n="knowledgeUi.soon">Скоро</button>
       </article>`;}).join('')}
 
 
@@ -92,6 +96,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
     </div>
   </section>`;
   const page=container.querySelector('.knowledge-page');
+  stopKnowledgeLanguage();stopKnowledgeLanguage=watchPracticeUi(page);
   page.dataset.learningUser=learningUserId||'';
   page.dataset.catalogKey=catalogKey;
   if(learningUserId)void mountCabinetLink(page,{userId:learningUserId,isActive:()=>page.isConnected&&container.querySelector('.knowledge-page')===page});

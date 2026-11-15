@@ -13,7 +13,8 @@ const events=pick("window.addEventListener('hashchange'").split(";document.getEl
 let rebuilt=0,form=null,focus=null,weatherChecks=0,loads=0,now=Date.now(),day='2026-10-02';const handlers=new Map(),offset={dataset:{offsetTime:'Asr'},textContent:''},connection={hidden:false},city={textContent:''};
 const body={classList:{toggle(){}}},footer={classList:{add(){}},innerHTML:''};
 const app={querySelector:selector=>selector==='#settings-form'?form:selector==='.umrah-page'&&app.innerHTML?.includes('umrah-page')?{}:null,querySelectorAll:selector=>selector==='[data-offset-time]'?[offset]:[],insertAdjacentHTML(){throw Error('Unexpected storage warning')}};
-const document={body,hidden:false,querySelector:()=>footer,getElementById:id=>id==='connection'?connection:id==='change-city'?city:null,addEventListener:(name,fn)=>{handlers.set('doc:'+name,fn)}};
+const document={body,hidden:false,querySelector:selector=>selector==='#change-city span'?city:footer,getElementById:id=>id==='connection'?connection:id==='change-city'?city:null,addEventListener:(name,fn)=>{handlers.set('doc:'+name,fn)}};
+city.removeAttribute=()=>{};city.setAttribute=()=>{};
 const location={hash:'#settings'},window={addEventListener:(name,fn)=>handlers.set(name,fn),scrollTo(){}};
 const fakeDate=class extends Date {static now(){return now}};
 const noop=()=>{};

@@ -38,7 +38,7 @@ export const printedNeedsBasmala=lines=>lines.some(line=>line[1]==='basmala');
 export function printedPageMarkup(lines,page,index,surahs,escape,basmalaGlyphs,edition='tajweed'){
  const suffix=edition==='madani'?'Madani':'';
  const keys=printedVerseKeys(lines),first=keys[0]?.split(':').map(Number),meta=first&&index.surahs[first[0]-1],juz=first&&surahs.get(first[0])?.verses[first[1]-1]?.juz;
- const header='<div class="mushaf-print-meta"><span>Джуз '+(juz||'')+'</span><strong>'+escape(meta?.name||'Мусхаф')+'</strong></div><div class="mushaf-print-number">'+page+'</div>';
+ const header='<div class="mushaf-print-meta"><span>'+uiLeaf('quranUi.juzNumber',{number:juz||''})+'</span><strong>'+(meta?escape(meta.name):uiLeaf('quranUi.mushafTitle'))+'</strong></div><div class="mushaf-print-number">'+page+'</div>';
  const rows=lines.map(([number,type,surah,words],lineIndex)=>{
   if(type==='surah-header')return '<div class="mushaf-print-line mushaf-print-heading" data-print-line="'+number+'" data-print-type="'+type+'"><span lang="ar" dir="rtl">'+escape(index.surahs[surah-1].arabicName)+'</span></div>';
   if(type==='basmala')return '<div class="mushaf-print-line mushaf-print-basmala" data-print-line="'+number+'" data-print-type="'+type+'"><span class="mushaf-print-glyph" data-font-page="1" style="font-family:SALAHMushaf1'+suffix+'" lang="ar" dir="rtl" aria-label="'+escape(surahs.get(1)?.verses[0].arabic||'')+'">'+escape(basmalaGlyphs)+'</span></div>';
@@ -56,3 +56,4 @@ export function fitPrintedPage(paper,size=30){
  let max=1;for(const line of sheet.querySelectorAll('[data-print-type=text]')){const words=[...line.querySelectorAll('.mushaf-print-word')];let sum=0;for(const word of words){ctx.font='40px "'+word.style.fontFamily.replaceAll('"','')+'"';sum+=ctx.measureText(word.textContent).width;}max=Math.max(max,sum+Math.max(0,words.length-1)*(line.classList.contains('mushaf-print-centered')?8.8:2));}
  const zoom=Math.max(.8,Math.min(1.55,size/30)),fit=printedFitSize(width-6,max,zoom);sheet.style.width=(Math.max(1,zoom)*100)+'%';sheet.style.setProperty('--mushaf-print-size',fit+'px');sheet.dataset.fit=String(fit);
 }
+import{uiLeaf}from './quran-ui.js';

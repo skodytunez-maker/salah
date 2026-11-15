@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{mountAwardHistory,awardWonDate,awardHistoryLabel}from '../dist/js/quran-award-history.js';
+import{setInterfaceLanguage,t}from '../dist/js/i18n.js';
 import{safeAward}from '../dist/js/quran-awards-core.js';
 const w=new Window(),host=w.document.createElement('section');w.document.body.append(host);
 const uuid=n=>String(n).padStart(8,'0')+'-1111-4111-8111-111111111111';
@@ -23,6 +24,8 @@ host.querySelector('[data-history-period="month"]').click();
 assert.equal(host.querySelectorAll('details').length,1);assert.equal(host.querySelector('details').open,false);
 assert.match(host.querySelector('summary').textContent,/Октябрь 2026/);assert.doesNotMatch(host.querySelector('summary').textContent,/нояб|1 окт|31 окт|—/);assert.match(host.querySelector('.award-history-period').textContent,/1 окт.*2026.*31 окт.*2026/);assert.match(host.querySelector('.award-history-received').textContent,/2 нояб/);
 assert.equal(host.querySelector('.award-history-results').getAttribute('aria-label'),'Победители месяца');
+const sameEntry=host.querySelector('details'),sameSummary=sameEntry.querySelector('summary'),sameWinner=sameEntry.querySelector('[data-award-winner]'),sameImage=sameEntry.querySelector('img'),rowSnapshot=JSON.stringify(rows);sameEntry.open=true;sameWinner.focus();host.scrollTop=44;
+setInterfaceLanguage('en');assert.equal(host.querySelector('details'),sameEntry);assert.equal(sameEntry.querySelector('summary'),sameSummary);assert.equal(sameEntry.querySelector('img'),sameImage);assert.equal(sameEntry.open,true);assert.equal(w.document.activeElement,sameWinner);assert.equal(host.scrollTop,44);assert.match(sameSummary.textContent,/October 2026/);assert.equal(sameWinner.textContent,t('rankingUi.historyWinnerCard'));assert.equal(host.querySelector('[data-history-period="month"]').getAttribute('aria-pressed'),'true');assert.equal(JSON.stringify(rows),rowSnapshot);assert.equal(cards.length,1,'Language must not launch actions');setInterfaceLanguage('ru');
 active=false;host.querySelector('[data-award-winner]').click();host.querySelector('[data-history-period="week"]').click();assert.equal(cards.length,1);assert.equal(host.querySelectorAll('details').length,1,'Inactive view cannot launch actions or switch');
 mountAwardHistory(host,[]);assert.equal(host.querySelectorAll('details').length,0);assert.match(host.textContent,/после завершения периода/);
 assert.equal(awardWonDate({earnedAt:''}),'');assert.equal(awardWonDate({earnedAt:'bad'}),'');assert.equal(awardWonDate({earnedAt:'2026-11-02'}),'');assert.equal(awardWonDate({earnedAt:'2026-11-02T21:10:00Z'}),awardWonDate({earnedAt:'2026-11-03T00:10:00+03:00'}),'Award day is independent of device timezone');
@@ -30,4 +33,5 @@ mountAwardHistory(host,[{...rows[0],earnedAt:''}]);assert.match(host.querySelect
 assert.equal(awardHistoryLabel({start:'bad',end:'bad',kind:'week'}),'Период не указан');
 assert.equal(awardHistoryLabel({start:'2026-12-01',end:'2027-01-01',kind:'month'}),'Декабрь 2026');
 assert.match(awardHistoryLabel({start:'2026-12-28',end:'2027-01-04',kind:'week'}),/28 дек.*2026.*3 янв.*2027/,'Cross-year week remains unambiguous');
+const dispose=mountAwardHistory(host,rows);const detachedLabel=host.querySelector('[data-history-period]').textContent;dispose();setInterfaceLanguage('en');assert.equal(host.querySelector('[data-history-period]').textContent,detachedLabel,'Disposed history removes language subscriber');setInterfaceLanguage('ru');
 await w.happyDOM.close();console.log('PASS: period-first weekly/monthly labels, actual award date inside disclosure, full period and hours on tap, timezone/year boundaries, anonymous identities and inactive-view guard.');

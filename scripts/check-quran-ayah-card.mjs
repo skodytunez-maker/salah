@@ -1,14 +1,19 @@
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{t,getDirection,setInterfaceLanguage}from '../dist/js/i18n.js';
+import{uiLeaf,uiTextAttributes,uiAttribute,setUiLabel,setUiAttribute,bindQuranUi,quranModal}from '../dist/js/quran-ui.js';
+import{esc}from '../dist/js/ui.js';
+import{actionIcon}from '../dist/js/action-icons.js';
 const root=new URL('../',import.meta.url);
 const source=await fs.readFile(new URL('dist/js/quran-ayah-card.js',root),'utf8');
 const index=JSON.parse(await fs.readFile(new URL('dist/data/quran-index.json',root),'utf8'));
 const surah=JSON.parse(await fs.readFile(new URL('dist/data/quran/2.json',root),'utf8'));
 const draws=[];let canvasId=0;
 const document={fonts:{ready:Promise.resolve()},createElement:()=>({id:canvasId++,dataset:{},attributes:{},setAttribute(name,value){this.attributes[name]=value;},getContext(){const id=this.id;return {scale(){},font:'',measureText(text){return {width:[...text].length*Number(this.font.match(/(\d+)px/)[1])*.55};},createLinearGradient(){return {addColorStop(){}};},createRadialGradient(){return {addColorStop(){}};},beginPath(){},moveTo(){},lineTo(){},bezierCurveTo(){},stroke(){},fillRect(){},strokeRect(){},drawImage(){},fillText(text,x,y){draws.push({id,text,x,y,font:this.font,direction:this.direction});}};}})};
-const context=vm.createContext({document,Date,Image:class {complete=false;async decode(){}},console});
-vm.runInContext(source.replace(/^import .*;\n/gm,'').replace(/export /g,''),context);
+const context=vm.createContext({t,getDirection,setUiAttribute,document,Date,Image:class {complete=false;async decode(){}},console});
+vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context);
 for(let day=0;day<6236;day++){
  const position=vm.runInContext('dailyPosition',context)(index,new Date(2026,0,1+day));
  assert.ok(position.surah>=1&&position.surah<=114&&position.ayah>=1&&position.ayah<=index.surahs[position.surah-1].ayahs);
@@ -22,7 +27,7 @@ assert.equal(new Set(shuffled).size,total,'A complete daily cycle must include e
 assert.equal(Math.min(...shuffled),0);assert.equal(Math.max(...shuffled),total-1);
 assert.ok(shuffled.slice(1,366).filter((value,i)=>Math.abs(value-shuffled[i])>100).length>300,'Daily choices must be dispersed throughout the Quran, not advance to adjacent ayahs');
 const freshContext=vm.createContext({Date});
-vm.runInContext(source.replace(/^import .*;\n/gm,'').replace(/export /g,''),freshContext);
+vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),freshContext);
 const reopenedDaily=vm.runInContext('dailyPosition',freshContext);
 for(const date of [new Date(2026,9,30),new Date(2026,11,31),new Date(2027,0,1),new Date(2028,1,29),new Date(2026,2,8),new Date(2026,10,1)]){
  const first=daily(index,new Date(date.getFullYear(),date.getMonth(),date.getDate(),0,1));
@@ -86,10 +91,40 @@ assert.equal(compactPages.length,2,'When each language fits individually, emit e
 assert.deepEqual(Array.from(compactPages,page=>page.dataset.language),['ar','ru']);
 const quran=await fs.readFile(new URL('dist/js/quran.js',root),'utf8');
 assert.ok(quran.includes('mountDailyAyah(host'));
-assert.ok(quran.includes('showAyahCard(surah,surah.verses'));
+assert.ok(quran.includes('showAyahCard(view,view.verses'));
+assert.ok(quran.includes('translationInfo:meaning')&&quran.includes('translationFootnotes:meaning.verses[i].footnotes'),'The reader passes the selected source and its complete notes to the card; the actual reader contract is also exercised by check-quran-library-language.');
 assert.ok(source.includes('navigator.canShare?.({files:images})'));
 console.log('PASS: daily dates, full long-verse Arabic/translation pagination, bounds and reader integration.');
 
-const backgrounds=vm.runInContext("AYAH_PHOTO_BACKGROUNDS",context);assert.equal(backgrounds.length,12);assert.equal(new Set(backgrounds.map(x=>x.id)).size,12);for(const bg of backgrounds){const data=await fs.readFile(new URL("dist/"+bg.path.slice(2),root));assert.equal(data.subarray(0,4).toString(),"RIFF");assert.equal(data.subarray(8,12).toString(),"WEBP");assert.ok(source.includes('value="'+bg.id+'"'));}console.log("PASS: all 12 selectable photographic assets exist and are WebP.");
+const backgrounds=vm.runInContext("AYAH_PHOTO_BACKGROUNDS",context);assert.equal(backgrounds.length,12);assert.equal(new Set(backgrounds.map(x=>x.id)).size,12);for(const bg of backgrounds){const data=await fs.readFile(new URL("dist/"+bg.path.slice(2),root));assert.equal(data.subarray(0,4).toString(),"RIFF");assert.equal(data.subarray(8,12).toString(),"WEBP");}console.log("PASS: all 12 photographic assets exist and are WebP; selectable IDs are verified against the actual editor below.");
 
 const automatic=vm.runInContext("automaticBackground",context);assert.equal(new Set(Array.from({length:12},(_,i)=>automatic(16,128,new Date(2026,9,10+i)))).size,12);assert.equal(automatic(16,128,new Date(2026,9,10,0)),automatic(16,128,new Date(2026,9,10,23)));console.log("PASS: automatic backgrounds rotate daily and stay stable within the day.");
+
+// The real connected editor/popover uses explicit UI markers. Changing language
+// must never render/export another image, replace scripture or restart playback.
+const w=new Window({url:'https://fixture.invalid/#quran'}),doc=w.document;
+Object.assign(globalThis,{window:w,document:doc,localStorage:w.localStorage,MutationObserver:w.MutationObserver});
+doc.body.innerHTML='<dialog id="modal"><div id="modal-content"></div></dialog><div id="toast" hidden></div>';
+Object.defineProperty(doc,'fonts',{configurable:true,value:{ready:Promise.resolve()}});
+const contexts=new WeakMap();let blobCalls=0,shareCalls=[];
+w.HTMLCanvasElement.prototype.getContext=function(){if(!contexts.has(this))contexts.set(this,document.createElement('canvas').getContext('2d'));return contexts.get(this);};
+w.HTMLCanvasElement.prototype.toBlob=function(callback){blobCalls++;callback(new w.Blob(['PNG fixture'],{type:'image/png'}));};
+const nav={canShare:()=>true,share:async value=>{shareCalls.push(value);}};
+Object.assign(context,{document:doc,window:w,innerHeight:852,localStorage:w.localStorage,navigator:nav,File:w.File,esc,actionIcon,uiLeaf,uiTextAttributes,uiAttribute,setUiLabel,setUiAttribute,bindQuranUi,quranModal,toast(){},setTimeout,URL});
+context.loadSurah=async number=>JSON.parse(await fs.readFile(new URL('dist/data/quran/'+number+'.json',root),'utf8'));
+const flush=async()=>{for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));};
+setInterfaceLanguage('ru');draws.length=0;
+vm.runInContext('showAyahCard',context)(shortSurah,shortSurah.verses[0],index.surahs[111]);await flush();
+const editor=doc.querySelector('.ayah-card-editor'),preview=editor.querySelector('#ayah-card-preview'),format=editor.querySelector('#ayah-card-format'),background=editor.querySelector('#ayah-card-theme'),arabicCheck=editor.querySelector('#ayah-card-arabic'),translationCheck=editor.querySelector('#ayah-card-translation'),send=editor.querySelector('#ayah-card-send'),status=editor.querySelector('#ayah-card-status'),canvas=preview.querySelector('canvas');
+assert.ok(canvas);assert.equal(send.disabled,false);assert.ok(draws.some(row=>row.text==='Перевод Эльмира Кулиева'));
+const selectedIds=new Set([...background.options].map(option=>option.value));for(const bg of backgrounds)assert.ok(selectedIds.has(bg.id),bg.id+' is selectable in the actual editor');assert.equal(background.options.length,18);assert.equal(background.querySelector('span'),null,'Native options contain text and their own translation marker');
+format.value='square';arabicCheck.checked=false;translationCheck.checked=true;background.focus();const canvasCount=preview.children.length,drawCount=draws.length,exportCount=blobCalls;
+await send.onclick();const preparedFiles=shareCalls.at(-1).files;setInterfaceLanguage('en');assert.equal(doc.querySelector('.ayah-card-editor'),editor);assert.equal(editor.querySelector('#ayah-card-format'),format);assert.equal(format.value,'square');assert.equal(arabicCheck.checked,false);assert.equal(translationCheck.checked,true);assert.equal(doc.activeElement,background);assert.equal(preview.querySelector('canvas'),canvas);assert.equal(preview.children.length,canvasCount);assert.equal(draws.length,drawCount,'Locale change must not redraw canvas pixels');assert.equal(blobCalls,exportCount,'Locale change must not re-export binary files');assert.equal(canvas.getAttribute('aria-label'),t('quranUi.ayahCardAriaBoth',{name:index.surahs[111].name,number:1,index:1,total:1}));assert.equal(editor.querySelector('h2').textContent,t('quranUi.ayahCardTitle'));assert.equal(background.querySelector('[value=moon-mosque]').textContent,t('quranUi.ayahCardBackgroundMoonMosque'));assert.equal(status.textContent,t('quranUi.ayahCardComplete'));assert.equal(send.disabled,false);
+await send.onclick();assert.equal(shareCalls.at(-1).files,preparedFiles);assert.equal(shareCalls.at(-1).files[0],preparedFiles[0],'Prepared images retain their creation-language content');
+doc.querySelector('dialog').close();const closedCaption=editor.querySelector('h2').textContent;setInterfaceLanguage('ru');assert.equal(editor.querySelector('h2').textContent,closedCaption,'Closed editor removes the locale subscription');
+let listens=0;const slot=doc.createElement('section');doc.body.append(slot);await vm.runInContext('mountDailyAyah',context)(slot,index,()=>{listens++;},{compact:true});
+const invoker=slot.querySelector('button');invoker.click();const popover=doc.getElementById('quran-day-popover'),arabicNode=popover.querySelector('.ayah-day-arabic'),russianNode=popover.querySelector('.ayah-day-translation'),scripture=arabicNode.textContent,translationText=russianNode.textContent;assert.equal(popover.hidden,false);assert.equal(invoker.getAttribute('aria-expanded'),'true');assert.equal(russianNode.lang,'ru');assert.equal(russianNode.dir,'ltr');assert.equal(arabicNode.lang,'ar');assert.equal(arabicNode.dir,'rtl');
+setInterfaceLanguage('en');assert.equal(doc.getElementById('quran-day-popover'),popover);assert.equal(popover.hidden,false);assert.equal(popover.querySelector('.ayah-day-arabic'),arabicNode);assert.equal(popover.querySelector('.ayah-day-translation'),russianNode);assert.equal(arabicNode.textContent,scripture);assert.equal(russianNode.textContent,translationText);assert.equal(popover.querySelector('h2').textContent,t('quranUi.dailyTitle'));assert.equal(listens,0);assert.equal(invoker.getAttribute('aria-expanded'),'true');popover.querySelector('[data-day-listen]').click();assert.equal(listens,1);assert.equal(popover.hidden,true);vm.runInContext('closeDailyAyah',context)();assert.equal(doc.getElementById('quran-day-popover'),null);
+await vm.runInContext('mountDailyAyah',context)(slot,index,()=>{listens++;});const disclosure=slot.querySelector('details'),normalArabic=slot.querySelector('.ayah-day-arabic');disclosure.open=true;setInterfaceLanguage('ru');assert.equal(slot.querySelector('details'),disclosure);assert.equal(disclosure.open,true);assert.equal(slot.querySelector('.ayah-day-arabic'),normalArabic);assert.equal(listens,1);vm.runInContext('closeDailyAyah',context)();
+setInterfaceLanguage('ru');await w.happyDOM.close();
+console.log('PASS: connected editor/native options/status/canvas ARIA and daily surfaces translate without redrawing/exporting ready files, replacing Quran text, closing the popover or operating audio; creation-language PNGs, choices/focus, all background IDs and cleanup remain stable. Fake DOM and canvas recording only.');

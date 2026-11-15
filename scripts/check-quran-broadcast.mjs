@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createQuranBroadcast} from '../dist/js/quran-broadcast.js';
+import{t,setInterfaceLanguage}from '../dist/js/i18n.js';
 
 const events=new Map(),listeners=new Set(),frames=[];
 let pauses=0,detaches=0,doc;
@@ -14,7 +15,7 @@ class Element{
  replaceChildren(...children){for(const child of this.children)child.isConnected=false;this.children=children;for(const child of children)child.parent=this}
  before(element){this.parent.nodes.set('[data-broadcast-audio]',element)}
  remove(){this.isConnected=false;this.parent.children=this.parent.children.filter(child=>child!==this)}
- querySelector(key){return this.nodes.get(key)}
+ querySelector(key){return this.nodes.get(key)||this.children.find(child=>child.tag===key)}
  querySelectorAll(key){return key==='[data-channel]'?this.channels:key==='button,a[href],iframe'?[this.nodes.get('[data-broadcast-size]'),this.nodes.get('[data-broadcast-stop]'),...this.channels,this.nodes.get('a')]:[]}
  set innerHTML(html){
   if(html.includes("quran-live-audio")){this.nodes.set("[data-audio-toggle]",new Element("button"));this.nodes.set("[data-audio-status]",new Element());return}
@@ -34,6 +35,7 @@ live.minimize();live.stop();assert.equal(frames.length,0,'No iframe or stream lo
 live.open();const root=body.children.at(-1),section=root.querySelector('.quran-broadcast-dialog'),screen=section.querySelector('.quran-broadcast-screen'),first=frames[0];
 assert.equal(pauses,1);assert.equal(main.inert,true);assert.equal(dialog.inert,false);
 assert.equal(first.referrerPolicy,'strict-origin-when-cross-origin');assert.equal(first.attributes.get('sandbox'),'allow-scripts allow-same-origin allow-presentation');assert.match(first.src,/youtube-nocookie\.com\/embed\/eC4LfEVxvKg/);
+const firstUrl=first.src,sizeControl=section.querySelector('[data-broadcast-size]');setInterfaceLanguage('en');assert.equal(screen.children[0],first);assert.equal(first.src,firstUrl);assert.equal(frames.length,1);assert.equal(pauses,1);assert.equal(section.querySelector('[data-broadcast-size]'),sizeControl);assert.equal(first.title,t('quranUi.broadcastFrame',{name:t('quranUi.broadcastMakkah')}));assert.equal(section.querySelector('.quran-broadcast-title').textContent,'Makkah');setInterfaceLanguage('ru');assert.equal(section.querySelector('.quran-broadcast-title').textContent,'Мекка');assert.equal(frames.length,1,'Locale changes only update labels and never recreate the connected iframe');
 section.querySelector('[data-broadcast-size]').onclick();assert.equal(live.state.minimized,true);assert.equal(main.inert,false);assert.equal(alreadyInert.inert,true);assert.equal(doc.activeElement,launch);
 events.get('hashchange')();live.minimize();assert.equal(screen.children[0],first);assert.equal(first.isConnected,true);assert.equal(frames.length,1,'Minimizing and navigation retain the connected iframe');
 live.open();assert.equal(screen.children[0],first);assert.equal(frames.length,1,'Reopening the broadcast only expands it');assert.equal(live.state.minimized,false);
@@ -41,6 +43,6 @@ section.channels[1].onclick();assert.equal(frames.length,2);assert.equal(first.i
 root.onkeydown({key:'Escape',preventDefault(){}});assert.equal(live.state.minimized,true);assert.equal(screen.children[0],medina);
 for(const listener of listeners)listener({status:'loading'});assert.equal(live.state.active,false);assert.equal(medina.isConnected,false);assert.equal(events.size,0);assert.equal(listeners.size,0);assert.equal(detaches,1,'Starting recitation closes the competing live stream');
 live.open();const finalRoot=body.children.at(-1);finalRoot.querySelector('.quran-broadcast-dialog').querySelector('[data-broadcast-stop]').onclick();assert.equal(live.state.active,false);assert.equal(main.inert,false);assert.equal(alreadyInert.inert,true);assert.equal(events.size,0);assert.equal(listeners.size,0);live.stop();
-live.open();const audioRoot=body.children.at(-1),audioSection=audioRoot.querySelector('.quran-broadcast-dialog');audioSection.querySelector('[data-broadcast-audio]').onclick();const retainedAudio=audioElement;assert.equal(live.state.audio,true);assert.equal(audioStarts,1);live.minimize();events.get('hashchange')();live.open();assert.equal(audioElement,retainedAudio);assert.equal(retainedAudio.isConnected,true);assert.equal(audioStarts,1,'Minimizing/navigation/expand cannot restart background audio');audioSection.channels[1].onclick();assert.equal(audioStarts,2);assert.equal(retainedAudio.isConnected,false);live.stop();assert.equal(audioStops,1);assert.equal(audioElement,null);
-const reader=await readFile(new URL('../dist/js/quran.js',import.meta.url),'utf8');assert.match(reader,/stopQuran\(\)\{minimizeQuranBroadcast\(\)/,'Leaving the reader minimizes the broadcast');
+live.open();const audioRoot=body.children.at(-1),audioSection=audioRoot.querySelector('.quran-broadcast-dialog');audioSection.querySelector('[data-broadcast-audio]').onclick();const retainedAudio=audioElement;assert.equal(live.state.audio,true);assert.equal(audioStarts,1);const audioScreen=audioSection.querySelector('.quran-broadcast-screen'),audioToggle=audioScreen.querySelector('[data-audio-toggle]'),pausesBeforeLocale=pauses;setInterfaceLanguage('en');assert.equal(audioElement,retainedAudio);assert.equal(audioScreen.querySelector('[data-audio-toggle]'),audioToggle);assert.equal(audioStarts,1);assert.equal(audioStops,0);assert.equal(pauses,pausesBeforeLocale);assert.equal(audioScreen.querySelector('[data-audio-status]').textContent,t('quranUi.broadcastConnecting'));assert.equal(audioToggle.attributes.get('aria-label'),t('quranUi.broadcastPause'));setInterfaceLanguage('ru');live.minimize();events.get('hashchange')();live.open();assert.equal(audioElement,retainedAudio);assert.equal(retainedAudio.isConnected,true);assert.equal(audioStarts,1,'Minimizing/navigation/expand cannot restart background audio');audioSection.channels[1].onclick();assert.equal(audioStarts,2);assert.equal(retainedAudio.isConnected,false);live.stop();assert.equal(audioStops,1);assert.equal(audioElement,null);
+const reader=await readFile(new URL('../dist/js/quran.js',import.meta.url),'utf8');assert.match(reader,/stopQuran\(\)\{[^}]*minimizeQuranBroadcast\(\)/,'Leaving the reader minimizes the broadcast');
 console.log('PASS: lazy stream loading, connected iframe across minimize/navigation/expand, channel changes, audio exclusivity, focus and inert restoration, close cleanup.');

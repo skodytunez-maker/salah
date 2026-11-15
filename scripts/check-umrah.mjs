@@ -1,4 +1,8 @@
 import{actionIcon,actionLabel}from '../dist/js/action-icons.js';
+import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import * as practiceUi from '../dist/js/practice-i18n.js';
+import{getLocale}from '../dist/js/i18n.js';
+const uiDocument=new Window({url:'https://salah.invalid/'}).document;
 import assert from 'node:assert/strict';
 import{readFile}from 'node:fs/promises';
 import{Script,createContext}from 'node:vm';
@@ -28,7 +32,7 @@ const{Storage,Element}=new Script(helpers+'\n;({Storage,Element});').runInNewCon
 const source=await read('dist/js/umrah.js'),executable=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport (?=(?:async )?function)/g,'')+'\n;({showUmrah,stopUmrah});';
 function browser(hash='#umrah',storage=new Storage(),fetchImpl=async()=>({ok:true,json:async()=>structuredClone(data)})){
  const host=new Element(),body=new Element('body'),location={hash},notices=[];
- const context=createContext({actionIcon,actionLabel,document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Date,Intl,
+ const context=createContext({...practiceUi,uiHtml:html=>practiceUi.uiHtml(html,uiDocument),getLocale,actionIcon,actionLabel,document:{body},location,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,console,Date,Intl,
   UMRAH_EDITION,umrahSources,umrahHistory,umrahSteps,pilgrimTips,validUmrahProgress,umrahRoute,umrahIllustration,
   scheduleSources,schedulePrayers,imamLabel,saudiDay,scheduleTime,validScheduleMonth,validScheduleDay,validateHaramainSchedule,scheduleForDay,scheduleDays,
   read:(key,fallback)=>{try{const value=storage.getItem('salah:'+key);return value===null?fallback:JSON.parse(value)}catch{return fallback}},

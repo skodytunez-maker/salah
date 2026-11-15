@@ -1,3 +1,4 @@
+import{deviceRows}from '../dist/js/account-devices.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 const root=new URL('../',import.meta.url);
@@ -24,5 +25,5 @@ assert.equal(deviceLabel('<script>alert(1)</script>'),'Устройство');as
 assert.match(text,/delete from auth\.sessions where id=\$\{target\}::uuid and user_id=\$\{caller\.id\}::uuid and id<>\$\{caller\.sessionId\}::uuid/);
 assert.match(text,/exists\(select 1 from auth\.sessions current_session/);
 assert.ok(!/select \*|select.*(?:refresh_token_hmac_key|\bip\b)/i.test(text));
-const client=await fs.readFile(new URL('dist/js/account-devices.js',root),'utf8');assert.match(client,/data-device-yes/);assert.match(client,/row\.current\)return/);assert.match(client,/Это устройство/);
+const client=await fs.readFile(new URL('dist/js/account-devices.js',root),'utf8');assert.match(client,/data-device-yes/);assert.match(client,/row\.current\)return/);assert.match(deviceRows([{id:current,label:'iPhone',current:true,signedInAt:'2026-10-07T10:00:00Z'}]),/Это устройство/);
 console.log('PASS: device list ownership, token/IP exclusion, protected current device, enrolled MFA, revoked caller, cross-account and repeated revocation fail closed.');

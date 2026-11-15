@@ -7,6 +7,7 @@ import{APP_VERSION,APP_CHANGES,APP_ANNOUNCEMENT,APP_NEWS_UNTIL}from '../dist/js/
 import{releaseFeatureForChange}from '../dist/js/release-illustrations.js';
 import{releaseHighlightActive,releaseHighlightMarkup,bindReleaseHighlight}from '../dist/js/release-highlight.js';
 import{showAppRelease,hasSeenAnnouncement}from '../dist/js/pwa-updates.js';
+import{setInterfaceLanguage,t}from '../dist/js/i18n.js';
 
 const w=new Window({url:'https://example.invalid/'}),doc=w.document;
 Object.assign(globalThis,{window:w,document:doc,localStorage:w.localStorage,Event:w.Event});
@@ -96,7 +97,13 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- if(APP_ANNOUNCEMENT.version===499){
+ if(APP_ANNOUNCEMENT.version===501){
+  assert.equal(releaseModal.querySelectorAll('.release-feature').length,2);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,2);assert.ok(releaseModal.querySelectorAll('.release-interface-preview [data-release-motion-part]').length===2);
+  releaseModal.querySelector('[data-release-next]').click();const selected=releaseModal.querySelector('.release-feature[aria-hidden="false"]'),picture=selected.querySelector('img'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();
+  for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(releaseModal.querySelector('.release-feature[aria-hidden="false"]'),selected);assert.equal(selected.querySelector('img'),picture);assert.equal(releaseModal.querySelector('[data-release-page]').textContent,'2/2');assert.equal(selected.querySelector('h3').textContent,t('releaseUi.translationsTitle'));assert.equal(doc.activeElement,confirmation);assert.equal(hasSeenAnnouncement(),false);}
+  setInterfaceLanguage('ru');assert.ok(releaseModal.textContent.includes('SALAH на вашем языке'));assert.ok(releaseModal.textContent.includes('Переводы смыслов с источниками'));assert.doesNotMatch(releaseModal.textContent,/Ночью чтение продолжается|Сохраните прослушанное|Короткое напоминание каждый день/);
+  for(const name of['interface-languages-501','quran-translations-501']){const svg=await fs.readFile(new URL('../dist/assets/updates/'+name+'.svg',import.meta.url),'utf8');assert.match(svg,/<title\b/);assert.match(svg,/<desc\b/);assert.doesNotMatch(svg,/<(?:script|animate|animateTransform|animateMotion|set|foreignObject)\b|(?:href|xlink:href)=["']https?:/iu);assert.ok(Buffer.byteLength(svg)<10000);}
+ }else if(APP_ANNOUNCEMENT.version===499){
   assert.ok(releaseModal.textContent.includes('Ночью чтение продолжается'));assert.ok(releaseModal.textContent.includes('Сохраните прослушанное'));assert.ok(!releaseModal.textContent.includes('Короткое напоминание каждый день'));
   assert.equal(releaseModal.querySelectorAll('.release-feature').length,2);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,2);assert.ok(releaseModal.querySelector('.release-night-credit [data-release-motion-part]'));assert.ok(releaseModal.querySelector('.release-guest-registration [data-release-motion-part]'));
  }else{

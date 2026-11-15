@@ -1,3 +1,5 @@
+import{uiLeaf,uiAttribute,bindUiLanguage,setUiMessage,uiMessage,uiError,setUiAttribute}from './ui.js';
+import{t,translateUi,getLocale,subscribeLanguage}from './i18n.js';
 import{competitionOwn,refreshCompetitionOwn}from './competition-client.js';
 import{awardArtwork}from './quran-awards-core.js';
 import{FOUNDER_WELCOME_FIELD,founderWelcomeKey,founderWelcomeEligible,confirmedFounderUser,founderWelcomePreference,hasFounderWelcomeSeen}from './founder-welcome-core.js';
@@ -15,8 +17,8 @@ export function hideFounderWelcome(root=layer,{immediate=false}={}){
 export function showFounderWelcome({preview=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches}={}){
  hideFounderWelcome(layer,{immediate:true});
  const root=document.createElement('div');root.className='founder-welcome'+(reduced?' founder-welcome-reduced':'');
- root.innerHTML='<div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+'" alt=""></div><h2>Спасибо, что вы с нами.</h2><p>Первопроходец SALAH</p>'+(preview?'<small>Предпросмотр · награды и счётчик не меняются</small>':'')+'<button type="button" class="founder-welcome-close">Спасибо</button></div>';
- layer=root;document.body.append(root);root.querySelector('.founder-welcome-close').onclick=()=>hideFounderWelcome(root);
+ root.innerHTML='<div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+("\" alt=\"\"></div><h2>"+uiLeaf("extraUi.founderThanks")+"</h2><p>"+uiLeaf("rankingUi.awardTitleFounder")+"</p>")+(preview?("<small>"+uiLeaf("extraUi.founderPreview")+"</small>"):'')+("<button type=\"button\" class=\"founder-welcome-close\">"+uiLeaf("rankingUi.celebrationThanks")+"</button></div>");
+ layer=root;document.body.append(root);bindUiLanguage(root);root.querySelector('.founder-welcome-close').onclick=()=>hideFounderWelcome(root);
  exitTimer=setTimeout(()=>hideFounderWelcome(root),15000);
  return root;
 }

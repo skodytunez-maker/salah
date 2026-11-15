@@ -7,7 +7,7 @@ const win=new Window({url:'https://fixture.invalid/#settings?section=appearance'
 Object.assign(globalThis,{window:win,document:doc,localStorage:win.localStorage,Event:win.Event,CustomEvent:win.CustomEvent});
 globalThis.fetch=async()=>{throw Error('No network in interface-shell checks');};
 doc.body.innerHTML='<nav id="desktop-nav"></nav><nav id="mobile-nav"></nav><button id="location-button"></button><main id="app"></main><div id="toast" hidden></div><p id="private-text" lang="ar" dir="rtl">الحمد لله · Меню</p>';
-const[{t,setInterfaceLanguage,translateUi,getLocale,getLanguage},{initializeInterfaceLanguage,languageSettingsMarkup,mountLanguageSettings},{settings,updateSettings},{mountSettingsScreens},{PrayerDisplay},{esc,title},{prayers}]=await Promise.all([
+const[{t,setInterfaceLanguage,translateUi,getLocale,getLanguage,subscribeLanguage},{initializeInterfaceLanguage,languageSettingsMarkup,mountLanguageSettings},{settings,updateSettings},{mountSettingsScreens},{PrayerDisplay},{esc,title},{prayers}]=await Promise.all([
  import('../dist/js/i18n.js'),import('../dist/js/language-settings.js'),import('../dist/js/storage.js'),import('../dist/js/settings-screens.js'),import('../dist/js/prayer-display.js'),import('../dist/js/ui.js'),import('../dist/js/prayers.js')
 ]);
 updateSettings({uiLanguage:'ru',city:{name:'Настройки',latitude:57.1522,longitude:65.5272,timezone:'Asia/Yekaterinburg'},school:1});
@@ -34,7 +34,8 @@ const ctx=vm.createContext({app,document:doc,window:win,location:win.location,se
 });
 vm.runInContext(source.slice(source.indexOf('const settingsIconPaths='),source.indexOf("let historyPeriod='month'")),ctx);
 vm.runInContext(source.split(/\r?\n/).find(line=>line.startsWith('const routes=')),ctx);
-for(const name of ['nav','settingsPage','tick'])vm.runInContext(source.split(/\r?\n/).find(line=>line.startsWith('function '+name+'(')),ctx);
+for(const name of ['nav','settingsPage','tick','updateSettingsTranslations'])vm.runInContext(source.split(/\r?\n/).find(line=>line.startsWith('function '+name+'(')),ctx);
+const stopSettingsCopy=subscribeLanguage(ctx.updateSettingsTranslations);
 vm.runInContext(source.slice(source.indexOf('function more(){'),source.indexOf("window.addEventListener('salah:counter-status'")),ctx);
 
 ctx.nav();ctx.settingsPage();
@@ -52,9 +53,17 @@ for(const language of ['en','de','az','tg','uz','kk','ar','ru']){
  assert.equal(app.querySelector('.settings-screen-back').textContent,t('common.backSettings'));assert.equal(app.querySelector('[data-i18n="common.saveSettings"]').textContent,t('common.saveSettings'));
  assert.equal(app.querySelectorAll('.settings-group>summary svg').length,summaryIcons,'Translating a leaf preserves its icon');
  assert.equal(doc.getElementById('location-button').textContent,'Настройки');assert.equal(doc.getElementById('private-text').textContent,privateText);
+ assert.equal(doc.querySelector('label[for="method"]').textContent,t('settingsExtra.method'));
+ assert.equal(doc.querySelector('label[for="offset-Fajr"]').textContent,t('home.fajr'));
+ assert.equal(offset.getAttribute('aria-label'),t('settingsExtra.offsetLabel',{name:t('home.fajr')}));
+ assert.equal(doc.querySelector('[data-offset-label="less"]').getAttribute('aria-label'),t('settingsExtra.offsetLess',{name:t('home.fajr')}));
+ assert.equal(doc.querySelector('#change-city span').textContent,'Настройки');assert.equal(doc.querySelector('#change-city span').hasAttribute('data-i18n'),false);
+ assert.equal(doc.querySelector('#school').value,'1');assert.equal(doc.querySelector('#school [value="1"]').textContent,t('settingsExtra.schoolHanafi'));
+ assert.equal(doc.querySelector('#wallpaper-select').getAttribute('aria-label'),t('settingsExtra.chooseWallpaper'));
+ assert.equal(doc.querySelector('#check-update span').textContent,t('settingsExtra.update'));
  assert.equal(renders,0,'Changing language cannot reload, refresh forms or reset playback');
 }
-ctx.stopLanguageSettings();ctx.stopSettingsScreens();
+ctx.stopLanguageSettings();ctx.stopSettingsScreens();stopSettingsCopy();
 
 ctx.currentRoute='more';ctx.more();
 assert.equal(app.querySelector('.menu-account-name').textContent,'Мой аккаунт');assert.equal(app.querySelector('.menu-account-name').getAttribute('data-i18n'),'menu.account');

@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Quranın mənalarının tərcüməsi",
+  "quranTranslations.choose": "Tərcümə seçin",
+  "quranTranslations.included": "Tətbiqə daxildir",
+  "quranTranslations.download": "Tərcüməni endir",
+  "quranTranslations.downloading": "Endirilir: {done}/{total}",
+  "quranTranslations.saved": "İnternetsiz əlçatandır",
+  "quranTranslations.version": "Versiya {version}",
+  "quranTranslations.source": "Mənbə",
+  "quranTranslations.notes": "Tərcüməyə qeydlər",
+  "quranTranslations.latin": "Latın qrafikası",
+  "quranTranslations.cyrillic": "Kiril qrafikası",
+  "quranTranslations.loading": "Tərcümə yüklənir…",
+  "quranTranslations.unavailable": "Tərcümə siyahısını yükləmək mümkün olmadı. İnterneti yoxlayıb yenidən cəhd edin.",
+  "quranTranslations.failed": "Yoxlanılmış tərcüməni yükləmək mümkün olmadı. Əvvəlki seçim saxlanıldı.",
+  "quranTranslations.saveFailed": "Tərcümə seçimini saxlamaq mümkün olmadı.",
+  "quranTranslations.downloadFailed": "Tam tərcüməni saxlamaq mümkün olmadı. Endirilmiş surələr saxlanılıb; yenidən cəhd edə bilərsiniz.",
+  "quranTranslations.separate": "Menyu dili və Quran tərcüməsi ayrıca seçilir.",
+  "quranTranslations.searchSource": "{author} tərcüməsində axtarış",
+  "quranTranslations.credit": "Tərcümə: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Ərəb mətni: Tanzil, Uthmani. Müshəf şrifti: QCF; alternativ təcvid işarələri: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Quran, {name} ({surah}:{ayah})."
+});

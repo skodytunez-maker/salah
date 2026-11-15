@@ -4,12 +4,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {latestRequest} from '../dist/js/city-data.js';
+import{t,translateUi}from '../dist/js/i18n.js';
 const source=await readFile(new URL('../dist/js/city-dialog.js',import.meta.url),'utf8');
 const controls=new Map();let calls=0,success,optionsCaptured,selected=null;
-function element(){return {open:true,isConnected:true,value:'',children:[],events:{},addEventListener(k,f){this.events[k]=f},replaceChildren(){this.children=[]},append(x){this.children.push(x)},focus(){}}}
+function element(){const attributes=new Map();return {open:true,isConnected:true,value:'',children:[],events:{},setAttribute(key,value){attributes.set(key,String(value))},getAttribute(key){return attributes.get(key)??null},removeAttribute(key){attributes.delete(key)},querySelectorAll(){return[]},addEventListener(k,f){this.events[k]=f},replaceChildren(){this.children=[]},append(x){this.children.push(x)},focus(){}}}
 for(const id of ['modal','city-search','city-name','city-results','city-status','geolocate'])controls.set(id,element());
 const saved={name:'Тюмень',latitude:57.15,longitude:65.52,timezone:'Asia/Yekaterinburg'};
-const context=vm.createContext({getDevicePosition:options=>getDevicePosition({...options,geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;optionsCaptured=opts}}}),personalDataAllowed,document:{getElementById:id=>controls.get(id),createElement:element},navigator:{geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;optionsCaptured=opts}}},esc:x=>x,modal:()=>{},toast:()=>{},localCities:()=>[saved],searchCities:async()=>[saved],locateCity:async()=>saved,latestRequest,setTimeout,clearTimeout});
+const context=vm.createContext({t,translateUi,getDevicePosition:options=>getDevicePosition({...options,geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;optionsCaptured=opts}}}),personalDataAllowed,document:{getElementById:id=>controls.get(id),createElement:element},navigator:{geolocation:{getCurrentPosition(ok,error,opts){calls++;success=ok;optionsCaptured=opts}}},esc:x=>x,modal:()=>{},toast:()=>{},localCities:()=>[saved],searchCities:async()=>[saved],locateCity:async()=>saved,latestRequest,setTimeout,clearTimeout});
 vm.runInContext(source.replace(/^import.*;\n/gm,'').replace('export function','function')+'\nglobalThis.openCityDialog=openCityDialog;',context);
 context.openCityDialog(saved,city=>selected=city);
 assert.equal(calls,0,'Opening city selection must not request GPS');

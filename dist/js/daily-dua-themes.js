@@ -1,4 +1,6 @@
+import{uiLeaf}from './practice-i18n.js';
+import{duaCategoryLeaf}from './daily-dua-ui.js';
 import{esc}from './ui.js';
 export const DUA_THEME_IDS=Object.freeze(['sleep','home','food','cleanliness','mosque','everyday','family','prayer','travel','distress','health']);
 export function duaThemes(catalogue){return catalogue.categories.map(category=>({...category,count:catalogue.items.filter(item=>item.category===category.id).length,image:'./assets/dua-themes/'+category.id+'.webp'}));}
-export function duaThemeGrid(catalogue){return '<div class="dua-theme-grid" aria-label="Темы повседневных дуа">'+duaThemes(catalogue).map((theme,index)=>'<button type="button" class="dua-theme-card" data-dua-theme="'+esc(theme.id)+'"><img src="'+esc(theme.image)+'" alt="" width="400" height="400" loading="'+(index<2?'eager':'lazy')+'" decoding="async"><span><strong>'+esc(theme.name)+'</strong><small>Дуа: '+theme.count+'</small></span></button>').join('')+'</div>';}
+export function duaThemeGrid(catalogue){return "<div class=\"dua-theme-grid\" aria-label=\"Темы повседневных дуа\" data-i18n-aria-label=\"duaUi.themes\">"+duaThemes(catalogue).map((theme,index)=>"<button type=\"button\" class=\"dua-theme-card\" data-dua-theme=\""+esc(theme.id)+"\"><img src=\""+esc(theme.image)+'" alt="" width="400" height="400" loading="'+(index<2?'eager':'lazy')+"\" decoding=\"async\"><span><strong>"+duaCategoryLeaf(theme.id,theme.name)+"</strong><small>"+uiLeaf('duaUi.count','Дуа: {count}',{count:theme.count})+'</small></span></button>').join('')+'</div>';}

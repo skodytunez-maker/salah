@@ -1,0 +1,28 @@
+{
+  "verifiedAt": "2026-11-15",
+  "provider": "QuranEnc.com",
+  "apiDocumentation": "https://quranenc.com/en/home/api",
+  "publicationConditions": "https://quranenc.com/en/home",
+  "selectedFormat": "publisher-api-v1",
+  "preservation": "Publisher API translation text, Arabic source, numbering, whitespace, footnote markers and notes are kept verbatim. The existing SALAH Arabic Quran remains its own unchanged edition.",
+  "attribution": "The reader must display the translator or institution, QuranEnc.com, source link and edition version. Retain notes and source metadata when sharing or exporting.",
+  "maintenance": "Check the publisher catalogue and browse pages when updating the pinned manifest. Newly changed bytes must be reviewed and re-pinned before use; previously verified offline copies remain tied to their edition version.",
+  "formatDifference": "The publisher's SQLite and API exports differ in number prefixes, whitespace and some notes. Their ayah mappings were verified independently. No claim is made that those two exports are byte-identical; SALAH uses the documented API response without normalizing its text.",
+  "coverage": {"editions": 7, "surahsEach": 114, "ayahsEach": 6236, "pinnedApiResponses": 798},
+  "download": "Meaning translations are loaded individually from the documented public QuranEnc API. Complete corpora are not bundled into the native app archive.",
+  "screenshotCandidates": {
+    "matched": ["Əlixan Musayev", "Frank Bubenheim and Nadim Elias", "Khalifa Altai", "Muhammad Sadiq Muhammad Yusuf", "Alouddin Mansur"],
+    "differentVerifiedSource": {"en": "Noor International", "tg": "Rowwad Translation Center"},
+    "pendingPublisherPermissionOrSeparateSourceVerification": ["The Clear Quran / Mustafa Khattab", "AbdolMohammad Ayati", "Ziya Bunyadov and Vasim Mammadaliyev", "Latin-script Uzbek editions"],
+    "quranFoundationRemovalNotice": "https://api-docs.quran.foundation/docs/updates/",
+    "tanzilTranslationTerms": "https://tanzil.net/trans/"
+  },
+  "boundaries": [
+    "Interface language never automatically changes the selected Quran translation.",
+    "No machine translation or automatic transliteration of scripture.",
+    "The Uzbek editions verified here are Cyrillic; the Uzbek interface uses Latin script.",
+    "Arabic Quran original is not a translated edition. Public Tafsir entry points remain removed.",
+    "Religious notification excerpts retain their reviewed source edition until separately verified native-language excerpts are prepared."
+  ],
+  "testFixture": {"path": "scripts/fixtures/quran-translations/azeri_musayev-1.json", "author": "Əlixan Musayev", "publisher": "QuranEnc.com", "version": "1.0.4", "source": "https://quranenc.com/api/v1/translation/sura/azeri_musayev/1", "terms": "https://quranenc.com/en/home", "content": "Unmodified documented API response for Al-Fatihah, for integrity and offline-cache verification."}
+}

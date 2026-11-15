@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Translation of the Quran’s meanings",
+  "quranTranslations.choose": "Choose a translation",
+  "quranTranslations.included": "Included in the app",
+  "quranTranslations.download": "Download translation",
+  "quranTranslations.downloading": "Downloading: {done} of {total}",
+  "quranTranslations.saved": "Available offline",
+  "quranTranslations.version": "Version {version}",
+  "quranTranslations.source": "Source",
+  "quranTranslations.notes": "Translation notes",
+  "quranTranslations.latin": "Latin script",
+  "quranTranslations.cyrillic": "Cyrillic script",
+  "quranTranslations.loading": "Loading translation…",
+  "quranTranslations.unavailable": "Could not load the translation list. Check your connection and try again.",
+  "quranTranslations.failed": "Could not load the verified translation. Your previous selection is unchanged.",
+  "quranTranslations.saveFailed": "Could not save the translation selection.",
+  "quranTranslations.downloadFailed": "Could not save the complete translation. Downloaded surahs are saved; you can retry.",
+  "quranTranslations.separate": "Interface language and Quran translation are selected separately.",
+  "quranTranslations.searchSource": "Searching the translation by {author}",
+  "quranTranslations.credit": "Translation: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Arabic text: Tanzil, Uthmani. Mushaf typeface: QCF; fallback tajweed markup: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Quran, {name} ({surah}:{ayah})."
+});

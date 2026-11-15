@@ -1,3 +1,4 @@
+import{uiLeaf}from '../dist/js/ui.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import{createHash}from 'node:crypto';
@@ -38,7 +39,7 @@ const cancel=await create();await post({action:'cancel',id:cancel.id,secret:canc
 const revoked=await create();await post({action:'approve',id:revoked.id,secret:revoked.approvalSecret},'valid-phone-token');active=false;assert.equal((await post({action:'redeem',id:revoked.id,secret:revoked.pollSecret})).status,401);active=true;
 assert.equal((await handler(new Request('https://example.test/qr-login'))).status,405);
 const sql=await fs.readFile(new URL('supabase/qr-login-schema.sql',root),'utf8');assert.match(sql,/enable row level security/);assert.match(sql,/revoke all on schema salah_qr_private from public, anon, authenticated/);assert.ok(!/grant.*(?:anon|authenticated)/i.test(sql));
-const ui=await fs.readFile(new URL('dist/js/qr-login.js',root),'utf8');assert.match(ui,/history.replaceState/);assert.ok(!/localStorage|sessionStorage|console\.log/.test(ui));assert.match(ui,/Подтверждайте только свой экран/);assert.match(ui,/document.hidden/);
+const ui=await fs.readFile(new URL('dist/js/qr-login.js',root),'utf8');assert.match(ui,/history.replaceState/);assert.ok(!/localStorage|sessionStorage|console\.log/.test(ui));assert.ok(ui.includes("uiLeaf('qrUi.compareNote')"));assert.match(uiLeaf('qrUi.compareNote'),/Подтверждайте только свой экран/);assert.match(ui,/document.hidden/);
 const vendor=await fs.readFile(new URL('dist/js/vendor/qrcode-generator.js',root),'utf8');assert.ok(vendor.startsWith('//-----'));assert.match(vendor,/Copyright \(c\) 2009 Kazuhiko Arase/);
 const {default:qrcode}=await import(new URL('dist/js/vendor/qrcode-generator.js',root));const qr=qrcode(0,'M');qr.addData('https://skodytunez-maker.github.io/salah/#account?qr='+q.id+'&approve='+q.approvalSecret);qr.make();assert.ok(qr.getModuleCount()>20);assert.match(qr.createSvgTag({scalable:true}),/^<svg/);
 console.log('PASS: QR proof separation, explicit confirmation, origin and MFA checks, expiration, cancellation, revoked sessions and concurrent single-use redemption.');

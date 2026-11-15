@@ -6,9 +6,9 @@ const style=await readFile(new URL('../dist/style.css',import.meta.url),'utf8');
 
 assert.match(learning,/id="lesson-prev"/);
 assert.match(learning,/id="lesson-next"/);
-assert.match(learning,/id="lesson-prev" aria-label="Предыдущий шаг"/);
-assert.match(learning,/id="lesson-next" aria-label=".*Завершить.*Следующий шаг/);
-assert.match(learning,/Завершить/);
+assert.ok(learning.includes("id=\"lesson-prev\" '+uiAttribute('learningUi.previousStep')"));
+assert.match(learning,/id="lesson-next".*uiAttribute\(session[.]index.*learningUi[.]finish.*learningUi[.]nextStep/);
+assert.match(learning,/learningLeaf\('finish'\)/);
 assert.match(learning,/host\.querySelector\('#lesson-prev'\).*moveLesson\(-1\)/);
 assert.match(learning,/host\.querySelector\('#lesson-next'\).*moveLesson\(1\)/);
 assert.doesNotMatch(learning,/Свайп влево —/);

@@ -4,7 +4,8 @@ const source=await readFile(new URL('../dist/js/notification-status.js',import.m
 const reminder=await import('../dist/js/reminder-events.js');
 const pure=source.slice(source.indexOf('export function notificationSnapshot'),source.indexOf('export async function readNotificationSnapshot'))+source.slice(source.indexOf('const date='));
 const sharedURL=new URL('../dist/js/reminder-events.js',import.meta.url).href;
-const {notificationSnapshot,notificationLabels}=await import('data:text/javascript;base64,'+Buffer.from('import {normalizeReminders,PRAYER_KEYS} from '+JSON.stringify(sharedURL)+';'+pure).toString('base64'));
+const languageURL=new URL('../dist/js/i18n.js',import.meta.url).href;
+const {notificationSnapshot,notificationLabels}=await import('data:text/javascript;base64,'+Buffer.from('import {normalizeReminders,PRAYER_KEYS} from '+JSON.stringify(sharedURL)+';import {t,getLocale} from '+JSON.stringify(languageURL)+';'+pure).toString('base64'));
 const id='11111111-1111-4111-8111-111111111111',device={id,token:'a'.repeat(64),saved:true};
 assert.deepEqual(notificationSnapshot({}),{enabled:false,permission:'unsupported',browser:false,device:null});
 const enabled={reminders:{enabled:true,browserNotifications:true}};

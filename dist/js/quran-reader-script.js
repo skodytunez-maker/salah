@@ -1,6 +1,8 @@
 import{loadPrintedPage,printedPageForPosition,ensurePrintedFont,trimPrintedFonts}from './quran-mushaf-print.js';
 import{arabicWithHints,hintsLegend}from './tajweed.js';
 import{MUSHAF_COLOR_RULES}from './quran-mushaf-controls.js';
+import{translateUi,subscribeLanguage}from './i18n.js';
+import{uiLeaf,translateQuranUi}from './quran-ui.js';
 const escape=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 // Use the same verified word cells and page fonts as the printed mushaf.
@@ -21,7 +23,8 @@ export function readerVerseMarkup(words,surah,verse,edition){
  return '<span class="quran-medina-accessible">'+escape(verse.arabic)+'</span>'+basmala+words.map(w=>word(w.page,w.glyph)).join(' ');
 }
 export function readerScriptGuide(){
- return '<details class="quran-hint-guide"><summary>Цветовые подсказки</summary><p>Мединское начертание · те же цвета, что в мусхафе.</p><ul class="mushaf-color-rules">'+MUSHAF_COLOR_RULES.map(([key,title,text])=>'<li><span class="mushaf-color-swatch" data-rule="'+key+'" aria-hidden="true"></span><div><strong>'+title+'</strong><p>'+text+'</p></div></li>').join('')+'</ul><details class="quran-script-fallback-guide"><summary>Если мединский шрифт не загрузился</summary><p>Остаётся обычный арабский текст с разметкой Al Quran Cloud.</p>'+hintsLegend()+'</details></details>';
+ const names={edgham:'Edgham','mad-2':'Mad2','mad-2-4-6':'Mad246','mad-4-5':'Mad45','mad-6':'Mad6',ekhfa:'Ekhfa',qalqala:'Qalqala',tafkhim:'Tafkhim'};
+ return '<details class="quran-hint-guide"><summary>'+uiLeaf('quranUi.mushafGuideTitle')+'</summary><p>'+uiLeaf('quranUi.mushafGuideIntro')+'</p><ul class="mushaf-color-rules">'+MUSHAF_COLOR_RULES.map(([key])=>'<li><span class="mushaf-color-swatch" data-rule="'+key+'" aria-hidden="true"></span><div><strong>'+uiLeaf('quranUi.mushafRule'+names[key]+'Title')+'</strong><p>'+uiLeaf('quranUi.mushafRule'+names[key]+'Text')+'</p></div></li>').join('')+'</ul><details class="quran-script-fallback-guide"><summary>'+uiLeaf('quranUi.mushafGuideFallbackTitle')+'</summary><p>'+uiLeaf('quranUi.mushafGuideFallbackText')+'</p>'+hintsLegend()+'</details></details>';
 }
 export function mountReaderScript(shell,surah,initial,dependencies={}){
  const loadWords=dependencies.loadWords||readerWordsForSurah,ensureFont=dependencies.ensureFont||ensurePrintedFont,trimFonts=dependencies.trimFonts||trimPrintedFonts;
@@ -48,5 +51,6 @@ export function mountReaderScript(shell,surah,initial,dependencies={}){
  const observer=new IntersectionObserver(entries=>{for(const entry of entries){const paragraph=entry.target;if(entry.isIntersecting){near.add(paragraph);void render(paragraph);}else{near.delete(paragraph);if(rendered.has(paragraph))fallback(paragraph,paragraphs.get(paragraph));}}trim();},{rootMargin:'600px 0px'});
  for(const paragraph of paragraphs.keys())observer.observe(paragraph);
  const retry=()=>{for(const paragraph of near)void render(paragraph);};window.addEventListener('online',retry);
- return {update(next){const changed=options.hints!==next.hints||options.arabic!==next.arabic;options={...next};if(!changed)return;revision++;for(const [paragraph,verse]of paragraphs)fallback(paragraph,verse);retry();trim();},dispose(){disposed=true;revision++;observer.disconnect();window.removeEventListener('online',retry);near.clear();rendered.clear();trim();}};
+ const offLanguage=subscribeLanguage(()=>{if(!disposed){translateQuranUi(shell);translateUi(shell.querySelector('.quran-hint-guide'));}});
+ return {update(next){const changed=options.hints!==next.hints||options.arabic!==next.arabic;options={...next};if(!changed)return;revision++;for(const [paragraph,verse]of paragraphs)fallback(paragraph,verse);retry();trim();},dispose(){disposed=true;revision++;offLanguage();observer.disconnect();window.removeEventListener('online',retry);near.clear();rendered.clear();trim();}};
 }

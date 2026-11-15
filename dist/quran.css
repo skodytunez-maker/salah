@@ -473,3 +473,17 @@ body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mush
 .competition-time-emphasis small{display:block;color:var(--muted);font-size:10px;font-weight:500;white-space:normal}
 
 .reciter-filter-tabs.reciter-catalog-filter-tabs[data-has-new=false]{grid-template-columns:minmax(0,1fr) minmax(0,1.45fr) minmax(0,1fr)}
+.quran-translation-picker{max-width:36rem;margin-inline:auto;text-align:start}
+.quran-translation-choices{display:grid;gap:.65rem}
+.quran-translation-choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.2rem .5rem;padding:.8rem;border:1px solid var(--line,#34415a);border-radius:1rem}
+.quran-translation-select{display:flex;align-items:center;gap:.65rem;min-width:0;text-align:start;border:0;background:transparent;box-shadow:none;padding:.2rem;color:inherit}
+.quran-translation-select strong,.quran-translation-select small{display:block;white-space:normal;overflow-wrap:anywhere}
+.quran-translation-select small{margin-top:.3rem;opacity:.75}
+.quran-translation-check{width:1.1rem;flex:none;color:var(--gold,#dbc08e)}
+.quran-translation-download{align-self:center;padding:.6rem;min-width:44px;min-height:44px}
+.quran-translation-source{grid-column:1/-1;padding-inline-start:1.95rem;font-size:.78rem;opacity:.75;overflow-wrap:anywhere}
+.quran-translation-offline{align-self:center;max-width:7rem;font-size:.75rem;opacity:.7}
+.quran-translation-notes{font-size:.85em;text-align:start;white-space:pre-wrap;overflow-wrap:anywhere}
+.quran-translation-notes summary{color:var(--gold,#dbc08e)}
+.quran-translation-notes[hidden]{display:none!important}
+.quran-translation-credit{font-size:.85rem;text-align:start;overflow-wrap:anywhere}

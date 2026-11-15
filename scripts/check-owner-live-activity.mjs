@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import*as language from '../dist/js/i18n.js';
+import*as languageUi from '../dist/js/ui.js';
 const source=await fs.readFile(new URL('../supabase/functions/owner-access/index.ts',import.meta.url),'utf8');
 const{createOwnerHandler}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const owner='dc1eb1cc-6f8f-472f-a937-735fbfbba4b7',id='11111111-1111-4111-8111-111111111111';
@@ -26,7 +28,7 @@ const{Window}=await import('../tests/staff/node_modules/happy-dom/lib/index.js')
 const w=new Window({url:'https://fixture.invalid/#home'}),doc=w.document;doc.body.innerHTML='<dialog id="modal"><div id="modal-content"></div></dialog>';const dlg=doc.getElementById('modal'),content=doc.getElementById('modal-content');
 w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
 let uid=owner,verified=true,mfa=false,peopleReads=0,timer=null,stopCount=0,pending=[],listeners=new Set();
-const context=vm.createContext({ownerVerified:()=>verified,ownerNeedsMfa:()=>mfa,verifyOwner:async()=>verified,onOwnerChange:fn=>{listeners.add(fn);return()=>listeners.delete(fn);},counterSyncStatus:()=>({userId:uid}),ownerLiveActivity:async()=>{peopleReads++;return new Promise(resolve=>pending.push(resolve));},esc:v=>String(v).replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),toast(){},document:doc,window:w,location:w.location,setInterval:fn=>{timer=fn;return 1;},clearInterval:()=>stopCount++,modal:html=>{content.innerHTML=html;dlg.showModal();content.querySelector('[data-close]').onclick=()=>dlg.close();},closeModal:()=>dlg.close(),encodeURIComponent});
+const context=vm.createContext({...language,...languageUi,ownerVerified:()=>verified,ownerNeedsMfa:()=>mfa,verifyOwner:async()=>verified,onOwnerChange:fn=>{listeners.add(fn);return()=>listeners.delete(fn);},counterSyncStatus:()=>({userId:uid}),ownerLiveActivity:async()=>{peopleReads++;return new Promise(resolve=>pending.push(resolve));},esc:v=>String(v).replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),toast(){},document:doc,window:w,location:w.location,setInterval:fn=>{timer=fn;return 1;},clearInterval:()=>stopCount++,modal:html=>{content.innerHTML=html;dlg.showModal();content.querySelector('[data-close]').onclick=()=>dlg.close();},closeModal:()=>dlg.close(),encodeURIComponent});
 const frontend=await fs.readFile(new URL('../dist/js/home-activity-members.js',import.meta.url),'utf8');
 const open=vm.runInContext(frontend.replace(/^import.*$/gm,'').replaceAll('export ','')+';showHomeActivity;',context);
 const flush=async()=>{for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));};

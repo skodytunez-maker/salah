@@ -8,10 +8,10 @@ export function createNativeSupportClient({plugin,getSession,register,registrati
  function tap(value){if(!UUID.test(value?.user||'')||!UUID.test(value.thread||'')||value.kind!==undefined&&!['support','staff'].includes(value.kind))return;pendingTap=value;if(actor===value.user){const key=(value.kind||'support')+':'+(value.tap||value.user+':'+value.thread);if(!taps.has(key)){taps.add(key);if(taps.size>50)taps.delete(taps.values().next().value);open(value.thread,value.kind||'support');}pendingTap=null;}}
  async function sync({enable=false}={}){
   const id=revision,current=session,expectedActor=actor;
-  if(!actor||!current)return {ready:false,message:'Войдите в аккаунт.'};
+  if(!actor||!current)return {ready:false,reason:'sign_in_required',message:'Войдите в аккаунт.'};
   return queue(async()=>{
    if(id!==revision)return {ready:false};
-   const status=await bounded(plugin.getStatus(),2000);if(id!==revision||actor!==expectedActor)return {ready:false};if(!status.supported)return {ready:false,message:'На этом устройстве недоступна служба уведомлений Google.'};
+   const status=await bounded(plugin.getStatus(),2000);if(id!==revision||actor!==expectedActor)return {ready:false};if(!status.supported)return {ready:false,reason:'google_services_unavailable',message:'На этом устройстве недоступна служба уведомлений Google.'};
    if(!enable&&!status.enabled)return {ready:false};
    const result=await bounded(enable?plugin.enable({user:expectedActor}):plugin.getRegistration({user:expectedActor}),enable?60000:15000);
    if(id!==revision||!valid(current)||current.user.id!==actor)return {ready:false};

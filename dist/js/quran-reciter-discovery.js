@@ -1,4 +1,5 @@
 // Dates are the actual first public deliveries; later app updates do not reset them.
+import{uiLeaf,uiAttribute}from './quran-ui.js';
 export const RECITER_ADDED_AT={
   "ar.islamsobhi": "2026-10-17T10:52:50.953Z",
   "ar.abdulrahmanalawsi": "2026-10-17T10:52:50.953Z",
@@ -44,6 +45,6 @@ export function orderReciterCatalog(reciters,favorites=[],now=Date.now()){
 export function reciterFilterTabs(active,favoriteCount,reciters,now=Date.now()){
  const all=reciters.filter(r=>!r.variantOf).length,saved=Number.isSafeInteger(favoriteCount)&&favoriteCount>=0?Math.min(favoriteCount,all):0;
  const fresh=recentReciters(reciters,now).length,current=active==='new'&&!fresh?'all':active;
- const links=[['all','#quran?view=reciters','Все '+all],...(fresh?[['new','#quran?view=reciters&filter=new','Новые '+fresh]]:[]),['favorites','#quran?view=reciters&filter=favorites','Избранные '+saved],['ruqyah','#quran?view=reciters&filter=ruqyah','Рукъя']];
- return '<nav class="reciter-filter-tabs reciter-catalog-filter-tabs" data-has-new="'+Boolean(fresh)+'" aria-label="Каталог чтецов">'+links.map(([key,href,label])=>'<a href="'+href+'" aria-current="'+(current===key?'page':'false')+'">'+label+'</a>').join('')+'</nav>';
+ const links=[['all','#quran?view=reciters',uiLeaf('reciterUi.allCount',{count:all})],...(fresh?[['new','#quran?view=reciters&filter=new',uiLeaf('reciterUi.newCount',{count:fresh})]]:[]),['favorites','#quran?view=reciters&filter=favorites',uiLeaf('reciterUi.favoritesCount',{count:saved})],['ruqyah','#quran?view=reciters&filter=ruqyah',uiLeaf('reciterUi.ruqyah')]];
+ return '<nav class="reciter-filter-tabs reciter-catalog-filter-tabs" data-has-new="'+Boolean(fresh)+'" '+uiAttribute('reciterUi.catalog')+'>'+links.map(([key,href,label])=>'<a href="'+href+'" aria-current="'+(current===key?'page':'false')+'">'+label+'</a>').join('')+'</nav>';
 }

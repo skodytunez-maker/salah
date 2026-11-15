@@ -1,3 +1,4 @@
+import{uiAttribute,uiLeaf}from './ui.js';
 // Own SALAH diagrams for the actions already described in sourced lessons.
 // School-specific finger, hand and foot details are deliberately omitted.
 const drop=(x,y,s=1)=>'<path transform="translate('+x+' '+y+') scale('+s+')" d="M0-14C-4-7-10-1-10 6a10 10 0 0 0 20 0C10-1 4-7 0-14Z" fill="#86b9d8" stroke="none"/>';
@@ -27,5 +28,5 @@ const schemes={
  wdone:drop(150,107,2.7)+'<path d="m125 114 17 17 34-36" stroke="#f7f1e5" stroke-width="7"/>'
 };
 const escape=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function learningIllustration(step){const diagram=schemes[step.id];if(!diagram)return '';return '<div class="lesson-diagram" style="width:min(280px,100%);margin:24px auto 0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" role="img" aria-label="'+escape(step.title)+': схематичный пример" style="display:block;width:100%;height:auto;border-radius:22px"><rect width="300" height="250" rx="22" fill="#efeadd"/><g fill="none" stroke="#3a4b63" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">'+diagram+'</g></svg></div><p class="pose-caption">Схематичный пример. Детали действия описаны ниже.</p>'}
+export function learningIllustration(step){const diagram=schemes[step.id];if(!diagram)return '';return '<div class="lesson-diagram" style="width:min(280px,100%);margin:24px auto 0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" role="img" '+uiAttribute('learningUi.schematicAction',{title:step.title})+' style="display:block;width:100%;height:auto;border-radius:22px"><rect width="300" height="250" rx="22" fill="#efeadd"/><g fill="none" stroke="#3a4b63" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">'+diagram+'</g></svg></div><p class="pose-caption">'+uiLeaf('learningUi.actionHint')+'</p>'}
 export const illustratedStepIds=Object.freeze(Object.keys(schemes));

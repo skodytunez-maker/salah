@@ -1,3 +1,5 @@
+import{uiLeaf,uiAttribute,bindUiLanguage,setUiMessage,uiMessage,uiError,setUiAttribute}from './ui.js';
+import{t,translateUi,getLocale,subscribeLanguage}from './i18n.js';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const seen=new Map();
 export function clearSupportNotice({owner=false,documentRef=globalThis.document}={}){
@@ -11,8 +13,8 @@ export function supportNotice({actor,owner=false,generic=false,pending,latest,do
  if(!documentRef?.body)return true;
  documentRef.querySelector('[data-support-notice]')?.remove();
  const banner=documentRef.createElement('aside');banner.dataset.supportNotice='';banner.dataset.owner=String(owner);banner.className='support-message-notice';banner.setAttribute('role','status');
- const link=documentRef.createElement('a');link.href='#support?thread='+latest.thread+(owner?'&owner=1':'');link.textContent=generic?'Новое сообщение поддержки':owner?'Новое сообщение пользователя':'Новый ответ поддержки';
- const close=documentRef.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Закрыть уведомление');close.onclick=()=>banner.remove();link.onclick=()=>{windowRef?.dispatchEvent?.(new CustomEvent('salah:support-open',{detail:{thread:latest.thread}}));banner.remove();};
- banner.append(link,close);documentRef.body.append(banner);
+ const link=documentRef.createElement('a');link.href='#support?thread='+latest.thread+(owner?'&owner=1':'');setUiMessage(link,uiMessage(generic?'extraUi.supportGeneric':owner?'extraUi.supportUser':'extraUi.supportReply'));
+ const close=documentRef.createElement('button');close.type='button';close.textContent='×';setUiAttribute(close,'aria-label','extraUi.closeNotice');close.onclick=()=>banner.remove();link.onclick=()=>{windowRef?.dispatchEvent?.(new CustomEvent('salah:support-open',{detail:{thread:latest.thread}}));banner.remove();};
+ banner.append(link,close);documentRef.body.append(banner);bindUiLanguage(banner);
  setTimeout(()=>banner.remove(),12000);return true;
 }

@@ -10,6 +10,7 @@ import {Script,createContext} from 'node:vm';
 import {createCounterSync} from '../dist/js/counter-sync-core.js';
 import {createSessionGuard} from '../dist/js/auth-session.js';
 import{t,setInterfaceLanguage}from '../dist/js/i18n.js';
+import{uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute}from '../dist/js/ui.js';
 setInterfaceLanguage('ru');
 
 const source=await readFile(new URL('../dist/js/counter-account.js',import.meta.url),'utf8');
@@ -33,6 +34,7 @@ class Element {
  querySelector(selector){return this.querySelectorAll(selector)[0]||null;}
  checkValidity(){return this.attributes.type!=='email'||/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());}
  setAttribute(name,value){this.attributes[name]=String(value);}
+ removeAttribute(name){delete this.attributes[name];}
  focus(){this.focused=true;}
  async submit(){return this.onsubmit({currentTarget:this,preventDefault(){}});}
 }
@@ -55,7 +57,7 @@ function browser(){
   signOut:async options=>{fixture.signOuts.push(options);fixture.session=null;return{error:null};}
  };
  const navigator={onLine:true};class FixtureDate extends Date{static now(){return fixture.now;}}
- const context=createContext({teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},createAdhkarActivityQueue,mountAccountLessonLink:()=>{},lessonAccountReturn,hasFounderWelcomeSeen,accountProfileMarkup,mountQrScanner:(area,options)=>{fixture.scannerOptions=options;},setQrApproval:request=>{fixture.qrApproval=request;},history:{state:{},replaceState(state,title,url){fixture.qrUrl=url;location.hash=url.slice(url.indexOf('#'));}},mountAccountAwards:()=>{},mountAccountAvatar:()=>{},mountAccountDevices:(area,options)=>{fixture.deviceMount=options.mountIn;const panel=new Element('details');panel.innerHTML='<div class="account-device-body"></div>';options.mountIn.append(panel);return panel;},captureQrApproval:()=>false,hasQrApproval:()=>!!fixture.qrApproval,mountQrApproval:async(area,session)=>{fixture.qrMounted=!!session;fixture.qrGate?.resolve();return true;},mountQrLogin:()=>{},stopQrLogin:()=>{},Date:FixtureDate,location,document:{createElement:tag=>new Element(tag),getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountStaffEntry:async container=>{assert.ok(container);container.hidden=true;},mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
+ const context=createContext({t,uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute,teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},createAdhkarActivityQueue,mountAccountLessonLink:()=>{},lessonAccountReturn,hasFounderWelcomeSeen,accountProfileMarkup,mountQrScanner:(area,options)=>{fixture.scannerOptions=options;},setQrApproval:request=>{fixture.qrApproval=request;},history:{state:{},replaceState(state,title,url){fixture.qrUrl=url;location.hash=url.slice(url.indexOf('#'));}},mountAccountAwards:()=>{},mountAccountAvatar:()=>{},mountAccountDevices:(area,options)=>{fixture.deviceMount=options.mountIn;const panel=new Element('details');panel.innerHTML='<div class="account-device-body"></div>';options.mountIn.append(panel);return panel;},captureQrApproval:()=>false,hasQrApproval:()=>!!fixture.qrApproval,mountQrApproval:async(area,session)=>{fixture.qrMounted=!!session;fixture.qrGate?.resolve();return true;},mountQrLogin:()=>{},stopQrLogin:()=>{},Date:FixtureDate,location,document:{createElement:tag=>new Element(tag),getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountStaffEntry:async container=>{assert.ok(container);container.hidden=true;},mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
   fetch:async(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/adhkar-sync');assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');fixture.syncRequests++;if(fixture.syncGate)await fixture.syncGate.promise;return Response.json({totals:{}});},
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
  return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};

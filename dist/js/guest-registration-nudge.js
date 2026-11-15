@@ -1,3 +1,5 @@
+import{uiLeaf,uiAttribute,bindUiLanguage,setUiMessage,uiMessage,uiError,setUiAttribute}from './ui.js';
+import{t,translateUi,getLocale,subscribeLanguage}from './i18n.js';
 import{personalDataAllowed}from './audience.js';
 import{guestRankKnown}from './guest-competition-core.js';
 
@@ -56,13 +58,13 @@ export function initGuestRegistrationNudge({getAccount,getListeningSeconds=()=>0
   }catch{remove();return;}
   if(card?.isConnected&&card.parentElement===host)return;
   remove();card=doc.createElement('section');card.className='panel guest-registration-nudge';card.setAttribute('role','region');card.setAttribute('aria-labelledby','guest-registration-nudge-title');
-  card.innerHTML='<div class="panel-head"><h2 id="guest-registration-nudge-title">Сохраните прослушанное</h2></div><p>Создайте аккаунт, чтобы сохранить прослушанное в профиле и продолжить на других устройствах.</p><p class="muted">Сейчас история гостя связана с этим браузером или приложением. Коран можно слушать и без регистрации.</p><div class="admin-actions"><a class="button" href="#account" data-guest-registration-open>Создать аккаунт или войти</a><button type="button" class="text-button" data-guest-registration-dismiss>Не сейчас</button></div>';
+  card.innerHTML=("<div class=\"panel-head\"><h2 id=\"guest-registration-nudge-title\">"+uiLeaf("extraUi.nudgeTitle")+"</h2></div><p>"+uiLeaf("extraUi.nudgeBody")+"</p><p class=\"muted\">"+uiLeaf("extraUi.nudgeHistory")+"</p><div class=\"admin-actions\"><a class=\"button\" href=\"#account\" data-guest-registration-open>"+uiLeaf("extraUi.nudgeOpen")+"</a><button type=\"button\" class=\"text-button\" data-guest-registration-dismiss>"+uiLeaf("notifyUi.notNow")+"</button></div>");
   card.querySelector('[data-guest-registration-dismiss]').addEventListener('click',dismiss);
   card.querySelector('[data-guest-registration-open]').addEventListener('click',event=>{
    let guest=false;try{const account=getAccount();guest=guestRankKnown(account)&&account.reason!=='session_expired'&&isAllowed()===true;}catch{}
    event.preventDefault();if(!guest){remove();return;}dismiss();win.location.hash='account';
   });
-  host.prepend(card);
+  host.prepend(card);bindUiLanguage(card);
  }
  const schedule=()=>{if(disposed||queued)return;queued=true;Promise.resolve().then(()=>{queued=false;refresh();});};
  const onStorage=event=>{if(event.key===GUEST_REGISTRATION_NUDGE_KEY||event.key===null)schedule();};

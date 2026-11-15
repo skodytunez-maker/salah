@@ -7,6 +7,7 @@ import {dispatchNativeSupportPush} from './native-support-dispatch.mjs';
 import {dispatchSupportPush}from './support-push.mjs';
 import {dhikrTimestamp,dhikrAllowedAt} from '../../../dist/js/dhikr-reminder.js';
 import {buildReminderEvents,normalizeReminders,PRAYER_KEYS,validLocalTime,localTimestamp,shiftDay} from '../../../dist/js/reminder-events.js';
+import {NOTIFICATION_LANGUAGES,notificationLanguage,reminderNotificationText} from '../../../dist/js/notification-language.js';
 
 import {TYUMEN_SOURCES,normalizeTyumenSource,tyumenSourceFiles,matchesTyumenSource} from '../../../dist/js/tyumen-source.js';
 import {mergeFirstAsr,firstAsrValid} from '../../../dist/js/asr-first.js';
@@ -44,6 +45,7 @@ export function preferences(value){
  try{new Intl.DateTimeFormat('en',{timeZone:c.timezone}).format(0);}catch{fail(400,'Недопустимый часовой пояс');}
  if(![1,2,3,4,5,13].includes(value.method)||![0,1].includes(value.school)||![1,2,3].includes(value.highLatitude))fail(400,'Недопустимый расчёт');
  if(value.tyumenTimeSource!==undefined&&!TYUMEN_SOURCES.includes(value.tyumenTimeSource))fail(400,'Недопустимый источник расписания');
+ if(value.language!==undefined&&!NOTIFICATION_LANGUAGES.includes(value.language))fail(400,'Недопустимый язык уведомлений');
  const tyumenTimeSource=normalizeTyumenSource(value.tyumenTimeSource);
  const offsets={},tableOffsets={},mosqueTimes={};
  for(const key of PRAYER_KEYS){const n=value.offsets?.[key]??0;if(!Number.isInteger(n)||Math.abs(n)>60)fail(400,'Недопустимая поправка');offsets[key]=n;const tableN=value.tableOffsets?.[key]??0;if(!Number.isInteger(tableN)||Math.abs(tableN)>60)fail(400,'Недопустимая поправка');tableOffsets[key]=tableN;
@@ -51,7 +53,7 @@ export function preferences(value){
  // Explicit allow-list: never store prayer history, counters, email or backups.
  const reminders=normalizeReminders(value.reminders);
  reminders.browserNotifications=false;
- return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,reminders,...(reminders.enabled&&reminders.dhikr.enabled?{dhikrLastAt:dhikrTimestamp(value.dhikrLastAt)}:{})};
+ return {city:{name:c.name.trim(),latitude:c.latitude,longitude:c.longitude,timezone:c.timezone},method:value.method,school:value.school,highLatitude:value.highLatitude,tyumenTimeSource,offsets,tableOffsets,mosque:value.mosque===true,mosqueTimes,language:notificationLanguage(value.language),reminders,...(reminders.enabled&&reminders.dhikr.enabled?{dhikrLastAt:dhikrTimestamp(value.dhikrLastAt)}:{})};
 }
 export function cityDay(now,zone){return new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
 export function isTyumen(p){return /^(Тюмень|Tyumen)$/i.test(p.city.name)&&Math.abs(p.city.latitude-57.1522)<.2&&Math.abs(p.city.longitude-65.5272)<.3;}
@@ -101,7 +103,7 @@ export async function scheduleRows(p,now,{cache,fetcher=fetch}){
  }
  return rows;
 }
-export function notification(event,now){return {title:'SALAH',body:event.message,tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
+export function notification(event,now){return {title:'SALAH',body:reminderNotificationText(event,event.language),language:notificationLanguage(event.language),tag:'salah-push-'+event.hash,url:event.kind==='classroom'?'#lesson?class='+event.lessonId:event.kind==='competition'?'#quran?view=reciters&filter=salah-top&period='+event.period:event.kind==='staff'?'#staff?room='+event.thread:event.kind==='support'?'#support?thread='+event.thread:event.kind==='setup-invite'?'#settings':['adhkar','dhikr'].includes(event.kind)?'#adhkar':'#home',kind:event.kind,...(event.kind==='classroom'?{user:event.user,lessonId:event.lessonId}:{}),...(event.kind==='staff'?{user:event.user,room:event.thread,messageId:event.messageId}:{}),at:event.at,expiresAt:event.kind==='classroom'?Math.min(event.startsAt,event.at+15*60000):event.kind==='competition'?event.at+3600000:['support','staff'].includes(event.kind)?event.at+86400000:event.kind==='setup-invite'?Math.min(now+3600000,SETUP_INVITE.until):event.kind==='dhikr'?Math.min(event.at+120000,localTimestamp(event.day,'22:00',event.timeZone)):event.at+120000,...(event.kind==='dhikr'?{kind:'dhikr',timeZone:event.timeZone}:{})};}
 function needsPrayerTimings(p){return p.reminders.enabled&&(PRAYER_KEYS.some(key=>p.reminders.prayers[key].atTime||p.reminders.prayers[key].beforeMinutes>0)||Object.values(p.reminders.adhkar).some(row=>row.enabled&&row.mode==='prayer')||p.reminders.tahajjud.enabled);}
 export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,firebaseSender=null,firebaseReturnSender=null}){
  async function sendOwnerReturn(device,event){
@@ -111,7 +113,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
   catch(error){return [404,410].includes(error.statusCode)?'expired':'retry';}
  }
  async function send(device,event){
-  try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification(event,now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
+  try{const now=clock();if(event.kind==='dhikr'&&!dhikrAllowedAt(now,event.timeZone))return 'retry';const payload=notification({...event,language:notificationLanguage(event.language??device.preferences?.language)},now);await webpush.sendNotification(device.subscription,JSON.stringify(payload),{vapidDetails:{subject:PUBLIC_APP,publicKey:(await db.config()).vapid.publicKey,privateKey:(await db.config()).vapid.privateKey},TTL:Math.max(1,Math.ceil((payload.expiresAt-now)/1000)),urgency:event.kind==='dhikr'?'normal':'high',timeout:8000});return 'sent';}
   catch(error){if([404,410].includes(error.statusCode)){if(event.kind==='competition')await db.competitionExpire(device.id);else if(event.kind==='staff')await db.staffPushExpire(device.id);else await db.expire(device.id);return 'expired';}return 'retry';}
  }
  return async function handle(request){
@@ -164,7 +166,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
         if(previous&&(cityDay(previous,latest.city.timezone)===event.day||clock()-previous<22*3600000))continue;
        }
        const hash=(event.kind==='dhikr'?'dhikr-':'')+await digest(JSON.stringify([event.day,event.kind,event.key,event.phase,event.at]));if(!await db.claim(device.id,hash,event.at,clock()))continue;
-       const result=await send(device,{...event,hash});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
+       const result=await send(device,{...event,hash,message:reminderNotificationText(event,p.language),language:p.language});await db.complete(device.id,hash,result);if(result==='sent')delivered++;
        if(result==='expired')break;
       }
      }
@@ -196,7 +198,7 @@ export function createPushHandler({db,webpush,fetcher=fetch,clock=Date.now,fireb
     const rows=needsSchedule?await scheduleRows(p,clock(),{cache:db.cache,fetcher}):{};
     const today=cityDay(clock(),p.city.timezone),ready=PRAYER_KEYS.every(key=>Number.isFinite(serverTimings(today,rows,p)?.[key]));
     if(needsSchedule&&!ready)fail(503,'На эту дату нет проверенного расписания');
-    if(!device){const welcome={hash:'connected-'+clock(),at:clock(),kind:'test',message:'Фоновые уведомления SALAH подключены.'};if(await send({id:auth.id,subscription:sub},welcome)!=='sent')fail(400,'Телефон не подтвердил доставку. Повторите подключение.');}
+    if(!device){const welcome={hash:'connected-'+clock(),at:clock(),kind:'test',message:'Фоновые уведомления SALAH подключены.'};if(await send({id:auth.id,subscription:sub,preferences:p},welcome)!=='sent')fail(400,'Телефон не подтвердил доставку. Повторите подключение.');}
     await db.upsert({id:auth.id,token_hash:tokenHash,endpoint_hash:endpointHash,subscription:sub,preferences:p,now:clock()});
     return reply({saved:true,enabled:p.reminders.enabled});
    }

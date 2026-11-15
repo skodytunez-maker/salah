@@ -3,6 +3,9 @@ import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{QURAN_AWARDS,safeAward,safeAwardState,awardCollectionCounts,awardInfo,awardArtwork,awardPeriod,awardMetric}from '../dist/js/quran-awards-core.js';
+import{t,subscribeLanguage,setInterfaceLanguage}from '../dist/js/i18n.js';
+import{uiMessage}from '../dist/js/ui.js';
+import{awardUiTitle,awardUiPeriod,awardUiMetric}from '../dist/js/quran-award-history.js';
 import{createAwardPresentations,awardPresentationKey}from '../dist/js/award-celebration-core.js';
 const id='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
 const row=(kind,n=1)=>({id:String(n).padStart(8,'0')+'-aaaa-4aaa-8aaa-aaaaaaaaaaaa',kind,start:'2026-10-19',end:kind==='week'?'2026-10-26':kind==='month'?'2026-11-01':'2026-10-19',reciter:kind==='week'||kind==='month'?'ar.alafasy':null,seconds:kind==='week'||kind==='month'?42791:awardInfo(kind).hours?awardInfo(kind).hours*3600:0});
@@ -26,7 +29,7 @@ async function fixture({imageGate=null,showGate=()=>true}={}){
  const w=new Window({url:'https://fixture.invalid/#account'});Object.defineProperty(w.document,'hidden',{value:false,writable:true});w.document.body.innerHTML='<main><button id="previous">Награда</button></main><aside inert></aside><dialog id="modal"></dialog>';w.document.getElementById('previous').focus();
  let active=true;const tasks=new Map();let serial=0;const images=[];
  class Picture{constructor(){const img=w.document.createElement('img');img.decode=async()=>{if(imageGate)await imageGate;};images.push(img);return img;}}
- const ctx=vm.createContext({safeAward,awardInfo,awardArtwork,awardPeriod,awardMetric,createAwardPresentations,competitionOwn:()=>({awards:getAwards()}),settings:{motion:false,transitions:true},Image:Picture,matchMedia:()=>({matches:false}),document:w.document,window:w,location:w.location,localStorage:storage,Date,setTimeout:(fn,ms)=>{tasks.set(++serial,{fn,ms});return serial;},clearTimeout:k=>tasks.delete(k)});
+ const ctx=vm.createContext({t,subscribeLanguage,awardUiTitle,awardUiPeriod,awardUiMetric,safeAward,awardInfo,awardArtwork,awardPeriod,awardMetric,createAwardPresentations,competitionOwn:()=>({awards:getAwards()}),settings:{motion:false,transitions:true},Image:Picture,matchMedia:()=>({matches:false}),document:w.document,window:w,location:w.location,localStorage:storage,Date,setTimeout:(fn,ms)=>{tasks.set(++serial,{fn,ms});return serial;},clearTimeout:k=>tasks.delete(k)});
  const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({showAwardCelebration,hideAwardCelebration,initAwardCelebrations})',ctx);
  const flush=async max=>{for(const[k,t]of [...tasks])if(t.ms<=max){tasks.delete(k);await t.fn();}await new Promise(r=>setImmediate(r));};
  return{w,api,flush,images,isActive:()=>active&&showGate(),revoke(){active=false;w.dispatchEvent(new w.Event('salah:counter-status'));},dispose:async()=>{api.hideAwardCelebration('inactive');await w.happyDOM.abort();}};
@@ -37,6 +40,10 @@ for(const [i,a]of QURAN_AWARDS.entries()){
  f.w.document.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}));assert.equal(f.w.document.activeElement,root.querySelector('button'),'Keyboard stays within the presentation');
  root.querySelector('button').click();assert.equal(restored,1);assert.equal(f.w.document.querySelector('main').inert,false);assert.equal(f.w.document.querySelector('aside').inert,true,'Pre-existing inert state is restored');assert.equal(f.w.document.activeElement.id,'previous');assert.equal(JSON.stringify(real),snapshot,'Replay is presentation-only');await f.dispose();
 }
+const localized=await fixture();let labelGates=0;const custom={...row('week'),title:'Личная награда'};await localized.api.showAwardCelebration(custom,{isActive:()=>{labelGates++;return true;}});
+const sameRoot=localized.w.document.querySelector('.award-presentation'),samePicture=sameRoot.querySelector('img'),sameButton=sameRoot.querySelector('button'),sameOrbit=sameRoot.querySelector('.award-presentation-orbit');const beforeGates=labelGates;
+setInterfaceLanguage('en');assert.equal(sameRoot.querySelector('h2').textContent,'Личная награда','Actual custom titles pass through');assert.equal(sameButton.textContent,'Thank you');assert.equal(localized.w.document.querySelector('.award-presentation'),sameRoot);assert.equal(sameRoot.querySelector('img'),samePicture);assert.equal(sameRoot.querySelector('.award-presentation-orbit'),sameOrbit);assert.equal(labelGates,beforeGates,'Language does not execute privacy/presentation gates');
+setInterfaceLanguage('ru');assert.equal(sameButton.textContent,'Спасибо');await localized.dispose();const detachedText=sameButton.textContent;setInterfaceLanguage('en');assert.equal(sameButton.textContent,detachedText,'Closed presentation unsubscribes');setInterfaceLanguage('ru');
 const revoked=await fixture();await revoked.api.showAwardCelebration(row('week'),{isActive:revoked.isActive});revoked.revoke();assert.equal(revoked.w.document.querySelector('.award-presentation'),null);assert.equal(revoked.w.document.querySelector('main').inert,false);await revoked.dispose();
 const fading=await fixture();let reopened=0;await fading.api.showAwardCelebration(row('month'),{isActive:fading.isActive,onClose:()=>reopened++});fading.w.document.querySelector('.award-presentation button').click();assert.ok(fading.w.document.querySelector('.founder-welcome-ending'));fading.revoke();assert.equal(fading.w.document.querySelector('.award-presentation'),null,'Account change also interrupts the dismissal fade immediately');await fading.flush(15000);assert.equal(reopened,0,'A cancelled fade never reopens an old private reward');await fading.dispose();
 let loaded;const lazy=await fixture({imageGate:new Promise(r=>loaded=r)});const pending=lazy.api.showAwardCelebration(row('month'),{isActive:lazy.isActive});lazy.revoke();loaded();assert.equal(await pending,null,'A late image cannot show a previous account');await lazy.dispose();
@@ -52,7 +59,7 @@ replay.api.initAwardCelebrations({getAccount:()=>({signedIn:true,userId:id}),can
 replayDialog.innerHTML='<button data-award-celebrate>Посмотреть вручение</button>';
 const replayButton=replayDialog.querySelector('button');let restored=0,requests=0;
 const bindReplay=vm.runInNewContext(replayCode+';bindAwardReplay',{
- document:replay.w.document,showAwardCelebration:replay.api.showAwardCelebration,
+ uiMessage,document:replay.w.document,showAwardCelebration:replay.api.showAwardCelebration,
  closeModal:()=>replayDialog.close(),toast:message=>assert.fail(message),
  refreshCompetitionOwn:async()=>{requests++;throw Error('offline');}
 });

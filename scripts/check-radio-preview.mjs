@@ -1,3 +1,6 @@
+import*as teamUi from '../dist/js/team-ui.js';
+import{subscribeLanguage,translateUi}from '../dist/js/i18n.js';
+import{uiLeaf,setUiMessage}from '../dist/js/ui.js';
 import{RADIO_VOICES,radioCandidateBatch,measureRadioTrack}from '../dist/js/radio-candidates.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -34,7 +37,7 @@ assert.equal(state.phase,'finished');assert.deepEqual(state.scores,[3,2]);
 const source=await fs.readFile(new URL('../dist/js/radio-preview.js',import.meta.url),'utf8');
 const win=new Window(),host=win.document.createElement('main');win.document.body.append(host);
 let owner=false,listener=null,loads=0,played=0;const timers=new Set();
-const context=vm.createContext({console,URLSearchParams,AbortController,Set,Map,Math,Number,String,Array,Promise,
+const context=vm.createContext({...teamUi,subscribeLanguage,translateUi,uiLeaf,setUiMessage,console,URLSearchParams,AbortController,Set,Map,Math,Number,String,Array,Promise,
  ownerVerified:()=>owner,verifyOwner:async()=>owner,onOwnerChange:fn=>{listener=fn;return()=>{if(listener===fn)listener=null;}},
  loadIndex:async()=>{loads++;return index;},audioUrl,reciterInfo,reciterHasSurah,reciterRecording,
  quranPlayback:{start:async()=>{played++;}},reciterImageUrl:p=>'./'+p,

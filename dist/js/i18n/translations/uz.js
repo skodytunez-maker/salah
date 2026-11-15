@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Qur’on ma’nolari tarjimasi",
+  "quranTranslations.choose": "Tarjimani tanlang",
+  "quranTranslations.included": "Ilovaga kiritilgan",
+  "quranTranslations.download": "Tarjimani yuklab olish",
+  "quranTranslations.downloading": "Yuklanmoqda: {done}/{total}",
+  "quranTranslations.saved": "Internetsiz foydalanish mumkin",
+  "quranTranslations.version": "{version}-versiya",
+  "quranTranslations.source": "Manba",
+  "quranTranslations.notes": "Tarjima izohlari",
+  "quranTranslations.latin": "Lotin yozuvi",
+  "quranTranslations.cyrillic": "Kirill yozuvi",
+  "quranTranslations.loading": "Tarjima yuklanmoqda…",
+  "quranTranslations.unavailable": "Tarjimalar ro‘yxatini yuklab bo‘lmadi. Internetni tekshirib, qayta urining.",
+  "quranTranslations.failed": "Tekshirilgan tarjimani yuklab bo‘lmadi. Oldingi tanlov saqlandi.",
+  "quranTranslations.saveFailed": "Tarjima tanlovini saqlab bo‘lmadi.",
+  "quranTranslations.downloadFailed": "Tarjimani to‘liq saqlab bo‘lmadi. Yuklangan suralar saqlandi; qayta urinishingiz mumkin.",
+  "quranTranslations.separate": "Menyu tili va Qur’on tarjimasi alohida tanlanadi.",
+  "quranTranslations.searchSource": "{author} tarjimasi bo‘yicha qidiruv",
+  "quranTranslations.credit": "Tarjima: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Arabcha matn: Tanzil, Uthmani. Mushaf shrifti: QCF; muqobil tajvid belgilari: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Qur’on, {name} ({surah}:{ayah})."
+});

@@ -1,5 +1,6 @@
 import {normalizeReminders,PRAYER_KEYS} from './reminder-events.js';
 import {read,settings} from './storage.js';
+import {t,getLocale} from './i18n.js';
 const PUSH_KEY='salah:push-install-v1';
 export function notificationSnapshot(value,{permission='unsupported',device=null,subscription=false}={}){
  const reminders=normalizeReminders(value?.reminders);
@@ -12,9 +13,10 @@ export async function readNotificationSnapshot(){
  try{device=JSON.parse(localStorage.getItem(PUSH_KEY)||'null');if(permission==='granted'&&device?.saved&&!device.pendingRemoval){const registration=await navigator.serviceWorker?.getRegistration();subscription=!!await registration?.pushManager?.getSubscription();}}catch{}
  return notificationSnapshot(read('settings',settings),{permission,device,subscription});
 }
-const date=value=>Number.isFinite(Date.parse(value))?new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+const date=value=>Number.isFinite(Date.parse(value))?new Date(value).toLocaleString(getLocale(),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
 export function notificationLabels(value){
- if(!value||!Number.isFinite(Date.parse(value.checkedAt)))return {state:'unknown',primary:'Намаз: нет данных',secondary:'',checked:''};
+ if(!value||!Number.isFinite(Date.parse(value.checkedAt)))return {state:'unknown',primary:t('notifyUi.statusUnknown'),secondary:'',checked:'',primaryKey:'notifyUi.statusUnknown',secondaryKey:null,checkedKey:null,checkedParams:{}};
  const enabled=value.enabled===true,background=value.background===true&&enabled;
- return {state:enabled?'enabled':'disabled',primary:'Намаз: '+(enabled?'напоминания включены':'напоминания выключены'),secondary:background?'Фоновая доставка подключена':!enabled?'':value.permissionGranted===true?'Фоновая доставка не подключена':value.permissionDenied===true?'Уведомления запрещены на устройстве':'Уведомления не разрешены на устройстве',checked:'Проверено '+date(value.checkedAt)};
+ const primaryKey=enabled?'notifyUi.statusEnabled':'notifyUi.statusDisabled',secondaryKey=background?'notifyUi.statusBackground':!enabled?null:value.permissionGranted===true?'notifyUi.statusBackgroundOff':value.permissionDenied===true?'notifyUi.statusDenied':'notifyUi.statusNotAllowed',checkedKey='notifyUi.statusChecked',checkedParams={date:date(value.checkedAt)};
+ return {state:enabled?'enabled':'disabled',primary:t(primaryKey),secondary:secondaryKey?t(secondaryKey):'',checked:t(checkedKey,checkedParams),primaryKey,secondaryKey,checkedKey,checkedParams};
 }

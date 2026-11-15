@@ -1,13 +1,114 @@
 {
-  "status": "draft_first_slice_not_release_ready",
+  "status": "release_candidate_pending_final_ci_and_owner_publication_approval",
   "productionVersion": 500,
-  "languages": ["ru", "en", "az", "tg", "uz", "kk", "de", "ar"],
-  "uzbekScript": "Latn",
-  "sharedUiKeys": 150,
-  "implemented": ["explicit UI message catalogues", "local saved/system language choice and backup", "navigation", "Home prayer display and azkar entry label", "Menu primary entries", "Settings headings and language selector", "player controls, timer/nature labels and playback states", "Arabic document direction with LTR playback axes", "offline catalogue assets"],
-  "notYetLocalized": ["most Settings field bodies and validation messages", "Quran/reciter library and reading controls", "knowledge and learning interface", "Qibla interface", "support, account, owner and staff interfaces", "calendar and PDF interface", "release galleries and setup/update dialogs", "foreground/native/background notification rendering"],
-  "contentBoundaries": {"quranArabicAndRuKuliev": "unchanged", "duaAndAdhkarContent": "unchanged; new translations require separate editorial sources", "messagesNamesGuestAliases": "never translated", "prayerCityTimezoneAndDateKeys": "unchanged"},
-  "validationLimits": ["DOM/CSS logic checks are not pixel inspection", "device font coverage and long-label layout need device review", "human language feedback remains useful", "no production release or new public announcement in this draft"],
-  "references": ["https://www.w3.org/International/questions/qa-html-dir.en.html", "https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html", "https://lex.uz/docs/-112286", "https://gov.uz/uz"],
-  "beforePublication": ["complete the selected public scope and review translations", "audit all untranslated-content direction and accessibility boundaries", "finish notification locale propagation for a full-language release", "measure Android update archive size", "bump the actual release/cache version and prepare appropriate news only when the release scope is final"]
+  "candidateVersion": 501,
+  "sharedUiKeys": 3464,
+  "published": false,
+  "languages": [
+    "ru",
+    "en",
+    "az",
+    "tg",
+    "uz",
+    "kk",
+    "de",
+    "ar"
+  ],
+  "uzbekInterfaceScript": "Latn",
+  "implemented": [
+    "Explicit text-only catalogues, validated keys, parameters and plurals",
+    "Saved/device language choice, backup and Arabic direction",
+    "Home, Menu, Settings, city, weather and travel UI",
+    "Player, nature/timer controls, Quran library, recognition, reading, downloads and exports",
+    "Qibla, calendar/PDF, knowledge, learning, adhkar and dua UI",
+    "Account, support, owner, staff, radio, teacher and classroom interfaces",
+    "In-place updates preserve forms, focus, source data, audio, ISO dates and permissions",
+    "Notification setup and prayer/classroom event frames with optional stored device language",
+    "Separate authored Quran meaning-translation selection, verified downloads and source credits",
+    "Two localized public news cards with dedicated artwork and the shared animation lifecycle"
+  ],
+  "runtimeCatalogues": {
+    "source": "dist/js/i18n-source-catalogues.js and dist/js/i18n namespace files",
+    "build": "node scripts/build-interface-catalogues.mjs",
+    "validation": "check-interface-catalogues.mjs and check-interface-compiled.mjs",
+    "output": "Eight deterministic dist/js/i18n-runtime bundles",
+    "reason": "Avoid the entire editorial module graph at startup; incomplete languages cannot hide behind Russian fallback"
+  },
+  "quranMeaningTranslations": {
+    "bundled": "ru.kuliev, unchanged",
+    "publisher": "QuranEnc",
+    "additionalEditions": [
+      "azeri_musayev",
+      "english_saheeh",
+      "german_bubenheim",
+      "kazakh_altai",
+      "tajik_arifi",
+      "uzbek_sadiq",
+      "uzbek_mansour"
+    ],
+    "sourceManifest": "dist/data/quran-translation-manifest.json",
+    "provenance": "docs/quran-translation-sources-501.json",
+    "validation": "798 pinned raw publisher-API response hashes; 114 surahs and 6236 ayahs per edition",
+    "uzbekMeaningScript": "Cyrl; publisher original, independently of Latin Uzbek UI",
+    "content": "Unmodified publisher text/whitespace/notes with author, version and source; no auto-translation/transliteration",
+    "selection": "Independent of UI language; failed loads cannot silently substitute Russian",
+    "offline": "Verified surah cache plus bundled/service-worker-cached pinned manifest; undownloaded texts are not promised offline",
+    "notConnected": [
+      "The Clear Quran by Mustafa Khattab",
+      "Abdulmuhammad Ayati",
+      "unverified Latin Uzbek editions"
+    ],
+    "arabicAndAudio": "Canonical Quran/audio/timing inputs remain unchanged"
+  },
+  "contentBoundaries": {
+    "religiousLearningDuaAdhkarDailyQuotes": "Reviewed source content remains verbatim with language/direction boundaries unless a separately verified edition exists",
+    "messagesNamesGuestAliasesCitiesTeacherText": "Literal source data, never translated by matching its words",
+    "prayerMathTimezonesDateKeysAsrTyumen": "Unchanged",
+    "creditPresenceAwards": "Only display labels change, not credit/freshness/scoring/stored results",
+    "privacy": "Existing owner active-session and MFA checks; no new tracking, roles or geography exposure",
+    "tafsir": "Still unavailable to the public",
+    "historicalAnnouncements": "Source content and old acknowledgement IDs preserved",
+    "legalCreditsLegacyRepair418": "Independent source documents outside the current in-app translation",
+    "backgroundMessages": "Daily religious quotes remain Russian; generic staff/support delivery retains its source language on paths without locale registration"
+  },
+  "nativeArchive": {
+    "limitBytes": 104857600,
+    "uncompressedLimitBytes": 188743680,
+    "quality": "No sound, video, portrait or current recognition quality changes",
+    "exclusions": "Only exact superseded recognition-v1 build inputs are additionally omitted from new native packages; repository/Pages sources remain",
+    "verification": "Current v2 hashes/query fixtures, native startup and strict limits tested; actual generated package size is checked in CI"
+  },
+  "publication": {
+    "requiresOwnerApproval": true,
+    "serverFunction": "background-reminders",
+    "databaseMigration": false,
+    "courseServiceRestart": false,
+    "newAnnouncement": 501,
+    "newsFeatures": [
+      "interface languages",
+      "authored Quran meaning translations"
+    ],
+    "excludedNews": [
+      "billing",
+      "old reciters",
+      "nature scenes",
+      "radio",
+      "private owner activity/geography"
+    ]
+  },
+  "validationLimits": [
+    "Browser automation disabled by user; VM/DOM checks are not pixel/device inspection",
+    "Real iPhone/Android font coverage and long labels need device review",
+    "Native-speaker feedback can refine UI terminology without altering religious sources",
+    "No production or server deployment in this candidate"
+  ],
+  "references": [
+    "https://www.w3.org/International/questions/qa-html-dir.en.html",
+    "https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html",
+    "https://lex.uz/docs/-112286",
+    "https://gov.uz/uz",
+    "https://quranenc.com/en/home",
+    "https://quranenc.com/en/home/api",
+    "https://api-docs.quran.foundation/docs/updates/"
+  ]
 }

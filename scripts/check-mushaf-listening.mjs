@@ -10,6 +10,9 @@ import{createQuranSession}from '../dist/js/quran-session.js';
 import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from '../dist/js/quran-reciters.js';
 import{timingUrl}from '../dist/js/quran-timing.js';
 import{actionIcon}from '../dist/js/action-icons.js';
+import{t,translateUi,subscribeLanguage}from '../dist/js/i18n.js';
+import{uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups}from '../dist/js/quran-ui.js';
+import{esc}from '../dist/js/ui.js';
 const first={number:1,verses:Array.from({length:7},(_,i)=>({ayah:i+1,number:i+1}))};
 const second={number:2,verses:Array.from({length:286},(_,i)=>({ayah:i+1,number:i+8}))};
 const state=(surah,ayah,status='playing')=>({surah,ayah,status,timingStatus:'ready',reciter:'ar.alafasy'});
@@ -38,7 +41,7 @@ const w=new Window({url:'https://fixture.invalid/#quran?view=mushaf&page=1'}),do
 const saved=new Map(),listeners=new Set(),navigations=[],starts=[];let current={status:'stopped',surah:null,ayah:null,timingStatus:'unavailable'},enabled=true,lines=[[1,'text',0,[[1,1,1,'x'],[1,7,1,'y']]]];
 const playback={get state(){return current;},subscribe(fn){listeners.add(fn);fn(current);return()=>listeners.delete(fn);},pause(){current={...current,status:'paused'};emit();},toggle(){current={...current,status:'playing'};emit();},async startFromAyah(s,r,a){starts.push([s.number,r,a]);current={...state(s,a),reciter:r};emit();},async start(s,r){starts.push([s.number,r,0]);current={...state(s,null),reciter:r,timingStatus:'unavailable'};emit();}};
 function emit(){for(const fn of listeners)fn(current);}
-const ctx=vm.createContext({mushafThemeButton,document:doc,innerHeight:853,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,actionIcon,quranPlayback:playback,loadSurah:async()=>first,read:(k,d)=>saved.get(k)??d,write:(k,v)=>{saved.set(k,v);return true;},toast:()=>{},console});
+const ctx=vm.createContext({t,translateUi,subscribeLanguage,uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups,esc,mushafThemeButton,document:doc,innerHeight:853,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,actionIcon,quranPlayback:playback,loadSurah:async()=>first,read:(k,d)=>saved.get(k)??d,write:(k,v)=>{saved.set(k,v);return true;},toast:()=>{},console});
 const source=await fs.readFile(new URL('../dist/js/quran-mushaf-listening.js',import.meta.url),'utf8'),api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mushafListeningOptions,mountMushafListening});',ctx);
 host.innerHTML='<div class="mushaf-top"></div><details class="mushaf-options"><summary>Aa</summary>'+api.mushafListeningOptions()+'</details><div class="mushaf-tools"></div><article class="mushaf-paper"><span class="mushaf-print-word" data-verse="1:1"></span><span class="mushaf-print-word" data-verse="1:7"></span></article>';
 let quickTheme='night',legendOpens=0;

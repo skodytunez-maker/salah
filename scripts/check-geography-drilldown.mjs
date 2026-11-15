@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import * as ownerUi from '../dist/js/owner-i18n.js';
 import{readFile}from 'node:fs/promises';
 import{spawnSync}from 'node:child_process';
 import{runInNewContext}from 'node:vm';
@@ -64,7 +65,7 @@ const avatarSource=await read('dist/js/owner-geo-members.js'),avatarHost=w.docum
 w.document.body.append(avatarHost);
 const loadedPhotos=[],revokedPhotos=[];
 const mountWithPhotos=runInNewContext(avatarSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';mountOwnerGeoMembers',{
- esc,ownerUserRow,createStaffAvatarManager:options=>createStaffAvatarManager({
+ ...ownerUi,esc,ownerUserRow,createStaffAvatarManager:options=>createStaffAvatarManager({
   ...options,includeNode:node=>node.closest('[data-user]').isConnected,interval:()=>1,clear(){},
   load:async userId=>{loadedPhotos.push(userId);return userId===id(1)?new Blob([new Uint8Array([255,216,255,0])],{type:'image/jpeg'}):null;},
   createUrl:()=> 'blob:private-geography-fixture',revokeUrl:url=>revokedPhotos.push(url)

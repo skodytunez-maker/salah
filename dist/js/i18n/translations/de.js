@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "Übersetzung der Bedeutung des Korans",
+  "quranTranslations.choose": "Übersetzung auswählen",
+  "quranTranslations.included": "In der App enthalten",
+  "quranTranslations.download": "Übersetzung herunterladen",
+  "quranTranslations.downloading": "Wird heruntergeladen: {done} von {total}",
+  "quranTranslations.saved": "Offline verfügbar",
+  "quranTranslations.version": "Version {version}",
+  "quranTranslations.source": "Quelle",
+  "quranTranslations.notes": "Anmerkungen zur Übersetzung",
+  "quranTranslations.latin": "Lateinische Schrift",
+  "quranTranslations.cyrillic": "Kyrillische Schrift",
+  "quranTranslations.loading": "Übersetzung wird geladen…",
+  "quranTranslations.unavailable": "Die Übersetzungsliste konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+  "quranTranslations.failed": "Die geprüfte Übersetzung konnte nicht geladen werden. Ihre bisherige Auswahl bleibt erhalten.",
+  "quranTranslations.saveFailed": "Die Übersetzungsauswahl konnte nicht gespeichert werden.",
+  "quranTranslations.downloadFailed": "Die vollständige Übersetzung konnte nicht gespeichert werden. Heruntergeladene Suren sind gespeichert; Sie können es erneut versuchen.",
+  "quranTranslations.separate": "Menüsprache und Koranübersetzung werden getrennt ausgewählt.",
+  "quranTranslations.searchSource": "Suche in der Übersetzung von {author}",
+  "quranTranslations.credit": "Übersetzung: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "Arabischer Text: Tanzil, Uthmani. Mushaf-Schrift: QCF; alternative Tadschwid-Markierung: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "Koran, {name} ({surah}:{ayah})."
+});

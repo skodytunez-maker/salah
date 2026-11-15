@@ -1,0 +1,23 @@
+export default Object.freeze({
+  "quranTranslations.title": "ترجمة معاني القرآن",
+  "quranTranslations.choose": "اختيار الترجمة",
+  "quranTranslations.included": "متوفرة في التطبيق",
+  "quranTranslations.download": "تنزيل الترجمة",
+  "quranTranslations.downloading": "جارٍ التنزيل: {done} من {total}",
+  "quranTranslations.saved": "متاحة دون اتصال",
+  "quranTranslations.version": "الإصدار {version}",
+  "quranTranslations.source": "المصدر",
+  "quranTranslations.notes": "حواشي الترجمة",
+  "quranTranslations.latin": "الحروف اللاتينية",
+  "quranTranslations.cyrillic": "الحروف السيريلية",
+  "quranTranslations.loading": "جارٍ تحميل الترجمة…",
+  "quranTranslations.unavailable": "تعذّر تحميل قائمة الترجمات. تحقّق من الاتصال وأعد المحاولة.",
+  "quranTranslations.failed": "تعذّر تحميل الترجمة المتحقَّق منها. بقي اختيارك السابق كما هو.",
+  "quranTranslations.saveFailed": "تعذّر حفظ اختيار الترجمة.",
+  "quranTranslations.downloadFailed": "تعذّر حفظ الترجمة كاملة. حُفظت السور التي نُزّلت؛ يمكنك إعادة المحاولة.",
+  "quranTranslations.separate": "تُختار لغة الواجهة وترجمة القرآن كلٌّ على حدة.",
+  "quranTranslations.searchSource": "البحث في ترجمة {author}",
+  "quranTranslations.credit": "الترجمة: {author} · {publisher} · {version}",
+  "quranTranslations.arabicSource": "النص العربي: Tanzil، Uthmani. خط المصحف: QCF؛ علامات التجويد البديلة: quran-tajweed. ",
+  "quranTranslations.copyAttribution": "القرآن، {name} ({surah}:{ayah})."
+});

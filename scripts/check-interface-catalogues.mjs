@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import{UI_LANGUAGES}from '../dist/js/interface-languages.js';
 import{createInterfacePluralRules}from '../dist/js/interface-plurals.js';
-import ru from '../dist/js/i18n/ru.js';
+import{UI_CATALOGUES}from '../dist/js/i18n-catalogues.js';
+const ru=UI_CATALOGUES.ru;
 const keys=Object.keys(ru).sort(),forms=value=>typeof value==='string'?[value]:Object.values(value);
 const placeholders=value=>new Set(forms(value).flatMap(text=>[...text.matchAll(/\{([a-zA-Z][a-zA-Z0-9]*)\}/g)].map(match=>match[1])));
 for(const info of UI_LANGUAGES){
- const catalogue=(await import('../dist/js/i18n/'+info.code+'.js')).default;assert.deepEqual(Object.keys(catalogue).sort(),keys,info.code+' must cover every explicit UI key');
+ const catalogue=UI_CATALOGUES[info.code];assert.deepEqual(Object.keys(catalogue).sort(),keys,info.code+' must cover every explicit UI key');
  const categories=createInterfacePluralRules(info.code).resolvedOptions().pluralCategories;
  for(const key of keys){
   const source=ru[key],entry=catalogue[key];assert.equal(typeof entry,typeof source,info.code+': '+key);

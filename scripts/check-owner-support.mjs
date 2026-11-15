@@ -1,3 +1,4 @@
+import{uiLeaf,uiMessage}from '../dist/js/ui.js';
 
 import assert from 'node:assert/strict';
 import{appSharingMarkup}from '../dist/js/app-sharing.js';
@@ -23,8 +24,8 @@ owner='owner-two';const before=calls;doc.visibilityState='hidden';await status.r
 const bind=await readFile(new URL('../dist/js/support.js',import.meta.url),'utf8');
 let verified=false,answer=false,mfa=false,verifyPending=null,mounts=[];
 globalThis.location={hash:'#support'};
-globalThis.__supportFixture={validOwnerUserId,prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
-const source="const {prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title,validOwnerUserId}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
+globalThis.__supportFixture={t,uiLeaf,uiMessage,validOwnerUserId,prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
+const source="const {t,uiLeaf,uiMessage,prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,APP_VERSION,title,validOwnerUserId}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
 const {showSupport,stopSupport}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const app={dataset:{},isConnected:true,innerHTML:'',querySelector:()=>({})};
 await showSupport(app);assert.equal(mounts.at(-1).owner,false);assert.ok(app.innerHTML.includes('Обращения в поддержку'));

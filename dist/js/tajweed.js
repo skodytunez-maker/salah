@@ -1,23 +1,8 @@
+import{t}from './i18n.js';
+import{uiLeaf,uiAttribute}from './quran-ui.js';
 const escapeHtml=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export const TAJWEED_RULES={
-h:['silent','Хамзат аль-васл','Соединительная хамза: произношение зависит от начала или продолжения чтения.'],
-s:['silent','Непроизносимая буква','В этом месте разметка источника отмечает непроизносимую букву.'],
-l:['silent','Солнечный лям','Лям артикля сливается со следующей солнечной буквой.'],
-n:['madd','Естественное удлинение','Долгий гласный: 2 счёта.'],
-p:['madd-p','Допустимое удлинение','В источнике отмечено допустимое удлинение: 2, 4 или 6 счётов; длительность зависит от способа чтения.'],
-m:['madd-m','Необходимое удлинение','Удлинение на 6 счётов.'],
-o:['madd-o','Обязательное удлинение','Удлинение на 4–5 счётов.'],
-q:['qalqalah','Калькаля','Отзвук отмеченного согласного с сукуном.'],
-c:['ikhfa','Ихфа шафави','Скрытое произношение мима перед ба с носовым звучанием.'],
-f:['ikhfa','Ихфа','Скрытое произношение нуна или танвина с носовым звучанием.'],
-w:['idgham','Идгам шафави','Слияние мима со следующим мимом с носовым звучанием.'],
-i:['iqlab','Икляб','Нун или танвин перед ба переходит в мим с носовым звучанием.'],
-a:['idgham','Идгам с гунной','Слияние с носовым звучанием.'],
-u:['idgham','Идгам без гунны','Слияние без носового звучания.'],
-d:['silent','Идгам мутаджанисайн','Слияние букв с общим местом образования.'],
-b:['silent','Идгам мутакарибайн','Слияние букв с близкими местами образования.'],
-g:['ghunnah','Гунна','Носовое звучание на 2 счёта.']
-};
+const RULE_CLASSES={h:'silent',s:'silent',l:'silent',n:'madd',p:'madd-p',m:'madd-m',o:'madd-o',q:'qalqalah',c:'ikhfa',f:'ikhfa',w:'idgham',i:'iqlab',a:'idgham',u:'idgham',d:'silent',b:'silent',g:'ghunnah'};
+export const TAJWEED_RULES=Object.fromEntries(Object.entries(RULE_CLASSES).map(([key,className])=>[key,Object.defineProperties([className],{1:{enumerable:true,get:()=>t('quranUi.tajweed.'+key+'.title')},2:{enumerable:true,get:()=>t('quranUi.tajweed.'+key+'.description')}})]));
 export function parseTajweed(source){
  const parts=[],stack=[];let text='',active;
  const flush=()=>{if(text){parts.push(active?{text,rule:active}:{text});text=''}};
@@ -36,6 +21,6 @@ export function parseTajweed(source){
 }
 export function arabicWithHints(verse){
  if(!verse.tajweed)return escapeHtml(verse.arabic);
- try{return parseTajweed(verse.tajweed).map(p=>p.rule?'<span class="tajweed-'+TAJWEED_RULES[p.rule][0]+'" data-tajweed-rule="'+p.rule+'" tabindex="0" role="button" aria-label="'+escapeHtml(TAJWEED_RULES[p.rule][1])+'" title="'+escapeHtml(TAJWEED_RULES[p.rule][1])+'">'+escapeHtml(p.text)+'</span>':escapeHtml(p.text)).join('')}catch{return escapeHtml(verse.arabic)}
+ try{return parseTajweed(verse.tajweed).map(p=>p.rule?'<span class="tajweed-'+TAJWEED_RULES[p.rule][0]+'" data-tajweed-rule="'+p.rule+'" tabindex="0" role="button" '+uiAttribute('quranUi.tajweed.'+p.rule+'.title',{},'aria-label')+' '+uiAttribute('quranUi.tajweed.'+p.rule+'.title',{},'title')+'>'+escapeHtml(p.text)+'</span>':escapeHtml(p.text)).join('')}catch{return escapeHtml(verse.arabic)}
 }
-export function hintsLegend(){return '<details class="quran-hint-guide"><summary>Цветовые подсказки</summary><div class="quran-hint-legend"><span class="tajweed-madd">Удлинение</span><span class="tajweed-ghunnah">Гунна</span><span class="tajweed-ikhfa">Ихфа</span><span class="tajweed-idgham">Идгам</span><span class="tajweed-iqlab">Икляб</span><span class="tajweed-qalqalah">Калькаля</span><span class="tajweed-silent">Непроизносимые буквы и слияние</span></div><p>Нажмите цветной фрагмент арабского текста, чтобы открыть правило.</p><a href="https://alquran.cloud/tajweed-guide" target="_blank" rel="noopener">Разметка Al Quran Cloud</a></details>'}
+export function hintsLegend(){return '<details class="quran-hint-guide"><summary>'+uiLeaf('quranUi.tajweed.legendTitle')+'</summary><div class="quran-hint-legend">'+[['madd','madd'],['ghunnah','ghunnah'],['ikhfa','ikhfa'],['idgham','idgham'],['iqlab','iqlab'],['qalqalah','qalqalah'],['silent','silent']].map(([className,key])=>'<span class="tajweed-'+className+'">'+uiLeaf('quranUi.tajweed.'+key)+'</span>').join('')+'</div><p>'+uiLeaf('quranUi.tajweed.hint')+'</p><a href="https://alquran.cloud/tajweed-guide" target="_blank" rel="noopener">'+uiLeaf('quranUi.tajweed.source')+'</a></details>';}
