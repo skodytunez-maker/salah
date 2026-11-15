@@ -32,7 +32,7 @@ await assert.rejects(loadMonth('2026-11-01'),/нет данных/);
 for(const source of ['calendar','al-hakk']){
  updateSettings({tyumenTimeSource:source});
  const client=await loadMonth(day),cache=new Map(),requested=[];
- const deps={cache:{get:async k=>cache.get(k),put:async(k,v)=>cache.set(k,v)},fetcher:async url=>{requested.push(url);return new Response(JSON.stringify(await read(url.split('/').at(-1))))}};
+ const deps={cache:{get:async k=>cache.get(k),put:async(k,v)=>cache.set(k,v)},fetcher:async url=>{requested.push(url);return new Response(JSON.stringify(await read(new URL(url).pathname.split('/').at(-1))))}};
  const p=preferences(pushPreferences(settings));
  assert.equal(p.tyumenTimeSource,source);
  const rows=await scheduleRows(p,Date.parse(day+'T10:00:00+05:00'),deps);

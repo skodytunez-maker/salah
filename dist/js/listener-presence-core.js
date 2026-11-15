@@ -4,14 +4,14 @@ export function createPlaybackPresenceReporter({getState,getUserId,isEligible,se
  function resetScope(user){epoch++;if(inflight){inflight.controller.abort();cancel(inflight.timer);}inflight=null;scope=user;tab=user?randomId():null;sequence=0;previous=null;forwardAt=-Infinity;posted=null;lastAt=retryAt=0;ever=false;}
  function post(playing,{keepalive=false}={}){
   if(!scope||disposed||(!playing&&!ever)||playing&&now()<retryAt)return;
-  if(inflight?.playing===playing)return;
+  if(inflight?.playing===playing&&(!keepalive||inflight.keepalive))return;
   if(inflight){inflight.controller.abort();cancel(inflight.timer);}
-  const controller=new Controller(),entry={controller,playing,timer:null},generation=epoch;
+  const controller=new Controller(),entry={controller,playing,keepalive,timer:null},generation=epoch;
   entry.timer=schedule(()=>controller.abort(),5000);inflight=entry;posted=playing;lastAt=now();ever=true;
   const packet={action:'presence',tab,sequence:++sequence,playing};
   void Promise.resolve().then(()=>send(packet,{signal:controller.signal,keepalive})).catch(()=>{if(!disposed&&generation===epoch&&inflight===entry){posted=null;retryAt=now()+5000;}}).finally(()=>{cancel(entry.timer);if(inflight===entry)inflight=null;});
  }
- function sample({force=false}={}){
+ function sample({force=false,keepalive=false}={}){
   if(disposed)return;const user=getUserId()||null;if(user!==scope)resetScope(user);
   const state=getState()||{},time=now(),position=Number(state.trackPositionSeconds??state.positionSeconds),key=String(state.reciter||'')+':'+String(state.surah?.number||state.recordingId||'')+':'+String(state.seekRevision||0);
   if(state.status!=='playing'||!state.reciter||!Number.isFinite(position))forwardAt=-Infinity;
@@ -19,7 +19,7 @@ export function createPlaybackPresenceReporter({getState,getUserId,isEligible,se
   else forwardAt=-Infinity;
   previous={key,position,time,playing:state.status==='playing'};
   const playing=Boolean(user&&isEligible()&&state.status==='playing'&&time-forwardAt<20000);
-  if(playing!==posted||inflight&&inflight.playing!==playing||playing&&(force||time-lastAt>=15000))post(playing);
+  if(playing!==posted||inflight&&inflight.playing!==playing||keepalive&&inflight&&!inflight.keepalive||playing&&(force||time-lastAt>=15000))post(playing,{keepalive});
  }
  function stop({keepalive=false}={}){if(disposed)return;forwardAt=-Infinity;previous=null;if(posted!==false||inflight?.playing)post(false,{keepalive});}
  return{sample,stop,dispose(){stop({keepalive:true});disposed=true;epoch++;}};

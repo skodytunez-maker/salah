@@ -10,6 +10,9 @@
 .qibla-page .qibla-eyebrow { display: block; color: #b7a67e; font-size: 9px; letter-spacing: 1.7px; line-height: 1.6; margin-bottom: 7px; }
 .qibla-page h1 { margin: 0 0 5px; color: var(--qibla-ink); line-height:1.2; }
 .qibla-page .qibla-location { color: var(--qibla-muted); font-size: 13px; margin: 0; line-height: 1.5; overflow-wrap: anywhere; }
+.qibla-page .qibla-location-tools{display:flex;align-items:center;gap:12px;margin:-8px 0 16px}
+.qibla-page .qibla-location-tools .text-button{flex:none;min-height:44px;color:var(--gold,#d8c18a)}
+.qibla-page #qibla-location-state{margin:0;color:var(--qibla-muted);font-size:12px;line-height:1.5}
 .qibla-page .qibla-card { text-align: center; border: 1px solid rgba(147,166,192,.18); border-radius: 25px; padding: 25px 24px 20px; background: linear-gradient(160deg, #101e2e, #10182a 68%); }
 .qibla-page .qibla-stage { position: relative; width: min(100%, 340px); aspect-ratio: 1; margin: 4px auto 20px; isolation: isolate; border-radius: 50%; }
 .qibla-page .qibla-stage::before { content:''; position:absolute; inset:30px; border-radius:50%; background:radial-gradient(circle at 50% 28%,rgba(255,254,246,.62) 0,rgba(255,250,236,.20) 30%,rgba(255,248,224,0) 68%); opacity:var(--qibla-light); filter:blur(10px); transform:scale(.94); transition:opacity 320ms ease-out,transform 320ms ease-out; pointer-events:none; z-index:-1; }

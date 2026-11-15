@@ -55,7 +55,8 @@ const rug = `<svg class="qibla-rug" viewBox="0 0 340 340" aria-hidden="true" foc
 export function renderQiblaView({ cityName = '', bearing, hasCity = false } = {}) {
   const angle = Number.isFinite(bearing) ? `${Math.round((bearing % 360 + 360) % 360) % 360}°` : '—';
   return `<section class="qibla-page" aria-labelledby="qibla-title">
-    <div class="qibla-head"><div><h1 id="qibla-title">Кибла</h1><p class="qibla-location">${hasCity ? esc(cityName) : 'Выберите город, чтобы рассчитать направление'}</p></div></div>
+    <div class="qibla-head"><div><h1 id="qibla-title">Кибла</h1><p class="qibla-location">${hasCity ? 'Центр выбранного города: '+esc(cityName) : 'Текущее место не определено'}</p></div></div>
+    <div class="qibla-location-tools"><button type="button" class="text-button" id="qibla-locate">Моё место</button><p id="qibla-location-state" role="status" aria-live="polite">Определяем текущее местоположение…</p></div>
     <div class="qibla-card" id="qibla-compass-panel">
       <div id="qibla-stage" class="qibla-stage" style="--qibla-rotation:0deg;--compass-rotation:0deg;--qibla-light:0" aria-hidden="true">
         <span class="qibla-phone-axis"></span>

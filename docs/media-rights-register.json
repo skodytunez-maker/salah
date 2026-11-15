@@ -2111,12 +2111,13 @@
       "rightsEvidence": "docs/bootstrap-icon-evidence.json"
     },
     {
-      "path": "dist/assets/tyumen-november-source-2025.jpg",
-      "gitBlobSha": "23edda6c984d337ada980788a2accd193c561328",
-      "bytes": 142373,
+      "path": "dist/assets/tyumen-november-source-2026.jpg",
+      "gitBlobSha": "d5622d6d81c277a247e46eae80c4ed5e059af1ad",
+      "bytes": 144951,
       "kind": "raster",
       "rightsReviewStatus": "needs-review",
-      "note": "User supplied a monthly prayer timetable; original source image retained with printed year 2025. No license clearance asserted."
+      "note": "Raw user-supplied Tyumen November timetable photo, explicitly printed 2026, copied without editing its pixels. Source byte count and SHA-256 are recorded in docs/tyumen-november-2026.json; correction context is recorded in docs/tyumen-sources.md. Replaces the retired 2025 photo, whose fingerprint and Git history reference remain in docs/rights-source-manifest.json. User supply and printed attribution do not establish license clearance; status remains needs-review.",
+      "rightsEvidence": "docs/tyumen-november-2026.json"
     },
     {
       "path": "dist/assets/tyumen-october-2026.png",
