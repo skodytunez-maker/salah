@@ -1,4 +1,5 @@
 import{createDhikrFeedback}from './dhikr-feedback.js';
+import{t}from './i18n.js';
 import{emitAdhkarActivity,emitTransientDhikrPresence}from './adhkar-activity.js';
 import{recordAdhkarRound}from './learning-progress.js';
 import{SHORT_DHIKR_PRESETS,DEFAULT_SHORT_DHIKR,shortDhikr}from './short-dhikr.js';
@@ -58,7 +59,7 @@ function rememberView(view='hub',item=null){
 }
 function restoreGroup(requested){if(requested==='morning'||requested==='evening')return requested;if(requested==='all'){data.groups.all={name:'Все зикры',ids:data.items.map(item=>item.id)};return requested}if(requested==='favorites'){const favorites=read('adhkar-favorites',[]);data.groups.favorites={name:'Избранное',ids:(Array.isArray(favorites)?favorites:[]).filter(id=>data.items.some(item=>item.id===id))};return requested}return null}
 export function stopAdhkar(){feedback.stop();clearCounter();clearSwipe();renderedRoute=null;eveningDay=null;token++;stopDailyDuas();stopDhikrAudio();document.body.classList.remove('adhkar-focus','adhkar-signature','adhkar-hybrid','adhkar-reading','adhkar-hub-open');if(document.getElementById('short-dhikr-picker'))closeModal()}
-export function adhkarHomeCard(period){if(!names[period])return '';return '<a class="home-adhkar-prompt" href="#adhkar?group='+period+'" data-adhkar-open="'+period+'">'+icon(period==='morning'?'sun':'moon-stars')+'<span>'+names[period]+'</span></a>'}
+export function adhkarHomeCard(period){if(!names[period])return '';const key=period==='morning'?'home.morningAdhkar':period==='evening'?'home.eveningAdhkar':null;return '<a class="home-adhkar-prompt" href="#adhkar?group='+period+'" data-adhkar-open="'+period+'">'+icon(period==='morning'?'sun':'moon-stars')+'<span'+(key?' data-i18n="'+key+'"':'')+'>'+esc(key?t(key):names[period])+'</span></a>'}
 export function selectAdhkar(g){write('adhkar-selected',g)}
 export async function showAdhkar(container,period=null,{resumeEvening=null}={}){
  activePeriod=period;resumePreviousEvening=resumeEvening;

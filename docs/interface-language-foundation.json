@@ -1,0 +1,13 @@
+{
+  "status": "draft_first_slice_not_release_ready",
+  "productionVersion": 500,
+  "languages": ["ru", "en", "az", "tg", "uz", "kk", "de", "ar"],
+  "uzbekScript": "Latn",
+  "sharedUiKeys": 150,
+  "implemented": ["explicit UI message catalogues", "local saved/system language choice and backup", "navigation", "Home prayer display and azkar entry label", "Menu primary entries", "Settings headings and language selector", "player controls, timer/nature labels and playback states", "Arabic document direction with LTR playback axes", "offline catalogue assets"],
+  "notYetLocalized": ["most Settings field bodies and validation messages", "Quran/reciter library and reading controls", "knowledge and learning interface", "Qibla interface", "support, account, owner and staff interfaces", "calendar and PDF interface", "release galleries and setup/update dialogs", "foreground/native/background notification rendering"],
+  "contentBoundaries": {"quranArabicAndRuKuliev": "unchanged", "duaAndAdhkarContent": "unchanged; new translations require separate editorial sources", "messagesNamesGuestAliases": "never translated", "prayerCityTimezoneAndDateKeys": "unchanged"},
+  "validationLimits": ["DOM/CSS logic checks are not pixel inspection", "device font coverage and long-label layout need device review", "human language feedback remains useful", "no production release or new public announcement in this draft"],
+  "references": ["https://www.w3.org/International/questions/qa-html-dir.en.html", "https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html", "https://lex.uz/docs/-112286", "https://gov.uz/uz"],
+  "beforePublication": ["complete the selected public scope and review translations", "audit all untranslated-content direction and accessibility boundaries", "finish notification locale propagation for a full-language release", "measure Android update archive size", "bump the actual release/cache version and prepare appropriate news only when the release scope is final"]
+}

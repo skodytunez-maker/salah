@@ -1,0 +1,17 @@
+import{createTranslator,translateUiElements}from './i18n-core.js';
+import ru from './i18n/ru.js';
+import en from './i18n/en.js';
+import az from './i18n/az.js';
+import tg from './i18n/tg.js';
+import uz from './i18n/uz.js';
+import kk from './i18n/kk.js';
+import de from './i18n/de.js';
+import ar from './i18n/ar.js';
+const translator=createTranslator({ru,en,az,tg,uz,kk,de,ar});
+export const t=(key,parameters)=>translator.t(key,parameters);
+export const getLanguage=()=>translator.getLanguage();
+export const getLocale=()=>translator.getLocale();
+export const getDirection=()=>translator.getDirection();
+export const setInterfaceLanguage=code=>translator.setLanguage(code);
+export const subscribeLanguage=listener=>translator.subscribe(listener);
+export const translateUi=root=>translateUiElements(root,translator);
