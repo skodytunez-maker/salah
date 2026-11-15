@@ -2,6 +2,7 @@ import{rankingUiContext}from './lib/ranking-language-fixture.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
+import{mock}from 'node:test';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{createListeningCreditPolicy,createCreditMinuteMeter}from '../dist/js/listening-credit-core.js';
 import{createGuestCompetitionTracker}from '../dist/js/guest-competition-core.js';
@@ -27,12 +28,14 @@ const wheelSettles=settles;for(let i=0;i<30;i++)fire('wheel',{trusted:true});ass
 bridge.destroy();assert.equal(doc.querySelector('.listening-credit-notice'),null);clock+=1000;fire('wheel',{trusted:true});assert.equal(settles,wheelSettles+1,'Destroy removes the wheel listener');await w.happyDOM.close();
 // Guest manual hold: automatic register/sync cannot manufacture an acknowledgement.
 let state=null,auth={identityKnown:true,signedIn:false,userId:null},serverHeld=true,revision=0,calls=[],gateState=null;clock=Date.parse('2026-11-15T12:00:00+05:00');
+const guestDateNow=mock.method(Date,'now',()=>clock);
 const gate=createListeningCreditPolicy({now:()=>clock,timeZone:()=>zone,source:()=> 'guest:'+device,readState:()=>gateState,writeState:value=>gateState=structuredClone(value)});
 const tracker=createGuestCompetitionTracker({getAccount:()=>auth,readState:()=>structuredClone(state),writeState:value=>(state=structuredClone(value),true),randomId:()=>device,randomSecret:()=> 'a'.repeat(64),now:()=>clock,credit:gate,
  send:async body=>{calls.push(structuredClone(body));if(body.action==='snapshot')revision++;if(body.resumeCredit===token)serverHeld=false;return{ok:true,id:guestId,nickname:'Гость · Янтарь',creditRevision:revision,creditPaused:serverHeld,...(serverHeld?{creditPauseToken:token}:{}),creditTotals:{[reciter]:10},creditDays:{[listeningDayKey(clock)]:{[reciter]:10}}};}});
 await tracker.sync({force:true});assert.equal(gate.resumeToken(),null);assert.equal(state.nickname,'Гость · Янтарь');assert.equal(tracker.own().nickname,'Гость · Янтарь','Own row uses the same persisted server alias, never a locally generated nickname');await tracker.progress(reciter,90,clock);clock+=15000;await tracker.sync({force:true});assert.equal(calls.at(-1).resumeCredit,undefined);assert.equal(tracker.own().totals[reciter],10,'Paused own row displays server-credited time rather than excluded raw highwater');
 gate.action(clock);await tracker.sync({force:true});assert.equal(calls.at(-1).resumeCredit,token);assert.equal(gate.paused(),false);assert.equal(tracker.own().totals[reciter],10,'The acknowledgement packet itself adds no held seconds');clock+=10000;await tracker.progress(reciter,10,clock);assert.equal(tracker.own().totals[reciter],20,'Only new advancement after the acknowledged raw highwater appears locally');assert.equal(tracker.own('day').totals[reciter],20);
 state.serverCredit={totals:{[reciter]:10},days:{[listeningDayKey(clock)]:{[reciter]:10}},paused:false};assert.equal(tracker.own().totals[reciter],10,'A partial persisted server view remains conservative and cannot throw or promote excluded raw seconds');assert.equal(tracker.own('day').totals[reciter],10);
+guestDateNow.mock.restore();
 // Two tabs receive replies out of order. The guest lock protects both control and its paired view.
 const day=listeningDayKey(clock);state={version:1,device,secret:'a'.repeat(64),id:guestId,enrolled:true,claimedBy:null,totals:{[reciter]:100},days:{[day]:{[reciter]:100}}};let lock=Promise.resolve(),resolveOld,oldStarted;
 const oldReady=new Promise(resolve=>oldStarted=resolve),exclusive=fn=>{const result=lock.then(fn);lock=result.catch(()=>{});return result;};

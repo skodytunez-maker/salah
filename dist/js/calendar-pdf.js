@@ -70,7 +70,7 @@ export async function createMonthCanvas({month,city,rows,source,localAsr=false})
  text(labels['calendarPdfUi.sunriseNote'],36,759,8.5,muted);
  text(sourceLabel,36,777,8.5,muted);
  text(labels['calendarPdfUi.settingsNote'],36,793,8,muted);
- text('SALAH by Saadi Kobilov',559,819,8.5,gold,'right');
+ text('SALAH',559,819,8.5,gold,'right');
  return canvas;
 }
 export async function createMonthFile(options,format='pdf'){
