@@ -23,16 +23,15 @@ for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=onlin
  const links=host.querySelectorAll('[data-learning-entry]');assert.equal(links.length,3);links[0].click();assert.equal(started,1);started=0;
 }
 host.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
-assert.equal(host.querySelectorAll('.release-feature').length,2,'News499 contains exactly the new night-credit and optional guest-registration features');
+assert.equal(host.querySelectorAll('.release-feature').length,2,'News501 contains exactly interface languages and authored meaning translations');
 assert.equal(host.querySelectorAll('.release-coming-button').length,0,'Closed features are not re-announced as new');
 for(const feature of UPCOMING_KNOWLEDGE)assert.ok(![...host.querySelectorAll('.release-feature h3')].some(h=>h.textContent===feature.title+' · скоро'));
-const currentFeatures=['night-credit-499','guest-registration-499'];
-assert.equal(APP_ANNOUNCEMENT.version,499);
-assert.deepEqual(APP_ANNOUNCEMENT.changes.map(releaseFeatureForChange),currentFeatures,'Public announcement499 covers only night credit and guest stone labels/registration');
+const currentFeatures=['interface-languages-501','quran-translations-501'];
+assert.equal(APP_ANNOUNCEMENT.version,501);
+assert.deepEqual(APP_ANNOUNCEMENT.changes.map(releaseFeatureForChange),currentFeatures,'Public announcement501 covers only the two new language features');
 assert.deepEqual(APP_CHANGES.map(releaseFeatureForChange),currentFeatures,'Current release and announcement use the same two feature-specific illustrations');
-assert.ok(host.querySelector('.release-night-credit.release-motion-preview [data-release-motion-part]'));
-assert.ok(host.querySelector('.release-guest-registration.release-motion-preview [data-release-motion-part]'));
-assert.doesNotMatch(host.textContent,/тафсир|подписк|оплат|плат[её]ж|yookassa|Короткое напоминание каждый день|Своя атмосфера для чтения/iu,'Closed, billing and previously announced features stay out of news499');
+assert.equal(host.querySelectorAll('.release-interface-preview.release-motion-preview [data-release-motion-part]').length,2);
+assert.doesNotMatch(host.textContent,/тафсир|подписк|оплат|плат[её]ж|yookassa|Короткое напоминание каждый день|Своя атмосфера для чтения|Ночью чтение продолжается|Сохраните прослушанное/iu,'Closed, billing and previously announced features stay out of news501');
 for(const img of host.querySelectorAll('.release-feature img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));
 assert.ok(APP_VERSION>=395);
 // Verified owner access reveals only navigation to the private checks.

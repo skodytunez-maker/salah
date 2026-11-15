@@ -3618,6 +3618,24 @@
       "role": "mask",
       "rightsEvidence": "docs/holy-wallpapers-20261011.json",
       "note": "Project-authored SVG sky mask aligned with this generated scene."
+    },
+    {
+      "path": "dist/assets/updates/interface-languages-501.svg",
+      "bytes": 1751,
+      "gitBlobSha": "0999d38c27399aecd749b77835a0ea7e3fbaf631",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH SVG interface illustration authored in repository code for release501: the eight-language chooser with original panel geometry and native language names. No external images, embedded font files, copied third-party app artwork or private user data."
+    },
+    {
+      "path": "dist/assets/updates/quran-translations-501.svg",
+      "bytes": 1859,
+      "gitBlobSha": "c360416f6d223041934b9255274d902aac564dcc",
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-announcements.md",
+      "note": "Original SALAH SVG interface illustration authored in repository code for release501: the separate Quran meaning-translation chooser with Noor International author, QuranEnc/version credit and download control. No external images, embedded font files, copied third-party app artwork or private user data."
     }
   ],
   "wallpaperSets": [
