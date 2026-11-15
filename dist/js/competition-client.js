@@ -2,7 +2,7 @@ import{personalDataAllowed}from './audience.js';
 import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{read,write}from './storage.js';
 import{RECITERS}from './quran-reciters.js';
-import{listeningDayKey}from './reciter-popularity-core.js';
+import{listeningDayKey,listeningPeriodTotals}from './reciter-popularity-core.js';
 import{safeListener}from './reciter-ranking-core.js';
 const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition',allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
 const boards=new Map(),favoriteBoards=new Map(),boardRequests=new Map();
@@ -10,8 +10,17 @@ export function cachedCompetition(period='all',{mode='total'}={}){const entry=(m
 export function competitionListeningTotal(period='all'){return boards.get(listeningDayKey(Date.now())+':'+period)?.totalSeconds??null;}
 export function clearCompetitionCache(){boards.clear();favoriteBoards.clear();for(const request of boardRequests.values())request.controller.abort();boardRequests.clear();}
 export function preloadCompetition(){return loadCompetition('all').catch(()=>[]);}
-let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,credit=null,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0;
+let account=()=>({signedIn:false}),client=()=>null,snapshot=()=>({totals:{},days:{}}),enabled=()=>false,credit=null,initialized=false,own=null,scope=null,inflight=null,ownRequest=null,lastUpload=0,lastOwn=0,lastSignature='',retryAt=0,localSnapshotRef=null,localSnapshotOwner=null;
 export const competitionOwn=()=>own&&scope===account().userId?own:null;
+// Read the already metered, competition-eligible snapshot. Display code must
+// never substitute full personal history, which continues while Top is paused.
+export function localCompetitionTotals(period='all'){
+ if(!account().signedIn||!account().userId||!competitionOwn())return {};
+ const source=snapshot();if(source!==localSnapshotRef){localSnapshotRef=source;localSnapshotOwner=account().userId;}
+ if(localSnapshotOwner!==account().userId)return {};
+ const totals=listeningPeriodTotals(source,period);
+ return Object.fromEntries(Object.entries(totals).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0));
+}
 export const competitionAvatar=id=>endpoint+'?avatar='+encodeURIComponent(id);
 const announce=()=>window.dispatchEvent(new Event('salah:competition-updated'));
 async function request(body=null,{signal,keepalive=false}={}){
@@ -90,5 +99,6 @@ export async function syncCompetitionNow(force=false){
  }catch{retryAt=Date.now()+15000;}})();inflight=task;try{await task;}finally{if(inflight===task)inflight=null;}
 }
 export function initCompetition({getAccount,getClient,getSnapshot,isEnabled,credit:creditPolicy=null}){if(!personalDataAllowed()||initialized)return;initialized=true;account=getAccount;client=getClient;snapshot=getSnapshot;enabled=isEnabled;credit=creditPolicy;
+ localSnapshotRef=snapshot();localSnapshotOwner=account().userId;
  setInterval(()=>void syncCompetitionNow(),15000);window.addEventListener('salah:listening-credit-action',()=>void syncCompetitionNow());window.addEventListener('salah:personal-listening',()=>void syncCompetitionNow());window.addEventListener('online',()=>void syncCompetitionNow());window.addEventListener('salah:counter-status',()=>void syncCompetitionNow());window.addEventListener('salah:popularity-updated',()=>{lastOwn=0;void syncCompetitionNow();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCompetitionNow();});void syncCompetitionNow();
 }

@@ -102,7 +102,8 @@ async function main(){
  const runtime=fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/functions/background-reminders/runtime.txt'),'utf8').replace(/\r\n/g,'\n');
  const adapterSource=runtime.slice(runtime.indexOf('const db={'),runtime.indexOf('let firebaseSender'));
  const sql=async(strings,...values)=>{let query=strings[0];for(let i=0;i<values.length;i++)query+='$'+(i+1)+strings[i+1];return(await db.query(query,values)).rows;};sql.json=JSON.stringify;
- const adapter=require('node:vm').runInNewContext(adapterSource+';db',{sql,String,Number,Math});
+ const {createUpdate501Db}=await import('../../supabase/functions/background-reminders/update-501-db.mjs');
+ const adapter=require('node:vm').runInNewContext(adapterSource+';db',{sql,String,Number,Math,createUpdate501Db});
  const {dispatchCompetitionPush}=await import('../../supabase/functions/background-reminders/competition-push.mjs');const sent=[];const send=async(row,notice)=>{sent.push({row,notice});return'sent';};
  yes(await dispatchCompetitionPush({db:adapter,send,clock:Date.now})===1);yes(sent.length===1&&sent[0].notice.kind==='competition');yes(Number.isFinite(sent[0].notice.at)&&Math.abs(Date.now()-sent[0].notice.at)<60000);yes(sent[0].row.event_id===event);yes((await db.query(`SELECT state FROM salah_competition_private.deliveries WHERE event_id=$1`,[event])).rows[0].state==='sent');
  yes(await dispatchCompetitionPush({db:adapter,send,clock:Date.now})===0);yes(sent.length===1);

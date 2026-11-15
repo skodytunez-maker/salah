@@ -21,8 +21,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Update official imam records
         run: node scripts/update-haramain-schedule.mjs
+      - name: Install pinned local DOM test dependencies
+        run: npx --yes pnpm@11.25.0 --dir tests/staff install --frozen-lockfile --ignore-scripts
       - name: Verify SALAH files
         run: |
           node scripts/build-push-function.mjs --check
@@ -85,9 +90,6 @@ jobs:
           node scripts/check-android-widget.mjs
           node scripts/check-android-update.mjs
           node scripts/check-nature-video-assets.mjs
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
       - name: Prepare verified Android web updates
         working-directory: mobile
         run: |

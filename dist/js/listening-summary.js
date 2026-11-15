@@ -16,6 +16,30 @@ export function createLiveListeningTotal(){
   return Number.isSafeInteger(Math.floor(shown))?Math.floor(shown):server;
  }};
 }
+// A self-only UI preview uses the same eligible samples as the shared header.
+// Keep server order, ranks, carousel membership and stored ledgers untouched.
+export function createLiveCompetitionRows(){
+ const previews=new Map();let scope=null;
+ const reset=()=>{scope=null;previews.clear();};
+ const sample=(server,totals,key)=>{
+  if(!Number.isSafeInteger(server)||server<0)return server;
+  const local=Object.values(totals||{}).reduce((sum,n)=>sum+(Number.isFinite(n)&&n>=0?n:0),0),before=previews.get(key);
+  // Existing eligible time can still be waiting to upload after a remount.
+  // Later downward server corrections or local resets remain authoritative.
+  const shown=!before?Math.max(server,local):local<before.local||server<before.server?server:Math.max(server,before.shown+Math.max(0,local-before.local));
+  previews.set(key,{server,local,shown});return Math.floor(shown);
+ };
+ return{reset,sample(rows,own,totals,{key,eligible=false}={}){
+  if(!eligible||!own?.id||!key){reset();return rows;}
+  if(scope!==key){reset();scope=key;}
+  return rows.map(row=>{
+   if(row.id!==own.id)return row;
+   const reciters=(row.reciters?.length?row.reciters:[{reciter:row.reciter,seconds:row.seconds}]).map(item=>({...item,seconds:sample(item.seconds,{[item.reciter]:totals?.[item.reciter]||0},item.reciter)}));
+   const seconds=reciters.find(item=>item.reciter===row.reciter)?.seconds??row.seconds;
+   return{...row,seconds,...(row.totalSeconds!==undefined?{totalSeconds:sample(row.totalSeconds,totals,'total'),reciters}:{} )};
+  });
+ }};
+}
 // Only the glyph transition animates. Never replay a backlog of seconds.
 export function createSharedListeningMotion(){let value=null;return{reset(){value=null;},tick(){return value;},sample(target,{key,server}={}){value=Number.isSafeInteger(target)&&target>=0&&Number.isSafeInteger(server)&&server>=0&&key?target:null;return value;}};}
 const validSeconds=seconds=>Number.isSafeInteger(seconds)&&seconds>=0;
