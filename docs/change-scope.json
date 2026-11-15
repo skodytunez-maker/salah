@@ -15,15 +15,15 @@
     },
     {
       "path": "dist/assets/updates/audio-offline-502.svg",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "dist/assets/updates/prayer-offline-502.svg",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "dist/assets/updates/quran-offline-502.svg",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "dist/css/app-bootstrap.css",
@@ -51,7 +51,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "dist/js/app.js",
@@ -255,7 +255,7 @@
     },
     {
       "path": "dist/js/offline-release-news.js",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "dist/js/owner-release-card.js",
@@ -343,7 +343,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "dist/js/staff-cabinet.js",
@@ -391,7 +391,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "docs/prayer-offline-502.md",
@@ -403,11 +403,11 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "scripts/check-app-bootstrap.mjs",
@@ -436,6 +436,10 @@
     {
       "path": "scripts/check-interface-shell.mjs",
       "reason": "Integrate the requested offline settings, remove the unwanted About credit rows and general Menu team row."
+    },
+    {
+      "path": "scripts/check-knowledge-coming-soon.mjs",
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "scripts/check-native-update-feedback.mjs",
@@ -503,7 +507,7 @@
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
-      "reason": "Feature-specific release502 artwork, announcement and exact source provenance."
+      "reason": "Feature-specific release502 artwork, announcement, current-news regression and exact source provenance."
     },
     {
       "path": "scripts/check-scene-load.mjs",
