@@ -38,6 +38,10 @@
       "reason": "Verify automatic fallback for missing, invalid and inaccessible language preferences, retaining manual choices and startup recovery."
     },
     {
+      "path": "scripts/check-classroom-language.mjs",
+      "reason": "Seed an explicit Russian comparison fixture so classroom RU-to-English tests remain meaningful with automatic phone-language defaults; lesson behavior and data assertions stay unchanged."
+    },
+    {
       "path": "scripts/check-interface-language-core.mjs",
       "reason": "Verify the automatic language default, explicit choices, backup compatibility and unchanged source-language data."
     },
@@ -52,6 +56,10 @@
     {
       "path": "scripts/check-owner-app-state.mjs",
       "reason": "Verify historical guest aliases without importing claimed credit or exposing account identity."
+    },
+    {
+      "path": "scripts/check-public-language.mjs",
+      "reason": "Seed an explicit Russian comparison fixture for public UI language tests, preserving existing privacy, byline, PDF and calendar assertions."
     },
     {
       "path": "supabase/functions/owner-access/app-state.mjs",
