@@ -1,0 +1,23 @@
+SALAH Home Moon image
+
+Credit: NASA's Scientific Visualization Studio
+Moon Mosaic, SVS item 5001, released May 5, 2022.
+Visualizer: Ernie Wright (STC)
+Producer: Staci Tiedeken (ADNET Systems, Inc.)
+
+Official item: https://svs.gsfc.nasa.gov/5001
+Original image: https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005001/moon_mosaic_print.jpg
+Usage guidance: https://www.nasa.gov/nasa-brand-center/images-and-media/
+
+The original 1024 x 1024 JPEG is bundled unchanged as home-moon-disc.jpg.
+Bytes: 252499
+SHA-256: 36fbe604043f1403acbc4db6fbd36d04db1db1c8a3749aa81d1e6ffea072a5fa
+
+SALAH code applies phase shading, orientation and sizing when displaying the
+image. Those application effects are not part of NASA's original JPEG or a
+NASA-provided phase simulation. NASA does not endorse or validate SALAH.
+
+NASA guidance allows factual informational use with source acknowledgement
+and no implied endorsement. This notice records the source and conditions;
+it does not claim exclusive ownership or grant rights to NASA marks or
+separately protected third-party material.

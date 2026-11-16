@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "release": 505,
+  "reviewedAt": "2026-11-17",
+  "asset": {
+    "path": "dist/assets/home-moon-disc.jpg",
+    "bytes": 252499,
+    "width": 1024,
+    "height": 1024,
+    "gitBlobSha": "eccf3896a57c55b6ecea1fc92f0bcd282ba43993",
+    "sha256": "36fbe604043f1403acbc4db6fbd36d04db1db1c8a3749aa81d1e6ffea072a5fa",
+    "sourceFileUnmodified": true
+  },
+  "source": {
+    "title": "Moon Mosaic",
+    "itemId": 5001,
+    "pageUrl": "https://svs.gsfc.nasa.gov/5001",
+    "originalUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005001/moon_mosaic_print.jpg",
+    "publishedAt": "2022-05-05",
+    "credit": "NASA's Scientific Visualization Studio",
+    "visualizer": "Ernie Wright (STC)",
+    "producer": "Staci Tiedeken (ADNET Systems, Inc.)",
+    "description": "A full-Moon photographic mosaic from Lunar Reconnaissance Orbiter Narrow Angle Camera images.",
+    "verification": "The bundled JPEG matches the unchanged source acquisition fingerprint and byte length. NASA's official item metadata identifies this 1024-square print image and its credits."
+  },
+  "rightsReviewStatus": "license-recorded",
+  "usageGuidelines": {
+    "title": "NASA Images and Media Usage Guidelines",
+    "url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "scope": "Factual informational Moon display in SALAH, with NASA source acknowledgement and no endorsement implication.",
+    "conditions": [
+      "Retain the source acknowledgement and original links.",
+      "Do not imply NASA endorsement, review or approval of SALAH or its calculations.",
+      "NASA marks and third-party protected material require separate consideration; no blanket ownership clearance is claimed."
+    ]
+  },
+  "bundledAttribution": "dist/assets/home-moon-source.txt",
+  "rendering": {
+    "sourceImageEdits": "None: the downloaded JPEG is bundled without re-encoding, cropping or generated additions.",
+    "displayOnly": "SALAH code applies phase shading, orientation and sizing at runtime. This is an application rendering using the credited texture, not a NASA-provided phase simulation or an assertion of NASA validation."
+  },
+  "existingSkyMask": {
+    "path": "dist/assets/mosque-sky-mask.svg",
+    "gitBlobSha": "dcbfe9200d095aa7fa4e6a7ee247676d96c5215e",
+    "bytes": 1146,
+    "previousGitBlobSha": "c80124e7826a77091a4ea8606be93d346ae80b73",
+    "previousBytes": 1086,
+    "previousEvidence": "docs/sky-projection-451.md",
+    "geometryUnchanged": true,
+    "change": "Only the SVG description was updated against release504. The project-authored skyline geometry and original mosque photograph are unchanged; the runtime masked atmosphere covers the photograph's painted crescent."
+  },
+  "releaseArtwork": {
+    "path": "dist/assets/updates/home-sky-505.svg",
+    "bytes": 3669,
+    "gitBlobSha": "9e15e779c638a9f7cdaad151879b8659386d676a",
+    "sha256": "32db7cbd4540f88fbaa387e695a40a3a2a791b76ba91487bd95bad18976ea437",
+    "rightsReviewStatus": "origin-supported",
+    "rightsEvidence": "docs/release-artwork.md",
+    "origin": "Original SVG authored in repository code for SALAH release505. Only vector paths, gradients and circles; no external or embedded images/fonts, third-party artwork, religious text or user data. This illustration does not embed the separate NASA texture or imply exclusive copyright."
+  },
+  "historicalRegisters": "The historical sourceCommit and inventory remain unchanged apart from the new Moon, credit and release-artwork entries. All other media records are preserved except the explicitly documented existing sky-mask fingerprint and description update."
+}

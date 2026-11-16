@@ -6,7 +6,7 @@ import{appStatePacket,createAppStateDb}from '../supabase/functions/listening-now
 import{guestActivityHash}from '../supabase/functions/listening-now/guest-activity.mjs';
 import{createListeningNowHandler}from '../supabase/functions/listening-now/core.mjs';
 const pg=new PGlite();await pg.exec(`create role anon;create role authenticated;create role service_role bypassrls;
-create schema auth;create schema salah_visits_private;create schema salah_competition_private;
+create schema auth;create schema salah_visits_private;create schema salah_competition_private;create schema salah_counter_private;
 create table auth.users(id uuid primary key,email_confirmed_at timestamptz,is_anonymous boolean,banned_until timestamptz);
 create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);
 create table salah_visits_private.activity_budgets(bucket timestamptz primary key,hits integer);
@@ -16,8 +16,10 @@ create table salah_competition_private.preferences(user_id uuid,enabled boolean)
 create table public.reciter_listener_visibility(user_id uuid,mode text);
 create table salah_competition_private.listener_presence(user_id uuid,session_id uuid,playing boolean,reported_at timestamptz);
 create table salah_competition_private.activity_presence(user_id uuid,session_id uuid,kind text,active boolean,reported_at timestamptz);
+create table salah_counter_private.account_context(user_id uuid,city text,country text,reading_page integer);
 create table salah_competition_private.guest_totals(seconds bigint);insert into salah_competition_private.guest_totals values(17);`);
 const files=await fs.readdir(new URL('../supabase/migrations/',import.meta.url));await pg.exec(await fs.readFile(new URL('../supabase/migrations/'+files.find(x=>x.endsWith('_owner_app_state.sql')),import.meta.url),'utf8'));
+await pg.exec(await fs.readFile(new URL('../supabase/migrations/'+files.find(x=>x.endsWith('_app_entry_selected_city.sql')),import.meta.url),'utf8'));
 function tag(connection){const sql=(parts,...values)=>{let query='';parts.forEach((part,i)=>{query+=part;if(i<values.length)query+='$'+(i+1);});return{then(resolve,reject){return(query.includes('pg_advisory_xact_lock')?Promise.resolve([]):connection.query(query,values).then(x=>x.rows)).then(resolve,reject);}};};sql.begin=fn=>connection.transaction(tx=>fn(tag(tx)));return sql;}
 const sql=tag(pg),db=createAppStateDb(sql),user={id:randomUUID(),session:randomUUID()},device=randomUUID(),tab=randomUUID();await pg.query('insert into auth.users values($1,now(),false,null)',[user.id]);await pg.query('insert into auth.sessions values($1,$2,null)',[user.session,user.id]);
 const body=(extra={})=>({action:'guest-state',device,tab,sequence:1,visible:false,section:'quran',playerState:'playing',actionSequence:1,actionAgeMs:60000,creditPaused:true,appVersion:500,...extra});
@@ -41,8 +43,24 @@ assert.deepEqual(await(await handler(new Request('https://fixture.invalid'))).js
 assert.equal(Number((await pg.query('select sum(seconds)seconds from salah_competition_private.guest_totals')).rows[0].seconds),17,'Presence never grants competition minutes');
 await pg.query('update salah_visits_private.guest_activity_presence set active=false');
 assert.deepEqual(await(await handler(new Request('https://fixture.invalid'))).json(),{count:0,readers:0,dhikr:0},'A real playback stop clears listening presence independently');
+// Entering Home reports only the selected prayer city, even without playback,
+// Quran reading or dhikr. It never creates one of those activity signals.
+const cityDevice=randomUUID(),cityTab=randomUUID(),entry=extra=>body({device:cityDevice,tab:cityTab,visible:true,section:'home',playerState:'stopped',actionSequence:0,actionAgeMs:null,creditPaused:null,selectedCity:{city:'  Тюмень  ',country:'Россия'},...extra}),cityActor='guest:'+await guestActivityHash(cityDevice);
+assert.equal((await handler(request(entry()))).status,200);
+const cityRead=async()=>(await pg.query('select selected_city,selected_country,selected_context_at,player_state,section,last_action_at from salah_visits_private.app_state_presence where actor=$1',[cityActor])).rows[0];
+let cityRow=await cityRead();assert.equal(cityRow.selected_city,'Тюмень');assert.equal(cityRow.selected_country,'Россия');assert.equal(cityRow.player_state,'stopped');assert.equal(cityRow.section,'home');assert.equal(cityRow.last_action_at,null);assert.ok(Math.abs(Date.now()-Date.parse(cityRow.selected_context_at))<3000,'Selected-city receipt uses server time');
+const savedContextAt=Date.parse(cityRow.selected_context_at);const legacyEntry=entry({sequence:2});delete legacyEntry.selectedCity;await db.update(appStatePacket(legacyEntry));cityRow=await cityRead();assert.equal(cityRow.selected_city,'Тюмень');assert.equal(Date.parse(cityRow.selected_context_at),savedContextAt,'A legacy omission retains the explicit context and receipt time');
+assert.equal((await db.update(appStatePacket(entry({sequence:1,selectedCity:{city:'Stale city',country:null}})))).accepted,false);assert.equal((await cityRead()).selected_city,'Тюмень','Replayed packets cannot change the selected city');
+for(const selectedCity of [undefined,[],{city:''},{city:'x'.repeat(161)},{city:'Bad\nCity'},{city:'City',country:2},{city:'City',latitude:55},{city:'City',timezone:'UTC'},{city:'City',reportedAt:'2099-01-01'}]){
+ const invalid=entry({sequence:3,selectedCity});assert.throws(()=>appStatePacket(invalid),/invalid_app_state/);if(selectedCity!==undefined)assert.equal((await handler(request(invalid))).status,400);
+}assert.equal((await cityRead()).selected_city,'Тюмень','Invalid city payloads never overwrite the last valid context');
+await db.update(appStatePacket(entry({sequence:3,selectedCity:null})));cityRow=await cityRead();assert.equal(cityRow.selected_city,null);assert.equal(cityRow.selected_country,null);assert.ok(Date.parse(cityRow.selected_context_at)>=savedContextAt,'An explicit clear retains its receipt timestamp for clear-aware readers');
+await pg.query("insert into salah_counter_private.account_context values($1,'Saved account city','Saved country',604)",[user.id]);
+assert.equal((await handler(request({...account,sequence:3,selectedCity:{city:'Entry city',country:null}},undefined,'Bearer fixture'))).status,200);
+const accountEntry=(await pg.query('select selected_city,selected_country from salah_visits_private.app_state_presence where actor=$1',['account:'+user.id])).rows[0];assert.deepEqual(accountEntry,{selected_city:'Entry city',selected_country:null});assert.deepEqual((await pg.query('select city,country,reading_page from salah_counter_private.account_context where user_id=$1',[user.id])).rows[0],{city:'Saved account city',country:'Saved country',reading_page:604},'Entry telemetry never rewrites saved account context or reading state');
+assert.deepEqual(await(await handler(new Request('https://fixture.invalid'))).json(),{count:0,readers:0,dhikr:0});assert.equal(Number((await pg.query('select sum(seconds)seconds from salah_competition_private.guest_totals')).rows[0].seconds),17,'Selected-city entry telemetry never changes public counts or Top credit');
 await pg.query('update salah_visits_private.app_state_limits set attempts=90,minute=floor(extract(epoch from now())/60)::bigint where actor=$1',[actor]);assert.equal((await handler(request(body({sequence:5})))).status,429);
 for(const role of ['anon','authenticated']){await pg.exec('set role '+role);await assert.rejects(pg.query('select * from salah_visits_private.app_state_presence'),/permission denied/);await pg.exec('reset role');}
 await pg.query('delete from auth.sessions where id=$1',[user.session]);assert.equal((await handler(request({...account,sequence:3},undefined,'Bearer fixture'))).status,401);
 await assert.rejects(pg.query("insert into salah_visits_private.app_state_presence(actor,tab_id,sequence,visible,section,player_state,action_sequence,app_version)values('guest:invalid',$1,1,true,'home','unknown',0,500)",[randomUUID()]),/check constraint/);
-await pg.close();console.log('PASS: actual private PostgreSQL app state, separate Top/playback signals, action/replay integrity, session/origin/rate checks, no coordinates/contents, aggregate-only reads and RLS.');
+await pg.close();console.log('PASS: actual private PostgreSQL app state and selected-prayer-city entry capture, omission/clear/replay validation, separate Top/playback signals, account-context preservation, session/origin/rate checks, no coordinates/contents, aggregate-only reads and RLS.');

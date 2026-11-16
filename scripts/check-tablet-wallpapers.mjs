@@ -127,10 +127,10 @@ for(const viewport of [{width:390,height:844},{width:844,height:390},{width:900,
    const raw={sunX:progress,sunY:elevation,sun:1,moonX:100-progress,moonY:elevation,moon:.42},projected=projectSkyObjects(raw,options);
    for(const body of ['sun','moon']){const x=photo.left+photo.width*projected[body+'X']/100,y=photo.top+photo.height*projected[body+'Y']/100;
     assert.ok(x>=0&&x<=viewport.width,entry.id+' '+body+' stays in the horizontal crop');assert.ok(y>=0&&y<=viewport.height,entry.id+' '+body+' stays in the vertical crop');}
-   assert.equal(projected.sun,raw.sun);assert.equal(projected.moon,entry.wallpaper==='mosque'?0:raw.moon,'Keep the original mosque crescent without a duplicate dynamic Moon');
+   assert.equal(projected.sun,raw.sun);assert.equal(projected.moon,raw.moon,'Every scene uses the live Moon; the mosque’s baked crescent is covered inside its existing sky mask');
   }
   const a=projectSkyObjects({sunX:30,sunY:40,sun:1,moonX:55,moonY:30,moon:.42},options),b=projectSkyObjects({sunX:30.001,sunY:40.001,sun:1,moonX:55.001,moonY:30.001,moon:.42},options);
   for(const key of ['sunX','sunY','moonX','moonY'])assert.ok(Math.abs(a[key]-b[key])<.01,'Projection remains continuous while bodies move');
  }
 }
-console.log('PASS: all 23 city backgrounds, mosque and New York retain continuous visible sky paths across phone/tablet crops; original mosque crescent remains the only Moon.');
+console.log('PASS: all 23 city backgrounds, mosque and New York retain continuous visible sky paths across phone/tablet crops; each masked scene uses its independent dynamic Moon.');

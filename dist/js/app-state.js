@@ -4,6 +4,8 @@ import{personalDataAllowed}from './audience.js';
 import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{counterSyncStatus}from './counter-account.js';
 import{APP_VERSION}from './app-release.js';
+import{settings}from './storage.js';
+import{guestSelectedContext}from './guest-context.js';
 let initialized=false;
 const sessionId=session=>{try{const value=JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id;return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||'')?value:null;}catch{return null;}};
 export function initAppState({playback,getAccount=counterSyncStatus,getClient=accountAuthClient,getCreditPaused=()=>null}={}){
@@ -21,10 +23,11 @@ export function initAppState({playback,getAccount=counterSyncStatus,getClient=ac
    if(!keepalive){await new Promise(resolve=>setTimeout(resolve,0));const result=await getClient()?.auth.getSession();if(result?.error)throw Error('session');currentSession=result?.data?.session;}
    if(disposed||signal.aborted||currentSession?.user?.id!==person.id||sessionId(currentSession)!==person.sessionId||identity()?.scope!==person.scope)throw Error('changed');token=currentSession.access_token;
   }
+  if(signal.aborted||identity()?.scope!==person.scope||JSON.stringify(packet.selectedCity)!==JSON.stringify(guestSelectedContext(settings.city)))throw Error('changed');
   const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/listening-now',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json'},body:JSON.stringify(packet),signal,keepalive,credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer'});
   if(disposed||!response.ok||identity()?.scope!==person.scope)throw Error('unavailable');
  };
- const reporter=createAppStateReporter({getIdentity:identity,getView:()=>({visible:!document.hidden&&!pageHidden,section:appSection(location)}),getPlayback:()=>playback?.state,getCreditPaused,appVersion:APP_VERSION,send,now:()=>performance.now()});
+ const reporter=createAppStateReporter({getIdentity:identity,getView:()=>({visible:!document.hidden&&!pageHidden,section:appSection(location)}),getPlayback:()=>playback?.state,getCreditPaused,getSelectedCity:()=>settings.city,appVersion:APP_VERSION,send,now:()=>performance.now()});
  const sample=(force=false)=>{if(!disposed)reporter.sample({force,keepalive:document.hidden||pageHidden});};
  const refreshSession=()=>{let next;try{next=getClient()?.auth;}catch{return;}if(!next)return;
   if(auth!==next){authSubscription?.unsubscribe?.();auth=next;session=null;revision++;const subscription=auth.onAuthStateChange((_event,value)=>{revision++;session=value;setTimeout(()=>sample(),0);});authSubscription=subscription?.data?.subscription;}

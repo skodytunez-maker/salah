@@ -1,4 +1,4 @@
-import{getPosition,getTimes,getMoonPosition,getMoonTimes}from './vendor/suncalc.js';
+import{getPosition,getTimes,getMoonPosition,getMoonTimes,getMoonIllumination}from './vendor/suncalc.js';
 export const wallpapers=[
  {id:'mosque',name:'Мечеть',day:'./assets/day-mosque.webp',night:'./assets/night-mosque.webp'},
  {id:'new-york',name:'Нью-Йорк',day:'./assets/window-new-york-day.webp',night:'./assets/window-new-york-night.webp'},
@@ -29,7 +29,7 @@ function skyEvents(now,city){
  solar.sort((a,b)=>a.time-b.time);lunar.sort((a,b)=>a.time-b.time);
  return eventsCache={key,solar,lunar};
 }
-function bodyPoint(now,position,events){
+function bodyPoint(now,position,events,northFacing=false){
  // Keep one rise/set arc through the complete horizon fade. Choosing rise
  // before now and set after now independently changes the arc while the disc
  // is still visible, causing a horizontal jump at both ends of the day.
@@ -39,7 +39,8 @@ function bodyPoint(now,position,events){
  // Circumpolar bodies may have no complete arc in the cached event window.
  const arc=!active&&position.altitude>0?null:nearest;
  const progress=arc?clamp((now-arc.rise)/(arc.set-arc.rise)):null;
- return {x:progress===null?50-42*Math.sin(position.azimuth*rad):8+84*progress,
+ const eastToWest=progress===null?50-42*Math.sin(position.azimuth*rad):8+84*progress;
+ return {x:northFacing?100-eastToWest:eastToWest,
   y:skyGeometry.horizon/skyGeometry.height*100-50*Math.max(-2,Math.min(90,position.altitude))/90};
 }
 export function previewClock(now,times,elapsed,city){
@@ -53,19 +54,38 @@ export function previewClock(now,times,elapsed,city){
  return t<5000?rise-night/2+night*t/10000:t<15000?rise+(set-rise)*(t-5000)/10000:set+night*(t-15000)/10000;
 }
 export function skyObjects(now,times,mode='auto',preview=null,city=null){
- if(mode==='light')return {sunX:50,sunY:15,sun:1,moonX:50,moonY:58,moon:0};
- if(mode==='dark')return {sunX:50,sunY:58,sun:0,moonX:68,moonY:18,moon:1};
+ // Manual light/dark changes the photograph's lighting only. Celestial
+ // position/visibility must never fabricate an always-visible Sun or Moon.
  if(!Number.isFinite(now)||!validCity(city))return emptySky();
  const instant=Number.isFinite(preview)?previewClock(now,times,preview,city):now;
  const date=new Date(instant),sun=getPosition(date,city.latitude,city.longitude),moon=getMoonPosition(date,city.latitude,city.longitude);
  if(![sun.azimuth,sun.altitude,moon.azimuth,moon.altitude,moon.distance].every(Number.isFinite))return emptySky();
- const events=skyEvents(instant,city),s=bodyPoint(instant,sun,events.solar),m=bodyPoint(instant,moon,events.lunar);
+ // The artwork is a schematic equator-facing panorama, not a compass/photo
+ // bearing: north/equator looks south (east at left), south looks north (east
+ // at right). Never mirror the lunar phase itself; its observer tilt is real.
+ const northFacing=city.latitude<0,events=skyEvents(instant,city),s=bodyPoint(instant,sun,events.solar,northFacing),m=bodyPoint(instant,moon,events.lunar,northFacing);
  // Apparent upper-limb horizon convention used by SunCalc's rise/set solver.
  const sunLimb=sun.altitude+.266+.09,moonLimb=moon.altitude+.2725*Math.asin(6378.14/moon.distance)/rad+.09;
  // A half-degree band fades the disc through the horizon without a binary flash.
  // Lunar daylight brightness follows the same continuous solar light curve.
  const sunVisible=smooth((sunLimb+.25)/.5),moonVisible=smooth((moonLimb+.25)/.5),daylight=smooth((sun.altitude+1)/2);
  return {sunX:s.x,sunY:s.y,sun:sunVisible,moonX:m.x,moonY:m.y,moon:moonVisible*(1-.58*daylight)};
+}
+
+// The visible area of this object-bounding-box path is exactly the illuminated
+// fraction. Its unrotated bright limb points right. Orientation is applied
+// separately using the observer's zenith-relative bright-limb position angle.
+export function moonPhasePath(fraction){
+ const lit=clamp(Number.isFinite(fraction)?fraction:0),points=[],steps=40;
+ for(let i=0;i<=steps;i++){const y=-1+2*i/steps;points.push([Math.sqrt(Math.max(0,1-y*y)),y]);}
+ for(let i=steps;i>=0;i--){const y=-1+2*i/steps;points.push([(1-2*lit)*Math.sqrt(Math.max(0,1-y*y)),y]);}
+ return points.map(([x,y],i)=>(i?'L':'M')+((x+1)/2).toFixed(5)+' '+((y+1)/2).toFixed(5)).join('')+'Z';
+}
+export function moonAppearance(now,city){
+ if(!Number.isFinite(now)||!validCity(city))return{fraction:0,phase:0,rotation:0,textureRotation:0};
+ const date=new Date(now),illumination=getMoonIllumination(date),moon=getMoonPosition(date,city.latitude,city.longitude);
+ const zenithAngle=illumination.angle-moon.parallacticAngle;
+ return{fraction:illumination.fraction,phase:illumination.phase,rotation:-90-zenithAngle,textureRotation:moon.parallacticAngle};
 }
 
 // Visual projection follows each artwork's skyline; astronomy above remains unchanged.
@@ -78,16 +98,14 @@ export function skyProjectionFrame({width,height,wallpaper='mosque',geometry=nul
  return{left,top,width:photoWidth,height:photoHeight,planeLeft:left,planeTop:top};
 }
 export function projectSkyObjects(sky,{width,height,wallpaper='mosque',landmark=null,geometry=null,layout=null}={}){
- const frame=skyProjectionFrame({width,height,wallpaper,geometry,layout});if(!frame)return{...sky,moon:wallpaper==='mosque'?0:sky.moon};
+ const frame=skyProjectionFrame({width,height,wallpaper,geometry,layout});if(!frame)return{...sky};
  const wide=Number.isFinite(geometry?.width)&&Number.isFinite(geometry?.height)?geometry.width>geometry.height:!!layout&&wallpaper==='new-york';
  const choices=artworkHorizons[landmark],horizon=wallpaper==='mosque'?.55:wallpaper==='new-york'?(wide?.54:.49):choices?.[wide&&choices.length>1?1:0]??.55;
  const left=Math.max(0,-frame.left/frame.width),right=Math.min(1,(width-frame.left)/frame.width),top=Math.max(0,-frame.top/frame.height),bottom=Math.min(1,(height-frame.top)/frame.height);
  const xPad=(right-left)*.07,x0=left+xPad,x1=right-xPad,ceiling=top+(bottom-top)*.07;
  const floor=Math.max(ceiling+.04,Math.min(horizon,bottom-(bottom-top)*.16));
- const output={...sky};
+ const output={...sky,horizonY:floor*100};
  for(const body of ['sun','moon']){const progress=clamp((sky[body+'X']-8)/84),altitude=(skyGeometry.horizon/skyGeometry.height*100-sky[body+'Y'])/100;
   output[body+'X']=(x0+(x1-x0)*progress)*100;output[body+'Y']=Math.max(ceiling,Math.min(floor+.012,floor-altitude))*100;}
- // The original mosque photograph retains its decorative crescent by request.
- if(wallpaper==='mosque')output.moon=0;
  return output;
 }

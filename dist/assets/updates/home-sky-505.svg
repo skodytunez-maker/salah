@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+<title id="title">SALAH — the sky through the day</title>
+<desc id="desc">A calm mosque silhouette beneath a sunrise arc and a deep blue evening sky. A small sequence of shaded Moon discs illustrates lunar phases. The release card adds moving Sun and Moon layers and passing cloud cover using its shared motion controls.</desc>
+<defs>
+ <linearGradient id="sky" x2="1" y2="1"><stop stop-color="#14283f"/><stop offset=".6" stop-color="#0c1b31"/><stop offset="1" stop-color="#091322"/></linearGradient>
+ <radialGradient id="dawn" cx=".23" cy=".94" r=".73"><stop stop-color="#cc8259" stop-opacity=".85"/><stop offset=".35" stop-color="#8a6465" stop-opacity=".44"/><stop offset="1" stop-color="#15273d" stop-opacity="0"/></radialGradient>
+ <linearGradient id="horizon" x2="0" y2="1"><stop stop-color="#bfa278" stop-opacity="0"/><stop offset="1" stop-color="#dcae72" stop-opacity=".3"/></linearGradient>
+ <linearGradient id="stone" x2="0" y2="1"><stop stop-color="#17253b"/><stop offset="1" stop-color="#0a1526"/></linearGradient>
+ <clipPath id="frame"><rect x="8" y="8" width="624" height="404" rx="25"/></clipPath>
+ <clipPath id="moon"><circle r="12"/></clipPath>
+</defs>
+<g clip-path="url(#frame)">
+ <path fill="url(#sky)" d="M0 0h640v420H0z"/><path fill="url(#dawn)" d="M0 0h640v420H0z"/>
+ <g fill="#d9d9cb"><circle cx="409" cy="58" r="1.2" opacity=".65"/><circle cx="558" cy="80" r="1" opacity=".5"/><circle cx="526" cy="42" r="1.4" opacity=".5"/><circle cx="581" cy="148" r=".9" opacity=".4"/><circle cx="372" cy="110" r=".8" opacity=".4"/></g>
+ <path d="M82 315a180 180 0 0 1 360 0" fill="none" stroke="#ddc795" stroke-width="1.2" stroke-dasharray="3 8" opacity=".48"/>
+ <path d="M65 315h490" stroke="#e5bc80" stroke-opacity=".35"/><circle cx="82" cy="315" r="3" fill="#e4bd80"/><circle cx="442" cy="315" r="3" fill="#d0bda0"/>
+ <path d="M0 226h640v99H0z" fill="url(#horizon)"/>
+ <path d="M0 316l45-7 51 5 56-10 54 9 57-6 66 10 58-14 64 10 60-5 62 8 67-3v107H0z" fill="#101e31"/>
+ <g fill="url(#stone)" stroke="#83919c" stroke-opacity=".25" stroke-width="1">
+  <path d="M208 348v-40c0-26 21-50 52-64 31 14 52 38 52 64v40z"/>
+  <path d="M196 348h130v40H196z"/><path d="M164 348v-64h18v64m-22-64h26l-13-13zM336 348v-78h17v78m-22-78h27l-13.5-13z"/>
+  <path d="M169 270v-59h8v59m-14-59h20l-10-22zM340 257v-70h9v70m-15-70h21l-10.5-23z"/>
+  <path d="M117 366v-29c0-16 12-30 30-39 18 9 30 23 30 39v29zM359 368v-24c0-16 12-30 30-39 18 9 30 23 30 39v24z"/>
+ </g>
+ <path d="M260 244v-16m-4 0h8M173 189v-8m172-17v-8" stroke="#dec393" stroke-width="1.5"/>
+ <g fill="#e7c890" opacity=".6"><path d="M247 371v-18a13 13 0 0 1 26 0v18z"/><path d="M216 350v-9a5 5 0 0 1 10 0v9zM294 350v-9a5 5 0 0 1 10 0v9z"/></g>
+ <path d="M0 379h640v41H0z" fill="#0a1423"/>
+ <rect x="426" y="340" width="178" height="43" rx="21.5" fill="#18263b" stroke="#bda97d" stroke-opacity=".45"/>
+ <g transform="translate(451 361)"><circle r="12" fill="#7d8a99"/><path d="M0-12a12 12 0 0 1 0 24a5 12 0 0 0 0-24" fill="#e8dfc5"/></g>
+ <g transform="translate(483 361)"><circle r="12" fill="#7d8a99"/><path d="M0-12a12 12 0 0 1 0 24z" fill="#e8dfc5"/></g>
+ <circle cx="515" cy="361" r="12" fill="#e8dfc5"/>
+ <g transform="translate(547 361)"><circle r="12" fill="#7d8a99"/><path d="M0-12a12 12 0 0 0 0 24z" fill="#e8dfc5"/></g>
+ <g transform="translate(579 361)"><circle r="12" fill="#7d8a99"/><path d="M0-12a12 12 0 0 0 0 24a5 12 0 0 1 0-24" fill="#e8dfc5"/></g>
+</g>
+<rect x="8.5" y="8.5" width="623" height="403" rx="24.5" fill="none" stroke="#c9b686" stroke-opacity=".6"/>
+</svg>

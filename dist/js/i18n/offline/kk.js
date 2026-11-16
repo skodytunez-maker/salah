@@ -11,6 +11,7 @@ export default Object.freeze({
  'offlineUi.storage':'Бұл браузерде офлайн сақтау мүмкін емес.',
  'offlineUi.failed':'Жүктеуді аяқтау мүмкін болмады. Сақталған бөліктер қалады; жалғастырып көріңіз.',
  'offlineUi.download':'Бүкіл Құранды жүктеу',
+ 'offlineUi.downloaded':'Құран жүктелді',
  'offlineUi.resume':'Жүктеуді жалғастыру',
  'offlineUi.pause':'Жүктеуді кідірту',
  'offlineUi.read':'Интернетсіз оқу',

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {wallpaperChoice,skyObjects,wallpapers,previewClock,skyGeometry} from '../dist/js/wallpapers.js';
+import {wallpaperChoice,skyObjects,wallpapers,previewClock,skyGeometry,moonAppearance,moonPhasePath} from '../dist/js/wallpapers.js';
 import {solarSceneAt,sceneForMode} from '../dist/js/day-night.js';
-import {getTimes,getPosition,getMoonTimes,getMoonPosition} from '../dist/js/vendor/suncalc.js';
+import {getTimes,getPosition,getMoonTimes,getMoonPosition,getMoonIllumination} from '../dist/js/vendor/suncalc.js';
 const store=new Map();globalThis.localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
 const {settings,updateSettings,normalizeSettings}=await import('../dist/js/storage.js');
 assert.equal(settings.wallpaper,'mosque');assert.equal(wallpapers.length,3);assert.equal(wallpaperChoice('external-url'),'mosque');assert.throws(()=>normalizeSettings({wallpaper:'external-url'},{strict:true}));
@@ -106,9 +106,9 @@ for(const elapsed of [0,2500,5000,10000,15000,17500,20000]){
  const simulated=previewClock(observed,null,elapsed,tyumen),preview=skyObjects(observed,null,'auto',elapsed,tyumen);
  finite(preview);assert.deepEqual(preview,at(simulated));
 }
-assert.equal(skyObjects(observed,null,'light').sun,1);assert.equal(skyObjects(observed,null,'dark').moon,1);
+for(const mode of ['auto','light','dark'])assert.deepEqual(skyObjects(observed,null,mode,null,tyumen),at(observed),'Lighting choice never changes the real celestial position or visibility');
 for(const city of [null,{latitude:91,longitude:0},{latitude:0,longitude:181},{latitude:NaN,longitude:0},{latitude:'57',longitude:65}]){
- const sky=at(observed,city);finite(sky);assert.equal(sky.sun,0);assert.equal(sky.moon,0);
+ for(const mode of ['auto','light','dark']){const sky=skyObjects(observed,null,mode,null,city);finite(sky);assert.equal(sky.sun,0);assert.equal(sky.moon,0);}
 }
 const invalidTime=skyObjects(NaN,null,'auto',null,tyumen);finite(invalidTime);assert.equal(invalidTime.sun,0);assert.equal(invalidTime.moon,0);
 
@@ -143,3 +143,40 @@ assert.equal(solarSceneAt(Date.parse('2026-06-21T00:00:00Z'),svalbard).day,1);
 assert.equal(solarSceneAt(NaN,tyumen),null);assert.equal(solarSceneAt(observed,{latitude:91,longitude:0}),null);
 assert.equal(sceneForMode(observed,null,'dark',tyumen).day,0);assert.equal(sceneForMode(observed,null,'light',tyumen).day,1);
 console.log('PASS: independent saved landmark city; safe preference validation; astronomical twilight continuity; polar light; explicit modes; prayer offsets do not affect the scene.');
+
+// SunCalc2 azimuth is north=0/east=90/south=180/west=270, never a
+// negative south-based v1 value. Dawn must not silently become sunset.
+const sydney={latitude:-33.8688,longitude:151.2093};
+for(const city of [tyumen,nyc,sydney,{latitude:0,longitude:0}]){
+ const events=getTimes(new Date('2026-11-17T12:00:00Z'),city.latitude,city.longitude);
+ const rise=solarSceneAt(+events.sunrise,city),set=solarSceneAt(+events.sunset,city);
+ assert.ok(rise.dawn>.1&&rise.dusk===0,'Eastern ascending Sun gives dawn in either hemisphere');
+ assert.ok(set.dusk>.1&&set.dawn===0,'Western descending Sun gives sunset in either hemisphere');
+ const first=at(+events.sunrise+minute,city),last=at(+events.sunset-minute,city);
+ assert.ok(city.latitude<0?first.sunX>last.sunX:first.sunX<last.sunX,'Equator-facing SH panorama correctly reverses east/west');
+}
+// This is a genuine illuminated area, not a scaled crescent photograph.
+const pathArea=path=>{const values=[...path.matchAll(/[ML]([\d.]+) ([\d.]+)/g)].map(match=>[+match[1],+match[2]]);let twice=0;for(let i=0;i<values.length;i++){const a=values[i],b=values[(i+1)%values.length];twice+=a[0]*b[1]-a[1]*b[0];}return Math.abs(twice)/2;};
+for(const fraction of [0,.001,.08,.25,.5,.75,.92,.999,1])assert.ok(Math.abs(pathArea(moonPhasePath(fraction))/(Math.PI/4)-fraction)<.005,'Lunar mask area matches illumination '+fraction);
+const degrees=Math.PI/180,vector=p=>[Math.cos(p.altitude*degrees)*Math.sin(p.azimuth*degrees),Math.cos(p.altitude*degrees)*Math.cos(p.azimuth*degrees),Math.sin(p.altitude*degrees)],dot=(a,b)=>a.reduce((sum,x,i)=>sum+x*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit=a=>a.map(x=>x/Math.hypot(...a)),angleDistance=(a,b)=>Math.abs(((a-b+540)%360)-180);
+// Independent horizon vectors project the Sun onto the Moon's tangent plane.
+// Their bright-limb direction catches reversed degree/sign/hemisphere masks.
+for(const city of [tyumen,sydney,{latitude:0,longitude:0}])for(const stamp of ['2026-11-17T12:00:00Z','2026-11-21T12:00:00Z','2026-11-29T12:00:00Z']){
+ const date=new Date(stamp),sun=getPosition(date,city.latitude,city.longitude),moon=getMoonPosition(date,city.latitude,city.longitude),m=vector(moon),s=vector(sun),up=unit([0,0,1].map((x,i)=>x-m[2]*m[i])),right=cross(m,up),expected=Math.atan2(-dot(s,up),dot(s,right))/degrees,actual=moonAppearance(+date,city);
+ assert.ok(angleDistance(actual.rotation,expected)<3,'The illuminated limb faces the Sun from the observer’s horizon');
+ assert.equal(actual.fraction,getMoonIllumination(date).fraction);assert.equal(actual.phase,getMoonIllumination(date).phase);
+}
+const sameInstant=Date.parse('2026-11-17T00:30:00Z'),northMoon=moonAppearance(sameInstant,tyumen),southMoon=moonAppearance(sameInstant,sydney);
+assert.equal(northMoon.fraction,southMoon.fraction);assert.equal(northMoon.phase,southMoon.phase);assert.ok(angleDistance(northMoon.rotation,southMoon.rotation)>20,'Location changes observer tilt, not the global phase');
+assert.deepEqual(moonAppearance(NaN,tyumen),{fraction:0,phase:0,rotation:0,textureRotation:0});
+// Independently fetched primary reference, UTC to one-minute precision:
+// https://aa.usno.navy.mil/api/moon/phases/date?date=2026-11-01&nump=5
+// USNO API4.0.1, retrieved2026-11-17. Rendering does not query this service.
+for(const [instant,phase,fraction]of [['2026-11-01T20:28:00Z',.75,.5],['2026-11-09T07:02:00Z',0,0],['2026-11-17T11:48:00Z',.25,.5],['2026-11-24T14:53:00Z',.5,1],['2026-12-01T06:08:00Z',.75,.5]]){
+ // USNO names geocentric longitude conjunction/opposition. SunCalc's phase
+ // is derived from the 3-D illuminated fraction; lunar ecliptic latitude means
+ // it need not hit exactly0/.5 at a non-eclipse new/full Moon.
+ const actual=moonAppearance(Date.parse(instant),tyumen),distance=Math.abs(actual.phase-phase);assert.ok(Math.min(distance,1-distance)<(fraction===.5?.003:.02),'USNO primary phase at '+instant);assert.ok(Math.abs(actual.fraction-fraction)<.003,'USNO illuminated fraction at '+instant);
+}
+const waxing=moonAppearance(Date.parse('2026-11-13T12:00:00Z'),tyumen),waning=moonAppearance(Date.parse('2026-11-28T12:00:00Z'),tyumen);assert.ok(waxing.phase>0&&waxing.phase<.5);assert.ok(waning.phase>.5&&waning.phase<1);assert.ok(moonAppearance(Date.parse('2026-11-09T07:02:00Z'),tyumen).fraction<.002,'New Moon has no bright disc or glow');
+console.log('PASS: v2 north-clockwise dawn convention, both hemisphere directions, exact lunar illuminated area, independent bright-limb orientation and one global phase at each instant.');

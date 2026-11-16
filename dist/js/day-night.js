@@ -33,7 +33,10 @@ export function solarSceneAt(now,city){
  if(!Number.isFinite(sun.altitude)||!Number.isFinite(sun.azimuth))return null;
  const day=smooth((sun.altitude+12)/18);
  const warm=smooth((sun.altitude+4)/5)*(1-smooth((sun.altitude-1)/9));
- const morning=sun.azimuth<0,dawn=morning?warm:0,dusk=morning?0:warm;
+ // SunCalc2 uses degrees clockwise from north: the eastern half of the sky
+ // (0..180) is ascending, in either hemisphere. v1's negative/south azimuth
+ // convention would incorrectly classify every morning as dusk here.
+ const morning=sun.azimuth<180,dawn=morning?warm:0,dusk=morning?0:warm;
  return {day,dawn,dusk,phase:day===0?'night':warm>.01?(morning?'dawn':'dusk'):day>.5?'day':'night'};
 }
 export function sceneForMode(now,times,mode,city=null){return mode==='light'?{day:1,dawn:0,dusk:0,phase:'day'}:mode==='dark'?night():solarSceneAt(now,city)||sceneAt(now,times)}

@@ -11,6 +11,7 @@ export default Object.freeze({
  'offlineUi.storage':'Offline storage is unavailable in this browser.',
  'offlineUi.failed':'The download could not finish. Saved parts are kept; try resuming.',
  'offlineUi.download':'Download the whole Quran',
+ 'offlineUi.downloaded':'Quran downloaded',
  'offlineUi.resume':'Resume download',
  'offlineUi.pause':'Pause download',
  'offlineUi.read':'Read offline',

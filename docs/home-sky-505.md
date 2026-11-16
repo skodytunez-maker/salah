@@ -1,0 +1,17 @@
+# Home sky in 505
+
+The Home background follows the selected prayer city's coordinates and the current absolute instant. This is a schematic equator-facing panorama: the northern hemisphere and equator look south, with east on the left; the southern hemisphere looks north, with east on the right. The wallpaper is not a measured compass panorama, and its skyline projection is not an angular survey. The foreground architecture, Home layout, prayer calculations and all five Quran player nature videos remain unchanged.
+
+The pinned, unchanged SunCalc 2.1 module returns degrees clockwise from north. Morning is the eastern half of the sky, not the negative azimuth used by SunCalc 1. Solar altitude drives continuous daylight and warm horizon colours. Sun and Moon have independent rise/set paths and horizon fades. Explicit light/dark background choices affect lighting; they do not invent a permanently visible Moon or bypass its real horizon.
+
+Lunar illumination is calculated at one global instant. Position and zenith-relative bright-limb orientation use the observer coordinates and parallactic angle. A geometric phase clip reveals the appropriate area of the unchanged NASA full-disc texture. There is no local-calendar phase shift, repeated fictitious orbit, survey precision or lunar-libration promise. Illumination below 0.003 is not painted as a bright disc or halo. Fresh measured fog (weather codes45/48) and opaque cloud cover hide the celestial discs and direct light; unavailable or stale weather does not fabricate fog.
+
+The mosque photo contains a fixed crescent in its sky. One opaque, smoothly coloured sky layer uses the existing source mask to cover that sky while preserving the facade and architectural finials. Other photo skies keep a translucent atmosphere. No photo was retouched and the mask geometry did not change. Full-disc provenance and packaged credit are recorded in `home-sky-moon-505.json` and `dist/assets/home-moon-source.txt`; no About-screen attribution or new controls were added.
+
+The existing foreground timer supplies real motion, with a one-minute phase-geometry cache. The existing optional preview accelerates one shared astronomical instant for lighting, position and phase. Hidden pages stop the existing preview frames, reduced motion is respected, and city/crop/resume changes reset coordinates without streaking across the screen. No new animation loop, location request, GPS tracking or network ephemeris dependency was added.
+
+Validation includes SunCalc2 angle conventions, northern/southern/equatorial directions, rise/set continuity, polygon area, observer orientation vectors, all background choices, new-Moon suppression, mask/texture DOM, viewport changes, hidden/reduced motion, measured fog and missing weather. Official USNO API4.0.1 fixtures cover 2026-11-01 last quarter20:28UTC, November9 new Moon07:02UTC, November17 first quarter11:48UTC, November24 full Moon14:53UTC and December1 last quarter06:08UTC. The fixture checks illumination within0.003. New/full Moon cyclic phase has a0.02 tolerance because SunCalc's geometric extrema and conjunction/opposition differ with lunar latitude; this is not a claim of minute-accurate ephemerides.
+
+Primary references: [SunCalc](https://github.com/mourner/suncalc), [USNO API](https://aa.usno.navy.mil/data/api), [NOAA solar terminology](https://www.gml.noaa.gov/grad/solcalc/glossary.html), [NASA Moon Mosaic](https://svs.gsfc.nasa.gov/5001).
+
+Browser automation was not used. Mathematical and DOM checks do not replace a physical iPhone visual check.

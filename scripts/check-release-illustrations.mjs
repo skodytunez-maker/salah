@@ -98,7 +98,11 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- if(APP_ANNOUNCEMENT.version===502){
+ if(APP_ANNOUNCEMENT.version===505){
+  assert.equal(releaseModal.querySelectorAll('.release-feature').length,1);const selected=releaseModal.querySelector('.release-feature[aria-hidden="false"]'),picture=selected.querySelector('img'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();assert.equal(picture.getAttribute('src'),'./assets/updates/home-sky-505.svg');assert.equal(selected.querySelectorAll('.release-sky-preview [data-release-motion-part]').length,3);
+  for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(releaseModal.querySelector('.release-feature'),selected);assert.equal(selected.querySelector('img'),picture);assert.equal(selected.querySelector('h3').textContent,t('skyReleaseUi.title'));assert.equal(selected.querySelector('p').textContent,t('skyReleaseUi.text'));assert.equal(doc.activeElement,confirmation);assert.equal(hasSeenAnnouncement(),false);}
+  setInterfaceLanguage('ru');assert.ok(releaseModal.textContent.includes('Небо в вашем городе'));assert.doesNotMatch(releaseModal.textContent,/Коран всегда рядом|Расписание без сети|Ваше скачанное чтение|SALAH на вашем языке|Переводы смыслов с источниками|Ночью чтение продолжается|Сохраните прослушанное/);
+ }else if(APP_ANNOUNCEMENT.version===502){
   assert.equal(releaseModal.querySelectorAll('.release-feature').length,3);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,3);assert.equal(releaseModal.querySelectorAll('.release-offline-preview [data-release-motion-part]').length,3);
   releaseModal.querySelector('[data-release-next]').click();const selected=releaseModal.querySelector('.release-feature[aria-hidden="false"]'),picture=selected.querySelector('img'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();
   for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(releaseModal.querySelector('.release-feature[aria-hidden="false"]'),selected);assert.equal(selected.querySelector('img'),picture);assert.equal(selected.querySelector('h3').textContent,t('offlineReleaseUi.prayerTitle'));assert.equal(doc.activeElement,confirmation);assert.equal(hasSeenAnnouncement(),false);}

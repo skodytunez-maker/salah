@@ -4343,6 +4343,21 @@
       "path": "dist/assets/updates/audio-offline-502.svg",
       "bytes": 2147,
       "gitBlobSha": "5146c3caa08865e62f957c6e0b79f3fc6247ff46"
+    },
+    {
+      "path": "dist/assets/home-moon-disc.jpg",
+      "gitBlobSha": "eccf3896a57c55b6ecea1fc92f0bcd282ba43993",
+      "bytes": 252499
+    },
+    {
+      "path": "dist/assets/home-moon-source.txt",
+      "gitBlobSha": "6285999b8372f078a765ff4749eb2d524ba828ef",
+      "bytes": 1064
+    },
+    {
+      "path": "dist/assets/updates/home-sky-505.svg",
+      "gitBlobSha": "9e15e779c638a9f7cdaad151879b8659386d676a",
+      "bytes": 3669
     }
   ],
   "incrementalEvidence": [
@@ -4519,6 +4534,25 @@
       "evidence": "docs/release-announcements.md",
       "baseCommit": "e1ffe4fefa669623026ed3ab959db42c04e2ee4d",
       "note": "Original release502 SVG sources and exact final Git blob fingerprints are recorded in entries and media-rights-register. Shared release-motion overlays animate only the active visible card and respect reduced motion."
+    },
+    {
+      "date": "2026-11-17",
+      "paths": [
+        "dist/assets/home-moon-disc.jpg",
+        "dist/assets/home-moon-source.txt"
+      ],
+      "evidence": "docs/home-sky-moon-505.json",
+      "baseCommit": "e2656d149add1ab287f0967561d28bf4405889ea",
+      "note": "Unchanged NASA SVS5001 Moon Mosaic print JPEG and bundled source acknowledgement. Exact Git blob, byte length and SHA-256 are recorded; NASA media usage conditions apply to factual informational display without implied endorsement. Historical sourceCommit and all earlier inventory/evidence records remain unchanged."
+    },
+    {
+      "date": "2026-11-17",
+      "paths": [
+        "dist/assets/updates/home-sky-505.svg"
+      ],
+      "evidence": "docs/release-artwork.md",
+      "baseCommit": "e2656d149add1ab287f0967561d28bf4405889ea",
+      "note": "Original repository-authored release505 SVG for the Home sky feature, with final-file fingerprint recorded in entries and media-rights-register. It uses project-authored vector shapes only and does not embed the NASA Moon JPEG. Origin support is not a claim of exclusive copyright or blanket clearance."
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"
