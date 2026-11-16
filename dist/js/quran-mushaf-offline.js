@@ -75,7 +75,7 @@ export function mountMushafOffline(host,index,{getOffline=()=>false,onModeChange
   if(closed)return;const busy=snapshot.status==='downloading',checking=snapshot.status==='checking';
   const key=checking?'offlineUi.checking':snapshot.status==='ready'?'offlineUi.ready':snapshot.status==='paused'?'offlineUi.paused':snapshot.status==='error'?'offlineUi.'+(snapshot.error==='quota'?'quota':snapshot.error==='storage'?'storage':'failed'):busy?'offlineUi.progress':'offlineUi.available';
   setUiLabel(status,key,{count:snapshot.done,size:new Intl.NumberFormat(getLocale(),{minimumFractionDigits:1,maximumFractionDigits:1}).format((snapshot.totalBytes||index.totalBytes+(index.transcriptionBytes||0)+(index.searchBytes||0)+MUSHAF_OFFLINE_FONT.bytes)/1048576)});
-  progress.hidden=!busy;progress.value=snapshot.done;save.disabled=busy||checking||snapshot.complete;pause.hidden=!busy;setUiLabel(save,snapshot.done&&!snapshot.complete?'offlineUi.resume':'offlineUi.download');mode.disabled=!getOffline()&&!snapshot.complete;setUiLabel(mode,getOffline()?'offlineUi.printed':'offlineUi.read');
+  progress.hidden=!busy;progress.value=snapshot.done;save.disabled=busy||checking||snapshot.complete;pause.hidden=!busy;setUiLabel(save,checking?'offlineUi.checking':snapshot.complete?'offlineUi.downloaded':snapshot.done?'offlineUi.resume':'offlineUi.download');mode.disabled=!getOffline()&&!snapshot.complete;setUiLabel(mode,getOffline()?'offlineUi.printed':'offlineUi.read');
  };
  const off=queue.subscribe(state=>{snapshot=state;paint();}),offLanguage=subscribeLanguage(paint);
  save.onclick=()=>void queue.start(index);pause.onclick=()=>void queue.pause();mode.onclick=()=>{onModeChange(!getOffline());paint();};

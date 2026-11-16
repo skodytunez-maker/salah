@@ -1,5 +1,13 @@
 # SALAH release announcements
 
+## Version505 — sky for the selected prayer city (17 November2026)
+
+The new announcement505 contains exactly one public change: «Небо в вашем городе: плавный рассвет и закат, движение Солнца и Луны, сегодняшняя лунная фаза. Туман и плотные облака скрывают светила.» It expires on 24 November2026 at23:59:59UTC. Earlier announcement receipts remain unchanged; the new edition uses the normal confirmation-only acknowledgement.
+
+One dedicated original vector illustration shows the sunrise arc, mosque silhouette and lunar phases, with shared alternating Sun/Moon/cloud motion. The three surrounding captions have explicit translations in all eight interface languages. Hide/pause and reduced-motion behavior use the existing release-gallery lifecycle. Existing 502 offline cards remain available as their historical edition and are not appended to505. Private owner city reporting, Mushaf button maintenance, staff access and billing do not appear in this public news.
+
+The artwork and source catalogue mapping are checked by `scripts/check-sky-release-news.mjs` and the existing release-illustrations check. Device astronomy is the Home feature; the news illustration is an explanatory example. No new religious text or third-party media is introduced by this artwork. Final media fingerprints belong in the existing rights registers.
+
 ## Version502 — offline Quran, saved prayer schedules and downloaded recitations (15 November2026)
 
 Make the complete Quran available for offline reading through the existing verified 114-surah corpus and 604-page range map. Save and verify the existing Amiri Quran font with the book; pause and resume reuse valid bytes. The offline view uses Unicode Arabic and preserves every ayah, bookmarks and page boundaries; its lettering and line breaks differ from the online printed Tajweed/Madani view. Preserve the online printed default and source attributions. Do not cache Quran.Foundation page fonts without the required active-account evidence. No new religious text, recordings or printed-page assets are introduced. Details: docs/quran-offline-502.md.

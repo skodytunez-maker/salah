@@ -5,7 +5,7 @@ const w=new Window({url:'https://example.invalid/salah/#knowledge'}),doc=w.docum
 Object.assign(globalThis,{window:w,document:doc,location:w.location,localStorage:w.localStorage,Event:w.Event});
 doc.body.innerHTML='<main id="app"></main><div id="toast" hidden></div>';
 const{showKnowledge}=await import('../dist/js/knowledge.js'),{UPCOMING_KNOWLEDGE}=await import('../dist/js/knowledge-upcoming.js');
-const{illustratedReleaseMarkup}=await import('../dist/js/release-gallery.js'),{APP_VERSION,APP_CHANGES,APP_ANNOUNCEMENT}=await import('../dist/js/app-release.js'),{releaseFeatureForChange}=await import('../dist/js/release-illustrations.js');
+const{illustratedReleaseMarkup}=await import('../dist/js/release-gallery.js'),{APP_VERSION}=await import('../dist/js/app-release.js'),{releaseFeatureForChange}=await import('../dist/js/release-illustrations.js');
 const host=doc.getElementById('app');let started=0;
 for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=online-lessons','#knowledge?view=live-stream','#knowledge?preview=online-lessons','#knowledge?preview=muallim','#knowledge?preview=live-stream']){
  w.location.hash=hash;showKnowledge(host,{hash,onStart:()=>started++});
@@ -22,14 +22,14 @@ for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=onlin
  assert.ok(host.querySelector('a[href="#knowledge?view=names"]'),'Existing names remain available');
  const links=host.querySelectorAll('[data-learning-entry]');assert.equal(links.length,3);links[0].click();assert.equal(started,1);started=0;
 }
-host.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);
+const historical502Changes=['Коран без интернета: все страницы.','Намаз без интернета: сохранённое расписание.','Скачанное аудио: своя библиотека.'];
+host.innerHTML=illustratedReleaseMarkup(502,historical502Changes);
 assert.equal(host.querySelectorAll('.release-feature').length,3,'News502 contains exactly offline Quran, prayer schedules and downloaded audio');
 assert.equal(host.querySelectorAll('.release-coming-button').length,0,'Closed features are not re-announced as new');
 for(const feature of UPCOMING_KNOWLEDGE)assert.ok(![...host.querySelectorAll('.release-feature h3')].some(h=>h.textContent===feature.title+' · скоро'));
-const currentFeatures=['quran-offline-502','prayer-offline-502','audio-offline-502'];
-assert.equal(APP_ANNOUNCEMENT.version,502);
-assert.deepEqual(APP_ANNOUNCEMENT.changes.map(releaseFeatureForChange),currentFeatures,'Public announcement502 covers only the three new offline features');
-assert.deepEqual(APP_CHANGES.map(releaseFeatureForChange),currentFeatures,'Current release and announcement use the same three feature-specific illustrations');
+const historicalFeatures=['quran-offline-502','prayer-offline-502','audio-offline-502'];
+assert.deepEqual(historical502Changes.map(releaseFeatureForChange),historicalFeatures,'Historical announcement502 covers only the three new offline features');
+assert.deepEqual([...host.querySelectorAll('.release-new-art img')].map(img=>img.getAttribute('src')),historicalFeatures.map(name=>'./assets/updates/'+name+'.svg'),'Historical502 keeps its three exact feature-specific illustrations independently of the current edition');
 assert.equal(host.querySelectorAll('.release-offline-preview.release-motion-preview [data-release-motion-part]').length,3);
 assert.doesNotMatch(host.textContent,/тафсир|подписк|оплат|плат[её]ж|yookassa|Короткое напоминание каждый день|Своя атмосфера для чтения|Ночью чтение продолжается|Сохраните прослушанное|SALAH на вашем языке|Переводы смыслов с источниками/iu,'Closed, billing and previously announced features stay out of news502');
 for(const img of host.querySelectorAll('.release-feature img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));

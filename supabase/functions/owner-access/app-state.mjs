@@ -44,7 +44,8 @@ export async function readOwnerAppState(sql,page=1){
    c.section,case when s.playing_at is not null then 'playing' when mp.actor is not null then mp.player_state else 'unknown' end as player_state,
    coalesce(s.playing_at,mp.reported_at)as player_signal_at,
    case when g.paused_at is not null then true else s.credit_paused end as credit_paused,
-   c.visible and c.valid_session and c.reported_at>b.now-interval '45 seconds' as visible,s.last_signal_at,s.last_action_at,s.app_version
+   c.visible and c.valid_session and c.reported_at>b.now-interval '45 seconds' as visible,s.last_signal_at,s.last_action_at,s.app_version,
+   context.city as selected_city,context.country as selected_country,context.context_at as selected_context_at
   from chosen c join signals s using(actor)cross join bounds b left join player_latest mp on mp.actor=c.actor
   left join auth.users u on u.id=c.user_id
   left join lateral(
@@ -59,14 +60,25 @@ export async function readOwnerAppState(sql,page=1){
    where c.user_id is null and g.public_id is null and p.activity_hash=c.device_hash and p.claimed_by is not null
    order by p.created_at desc,p.public_id limit 1
   )historical_guest on true
+  left join lateral(
+   select city,country,context_at from(
+    select p.selected_city as city,p.selected_country as country,p.selected_context_at as context_at,(p.tab_id=c.tab_id)::integer as chosen_tab,3 as priority,p.tab_id::text as stable
+    from salah_visits_private.app_state_presence p where p.actor=c.actor and p.selected_context_at is not null and p.selected_context_at<=b.now+interval '5 seconds' and p.reported_at>=b.now-interval '24 hours' and p.reported_at<=b.now+interval '5 seconds'
+    union all
+    select a.city,a.country,a.city_updated_at,0,2,'' from salah_counter_private.account_context a where c.user_id is not null and a.user_id=c.user_id and a.city_updated_at is not null and a.city_updated_at<=b.now+interval '5 seconds'
+    union all
+    select p.selected_city,p.selected_country,p.selected_context_at,(p.tab_id=c.tab_id)::integer,1,p.kind||':'||p.tab_id::text
+    from salah_visits_private.guest_activity_presence p where c.user_id is null and p.device_hash=c.device_hash and p.selected_context_at is not null and p.selected_context_at<=b.now+interval '5 seconds' and p.reported_at>=b.now-interval '24 hours' and p.reported_at<=b.now+interval '5 seconds'
+   )explicit_context order by context_at desc,chosen_tab desc,priority desc,stable limit 1
+  )context on true
   where(c.user_id is null and c.device_hash~'^[a-f0-9]{64}$')or(u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)and(u.banned_until is null or u.banned_until<=b.now))
  ), numbered as(
   select n.*,row_number()over(order by n.last_signal_at desc,n.actor)as rank from named n
  ), summary as(select count(*)::integer as total from numbered)
  select (select now from bounds)as "updatedAt",summary.total,
-  coalesce(jsonb_agg(jsonb_build_object('id',n.id,'guest',n.guest,'nickname',n.nickname,'section',n.section,'playerState',n.player_state,'playerSignalAt',n.player_signal_at,'playerExpiresAt',n.player_signal_at+interval '45 seconds','creditPaused',n.credit_paused,'lastSignalAt',n.last_signal_at,'lastActionAt',n.last_action_at,'visible',n.visible,'appVersion',n.app_version)order by n.rank)filter(where n.rank is not null),'[]'::jsonb)as items
+  coalesce(jsonb_agg(jsonb_build_object('id',n.id,'guest',n.guest,'nickname',n.nickname,'section',n.section,'playerState',n.player_state,'playerSignalAt',n.player_signal_at,'playerExpiresAt',n.player_signal_at+interval '45 seconds','creditPaused',n.credit_paused,'lastSignalAt',n.last_signal_at,'lastActionAt',n.last_action_at,'visible',n.visible,'appVersion',n.app_version,'selectedCity',case when n.selected_city is not null then jsonb_build_object('city',n.selected_city,'country',n.selected_country,'reportedAt',n.selected_context_at)else null end)order by n.rank)filter(where n.rank is not null),'[]'::jsonb)as items
  from summary left join numbered n on n.rank>${offset} and n.rank<=${offset+50} group by summary.total`;
  if(!result||!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.items))throw Error('invalid_app_state');
  const iso=value=>value===null?null:new Date(value).toISOString();
- return{updatedAt:iso(result.updatedAt),freshForSeconds:45,total:result.total,page,pageSize:50,items:result.items.map(row=>({...row,lastSignalAt:iso(row.lastSignalAt),lastActionAt:iso(row.lastActionAt),playerSignalAt:iso(row.playerSignalAt),playerExpiresAt:iso(row.playerExpiresAt)}))};
+ return{updatedAt:iso(result.updatedAt),freshForSeconds:45,total:result.total,page,pageSize:50,items:result.items.map(row=>({...row,selectedCity:row.selectedCity?{...row.selectedCity,reportedAt:iso(row.selectedCity.reportedAt)}:null,lastSignalAt:iso(row.lastSignalAt),lastActionAt:iso(row.lastActionAt),playerSignalAt:iso(row.playerSignalAt),playerExpiresAt:iso(row.playerExpiresAt)}))};
 }

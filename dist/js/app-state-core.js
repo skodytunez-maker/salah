@@ -1,3 +1,4 @@
+import{guestSelectedContext}from './guest-context.js';
 const MAX_SEQUENCE=2147483647,MAX_ACTION_AGE=86400000;
 export const APP_SECTIONS=['home','knowledge','quran','reciters','qibla','adhkar','more','settings','account','support','staff','lesson','radio','admin','other'];
 export function appSection(location){
@@ -10,7 +11,7 @@ export function appSection(location){
  return 'other';
 }
 // This short-lived signal describes app state, never Top eligibility or input contents.
-export function createAppStateReporter({getIdentity,getView,getPlayback,getCreditPaused=()=>null,appVersion,send,now=Date.now,randomId=()=>crypto.randomUUID(),Controller=AbortController,schedule=setTimeout,cancel=clearTimeout}){
+export function createAppStateReporter({getIdentity,getView,getPlayback,getCreditPaused=()=>null,getSelectedCity=()=>null,appVersion,send,now=Date.now,randomId=()=>crypto.randomUUID(),Controller=AbortController,schedule=setTimeout,cancel=clearTimeout}){
  let identity=null,scope=null,tab=null,sequence=0,actionSequence=0,lastAction=null,previous=null,forwardAt=-Infinity,lastSent=-Infinity,lastSignature=null,lastActionSent=-1,retryAt=0,timer=null,inflight=null,queued=false,epoch=0,disposed=false;
  const reset=next=>{epoch++;if(timer!==null)cancel(timer);timer=null;if(inflight){inflight.controller.abort();cancel(inflight.timeout);}inflight=null;identity=next;scope=next?.scope||null;tab=scope?randomId():null;sequence=actionSequence=0;lastAction=null;previous=null;forwardAt=-Infinity;lastSent=-Infinity;lastSignature=null;lastActionSent=-1;retryAt=0;queued=false;};
  const current=()=>{const next=getIdentity();if(next?.scope!==scope)reset(next||null);else identity=next;return identity;};
@@ -28,7 +29,7 @@ export function createAppStateReporter({getIdentity,getView,getPlayback,getCredi
  const later=delay=>{if(timer!==null)return;timer=schedule(()=>{timer=null;sample();},Math.max(0,delay));};
  function sample({force=false,keepalive=false}={}){
   if(disposed||!current())return;
-  const time=now(),view=getView()||{},credit=getCreditPaused(),snapshot={visible:view.visible===true,section:APP_SECTIONS.includes(view.section)?view.section:'other',playerState:playerState(time),creditPaused:typeof credit==='boolean'?credit:null},signature=JSON.stringify(snapshot);
+  const time=now(),view=getView()||{},credit=getCreditPaused(),snapshot={visible:view.visible===true,section:APP_SECTIONS.includes(view.section)?view.section:'other',playerState:playerState(time),creditPaused:typeof credit==='boolean'?credit:null,selectedCity:guestSelectedContext(getSelectedCity())},signature=JSON.stringify(snapshot);
   const due=force||signature!==lastSignature||actionSequence!==lastActionSent||time-lastSent>=15000;
   if(!due)return;
   keepalive=keepalive||!snapshot.visible;

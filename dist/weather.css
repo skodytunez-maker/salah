@@ -45,3 +45,7 @@ body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{animation:none
 #weather-layer[data-motion=off][data-kind=rain] .weather-rain::after,#weather-layer[data-motion=off][data-kind=storm] .weather-rain::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 61px,rgba(208,222,240,.24) 62px 63px,transparent 64px 128px);-webkit-mask-image:repeating-linear-gradient(to bottom,#000 0 18px,transparent 19px 76px);mask-image:repeating-linear-gradient(to bottom,#000 0 18px,transparent 19px 76px)}
 #weather-layer[data-motion=off][data-kind=snow] .weather-snow::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 18px 23px,rgba(239,246,252,.6) 1.5px,transparent 2.5px),radial-gradient(circle at 53px 68px,rgba(239,246,252,.35) 1px,transparent 2px);background-size:91px 113px}
 body.no-transitions *,body.no-transitions *::before,body.no-transitions *::after{transition:none!important;scroll-behavior:auto!important}
+
+/* Measured fog scatters daylight and removes direct celestial discs. At night
+   its colour remains dark; missing/stale weather never enables this layer. */
+#weather-layer .weather-mist{background:linear-gradient(180deg,rgba(var(--weather-fog-color,35,48,65),.18),rgba(var(--weather-fog-color,35,48,65),.74) 53%,rgba(var(--weather-fog-color,35,48,65),.63) 76%,rgba(var(--weather-fog-color,35,48,65),.22));filter:blur(5px)}

@@ -1,5 +1,13 @@
 # Public release roundup
 
+## 505 — the sky in your city
+
+The new public announcement contains one sky feature only. `home-sky-505.svg` is original, repository-authored vector artwork: a mosque silhouette, sunrise arc, warm horizon and a sequence of shaded lunar discs. It embeds no external pictures, fonts, religious quotations, personal data or third-party artwork. The card adds its own vector Sun, phase-shaded Moon and cloud/fog layers; the Sun follows the illustrated arc and clouds cover the light sources. These are explanatory examples, not a live astronomical observation inside the news card.
+
+`sky-release-news.js` uses existing `release-motion-preview` and `data-release-motion-part` with the shared `release-sleep-turn`, `release-daily-reminder-rise` and `release-nature-scene` keyframes. The active visible card loops in alternating directions until the existing confirmation; hidden/closed and reduced-motion modes retain the shared pause/static behavior. Three explicit `skyReleaseUi` captions are translated in all eight existing UI languages, with no text baked into the artwork. The source catalogue hook is additive; runtime bundles and the worker graph are built by the release pipeline.
+
+`scripts/check-sky-release-news.mjs` verifies the installed 505 dialog, one-feature scope, original bounded SVG, real shared keyframes, all-eight source/runtime captions, stable elements/focus/RTL while changing language, visibility and confirmation-only acknowledgement. It independently keeps the three historical 502 offline cards intact. The main release-artwork check also exercises the current 505 branch; no older features, private owner reports or billing are promoted.
+
 The user requested real feature pictures in update cards, not a generic star plus text. Use screenshots from SALAH and the existing verified reciter portraits and award artwork. Keep personal account data out of these images.
 
 The October 18, 2026 roundup is APP_ANNOUNCEMENT version 357. It remains prominently available on Menu through APP_NEWS_UNTIL (October 21, 2026, 05:30 Asia/Yekaterinburg). Per the user's follow-up, the Home entry disappears after the announcement is read and «Понятно» is pressed; the saved seen-version prevents its return on later launches. Menu retains access for reopening the cards. The automatic modal remains once per announcement; do not interrupt readers repeatedly.

@@ -1282,12 +1282,12 @@
     },
     {
       "path": "dist/assets/mosque-sky-mask.svg",
-      "gitBlobSha": "c80124e7826a77091a4ea8606be93d346ae80b73",
-      "bytes": 1086,
+      "gitBlobSha": "dcbfe9200d095aa7fa4e6a7ee247676d96c5215e",
+      "bytes": 1146,
       "kind": "vector",
       "rightsReviewStatus": "origin-supported",
-      "rightsEvidence": "docs/sky-projection-451.md",
-      "note": "Project-authored geometric vector occlusion mask aligned to the existing SALAH mosque photograph; no imported raster or external vector. Existing photograph and its original crescent remain unchanged."
+      "rightsEvidence": "docs/home-sky-moon-505.json",
+      "note": "Project-authored geometric vector occlusion mask from docs/sky-projection-451.md; its geometry is identical to release504 and only the SVG description changed. The original mosque photograph is untouched. The masked sky overlay covers its painted crescent so the code-rendered Moon supplies the current phase; no imported raster or external vector is added to this mask."
     },
     {
       "path": "dist/assets/night-mosque.webp",
@@ -3663,6 +3663,26 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/release-announcements.md",
       "note": "Original SALAH release502 SVG interface illustration authored directly in repository code: offline Quran save/read progress, saved prayer-calendar coverage, or saved recitation library. Uses original panel geometry and decorative lines, not copied third-party app artwork or religious quotations. No embedded or external images/fonts/private user data; origin support does not claim exclusive copyright."
+    },
+    {
+      "path": "dist/assets/home-moon-disc.jpg",
+      "gitBlobSha": "eccf3896a57c55b6ecea1fc92f0bcd282ba43993",
+      "bytes": 252499,
+      "kind": "image",
+      "rightsReviewStatus": "license-recorded",
+      "license": "NASA Images and Media Usage Guidelines",
+      "originUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005001/moon_mosaic_print.jpg",
+      "rightsEvidence": "docs/home-sky-moon-505.json",
+      "note": "Unchanged NASA Scientific Visualization Studio Moon Mosaic JPEG (SVS5001), with exact SHA-256 and credit recorded in the dedicated evidence and bundled home-moon-source.txt. NASA guidance permits factual informational use with source acknowledgement and no implied endorsement; this is not a claim of exclusive rights. SALAH code applies its own phase shading and display orientation without rewriting the source image."
+    },
+    {
+      "path": "dist/assets/updates/home-sky-505.svg",
+      "gitBlobSha": "9e15e779c638a9f7cdaad151879b8659386d676a",
+      "bytes": 3669,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-artwork.md",
+      "note": "Original SALAH release505 illustration authored directly as repository SVG paths, gradients and circles: mosque skyline, Sun arc and lunar phases. No external or embedded images, fonts, third-party artwork, religious text or user content; this SVG does not embed the separate NASA Moon texture. Provenance supports project origin without claiming exclusive copyright or blanket clearance."
     }
   ],
   "wallpaperSets": [

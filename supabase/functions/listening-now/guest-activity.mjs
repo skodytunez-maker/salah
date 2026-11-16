@@ -1,7 +1,7 @@
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const origins=new Set(['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost']);
 export const guestActivityOrigin=origin=>origins.has(origin);
-function selectedContext(value){
+export function selectedContext(value){
  if(value===null)return null;
  const clean=v=>typeof v==='string'&&v.length<=160&&!/[\u0000-\u001f\u007f]/.test(v)&&v.trim()?v.trim().replace(/\s+/g,' '):null;
  if(!value||Array.isArray(value)||Object.keys(value).some(k=>!['city','country'].includes(k))||!clean(value.city)||value.country!==undefined&&value.country!==null&&!clean(value.country))throw Error('invalid_guest_context');

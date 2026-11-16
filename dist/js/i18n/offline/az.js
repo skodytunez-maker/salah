@@ -11,6 +11,7 @@ export default Object.freeze({
  'offlineUi.storage':'Bu brauzerdə oflayn yaddaş əlçatan deyil.',
  'offlineUi.failed':'Yükləməni tamamlamaq mümkün olmadı. Saxlanmış hissələr qalır; davam etməyə çalışın.',
  'offlineUi.download':'Bütün Quranı yüklə',
+ 'offlineUi.downloaded':'Quran yüklənib',
  'offlineUi.resume':'Yükləməyə davam et',
  'offlineUi.pause':'Yükləməni dayandır',
  'offlineUi.read':'İnternetsiz oxu',

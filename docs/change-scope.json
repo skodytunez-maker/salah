@@ -1,209 +1,297 @@
 {
   "schema": 1,
-  "version": 504,
-  "baseCommit": "57159b55577b5fc1465fc0e3cbad6ab1192effda",
-  "baseTree": "8fc40bbcca7caf90a9ddec31ac571d76b6bb928c",
+  "version": 505,
+  "baseCommit": "e2656d149add1ab287f0967561d28bf4405889ea",
+  "baseTree": "9774e5d00f2da4f757b31e4cfe9a65a6e53a183c",
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
-      "path": "dist/js/app-bootstrap.js",
-      "reason": "Apply the same automatic phone-language fallback before module startup, without writing saved preferences."
+      "path": "dist/assets/home-moon-disc.jpg",
+      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
+    },
+    {
+      "path": "dist/assets/home-moon-source.txt",
+      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
+    },
+    {
+      "path": "dist/assets/mosque-sky-mask.svg",
+      "reason": "Correct only the existing sky-mask description to describe the new runtime sky composition; mask geometry and source photos are unchanged."
+    },
+    {
+      "path": "dist/assets/updates/home-sky-505.svg",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
+    },
+    {
+      "path": "dist/day-night.css",
+      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance the minor release to504 while preserving announcement502, its acknowledgement, expiry and feature cards."
+      "reason": "Advance to505 on2026-11-17; a new announcement covers only the newly introduced sky feature, leaving historical announcements intact."
     },
     {
-      "path": "dist/js/competition-client.js",
-      "reason": "Send measured eligible progress at most once a second and consume confirmed public numeric updates; retain full recovery, account isolation, current privacy and own-counter behavior."
+      "path": "dist/js/app-state-core.js",
+      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
     },
     {
-      "path": "dist/js/competition-fast-progress.js",
-      "reason": "Bounded cumulative transport shared by account and guest producers, with a confirmed full baseline, coalescing, no overlapping requests and no invented seconds."
+      "path": "dist/js/app-state.js",
+      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
     },
     {
-      "path": "dist/js/competition-page.js",
-      "reason": "Patch confirmed seconds in the visible Top without replacing stable cards, images, focus or carousel state; pause polling while hidden or offline."
+      "path": "dist/js/day-night.js",
+      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
     },
     {
-      "path": "dist/js/guest-competition-core.js",
-      "reason": "Send compact measured guest progress while preserving exact raw/credited offsets, holds, registration transfer and full recovery."
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
     },
     {
-      "path": "dist/js/guest-competition.js",
-      "reason": "Wire the existing guest transport to abortable compact progress and final measured tail uploads, retaining the existing full-sync cadence."
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
     },
     {
-      "path": "dist/js/language-settings.js",
-      "reason": "Remove the visible device-language option, display the automatically resolved language and add decorative flags to eight existing choices without changing other settings."
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
     },
     {
-      "path": "dist/js/quran-reciter-library.js",
-      "reason": "Remove the general Downloaded shortcut from Quran and reciter headers while preserving their navigation and all per-surah download indicators."
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
     },
     {
-      "path": "dist/js/quran.js",
-      "reason": "Remove duplicate translation and whole-text download controls from the general Quran page; preserve the existing Aa translation selector, inner Mushaf download, player, library and offline stores."
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
     },
     {
-      "path": "dist/js/reciter-popularity.js",
-      "reason": "Mark the actual measured pause/end/pagehide tail for transport after eligibility filtering; keep media metering and night-credit rules unchanged."
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
     },
     {
-      "path": "dist/js/storage.js",
-      "reason": "Use the phone language by default, while preserving valid explicit language choices and strict backup validation."
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
+    },
+    {
+      "path": "dist/js/i18n-source-catalogues.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/offline/ar.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/az.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/de.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/en.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/kk.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/ru.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/tg.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/offline/uz.js",
+      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/ar.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/az.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/de.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/en.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/index.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/kk.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/ru.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/tg.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/uz.js",
+      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
+    },
+    {
+      "path": "dist/js/owner-current-activity.js",
+      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
+    },
+    {
+      "path": "dist/js/quran-mushaf-offline.js",
+      "reason": "Show Quran downloaded only after complete SHA/font verification; retain resumable loading, errors, corruption recovery, offline reading and all604pages/6236ayat."
+    },
+    {
+      "path": "dist/js/release-illustrations.js",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
+    },
+    {
+      "path": "dist/js/sky-release-news.js",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
+    },
+    {
+      "path": "dist/js/wallpapers.js",
+      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
+    },
+    {
+      "path": "dist/js/weather.js",
+      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
+    },
+    {
+      "path": "dist/privacy.html",
+      "reason": "Clarify the existing selected-prayer-city disclosure for entry/resume and24h latest app-state, distinct from10minute activity indicators; no new UI or location permission."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance the existing shell/update version to504, preserving request handling and downloaded stores."
+      "reason": "Advance505 shell/release metadata and cache the exact new runtime closure, Moon texture/credit and sky illustration; preserve downloaded stores, safe activation and request handling."
     },
     {
-      "path": "docs/calendar-award-total-ranking.md",
-      "reason": "Record the requested award-criterion correction and controlled verification without private user repair data."
+      "path": "dist/weather.css",
+      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
+    },
+    {
+      "path": "docs/app-entry-selected-city.md",
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Fingerprint the complete published503 baseline and allow only the reviewed changes of release504."
+      "reason": "Bind the exact505 allowlist to the complete immutable published504 baseline and verify every unrelated file stays unchanged."
     },
     {
-      "path": "docs/competition-confirmed-live-progress.md",
-      "reason": "Document the confirmed compact transport, privacy, exact credit offsets, operational limits, compatible fallback and migration-before-client deployment order."
+      "path": "docs/home-sky-505.md",
+      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
     },
     {
-      "path": "scripts/check-app-bootstrap.mjs",
-      "reason": "Verify automatic fallback for missing, invalid and inaccessible language preferences, retaining manual choices and startup recovery."
+      "path": "docs/home-sky-moon-505.json",
+      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
     },
     {
-      "path": "scripts/check-classroom-language.mjs",
-      "reason": "Seed an explicit Russian comparison fixture so classroom RU-to-English tests remain meaningful with automatic phone-language defaults; lesson behavior and data assertions stay unchanged."
+      "path": "docs/media-rights-register.json",
+      "reason": "Record the two explicitly introduced505 images and correct the modified sky-mask description fingerprint; preserve unrelated rights records and historical sourceCommit."
     },
     {
-      "path": "scripts/check-competition-account-progress.mjs",
-      "reason": "Exercise the real registered adapter with full capability and measured compact uploads, serialized recovery, independent own reads, abort handling and queued account isolation."
+      "path": "docs/owner-current-activity-500.md",
+      "reason": "Clarify the existing selected-prayer-city disclosure for entry/resume and24h latest app-state, distinct from10minute activity indicators; no new UI or location permission."
     },
     {
-      "path": "scripts/check-competition-client.mjs",
-      "reason": "Load the real shared producer factory in existing account/SDK-lock fixtures while retaining all original assertions."
+      "path": "docs/owner-selected-city-entry-505.md",
+      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
     },
     {
-      "path": "scripts/check-competition-fast-progress-client.mjs",
-      "reason": "Exercise the real compact transport with delayed acknowledgements, cumulative changes, full interleave, abort draining and bounded retries."
+      "path": "docs/release-announcements.md",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
     },
     {
-      "path": "scripts/check-competition-fast-progress.mjs",
-      "reason": "Actual PostgreSQL and HTTP regressions for account/guest compact writes, shared elapsed-time budgets, full recovery, auth, rate limits and numeric public responses."
+      "path": "docs/release-artwork.md",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
     },
     {
-      "path": "scripts/check-competition-live.mjs",
-      "reason": "Actual consumer and DOM tests for confirmed foreign seconds, synchronized total, stable cards, stale responses, privacy, route changes and offline/hidden backoff."
+      "path": "docs/rights-source-manifest.json",
+      "reason": "Record the two explicitly introduced505 images and correct the modified sky-mask description fingerprint; preserve unrelated rights records and historical sourceCommit."
     },
     {
-      "path": "scripts/check-competition-responsive.mjs",
-      "reason": "Retain the existing total/favorite/carousel regressions with real new dependency factories and ordered backend revision fixtures."
+      "path": "scripts/check-app-state-sql.mjs",
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
     {
-      "path": "scripts/check-guest-competition.mjs",
-      "reason": "Retain all guest ledger and transfer assertions while loading the shared compact progress budget migration in the actual PostgreSQL fixture."
+      "path": "scripts/check-app-state.mjs",
+      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
     },
     {
-      "path": "scripts/check-guest-fast-progress.mjs",
-      "reason": "Verify exact guest offsets, thin watermark acknowledgements, full-only resume, final tail, cross-tab stale replies and registration transfer."
+      "path": "scripts/check-image-presentation.mjs",
+      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
     },
     {
-      "path": "scripts/check-guest-stone-aliases.mjs",
-      "reason": "Preserve every stone-name and privacy assertion while returning the current same-SQL snapshot envelope from its canned public-board fixture."
-    },
-    {
-      "path": "scripts/check-interface-language-core.mjs",
-      "reason": "Verify the automatic language default, explicit choices, backup compatibility and unchanged source-language data."
-    },
-    {
-      "path": "scripts/check-interface-language-settings.mjs",
-      "reason": "Actual DOM regressions for eight flags, automatic and manual preferences, denied storage, RTL, focus, drafts, audio and prayer settings."
-    },
-    {
-      "path": "scripts/check-interface-shell.mjs",
-      "reason": "Verify the requested eight-language picker in the actual shell without duplicate selectors or changing other routes."
-    },
-    {
-      "path": "scripts/check-listener-presence-sql.mjs",
-      "reason": "Keep existing presence/privacy assertions with the lazy compact-budget dependency used by the production guest database adapter."
-    },
-    {
-      "path": "scripts/check-listening-credit-client.mjs",
-      "reason": "Retain the real eligibility/source tests and cover account changes before the next meter sample so a new account cannot upload the previous account's ledger."
+      "path": "scripts/check-knowledge-coming-soon.mjs",
+      "reason": "Keep all Knowledge availability assertions and isolate the historical502 offline-news fixture from the new505 announcement; no Knowledge product change."
     },
     {
       "path": "scripts/check-owner-app-state.mjs",
-      "reason": "Verify historical guest aliases without importing claimed credit or exposing account identity."
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
     {
-      "path": "scripts/check-public-language.mjs",
-      "reason": "Seed an explicit Russian comparison fixture for public UI language tests, preserving existing privacy, byline, PDF and calendar assertions."
-    },
-    {
-      "path": "scripts/check-quran-library-language.mjs",
-      "reason": "Actual DOM regressions across eight languages for clean general Quran controls and the unchanged single translation selector inside the surah, retaining content, audio and cancellation checks."
+      "path": "scripts/check-owner-current-activity.mjs",
+      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
     },
     {
       "path": "scripts/check-quran-mushaf-offline.mjs",
-      "reason": "Verify the existing complete Mushaf download remains once inside its own options panel; preserve all page, Arabic-text and offline-cache assertions."
+      "reason": "Show Quran downloaded only after complete SHA/font verification; retain resumable loading, errors, corruption recovery, offline reading and all604pages/6236ayat."
     },
     {
-      "path": "scripts/check-quran-saved-library.mjs",
-      "reason": "Verify both general headers omit the Downloaded shortcut while direct offline access, per-surah indicators, saved audio, deletion and resume remain functional."
+      "path": "scripts/check-release-illustrations.mjs",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
     },
     {
-      "path": "scripts/lib/ranking-language-fixture.mjs",
-      "reason": "Keep legacy language comparison fixtures network-free; the dedicated live counter fixture overrides the adapter with the actual watcher."
+      "path": "scripts/check-scene-load.mjs",
+      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
     },
     {
-      "path": "supabase/functions/guest-competition/competition-core.mjs",
-      "reason": "Keep the guest function's packaged snapshot validator identical to the registered validator and add bounded compact progress validation."
+      "path": "scripts/check-sky-release-news.mjs",
+      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
     },
     {
-      "path": "supabase/functions/guest-competition/core.mjs",
-      "reason": "Accept a strictly validated compact guest action without allowing it to resume a credit hold or claim an account."
+      "path": "scripts/check-tablet-wallpapers.mjs",
+      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
     },
     {
-      "path": "supabase/functions/guest-competition/db.mjs",
-      "reason": "Apply compact cumulative guest writes with the shared elapsed-time budget, exact credit revisions and existing held/claimed ledger rules."
+      "path": "scripts/check-wallpapers.mjs",
+      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
+    },
+    {
+      "path": "scripts/check-weather-data.mjs",
+      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
+    },
+    {
+      "path": "supabase/functions/listening-now/app-state.mjs",
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
+    },
+    {
+      "path": "supabase/functions/listening-now/guest-activity.mjs",
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
     {
       "path": "supabase/functions/owner-access/app-state.mjs",
-      "reason": "Reuse the existing stone alias for a historical guest after registration; keep identifiers, credit, activity, owner session/MFA and privacy checks unchanged."
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
     {
-      "path": "supabase/functions/reciter-competition/core.mjs",
-      "reason": "Validate compact progress with at most four reciters and two day buckets, preserving the full snapshot contract."
+      "path": "supabase/functions/owner-access/index.ts",
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
     {
-      "path": "supabase/functions/reciter-competition/guest-board.mjs",
-      "reason": "Return total and numeric rows from one SQL snapshot with a comparable revision; preserve full public identity and eligibility policy."
-    },
-    {
-      "path": "supabase/functions/reciter-competition/index.ts",
-      "reason": "Route authenticated compact writes and a bounded public numeric read without invoking full initialization or award refresh on every tick."
-    },
-    {
-      "path": "supabase/functions/reciter-competition/live-board.mjs",
-      "reason": "Coalesce public numeric reads in a bounded short cache with explicit response-size limits and no hidden row truncation."
-    },
-    {
-      "path": "supabase/functions/reciter-competition/progress-db.mjs",
-      "reason": "Apply registered cumulative compact and full writes through one elapsed-time budget, retaining account/device isolation and full-sync imports."
-    },
-    {
-      "path": "supabase/migrations/20261116132745_calendar_awards_total_ranking.sql",
-      "reason": "Make weekly and monthly awards rank eligible confirmed accounts by total time across all reciters, matching the current total Top and retaining existing boundaries and award rules."
-    },
-    {
-      "path": "supabase/migrations/20261116132805_confirmed_competition_progress.sql",
-      "reason": "Add private fast/full growth and request budgets with closed public permissions; preserve all existing listening and award data."
-    },
-    {
-      "path": "tests/awards/check-database.cjs",
-      "reason": "Real PostgreSQL regressions for total-time award winners, representative reciter, ties, eligibility, queues, permissions and idempotent replay; retain all existing award checks."
+      "path": "supabase/migrations/20261116221752_app_entry_selected_city.sql",
+      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     }
   ],
   "generated": [
@@ -2755,7 +2843,7 @@
     },
     {
       "path": "dist/js/app-bootstrap.js",
-      "sha": "b0d15bbe0fd6776b99bb501290ad3a93a7827121"
+      "sha": "4e5f8d73f8d9bb48f4788e97c192abc39eb485ac"
     },
     {
       "path": "dist/js/app-recover.js",
@@ -2763,7 +2851,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "de8283d63f3682a7e127f279b7efbe1e052e9c45"
+      "sha": "1cc8129a6171b20ebba4d46162e28e6ba811dba6"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2879,7 +2967,11 @@
     },
     {
       "path": "dist/js/competition-client.js",
-      "sha": "1f5e91d2994af40ff4bf8b2fc7cef613407808e4"
+      "sha": "c3f9bcc447d7b4fb00de905b9bca6303c58448d2"
+    },
+    {
+      "path": "dist/js/competition-fast-progress.js",
+      "sha": "ade3c5d956847c7457acc98c5150523970c0ceee"
     },
     {
       "path": "dist/js/competition-motion.js",
@@ -2887,7 +2979,7 @@
     },
     {
       "path": "dist/js/competition-page.js",
-      "sha": "80df11ef91239308b5bce9a42f194913044bbae6"
+      "sha": "c7d0543290fdc77ebfe8002f31014cebcb2d4fbd"
     },
     {
       "path": "dist/js/competition-view.js",
@@ -2975,11 +3067,11 @@
     },
     {
       "path": "dist/js/guest-competition-core.js",
-      "sha": "88f4b966ef00576a8a4d8e95b3d9fee8e4556096"
+      "sha": "8b28a778bad77f8a45640926a7ebc0d908398fa7"
     },
     {
       "path": "dist/js/guest-competition.js",
-      "sha": "9b1aa83a54df0d3c0415e610444c78b84de74995"
+      "sha": "cc84fd485d8028defca2462f2779287bde8b67c7"
     },
     {
       "path": "dist/js/guest-context.js",
@@ -3943,7 +4035,7 @@
     },
     {
       "path": "dist/js/language-settings.js",
-      "sha": "7db706c3bb16c40255f1f88645a692355ccaa9df"
+      "sha": "48eddd9caa3bb5520ce8b1494655f43a449a4205"
     },
     {
       "path": "dist/js/learning-awards-catalog.js",
@@ -4439,7 +4531,7 @@
     },
     {
       "path": "dist/js/quran-reciter-library.js",
-      "sha": "5e601258d8be11498eb44b29b9ef1eb45d8d6b3a"
+      "sha": "e4c4a48823f0f5674d2b09759da3c74a3eba53c9"
     },
     {
       "path": "dist/js/quran-reciter-recording.js",
@@ -4507,7 +4599,7 @@
     },
     {
       "path": "dist/js/quran.js",
-      "sha": "e02299129061ce9d7a905c7086ab988197ebbecc"
+      "sha": "aee18bd5225daafb7c91722baa340a835dd295df"
     },
     {
       "path": "dist/js/radio-candidates.js",
@@ -4543,7 +4635,7 @@
     },
     {
       "path": "dist/js/reciter-popularity.js",
-      "sha": "5194390e8be5684d874d585089d84232ec5cbf00"
+      "sha": "e3c1c7c877f3177067c151bf86f326ba6cb964b1"
     },
     {
       "path": "dist/js/reciter-ranking-core.js",
@@ -4651,7 +4743,7 @@
     },
     {
       "path": "dist/js/storage.js",
-      "sha": "01988f4e60b34cb06fd11cd7000968a7ff99b1ee"
+      "sha": "8723ebe076c4750044e278051943aa612f389dfa"
     },
     {
       "path": "dist/js/support-billing-test.js",
@@ -4955,7 +5047,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "4683b0ed1c2ce738d4562327c407e231263104e2"
+      "sha": "d3944666bb494f6d5e5108be88f9cc7da3de6a7e"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5410,8 +5502,12 @@
       "sha": "39d6304806b50d3695266e37bcdf34eba72f6eda"
     },
     {
+      "path": "docs/calendar-award-total-ranking.md",
+      "sha": "6b13ba8b259b5040beb6d251810ba83f9fa35997"
+    },
+    {
       "path": "docs/change-scope.json",
-      "sha": "8b2a0f2d5dfc46712be985330dd85d5775c5e00d"
+      "sha": "57640b6d28ddf5c52a08b7c814ccca73f58bd1a6"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5420,6 +5516,10 @@
     {
       "path": "docs/classroom-schedule-schema.sql",
       "sha": "8264e2bcd5cfc478b105c4f589559ccdb6485a4c"
+    },
+    {
+      "path": "docs/competition-confirmed-live-progress.md",
+      "sha": "31073f7e2c6981ba00e1e6b29d1fdedcba02f1ef"
     },
     {
       "path": "docs/competition-summary-consistency.md",
@@ -6283,7 +6383,7 @@
     },
     {
       "path": "scripts/check-app-bootstrap.mjs",
-      "sha": "a569062f98a5b5c93aff25d203a028a9e79d2080"
+      "sha": "2f61f7fb89127f166d396d980a430fbab8a3dd59"
     },
     {
       "path": "scripts/check-app-sharing.mjs",
@@ -6375,7 +6475,7 @@
     },
     {
       "path": "scripts/check-classroom-language.mjs",
-      "sha": "e02c5f44ca4e114b20e697ed315a7272d837b9dc"
+      "sha": "c1c5662263a084d90e51f7be1428dcb63cb17719"
     },
     {
       "path": "scripts/check-classroom-schedule.mjs",
@@ -6390,8 +6490,24 @@
       "sha": "607f1d44d7daa250d424b14ae312fce73112acba"
     },
     {
+      "path": "scripts/check-competition-account-progress.mjs",
+      "sha": "416b16fb5bf386ace5d10dc53a2011058a8bcae4"
+    },
+    {
       "path": "scripts/check-competition-client.mjs",
-      "sha": "ba0c6a64cc76514c9a0306a981e2c20fb55c0e30"
+      "sha": "6328fc382a53a1c1bb454840e7968ea125822a85"
+    },
+    {
+      "path": "scripts/check-competition-fast-progress-client.mjs",
+      "sha": "43837ef4cd16da73e0b742f1658e104908017380"
+    },
+    {
+      "path": "scripts/check-competition-fast-progress.mjs",
+      "sha": "b607ce6fb05247edd867fd558237198822e262f0"
+    },
+    {
+      "path": "scripts/check-competition-live.mjs",
+      "sha": "c61a4431247dec137eefdcb79c12c32d86d6b278"
     },
     {
       "path": "scripts/check-competition-period-consistency.mjs",
@@ -6399,7 +6515,7 @@
     },
     {
       "path": "scripts/check-competition-responsive.mjs",
-      "sha": "fae244ef9c881de0f81f0d6be47e97e5a84e7b44"
+      "sha": "ae26fc86bb0ec9ea9a22e9add035e45e44efcc65"
     },
     {
       "path": "scripts/check-competition-sql.mjs",
@@ -6487,11 +6603,15 @@
     },
     {
       "path": "scripts/check-guest-competition.mjs",
-      "sha": "bcd923d52db23611869f7b0fa41e3d9d0e6292f3"
+      "sha": "2751172a02c5db8330797052a7ba30e751cc8fd7"
     },
     {
       "path": "scripts/check-guest-context.mjs",
       "sha": "3c08b8008faf7f032cdcfaae745aa2574a5cf993"
+    },
+    {
+      "path": "scripts/check-guest-fast-progress.mjs",
+      "sha": "1b6b7d70f3f7986301474681ad7e49eca282acbe"
     },
     {
       "path": "scripts/check-guest-initials.mjs",
@@ -6503,7 +6623,7 @@
     },
     {
       "path": "scripts/check-guest-stone-aliases.mjs",
-      "sha": "cbbd6c70514def76499b374654a3b5d2e882c751"
+      "sha": "2c3b8d5327f11e1122e3fd941b82012a867deed1"
     },
     {
       "path": "scripts/check-guest-visitors.mjs",
@@ -6543,15 +6663,15 @@
     },
     {
       "path": "scripts/check-interface-language-core.mjs",
-      "sha": "393b9495370708615ffbe344a9cb946125d2bee9"
+      "sha": "1690195f9a1b91685ec5bcd9c0bc45ca4c9fd28e"
     },
     {
       "path": "scripts/check-interface-language-settings.mjs",
-      "sha": "a4a8f5596c2c7ce0e256857469c43910fc229dd1"
+      "sha": "5b1d020362f54a62d19c00074c29deb75db648c3"
     },
     {
       "path": "scripts/check-interface-shell.mjs",
-      "sha": "e72bc83dcec3d71eb812ce0fb98d7c232a122334"
+      "sha": "024e216b4b79b5484f0350253ac683f79bed2e62"
     },
     {
       "path": "scripts/check-ios-widget.mjs",
@@ -6603,7 +6723,7 @@
     },
     {
       "path": "scripts/check-listener-presence-sql.mjs",
-      "sha": "b06064ac07581928e80cf37eee2314a71529d464"
+      "sha": "1e3d972c0b02221e1e7a4d62b0e7d27e35415dfa"
     },
     {
       "path": "scripts/check-listener-presence.mjs",
@@ -6611,7 +6731,7 @@
     },
     {
       "path": "scripts/check-listening-credit-client.mjs",
-      "sha": "eb45e0d163c2f4df7be94b724d5881db4a6a803d"
+      "sha": "b963f8d7f80baa1d6946707f1a783b14767eb82c"
     },
     {
       "path": "scripts/check-listening-credit.mjs",
@@ -6755,7 +6875,7 @@
     },
     {
       "path": "scripts/check-owner-app-state.mjs",
-      "sha": "fb383082dd288faa19fca82abb13800ad3b7fd8a"
+      "sha": "d063d6fbce8af550dab45fec32be5d0205d313e8"
     },
     {
       "path": "scripts/check-owner-client.mjs",
@@ -6879,7 +6999,7 @@
     },
     {
       "path": "scripts/check-public-language.mjs",
-      "sha": "273443c11c1d1639ab4635148cd88c6db9ddc748"
+      "sha": "1222ad83d0c006d8f72a160f04d507b2de044f4f"
     },
     {
       "path": "scripts/check-push-bundle.mjs",
@@ -6963,7 +7083,7 @@
     },
     {
       "path": "scripts/check-quran-library-language.mjs",
-      "sha": "353e1f01aa90cef1ad978714000e7c5a51636e61"
+      "sha": "4cdb3cb8f56603bc53673c78786225d22e692040"
     },
     {
       "path": "scripts/check-quran-listen-share.mjs",
@@ -6983,7 +7103,7 @@
     },
     {
       "path": "scripts/check-quran-mushaf-offline.mjs",
-      "sha": "1195de51db488c585941d9b18b3ea1d98fd218cd"
+      "sha": "ae0c78fcfb1a1c15925716bce9ea5cbb69b3125a"
     },
     {
       "path": "scripts/check-quran-mushaf.mjs",
@@ -7059,7 +7179,7 @@
     },
     {
       "path": "scripts/check-quran-saved-library.mjs",
-      "sha": "3cba246c70e226f0d6236f8c2039aca98640f684"
+      "sha": "12f1920eb1a3d803276af0a3daac1aa5dd57cafb"
     },
     {
       "path": "scripts/check-quran-session-recovery.mjs",
@@ -7383,7 +7503,7 @@
     },
     {
       "path": "scripts/lib/ranking-language-fixture.mjs",
-      "sha": "2a6ae8d58b9c4d385c6c2b08498640150f38dfa4"
+      "sha": "b53b7c79dc13fa74ecd09690d73f0413406978de"
     },
     {
       "path": "scripts/prepare-quran-reading.py",
@@ -7551,11 +7671,11 @@
     },
     {
       "path": "supabase/functions/guest-competition/competition-core.mjs",
-      "sha": "2edbb92f73ad4c612c1dda1bfcb90d09e474c1e9"
+      "sha": "9d0ba5e672bf273631c2f7fe73cf89b53d358b14"
     },
     {
       "path": "supabase/functions/guest-competition/core.mjs",
-      "sha": "3d35396ad2cf8fad3aeac62dcf5fba24fd3807ea"
+      "sha": "68c398f72fea0e18736b7cf78a032fe0b06299fc"
     },
     {
       "path": "supabase/functions/guest-competition/credit-control.mjs",
@@ -7563,7 +7683,7 @@
     },
     {
       "path": "supabase/functions/guest-competition/db.mjs",
-      "sha": "5828a6e0dc3d2817de0015cce8d08417c44fc9b4"
+      "sha": "430c17bb0dd7fd34527f0cab8ab3931f7729eb01"
     },
     {
       "path": "supabase/functions/guest-competition/index.ts",
@@ -7599,7 +7719,7 @@
     },
     {
       "path": "supabase/functions/owner-access/app-state.mjs",
-      "sha": "eb9b477eb14a9a6751c6716c38976caf90aab1ec"
+      "sha": "e671ae4250187650def0cba5a698c891186bc739"
     },
     {
       "path": "supabase/functions/owner-access/index.ts",
@@ -7627,15 +7747,15 @@
     },
     {
       "path": "supabase/functions/reciter-competition/core.mjs",
-      "sha": "2edbb92f73ad4c612c1dda1bfcb90d09e474c1e9"
+      "sha": "9d0ba5e672bf273631c2f7fe73cf89b53d358b14"
     },
     {
       "path": "supabase/functions/reciter-competition/guest-board.mjs",
-      "sha": "7de61dc1f03025d461d3eb9a3f1d77d164b6ecee"
+      "sha": "5819e4edff5ff229db2b2e02831d206f956c1ce2"
     },
     {
       "path": "supabase/functions/reciter-competition/index.ts",
-      "sha": "77e7e951440fd6245560e4fd66521a93f70a5cb9"
+      "sha": "6ab88520f823973aae0bde91506664727f6be51b"
     },
     {
       "path": "supabase/functions/reciter-competition/learning-catalog.mjs",
@@ -7658,8 +7778,16 @@
       "sha": "cb99b61f4b7e2255a23220596f3bd1621351ff69"
     },
     {
+      "path": "supabase/functions/reciter-competition/live-board.mjs",
+      "sha": "aabcb8e82f9634733c1111421397f59680a9d6b2"
+    },
+    {
       "path": "supabase/functions/reciter-competition/period-titles.mjs",
       "sha": "55fb7d51c020f834bd4e133728272e68d94c312c"
+    },
+    {
+      "path": "supabase/functions/reciter-competition/progress-db.mjs",
+      "sha": "4cec88dffae6be8733f5968c10abe6d58bd11011"
     },
     {
       "path": "supabase/functions/reciter-popularity/index.ts",
@@ -7898,6 +8026,14 @@
       "sha": "8c43cf24221fa42e14a0721f6a259a2a6f3f072e"
     },
     {
+      "path": "supabase/migrations/20261116132745_calendar_awards_total_ranking.sql",
+      "sha": "dba238ed0bb97b3d77a6dcac142cdb09308ed27b"
+    },
+    {
+      "path": "supabase/migrations/20261116132805_confirmed_competition_progress.sql",
+      "sha": "5e1986372fa54ce2b9781cc3f6b10c7d6c74e76f"
+    },
+    {
       "path": "supabase/native-support-devices.sql",
       "sha": "ba5aff3b83767ebcf89d776acd1034dbb78d7da9"
     },
@@ -7955,7 +8091,7 @@
     },
     {
       "path": "tests/awards/check-database.cjs",
-      "sha": "a45365225e5fb3338ee6ff226018daefa4ba2bf7"
+      "sha": "5b0cd7958fd61bae2ce2b2d667eb14c0bd263370"
     },
     {
       "path": "tests/awards/check-founders.cjs",

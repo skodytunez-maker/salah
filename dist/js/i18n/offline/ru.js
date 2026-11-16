@@ -11,6 +11,7 @@ export default Object.freeze({
  'offlineUi.storage':'Офлайн-хранилище недоступно в этом браузере.',
  'offlineUi.failed':'Не удалось завершить загрузку. Сохранённые части остаются; попробуйте продолжить.',
  'offlineUi.download':'Скачать весь Коран',
+ 'offlineUi.downloaded':'Коран скачан',
  'offlineUi.resume':'Продолжить загрузку',
  'offlineUi.pause':'Приостановить',
  'offlineUi.read':'Читать без интернета',

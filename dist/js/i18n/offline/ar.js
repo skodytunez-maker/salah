@@ -11,6 +11,7 @@ export default Object.freeze({
  'offlineUi.storage':'التخزين دون إنترنت غير متاح في هذا المتصفح.',
  'offlineUi.failed':'تعذر إكمال التنزيل. تبقى الأجزاء المحفوظة؛ حاول استئناف التنزيل.',
  'offlineUi.download':'تنزيل القرآن كاملاً',
+ 'offlineUi.downloaded':'تم تنزيل القرآن',
  'offlineUi.resume':'استئناف التنزيل',
  'offlineUi.pause':'إيقاف التنزيل مؤقتاً',
  'offlineUi.read':'القراءة دون إنترنت',

@@ -11,6 +11,7 @@ export default Object.freeze({
  'offlineUi.storage':'Дар ин браузер нигоҳдории офлайн дастрас нест.',
  'offlineUi.failed':'Боргирӣ анҷом наёфт. Қисмҳои нигоҳдошташуда мемонанд; идома доданро санҷед.',
  'offlineUi.download':'Тамоми Қуръонро боргирӣ кардан',
+ 'offlineUi.downloaded':'Қуръон боргирӣ шуд',
  'offlineUi.resume':'Идома додани боргирӣ',
  'offlineUi.pause':'Боздоштани боргирӣ',
  'offlineUi.read':'Хондан бе интернет',

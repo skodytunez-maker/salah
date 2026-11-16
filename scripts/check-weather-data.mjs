@@ -13,6 +13,7 @@ assert.equal(weatherFrame(sample,now).kind,'rain');
 assert.ok(weatherFrame(sample,now).precipitation>=.2,'a rain condition remains visible even when a tiny interval sum is rounded to zero');
 assert.ok(weatherFrame({...sample,weather_code:51,precipitation:.01},now).precipitation>=.2,'drizzle must not disappear');
 assert.equal(weatherFrame({...sample,weather_code:3,precipitation:0},now).precipitation,0,'overcast skies must not invent rain');
+for(const code of [45,48]){const fog=weatherFrame({...sample,weather_code:code,cloud_cover:0,precipitation:0},now);assert.equal(fog.kind,'fog','Both actual WMO fog codes remain fog even with zero high-cloud cover');assert.equal(fog.fresh,true);assert.equal(fog.precipitation,0);}
 assert.ok(weatherFrame({...sample,precipitation:2},now).precipitation>weatherFrame(sample,now).precipitation,'heavy rain is visually stronger');
 assert.equal(weatherFrame(sample,now+121*60000).fresh,false,'stale weather must not be presented as current');
 store.set('salah:'+weatherKey(city),JSON.stringify({...sample,weather_code:3,locationKey:weatherKey(city)}));
