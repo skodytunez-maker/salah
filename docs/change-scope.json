@@ -102,6 +102,10 @@
       "reason": "Verify exact guest offsets, thin watermark acknowledgements, full-only resume, final tail, cross-tab stale replies and registration transfer."
     },
     {
+      "path": "scripts/check-guest-stone-aliases.mjs",
+      "reason": "Preserve every stone-name and privacy assertion while returning the current same-SQL snapshot envelope from its canned public-board fixture."
+    },
+    {
       "path": "scripts/check-interface-language-core.mjs",
       "reason": "Verify the automatic language default, explicit choices, backup compatibility and unchanged source-language data."
     },

@@ -58,7 +58,9 @@ assert.equal(safeListener({...person,guest:false}).guest,undefined,'A registered
 assert.equal(safeListener(person).guest,undefined);assert.equal(safeListener({...person,nickname:'Гость ABCDEF',guest:true}).guest,true,'Cached legacy guest labels remain guest-safe');
 assert.equal(safeListener({...person,nickname:'Гость',guest:true}).guest,true,'An unmatched guest retains the anonymous fallback');
 for(const nickname of ['Гость · '+ 'x'.repeat(40),'Гость · \nЯнтарь'])assert.equal(safeListener({...person,nickname,guest:true}).guest,undefined);
-const board=await combinedPublicBoard(async()=>[{id:person.id,guest:true,nickname:person.nickname,reciter:'idris',seconds:60,place:1,active_for_seconds:0,listening_total:60}],'day','2026-11-15');
+// The real board query returns one SQL snapshot envelope, including its aggregate
+// and revision. Keep the guest row unchanged while exercising that current shape.
+const board=await combinedPublicBoard(async()=>[{items:[{id:person.id,guest:true,nickname:person.nickname,reciter:'idris',seconds:60,place:1,active_for_seconds:0,listening_total:60}],listening_total:60,revision:Date.now()*1000}],'day','2026-11-15');
 const wire=board.items[0];assert.equal(wire.nickname,'Гость '+person.id.slice(0,6).toUpperCase());assert.equal(wire.guestDisplayName,person.nickname);
 assert.ok(wire.guest===true&&/^Гость [A-F0-9]{6}$/.test(wire.nickname),'The old client guest predicate still matches a new board response during rollout');
 assert.equal(safeListener(wire).nickname,person.nickname);assert.equal(safeListener(wire).guest,true);assert.equal(safeListener(wire).hasPhoto,false);
