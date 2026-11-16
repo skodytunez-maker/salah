@@ -5,7 +5,7 @@ import{rankingTime,listeningTime,renderRankingTimes,rankingErrorMessage,rankingM
 import{translateListeningSummary,createLiveCompetitionRows}from '../../dist/js/listening-summary.js';
 import{watchDecodedImages}from '../../dist/js/image-presentation.js';
 export function rankingUiContext(values){
- const context={...language,watchDecodedImages,uiLeaf,uiAttribute,uiTextAttributes,setUiMessage,uiMessage,uiError,rankingTime,listeningTime,renderRankingTimes,rankingErrorMessage,translateListeningSummary,createLiveCompetitionRows,guestCompetitionOwn:()=>null,localCompetitionTotals:period=>values.personalListening?.(period)?.totals||{},...values};
+ const context={...language,watchDecodedImages,uiLeaf,uiAttribute,uiTextAttributes,setUiMessage,uiMessage,uiError,rankingTime,listeningTime,renderRankingTimes,rankingErrorMessage,translateListeningSummary,createLiveCompetitionRows,watchCompetitionUpdates:()=>()=>{},guestCompetitionOwn:()=>null,localCompetitionTotals:period=>values.personalListening?.(period)?.totals||{},...values};
  context.rankingModal=(...args)=>typeof context.modal==='function'?context.modal(...args):rankingModal(...args);
  return context;
 }

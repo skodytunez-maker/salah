@@ -6,6 +6,8 @@ import{renderQiblaView}from '../dist/js/qibla-view.js';
 
 const win=new Window({url:'https://fixture.invalid/#calendar'}),doc=win.document;
 Object.assign(globalThis,{window:win,document:doc,localStorage:win.localStorage,sessionStorage:win.sessionStorage,Event:win.Event,CustomEvent:win.CustomEvent});
+// This scenario compares Russian with English; it must not inherit the CI phone locale.
+localStorage.setItem('salah:settings',JSON.stringify({uiLanguage:'ru'}));
 doc.body.innerHTML='<main id="app"></main><dialog id="modal"><div id="modal-content"></div></dialog><div id="toast" hidden></div>';
 globalThis.fetch=async()=>{throw Error('Network is forbidden in public UI language checks');};
 const[{t,setInterfaceLanguage,translateUi,getLocale,subscribeLanguage},{initializeInterfaceLanguage},ui,{hijriForDay},{upcomingIslamicDates,remainingDaysMessage},{monthRows,createMonthCanvas,jpegPdf},sharing,{weatherName}]=await Promise.all([

@@ -14,13 +14,13 @@ import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-fav
 import{RANK_INTENTION_PHRASES}from './reciter-ranking-core.js';
 import{listenerPrivacyMarkup,bindPopularConsent}from './reciter-popularity.js';
 import{guestCompetitionOwn}from './guest-competition.js';
-import{loadCompetition,cachedCompetition,competitionListeningTotal,preloadCompetition,clearCompetitionCache,competitionOwn,localCompetitionTotals,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
+import{loadCompetition,cachedCompetition,watchCompetitionUpdates,competitionListeningTotal,preloadCompetition,clearCompetitionCache,competitionOwn,localCompetitionTotals,refreshCompetitionOwn,saveCompetitionSettings,connectCompetitionNotifications,syncCompetitionNow}from './competition-client.js';
 import{competitionMarkup,bindCompetitionView,updateCompetitionTimes,competitionScoreModeButton}from './competition-view.js';
 import{renderRankingTimes,rankingErrorMessage}from './ranking-ui.js';
 export function mountCompetition(host,heading){
  if(!personalDataAllowed()){showRestrictedFeature(host,t('rankingUi.salahTop'));return()=>{};}
  const params=new URLSearchParams(location.hash.split('?')[1]||'');let period=params.get('period')||read('competition-period','all'),rows=[],loading=true,error=false,closed=false,generation=0,busy=false,renderKey='',refreshing=null,resetMotionOnDraw=false,ownerCheck=null,mode='total';
- const selectedReciters=new Map();
+ const selectedReciters=new Map();let stopLive=null,liveKey='',liveDay='',liveEpoch=0,fullRequested=false;
  if(!['day','week','month','all'].includes(period))period='all';
  const periods=[['day','rankingUi.day'],['week','rankingUi.week'],['month','rankingUi.month'],['all','rankingUi.allTime']],liveTotal=createLiveListeningTotal(),liveRows=createLiveCompetitionRows(),sharedMotion=createSharedListeningMotion();
  // Both counters already include this device's history: compare them, never add
@@ -38,7 +38,19 @@ export function mountCompetition(host,heading){
    check.allowed=allowed||ownerNeedsMfa();draw();
   }).catch(()=>{if(ownerCheck===check)ownerCheck=null;});
  }
- function draw(){if(closed)return;const preview=previewState(),shown=displayRows(preview),own=competitionOwn(),{signedIn:signed,userId}=counterSyncStatus(),count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
+ function liveScope(){const auth=counterSyncStatus(),registered=competitionOwn(),guest=auth.signedIn?null:guestCompetitionOwn(period);return(auth.signedIn?'account:'+auth.userId:'guest')+':'+(registered?.id||guest?.id||'none');}
+ function requestFull(){if(closed||fullRequested)return;fullRequested=true;void Promise.resolve(refresh(true)).finally(()=>{fullRequested=false;});}
+ function syncLive(){
+  if(closed)return false;const day=new Date().toDateString(),key=period+':'+mode+':'+day+':'+liveScope()+':'+liveEpoch;if(key===liveKey)return false;
+  stopLive?.();const midnight=!!liveDay&&liveDay!==day;liveDay=day;liveKey=key;
+  if(midnight){rows=cachedCompetition(period,{mode})||[];loading=!rows.length;error=false;liveTotal.reset();liveRows.reset();sharedMotion.reset();}
+  stopLive=watchCompetitionUpdates(period,{mode,getScope:liveScope,onUpdate:update=>{
+   if(closed||liveKey!==key)return;const fresh=cachedCompetition(period,{mode}),roster=new Map((update.roster||[]).map(item=>[item.id,item]));
+   if(fresh!==null){rows=fresh;loading=false;error=false;}else rows=rows.filter(row=>{const item=roster.get(row.id);return item&&item.mode===row.mode&&item.guest===!!row.guest;});
+   draw();if(update.needsRefresh)requestFull();
+  }});if(midnight)requestFull();return midnight;
+ }
+ function draw(){if(closed)return;syncLive();const preview=previewState(),shown=displayRows(preview),own=competitionOwn(),{signedIn:signed,userId}=counterSyncStatus(),count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
  const confirmedTotal=competitionListeningTotal(period),confirmedOwn=rows.find(row=>row.id===preview.own?.id),shownOwn=shown.find(row=>row.id===preview.own?.id);
  let target=liveTotal.sample(confirmedTotal,preview.totals,preview);
  // A detailed board and its aggregate come from the same response. Apply the
@@ -65,14 +77,14 @@ export function mountCompetition(host,heading){
  }
  async function act(action){if(busy)return;busy=true;draw();try{await action();}catch(e){toast(rankingErrorMessage(e));}finally{busy=false;draw();}}
  async function refresh(force=false){if(closed||document.hidden)return;if(refreshing?.period===period&&refreshing.mode===mode)return refreshing.task;const selected=period,scoreMode=mode,token=++generation,entry={period:selected,mode:scoreMode,task:null};refreshing=entry;entry.task=(async()=>{try{const data=await loadCompetition(selected,{force,mode:scoreMode});if(closed||token!==generation)return;rows=data;loading=false;error=false;}catch{if(closed||token!==generation)return;loading=false;error=true;}finally{if(refreshing===entry)refreshing=null;}draw();})();return entry.task;}
- const privacyUpdate=()=>{clearCompetitionCache();liveTotal.reset();liveRows.reset();sharedMotion.reset();generation++;refreshing=null;const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh(true);};
+ const privacyUpdate=()=>{stopLive?.();stopLive=null;liveKey='';liveEpoch++;clearCompetitionCache();liveTotal.reset();liveRows.reset();sharedMotion.reset();generation++;refreshing=null;const own=competitionOwn();if(own){rows=rows.filter(row=>row.id!==own.id);draw();}void refresh(true);};
  const ownUpdate=()=>{void refresh();},authUpdate=()=>{checkRankOwner();draw();void refreshCompetitionOwn().catch(()=>{});void refresh();},visible=()=>{resetMotionOnDraw=true;sharedMotion.reset();if(!document.hidden){checkRankOwner();void refresh(true);}};
  window.addEventListener('salah:listener-visibility',privacyUpdate);window.addEventListener('salah:competition-updated',ownUpdate);window.addEventListener('salah:guest-competition-updated',authUpdate);window.addEventListener('salah:popularity-updated',authUpdate);window.addEventListener('salah:counter-status',authUpdate);document.addEventListener('visibilitychange',visible);
  const progress=()=>{if(!closed&&!document.hidden)draw();};window.addEventListener('salah:personal-listening-progress',progress);
  const timer=setInterval(()=>void refresh(true),5000),phraseTimer=setInterval(()=>{const line=host.querySelector('#rank-intention');if(line&&!document.hidden)line.textContent=RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length];},15000);
- const presenceTimer=setInterval(()=>{if(!closed&&!document.hidden)updateCompetitionTimes(host,displayRows(),mode);},1000);
+ const presenceTimer=setInterval(()=>{if(!closed&&!document.hidden){if(syncLive())draw();else updateCompetitionTimes(host,displayRows(),mode);}},1000);
  const motionTimer=setInterval(()=>{if(!closed&&!document.hidden&&!resetMotionOnDraw)updateListeningSummary(host,sharedMotion.tick());},250);
  const offLanguage=subscribeLanguage(()=>{if(closed)return;translateUi(host);renderRankingTimes(host);translateListeningSummary(host);});
  rows=cachedCompetition(period,{mode})||[];loading=!rows.length;checkRankOwner();draw();resetMotionOnDraw=true;void refresh();void preloadCompetition();void refreshCompetitionOwn().catch(()=>{});
- return()=>{closed=true;offLanguage();generation++;clearInterval(timer);clearInterval(phraseTimer);clearInterval(motionTimer);clearInterval(presenceTimer);sharedMotion.reset();window.removeEventListener('salah:personal-listening-progress',progress);window.removeEventListener('salah:listener-visibility',privacyUpdate);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:guest-competition-updated',authUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
+ return()=>{closed=true;stopLive?.();stopLive=null;liveKey='';offLanguage();generation++;clearInterval(timer);clearInterval(phraseTimer);clearInterval(motionTimer);clearInterval(presenceTimer);sharedMotion.reset();window.removeEventListener('salah:personal-listening-progress',progress);window.removeEventListener('salah:listener-visibility',privacyUpdate);window.removeEventListener('salah:competition-updated',ownUpdate);window.removeEventListener('salah:guest-competition-updated',authUpdate);window.removeEventListener('salah:popularity-updated',authUpdate);window.removeEventListener('salah:counter-status',authUpdate);document.removeEventListener('visibilitychange',visible);};
 }

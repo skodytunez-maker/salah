@@ -1,20 +1,23 @@
 import{combinedPublicBoard}from './guest-board.mjs';
+import{createAccountProgressDb}from './progress-db.mjs';
+import{createLiveBoardLoader}from './live-board.mjs';
 import{currentTitleHolders}from './period-titles.mjs';
 import{listenerPresencePacket,createListenerPresenceDb}from './listener-presence.mjs';
 import postgres from 'npm:postgres@3.4.9';
 import{readListeningTotals}from './listening-totals.mjs';
 import{ownAwards,awardWinners}from './awards.mjs';
 import{learningPacket}from './learning-progress.mjs';
-import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionSubscription}from './core.mjs';
+import{COMPETITION_RECITERS,COMPETITION_PERIODS,validCompetitionId,competitionDay,competitionSnapshot,competitionProgress,competitionSubscription}from './core.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
 const url=Deno.env.get('SUPABASE_URL')!,key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const sql=postgres(Deno.env.get('SUPABASE_DB_URL')!,{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
 const presenceDb=createListenerPresenceDb(sql);
+const progressDb=createAccountProgressDb(sql),liveBoard=createLiveBoardLoader();
 const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Content-Type':'application/json','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'};
 const reply=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers});
 async function verified(req:Request){
  const bearer=req.headers.get('authorization')||'';if(!/^Bearer [A-Za-z0-9_.-]+$/.test(bearer))return null;
- const response=await fetch(url+'/auth/v1/user',{headers:{apikey:key,Authorization:bearer}});if(!response.ok)return null;const user=await response.json();if(!validCompetitionId(user.id)||!user.email_confirmed_at||user.is_anonymous)return null;
+ const response=await fetch(url+'/auth/v1/user',{headers:{apikey:key,Authorization:bearer},signal:AbortSignal.timeout(8000)});if(!response.ok)return null;const user=await response.json();if(!validCompetitionId(user.id)||!user.email_confirmed_at||user.is_anonymous)return null;
  let claim;try{claim=JSON.parse(atob(bearer.slice(7).split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return null;}
  if(claim.sub!==user.id||!validCompetitionId(claim.session_id))return null;
  const sessions=await sql`select id from auth.sessions where id=${claim.session_id}::uuid and user_id=${user.id}::uuid and (not_after is null or not_after>now())`;
@@ -44,6 +47,7 @@ Deno.serve(async req=>{
  if(req.method==='GET'&&params.get('winners')==='1')return reply(await awardWinners(sql));
  if(req.method==='GET'&&params.get('own')!=='true'){
   const period=params.get('period')||'all';if(!COMPETITION_PERIODS.includes(period))return reply({error:'invalid_period'},400);const day=competitionDay(params.get('day')||new Date().toISOString().slice(0,10));
+  if(params.get('live')==='1'){const mode=params.get('mode')||'total';if(!['total','favorite'].includes(mode))return reply({error:'invalid_mode'},400);try{return reply(await liveBoard(sql,period,day,mode));}catch(error){if(error?.message==='live_resource_limit')return reply({error:'live_resource_limit'},503);throw error;}}
   const holders=await currentTitleHolders(sql);
   if(params.get('boards')==='1'){
    const boards:any={},listeningTotals:any={},withTotals=params.get('details')==='reciters';
@@ -73,20 +77,14 @@ Deno.serve(async req=>{
   const result=await sql`select salah_competition_private.record_learning_progress(${user.id}::uuid,${user.session}::uuid,${sql.json(packet.juz)}::jsonb,${sql.json(packet.rounds)}::jsonb)learning`;
   return reply({ok:true,learning:result[0].learning});
  }
+ if(body?.action==='progress'){
+  let snapshot;try{const approved=await sql`SELECT entity_id FROM salah_staff_private.catalog WHERE kind='reciter'`;snapshot=competitionProgress(body,Date.now(),[...COMPETITION_RECITERS,...approved.map(x=>x.entity_id)]);}catch{return reply({error:'invalid_progress'},400);}
+  const result=await progressDb.apply(user,snapshot);return reply(result,result.retry?429:200);
+ }
  await ensure(user);
  if(body?.action==='snapshot'){
   let snapshot;try{const approved=await sql`SELECT entity_id FROM salah_staff_private.catalog WHERE kind='reciter'`;snapshot=competitionSnapshot(body,Date.now(),[...COMPETITION_RECITERS,...approved.map(x=>x.entity_id)]);}catch{return reply({error:'invalid_snapshot'},400);}
-  await sql.begin(async tx=>{
-   await tx`select pg_advisory_xact_lock(hashtextextended(${user.id},285))`;
-   const pref=(await tx`select p.enabled,v.mode from salah_competition_private.preferences p join public.reciter_listener_visibility v using(user_id)where p.user_id=${user.id}::uuid`)[0];if(!pref.enabled||pref.mode==='hidden')throw Error('disabled');
-   const devices=await tx`select distinct device_id from salah_competition_private.totals where user_id=${user.id}::uuid`;if(devices.length>=16&&!devices.some(r=>r.device_id===snapshot.device))throw Error('devices_limit');
-   const previous=await tx`select reciter,seconds,extract(epoch from(now()-max(updated_at)over()))elapsed from salah_competition_private.totals where user_id=${user.id}::uuid and device_id=${snapshot.device}::uuid`;
-   if(previous.length){const elapsed=Number(previous[0].elapsed);if(elapsed<10)throw Error('retry');const old=Object.fromEntries(previous.map(r=>[r.reciter,Number(r.seconds)]));const growth=Object.entries(snapshot.totals).reduce((sum,[id,n])=>sum+Math.max(0,Number(n)-(old[id]||0)),0);if(growth>elapsed+120)throw Error('invalid_growth');}
-   const totalsRows=Object.entries(snapshot.totals).map(([reciter,seconds])=>({reciter,seconds}));if(totalsRows.length)await tx`insert into salah_competition_private.totals(user_id,device_id,reciter,seconds,initial_seconds)select ${user.id}::uuid,${snapshot.device}::uuid,x.reciter,x.seconds,x.seconds from jsonb_to_recordset(${tx.json(totalsRows)}::jsonb)as x(reciter text,seconds bigint)on conflict(user_id,device_id,reciter)do update set seconds=greatest(totals.seconds,excluded.seconds),updated_at=now()`;
-   const dayRows=Object.entries(snapshot.days).flatMap(([day,rows])=>Object.entries(rows).map(([reciter,seconds])=>({day,reciter,seconds})));if(dayRows.length)await tx`insert into salah_competition_private.days(user_id,device_id,day,reciter,seconds,initial_seconds)select ${user.id}::uuid,${snapshot.device}::uuid,x.day,x.reciter,x.seconds,x.seconds from jsonb_to_recordset(${tx.json(dayRows)}::jsonb)as x(day date,reciter text,seconds integer)on conflict(user_id,device_id,day,reciter)do update set seconds=greatest(days.seconds,excluded.seconds)`;
-   await tx`update salah_competition_private.preferences set time_zone=${snapshot.timeZone},updated_at=now()where user_id=${user.id}::uuid`;
-   await tx`select public.competition_refresh()`;
-  });return reply({ok:true});
+  const result=await progressDb.apply(user,snapshot,{full:true});return reply(result,result.retry?429:200);
  }
  if(body?.action==='device'&&Object.keys(body).every(k=>['action','device','subscription'].includes(k))&&validCompetitionId(body.device)){
   let sub;try{sub=competitionSubscription(body.subscription);}catch{return reply({error:'invalid_subscription'},400);}

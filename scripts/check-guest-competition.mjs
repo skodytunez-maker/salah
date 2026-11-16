@@ -32,6 +32,7 @@ await pg.exec(await fs.readFile(new URL('../supabase/guest-competition.sql',impo
 await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114225107_guest_credit_controls.sql',import.meta.url),'utf8'));
 await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114230244_guest_credit_revision.sql',import.meta.url),'utf8'));
 await pg.exec(await fs.readFile(new URL('../supabase/migrations/20261114230126_guest_stone_aliases.sql',import.meta.url),'utf8'));
+const progressMigration=(await fs.readdir(new URL('../supabase/migrations/',import.meta.url))).find(name=>name.endsWith('_confirmed_competition_progress.sql'));assert.ok(progressMigration);await pg.exec(await fs.readFile(new URL('../supabase/migrations/'+progressMigration,import.meta.url),'utf8'));
 for(const u of [user,other]){
  await pg.query("insert into auth.users values($1,now(),false,null,'{\"nickname\":\"Private account\"}')",[u.id]);await pg.query('insert into auth.sessions values($1,$2,null)',[u.session,u.id]);
  await pg.query('insert into salah_competition_private.preferences values($1,true)',[u.id]);await pg.query("insert into public.reciter_listener_visibility values($1,$2,'initial',null)",[u.id,randomUUID()]);

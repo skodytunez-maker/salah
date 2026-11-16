@@ -1,11 +1,11 @@
 import{publicListenerRows}from './listener-labels.mjs';
-export async function combinedPublicBoard(sql,period,day,holders={},withTotals=false){
- const rows=await sql`with source as(
+export async function combinedPublicBoard(sql,period,day,holders={},withTotals=false,{thin=false}={}){
+ const [snapshot]=await sql`with source as(
  select s.user_id,v.public_id as id,v.mode,false as guest,s.reciter,s.seconds,f.reciter as preferred,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),1))initial,
  upper(left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),2))prefix,
- case when v.mode='profile'then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
- case when v.mode='profile'then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars' and o.name=u.id::text||'/profile.jpg')else false end has_photo,
+ case when not ${thin} and v.mode='profile'then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Слушатель'),40)end nickname,
+ case when not ${thin} and v.mode='profile'then exists(select 1 from storage.objects o where o.bucket_id='profile-avatars' and o.name=u.id::text||'/profile.jpg')else false end has_photo,
  coalesce((select least(45,greatest(0,ceil(extract(epoch from(max(lp.reported_at)+interval '45 seconds'-statement_timestamp())))))::int from salah_competition_private.listener_presence lp join auth.sessions a on a.id=lp.session_id and a.user_id=lp.user_id where lp.user_id=s.user_id and lp.playing and lp.reported_at>statement_timestamp()-interval '45 seconds' and (a.not_after is null or a.not_after>statement_timestamp()) and (u.banned_until is null or u.banned_until<=statement_timestamp())),0)active_for_seconds
  from public.competition_scores(${period},${day}::date)s
  join salah_competition_private.preferences p using(user_id)join public.reciter_listener_visibility v using(user_id)join auth.users u on u.id=s.user_id
@@ -22,13 +22,19 @@ export async function combinedPublicBoard(sql,period,day,holders={},withTotals=f
  row_number()over(order by case when ${withTotals} then total_seconds else seconds end desc,id)ordinal from heard where favorite=1
  ), podium as(
  select h.id,json_agg(json_build_object('reciter',h.reciter,'seconds',h.seconds)order by h.favorite)reciters from heard h join ranked r using(id)where r.ordinal<=3 group by h.id
+ ), result as(
+ select r.*,p.reciters,sum(r.total_seconds)over()listening_total from ranked r left join podium p using(id)order by r.place,r.id limit 1000
  )
- select r.*,p.reciters,sum(r.total_seconds)over()listening_total from ranked r left join podium p using(id)order by r.place,r.id limit 1000`;
+ select coalesce(jsonb_agg(to_jsonb(r)order by r.place,r.id),'[]'::jsonb)items,coalesce(max(r.listening_total),0)listening_total,
+ floor(extract(epoch from statement_timestamp())*1000000)::bigint revision from result r`;
+ const rows=snapshot.items,revision=Number(snapshot.revision),listeningTotal=Number(snapshot.listening_total);
+ if(!Number.isSafeInteger(revision)||revision<=0||!Number.isSafeInteger(listeningTotal)||listeningTotal<0||!Array.isArray(rows))throw Error('invalid_board');
+ if(thin)return{revision,listeningTotal,limited:rows.length===1000,items:rows.map(r=>({id:r.id,guest:r.guest===true,mode:r.mode,reciter:r.reciter,seconds:Number(r.seconds),rank:Number(r.place),totalSeconds:Number(r.total_seconds),reciters:Array.isArray(r.reciters)?r.reciters.map(x=>({reciter:x.reciter,seconds:Number(x.seconds)})):[],activeForSeconds:Number(r.active_for_seconds)||0}))};
  const labels=publicListenerRows(rows.filter(r=>!r.guest)),byId=new Map(labels.map(r=>[r.id,r]));
  // Old clients require the legacy nickname to retain their non-clickable guest flag.
  return{items:rows.map(r=>({...((r.guest)?{id:r.id,mode:'profile',initial:'Г',nickname:'Гость '+String(r.id).slice(0,6).toUpperCase(),guestDisplayName:r.nickname,hasPhoto:false,guest:true}:byId.get(r.id)),
  reciter:r.reciter,seconds:Number(r.seconds),rank:Number(r.place),activeForSeconds:Number(r.active_for_seconds)||0,
  ...(withTotals?{totalSeconds:Number(r.total_seconds),...(Array.isArray(r.reciters)?{reciters:r.reciters.map(x=>({reciter:x.reciter,seconds:Number(x.seconds)}))}:{})}:{}),
  awards:r.guest?[]:[...(holders.week===r.user_id?['week']:[]),...(holders.month===r.user_id?['month']:[])]})),
- limited:rows.length===1000,listeningTotal:Number(rows[0]?.listening_total||0)};
+ revision,limited:rows.length===1000,listeningTotal};
 }

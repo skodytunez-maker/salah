@@ -15,7 +15,7 @@ assert.match(css,/\.app-bootstrap__actions\[hidden\]\{display:none!important\}/,
 const webEntry='<script type="module" src="./js/app.js"></script>',nativeEntry='<script type="module" src="./js/native-entry.js"></script>';
 assert.ok(html.includes(webEntry),'Preserve the exact entry consumed by the native bundle builder');
 const nativeHtml=html.replace(webEntry,nativeEntry);
-function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=false,alreadyRendered=false,documentHtml=html,native=false}={}){
+function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=false,missingSettings=false,alreadyRendered=false,documentHtml=html,native=false}={}){
  const win=new Window({url:'https://example.test/salah/?from=phone#quran?view=surah&n=5',settings:{disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true,disableCSSFileLoading:true}}),doc=win.document;
  doc.write(documentHtml);doc.close();
  const host=doc.getElementById('app'),panel=doc.getElementById('app-bootstrap'),entry=doc.querySelector('script[type="module"][src="./js/app.js"],script[type="module"][src="./js/native-entry.js"]');
@@ -28,7 +28,7 @@ function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=fal
  assert.equal(panel.querySelector('[data-bootstrap-recover]').getAttribute('href'),'./recover.html','Only the existing explicitly operated repair page is linked');
  const timers=new Map(),state={reloads:0,writes:0,forbidden:0,observed:0,disconnected:0,windowErrorListeners:0,entryErrorListeners:0},url=win.location.href;let id=0;
  const forbidden=()=>{state.forbidden++;throw Error('Bootstrap must not touch audio, stores, service worker or navigation');};
- const storage={getItem(key){assert.equal(key,'salah:settings');if(deniedStorage)throw Error('SecurityError');return raw??JSON.stringify({uiLanguage:preference,city:{name:'Тюмень',timezone:'Asia/Yekaterinburg'}});},setItem(){state.writes++;forbidden();},removeItem(){state.writes++;forbidden();},clear(){state.writes++;forbidden();}};
+ const storage={getItem(key){assert.equal(key,'salah:settings');if(deniedStorage)throw Error('SecurityError');if(missingSettings)return null;return raw??JSON.stringify({uiLanguage:preference,city:{name:'Тюмень',timezone:'Asia/Yekaterinburg'}});},setItem(){state.writes++;forbidden();},removeItem(){state.writes++;forbidden();},clear(){state.writes++;forbidden();}};
  const originalAdd=win.addEventListener.bind(win),originalRemove=win.removeEventListener.bind(win);win.addEventListener=(name,...args)=>{if(name==='error')state.windowErrorListeners++;return originalAdd(name,...args);};win.removeEventListener=(name,...args)=>{if(name==='error')state.windowErrorListeners--;return originalRemove(name,...args);};
  const entryAdd=entry.addEventListener.bind(entry),entryRemove=entry.removeEventListener.bind(entry);entry.addEventListener=(name,...args)=>{if(name==='error')state.entryErrorListeners++;return entryAdd(name,...args);};entry.removeEventListener=(name,...args)=>{if(name==='error')state.entryErrorListeners--;return entryRemove(name,...args);};
  class Observer extends win.MutationObserver{observe(...args){state.observed++;return super.observe(...args);}disconnect(){state.disconnected++;return super.disconnect();}}
@@ -79,9 +79,10 @@ for(const afterWarning of [false,true]){
 // matching, invalid settings and denied storage without writing any preference.
 const languageCases=[...['ru','en','az','tg','uz','kk','de','ar'].map(preference=>({preference})),
  {preference:'auto',browserLanguages:['uz-Cyrl-UZ','ar-EG','en-GB']},{preference:'auto',browserLanguages:['zz-XX','tg-TJ']},{preference:'auto',browserLanguages:['de-DE']},{preference:'auto',browserLanguages:['az-Arab','en-GB']},{preference:'auto',browserLanguages:['not a locale']},
- {preference:'invalid'},{raw:'{broken',preference:'ru'},{deniedStorage:true,preference:'ru'}];
+ {preference:'invalid'},{raw:'{broken',preference:'ru'},{raw:'{}',browserLanguages:['de-DE']},{raw:'null',browserLanguages:['ar-EG']},{missingSettings:true,browserLanguages:['de-DE']},{deniedStorage:true,preference:'ru',browserLanguages:['ar-EG']},{missingSettings:true,browserLanguages:['fr-FR','uz-Cyrl-UZ']},
+ ...[['ru'],['auto'],null,{code:'ru'}].map(uiLanguage=>({raw:JSON.stringify({uiLanguage}),browserLanguages:['de-DE']}))];
 for(const options of languageCases){
- const f=setup(options),expected=resolveInterfaceLanguage(options.deniedStorage||options.raw?'ru':options.preference,options.browserLanguages||['en-GB']);assert.equal(f.panel.lang,expected);assert.equal(f.panel.dir,expected==='ar'?'rtl':'ltr');assert.equal(f.doc.documentElement.lang,'ru','Only the startup section is localized; the app owns the document locale');
+ const f=setup(options),preference=options.deniedStorage||options.raw!==undefined||options.missingSettings||!['auto','ru','en','az','tg','uz','kk','de','ar'].includes(options.preference)?'auto':options.preference,expected=resolveInterfaceLanguage(preference,options.browserLanguages||['en-GB']);assert.equal(f.panel.lang,expected);assert.equal(f.panel.dir,expected==='ar'?'rtl':'ltr');assert.equal(f.doc.documentElement.lang,'ru','Only the startup section is localized; the app owns the document locale');
  f.fireTimers();assert.ok(f.panel.querySelector('[data-bootstrap-status]').textContent.trim());assert.ok(f.panel.querySelector('[data-bootstrap-retry]').textContent.trim());assert.ok(f.panel.querySelector('[data-bootstrap-recover]').textContent.trim());assert.equal(f.state.writes,0);assert.equal(f.state.reloads,0);assert.equal(f.state.forbidden,0);await f.close();
 }
 console.log('PASS: actual startup HTML is visible without the module; standalone CSP-compatible guard handles module errors/12s slow load, explicit route-preserving retry, eight language preferences, denied storage and late-app cleanup without automatic navigation, store/audio or draft changes.');

@@ -1,5 +1,8 @@
+import{createCompetitionFastProgress}from '../dist/js/competition-fast-progress.js';
 import{rankingUiContext}from './lib/ranking-language-fixture.mjs';
 import{combinedPublicBoard}from '../supabase/functions/reciter-competition/guest-board.mjs';
+import{createAccountProgressDb}from '../supabase/functions/reciter-competition/progress-db.mjs';
+import{createLiveBoardLoader}from '../supabase/functions/reciter-competition/live-board.mjs';
 import{reciterFilterTabs,recentReciters}from '../dist/js/quran-reciter-discovery.js';
 import{listeningSummaryMarkup,updateListeningSummary,createLiveListeningTotal,createSharedListeningMotion}from '../dist/js/listening-summary.js';
 import{readListeningTotals}from '../supabase/functions/reciter-competition/listening-totals.mjs';
@@ -19,7 +22,7 @@ const id='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-2
 const flush=async()=>{for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));};
 // One pending transport supplies all four periods; no request storm or stale private labels.
 const clientSource=await fs.readFile(new URL('../dist/js/competition-client.js',import.meta.url),'utf8');let finish,calls=0,lastSignal;
-const clientContext=vm.createContext(rankingUiContext({personalDataAllowed,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public',RECITERS,safeListener,listeningDayKey,read:(k,d)=>d,write:()=>true,Date,Intl,AbortController,AbortSignal,setTimeout,clearTimeout,fetch:async(url,opts)=>{calls++;assert.match(url,/boards=1/);lastSignal=opts.signal;return new Promise(resolve=>finish=()=>resolve({ok:true,json:async()=>({day:listeningDayKey(Date.now()),listeningTotals:{all:600,day:10,week:100,month:500},boards:Object.fromEntries(['all','day','week','month'].map((p,i)=>[p,{items:[{...person,seconds:100+i}]}]))})}));},window:{dispatchEvent(){}},Event:class{}}));
+const clientContext=vm.createContext(rankingUiContext({createCompetitionFastProgress,personalDataAllowed,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public',RECITERS,safeListener,listeningDayKey,read:(k,d)=>d,write:()=>true,Date,Intl,AbortController,AbortSignal,setTimeout,clearTimeout,fetch:async(url,opts)=>{calls++;assert.match(url,/boards=1/);lastSignal=opts.signal;return new Promise(resolve=>finish=()=>resolve({ok:true,json:async()=>({day:listeningDayKey(Date.now()),listeningTotals:{all:600,day:10,week:100,month:500},boards:Object.fromEntries(['all','day','week','month'].map((p,i)=>[p,{items:[{...person,seconds:100+i}]}]))})}));},window:{dispatchEvent(){}},Event:class{}}));
 const client=vm.runInContext(clientSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({loadCompetition,cachedCompetition,clearCompetitionCache,competitionListeningTotal})',clientContext);
 const pending=['all','day','week','month'].map(p=>client.loadCompetition(p));assert.equal(calls,1);finish();const all=await Promise.all(pending);assert.deepEqual(all.map(rows=>rows[0].seconds),[100,101,102,103]);assert.equal(client.competitionListeningTotal('all'),600);assert.equal(client.competitionListeningTotal('day'),10);await client.loadCompetition('week');assert.equal(calls,1,'A warm period switch is immediate and makes no HTTP request');
 const cancelled=client.loadCompetition('all',{force:true});client.clearCompetitionCache();assert.equal(lastSignal.aborted,true);finish();await assert.rejects(cancelled);assert.equal(client.cachedCompetition('all'),null,'A pre-privacy-change response must never repopulate the cache');
@@ -81,7 +84,7 @@ const sql=(strings,...args)=>{
   return result.then(resolve,reject);
  }};
 };
-const edgeContext=vm.createContext(rankingUiContext({combinedPublicBoard,currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,readListeningTotals,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date}));
+const edgeContext=vm.createContext(rankingUiContext({combinedPublicBoard,createAccountProgressDb,createLiveBoardLoader,currentTitleHolders:async()=>({week:null,month:null}),listenerPresencePacket,createListenerPresenceDb,readListeningTotals,personalDataAllowed,postgres:()=>sql,COMPETITION_PERIODS,competitionDay,publicListenerRows,Deno:{env:{get:()=> 'fixture'},serve:handler=>serve=handler},Request,Response,URL,JSON,Date,AbortSignal}));
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edgeContext);
 const testDay=listeningDayKey(Date.now());
 const response=await serve(new Request('https://fixture.invalid?boards=1&day='+testDay));assert.equal(response.status,200);const body=await response.json();assert.deepEqual(Object.keys(body.boards).sort(),['all','day','month','week']);assert.equal(readPeriods.length,4);assert.equal(body.listeningTotals.all,570);assert.ok(!JSON.stringify(body).includes('PRIVATE-NEVER-PUBLISH'));assert.equal(body.boards.all.items.find(x=>x.id===uid(101)).initial,'P');
@@ -116,10 +119,12 @@ assert.ok(!Object.hasOwn(parsedRich[0],'nickname'));
 const sortedFavorites=await client.loadCompetition('all',{mode:'favorite'});
 assert.deepEqual(JSON.parse(JSON.stringify(sortedFavorites.map(x=>[x.id,x.rank]))),[[uid(102),1],[uid(103),1],[uid(101),3],[uid(104),4]]);
 assert.equal(client.cachedCompetition('all')[0].id,uid(101),'Switching scores leaves the overall board intact');
-client.clearCompetitionCache();let requestedBoardUrls=[];
+client.clearCompetitionCache();let requestedBoardUrls=[],fixtureRevision=Math.max(...Object.values(rich.boards).map(board=>board.revision||0));
 clientContext.fetch=async url=>{
  requestedBoardUrls.push(url);
  const withTotals=url.includes('details=reciters'),payload=structuredClone(withTotals?rich:body);
+ // These are sequential new HTTP snapshots, not a replay of the earlier SQL response.
+ for(const board of Object.values(payload.boards))board.revision=++fixtureRevision;
  if(withTotals)payload.boards.all.limited=true;
  return {ok:true,status:200,json:async()=>payload};
 };

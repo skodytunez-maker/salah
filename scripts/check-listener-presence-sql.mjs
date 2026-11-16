@@ -1,4 +1,6 @@
 import{combinedPublicBoard}from '../supabase/functions/reciter-competition/guest-board.mjs';
+import{createAccountProgressDb}from '../supabase/functions/reciter-competition/progress-db.mjs';
+import{createLiveBoardLoader}from '../supabase/functions/reciter-competition/live-board.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -58,7 +60,7 @@ await pg.query('delete from auth.sessions where id=$1',[sid]);assert.equal((awai
 // Exercise the complete HTTP handler with a synthetic, locally validated auth response.
 await pg.query('insert into auth.sessions values($1,$2,null)',[sid,uid]);let serve;
 const token='fixture.'+Buffer.from(JSON.stringify({sub:uid,session_id:sid})).toString('base64url')+'.fixture';
-const edge=vm.createContext({...core,combinedPublicBoard,readListeningTotals,listenerPresencePacket,createListenerPresenceDb,publicListenerRows,postgres:()=>sql,Deno:{env:{get:()=> 'https://fixture.invalid'},serve:fn=>serve=fn},fetch:async()=>new Response(JSON.stringify({id:uid,email_confirmed_at:'2026-10-01',is_anonymous:false})),Request,Response,URL,JSON,Date,atob});
+const edge=vm.createContext({...core,combinedPublicBoard,createAccountProgressDb,createLiveBoardLoader,readListeningTotals,listenerPresencePacket,createListenerPresenceDb,publicListenerRows,postgres:()=>sql,Deno:{env:{get:()=> 'https://fixture.invalid'},serve:fn=>serve=fn},fetch:async()=>new Response(JSON.stringify({id:uid,email_confirmed_at:'2026-10-01',is_anonymous:false})),Request,Response,URL,JSON,Date,atob,AbortSignal});
 vm.runInContext(stripTypeScriptTypes(backend.replace(/^import.*\n/gm,'')),edge);
 const request=(body,authorized=true)=>new Request('https://fixture.invalid/functions/v1/reciter-competition',{method:'POST',headers:{'Content-Type':'application/json',...(authorized?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body)});
 const callStart=queries.length;assert.equal((await serve(request({action:'presence',tab,sequence:1,playing:true}))).status,200);assert.ok(!queries.slice(callStart).some(q=>q.includes('competition_refresh')||q.includes('legacy')),'The HTTP route bypasses score initialization');

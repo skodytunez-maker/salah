@@ -4,6 +4,8 @@ import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 const win=new Window({url:'https://fixture.invalid/#lesson',settings:{disableIframePageLoading:true}}),doc=win.document;
 Object.assign(globalThis,{window:win,document:doc,location:win.location,history:win.history,localStorage:win.localStorage,sessionStorage:win.sessionStorage,CustomEvent:win.CustomEvent});
+// This scenario compares Russian with English; it must not inherit the CI phone locale.
+localStorage.setItem('salah:settings',JSON.stringify({uiLanguage:'ru'}));
 doc.body.innerHTML='<main></main><dialog id="modal"><div id="modal-content"></div></dialog><div id="toast" hidden></div>';
 const[{t,setInterfaceLanguage,translateUi,getLocale,subscribeLanguage},{initializeInterfaceLanguage},ui,{lessonEntryLoading},{NATIVE_BOOK_ID,NATIVE_UNIT_IDS,normalizeNativeProgress}]=await Promise.all([import('../dist/js/i18n.js'),import('../dist/js/language-settings.js'),import('../dist/js/ui.js'),import('../dist/js/lesson-route.js'),import('../dist/js/owner-native-progress.js')]);
 setInterfaceLanguage('ru');const stopLanguage=initializeInterfaceLanguage({doc,win}),host=doc.querySelector('main'),id='A'.repeat(32),uid='11111111-1111-4111-8111-111111111111';
