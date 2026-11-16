@@ -40,7 +40,7 @@ export async function readOwnerAppState(sql,page=1){
   from records r,bounds b group by r.actor
  ), named as(
   select c.actor,coalesce(c.user_id::text,g.public_id::text,'guest:'||c.device_hash)as id,c.user_id is null as guest,
-   case when c.user_id is not null then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Без ника'),40)else coalesce(g.nickname,'Гость')end as nickname,
+   case when c.user_id is not null then left(coalesce(nullif(btrim(u.raw_user_meta_data->>'nickname'),''),'Без ника'),40)else coalesce(g.nickname,historical_guest.nickname,'Гость')end as nickname,
    c.section,case when s.playing_at is not null then 'playing' when mp.actor is not null then mp.player_state else 'unknown' end as player_state,
    coalesce(s.playing_at,mp.reported_at)as player_signal_at,
    case when g.paused_at is not null then true else s.credit_paused end as credit_paused,
@@ -53,6 +53,12 @@ export async function readOwnerAppState(sql,page=1){
    left join salah_competition_private.guest_credit_controls k on k.guest_id=p.public_id
    where p.activity_hash=c.device_hash and p.claimed_by is null order by p.created_at desc,p.public_id limit 1
   )g on c.user_id is null
+  left join lateral(
+   select a.nickname from salah_competition_private.guest_players p
+   join salah_competition_private.guest_aliases a on a.guest_id=p.public_id
+   where c.user_id is null and g.public_id is null and p.activity_hash=c.device_hash and p.claimed_by is not null
+   order by p.created_at desc,p.public_id limit 1
+  )historical_guest on true
   where(c.user_id is null and c.device_hash~'^[a-f0-9]{64}$')or(u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)and(u.banned_until is null or u.banned_until<=b.now))
  ), numbered as(
   select n.*,row_number()over(order by n.last_signal_at desc,n.actor)as rank from named n

@@ -1,59 +1,75 @@
 {
   "schema": 1,
-  "version": 503,
-  "baseCommit": "6db967061befd4ad46101f1ced9373f8b35ff778",
-  "baseTree": "6a53aa0740aaf76df01924bee972f99c137288f6",
-  "note": "Only this minor release is authorized. The complete baseline is the published502 commit, not the previous release allowlist. Extend the exact scope only for an authorized task; preserve unrelated local files and all earlier approved behavior.",
+  "version": 504,
+  "baseCommit": "57159b55577b5fc1465fc0e3cbad6ab1192effda",
+  "baseTree": "8fc40bbcca7caf90a9ddec31ac571d76b6bb928c",
+  "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
-      "path": "dist/index.html",
-      "reason": "Remove only the owner-requested visible personal founder credit from the public shell; preserve SALAH branding and application bootstrap."
+      "path": "dist/js/app-bootstrap.js",
+      "reason": "Apply the same automatic phone-language fallback before module startup, without writing saved preferences."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance the minor release to503 without resetting the current502 announcement identifier, acknowledgement, expiry or cards."
+      "reason": "Advance the minor release to504 while preserving announcement502, its acknowledgement, expiry and feature cards."
     },
     {
-      "path": "dist/js/app.js",
-      "reason": "Owner-requested temporary removal of the personal Instagram link and visible by Saadi Kobilov credit; preserve SALAH Instagram, sources, existing routes and settings."
+      "path": "dist/js/language-settings.js",
+      "reason": "Remove the visible device-language option, display the automatically resolved language and add decorative flags to eight existing choices without changing other settings."
     },
     {
-      "path": "dist/js/calendar-pdf.js",
-      "reason": "Remove only the exact visible by Saadi Kobilov calendar byline requested by the owner; preserve prayer values, layout and source attribution."
-    },
-    {
-      "path": "dist/js/qibla-view.js",
-      "reason": "Remove only the owner-requested visible founder credit in Qibla; preserve device location, compass, accuracy and privacy behavior."
-    },
-    {
-      "path": "dist/owner.html",
-      "reason": "Remove only the owner-requested visible personal founder credit from the owner shell; preserve owner authentication and application bootstrap."
-    },
-    {
-      "path": "dist/share.html",
-      "reason": "Keep the shared shell consistent with the requested temporary personal-credit removal; preserve the existing sharing and bootstrap behavior."
+      "path": "dist/js/storage.js",
+      "reason": "Use the phone language by default, while preserving valid explicit language choices and strict backup validation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance the release cache version to503 while preserving existing downloaded stores, asset inventory and request handling."
+      "reason": "Advance the existing shell/update version to504, preserving request handling and downloaded stores."
+    },
+    {
+      "path": "docs/calendar-award-total-ranking.md",
+      "reason": "Record the requested award-criterion correction and controlled verification without private user repair data."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Replace the previous release scope with this exact minor-release allowlist and the complete immutable published502 baseline; preserve unrelated files."
+      "reason": "Fingerprint the complete published503 baseline and allow only the reviewed changes of release504."
     },
     {
-      "path": "scripts/check-listening-credit-client.mjs",
-      "reason": "Bind the real listeningPeriodTotals Date.now dependency to the test clock so guest-day assertions remain deterministic after midnight; no production credit behavior changes."
+      "path": "scripts/check-app-bootstrap.mjs",
+      "reason": "Verify automatic fallback for missing, invalid and inaccessible language preferences, retaining manual choices and startup recovery."
     },
     {
-      "path": "scripts/check-public-language.mjs",
-      "reason": "Adapt only the visible personal-credit regression to the authorized temporary removal; keep source, language and unrelated content assertions."
+      "path": "scripts/check-interface-language-core.mjs",
+      "reason": "Verify the automatic language default, explicit choices, backup compatibility and unchanged source-language data."
+    },
+    {
+      "path": "scripts/check-interface-language-settings.mjs",
+      "reason": "Actual DOM regressions for eight flags, automatic and manual preferences, denied storage, RTL, focus, drafts, audio and prayer settings."
+    },
+    {
+      "path": "scripts/check-interface-shell.mjs",
+      "reason": "Verify the requested eight-language picker in the actual shell without duplicate selectors or changing other routes."
+    },
+    {
+      "path": "scripts/check-owner-app-state.mjs",
+      "reason": "Verify historical guest aliases without importing claimed credit or exposing account identity."
+    },
+    {
+      "path": "supabase/functions/owner-access/app-state.mjs",
+      "reason": "Reuse the existing stone alias for a historical guest after registration; keep identifiers, credit, activity, owner session/MFA and privacy checks unchanged."
+    },
+    {
+      "path": "supabase/migrations/20261116054349_calendar_awards_total_ranking.sql",
+      "reason": "Make weekly and monthly awards rank eligible confirmed accounts by total time across all reciters, matching the current total Top and retaining existing boundaries and award rules."
+    },
+    {
+      "path": "tests/awards/check-database.cjs",
+      "reason": "Real PostgreSQL regressions for total-time award winners, representative reciter, ties, eligibility, queues, permissions and idempotent replay; retain all existing award checks."
     }
   ],
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "The unchanged Pages workflow refreshes the official imam schedule before verification."
+      "reason": "The unchanged Pages workflow refreshes the official imam schedule."
     }
   ],
   "baseline": [
@@ -2483,7 +2499,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha": "2f86dbaee814d8cb9abf4be9597aa06d5301c11b"
+      "sha": "e0f6ab99df91a0503687ca0f877c7db450783513"
     },
     {
       "path": "dist/iphone.css",
@@ -2607,7 +2623,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "b5ef661c2feca85e74cd936d7ead681dfb36f90b"
+      "sha": "de8283d63f3682a7e127f279b7efbe1e052e9c45"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2627,7 +2643,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "6a5b1fb312ffc22534eff5ccd0c5c7ae805155e7"
+      "sha": "7ed6b9f6f99567b0c5570462274f1e4fb5229fe8"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -2703,7 +2719,7 @@
     },
     {
       "path": "dist/js/calendar-pdf.js",
-      "sha": "903c67c810df236975ebff59b44df828f84148e4"
+      "sha": "5c59a19ea74ce9b5ec72991683bd9ab035f5a00e"
     },
     {
       "path": "dist/js/city-data.js",
@@ -4111,7 +4127,7 @@
     },
     {
       "path": "dist/js/qibla-view.js",
-      "sha": "784bda45d79f7a3ad876042c961dcd3b7a8b3b8e"
+      "sha": "1918fe80e27c16ee05c29c48ead6b61bfad2396d"
     },
     {
       "path": "dist/js/qibla.js",
@@ -4755,7 +4771,7 @@
     },
     {
       "path": "dist/owner.html",
-      "sha": "c87c443161d008fa74ace0b734a6419e18709755"
+      "sha": "cc8a2f6ccda8ffb9d3cd8b609437347e1d9d4612"
     },
     {
       "path": "dist/privacy.html",
@@ -4787,7 +4803,7 @@
     },
     {
       "path": "dist/share.html",
-      "sha": "c2cdf82114fcbc50bcfcd8ed74ad5ef7f9f861e4"
+      "sha": "a1468a206077b9b4a538637548e739d49d7002d8"
     },
     {
       "path": "dist/soft-depth.css",
@@ -4799,7 +4815,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "39c86f9885c75fa59ddeb696b9eb39edbaf208c6"
+      "sha": "4683b0ed1c2ce738d4562327c407e231263104e2"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5255,7 +5271,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "df6f7dd0be8e71cbe5ede885ba4a59a843ab06ba"
+      "sha": "8b2a0f2d5dfc46712be985330dd85d5775c5e00d"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6455,7 +6471,7 @@
     },
     {
       "path": "scripts/check-listening-credit-client.mjs",
-      "sha": "63e9dd7f6da3d94467e37de89d370c9766162636"
+      "sha": "eb45e0d163c2f4df7be94b724d5881db4a6a803d"
     },
     {
       "path": "scripts/check-listening-credit.mjs",
@@ -6723,7 +6739,7 @@
     },
     {
       "path": "scripts/check-public-language.mjs",
-      "sha": "90a1e6daac6533b7c26e32d5bc332b0ca2765810"
+      "sha": "273443c11c1d1639ab4635148cd88c6db9ddc748"
     },
     {
       "path": "scripts/check-push-bundle.mjs",

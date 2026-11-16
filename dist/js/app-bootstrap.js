@@ -16,9 +16,9 @@
   ar:{script:'Arab',loading:'جارٍ تحميل SALAH…',delayed:'يستغرق التحميل وقتًا أطول. تحقّق من اتصالك وحاول مجددًا.',failed:'تعذّر فتح SALAH. تحقّق من اتصالك وحاول مجددًا.',retry:'المحاولة مجددًا',recover:'استعادة بدء التشغيل'}
  };
  // Match the normal interface preference without importing storage or changing
- // any saved setting. An unsupported or inaccessible preference stays Russian.
- let preference='ru',language='ru';
- try{const saved=JSON.parse(localStorage.getItem('salah:settings'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))preference=saved.uiLanguage;}catch{}
+ // any saved setting. With no valid manual choice, follow the phone language.
+ let preference='auto',language='ru';
+ try{const saved=JSON.parse(localStorage.getItem('salah:settings'));if(saved&&typeof saved==='object'&&!Array.isArray(saved)&&typeof saved.uiLanguage==='string'&&(saved.uiLanguage==='auto'||Object.hasOwn(languages,saved.uiLanguage)))preference=saved.uiLanguage;}catch{}
  if(Object.hasOwn(languages,preference))language=preference;
  else if(preference==='auto')for(const candidate of navigator.languages||[navigator.language]){
   if(typeof candidate!=='string'||candidate.length>80)continue;
