@@ -234,6 +234,10 @@
       "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
     },
     {
+      "path": "scripts/check-knowledge-coming-soon.mjs",
+      "reason": "Keep all Knowledge availability assertions and isolate the historical502 offline-news fixture from the new505 announcement; no Knowledge product change."
+    },
+    {
       "path": "scripts/check-owner-app-state.mjs",
       "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
     },
