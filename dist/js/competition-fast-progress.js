@@ -18,6 +18,11 @@ function changed(base,latest,timeZone){
  for(const[day,rows]of Object.entries(base.days))for(const[key,n]of Object.entries(rows))if((latest.days[day]?.[key]??-1)<n)return{needsFull:true};
  for(const[key,n]of Object.entries(latest.totals))if(n>(base.totals[key]||0)){totals[key]=n;reciters.add(key);}
  for(const[day,rows]of Object.entries(latest.days))for(const[key,n]of Object.entries(rows))if(n>(base.days[day]?.[key]||0)){(days[day]??={})[key]=n;totals[key]=latest.totals[key];reciters.add(key);}
+ // Lifetime and daily fractions can cross integer boundaries separately.
+ // Include an existing measured anchor, including zero, instead of an empty
+ // days map or a synthetic daily increment.
+ const measuredDays=Object.keys(latest.days).sort().reverse();
+ for(const key of reciters)if(!Object.values(days).some(rows=>Object.hasOwn(rows,key))){const day=measuredDays.find(value=>Object.hasOwn(latest.days[value],key));if(day===undefined)return{needsFull:true};(days[day]??={})[key]=latest.days[day][key];}
  if(reciters.size>4||Object.keys(days).length>2)return{needsFull:true};
  return reciters.size?{body:{action:'progress',totals,days,timeZone}}:{};
 }
@@ -58,7 +63,6 @@ export function createCompetitionFastProgress({getContext,send,onResult=()=>true
   acknowledgeFull(token,snapshot,reply){const ctx=context();if(disposed||!token||full!==token||token.epoch!==epoch||token.key!==ctx.key||!ctx.active)return false;full=null;const source=snapshotOf(snapshot);wantedFull=false;
    if(!source||reply?.ok!==true){baseline=null;capability='unknown';return false;}
    if(reply.progressVersion!==1||reply.creditPaused===true){baseline=null;capability=reply.creditPaused===true?'paused':'unsupported';return false;}
-   if(reply.accepted!==true||reply.needsFull===true){baseline=null;capability='unknown';wantedFull=true;retryAt=now()+15000;askFull('full-not-accepted');return false;}
    if(reply.accepted!==true||reply.needsFull===true){baseline=null;capability='unknown';wantedFull=true;retryAt=now()+15000;askFull('full-not-accepted');return false;}
    baseline=source;capability='yes';if(!latest||changed(source,latest,ctx.timeZone).needsFull)latest=source;pump();return true;
   },
