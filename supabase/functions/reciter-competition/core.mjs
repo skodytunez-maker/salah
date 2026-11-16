@@ -20,6 +20,14 @@ export function competitionSnapshot(body,now=Date.now(),approved=COMPETITION_REC
  const timeZone=typeof body.timeZone==='string'?body.timeZone:'UTC';if(timeZone.length>100)throw Error('invalid_timezone');try{new Intl.DateTimeFormat('en',{timeZone}).format();}catch{throw Error('invalid_timezone');}
  return {device:body.device,totals,days,timeZone};
 }
+export function competitionProgress(body,now=Date.now(),approved=COMPETITION_RECITERS){
+ if(body?.action!=='progress')throw Error('invalid_progress');
+ const result=competitionSnapshot({...body,action:'snapshot'},now,approved);
+ const ids=Object.keys(result.totals),days=Object.keys(result.days);
+ if(!ids.length||ids.length>4||!days.length||days.length>2)throw Error('invalid_progress');
+ if(days.some(day=>!Object.keys(result.days[day]).length))throw Error('invalid_progress');
+ return result;
+}
 export function competitionSubscription(value){
  if(!value||typeof value.endpoint!=='string'||value.endpoint.length>4096)throw Error('invalid_subscription');const u=new URL(value.endpoint);
  if(u.protocol!=='https:'||u.port&&u.port!=='443'||u.username||u.password||u.hash||!['web.push.apple.com','fcm.googleapis.com','updates.push.services.mozilla.com'].includes(u.hostname)&&!(/^[a-z0-9-]+\.notify\.windows\.com$/.test(u.hostname)))throw Error('invalid_subscription');

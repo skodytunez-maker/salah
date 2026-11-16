@@ -1,13 +1,15 @@
-import{competitionSnapshot}from './competition-core.mjs';
+import{competitionSnapshot,competitionProgress}from './competition-core.mjs';
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 export const guestRankOrigin=value=>['https://skodytunez-maker.github.io','capacitor://localhost','http://localhost','https://localhost'].includes(value);
 export async function guestRankHash(domain,value){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(domain+value));return Array.from(new Uint8Array(bytes),n=>n.toString(16).padStart(2,'0')).join('');}
 export function guestRankPacket(body,now=Date.now()){
- if(!body||Array.isArray(body)||!['register','snapshot','claim'].includes(body.action)||!uuid.test(body.device||'')||!/^[a-f0-9]{64}$/.test(body.secret||''))throw Error('invalid');
- const fields=body.action==='snapshot'?['action','device','secret','totals','days','timeZone','resumeCredit']:body.action==='register'?['action','device','secret','activity']:['action','device','secret'];
+ if(!body||Array.isArray(body)||!['register','snapshot','progress','claim'].includes(body.action)||!uuid.test(body.device||'')||!/^[a-f0-9]{64}$/.test(body.secret||''))throw Error('invalid');
+ const fields=body.action==='progress'?['action','device','secret','totals','days','timeZone','creditRevision']:body.action==='snapshot'?['action','device','secret','totals','days','timeZone','resumeCredit']:body.action==='register'?['action','device','secret','activity']:['action','device','secret'];
  if(Object.keys(body).some(k=>!fields.includes(k)))throw Error('invalid');
  if(body.action==='register'&&!uuid.test(body.activity||''))throw Error('invalid');
  if(body.resumeCredit!==undefined&&!uuid.test(body.resumeCredit))throw Error('invalid');
+ if(body.creditRevision!==undefined&&(!Number.isSafeInteger(body.creditRevision)||body.creditRevision<0))throw Error('invalid');
+ if(body.action==='progress')return{action:body.action,device:body.device.toLowerCase(),secret:body.secret,creditRevision:body.creditRevision,snapshot:competitionProgress({action:'progress',device:body.device,totals:body.totals,days:body.days,timeZone:body.timeZone},now)};
  return{activity:body.activity?.toLowerCase(),action:body.action,device:body.device.toLowerCase(),secret:body.secret,...(body.action==='snapshot'?{resumeCredit:body.resumeCredit,snapshot:competitionSnapshot({action:'snapshot',device:body.device,totals:body.totals,days:body.days,timeZone:body.timeZone},now)}:{})};
 }
 export function createGuestRankHandler(db,{verified=async()=>null}={}){
