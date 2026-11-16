@@ -8,7 +8,7 @@ The defect was in the calendar finalizer: it called the favorite-reciter board.
 A listener with 600 seconds for one reciter could beat a listener with 500 seconds
 for each of two reciters despite the latter leading the total-time board.
 
-`20261116054349_calendar_awards_total_ranking.sql` adds a private, stable,
+`20261116132745_calendar_awards_total_ranking.sql` adds a private, stable,
 security-invoker aggregation helper and changes only the board called by the
 existing finalizer. The representative reciter remains the highest personal
 score, with the existing saved-favorite and reciter-ID tie breakers. The awarded

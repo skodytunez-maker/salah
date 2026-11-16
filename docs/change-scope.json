@@ -38,6 +38,14 @@
       "reason": "Remove the visible device-language option, display the automatically resolved language and add decorative flags to eight existing choices without changing other settings."
     },
     {
+      "path": "dist/js/quran-reciter-library.js",
+      "reason": "Remove the general Downloaded shortcut from Quran and reciter headers while preserving their navigation and all per-surah download indicators."
+    },
+    {
+      "path": "dist/js/quran.js",
+      "reason": "Remove duplicate translation and whole-text download controls from the general Quran page; preserve the existing Aa translation selector, inner Mushaf download, player, library and offline stores."
+    },
+    {
       "path": "dist/js/reciter-popularity.js",
       "reason": "Mark the actual measured pause/end/pagehide tail for transport after eligibility filtering; keep media metering and night-credit rules unchanged."
     },
@@ -134,6 +142,18 @@
       "reason": "Seed an explicit Russian comparison fixture for public UI language tests, preserving existing privacy, byline, PDF and calendar assertions."
     },
     {
+      "path": "scripts/check-quran-library-language.mjs",
+      "reason": "Actual DOM regressions across eight languages for clean general Quran controls and the unchanged single translation selector inside the surah, retaining content, audio and cancellation checks."
+    },
+    {
+      "path": "scripts/check-quran-mushaf-offline.mjs",
+      "reason": "Verify the existing complete Mushaf download remains once inside its own options panel; preserve all page, Arabic-text and offline-cache assertions."
+    },
+    {
+      "path": "scripts/check-quran-saved-library.mjs",
+      "reason": "Verify both general headers omit the Downloaded shortcut while direct offline access, per-surah indicators, saved audio, deletion and resume remain functional."
+    },
+    {
       "path": "scripts/lib/ranking-language-fixture.mjs",
       "reason": "Keep legacy language comparison fixtures network-free; the dedicated live counter fixture overrides the adapter with the actual watcher."
     },
@@ -174,11 +194,11 @@
       "reason": "Apply registered cumulative compact and full writes through one elapsed-time budget, retaining account/device isolation and full-sync imports."
     },
     {
-      "path": "supabase/migrations/20261116054349_calendar_awards_total_ranking.sql",
+      "path": "supabase/migrations/20261116132745_calendar_awards_total_ranking.sql",
       "reason": "Make weekly and monthly awards rank eligible confirmed accounts by total time across all reciters, matching the current total Top and retaining existing boundaries and award rules."
     },
     {
-      "path": "supabase/migrations/20261116113606_confirmed_competition_progress.sql",
+      "path": "supabase/migrations/20261116132805_confirmed_competition_progress.sql",
       "reason": "Add private fast/full growth and request budgets with closed public permissions; preserve all existing listening and award data."
     },
     {
