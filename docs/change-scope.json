@@ -6,6 +6,10 @@
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
+      "path": ".github/workflows/pages.yml",
+      "reason": "Repair the observed Pages artifact visibility and repeated-run collision: unique run/attempt artifact name and one bounded retry of the same official publish action. Preserve every application verification, existing permission and concurrency setting; no application or notification behavior changes."
+    },
+    {
       "path": "dist/assets/home-moon-disc.jpg",
       "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
     },
@@ -208,6 +212,10 @@
     {
       "path": "docs/owner-selected-city-entry-505.md",
       "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
+    },
+    {
+      "path": "docs/pages-publication-505.md",
+      "reason": "Repair the observed Pages artifact visibility and repeated-run collision: unique run/attempt artifact name and one bounded retry of the same official publish action. Preserve every application verification, existing permission and concurrency setting; no application or notification behavior changes."
     },
     {
       "path": "docs/release-announcements.md",
