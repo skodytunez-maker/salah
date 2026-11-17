@@ -1,73 +1,77 @@
 {
   "schema": 1,
-  "version": 509,
-  "baseCommit": "7b50154205fc623171ad4200b6ae73222e69769b",
-  "baseTree": "174dbed5296b1e6c1b904d98cfecbbba9aa066a5",
+  "version": 510,
+  "baseCommit": "4c8be103fdd54db1858baaf99814a5b6baf12c63",
+  "baseTree": "deaf8c87d3eaa3f4fcc69edfd5e602162f8634e2",
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record the owner's confirmed natural cloud/fog occlusion and sharp-photo requirements for Home so later fixes preserve them."
-    },
-    {
-      "path": "dist/assets/home-clouds-509.webp",
-      "reason": "Bundle the exact owner-reviewed photographic cloud texture, with pinned origin and final-file hashes, for local and offline Home weather."
+      "reason": "Preserve the owner's shared coherent sky, source-specific foreground, deterministic daily variation and safe fallback requirements."
     },
     {
       "path": "dist/day-night.css",
-      "reason": "Preserve sharp photographic detail and coherent twilight exposure while keeping the506 sky-plane correction and508 solar-disc styling."
+      "reason": "Layer the coherent atmosphere below independently matted sharp foregrounds and keep celestial layout/source crops aligned."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance minor509 while retaining announcement505, its acknowledgement, content, date and expiry."
+      "reason": "Set candidate version510 while preserving announcement505, its content, acknowledgement and expiry."
     },
     {
-      "path": "dist/js/day-night.js",
-      "reason": "Make dawn/day/sunset illumination gradual and conserve warm light continuously through short northern and southern days."
+      "path": "dist/js/sky-atmosphere.js",
+      "reason": "New pure bounded photographic atmosphere painter with local illumination/occlusion and continuous date/location/weather variations."
     },
     {
-      "path": "dist/js/wallpapers.js",
-      "reason": "Fit real Sun/Moon elevation into each artwork's visible sky budget instead of flattening high summer paths at the top; preserve actual horizon, phase and city time."
+      "path": "dist/js/sky-matte-data.js",
+      "reason": "Reviewed source-specific alpha data for the unchanged existing catalogue photographs, including small sky, trees, cables and mountain edges."
+    },
+    {
+      "path": "dist/js/sky-matte.js",
+      "reason": "New safe source-keyed lossless matte decoder and selected-source foreground preparation; no model, network or runtime classification."
     },
     {
       "path": "dist/js/weather.js",
-      "reason": "Integrate decoded photographic sky clouds, atomic projection geometry and continuous twilight lighting while preserving original image detail, weather settings, natural Sun/Moon occlusion and existing lifecycle."
+      "reason": "Integrate the shared atmosphere, decoded source mattes, premultiplied foreground sum, coherent weather changes and bounded motion on Home only."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance509 shell/release literals and precache the reviewed local cloud texture; preserve downloaded stores and safe updates."
+      "reason": "Version510 offline shell and precache the three new local sky modules without changing application update policy."
     },
     {
       "path": "dist/weather.css",
-      "reason": "Draw visible, correctly lit sky cloud structure without a full-picture grey veil or coarse architectural mask halos."
+      "reason": "Replace old overlaid cloud photograph/grey treatment with bounded shared sky/cloud canvas presentation and lifecycle styling."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Bind this exact16-path509 scope to the immutable published508 tree and preserve every unrelated baseline blob."
+      "reason": "Immutable reviewed509 baseline and exact510 file scope; preserve every unrelated source."
     },
     {
-      "path": "docs/home-clouds-509.md",
-      "reason": "Document the owner-reviewed sky direction, implementation limits, real regressions and exact generative cloud provenance."
+      "path": "docs/home-sky-510.md",
+      "reason": "Document the rendering contract, local matte preparation provenance, actual references and visual/device limitations."
     },
     {
-      "path": "docs/media-rights-register.json",
-      "reason": "Record project-origin support and the exact final cloud texture fingerprint without changing earlier rights records."
+      "path": "docs/product-ideas.md",
+      "reason": "Record the owner's newly stated future SALAH business ecosystem as a deferred internal idea, without implementing or announcing business services."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record the minor509 sky-quality correction within the existing505 edition without another public card, acknowledgement reset or external push."
+      "reason": "Record this continuation of the existing505 sky feature without resetting its announcement or sending an external push."
     },
     {
-      "path": "docs/rights-source-manifest.json",
-      "reason": "Append the cloud texture's exact source fingerprint and incremental origin evidence while preserving the audited historical baseline."
+      "path": "scripts/check-image-presentation.mjs",
+      "reason": "Adapt only Home image-presentation assertions to the coherent atmosphere and atomic foreground pipeline; preserve unrelated image checks."
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "reason": "Regress real renderer/cloud asset readiness, source geometry, rotation/decode atomicity, detail contrast and weather/preview/manual/reduced-motion lifecycle."
+      "reason": "Exercise actual Home source readiness/fallback, foreground composition, cloud transitions, resize and hidden/reduced-motion lifecycle."
     },
     {
-      "path": "scripts/check-wallpapers.mjs",
-      "reason": "Regress genuine low-noon warm-light continuity and non-flat high-summer trajectories alongside existing astronomy/phase/horizon cases."
+      "path": "scripts/check-sky-atmosphere.mjs",
+      "reason": "Verify deterministic days/midnight continuity, photographic asymmetric flow, local occlusion, weather constraints and resource/readiness bounds."
+    },
+    {
+      "path": "scripts/check-sky-matte.mjs",
+      "reason": "Verify source hashes, catalogue coverage, lossless alpha bounds, critical retained detail/sky gaps and safe selected-source preparation."
     }
   ],
   "generated": [
@@ -127,7 +131,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "aa9cfe3f3693f69121fcd1f0c08ca36b379c71f8"
+      "sha": "91fb0fdb7bab2e132e722281c6e3e5026051f67d"
     },
     {
       "path": "ANALYTICS.md",
@@ -596,6 +600,10 @@
     {
       "path": "dist/assets/geomagnetism-LICENSE.txt",
       "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "dist/assets/home-clouds-509.webp",
+      "sha": "745750a0d5dc74305aa42ba3ab5f5ca811be7d3e"
     },
     {
       "path": "dist/assets/home-moon-disc.jpg",
@@ -2483,7 +2491,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "b3bd5f24975ab31bf699890c40d0923a5210b0d4"
+      "sha": "9cf1f1f14d41509b974b7e6fd78232656c2ccb8a"
     },
     {
       "path": "dist/delete-account.html",
@@ -2639,7 +2647,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "5bbf606dbdb4d05c73076ec5463474e1eb6429b8"
+      "sha": "2c642f7f8d6f91f9113de832551153b2ee3d43eb"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2807,7 +2815,7 @@
     },
     {
       "path": "dist/js/day-night.js",
-      "sha": "723ab6241382fb061fb73e545e8721b689d69071"
+      "sha": "d9df9395c68e6395f8239762f4e7c5232e01126a"
     },
     {
       "path": "dist/js/dhikr-feedback.js",
@@ -4795,7 +4803,7 @@
     },
     {
       "path": "dist/js/wallpapers.js",
-      "sha": "39eb3e170747942df0a3605abe282686ac8f7e36"
+      "sha": "2010ceaaf5b70a2eaa2bd05aa2c3bafb0a5ac564"
     },
     {
       "path": "dist/js/weather-data.js",
@@ -4803,7 +4811,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "f116b97aa4df3b6f7c07451fa2362a1731d6d985"
+      "sha": "2fc222f57bcc8c1efb3f0c0bac648681e2115103"
     },
     {
       "path": "dist/knowledge.css",
@@ -4875,7 +4883,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "acf2c84978409e4e2680e51422f9c8c8fa6bcc47"
+      "sha": "23ca65aa592e9952cbd27f000084b6d75ded501c"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5267,7 +5275,7 @@
     },
     {
       "path": "dist/weather.css",
-      "sha": "c9661e3cd9ccc27c0a07149d6a1a36aa070cee26"
+      "sha": "80802fbe7a23fd28e64c2e41a279f5f96663f1e0"
     },
     {
       "path": "docs/about-layout-evidence.md",
@@ -5339,7 +5347,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "c3bb60bf2e3747862e41858c9e2ff639eaf7007d"
+      "sha": "00317be9dfe114bbdda7bd4489b1df945b8b0a24"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5418,6 +5426,10 @@
       "sha": "14d3972791f4ad378fc26e9c6db434ab7141776b"
     },
     {
+      "path": "docs/home-clouds-509.md",
+      "sha": "e87b81b9d7994d50375b3ecd161964747935befc"
+    },
+    {
       "path": "docs/home-owner-controls-482.md",
       "sha": "29156d13efd8758d3c899e135317fd92bf6a9655"
     },
@@ -5479,7 +5491,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "57fe5c90065ab070232dbfe641c53453b5186588"
+      "sha": "616e26e9f0687c89ca4659675ec47676438bd15a"
     },
     {
       "path": "docs/native-reminders-262.json",
@@ -5703,7 +5715,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "6d4264b771ea8e2241c5d83e901e31a8a012e0a1"
+      "sha": "2e21088b3ed9f93d9e9ec85f7bd2d9763369e1c6"
     },
     {
       "path": "docs/release-artwork.md",
@@ -5719,7 +5731,7 @@
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "sha": "327d614717e9dd31e995d8b2eee38bc1a4f3704d"
+      "sha": "40d2009aa095bf4e3c650487e77b57c068ab4c46"
     },
     {
       "path": "docs/ruqyah-listening-336.md",
@@ -7139,7 +7151,7 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "1496c3c58812dfc4f9ad337a7d4ccfda7716348d"
+      "sha": "4fa5e9b60b4e3d55a43ddaa43a81e42652f5d4ad"
     },
     {
       "path": "scripts/check-security.mjs",
@@ -7347,7 +7359,7 @@
     },
     {
       "path": "scripts/check-wallpapers.mjs",
-      "sha": "cc550a11433e0b3fe08dcd39f4cbc08c4b469ba5"
+      "sha": "25eb461dd6270aa86eb3eaf275b42d1896fcf200"
     },
     {
       "path": "scripts/check-weather-data.mjs",

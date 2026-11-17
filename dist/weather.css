@@ -2,14 +2,16 @@
 #weather-layer{overflow:hidden;opacity:1;display:none;--weather-clouds:0;--weather-day:0;--weather-dark:1;--weather-rain:0;--weather-snow:0;--weather-mist:0}
 .home-page #weather-layer{display:block}
 #weather-layer>div{position:absolute;inset:0;pointer-events:none}
-/* A direct photo sibling can blend with the photograph in its own group.
-   Neutral color removes blue saturation without flattening luminance detail. */
-#home-scene>.scene-weather-sky{inset:auto;left:var(--weather-sky-left,0px);top:var(--weather-sky-top,0px);width:var(--weather-sky-width,0px);height:var(--weather-sky-height,0px);background:linear-gradient(180deg,rgba(128,128,128,.96) 0%,rgba(128,128,128,.94) 52%,rgba(128,128,128,.78) 68%,rgba(128,128,128,.24) 80%,transparent 100%);mix-blend-mode:color;opacity:var(--weather-clouds,0);transition:opacity 6s ease}
-/* Only the fully decoded approved photograph supplies extra cloud structure.
-   Its tint/exposure affect the texture, while its matte ends above all spires. */
-#home-scene>.scene-weather-texture{inset:auto;left:var(--weather-sky-left,0px);top:var(--weather-sky-top,0px);width:var(--weather-sky-width,0px);height:var(--weather-sky-height,0px);background-image:linear-gradient(rgba(var(--weather-cloud-tint,135,145,160),var(--weather-cloud-tint-alpha,.86)),rgba(var(--weather-cloud-tint,135,145,160),var(--weather-cloud-tint-alpha,.86))),var(--weather-cloud-image,none);background-blend-mode:color,normal;background-size:cover;background-position:46% top;background-repeat:no-repeat;filter:brightness(var(--weather-cloud-exposure,.13));opacity:var(--weather-texture-opacity,0);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 var(--weather-texture-fade-start,0%),rgba(0,0,0,.4) var(--weather-texture-fade-mid,0%),transparent var(--weather-texture-fade-end,0%));mask-image:linear-gradient(180deg,#000 0%,#000 var(--weather-texture-fade-start,0%),rgba(0,0,0,.4) var(--weather-texture-fade-mid,0%),transparent var(--weather-texture-fade-end,0%));animation:weather-photo-cloud-drift 180s ease-in-out infinite alternate paused;transition:opacity 6s ease,filter 6s ease}
-#home-scene[data-weather-motion=on]>.scene-weather-texture{animation-play-state:running}
-@keyframes weather-photo-cloud-drift{from{background-position:46% top}to{background-position:54% top}}
+/* One opaque sky and one alpha cloud field, behind individually cut photo
+   foregrounds. Uncertain/unavailable mattes keep the sharp original photos. */
+#home-scene .scene-atmosphere-sky,#home-scene .scene-atmosphere-clouds{display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.scene-sky-fallback-cover{display:none;position:absolute;inset:0;background:radial-gradient(ellipse at calc(var(--sky-sunX,50)*1%) calc(var(--sky-horizonY,58)*1%),rgba(255,185,126,calc(var(--sky-warm,0)*var(--scene-direct-light,1)*.46)),transparent 55%),linear-gradient(180deg,rgb(var(--sky-zenith,3,10,25)),rgb(var(--sky-middle,9,23,43)) 68%,rgb(var(--sky-horizon,20,34,53)));filter:brightness(calc(1 - var(--scene-clouds,0)*.17)) saturate(calc(1 - var(--scene-clouds,0)*.4))}
+#home-scene[data-wallpaper=mosque]:not([data-unified-sky=ready]) .scene-sky-fallback-cover{display:block}
+#home-scene>.scene-foreground{display:none;position:absolute;pointer-events:none;filter:brightness(calc((1 - var(--scene-day)*.06)*var(--scene-photo-exposure,1))) saturate(calc(.92 + var(--scene-day)*.01))}
+#home-scene[data-unified-sky=ready] .scene-atmosphere-sky,#home-scene[data-unified-sky=ready] .scene-atmosphere-clouds,#home-scene[data-unified-sky=ready]>.scene-foreground{display:block}
+#home-scene[data-unified-sky=ready]>.scene-night,#home-scene[data-unified-sky=ready]>.scene-day,#home-scene[data-unified-sky=ready]>.scene-dawn,#home-scene[data-unified-sky=ready]>.scene-dusk{visibility:hidden}
+#home-scene[data-unified-sky=ready] .scene-sky{-webkit-mask-image:none!important;mask-image:none!important;opacity:1}
+#weather-layer[data-unified-sky=on]>.weather-mist{opacity:0!important}
 .weather-mist{background:linear-gradient(180deg,rgba(127,145,163,.08),rgba(139,156,173,.25) 55%,rgba(135,151,166,.2) 80%,transparent);opacity:var(--weather-mist);transition:opacity 3s ease}
 .weather-rain{opacity:var(--weather-rain);transition:opacity 2s ease}
 .weather-snow{opacity:var(--weather-snow);transition:opacity 2s ease}
@@ -23,7 +25,7 @@
 .weather-settings-status[hidden]{display:none}
 .weather-preview-controls span{padding:0 5px;font-size:10px;white-space:nowrap}
 .weather-preview-controls button{min-width:36px;min-height:38px;font-size:18px}
-@media(prefers-reduced-motion:reduce){#weather-layer *,#weather-layer>div,#home-scene>.scene-weather-texture{animation:none!important;transition:none!important}.weather-rain,.weather-snow{animation:none!important}}
+@media(prefers-reduced-motion:reduce){#weather-layer *,#weather-layer>div{animation:none!important;transition:none!important}.weather-rain,.weather-snow{animation:none!important}}
 body.reduce-motion #weather-layer *{animation:none!important;transition:none!important}
 body.reduce-motion .weather-rain,body.reduce-motion .weather-snow{animation:none!important}
 
