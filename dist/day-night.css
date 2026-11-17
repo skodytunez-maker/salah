@@ -2,7 +2,7 @@
 #home-scene{display:none;position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--scene-day:0;--scene-dawn:0;--scene-dusk:0;background:#061020}
 .home-page #home-scene{display:block}
 .home-page:before{display:none}
-#home-scene[data-image-pending=true]>.scene-night,#home-scene[data-image-pending=true]>.scene-day,#home-scene[data-image-pending=true]>.scene-sky,#home-scene[data-image-pending=true]>.scene-weather-sky,#home-scene[data-image-pending=true]>.scene-weather-texture,#home-scene img[data-image-pending],body[data-scene-image-pending=true] #weather-layer{visibility:hidden}
+#home-scene[data-image-pending=true]>.scene-night,#home-scene[data-image-pending=true]>.scene-day,#home-scene[data-image-pending=true]>.scene-sky,#home-scene[data-image-pending=true]>canvas,#home-scene img[data-image-pending],body[data-scene-image-pending=true] #weather-layer{visibility:hidden}
 #home-scene>div{position:absolute;inset:0;pointer-events:none}
 .scene-night,.scene-day{background-size:cover;background-position:85% center;background-repeat:no-repeat}
 .scene-night{background-image:url('./assets/night-mosque.webp')}
@@ -176,10 +176,8 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 /* Photographic sky masks conservatively occlude buildings. A full-plane tint
    would expose those cutouts as boxes; only the original mosque needs an
    opaque sky to cover its painted crescent. Bodies retain their own masks. */
-.scene-sky-light{display:none;position:absolute;inset:0;background:radial-gradient(ellipse at calc(var(--sky-sunX,50)*1%) calc(var(--sky-horizonY,58)*1%),rgba(255,185,126,calc(var(--sky-warm,0)*var(--scene-direct-light,1)*.46)),transparent 55%),linear-gradient(180deg,rgb(var(--sky-zenith,3,10,25)),rgb(var(--sky-middle,9,23,43)) 68%,rgb(var(--sky-horizon,20,34,53)));opacity:0;filter:brightness(calc(1 - var(--scene-clouds,0)*.17)) saturate(calc(1 - var(--scene-clouds,0)*.4));transition:opacity 6s ease,filter 6s ease}
-#home-scene[data-wallpaper="mosque"] .scene-sky-light{display:block;opacity:1}
-#home-scene .scene-sun{opacity:calc(var(--sky-sun,0)*var(--scene-sky-visibility,1));background:radial-gradient(circle at 42% 36%,#fffffa 0%,#fff8e1 45%,#ffe0a4 82%,#edbd73 100%);box-shadow:0 0 0 1px rgba(255,246,214,.55),0 0 10px 3px rgba(255,225,164,.35),0 0 24px 8px rgba(255,209,130,.11)}
-#home-scene .scene-moon{opacity:calc(var(--sky-moon,0)*var(--sky-moon-light,0)*var(--scene-sky-visibility,1));border-radius:50%;overflow:visible}
+#home-scene .scene-sun{opacity:calc(var(--sky-sun,0)*var(--scene-celestial-visibility,var(--scene-sky-visibility,1)));background:radial-gradient(circle at 42% 36%,rgb(var(--scene-sun-core,255,255,250)) 0%,rgb(var(--scene-sun-mid,255,248,225)) 45%,rgb(var(--scene-sun-edge,237,189,115)) 100%);box-shadow:0 0 0 1px rgba(255,246,214,.55),0 0 10px 3px rgba(255,225,164,.35),0 0 24px 8px rgba(255,209,130,.11)}
+#home-scene .scene-moon{opacity:calc(var(--sky-moon,0)*var(--sky-moon-light,0)*var(--scene-celestial-visibility,var(--scene-sky-visibility,1)));border-radius:50%;overflow:visible}
 .scene-moon-defs{position:absolute;width:0;height:0;overflow:hidden}
 .scene-moon-phase{display:block;width:100%;height:100%;aspect-ratio:1;border-radius:50%;clip-path:url(#home-scene-moon-phase);-webkit-clip-path:url(#home-scene-moon-phase);transform:rotate(var(--sky-moon-rotation,0deg));transform-origin:center}
 .scene-moon-phase img{border-radius:50%;filter:brightness(.94) saturate(.25);transform:rotate(calc(var(--sky-moon-texture-rotation,0deg) - var(--sky-moon-rotation,0deg)))}
