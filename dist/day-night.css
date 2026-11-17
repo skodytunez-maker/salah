@@ -163,7 +163,8 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 /* All celestial planes share the photograph/mask source rectangle. Keep paths
    inside the visible crop, including tall phones showing wide city artwork. */
 #home-scene .scene-sky .scene-sky-plane{inset:auto;left:var(--sky-plane-left,0px);top:var(--sky-plane-top,0px);width:var(--sky-plane-width,100%);height:var(--sky-plane-height,100%);aspect-ratio:auto;transform:none}
-#home-scene .scene-sun{width:clamp(14px,3.8%,26px)}
+/* Give the empty solar span an explicit square, independent of aspect-ratio sizing. */
+#home-scene .scene-sun{--scene-sun-size:clamp(18px,4.4vw,28px);width:var(--scene-sun-size);height:var(--scene-sun-size)}
 #home-scene .scene-moon{width:clamp(18px,5%,32px)}
 #home-scene[data-wallpaper="mosque"] .scene-sky{display:block;overflow:hidden;-webkit-mask-image:url('./assets/mosque-sky-mask.svg');mask-image:url('./assets/mosque-sky-mask.svg');-webkit-mask-size:auto 100%;mask-size:auto 100%;-webkit-mask-position:85% center;mask-position:85% center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;mask-mode:alpha}
 #home-scene[data-wallpaper="mosque"] .scene-moon{display:block}
@@ -177,7 +178,7 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
    opaque sky to cover its painted crescent. Bodies retain their own masks. */
 .scene-sky-light{display:none;position:absolute;inset:0;background:radial-gradient(ellipse at calc(var(--sky-sunX,50)*1%) calc(var(--sky-horizonY,58)*1%),rgba(255,185,126,calc(var(--sky-warm,0)*var(--scene-direct-light,1)*.46)),transparent 55%),linear-gradient(180deg,rgb(var(--sky-zenith,3,10,25)),rgb(var(--sky-middle,9,23,43)) 68%,rgb(var(--sky-horizon,20,34,53)));opacity:0;filter:brightness(calc(1 - var(--scene-clouds,0)*.17)) saturate(calc(1 - var(--scene-clouds,0)*.4));transition:opacity 6s ease,filter 6s ease}
 #home-scene[data-wallpaper="mosque"] .scene-sky-light{display:block;opacity:1}
-#home-scene .scene-sun{opacity:calc(var(--sky-sun,0)*var(--scene-sky-visibility,1));background:radial-gradient(circle,#fffef5 28%,#fff2ce 72%,#f7cf91 100%);box-shadow:0 0 14px 3px rgba(255,222,164,.2)}
+#home-scene .scene-sun{opacity:calc(var(--sky-sun,0)*var(--scene-sky-visibility,1));background:radial-gradient(circle at 42% 36%,#fffffa 0%,#fff8e1 45%,#ffe0a4 82%,#edbd73 100%);box-shadow:0 0 0 1px rgba(255,246,214,.55),0 0 10px 3px rgba(255,225,164,.35),0 0 24px 8px rgba(255,209,130,.11)}
 #home-scene .scene-moon{opacity:calc(var(--sky-moon,0)*var(--sky-moon-light,0)*var(--scene-sky-visibility,1));border-radius:50%;overflow:visible}
 .scene-moon-defs{position:absolute;width:0;height:0;overflow:hidden}
 .scene-moon-phase{display:block;width:100%;height:100%;aspect-ratio:1;border-radius:50%;clip-path:url(#home-scene-moon-phase);-webkit-clip-path:url(#home-scene-moon-phase);transform:rotate(var(--sky-moon-rotation,0deg));transform-origin:center}
