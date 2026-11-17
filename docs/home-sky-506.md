@@ -1,0 +1,9 @@
+# Skyline lighting correction in 506
+
+The iPhone screenshots from17November2026 show rectangular halos around the Madinah minarets and green dome. The existing celestial occlusion mask uses conservative rectangles around those structures. Applying505's broad translucent sky-colour plane through that mask made its cutout boundaries visible.
+
+The correction disables that broad colour plane for photographic city/window skies. Their original day/night photographs, gradual crossfade and soft dawn/dusk lighting remain. The existing mask still hides moving celestial discs behind buildings. The bundled mosque keeps its opaque sky plane because it covers the fixed crescent painted into that different source photo. Photos and SVG mask geometry are unchanged.
+
+The missing Moon in the07:08Tyumen screenshot is correct. At2026-11-17T02:08:00Z its calculated altitude is about minus47degrees. The independently retrieved [USNO daily result](https://aa.usno.navy.mil/api/rstt/oneday?date=2026-11-17&coords=57.153%2C65.534&tz=5) gives local moonrise14:06 and moonset23:38 on17November2026. These minute-rounded event times refer to a clear astronomical horizon, not the photographed skyline. No Moon is fabricated below the horizon, including when dark lighting is selected manually. The appearance uses the selected prayer city's coordinates, independently of the chosen wallpaper's depicted city.
+
+Focused checks cover the real coarse mask, effective colour-layer rendering, preserved mosque sky coverage and genuine celestial visibility. The screenshot's morning, an afternoon above the horizon and the late-night set are separate cases. The506 minor release retains announcement505, its acknowledgement and expiry. There is no external push, server migration or player-video change. Browser automation is not used; physical iPhone appearance remains a follow-up verification.

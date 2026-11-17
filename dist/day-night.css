@@ -172,8 +172,11 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 /* One masked atmosphere, with the original skyline/architecture unchanged.
    Its opaque mosque sky covers the old painted crescent, not the facade. */
 #home-scene .scene-sky{opacity:1}
-.scene-sky-light{position:absolute;inset:0;background:radial-gradient(ellipse at calc(var(--sky-sunX,50)*1%) calc(var(--sky-horizonY,58)*1%),rgba(255,185,126,calc(var(--sky-warm,0)*var(--scene-direct-light,1)*.46)),transparent 55%),linear-gradient(180deg,rgb(var(--sky-zenith,3,10,25)),rgb(var(--sky-middle,9,23,43)) 68%,rgb(var(--sky-horizon,20,34,53)));opacity:.38;filter:brightness(calc(1 - var(--scene-clouds,0)*.17)) saturate(calc(1 - var(--scene-clouds,0)*.4));transition:opacity 6s ease,filter 6s ease}
-#home-scene[data-wallpaper="mosque"] .scene-sky-light{opacity:1}
+/* Photographic sky masks conservatively occlude buildings. A full-plane tint
+   would expose those cutouts as boxes; only the original mosque needs an
+   opaque sky to cover its painted crescent. Bodies retain their own masks. */
+.scene-sky-light{display:none;position:absolute;inset:0;background:radial-gradient(ellipse at calc(var(--sky-sunX,50)*1%) calc(var(--sky-horizonY,58)*1%),rgba(255,185,126,calc(var(--sky-warm,0)*var(--scene-direct-light,1)*.46)),transparent 55%),linear-gradient(180deg,rgb(var(--sky-zenith,3,10,25)),rgb(var(--sky-middle,9,23,43)) 68%,rgb(var(--sky-horizon,20,34,53)));opacity:0;filter:brightness(calc(1 - var(--scene-clouds,0)*.17)) saturate(calc(1 - var(--scene-clouds,0)*.4));transition:opacity 6s ease,filter 6s ease}
+#home-scene[data-wallpaper="mosque"] .scene-sky-light{display:block;opacity:1}
 #home-scene .scene-sun{opacity:calc(var(--sky-sun,0)*var(--scene-sky-visibility,1));background:radial-gradient(circle,#fffef5 28%,#fff2ce 72%,#f7cf91 100%);box-shadow:0 0 14px 3px rgba(255,222,164,.2)}
 #home-scene .scene-moon{opacity:calc(var(--sky-moon,0)*var(--sky-moon-light,0)*var(--scene-sky-visibility,1));border-radius:50%;overflow:visible}
 .scene-moon-defs{position:absolute;width:0;height:0;overflow:hidden}

@@ -1,305 +1,37 @@
 {
   "schema": 1,
-  "version": 505,
-  "baseCommit": "e2656d149add1ab287f0967561d28bf4405889ea",
-  "baseTree": "9774e5d00f2da4f757b31e4cfe9a65a6e53a183c",
+  "version": 506,
+  "baseCommit": "75357bb4eb957e10ee522672cecb884b2538b58d",
+  "baseTree": "0fb7a21b6bdced51a6a3e26eee5baa3d16e37904",
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
-      "path": ".github/workflows/pages.yml",
-      "reason": "Repair the observed Pages artifact visibility and repeated-run collision: unique run/attempt artifact name and one bounded retry of the same official publish action. Preserve every application verification, existing permission and concurrency setting; no application or notification behavior changes."
-    },
-    {
-      "path": "dist/assets/home-moon-disc.jpg",
-      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
-    },
-    {
-      "path": "dist/assets/home-moon-source.txt",
-      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
-    },
-    {
-      "path": "dist/assets/mosque-sky-mask.svg",
-      "reason": "Correct only the existing sky-mask description to describe the new runtime sky composition; mask geometry and source photos are unchanged."
-    },
-    {
-      "path": "dist/assets/updates/home-sky-505.svg",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
       "path": "dist/day-night.css",
-      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
+      "reason": "Remove the reported rectangular skyline halos by preventing the broad sky-colour layer from painting through conservative photo masks; keep the bundled mosque crescent coverage, original photos, celestial discs and existing weather."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance to505 on2026-11-17; a new announcement covers only the newly introduced sky feature, leaving historical announcements intact."
-    },
-    {
-      "path": "dist/js/app-state-core.js",
-      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
-    },
-    {
-      "path": "dist/js/app-state.js",
-      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
-    },
-    {
-      "path": "dist/js/day-night.js",
-      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Rebuild deterministic runtime catalogues from the reviewed download label and sky news namespaces; no other translations change."
-    },
-    {
-      "path": "dist/js/i18n-source-catalogues.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/offline/ar.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/az.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/de.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/en.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/kk.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/ru.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/tg.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/offline/uz.js",
-      "reason": "Translate the verified complete-download button label into all eight existing interface languages."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/ar.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/az.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/de.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/en.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/index.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/kk.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/ru.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/tg.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/uz.js",
-      "reason": "Add exactly the translated title, explanation and existing-settings location of the505 sky news in the eight-language source catalogue."
-    },
-    {
-      "path": "dist/js/owner-current-activity.js",
-      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
-    },
-    {
-      "path": "dist/js/quran-mushaf-offline.js",
-      "reason": "Show Quran downloaded only after complete SHA/font verification; retain resumable loading, errors, corruption recovery, offline reading and all604pages/6236ayat."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
-      "path": "dist/js/sky-release-news.js",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
-      "path": "dist/js/wallpapers.js",
-      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
-    },
-    {
-      "path": "dist/js/weather.js",
-      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
-    },
-    {
-      "path": "dist/privacy.html",
-      "reason": "Clarify the existing selected-prayer-city disclosure for entry/resume and24h latest app-state, distinct from10minute activity indicators; no new UI or location permission."
+      "reason": "Advance the minor fix to506 while preserving505 announcement content, acknowledgement, date and expiry."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance505 shell/release metadata and cache the exact new runtime closure, Moon texture/credit and sky illustration; preserve downloaded stores, safe activation and request handling."
-    },
-    {
-      "path": "dist/weather.css",
-      "reason": "Owner-requested realistic Home sky: SunCalc2 convention, continuous light, independent Sun/Moon paths, actual lunar phase and observer tilt, measured fog/cloud occlusion, unchanged foreground and Quran nature videos."
-    },
-    {
-      "path": "docs/app-entry-selected-city.md",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
+      "reason": "Advance the506 shell/release version only; preserve the complete offline asset inventory, safe activation and downloaded stores."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Bind the exact505 allowlist to the complete immutable published504 baseline and verify every unrelated file stays unchanged."
+      "reason": "Bind the exact506 cosmetic-fix scope to the immutable published505 baseline and preserve every unrelated file."
     },
     {
-      "path": "docs/home-sky-505.md",
-      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
-    },
-    {
-      "path": "docs/home-sky-moon-505.json",
-      "reason": "Unchanged, hash-pinned NASA full-disc Moon texture with packaged source credit, official usage evidence, geometric scope and primary-reference validation."
-    },
-    {
-      "path": "docs/media-rights-register.json",
-      "reason": "Record the two explicitly introduced505 images and correct the modified sky-mask description fingerprint; preserve unrelated rights records and historical sourceCommit."
-    },
-    {
-      "path": "docs/owner-current-activity-500.md",
-      "reason": "Clarify the existing selected-prayer-city disclosure for entry/resume and24h latest app-state, distinct from10minute activity indicators; no new UI or location permission."
-    },
-    {
-      "path": "docs/owner-selected-city-entry-505.md",
-      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
-    },
-    {
-      "path": "docs/pages-publication-505.md",
-      "reason": "Repair the observed Pages artifact visibility and repeated-run collision: unique run/attempt artifact name and one bounded retry of the same official publish action. Preserve every application verification, existing permission and concurrency setting; no application or notification behavior changes."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
-      "path": "docs/release-artwork.md",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
-      "path": "docs/rights-source-manifest.json",
-      "reason": "Record the two explicitly introduced505 images and correct the modified sky-mask description fingerprint; preserve unrelated rights records and historical sourceCommit."
-    },
-    {
-      "path": "scripts/check-app-state-sql.mjs",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
-    },
-    {
-      "path": "scripts/check-app-state.mjs",
-      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
+      "path": "docs/home-sky-506.md",
+      "reason": "Record the screenshot's actual halo cause, narrowly scoped photo-layer fix, verified lunar-event explanation and physical-device validation limit."
     },
     {
       "path": "scripts/check-image-presentation.mjs",
-      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
-    },
-    {
-      "path": "scripts/check-knowledge-coming-soon.mjs",
-      "reason": "Keep all Knowledge availability assertions and isolate the historical502 offline-news fixture from the new505 announcement; no Knowledge product change."
-    },
-    {
-      "path": "scripts/check-owner-app-state.mjs",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
-    },
-    {
-      "path": "scripts/check-owner-current-activity.mjs",
-      "reason": "Capture only the saved prayer city on entry/resume/settings in existing bounded app-state; identity/race guards, explicit clearing and owner-only conditional city display without guessed geography."
-    },
-    {
-      "path": "scripts/check-quran-mushaf-offline.mjs",
-      "reason": "Show Quran downloaded only after complete SHA/font verification; retain resumable loading, errors, corruption recovery, offline reading and all604pages/6236ayat."
-    },
-    {
-      "path": "scripts/check-release-illustrations.mjs",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
-      "path": "scripts/check-scene-load.mjs",
-      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
-    },
-    {
-      "path": "scripts/check-sky-release-news.mjs",
-      "reason": "Announce only the new505 Home sky using feature-specific project SVG and the existing shared active/hidden/reduced-motion loop; preserve historical cards and acknowledge only on confirmation. No external push or private/billing content."
-    },
-    {
-      "path": "scripts/check-tablet-wallpapers.mjs",
-      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
+      "reason": "Regress the actual Madinah coarse occlusion-mask boundary with effective CSS rendering and preserved celestial/mosque behavior, including wallpaper switching."
     },
     {
       "path": "scripts/check-wallpapers.mjs",
-      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
-    },
-    {
-      "path": "scripts/check-weather-data.mjs",
-      "reason": "Meaningful Home-sky regression checks for primary phase fixtures, independent orientation/area geometry, real DOM, sky masks, weather, viewport and hidden/reduced-motion lifecycle; retain previous checks."
-    },
-    {
-      "path": "supabase/functions/listening-now/app-state.mjs",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
-    },
-    {
-      "path": "supabase/functions/listening-now/guest-activity.mjs",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
-    },
-    {
-      "path": "supabase/functions/owner-access/app-state.mjs",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
-    },
-    {
-      "path": "supabase/functions/owner-access/index.ts",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
-    },
-    {
-      "path": "supabase/migrations/20261116221752_app_entry_selected_city.sql",
-      "reason": "Backward-compatible private selected-city storage and newest/clear-aware owner result, preserving active-session/MFA, RLS/ACL,24h retention, public aggregate counts, listening credit and existing account context. Canonical applied migration filename."
+      "reason": "Protect the independently verified07:08 Tyumen Moon-below-horizon behavior, daily rise/set and daytime visibility without changing astronomical code."
     }
   ],
   "generated": [
@@ -339,7 +71,7 @@
     },
     {
       "path": ".github/workflows/pages.yml",
-      "sha": "ebc73a7bf0b9ddb408199d415d38caaded5c0e6a"
+      "sha": "524d60e32cb4baa345d0916d68786f56f46b22b7"
     },
     {
       "path": ".github/workflows/rights-audit.yml",
@@ -830,6 +562,14 @@
       "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
     },
     {
+      "path": "dist/assets/home-moon-disc.jpg",
+      "sha": "eccf3896a57c55b6ecea1fc92f0bcd282ba43993"
+    },
+    {
+      "path": "dist/assets/home-moon-source.txt",
+      "sha": "6285999b8372f078a765ff4749eb2d524ba828ef"
+    },
+    {
       "path": "dist/assets/house.svg",
       "sha": "cb57f687a7eb44b9c9f0e9e9d4e54f7cc4df46a6"
     },
@@ -955,7 +695,7 @@
     },
     {
       "path": "dist/assets/mosque-sky-mask.svg",
-      "sha": "c80124e7826a77091a4ea8606be93d346ae80b73"
+      "sha": "dcbfe9200d095aa7fa4e6a7ee247676d96c5215e"
     },
     {
       "path": "dist/assets/night-mosque.webp",
@@ -1368,6 +1108,10 @@
     {
       "path": "dist/assets/updates/home-listening-478.svg",
       "sha": "f785a36f8dd3f14c3ddcf64dd1c9be6d3631d263"
+    },
+    {
+      "path": "dist/assets/updates/home-sky-505.svg",
+      "sha": "9e15e779c638a9f7cdaad151879b8659386d676a"
     },
     {
       "path": "dist/assets/updates/interface-languages-501.svg",
@@ -2703,7 +2447,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "136f648ff6cf030f33a69ccf7e5f7e75740590a0"
+      "sha": "4165a5f4ace391f69fe94a1f0ab3539b154acb5b"
     },
     {
       "path": "dist/delete-account.html",
@@ -2859,7 +2603,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "1cc8129a6171b20ebba4d46162e28e6ba811dba6"
+      "sha": "27451cac68c5ebc315e8f39b001ac3a8ead5ba1c"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2871,11 +2615,11 @@
     },
     {
       "path": "dist/js/app-state-core.js",
-      "sha": "64c95b5b69313d6fa94204bfbd7c406cf34f760c"
+      "sha": "e793b61f355bed481c94c475d89f3557d787a19b"
     },
     {
       "path": "dist/js/app-state.js",
-      "sha": "fe8ccabe7ae647b2fa46be7929cc7d90eff0b46f"
+      "sha": "25e191aa63043556116135779474ed7b9965073b"
     },
     {
       "path": "dist/js/app.js",
@@ -3027,7 +2771,7 @@
     },
     {
       "path": "dist/js/day-night.js",
-      "sha": "a1b5a6e1c411380759f6e44746daff0339bd4acd"
+      "sha": "723ab6241382fb061fb73e545e8721b689d69071"
     },
     {
       "path": "dist/js/dhikr-feedback.js",
@@ -3147,39 +2891,39 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "8cbec84f8ca2f45c87d653bac34c7c606f9a5963"
+      "sha": "a2b2494c0ad81ffe688b786e2caee31e0e3b451f"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "5f80b68b43bc0e5338ca868cd975dc04e2cdc975"
+      "sha": "a27c5e6734464eb3d542fb2c058e84d3f69814cb"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "084836f1844352182204edae940c353935986a59"
+      "sha": "badfe9a16f977b9d69964282daf7feeef9d7bcb8"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "bae1f3665689a88cfcc896f59cb2a2b2db5ba2a2"
+      "sha": "de95ad3c7631b0ca5c6b2221aa1ea3588248601b"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "d169a2916c4179ac11b3748a359aaef6a5fdb917"
+      "sha": "e145403b90755a6bfdd186eb105f8420032b7455"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "37c1f221ac4d7439b1991a804cda3a434be1f726"
+      "sha": "cb9abea31d473f770a7da01712a022c928ffcfd6"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "d720e159d71565a7e67d1bbdad212fe2ff3871bf"
+      "sha": "08f351d56291acf2f863f477cc75b8900d367c9e"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "0cff4ecb38e7cd7b35649971e1d1efb9b27aea7f"
+      "sha": "3ba976cb719645df49ba06e66d81a7962f32379c"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
-      "sha": "804af4d00dec3e6b681e0f4294b2005d66389616"
+      "sha": "568d7fb2b7aa98569d12f9028381775f800490dc"
     },
     {
       "path": "dist/js/i18n.js",
@@ -3459,19 +3203,19 @@
     },
     {
       "path": "dist/js/i18n/offline/ar.js",
-      "sha": "7d9719549a8bee610bc793234f4b3b788c386a1b"
+      "sha": "1a9a38172574500a44a79ac72af303481169b9ff"
     },
     {
       "path": "dist/js/i18n/offline/az.js",
-      "sha": "03f8ce6c700e60e99b3cae5f60573e6f567d6aad"
+      "sha": "442e9aa0f5b0c781ecaa9af31a3350cc5fe41e29"
     },
     {
       "path": "dist/js/i18n/offline/de.js",
-      "sha": "18aa7d6a84311e9ebe570ff5a3e0a1420e4d6dc0"
+      "sha": "02d4ec542a4eebab7f74ba27b0b69233c57cf41b"
     },
     {
       "path": "dist/js/i18n/offline/en.js",
-      "sha": "de8b6d9f546b02bbaedb3fb2e80db252786fc614"
+      "sha": "c2251b54ccb9934e84e317d2963f1300d4d7289f"
     },
     {
       "path": "dist/js/i18n/offline/index.js",
@@ -3479,19 +3223,19 @@
     },
     {
       "path": "dist/js/i18n/offline/kk.js",
-      "sha": "2f422ae8e489b2a57fc0994fbd66425cdc640d1a"
+      "sha": "efe08bf4dcca9acf1b6346e780645c93f6498f15"
     },
     {
       "path": "dist/js/i18n/offline/ru.js",
-      "sha": "6209ce831b24364f18bdbce1dade4048650ef9a9"
+      "sha": "3917e09d6315ce02cfe7ccf96b90e1e46659c2f6"
     },
     {
       "path": "dist/js/i18n/offline/tg.js",
-      "sha": "a8521441eafede324e6f86201c9f938d96164d6d"
+      "sha": "acf1afe578ea26171cbfec3a88fdf3cf0dd36b35"
     },
     {
       "path": "dist/js/i18n/offline/uz.js",
-      "sha": "7f4f46e424d195700c191d50135eb99b0e29cfd6"
+      "sha": "13b0ec50c36a31548746f3b6c971839da65ee945"
     },
     {
       "path": "dist/js/i18n/offlineRelease/ar.js",
@@ -3858,6 +3602,42 @@
       "sha": "b59ac91fc73987ef40d385be9410bcf03f4e2f59"
     },
     {
+      "path": "dist/js/i18n/skyRelease/ar.js",
+      "sha": "f181ef774c95ba4a4c06de0b894945ba0bfe672e"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/az.js",
+      "sha": "1ba7fbf14bb11d94fb9a9c5313c86e5b4b6a3488"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/de.js",
+      "sha": "4a0a4f34c8dce8f4d4861da0ab700b7593330ee2"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/en.js",
+      "sha": "423b135e203b674230e0ea78924c1979c6b6da13"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/kk.js",
+      "sha": "c837c4243d50839e6d10d7c87a07091cf930fcdf"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/ru.js",
+      "sha": "c36cc9e6c5880c58a7cdece31a533d87fd402a28"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/tg.js",
+      "sha": "7d30de3eebebc5d84af83836668c2a5de4d5f2ed"
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/uz.js",
+      "sha": "9da260a2a254e3c58ace843ae6dd3de61b77ae5c"
+    },
+    {
       "path": "dist/js/i18n/staff/ar.js",
       "sha": "a6a5ebd97898cf40713e63855ec591bc28e4603d"
     },
@@ -4219,7 +3999,7 @@
     },
     {
       "path": "dist/js/owner-current-activity.js",
-      "sha": "4daedea0cfde2c3e269deb3c2da32745b9b25803"
+      "sha": "454214d1c7b96225440c69b4cd2cd075d0f06328"
     },
     {
       "path": "dist/js/owner-entry.js",
@@ -4451,7 +4231,7 @@
     },
     {
       "path": "dist/js/quran-mushaf-offline.js",
-      "sha": "fc3b0445ef944077032b30ec0dba2055047bdb1e"
+      "sha": "5c4f45db5c9dbf7c7b9a1c5a951651ab6d1483a5"
     },
     {
       "path": "dist/js/quran-mushaf-page-cache.js",
@@ -4667,7 +4447,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "b54ab49e800bd2637c61ec92cbbb8bb88879954b"
+      "sha": "da1860df82c8e9f3d3a98af38556104f89dc1214"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -4704,6 +4484,10 @@
     {
       "path": "dist/js/short-dhikr.js",
       "sha": "83ff178cefa3e0082eca7d57db6f4f56fd5987b6"
+    },
+    {
+      "path": "dist/js/sky-release-news.js",
+      "sha": "5b3909c4f455b4c5ba736b772237cae7f58bbb97"
     },
     {
       "path": "dist/js/soft-depth.js",
@@ -4975,7 +4759,7 @@
     },
     {
       "path": "dist/js/wallpapers.js",
-      "sha": "f1281bd75bd29046958c0bce7670abef4ea0c687"
+      "sha": "ef72fb8cd43d52507fd999c7876fdf48b45cf0e6"
     },
     {
       "path": "dist/js/weather-data.js",
@@ -4983,7 +4767,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "c31753507676add99969cf4ad619b9c948e098b7"
+      "sha": "df4064e6768eb4626b0ab6f614148c65e9e1df1b"
     },
     {
       "path": "dist/knowledge.css",
@@ -5015,7 +4799,7 @@
     },
     {
       "path": "dist/privacy.html",
-      "sha": "ad567bf10bd280546d5917b6053c6d040033274b"
+      "sha": "8554f5e2ba6bb8586b3fa423206ee9413f2e4073"
     },
     {
       "path": "dist/qibla.css",
@@ -5055,7 +4839,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "d3944666bb494f6d5e5108be88f9cc7da3de6a7e"
+      "sha": "9725d973a81396b7b8a7c23ad2570f901badb01d"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5447,7 +5231,7 @@
     },
     {
       "path": "dist/weather.css",
-      "sha": "95820c40f71340e79a1a0bf288882b79483ee6c0"
+      "sha": "c9661e3cd9ccc27c0a07149d6a1a36aa070cee26"
     },
     {
       "path": "docs/about-layout-evidence.md",
@@ -5480,6 +5264,10 @@
     {
       "path": "docs/android-online-updates.md",
       "sha": "06df6e93778b938259b1b9f62a3a074234045e6f"
+    },
+    {
+      "path": "docs/app-entry-selected-city.md",
+      "sha": "443257bd1fd232bb9da2a9b2f08e168ab6daf0e8"
     },
     {
       "path": "docs/arabic-alphabet-source.json",
@@ -5515,7 +5303,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "57640b6d28ddf5c52a08b7c814ccca73f58bd1a6"
+      "sha": "0b29bd4c215727e41dcb734e5a85e16d6d5f7b11"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5598,6 +5386,14 @@
       "sha": "29156d13efd8758d3c899e135317fd92bf6a9655"
     },
     {
+      "path": "docs/home-sky-505.md",
+      "sha": "ec78d0e420b6c297037817a698c3cfe159ad15ba"
+    },
+    {
+      "path": "docs/home-sky-moon-505.json",
+      "sha": "0bbf6ae3301012ae3c2381a8402434ae4e119b05"
+    },
+    {
       "path": "docs/image-presentation-stability.md",
       "sha": "567e91a73e33f1894f568aca2f342cb9ec9dfb25"
     },
@@ -5635,7 +5431,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "cb737ffd1887d0641fbb217d213bdd4231968d3f"
+      "sha": "57fe5c90065ab070232dbfe641c53453b5186588"
     },
     {
       "path": "docs/native-reminders-262.json",
@@ -5667,7 +5463,15 @@
     },
     {
       "path": "docs/owner-current-activity-500.md",
-      "sha": "97ea979f16dabe859739308623964c4054e3ac18"
+      "sha": "fdf6f70ce3797fe2e47d8296e86081e6bc8539c3"
+    },
+    {
+      "path": "docs/owner-selected-city-entry-505.md",
+      "sha": "6e45419a590198c4b3ce45534713ceb54b235e1a"
+    },
+    {
+      "path": "docs/pages-publication-505.md",
+      "sha": "696a222b06fec0c3c7dd3dbf8f7aae9446708609"
     },
     {
       "path": "docs/persistent-audio-261.json",
@@ -5851,11 +5655,11 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "14227826e11c4a16421ccc859fe0dccead17bec8"
+      "sha": "1e6f6bd9722f3424ec53b6797b61c1c13f90205a"
     },
     {
       "path": "docs/release-artwork.md",
-      "sha": "8f709dd5143e5a7550adc6e8d4f3dd54a9d4f23e"
+      "sha": "4bae5bd9ba825bd8a646d862c9527583862bb4fc"
     },
     {
       "path": "docs/rights-audit.md",
@@ -5867,7 +5671,7 @@
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "sha": "3b5609b0231742911268b1799765462d5a854970"
+      "sha": "327d614717e9dd31e995d8b2eee38bc1a4f3704d"
     },
     {
       "path": "docs/ruqyah-listening-336.md",
@@ -6403,11 +6207,11 @@
     },
     {
       "path": "scripts/check-app-state-sql.mjs",
-      "sha": "0d39e865161af95f97f059e950add584c60cfe12"
+      "sha": "ba5c312487232c2475a1ea8e5ec5932130fb0885"
     },
     {
       "path": "scripts/check-app-state.mjs",
-      "sha": "02f8408bb2f3cd1c524154167a3383e72c2f11c2"
+      "sha": "8bbbcb14124d950e93c9199ac3e8aa479d730367"
     },
     {
       "path": "scripts/check-app.mjs",
@@ -6655,7 +6459,7 @@
     },
     {
       "path": "scripts/check-image-presentation.mjs",
-      "sha": "74f168ec5c7e87262a869426a1df3a2521f58c9f"
+      "sha": "aa31e4e8633dbb43661926f14ff6b9bbae2e43a8"
     },
     {
       "path": "scripts/check-image-response.mjs",
@@ -6691,7 +6495,7 @@
     },
     {
       "path": "scripts/check-knowledge-coming-soon.mjs",
-      "sha": "c014aa45afea64a79badb373393cdc886808f903"
+      "sha": "6234be36776fccf9426ef882ea2b903372c7d541"
     },
     {
       "path": "scripts/check-knowledge-repeat-navigation.mjs",
@@ -6883,7 +6687,7 @@
     },
     {
       "path": "scripts/check-owner-app-state.mjs",
-      "sha": "d063d6fbce8af550dab45fec32be5d0205d313e8"
+      "sha": "13895474927831cb35df81d26f25fd7c159910aa"
     },
     {
       "path": "scripts/check-owner-client.mjs",
@@ -6895,7 +6699,7 @@
     },
     {
       "path": "scripts/check-owner-current-activity.mjs",
-      "sha": "78b722a3e5f18ceead3f0434b207e885c82e226a"
+      "sha": "3d7b1908c282448b2c0af9d91a1d2a7cf8ef0cdc"
     },
     {
       "path": "scripts/check-owner-frame-viewport.mjs",
@@ -7111,7 +6915,7 @@
     },
     {
       "path": "scripts/check-quran-mushaf-offline.mjs",
-      "sha": "ae0c78fcfb1a1c15925716bce9ea5cbb69b3125a"
+      "sha": "e11bc6d7504380b41ffe6d77bccd37a93e9c4b61"
     },
     {
       "path": "scripts/check-quran-mushaf.mjs",
@@ -7275,7 +7079,7 @@
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
-      "sha": "21658b2813d601701c9beca1dd456cbd481c8358"
+      "sha": "b2fe81acd7ddac2a2f492a8bc584203b2ba2b34f"
     },
     {
       "path": "scripts/check-rights-register.mjs",
@@ -7287,7 +7091,7 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "548430dc502099f80e08639843de7630072ae62f"
+      "sha": "ea20417ab57830ab4de2ba9f2963f23cc549549f"
     },
     {
       "path": "scripts/check-security.mjs",
@@ -7324,6 +7128,10 @@
     {
       "path": "scripts/check-short-dhikr.mjs",
       "sha": "a2b4f67dfcc77dee43dad8279a633b57831b0466"
+    },
+    {
+      "path": "scripts/check-sky-release-news.mjs",
+      "sha": "34af1d9cfc94e07d3d19337cd61b36147864a3ec"
     },
     {
       "path": "scripts/check-staff-cabinet.mjs",
@@ -7411,7 +7219,7 @@
     },
     {
       "path": "scripts/check-tablet-wallpapers.mjs",
-      "sha": "699024bf268e8a8827d639324ceaab5b7c33390d"
+      "sha": "1341316ba088813f3582695fb21326085d5f2b2e"
     },
     {
       "path": "scripts/check-tahajjud.mjs",
@@ -7491,11 +7299,11 @@
     },
     {
       "path": "scripts/check-wallpapers.mjs",
-      "sha": "d963180161937f283484b6cc19aeb158170a214f"
+      "sha": "8f4a224e0fdb9e9e1ef3a9443a6f966a6f2edf16"
     },
     {
       "path": "scripts/check-weather-data.mjs",
-      "sha": "887f62ef15e89a2a7fed79fb5a9e0b6f4d770b3c"
+      "sha": "bd6d5c7f7ae985fa027fce6fad88f887c4f01393"
     },
     {
       "path": "scripts/expand-quran-recognition.mjs",
@@ -7707,7 +7515,7 @@
     },
     {
       "path": "supabase/functions/listening-now/app-state.mjs",
-      "sha": "d7a48aff7310ecb34ce44a633ebc0ba220b67230"
+      "sha": "46d51a4f6a685eed1b3fa2c1b4b603cde430d7a3"
     },
     {
       "path": "supabase/functions/listening-now/core.mjs",
@@ -7715,7 +7523,7 @@
     },
     {
       "path": "supabase/functions/listening-now/guest-activity.mjs",
-      "sha": "aac0d9536062657066718f5976f832a791b4bd15"
+      "sha": "2b053a60f994067f596e95eb94d382e01e29b806"
     },
     {
       "path": "supabase/functions/listening-now/index.ts",
@@ -7727,11 +7535,11 @@
     },
     {
       "path": "supabase/functions/owner-access/app-state.mjs",
-      "sha": "e671ae4250187650def0cba5a698c891186bc739"
+      "sha": "462472a133fe1680002ba0f86d84bc69e6efbb9e"
     },
     {
       "path": "supabase/functions/owner-access/index.ts",
-      "sha": "05967b845f067ae1774ca70efc45c6258363c02c"
+      "sha": "25f547aede61efa5522c9b19c52f02946d7e9ad5"
     },
     {
       "path": "supabase/functions/owner-reminders/core.mjs",
@@ -8040,6 +7848,10 @@
     {
       "path": "supabase/migrations/20261116132805_confirmed_competition_progress.sql",
       "sha": "5e1986372fa54ce2b9781cc3f6b10c7d6c74e76f"
+    },
+    {
+      "path": "supabase/migrations/20261116221752_app_entry_selected_city.sql",
+      "sha": "431b426567579abbe8b7cfc2b05cecdfeffb7db0"
     },
     {
       "path": "supabase/native-support-devices.sql",
