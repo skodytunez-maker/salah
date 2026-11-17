@@ -180,3 +180,17 @@ for(const [instant,phase,fraction]of [['2026-11-01T20:28:00Z',.75,.5],['2026-11-
 }
 const waxing=moonAppearance(Date.parse('2026-11-13T12:00:00Z'),tyumen),waning=moonAppearance(Date.parse('2026-11-28T12:00:00Z'),tyumen);assert.ok(waxing.phase>0&&waxing.phase<.5);assert.ok(waning.phase>.5&&waning.phase<1);assert.ok(moonAppearance(Date.parse('2026-11-09T07:02:00Z'),tyumen).fraction<.002,'New Moon has no bright disc or glow');
 console.log('PASS: v2 north-clockwise dawn convention, both hemisphere directions, exact lunar illuminated area, independent bright-limb orientation and one global phase at each instant.');
+
+// The reported iPhone screenshot is Tyumen17Nov2026,07:08 local (+05).
+// Independent USNO daily data: moonrise14:06, moonset23:38 local.
+// https://aa.usno.navy.mil/api/rstt/oneday?date=2026-11-17&coords=57.153%2C65.534&tz=5
+const screenshotTime=Date.parse('2026-11-17T07:08:00+05:00');
+assert.ok(getPosition(new Date(screenshotTime),tyumen.latitude,tyumen.longitude).altitude<0,'The reported sky is before sunrise');
+assert.ok(getMoonPosition(new Date(screenshotTime),tyumen.latitude,tyumen.longitude).altitude<-40,'The Moon is genuinely far below the horizon in the reported dark sky');
+for(const mode of ['auto','dark','light'])assert.equal(skyObjects(screenshotTime,null,mode,null,tyumen).moon,0,'A lighting preference cannot fabricate a visible Moon before moonrise');
+const screenshotDayEvents=getMoonTimes(new Date('2026-11-17T00:00:00Z'),tyumen.latitude,tyumen.longitude,0);
+assert.ok(Math.abs(+screenshotDayEvents.rise-Date.parse('2026-11-17T14:06:00+05:00'))<3*minute,'Moonrise agrees with the independent minute-rounded USNO event');
+assert.ok(Math.abs(+screenshotDayEvents.set-Date.parse('2026-11-17T23:38:00+05:00'))<3*minute,'Moonset agrees with the independent minute-rounded USNO event');
+assert.ok(at('2026-11-17T14:20:00+05:00').moon>0,'An above-horizon daytime Moon is not hidden simply because the Sun is up');
+assert.equal(at('2026-11-17T23:50:00+05:00').moon,0,'Late-night darkness cannot keep the Moon visible after its real set');
+console.log('PASS: the07:08 Tyumen dark-sky screenshot has no Moon below the horizon, independently checked daily events, daytime rise and late-night set.');
