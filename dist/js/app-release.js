@@ -1,4 +1,4 @@
-export const APP_VERSION=506;
+export const APP_VERSION=507;
 export const APP_UPDATED_AT='2026-11-17';
 export const APP_UPDATE_DATE='17 ноября 2026';
 export const APP_CHANGES=["Небо в вашем городе: плавный рассвет и закат, движение Солнца и Луны, сегодняшняя лунная фаза. Туман и плотные облака скрывают светила."];

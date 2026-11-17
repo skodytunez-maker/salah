@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {wallpaperChoice,skyObjects,wallpapers,previewClock,skyGeometry,moonAppearance,moonPhasePath} from '../dist/js/wallpapers.js';
+import {wallpaperChoice,skyObjects,wallpapers,previewClock,SCENE_PREVIEW_DURATION,SCENE_PREVIEW_STOPS,skyGeometry,moonAppearance,moonPhasePath} from '../dist/js/wallpapers.js';
 import {solarSceneAt,sceneForMode} from '../dist/js/day-night.js';
 import {getTimes,getPosition,getMoonTimes,getMoonPosition,getMoonIllumination} from '../dist/js/vendor/suncalc.js';
 const store=new Map();globalThis.localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
@@ -97,14 +97,22 @@ const midnight=Date.parse('2026-10-03T00:00:00Z'),before=at(midnight-1000),after
 assert.ok(before.moon>0&&after.moon>0);
 assert.ok(Math.abs(before.moonX-after.moonX)<.01&&Math.abs(before.moonY-after.moonY)<.01,'UTC cache rollover must not abruptly move the Moon');
 
-// One accelerated astronomical clock keeps preview sunrise/set at 5s/15s.
+// A36-second clock gives real twilight events room without changing live astronomy.
 const shiftedTimes={Sunrise:sunrise+2*minute,Maghrib:sunset+30*minute};
-assert.ok(Math.abs(previewClock(observed,shiftedTimes,5000,tyumen)-sunrise)<1000);
-assert.ok(Math.abs(previewClock(observed,shiftedTimes,15000,tyumen)-sunset)<1000);
-assert.equal(previewClock(observed,null,20000,tyumen)-previewClock(observed,null,0,tyumen),day);
-for(const elapsed of [0,2500,5000,10000,15000,17500,20000]){
+assert.equal(SCENE_PREVIEW_DURATION,36000);assert.equal(SCENE_PREVIEW_STOPS.at(-1),SCENE_PREVIEW_DURATION);
+for(const [index,event]of [solar.nauticalDawn,solar.sunrise,solar.goldenHourEnd,solar.solarNoon,solar.goldenHour,solar.sunset,solar.nauticalDusk].entries())assert.ok(Math.abs(previewClock(observed,shiftedTimes,SCENE_PREVIEW_STOPS[index],tyumen)-Number(event))<1000,'Preview visits actual solar event'+index);
+assert.ok(previewClock(observed,null,SCENE_PREVIEW_DURATION,tyumen)>Number(solar.nauticalDusk));
+for(const elapsed of [0,3000,6000,10000,16000,22000,27000,31000,SCENE_PREVIEW_DURATION]){
  const simulated=previewClock(observed,null,elapsed,tyumen),preview=skyObjects(observed,null,'auto',elapsed,tyumen);
  finite(preview);assert.deepEqual(preview,at(simulated));
+}
+for(const city of [null,{latitude:91,longitude:0},svalbard,{latitude:90,longitude:0}]){let previous=-Infinity;for(let elapsed=0;elapsed<=SCENE_PREVIEW_DURATION;elapsed+=500){const instant=previewClock(observed,null,elapsed,city);assert.ok(Number.isFinite(instant)&&instant>=previous,'Polar/invalid preview clocks stay finite and forward');previous=instant;}}
+// Missing nautical twilight does not make an ordinary short summer night
+// fall back to an arbitrary24h clock with its Night button in the next dawn.
+for(const city of [tyumen,{latitude:64.1466,longitude:-21.9426},{latitude:60.1699,longitude:24.9384}]){
+ const anchor=Date.parse('2026-06-21T07:08:00+05:00'),events=getTimes(new Date(anchor),city.latitude,city.longitude),following=getTimes(new Date(anchor+day),city.latitude,city.longitude);if(!Number.isFinite(+events.sunrise)||!Number.isFinite(+events.sunset))continue;
+ assert.ok(Math.abs(previewClock(anchor,null,SCENE_PREVIEW_STOPS[3],city)-Number(events.solarNoon))<1,'Day keeps the actual solar noon even when twilight is incomplete');assert.ok(Math.abs(previewClock(anchor,null,SCENE_PREVIEW_STOPS[1],city)-Number(events.sunrise))<1);assert.ok(Math.abs(previewClock(anchor,null,SCENE_PREVIEW_STOPS[5],city)-Number(events.sunset))<1);
+ const night=previewClock(anchor,null,SCENE_PREVIEW_DURATION-2000,city),end=previewClock(anchor,null,SCENE_PREVIEW_DURATION,city);assert.ok(night>Number(events.sunset)&&end>night);if(Number.isFinite(+following.sunrise))assert.ok(end<Number(following.sunrise),'Even the end of a short-night preview stays before the following sunrise');assert.ok(getPosition(new Date(night),city.latitude,city.longitude).altitude<0,'Night samples a real below-horizon Sun, not tomorrow’s bright morning');assert.ok(solarSceneAt(night,city).day<solarSceneAt(Number(events.solarNoon),city).day,'Short-night light remains the actual twilight, darker than solar noon without forced darkness');if(city===tyumen)assert.ok(solarSceneAt(night,city).day<.5,'Tyumen summer Night must not sample the next bright morning');let previous=-Infinity;for(let elapsed=0;elapsed<=SCENE_PREVIEW_DURATION;elapsed+=250){const instant=previewClock(anchor,null,elapsed,city);assert.ok(Number.isFinite(instant)&&instant>=previous);previous=instant;}
 }
 for(const mode of ['auto','light','dark'])assert.deepEqual(skyObjects(observed,null,mode,null,tyumen),at(observed),'Lighting choice never changes the real celestial position or visibility');
 for(const city of [null,{latitude:91,longitude:0},{latitude:0,longitude:181},{latitude:NaN,longitude:0},{latitude:'57',longitude:65}]){
