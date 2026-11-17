@@ -1,4 +1,5 @@
 import{createImagePresenter,watchDecodedImages}from '../dist/js/image-presentation.js';
+import{createPlayerWindowHistory}from '../dist/js/quran-player-navigation.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -26,6 +27,7 @@ const createNature=()=>({get state(){return natureState;},subscribe(fn){natureLi
 const reciters=[{id:'reader',name:'Ясир ад-Даусари',portrait:'portrait.jpg'},{id:'other',name:'Идрис Абкар',portrait:'other.jpg'},{id:'missing',name:'Чтец без этой записи',portrait:'missing.jpg'}];
 const values=new Map();
 const context=vm.createContext({createImagePresenter,watchDecodedImages,document:doc,window:w,location:w.location,innerHeight:852,getComputedStyle:w.getComputedStyle.bind(w),t,translateUi,subscribeLanguage,NATURE_SOUNDS:sounds,NATURE_MAX_VOLUME:100,NATURE_DEFAULT_VOLUME:28,createQuranNatureAudio:createNature,mountNatureMotion:()=>({sync(){actions.motionSync++;},destroy(){}}),read:(key,fallback)=>values.has(key)?values.get(key):fallback,write:(key,value)=>{values.set(key,value);return true;},quranPlayback:playback,ruqyahPlayback:ruqyah,reciterInfo:id=>reciters.find(reader=>reader.id===id)||reciters[0],reciterHasSurah:id=>id!=='missing',reciterImageUrl:path=>path,groupedReciters:()=>[{id:'favorites',name:'Избранные чтецы',reciters}],RECITERS:reciters,RECITER_FAVORITES_KEY:'favorites',ruqyahDuration:value=>Math.floor(value/60)+':'+String(value%60).padStart(2,'0'),actionIcon:()=>'<svg aria-hidden="true"></svg>',showListeningShare(){actions.audio++;},showTvOutput(){actions.audio++;},toast(){},bindMiniPlayerDismiss:()=>()=>{},initQuranSessionRecovery:()=>({destroy(){}}),console});
+context.createPlayerWindowHistory=createPlayerWindowHistory;
 for(const filename of ['quran-player-window.js','quran-player-extras.js','quran-player-bar.js']){
  const source=await fs.readFile(new URL('../dist/js/'+filename,import.meta.url),'utf8');
  vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context,{filename});

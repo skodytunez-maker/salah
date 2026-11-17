@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Жанды аспан",
+ "settingsExtra.liveSkyHint":"Күн, Ай, бұлттар және ауа райы. Өшірілсе — күн мен түннің қалыпты тұсқағаздары.",
   "settingsExtra.method": "Есептеу әдісі",
   "settingsExtra.school": "Екінтіні есептеу",
   "settingsExtra.schoolStandard": "Шафиғи, Мәлики, Ханбали",

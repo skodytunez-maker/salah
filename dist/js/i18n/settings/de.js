@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Lebendiger Himmel",
+ "settingsExtra.liveSkyHint":"Sonne, Mond, Wolken und Wetter. Aus: einfache Tag- und Nachtbilder.",
   "settingsExtra.method": "Berechnungsmethode",
   "settingsExtra.school": "Asr-Berechnung",
   "settingsExtra.schoolStandard": "Schafiitisch, malikitisch, hanbalitisch",

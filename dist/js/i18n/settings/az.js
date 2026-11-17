@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Canlı səma",
+ "settingsExtra.liveSkyHint":"Günəş, Ay, buludlar və hava effektləri. Söndürüldükdə adi gündüz və gecə fonları.",
   "settingsExtra.method": "Hesablama üsulu",
   "settingsExtra.school": "Əsr vaxtının hesablanması",
   "settingsExtra.schoolStandard": "Şafii, Maliki, Hənbəli",

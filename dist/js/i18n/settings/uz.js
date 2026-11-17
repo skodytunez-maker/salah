@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Jonli osmon",
+ "settingsExtra.liveSkyHint":"Quyosh, Oy, bulutlar va ob-havo. O‘chiq bo‘lsa, oddiy kun va tun fonlari.",
   "settingsExtra.method": "Hisoblash usuli",
   "settingsExtra.school": "Asr vaqtini hisoblash",
   "settingsExtra.schoolStandard": "Shofi’iy, Molikiy, Hanbaliy",

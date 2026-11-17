@@ -1,5 +1,5 @@
 export default Object.freeze({
-  "skyReleaseUi.title": "Der Himmel in Ihrer Stadt",
-  "skyReleaseUi.text": "Sanfte Sonnenauf- und -untergänge, die Bewegung von Sonne und Mond und die heutige Mondphase. Nebel und dichte Wolken verdecken die Himmelskörper.",
-  "skyReleaseUi.where": "Startseite · nach der Zeit Ihrer ausgewählten Gebetsstadt."
+  "skyReleaseUi.title": "Scharfe Hintergründe auf der Startseite",
+  "skyReleaseUi.text": "Originale Tag- und Nachtfotos auf der Startseite mit sanftem Übergang.",
+  "skyReleaseUi.where": "Startseite · je nach gewähltem Hintergrundmodus."
 });

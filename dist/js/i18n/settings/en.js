@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Living sky",
+ "settingsExtra.liveSkyHint":"Sun, Moon, clouds and weather. Off: simple day and night photos.",
  'settingsExtra.method':'Calculation method',
  'settingsExtra.school':'Asr calculation',
  'settingsExtra.schoolStandard':'Shafi‘i, Maliki, Hanbali',

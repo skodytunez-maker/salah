@@ -29,7 +29,7 @@ const guestRegistrationPreview=()=>'<div class="release-player-settings-demo rel
 
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
- {id:'home-sky-505',match:/^Небо в вашем городе:/iu,title:'Небо в вашем городе',art:()=>'',where:''},
+ {id:'home-sky-505',match:/^(?:Небо в вашем городе|Обои на главной):/iu,title:'Чёткие обои на главной',art:()=>'',where:''},
  {id:'quran-offline-502',match:/^Коран без интернета:/iu,title:'Коран всегда рядом',art:()=>'',where:''},
  {id:'prayer-offline-502',match:/^Намаз без интернета:/iu,title:'Расписание без сети',art:()=>'',where:''},
  {id:'audio-offline-502',match:/^Скачанное аудио:/iu,title:'Ваше скачанное чтение',art:()=>'',where:''},

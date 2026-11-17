@@ -101,7 +101,7 @@ export function createQuranSession({loadCatalog=loadIndex,load=async number=>rec
   view={...view,reciter,index,ayah:null,timingStatus:'loading',status:autoplay?'loading':'paused'};emit();
   try{const data=surah.verses?surah:await load(number);if(id!==request)return false;await start(data,reciter,index,autoplay,offlineOnly,0,false);return true}catch{if(id===request){releaseAudioSession();view.status='error';emit()}return false}
  }
- function pause(){if(player)player.pause();else if(view.surah||playlistBuilding){request++;playlistBuilding=false;releaseAudioSession();view.status='paused';emit()}}
+ function pause(){if(player)player.pause();else if(view.surah||playlistBuilding){request++;playlistBuilding=false;releaseAudioSession();view.status='paused';emit()}if(chapterAudio&&!chapterAudio.paused)chapterAudio.pause();}
  function resumeRemote(){return resume({remote:true});}
  function resume(options){
   if(!view.surah||sleepTimer.check())return;

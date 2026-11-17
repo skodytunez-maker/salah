@@ -51,6 +51,40 @@ for(const phase of['day','night']){
  for(const[x,y]of[[100,980],[400,980],[800,980]])assert.equal(pixel(key,x,y),0,'The real sky above the photographic sea horizon stays open');
 }
 
+// Native Al-Aqsa night-source roof samples. The former phone alpha retained a
+// detached blue-sky arc while cutting the real left dome; the wide alpha also
+// kept a blue rim outside the photographed silhouette. Midday/night blending
+// must not manufacture a second outline from those pixels.
+const aqsaPhone='wallpapers/al-aqsa/night-phone-v1.webp',aqsaWide='wallpapers/al-aqsa/night-v1.webp';
+for(const[x,y]of[[370,1005],[375,994],[866,490]])assert.equal(pixel(x>600?aqsaWide:aqsaPhone,x,y),0,'Source-inspected sky outside the night dome stays transparent');
+for(const[x,y]of[[390,982],[395,980],[400,980],[866,500]])assert.equal(pixel(x>600?aqsaWide:aqsaPhone,x,y),255,'The actual night metal roof remains opaque and connected');
+for(const[key,columns,base]of[[aqsaPhone,[[370,1006],[390,980],[415,965],[455,973],[480,1001]],1034],[aqsaWide,[[674,491],[714,445],[754,426],[826,445],[866,494]],529]])for(const[x,edge]of columns){
+ assert.equal(pixel(key,x,edge-1),0,'The selected native roof edge has no outer sky fringe');
+ for(let y=edge;y<=base;y++)assert.equal(pixel(key,x,y),255,'A night roof column has one real boundary and no cut-out strip');
+}
+// Independently reviewed photographs distinguish pale/snowy outer ridges from
+// their sky and from stronger mountain layers behind them. These coordinates
+// reproduced missing real rock/snow and floating fragments in the old atlas.
+for(const[key,rock,sky]of[
+ ['wallpapers/khujand/day-v1.webp',[125,992],[723,911]],
+ ['wallpapers/khujand/night-v1.webp',[87,999],[213,936]],
+ ['wallpapers/khujand/day-tablet-v1.webp',[263,469],[1292,369]],
+ ['wallpapers/khujand/night-tablet-v1.webp',[276,465],[1296,367]],
+ ['wallpapers/almaty/day-v1.webp',[335,1085],[586,1069]],
+ ['wallpapers/almaty/night-v1.webp',[485,1101],[585,1071]],
+ ['wallpapers/pamir/day-v1.webp',[4,916],[99,848]],
+ ['wallpapers/pamir/night-v1.webp',[345,895],[208,860]]
+]){
+ assert.equal(pixel(key,...rock),255,key+' retains the actual outer mountain, including pale and snowy parts');
+ assert.equal(pixel(key,...sky),0,key+' does not retain detached old-sky strips above the physical ridge');
+}
+for(const[key,points]of[
+ ['wallpapers/kaspiysk/day-v1.webp',[[500,992],[510,997],[520,1004]]],
+ ['wallpapers/moscow/day-v1.webp',[[481,1068],[485,1070],[489,1072]]]
+])for(const[x,y]of points)assert.equal(pixel(key,x,y),255,key+' retains the source-inspected bright outer dome shoulder');
+assert.equal(pixel('wallpapers/kaspiysk/day-v1.webp',500,980),0,'Sky above the actual white dome is still transparent');
+assert.equal(pixel('wallpapers/moscow/day-v1.webp',510,1080),0,'Sky above the actual golden dome is still transparent');
+
 for(const source of['https://other.invalid/assets/day-mosque.webp','data:image/png,anything','blob:fixture','../private.webp','./assets/unknown.webp','file://other-host/'+new URL('assets/day-mosque.webp',dist).pathname])assert.equal(skyMatteEntry(source),null,'Unknown/cross-host URLs never acquire an opaque sky');
 for(const bad of[{...SKY_MATTE_ATLAS['assets/day-mosque.webp'],runs:'0'},{...SKY_MATTE_ATLAS['assets/day-mosque.webp'],runs:'zzzzz'},{...SKY_MATTE_ATLAS['assets/day-mosque.webp'],runs:'1'},{maskWidth:999999,maskHeight:999999,start:0,runs:'1'}])assert.throws(()=>decodeForegroundAlpha(bad),/invalid-matte/);
 

@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Осмони зинда",
+ "settingsExtra.liveSkyHint":"Офтоб, Моҳ, абрҳо ва обу ҳаво. Хомӯш бошад — заминаи одии шабу рӯз.",
   "settingsExtra.method": "Усули ҳисоб",
   "settingsExtra.school": "Ҳисоби Аср",
   "settingsExtra.schoolStandard": "Шофеӣ, Моликӣ, Ҳанбалӣ",

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import{ADVANCED_SKY_AVAILABLE}from '../dist/js/sky-feature-policy.js';
 
 const win=new Window({url:'https://fixture.invalid/#settings?section=appearance'}),doc=win.document;
 Object.assign(globalThis,{window:win,document:doc,localStorage:win.localStorage,Event:win.Event,CustomEvent:win.CustomEvent});
@@ -10,23 +11,23 @@ doc.body.innerHTML='<nav id="desktop-nav"></nav><nav id="mobile-nav"></nav><butt
 const[{t,setInterfaceLanguage,translateUi,getLocale,getLanguage,subscribeLanguage},{initializeInterfaceLanguage,languageSettingsMarkup,mountLanguageSettings},{settings,updateSettings},{mountSettingsScreens},{PrayerDisplay},{esc,title},{prayers}]=await Promise.all([
  import('../dist/js/i18n.js'),import('../dist/js/language-settings.js'),import('../dist/js/storage.js'),import('../dist/js/settings-screens.js'),import('../dist/js/prayer-display.js'),import('../dist/js/ui.js'),import('../dist/js/prayers.js')
 ]);
-updateSettings({uiLanguage:'ru',city:{name:'Настройки',latitude:57.1522,longitude:65.5272,timezone:'Asia/Yekaterinburg'},school:1});
+updateSettings({uiLanguage:'ru',city:{name:'Настройки',latitude:57.1522,longitude:65.5272,timezone:'Asia/Yekaterinburg'},school:1,liveSky:true});
 const stopLanguage=initializeInterfaceLanguage({doc,win}),app=doc.getElementById('app'),privateText=doc.getElementById('private-text').textContent;
 const source=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 assert.ok(source.indexOf('initializeInterfaceLanguage();')<source.indexOf('mountQuranPlayer();'),'Interface language is initialized before the first app/player render');
 assert.ok(source.includes("new Intl.DateTimeFormat('en-US'"),'The machine Friday predicate remains in its fixed locale');
 const names={morning:'Утренние азкары',evening:'Вечерние азкары'},adhkarSource=await fs.readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 const adhkarCard=vm.runInNewContext(adhkarSource.split(/\r?\n/).find(line=>line.startsWith('export function adhkarHomeCard')).replace('export ','' )+';adhkarHomeCard;',{names,icon:()=>'<svg aria-hidden="true"></svg>',esc,t});
-let owner=false,account={signedIn:true,nickname:null},renders=0,clock=Date.parse('2026-11-15T08:00:00+05:00');
+let owner=false,account={signedIn:true,nickname:null},renders=0,previewCalls=0,clock=Date.parse('2026-11-15T08:00:00+05:00');
 const day='2026-11-15',times={Fajr:clock+100000,Sunrise:clock+200000,Dhuhr:clock+300000,Asr:clock+400000,Maghrib:clock+500000,Isha:clock+600000};
 let next={key:'Fajr',name:'Фаджр',time:times.Fajr,day};
-const ctx=vm.createContext({app,document:doc,window:win,location:win.location,settings,t,translateUi,getLocale,esc,title,languageSettingsMarkup,mountLanguageSettings,
+const ctx=vm.createContext({ADVANCED_SKY_AVAILABLE,app,document:doc,window:win,location:win.location,settings,t,translateUi,getLocale,esc,title,languageSettingsMarkup,mountLanguageSettings,
  stopSettingsScreens:null,stopLanguageSettings:null,mountSettingsScreens:node=>mountSettingsScreens(node,{win}),currentRoute:'settings',counterSyncStatus:()=>account,ownerVerified:()=>owner,
  teamPreviewVerified:()=>false,bindAppSharing(){},appSharingMarkup:()=>'<div class="app-share-row">Пригласить друзей</div>',mountMenuAvatar(){},
  reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){},tick(){}},usesAlHakk:()=>false,tyumenSourceSettings:()=>'',prayers,methods:{3:'Muslim World League',5:'Egyptian General Authority'},
  prayerOffsetValues:()=>settings.offsets,timingsFor:()=>times,dateKey:()=>day,formatTime:time=>Number.isFinite(time)?'08:00':'—',nativeUpdateRuntime:()=>false,APP_VERSION:500,APP_UPDATED_AT:'2026-11-15',APP_UPDATE_DATE:'15 ноября 2026',
  cityDialog(){},ensureTahajjudDays:async()=>{},mountAmbientSettings(){},mountLandmarkSettings(){},mountPrayerOffline(){},mountCacheSettings(){},mountTravelSettings(){},travelHooks:{},mountSoftDepthSetting(){},mountDiagnosticSetting(){},personalDataAllowed:()=>true,errorReporter:{},
- weatherLabel:()=>'',weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},updateSettings,toast(){},refresh(){renders++;},render(){renders++;},tick:null,
+ weatherLabel:()=>'',weatherDialog(){},startScenePreview(){previewCalls++;},startWeatherPreview(){previewCalls++;},installApp(){},showAppRelease(){},exportData(){},importData(){},updateSettings,toast(){},refresh(){renders++;},render(){renders++;},tick:null,
  calendarRequestId:0,currentDay:day,lastTick:clock,loading:false,days:{[day]:{timings:Object.fromEntries(Object.entries(times).map(([key,value])=>[key,new Date(value).toISOString()]))}},
  adhkarPeriod:()=> 'morning',adhkarHomeCard:adhkarCard,updateAdhkarPeriod(){},canResumePreviousEvening:()=>false,nextPrayer:()=>next,homeEvent:(_now,value)=>value,
  countdown:()=> '00:01:40',asrInfo:()=>null,tahajjudEntry:()=>({text:'01:30',label:'Личный текст расчёта'}),atmosphere(){},weather:null,lastWeatherCheck:0,WEATHER_REFRESH_INTERVAL:60000,weatherBusy:false,refreshWeather(){},
@@ -44,6 +45,18 @@ assert.deepEqual([...doc.querySelectorAll('#mobile-nav [data-i18n]')].map(node=>
 assert.equal(doc.getElementById('location-button').textContent,'Настройки');assert.equal(doc.getElementById('location-button').hasAttribute('data-i18n'),false,'A selected city is user data, never a placeholder to translate');
 assert.equal(app.querySelector('.page-head h1').textContent,'Оформление и атмосфера');
 const form=doc.getElementById('settings-form'),offset=doc.getElementById('offset-Fajr'),method=doc.getElementById('method'),weather=doc.getElementById('weather'),picker=app.querySelector('[data-interface-language]');
+assert.equal(ADVANCED_SKY_AVAILABLE,false,'The actual public availability policy, not a fixture override, governs Settings');
+const assertPublicAppearance=()=>{
+ for(const id of ['live-sky','weather','weatherAnimation']){const row=doc.getElementById(id).closest('label');assert.equal(row.hidden,true);assert.equal(win.getComputedStyle(row).display,'none','An explicit display rule also defeats the existing switch-row layout');}
+ for(const id of ['live-sky-hint','scene-preview','weather-preview']){const node=doc.getElementById(id);assert.equal(node.hidden,true);assert.equal(win.getComputedStyle(node).display,'none');}
+ for(const button of doc.querySelectorAll('[data-background-mode]')){assert.equal(button.hidden,false);assert.notEqual(win.getComputedStyle(button).display,'none','Basic Day/Night/Auto photo choices remain accessible');}
+ const visibleControls=[...app.querySelectorAll('input,select,button,a[href]')].filter(node=>!node.closest('[hidden]')&&win.getComputedStyle(node).display!=='none');
+ assert.ok(visibleControls.every(node=>!['live-sky','weather','weatherAnimation','scene-preview','weather-preview'].includes(node.id)),'Closed advanced controls are absent from the visible keyboard control set');
+};
+assertPublicAppearance();assert.equal(doc.getElementById('live-sky').checked,false,'Even a stored true preference is not shown as an available option');
+const savedBeforeHiddenHandler=localStorage.getItem('salah:settings'),liveSwitch=doc.getElementById('live-sky'),routeBeforeHiddenHandler=win.location.hash;
+liveSwitch.checked=true;liveSwitch.dispatchEvent(new win.Event('change',{bubbles:true}));assert.equal(liveSwitch.checked,false);assert.equal(localStorage.getItem('salah:settings'),savedBeforeHiddenHandler,'A direct hidden toggle event cannot save an opt-in');
+doc.getElementById('scene-preview').click();doc.getElementById('weather-preview').click();assert.equal(previewCalls,0);assert.equal(win.location.hash,routeBeforeHiddenHandler,'Programmatic hidden-demo clicks cannot navigate or start a preview');
 offset.value='17';method.value='5';weather.checked=true;
 const groups=[...form.querySelectorAll('.settings-grid>.settings-group')],keys=['city','appearance','language','reminders','data','application'],groupFor=key=>groups.find(group=>group.dataset.settingsSection===key),route=hash=>{win.location.hash=hash;assert.equal(app.settingsHandleRoute(hash),true);};
 assert.deepEqual(groups.map(group=>group.dataset.settingsSection),keys,'The visible language row follows Appearance, and every group owns a stable route key');assert.equal(app.querySelectorAll('[data-interface-language]').length,1);assert.equal(groupFor('language').querySelector('[data-interface-language]'),picker);assert.equal(groupFor('application').querySelector('[data-interface-language]'),null);assert.equal(groupFor('appearance').querySelector('[data-interface-language]'),null);
@@ -71,9 +84,11 @@ for(const language of ['en','de','az','tg','uz','kk','ar','ru']){
  assert.equal(doc.querySelector('#school').value,'1');assert.equal(doc.querySelector('#school [value="1"]').textContent,t('settingsExtra.schoolHanafi'));
  assert.equal(doc.querySelector('#wallpaper-select').getAttribute('aria-label'),t('settingsExtra.chooseWallpaper'));
  assert.equal(doc.querySelector('#check-update span').textContent,t('settingsExtra.update'));
+ assertPublicAppearance();
  assert.equal(renders,0,'Changing language cannot reload, refresh forms or reset playback');
 }
 groupFor('language').querySelector('summary').click();assert.deepEqual([...picker.options].map(option=>option.value),['ru','en','az','tg','uz','kk','de','ar']);assert.equal(picker.querySelector('[value="auto"]'),null);assert.equal(picker.textContent.includes('Как на телефоне'),false);updateSettings({uiLanguage:'auto'});assert.equal(settings.uiLanguage,'auto');assert.equal(picker.value,getLanguage(),'Automatic mode displays the current phone language among the eight manual choices');const autoPreference=localStorage.getItem('salah:settings');app.querySelector('.settings-screen-back').click();await new Promise(resolve=>setImmediate(resolve));app.settingsHandleRoute(win.location.hash);groupFor('language').querySelector('summary').click();assert.equal(localStorage.getItem('salah:settings'),autoPreference,'Opening Language cannot convert the automatic preference to manual');assert.equal(doc.getElementById('settings-form'),form);assert.equal(offset.value,'17');assert.equal(audio.currentTime,37);assert.equal(audioActions,0);picker.value='ru';picker.dispatchEvent(new win.Event('change',{bubbles:true}));
+liveSwitch.checked=true;form.dispatchEvent(new win.Event('submit',{bubbles:true,cancelable:true}));assert.equal(settings.liveSky,false);assert.equal(JSON.parse(localStorage.getItem('salah:settings')).liveSky,false,'Submitting Settings cannot persist a hidden public opt-in');assert.equal(doc.getElementById('settings-form'),form);assert.equal(audio.currentTime,37);assert.equal(audioActions,0);
 ctx.stopLanguageSettings();ctx.stopSettingsScreens();stopSettingsCopy();
 
 ctx.currentRoute='more';ctx.more();
