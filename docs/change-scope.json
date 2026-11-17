@@ -1,65 +1,33 @@
 {
   "schema": 1,
-  "version": 507,
-  "baseCommit": "2477b858abf7d4c3275c1808f37a77c24d29bdc5",
-  "baseTree": "f0cc7c77faf13a8b21132c90cb17326696b85d2d",
+  "version": 508,
+  "baseCommit": "023a92aa91cf0db44dab252fd040d2c026ab2e44",
+  "baseTree": "1e466fac24d76cf2c711c35268cca3fc1632d413",
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
-      "path": "AGENTS.md",
-      "reason": "Record the owner's explicit natural one-way Sun/Moon preview requirement as a narrow exception to generic alternating release-card motion."
-    },
-    {
-      "path": "dist/css/quran-awards.css",
-      "reason": "Add celestial-preview-only orbit keyframes and normal animation direction; keep all other cards, award styling, hidden/closed pause and reduced-motion behavior."
+      "path": "dist/day-night.css",
+      "reason": "Make only the existing Home Sun easier to see with explicit bounded square sizing and a soft warm local halo; preserve real position, weather/horizon opacity, masks, Moon and the506 photographic sky-plane correction."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance cosmetic fix507 with the current505 announcement, date, acknowledgement and expiry preserved."
-    },
-    {
-      "path": "dist/js/sky-release-news.js",
-      "reason": "Correct the reported news demonstration: complete one-way Sun/Moon rise-to-set arcs with a below-horizon invisible reset; preserve the real Home sky and shared gallery lifecycle."
-    },
-    {
-      "path": "dist/js/wallpapers.js",
-      "reason": "Use one monotone actual astronomical preview timeline with adequately visible dawn/dusk/night stages and real celestial visibility; ordinary real-time sky positions remain unchanged."
-    },
-    {
-      "path": "dist/js/weather.js",
-      "reason": "Repair the requested Home day/night demonstration only: transient clear weather, visible staged twilight, ready-time start and safe restore; preserve ordinary weather, actual clock, settings, prayer times and506 skyline correction."
+      "reason": "Advance minor508 while preserving the existing505 announcement, acknowledgement, content, date and expiry."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance507 shell/release version only, preserving offline assets, downloaded stores and safe application."
+      "reason": "Advance508 shell/release literals only, preserving offline assets, safe update behavior and stored downloads."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Bind the exact507 news-demo fix scope to the immutable published506 tree and preserve unrelated files."
+      "reason": "Bind the exact six-path508 scope to the immutable published507 tree and preserve every unrelated baseline file."
     },
     {
-      "path": "docs/home-sky-preview-507.md",
-      "reason": "Document the confirmed preview-weather/timing cause, constrained demonstration repair and its real-time/lifecycle boundaries."
+      "path": "docs/home-sun-508.md",
+      "reason": "Document the owner-requested solar visibility enhancement, independently checked screenshot geometry and limits of unknown phone weather."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Document the minor507 correction within the existing505 news edition and preserve acknowledgement/expiry."
-    },
-    {
-      "path": "docs/release-artwork.md",
-      "reason": "Correct the existing505 artwork description to explain one-way celestial motion without adding or resetting public feature cards."
-    },
-    {
-      "path": "scripts/check-scene-load.mjs",
-      "reason": "Exercise the real preview renderer and astronomy under opaque weather, slow readiness, lifecycle and reduced-motion cases; verify live weather/settings are restored."
-    },
-    {
-      "path": "scripts/check-sky-release-news.mjs",
-      "reason": "Regress real orbit endpoints, monotonically east-to-west visible motion and invisible loop reset alongside existing localization, acknowledgement and lifecycle checks."
-    },
-    {
-      "path": "scripts/check-wallpapers.mjs",
-      "reason": "Validate the real staged preview clock, event/phase coherence, genuine lunar visibility and safe polar/invalid-context behavior, preserving506 screenshot-time and all earlier astronomy regressions."
+      "reason": "Record the minor508 Home Sun presentation correction under the existing505 edition without new public cards or a push."
     }
   ],
   "generated": [
@@ -119,7 +87,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "339617c07c297ce5236a91ab96021198fc47d886"
+      "sha": "aa9cfe3f3693f69121fcd1f0c08ca36b379c71f8"
     },
     {
       "path": "ANALYTICS.md",
@@ -1415,7 +1383,7 @@
     },
     {
       "path": "dist/css/quran-awards.css",
-      "sha": "2b21e5f3c4f9148bc569ae77eb4adfc24a4e351f"
+      "sha": "cf4b8b6b28bc7e279d3ca92557d9181a45bb3bcc"
     },
     {
       "path": "dist/css/radio-preview.css",
@@ -2631,7 +2599,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "102bb3ee3a06842bf306c95ff1031a05236ee820"
+      "sha": "6bf3aadb0828cb3862c9e3a7ec0353285b6c27cb"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4515,7 +4483,7 @@
     },
     {
       "path": "dist/js/sky-release-news.js",
-      "sha": "5b3909c4f455b4c5ba736b772237cae7f58bbb97"
+      "sha": "ad4913128349209406812e8869485c645eb6d5f0"
     },
     {
       "path": "dist/js/soft-depth.js",
@@ -4787,7 +4755,7 @@
     },
     {
       "path": "dist/js/wallpapers.js",
-      "sha": "ef72fb8cd43d52507fd999c7876fdf48b45cf0e6"
+      "sha": "39eb3e170747942df0a3605abe282686ac8f7e36"
     },
     {
       "path": "dist/js/weather-data.js",
@@ -4795,7 +4763,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "df4064e6768eb4626b0ab6f614148c65e9e1df1b"
+      "sha": "f116b97aa4df3b6f7c07451fa2362a1731d6d985"
     },
     {
       "path": "dist/knowledge.css",
@@ -4867,7 +4835,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "4e45b5505fe1aedf81d16371f46da47bce4ff84c"
+      "sha": "da38f5bfc550366ada1459f0156300fa29c43ab0"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5331,7 +5299,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "eeba277f3bd989144aab45777afb73eb279c6668"
+      "sha": "c743b95c4c3fc5e00d9597617728b21e6bdd2f75"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5424,6 +5392,10 @@
     {
       "path": "docs/home-sky-moon-505.json",
       "sha": "0bbf6ae3301012ae3c2381a8402434ae4e119b05"
+    },
+    {
+      "path": "docs/home-sky-preview-507.md",
+      "sha": "9f37f80258dd04d1800d955d5856b3c700bf4a93"
     },
     {
       "path": "docs/image-presentation-stability.md",
@@ -5687,11 +5659,11 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "1e6f6bd9722f3424ec53b6797b61c1c13f90205a"
+      "sha": "73ecdea5883a495130eef4bf3d8b79903ed4ee64"
     },
     {
       "path": "docs/release-artwork.md",
-      "sha": "4bae5bd9ba825bd8a646d862c9527583862bb4fc"
+      "sha": "c577e9e0b6a69d7fa682dbafb68f961033c4a0bd"
     },
     {
       "path": "docs/rights-audit.md",
@@ -7123,7 +7095,7 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "ea20417ab57830ab4de2ba9f2963f23cc549549f"
+      "sha": "1496c3c58812dfc4f9ad337a7d4ccfda7716348d"
     },
     {
       "path": "scripts/check-security.mjs",
@@ -7163,7 +7135,7 @@
     },
     {
       "path": "scripts/check-sky-release-news.mjs",
-      "sha": "34af1d9cfc94e07d3d19337cd61b36147864a3ec"
+      "sha": "977f9a594532c0e8e69ffc640784948ac1dd5518"
     },
     {
       "path": "scripts/check-staff-cabinet.mjs",
@@ -7331,7 +7303,7 @@
     },
     {
       "path": "scripts/check-wallpapers.mjs",
-      "sha": "2ef26e91737423e6d5f689a82df44a920db7b84c"
+      "sha": "cc550a11433e0b3fe08dcd39f4cbc08c4b469ba5"
     },
     {
       "path": "scripts/check-weather-data.mjs",
