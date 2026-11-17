@@ -171,6 +171,9 @@
 .release-feature[aria-hidden="false"] .release-motion-preview{--release-motion-state:running}
 #modal:not([open]) .release-motion-preview{--release-motion-state:paused}
 .release-motion-preview [data-release-motion-part="element"],.release-motion-preview [data-release-motion-part="after"]::after{animation:var(--release-motion-keyframes) 3s cubic-bezier(.25,.7,.25,1) infinite alternate both var(--release-motion-state)}
+.release-sky-preview [data-sky-part="sun"],.release-sky-preview [data-sky-part="moon"]{animation-duration:12s;animation-direction:normal;animation-timing-function:linear}
+.release-sky-preview [data-sky-part="moon"]{animation-delay:-6s}
+@keyframes release-sky-orbit{0%,5%{transform:rotate(-108deg);opacity:0}10%{transform:rotate(-90deg);opacity:0}14%{transform:rotate(-80deg);opacity:1}50%{transform:rotate(0deg);opacity:1}86%{transform:rotate(80deg);opacity:1}90%{transform:rotate(90deg);opacity:0}95%,100%{transform:rotate(108deg);opacity:0}}
 body.reduce-motion .release-motion-preview [data-release-motion-part="element"],body.no-transitions .release-motion-preview [data-release-motion-part="element"],body.reduce-motion .release-motion-preview [data-release-motion-part="after"]::after,body.no-transitions .release-motion-preview [data-release-motion-part="after"]::after{animation:none}
 @media(prefers-reduced-motion:reduce){.release-motion-preview [data-release-motion-part="element"],.release-motion-preview [data-release-motion-part="after"]::after{animation:none}}
 

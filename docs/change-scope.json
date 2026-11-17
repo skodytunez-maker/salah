@@ -1,37 +1,65 @@
 {
   "schema": 1,
-  "version": 506,
-  "baseCommit": "75357bb4eb957e10ee522672cecb884b2538b58d",
-  "baseTree": "0fb7a21b6bdced51a6a3e26eee5baa3d16e37904",
+  "version": 507,
+  "baseCommit": "2477b858abf7d4c3275c1808f37a77c24d29bdc5",
+  "baseTree": "f0cc7c77faf13a8b21132c90cb17326696b85d2d",
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
-      "path": "dist/day-night.css",
-      "reason": "Remove the reported rectangular skyline halos by preventing the broad sky-colour layer from painting through conservative photo masks; keep the bundled mosque crescent coverage, original photos, celestial discs and existing weather."
+      "path": "AGENTS.md",
+      "reason": "Record the owner's explicit natural one-way Sun/Moon preview requirement as a narrow exception to generic alternating release-card motion."
+    },
+    {
+      "path": "dist/css/quran-awards.css",
+      "reason": "Add celestial-preview-only orbit keyframes and normal animation direction; keep all other cards, award styling, hidden/closed pause and reduced-motion behavior."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance the minor fix to506 while preserving505 announcement content, acknowledgement, date and expiry."
+      "reason": "Advance cosmetic fix507 with the current505 announcement, date, acknowledgement and expiry preserved."
+    },
+    {
+      "path": "dist/js/sky-release-news.js",
+      "reason": "Correct the reported news demonstration: complete one-way Sun/Moon rise-to-set arcs with a below-horizon invisible reset; preserve the real Home sky and shared gallery lifecycle."
+    },
+    {
+      "path": "dist/js/wallpapers.js",
+      "reason": "Use one monotone actual astronomical preview timeline with adequately visible dawn/dusk/night stages and real celestial visibility; ordinary real-time sky positions remain unchanged."
+    },
+    {
+      "path": "dist/js/weather.js",
+      "reason": "Repair the requested Home day/night demonstration only: transient clear weather, visible staged twilight, ready-time start and safe restore; preserve ordinary weather, actual clock, settings, prayer times and506 skyline correction."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance the506 shell/release version only; preserve the complete offline asset inventory, safe activation and downloaded stores."
+      "reason": "Advance507 shell/release version only, preserving offline assets, downloaded stores and safe application."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Bind the exact506 cosmetic-fix scope to the immutable published505 baseline and preserve every unrelated file."
+      "reason": "Bind the exact507 news-demo fix scope to the immutable published506 tree and preserve unrelated files."
     },
     {
-      "path": "docs/home-sky-506.md",
-      "reason": "Record the screenshot's actual halo cause, narrowly scoped photo-layer fix, verified lunar-event explanation and physical-device validation limit."
+      "path": "docs/home-sky-preview-507.md",
+      "reason": "Document the confirmed preview-weather/timing cause, constrained demonstration repair and its real-time/lifecycle boundaries."
     },
     {
-      "path": "scripts/check-image-presentation.mjs",
-      "reason": "Regress the actual Madinah coarse occlusion-mask boundary with effective CSS rendering and preserved celestial/mosque behavior, including wallpaper switching."
+      "path": "docs/release-announcements.md",
+      "reason": "Document the minor507 correction within the existing505 news edition and preserve acknowledgement/expiry."
+    },
+    {
+      "path": "docs/release-artwork.md",
+      "reason": "Correct the existing505 artwork description to explain one-way celestial motion without adding or resetting public feature cards."
+    },
+    {
+      "path": "scripts/check-scene-load.mjs",
+      "reason": "Exercise the real preview renderer and astronomy under opaque weather, slow readiness, lifecycle and reduced-motion cases; verify live weather/settings are restored."
+    },
+    {
+      "path": "scripts/check-sky-release-news.mjs",
+      "reason": "Regress real orbit endpoints, monotonically east-to-west visible motion and invisible loop reset alongside existing localization, acknowledgement and lifecycle checks."
     },
     {
       "path": "scripts/check-wallpapers.mjs",
-      "reason": "Protect the independently verified07:08 Tyumen Moon-below-horizon behavior, daily rise/set and daytime visibility without changing astronomical code."
+      "reason": "Validate the real staged preview clock, event/phase coherence, genuine lunar visibility and safe polar/invalid-context behavior, preserving506 screenshot-time and all earlier astronomy regressions."
     }
   ],
   "generated": [
@@ -2447,7 +2475,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "4165a5f4ace391f69fe94a1f0ab3539b154acb5b"
+      "sha": "025b2d8415d7137d90e5cfa6536eeefafd893cb8"
     },
     {
       "path": "dist/delete-account.html",
@@ -2603,7 +2631,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "27451cac68c5ebc315e8f39b001ac3a8ead5ba1c"
+      "sha": "102bb3ee3a06842bf306c95ff1031a05236ee820"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4839,7 +4867,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "9725d973a81396b7b8a7c23ad2570f901badb01d"
+      "sha": "4e45b5505fe1aedf81d16371f46da47bce4ff84c"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5303,7 +5331,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "0b29bd4c215727e41dcb734e5a85e16d6d5f7b11"
+      "sha": "eeba277f3bd989144aab45777afb73eb279c6668"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5388,6 +5416,10 @@
     {
       "path": "docs/home-sky-505.md",
       "sha": "ec78d0e420b6c297037817a698c3cfe159ad15ba"
+    },
+    {
+      "path": "docs/home-sky-506.md",
+      "sha": "2630842707c1b4226efab14c2d6acf758d3502de"
     },
     {
       "path": "docs/home-sky-moon-505.json",
@@ -6459,7 +6491,7 @@
     },
     {
       "path": "scripts/check-image-presentation.mjs",
-      "sha": "aa31e4e8633dbb43661926f14ff6b9bbae2e43a8"
+      "sha": "5edbe83018a42d9ff1864ffe25effe97e54307a8"
     },
     {
       "path": "scripts/check-image-response.mjs",
@@ -7299,7 +7331,7 @@
     },
     {
       "path": "scripts/check-wallpapers.mjs",
-      "sha": "8f4a224e0fdb9e9e1ef3a9443a6f966a6f2edf16"
+      "sha": "2ef26e91737423e6d5f689a82df44a920db7b84c"
     },
     {
       "path": "scripts/check-weather-data.mjs",

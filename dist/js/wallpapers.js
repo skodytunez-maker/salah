@@ -43,15 +43,31 @@ function bodyPoint(now,position,events,northFacing=false){
  return {x:northFacing?100-eastToWest:eastToWest,
   y:skyGeometry.horizon/skyGeometry.height*100-50*Math.max(-2,Math.min(90,position.altitude))/90};
 }
+export const SCENE_PREVIEW_DURATION=36000;
+export const SCENE_PREVIEW_STOPS=Object.freeze([0,6000,10000,16000,22000,27000,31000,SCENE_PREVIEW_DURATION]);
+let previewEventsCache=null;
 export function previewClock(now,times,elapsed,city){
- if(!Number.isFinite(elapsed)||!Number.isFinite(now)||!validCity(city))return now;
- const sun=getTimes(new Date(now),city.latitude,city.longitude);
- const rise=stamp(sun.sunrise),set=stamp(sun.sunset);
- if(rise===null||set===null||set<=rise||set-rise>=day)return now+clamp(elapsed/20000)*day;
- const t=Math.max(0,Math.min(20000,elapsed)),night=day-(set-rise);
- // Match the existing preview: sunrise at5s, sunset at15s. The Moon is
- // calculated at that same accelerated timestamp, independently of the Sun.
- return t<5000?rise-night/2+night*t/10000:t<15000?rise+(set-rise)*(t-5000)/10000:set+night*(t-15000)/10000;
+ const anchor=Number.isFinite(now)?now:0,t=Math.max(0,Math.min(SCENE_PREVIEW_DURATION,Number.isFinite(elapsed)?elapsed:0));
+ if(!validCity(city))return anchor+t/SCENE_PREVIEW_DURATION*day;
+ const key=[anchor,city.latitude,city.longitude].join(':');
+ if(previewEventsCache?.key!==key){
+  const sun=getTimes(new Date(anchor),city.latitude,city.longitude),next=getTimes(new Date(anchor+day),city.latitude,city.longitude),rise=stamp(sun.sunrise),set=stamp(sun.sunset),noon=stamp(sun.solarNoon);
+  let points=[];
+  if(rise!==null&&set!==null&&noon!==null&&rise<noon&&noon<set&&set-rise<day){
+   const nightLength=day-(set-rise),before=stamp(sun.nadir)??rise-nightLength/2,followingRise=stamp(next.sunrise),after=Math.min(stamp(next.nadir)??set+nightLength/2,followingRise===null?Infinity:followingRise-1);
+   const between=(values,left,right,fallback)=>values.map(stamp).find(value=>value!==null&&value>left&&value<right)??fallback;
+   const dawn=between([sun.nauticalDawn,sun.dawn],before,rise,(before+rise)/2),morning=between([sun.goldenHourEnd],rise,noon,(rise+noon)/2),evening=between([sun.goldenHour],noon,set,(noon+set)/2),dusk=between([sun.nauticalDusk,sun.dusk],set,after,(set+after)/2);
+   // Short summer nights need not reach nautical twilight. Preserve every
+   // available real event and sample the genuine following solar midnight;
+   // never advance the Night button into the following morning's daylight.
+   points=[dawn,rise,morning,noon,evening,set,dusk,Math.min(dusk+60*60000,after)];
+  }
+  const complete=points.length===SCENE_PREVIEW_STOPS.length&&points.every((value,i)=>Number.isFinite(value)&&(!i||value>points[i-1]))&&points.at(-1)-points[0]<day;
+  previewEventsCache={key,points:complete?points:null};
+ }
+ const points=previewEventsCache.points;if(!points)return anchor+t/SCENE_PREVIEW_DURATION*day;
+ let index=SCENE_PREVIEW_STOPS.findIndex(value=>value>=t);if(index<=0)return points[0];
+ const start=SCENE_PREVIEW_STOPS[index-1],end=SCENE_PREVIEW_STOPS[index];return points[index-1]+(points[index]-points[index-1])*(t-start)/(end-start);
 }
 export function skyObjects(now,times,mode='auto',preview=null,city=null){
  // Manual light/dark changes the photograph's lighting only. Celestial

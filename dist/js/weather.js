@@ -1,7 +1,7 @@
 import{t}from './i18n.js';
 import{uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute}from './ui.js';
 import{actionIcon,actionLabel}from './action-icons.js';
-import{wallpapers,skyObjects,previewClock,skyProjectionFrame,projectSkyObjects,moonAppearance,moonPhasePath}from './wallpapers.js';
+import{wallpapers,skyObjects,previewClock,SCENE_PREVIEW_DURATION,SCENE_PREVIEW_STOPS,skyProjectionFrame,projectSkyObjects,moonAppearance,moonPhasePath}from './wallpapers.js';
 import{loadDecodedImage,watchDecodedImages}from './image-presentation.js';
 import{loadLandmark}from './landmarks.js';
 import{applyWallpaperLayout}from './wallpaper-layout.js';
@@ -11,7 +11,10 @@ import{weatherFrame}from './weather-data.js';
 export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REFRESH_INTERVAL}from './weather-data.js';
 
 let skyAnimation=null,lastSkySample=null,lastSkyStamp=null;
-let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null;
+let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null,previewRequested=false,previewRequestedAt=null,previewAnchor=null,previewCityKey=null,previewOrigin='';
+const previewActive=()=>previewRequested||previewStarted!==null;
+const cityKey=()=>JSON.stringify([settings.city||null,settings.wallpaper,settings.landmarkCity]);
+const previewCityValid=()=>Number.isFinite(settings.city?.latitude)&&Math.abs(settings.city.latitude)<=90&&Number.isFinite(settings.city?.longitude)&&Math.abs(settings.city.longitude)<=180;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null;
 // Retain decoded sources while their exact URLs are used by the CSS layers.
 let builtinKey=null,builtinRequest=null,builtinState='idle',builtinImages=[];
@@ -30,7 +33,7 @@ function prepareBuiltin(scene,home,tablet){
   builtinImages=images;const night=scene.querySelector('.scene-night'),day=scene.querySelector('.scene-day'),sky=scene.querySelector('.scene-sky'),effect=document.getElementById('weather-layer');
   if(night)night.style.backgroundImage='url("'+images[0].url+'")';if(day)day.style.backgroundImage='url("'+images[1].url+'")';
   for(const [node,image]of [[sky,images[2]],[effect,images[3]]])if(node){const mask=image?'url("'+image.url+'")':'';node.style.maskImage=mask;node.style.webkitMaskImage=mask;}
-  builtinRequest=null;builtinState='ready';pendingScene(scene,false);layoutScene(scene);
+  builtinRequest=null;builtinState='ready';pendingScene(scene,false);layoutScene(scene);if(previewRequested)atmosphere(Date.now(),lastContext?.times,lastContext?.weather);
  }).catch(()=>{if(!controller.signal.aborted&&builtinRequest===controller){controller.abort();builtinRequest=null;builtinState='error';}});
 }
 function wallpaperCaption(scene){
@@ -92,14 +95,15 @@ function prepareLandmark(scene,home){
    landmarkUrls=urls;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight,fitSubject:result.entry.fitSubject===true,focalX:result.entry.focalX,focalY:result.entry.focalY,fillViewport:result.entry.fillViewport===true};landmarkRequest=null;landmarkState='ready';
    scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
    pendingScene(scene,false);
-   layoutScene(scene);releaseLandmarkUrls(previous);landmarkNote();
+   layoutScene(scene);releaseLandmarkUrls(previous);landmarkNote();if(previewRequested)atmosphere(Date.now(),lastContext?.times,lastContext?.weather);
   }
   catch(error){releaseLandmarkUrls(urls);if(!controller.signal.aborted){if(error.assetKey)void loadLandmark.invalidate?.(result.entry,error.assetKey);landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}}
  }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}});
 }
 window.addEventListener('online',()=>{if(landmarkState==='offline')landmarkState='idle';if(builtinState==='error')builtinState='idle';inactiveContext=null});
-export function startScenePreview(){stopWeatherPreview();previewStarted=performance.now();previewOverride=null}
-function stopScenePreview(){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewOverride=null;document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview')}
+function queueScenePreview(){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewRequested=true;previewRequestedAt=performance.now();previewAnchor=null;previewCityKey=cityKey();previewOrigin=String(window.location?.hash||'');previewOverride=null;weatherTail={rain:0,snow:0};previousWet='none';}
+export function startScenePreview(){stopWeatherPreview();queueScenePreview();}
+function stopScenePreview(){const active=previewActive();if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewRequested=false;previewRequestedAt=null;previewAnchor=null;previewCityKey=null;previewOverride=null;if(active){weatherTail={rain:0,snow:0};previousWet='none';moonPaintKey=null;}document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview')}
 function sceneLayer(){
  let scene=document.getElementById('home-scene');
  if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.dataset.imagePending='true';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-sky"><div class="scene-sky-plane"><div class="scene-sky-light"></div><span class="scene-sun"></span><span class="scene-moon"><svg class="scene-moon-defs" aria-hidden="true"><defs><clipPath id="home-scene-moon-phase" clipPathUnits="objectBoundingBox"><path data-moon-phase d="M0 0Z"/></clipPath></defs></svg><span class="scene-moon-phase"><img data-image-pending src="./assets/home-moon-disc.jpg" alt="" width="160" height="160"></span></span></div></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene);watchDecodedImages(scene,{fallback:null});}
@@ -119,7 +123,7 @@ let weatherTail={rain:0,snow:0},previousWet='none';
 function paintWeather(effect,now,weather,frame,home,scene){
  if(!home&&weatherPreview!==null)stopWeatherPreview();
  weatherLayer(effect);
- const view=weatherPreview!==null?weatherPreviews[weatherPreview]:weatherFrame(settings.weather?weather:null,now);
+ const scenePreview=previewActive(),view=scenePreview?weatherPreviews.clear:weatherPreview!==null?weatherPreviews[weatherPreview]:weatherFrame(settings.weather?weather:null,now);
  const active=home&&view.fresh;
  const reduced=settings.motion||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const moving=active&&settings.weatherAnimation&&!reduced&&!document.hidden;
@@ -134,7 +138,7 @@ function paintWeather(effect,now,weather,frame,home,scene){
  if(wet!==previousWet){if(previousWet!=='none'&&moving)weatherTail[previousWet]=now+2500;previousWet=wet}
  effect.dataset.rain=moving&&(wet==='rain'||weatherTail.rain>now)?'on':'off';
  effect.dataset.snow=moving&&(wet==='snow'||weatherTail.snow>now)?'on':'off';
- effect.className='';effect.dataset.kind=active?view.kind:'none';effect.dataset.source=active?(weatherPreview!==null?'preview':'live'):'none';effect.dataset.motion=moving?'on':'off';effect.dataset.clouds=active&&view.clouds>0?'on':'off';
+ effect.className='';effect.dataset.kind=active?view.kind:'none';effect.dataset.source=active?(scenePreview||weatherPreview!==null?'preview':'live'):'none';effect.dataset.motion=moving?'on':'off';effect.dataset.clouds=active&&view.clouds>0?'on':'off';
  effect.style.setProperty('--weather-clouds',active?String(view.clouds):'0');
  effect.style.setProperty('--weather-day',String(frame.day));
  effect.style.setProperty('--weather-dark',String(1-frame.day));
@@ -183,8 +187,8 @@ function paintSky(scene,sky,now){
 }
 function smoothPreview(){
  if(skyAnimation!==null||previewStarted===null||previewOverride!==null||settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden)return;
- const draw=()=>{skyAnimation=null;if(previewStarted===null||previewOverride!==null||!document.body.classList.contains('home-page')||document.hidden||settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const elapsed=performance.now()-previewStarted;if(elapsed>=22000){stopScenePreview();return;}
- const scene=sceneLayer(),instant=previewClock(Date.now(),lastContext?.times,Math.min(elapsed,19999),settings.city),frame=sceneForMode(instant,lastContext?.times,'auto',settings.city),sky=skyObjects(Date.now(),lastContext?.times,'auto',Math.min(elapsed,19999),settings.city);
+  const draw=()=>{skyAnimation=null;if(previewStarted===null||previewOverride!==null||!document.body.classList.contains('home-page')||document.hidden||settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(cityKey()!==previewCityKey){stopScenePreview();atmosphere(Date.now(),lastContext?.times,lastContext?.weather);return;}const elapsed=performance.now()-previewStarted;if(elapsed>=SCENE_PREVIEW_DURATION){stopScenePreview();atmosphere(Date.now(),lastContext?.times,lastContext?.weather);return;}
+ const scene=sceneLayer(),instant=previewClock(previewAnchor,lastContext?.times,elapsed,settings.city),frame=previewCityValid()?sceneForMode(instant,lastContext?.times,'auto',settings.city):previewScene(elapsed/SCENE_PREVIEW_DURATION*20000),sky=skyObjects(instant,lastContext?.times,'auto',null,settings.city);
  paintSky(scene,sky,performance.now());paintMoon(scene,instant);paintSceneLight(scene,frame);for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));scene.dataset.phase=frame.phase;skyAnimation=requestAnimationFrame(draw);};skyAnimation=requestAnimationFrame(draw);
 }
 export function atmosphere(now,times,weather){
@@ -192,21 +196,25 @@ export function atmosphere(now,times,weather){
  const layer=document.getElementById('atmosphere'),effect=document.getElementById('weather-layer'),home=document.body.classList.contains('home-page');
  document.body.classList.toggle('reduce-motion',settings.motion);
  document.body.classList.toggle('no-transitions',!settings.transitions);
- if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';return;}
+  if(previewActive()&&(cityKey()!==previewCityKey||document.hidden||!home&&(previewStarted!==null||String(window.location?.hash||'')!==previewOrigin&&!/^#?home(?:$|\?)/.test(String(window.location?.hash||'')))))stopScenePreview();
+  if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';return;}
  const staticContext=[home,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');
- if(!home&&previewStarted===null&&weatherPreview===null&&inactiveContext===staticContext)return;
+  if(!home&&!previewActive()&&weatherPreview===null&&inactiveContext===staticContext)return;
  inactiveContext=home?null:staticContext;
- if(previewStarted!==null&&(!home||(previewOverride===null&&performance.now()-previewStarted>=22000)))stopScenePreview();
- const preview=previewStarted!==null,previewElapsed=preview?(previewOverride==='day'?10000:previewOverride==='night'?0:Math.min(performance.now()-previewStarted,19999)):null,instant=preview?previewClock(now,times,previewElapsed,settings.city):now;
- const frame=preview?(previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):settings.city?sceneForMode(instant,times,'auto',settings.city):previewScene(performance.now()-previewStarted)):sceneForMode(now,times,settings.backgroundMode,settings.city),scene=sceneLayer();
+  const scene=sceneLayer();prepareLandmark(scene,home);layoutScene(scene,effect,false);
+  if(previewRequested&&performance.now()-previewRequestedAt>=20000)stopScenePreview();
+  if(previewRequested&&home&&scene.dataset.imagePending!=='true'&&(settings.wallpaper==='landmark'?landmarkState==='ready':builtinState==='ready')){previewRequested=false;previewStarted=performance.now();previewAnchor=now;}
+  if(previewStarted!==null&&performance.now()-previewStarted>=SCENE_PREVIEW_DURATION)stopScenePreview();
+  const preview=previewActive(),previewElapsed=previewStarted===null?null:previewOverride==='day'?SCENE_PREVIEW_STOPS[3]:previewOverride==='night'?SCENE_PREVIEW_DURATION-2000:Math.min(performance.now()-previewStarted,SCENE_PREVIEW_DURATION),instant=previewElapsed===null?now:previewClock(previewAnchor,times,previewElapsed,settings.city);
+  const frame=previewElapsed===null?sceneForMode(now,times,settings.backgroundMode,settings.city):previewCityValid()?sceneForMode(instant,times,'auto',settings.city):previewOverride==='day'?{day:1,dawn:0,dusk:0,phase:'day'}:previewOverride==='night'?sceneAt(NaN,null):previewScene(previewElapsed/SCENE_PREVIEW_DURATION*20000);
  document.body.classList.toggle('scene-preview',preview);
- scene.dataset.phase=frame.phase;prepareLandmark(scene,home);layoutScene(scene,effect,false);
+  scene.dataset.phase=frame.phase;
  const skyMode=preview?(previewOverride==='day'?'light':previewOverride==='night'?'dark':'auto'):settings.backgroundMode;
- const sky=skyObjects(now,times,skyMode,previewElapsed,settings.city);
+  const sky=skyObjects(instant,times,skyMode,null,settings.city);
  paintSky(scene,sky,previewStarted!==null?performance.now():now);
  paintMoon(scene,instant);paintSceneLight(scene,frame);
  for(const key of ['day','dawn','dusk'])scene.style.setProperty('--scene-'+key,frame[key].toFixed(4));
- if(preview&&!document.getElementById('scene-preview-controls')){const controls=document.createElement('div');controls.id='scene-preview-controls';controls.className='scene-preview-controls';controls.setAttribute('role','group');setUiAttribute(controls,'aria-label','weatherUi.backgroundPreview');controls.innerHTML='<span>'+uiLeaf('weatherUi.background')+'</span><button type="button" data-scene-preview="day" '+uiAttribute('weatherUi.dayPreview')+'>☼</button><button type="button" data-scene-preview="night" '+uiAttribute('weatherUi.nightPreview')+'>☾</button><button type="button" data-scene-preview="auto" '+uiAttribute('weatherUi.transitionPreview')+'>'+actionIcon('play')+'</button><button type="button" data-scene-preview="close" '+uiAttribute('weatherUi.finishTransition')+'>×</button>';controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{const choice=button.dataset.scenePreview;if(choice==='close')stopScenePreview();else{previewOverride=choice==='auto'?null:choice;if(choice==='auto')previewStarted=performance.now()}atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls)}
+  if(preview&&!document.getElementById('scene-preview-controls')){const controls=document.createElement('div');controls.id='scene-preview-controls';controls.className='scene-preview-controls';controls.setAttribute('role','group');setUiAttribute(controls,'aria-label','weatherUi.backgroundPreview');controls.innerHTML='<span>'+uiLeaf('weatherUi.background')+' · '+uiLeaf('weatherUi.clear')+'</span><button type="button" data-scene-preview="day" '+uiAttribute('weatherUi.dayPreview')+'>☼</button><button type="button" data-scene-preview="night" '+uiAttribute('weatherUi.nightPreview')+'>☾</button><button type="button" data-scene-preview="auto" '+uiAttribute('weatherUi.transitionPreview')+'>'+actionIcon('play')+'</button><button type="button" data-scene-preview="close" '+uiAttribute('weatherUi.finishTransition')+'>×</button>';controls.querySelectorAll('button').forEach(button=>button.onclick=()=>{const choice=button.dataset.scenePreview;if(choice==='close')stopScenePreview();else if(choice==='auto')queueScenePreview();else previewOverride=choice;atmosphere(Date.now(),lastContext?.times,lastContext?.weather)});document.body.append(controls)}
  if(preview)for(const button of document.querySelectorAll('[data-scene-preview]'))button.setAttribute('aria-pressed',String(button.dataset.scenePreview===(previewOverride||'auto')));
  if(settings.backgroundMode!=='dark'){layer.style.filter='brightness('+(.76+frame.day*.55)+')';layer.style.background='radial-gradient(ellipse at 75% 25%,rgba(69,90,151,'+(.04+frame.day*.12)+'),transparent 60%),linear-gradient(160deg,#10182b,#060914 75%)'}else{layer.style.filter='';layer.style.background=''}
  paintWeather(effect,now,weather,frame,home,scene);smoothPreview();
