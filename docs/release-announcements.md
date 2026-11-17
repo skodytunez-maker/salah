@@ -8,6 +8,8 @@ One dedicated original vector illustration shows the sunrise arc, mosque silhoue
 
 The minor508 correction makes the existing Home solar disc easier to see with explicit square sizing and a restrained warm halo; real horizon, weather, position and masks are preserved. See `home-sun-508.md`. It retains this announcement, acknowledgement, expiry and artwork without an external push.
 
+The minor509 correction transfers the owner-reviewed sky direction to Home: photographic cloud structure, neutral overcast with preserved architectural detail, gradual dawn/sunset exposure and continuous low-sun colour changes. High summer paths fit the available sky height. The owner chose natural Sun/Moon occlusion in dense clouds and fog; the Moon retains its actual phase and rise/set timing. See `home-clouds-509.md`. This keeps the505 announcement, acknowledgement, expiry and artwork; no external push is sent.
+
 The artwork and source catalogue mapping are checked by `scripts/check-sky-release-news.mjs` and the existing release-illustrations check. Device astronomy is the Home feature; the news illustration is an explanatory example. No new religious text or third-party media is introduced by this artwork. Final media fingerprints belong in the existing rights registers.
 
 ## Version502 — offline Quran, saved prayer schedules and downloaded recitations (15 November2026)

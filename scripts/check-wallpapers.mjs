@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {wallpaperChoice,skyObjects,wallpapers,previewClock,SCENE_PREVIEW_DURATION,SCENE_PREVIEW_STOPS,skyGeometry,moonAppearance,moonPhasePath} from '../dist/js/wallpapers.js';
+import {wallpaperChoice,skyObjects,wallpapers,previewClock,SCENE_PREVIEW_DURATION,SCENE_PREVIEW_STOPS,skyGeometry,moonAppearance,moonPhasePath,projectSkyObjects} from '../dist/js/wallpapers.js';
 import {solarSceneAt,sceneForMode} from '../dist/js/day-night.js';
 import {getTimes,getPosition,getMoonTimes,getMoonPosition,getMoonIllumination} from '../dist/js/vendor/suncalc.js';
 const store=new Map();globalThis.localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
@@ -151,6 +151,43 @@ assert.equal(solarSceneAt(Date.parse('2026-06-21T00:00:00Z'),svalbard).day,1);
 assert.equal(solarSceneAt(NaN,tyumen),null);assert.equal(solarSceneAt(observed,{latitude:91,longitude:0}),null);
 assert.equal(sceneForMode(observed,null,'dark',tyumen).day,0);assert.equal(sceneForMode(observed,null,'light',tyumen).day,1);
 console.log('PASS: independent saved landmark city; safe preference validation; astronomical twilight continuity; polar light; explicit modes; prayer offsets do not affect the scene.');
+
+// A short northern winter day can stay golden through noon. Its palette must
+// not jump from dawn1/dusk0 to dawn0/dusk1 as the Sun crosses the meridian.
+// The opposite hemisphere crosses north0/360°, not south180°.
+for(const [city,date]of [[{latitude:69.6492,longitude:18.9553},'2026-11-17T12:00:00Z'],[{latitude:-69.6492,longitude:18.9553},'2026-05-17T12:00:00Z']]){
+ const noon=+getTimes(new Date(date),city.latitude,city.longitude).solarNoon;
+ const before=solarSceneAt(noon-1000,city),middle=solarSceneAt(noon,city),after=solarSceneAt(noon+1000,city);
+ assert.ok(middle.dawn+middle.dusk>.5,'The fixture genuinely exercises a warm, low solar noon');
+ assert.ok(middle.dawn>.2&&middle.dusk>.2,'Both palettes coexist at the real meridian');
+ for(const key of ['day','dawn','dusk'])assert.ok(Math.abs(before[key]-after[key])<.002,'No two-second low-noon '+key+' discontinuity in either hemisphere');
+ assert.ok(Math.abs((before.dawn+before.dusk)-(after.dawn+after.dusk))<.0001,'Blending the palette never dims total warmth at noon');
+}
+// The approved photographic exposure keeps the courtyard subdued at sunrise
+// and sunset; the same real clock still reaches full daylight at Tyumen noon.
+const exposureEvents=getTimes(new Date('2026-11-17T12:00:00Z'),tyumen.latitude,tyumen.longitude);
+for(const event of [exposureEvents.sunrise,exposureEvents.sunset]){
+ const frame=solarSceneAt(+event,tyumen);assert.ok(frame.day>.25&&frame.day<.32,'The horizon does not reveal an already-bright daytime photograph');
+ const before=solarSceneAt(+event-1000,tyumen),after=solarSceneAt(+event+1000,tyumen);assert.ok(Math.abs(before.day-after.day)<.002,'Photo exposure emerges gradually at the real horizon');
+}
+assert.equal(solarSceneAt(+exposureEvents.solarNoon,tyumen).day,1,'Tyumen midday still reaches its full daylight photograph');
+
+// Real summer altitude rises and falls over these five instants. Previously
+// all five projected to7% on shallow-sky artwork: a four-hour flat plateau.
+const summerNoon=+getTimes(new Date('2026-06-21T12:00:00Z'),tyumen.latitude,tyumen.longitude).solarNoon;
+for(const landmark of ['kazan','afghanistan','badakhshan']){
+ const samples=[-120,-60,0,60,120].map(offset=>{
+  const sky=at(summerNoon+offset*minute),projected=projectSkyObjects(sky,{width:393,height:852,wallpaper:'landmark',landmark});
+  assert.equal(projected.sun,1,'A projection fix never hides the genuine high Sun');
+  assert.ok(projected.sunY>8&&projected.sunY<projected.horizonY,'High Sun stays inside the actual artwork sky');
+  return projected;
+ });
+ assert.ok(samples[0].sunY>samples[1].sunY&&samples[1].sunY>samples[2].sunY,'The Sun continues ascending before summer transit on '+landmark);
+ assert.ok(samples[2].sunY<samples[3].sunY&&samples[3].sunY<samples[4].sunY,'The Sun continues descending after summer transit on '+landmark);
+ assert.ok(Math.max(...samples.map(s=>s.sunY))-samples[2].sunY>1,'The four-hour arc has visible vertical travel instead of a ceiling plateau');
+ for(let i=1;i<samples.length;i++)assert.ok(samples[i].sunX>samples[i-1].sunX,'The east-to-west arc remains forward');
+}
+console.log('PASS: continuous low-noon palette in both hemispheres, gradual photographic exposure and unclipped real high-Sun arcs.');
 
 // SunCalc2 azimuth is north=0/east=90/south=180/west=270, never a
 // negative south-based v1 value. Dawn must not silently become sunset.

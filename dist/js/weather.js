@@ -18,6 +18,20 @@ const previewCityValid=()=>Number.isFinite(settings.city?.latitude)&&Math.abs(se
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null;
 // Retain decoded sources while their exact URLs are used by the CSS layers.
 let builtinKey=null,builtinRequest=null,builtinState='idle',builtinImages=[];
+const cloudTextureUrl='./assets/home-clouds-509.webp';
+let cloudTextureState='idle',cloudTextureRequest=null,cloudTextureImage=null,cloudLighting={day:0,warm:0,morning:.5};
+// Highest existing skyline/spire in each unchanged source mask. The texture
+// fades above this ceiling, never through conservative rectangular cutouts.
+const cloudTextureCeilings={tyumen:[687/1844,258/1024],omsk:[1042/1844],moscow:[675/1844],khujand:[895/1844,347/1024],dushanbe:[950/1844],almaty:[961/1844],astana:[906/1844],tashkent:[913/1844],grozny:[701/1844],makhachkala:[944/1844],derbent:[1000/1844],pamir:[821/1844],afghanistan:[554/1844],badakhshan:[548/1844],istanbul:[244/1024],cairo:[244/1024],'kuala-lumpur':[197/1024],makkah:[900/1844,268/1024],madinah:[815/1844,205/1024],uhud:[1010/1844,512/1024],'al-aqsa':[941/1844,389/1024],kaspiysk:[900/1844],kazan:[630/1844]};
+function prepareCloudTexture(scene,enabled){
+ if(!enabled||cloudTextureState!=='idle')return;
+ const controller=new AbortController();cloudTextureRequest=controller;cloudTextureState='loading';
+ void loadDecodedImage(cloudTextureUrl,{signal:controller.signal}).then(image=>{
+  if(controller.signal.aborted||cloudTextureRequest!==controller)return;
+  cloudTextureImage=image;cloudTextureRequest=null;cloudTextureState='ready';
+  if(scene.isConnected)paintCloudSky(scene,document.getElementById('weather-layer'));
+ }).catch(()=>{if(!controller.signal.aborted&&cloudTextureRequest===controller){cloudTextureRequest=null;cloudTextureState='error';}});
+}
 function pendingScene(scene,value){for(const data of [scene.dataset,document.body.dataset]){const key=data===scene.dataset?'imagePending':'sceneImagePending';if(value){if(data[key]!=='true')data[key]='true';}else if(data[key])delete data[key];}}
 function clearBuiltinStyles(scene){for(const name of ['.scene-night','.scene-day']){const node=scene.querySelector(name);if(node)node.style.backgroundImage='';}const sky=scene.querySelector('.scene-sky'),effect=document.getElementById('weather-layer');for(const node of [sky,effect])if(node){node.style.maskImage='';node.style.webkitMaskImage='';}}
 function prepareBuiltin(scene,home,tablet){
@@ -43,13 +57,14 @@ function wallpaperCaption(scene){
  if(scene.dataset.wallpaper==='new-york')caption.setAttribute('data-i18n','landmarkUi.newYork');else caption.removeAttribute('data-i18n');if(caption.textContent!==name)caption.textContent=name;
  if(caption.hidden!==!name)caption.hidden=!name;
 }
-let skyProjectionContext=null,skyProjectionKey=null;
+let skyProjectionContext=null,skyProjectionKey=null,skyProjectionPlane=null,lastSkyHorizon=58,lastCloudCover=0;
 function layoutScene(scene,effect=document.getElementById('weather-layer'),reproject=true){
  wallpaperCaption(scene);
  const layout=applyWallpaperLayout(scene,effect,{width:document.documentElement?.clientWidth,height:window.innerHeight,wallpaper:scene.dataset.wallpaper,geometry:scene.dataset.wallpaper==='landmark'?landmarkGeometry:null});
  if(layout){if(document.body.dataset.sceneLayout!==layout.mode)document.body.dataset.sceneLayout=layout.mode;}else if(document.body.dataset.sceneLayout)delete document.body.dataset.sceneLayout;
  skyProjectionContext={width:document.documentElement?.clientWidth||window.innerWidth,height:window.innerHeight,wallpaper:scene.dataset.wallpaper,landmark:landmarkEntry?.id||settings.landmarkCity,geometry:landmarkGeometry,layout};
  const plane=skyProjectionFrame(skyProjectionContext),key=JSON.stringify([skyProjectionContext,plane]);
+ skyProjectionPlane=plane;
  if(plane&&key!==skyProjectionKey){skyProjectionKey=key;for(const[name,value]of Object.entries({left:plane.planeLeft,top:plane.planeTop,width:plane.width,height:plane.height}))scene.style.setProperty('--sky-plane-'+name,value+'px');if(reproject&&lastSkySample)paintSky(scene,lastSkySample,lastSkyStamp);}
 }
 let layoutResize=null;
@@ -100,13 +115,13 @@ function prepareLandmark(scene,home){
   catch(error){releaseLandmarkUrls(urls);if(!controller.signal.aborted){if(error.assetKey)void loadLandmark.invalidate?.(result.entry,error.assetKey);landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}}
  }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}});
 }
-window.addEventListener('online',()=>{if(landmarkState==='offline')landmarkState='idle';if(builtinState==='error')builtinState='idle';inactiveContext=null});
+window.addEventListener('online',()=>{if(landmarkState==='offline')landmarkState='idle';if(builtinState==='error')builtinState='idle';if(cloudTextureState==='error')cloudTextureState='idle';inactiveContext=null});
 function queueScenePreview(){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewRequested=true;previewRequestedAt=performance.now();previewAnchor=null;previewCityKey=cityKey();previewOrigin=String(window.location?.hash||'');previewOverride=null;weatherTail={rain:0,snow:0};previousWet='none';}
 export function startScenePreview(){stopWeatherPreview();queueScenePreview();}
 function stopScenePreview(){const active=previewActive();if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;previewStarted=null;previewRequested=false;previewRequestedAt=null;previewAnchor=null;previewCityKey=null;previewOverride=null;if(active){weatherTail={rain:0,snow:0};previousWet='none';moonPaintKey=null;}document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview')}
 function sceneLayer(){
  let scene=document.getElementById('home-scene');
- if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.dataset.imagePending='true';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-sky"><div class="scene-sky-plane"><div class="scene-sky-light"></div><span class="scene-sun"></span><span class="scene-moon"><svg class="scene-moon-defs" aria-hidden="true"><defs><clipPath id="home-scene-moon-phase" clipPathUnits="objectBoundingBox"><path data-moon-phase d="M0 0Z"/></clipPath></defs></svg><span class="scene-moon-phase"><img data-image-pending src="./assets/home-moon-disc.jpg" alt="" width="160" height="160"></span></span></div></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene);watchDecodedImages(scene,{fallback:null});}
+ if(!scene){scene=document.createElement('div');scene.id='home-scene';scene.dataset.imagePending='true';scene.setAttribute('aria-hidden','true');scene.innerHTML='<div class="scene-night"></div><div class="scene-day"></div><div class="scene-dawn"></div><div class="scene-dusk"></div><div class="scene-sky"><div class="scene-sky-plane"><div class="scene-sky-light"></div><span class="scene-sun"></span><span class="scene-moon"><svg class="scene-moon-defs" aria-hidden="true"><defs><clipPath id="home-scene-moon-phase" clipPathUnits="objectBoundingBox"><path data-moon-phase d="M0 0Z"/></clipPath></defs></svg><span class="scene-moon-phase"><img data-image-pending src="./assets/home-moon-disc.jpg" alt="" width="160" height="160"></span></span></div></div><div class="scene-weather-sky"></div><div class="scene-weather-texture"></div><div class="scene-shade"></div>';document.getElementById('weather-layer').before(scene);watchDecodedImages(scene,{fallback:null});}
  return scene;
 }
 
@@ -116,10 +131,27 @@ function stopWeatherPreview(){weatherPreview=null;document.getElementById('weath
 function weatherLayer(effect){
  if(effect.dataset.ready)return;
  const particles=(count,cls)=>'<div class="'+cls+'">'+Array.from({length:count},(_,i)=>'<span style="--x:'+((i*37+11)%101)+'%;--delay:-'+((i*13)%31)+'s;--speed:'+(cls==='weather-rain'?(.7+(i%5)*.13):(9+(i%7)*1.5))+'s;--size:'+(1.5+(i%3)*.8)+'px"></span>').join('')+'</div>';
- effect.innerHTML='<div class="weather-overcast"></div><div class="weather-clouds"><div class="weather-cloud-dark"></div><div class="weather-cloud-light"></div></div><div class="weather-mist"></div>'+particles(38,'weather-rain')+particles(36,'weather-snow');
+ effect.innerHTML='<div class="weather-mist"></div>'+particles(38,'weather-rain')+particles(36,'weather-snow');
  effect.dataset.ready='true';
 }
 let weatherTail={rain:0,snow:0},previousWet='none';
+function paintCloudSky(scene,effect){
+ // Use the last measured cloud state during resize/photo-ready commits too;
+ // geometry must not wait for another weather sample or one-second tick.
+ const plane=skyProjectionPlane,cloudy=lastCloudCover>0,skyHeight=cloudy&&plane?plane.height*lastSkyHorizon/100:0;
+ scene.style.setProperty('--weather-clouds',String(lastCloudCover));
+ for(const[key,value]of Object.entries({left:plane?.left||0,top:plane?.top||0,width:plane?.width||0,height:skyHeight}))scene.style.setProperty('--weather-sky-'+key,value+'px');
+ effect?.style.setProperty('--weather-sky-height',(cloudy&&plane?Math.max(0,Math.min(skyProjectionContext?.layout?.height||skyProjectionContext?.height||window.innerHeight,plane.planeTop+skyHeight)):0)+'px');
+ const context=skyProjectionContext,wide=context?.geometry?context.geometry.width>context.geometry.height:context?.wallpaper==='mosque'||context?.wallpaper==='new-york'&&!!context.layout;
+ const ceilings=context?.wallpaper==='mosque'?[314/1024]:context?.wallpaper==='new-york'?[679/1844,245/1024]:cloudTextureCeilings[context?.landmark],ceiling=ceilings?.[wide&&ceilings.length>1?1:0]||0;
+ const stop=Math.max(0,Math.min(.74,(ceiling-.008)/(lastSkyHorizon/100))),amount=Math.max(0,Math.min(1,(lastCloudCover-.3)/.55)),strength=amount*amount*(3-2*amount),gray=Math.max(0,Math.min(1,(lastCloudCover-.7)/.2)),warm=cloudLighting.warm*(.7-gray*.65);
+ const lit=[229,158,151].map((value,i)=>value+([249,190,142][i]-value)*cloudLighting.morning),tint=[136,155,181].map((value,i)=>Math.round((value+(lit[i]-value)*warm)*(1-gray)+[135,145,160][i]*gray));
+ scene.style.setProperty('--weather-cloud-image',cloudTextureImage?'url("'+cloudTextureUrl+'")':'none');
+ scene.style.setProperty('--weather-texture-opacity',String(cloudTextureImage&&stop>0?strength*(.55+.4*lastCloudCover):0));
+ scene.style.setProperty('--weather-cloud-exposure',String(.13+.82*cloudLighting.day));
+ scene.style.setProperty('--weather-cloud-tint',tint.join(','));scene.style.setProperty('--weather-cloud-tint-alpha',String(.25+warm*.25+gray*.61));
+ for(const[key,value]of Object.entries({start:stop*.55,mid:stop*.8,end:stop}))scene.style.setProperty('--weather-texture-fade-'+key,value*100+'%');
+}
 function paintWeather(effect,now,weather,frame,home,scene){
  if(!home&&weatherPreview!==null)stopWeatherPreview();
  weatherLayer(effect);
@@ -127,7 +159,12 @@ function paintWeather(effect,now,weather,frame,home,scene){
  const active=home&&view.fresh;
  const reduced=settings.motion||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const moving=active&&settings.weatherAnimation&&!reduced&&!document.hidden;
+ scene.dataset.weatherMotion=moving?'on':'off';
  const clouds=active?view.clouds:0;
+ // Blend inside the photograph's own group: color removes blue sky saturation
+ // while preserving its luminance/detail. Never tint through skyline cutouts.
+ lastCloudCover=clouds;paintCloudSky(scene,effect);
+ prepareCloudTexture(scene,home&&clouds>.3&&scene.dataset.imagePending!=='true');
  // Dense cloud hides celestial discs and removes warm, direct sunlight.
  scene.style.setProperty('--scene-clouds',String(clouds));
  const fog=active&&view.kind==='fog',opaque=clouds>=.94;
@@ -169,11 +206,13 @@ function paintMoon(scene,instant){
  scene.dataset.skyFacing=Number.isFinite(settings.city?.latitude)?settings.city.latitude<0?'north':'south':'unknown';
 }
 function paintSceneLight(scene,frame){
- const mix=(a,b,t)=>a.map((value,i)=>Math.round(value+(b[i]-value)*t)),warm=Math.max(frame.dawn,frame.dusk);
+ const mix=(a,b,t)=>a.map((value,i)=>Math.round(value+(b[i]-value)*t)),sum=frame.dawn+frame.dusk,warm=Math.max(0,Math.min(1,sum)),morning=sum>0?frame.dawn/sum:.5;
  const colors={zenith:mix([3,10,25],[47,105,156],frame.day),middle:mix([9,23,43],[105,154,186],frame.day),horizon:mix([20,34,53],[193,206,214],frame.day)};
- colors.horizon=mix(colors.horizon,frame.dawn>frame.dusk?[249,190,142]:[239,153,117],warm*.82);
+ colors.horizon=mix(colors.horizon,mix([239,153,117],[249,190,142],morning),warm*.82);
  for(const[name,color]of Object.entries(colors))scene.style.setProperty('--sky-'+name,color.join(','));
  scene.style.setProperty('--sky-warm',String(warm));
+ scene.style.setProperty('--scene-photo-exposure',String(!previewActive()&&settings.backgroundMode!=='auto'?1:.72+.28*frame.day));
+ cloudLighting={day:frame.day,warm,morning};paintCloudSky(scene,document.getElementById('weather-layer'));
 }
 function paintSky(scene,sky,now){
  lastSkySample=sky;lastSkyStamp=now;
@@ -183,7 +222,8 @@ function paintSky(scene,sky,now){
  const reset=previousSkyContext!==context||previousSkyTime===null||Math.abs(now-previousSkyTime)>5000||previousSky&&['sunX','moonX'].some(key=>Math.abs(sky[key]-previousSky[key])>15);
  scene.classList.toggle('sky-reset',reset);previousSkyContext=context;previousSkyTime=now;previousSky=sky;
  for(const key of ['sunX','sunY','sun','moonX','moonY','moon'])scene.style.setProperty('--sky-'+key,String(sky[key]));
- scene.style.setProperty('--sky-horizonY',String(sky.horizonY||58));
+ lastSkyHorizon=sky.horizonY||58;scene.style.setProperty('--sky-horizonY',String(lastSkyHorizon));
+ paintCloudSky(scene,document.getElementById('weather-layer'));
 }
 function smoothPreview(){
  if(skyAnimation!==null||previewStarted===null||previewOverride!==null||settings.motion||!settings.transitions||window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden)return;
@@ -197,7 +237,7 @@ export function atmosphere(now,times,weather){
  document.body.classList.toggle('reduce-motion',settings.motion);
  document.body.classList.toggle('no-transitions',!settings.transitions);
   if(previewActive()&&(cityKey()!==previewCityKey||document.hidden||!home&&(previewStarted!==null||String(window.location?.hash||'')!==previewOrigin&&!/^#?home(?:$|\?)/.test(String(window.location?.hash||'')))))stopScenePreview();
-  if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';return;}
+  if(document.hidden){if(skyAnimation!==null)cancelAnimationFrame(skyAnimation);skyAnimation=null;effect.dataset.motion='off';const scene=document.getElementById('home-scene');if(scene)scene.dataset.weatherMotion='off';return;}
  const staticContext=[home,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');
   if(!home&&!previewActive()&&weatherPreview===null&&inactiveContext===staticContext)return;
  inactiveContext=home?null:staticContext;

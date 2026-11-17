@@ -1,33 +1,73 @@
 {
   "schema": 1,
-  "version": 508,
-  "baseCommit": "023a92aa91cf0db44dab252fd040d2c026ab2e44",
-  "baseTree": "1e466fac24d76cf2c711c35268cca3fc1632d413",
+  "version": 509,
+  "baseCommit": "7b50154205fc623171ad4200b6ae73222e69769b",
+  "baseTree": "174dbed5296b1e6c1b904d98cfecbbba9aa066a5",
   "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
   "allowed": [
     {
+      "path": "AGENTS.md",
+      "reason": "Record the owner's confirmed natural cloud/fog occlusion and sharp-photo requirements for Home so later fixes preserve them."
+    },
+    {
+      "path": "dist/assets/home-clouds-509.webp",
+      "reason": "Bundle the exact owner-reviewed photographic cloud texture, with pinned origin and final-file hashes, for local and offline Home weather."
+    },
+    {
       "path": "dist/day-night.css",
-      "reason": "Make only the existing Home Sun easier to see with explicit bounded square sizing and a soft warm local halo; preserve real position, weather/horizon opacity, masks, Moon and the506 photographic sky-plane correction."
+      "reason": "Preserve sharp photographic detail and coherent twilight exposure while keeping the506 sky-plane correction and508 solar-disc styling."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance minor508 while preserving the existing505 announcement, acknowledgement, content, date and expiry."
+      "reason": "Advance minor509 while retaining announcement505, its acknowledgement, content, date and expiry."
+    },
+    {
+      "path": "dist/js/day-night.js",
+      "reason": "Make dawn/day/sunset illumination gradual and conserve warm light continuously through short northern and southern days."
+    },
+    {
+      "path": "dist/js/wallpapers.js",
+      "reason": "Fit real Sun/Moon elevation into each artwork's visible sky budget instead of flattening high summer paths at the top; preserve actual horizon, phase and city time."
+    },
+    {
+      "path": "dist/js/weather.js",
+      "reason": "Integrate decoded photographic sky clouds, atomic projection geometry and continuous twilight lighting while preserving original image detail, weather settings, natural Sun/Moon occlusion and existing lifecycle."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance508 shell/release literals only, preserving offline assets, safe update behavior and stored downloads."
+      "reason": "Advance509 shell/release literals and precache the reviewed local cloud texture; preserve downloaded stores and safe updates."
+    },
+    {
+      "path": "dist/weather.css",
+      "reason": "Draw visible, correctly lit sky cloud structure without a full-picture grey veil or coarse architectural mask halos."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Bind the exact six-path508 scope to the immutable published507 tree and preserve every unrelated baseline file."
+      "reason": "Bind this exact16-path509 scope to the immutable published508 tree and preserve every unrelated baseline blob."
     },
     {
-      "path": "docs/home-sun-508.md",
-      "reason": "Document the owner-requested solar visibility enhancement, independently checked screenshot geometry and limits of unknown phone weather."
+      "path": "docs/home-clouds-509.md",
+      "reason": "Document the owner-reviewed sky direction, implementation limits, real regressions and exact generative cloud provenance."
+    },
+    {
+      "path": "docs/media-rights-register.json",
+      "reason": "Record project-origin support and the exact final cloud texture fingerprint without changing earlier rights records."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record the minor508 Home Sun presentation correction under the existing505 edition without new public cards or a push."
+      "reason": "Record the minor509 sky-quality correction within the existing505 edition without another public card, acknowledgement reset or external push."
+    },
+    {
+      "path": "docs/rights-source-manifest.json",
+      "reason": "Append the cloud texture's exact source fingerprint and incremental origin evidence while preserving the audited historical baseline."
+    },
+    {
+      "path": "scripts/check-scene-load.mjs",
+      "reason": "Regress real renderer/cloud asset readiness, source geometry, rotation/decode atomicity, detail contrast and weather/preview/manual/reduced-motion lifecycle."
+    },
+    {
+      "path": "scripts/check-wallpapers.mjs",
+      "reason": "Regress genuine low-noon warm-light continuity and non-flat high-summer trajectories alongside existing astronomy/phase/horizon cases."
     }
   ],
   "generated": [
@@ -2443,7 +2483,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "025b2d8415d7137d90e5cfa6536eeefafd893cb8"
+      "sha": "b3bd5f24975ab31bf699890c40d0923a5210b0d4"
     },
     {
       "path": "dist/delete-account.html",
@@ -2599,7 +2639,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "6bf3aadb0828cb3862c9e3a7ec0353285b6c27cb"
+      "sha": "5bbf606dbdb4d05c73076ec5463474e1eb6429b8"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4835,7 +4875,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "da38f5bfc550366ada1459f0156300fa29c43ab0"
+      "sha": "acf2c84978409e4e2680e51422f9c8c8fa6bcc47"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5299,7 +5339,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "c743b95c4c3fc5e00d9597617728b21e6bdd2f75"
+      "sha": "c3bb60bf2e3747862e41858c9e2ff639eaf7007d"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5396,6 +5436,10 @@
     {
       "path": "docs/home-sky-preview-507.md",
       "sha": "9f37f80258dd04d1800d955d5856b3c700bf4a93"
+    },
+    {
+      "path": "docs/home-sun-508.md",
+      "sha": "bf37c41f08f70f8c901aca60e710ec7d886bf206"
     },
     {
       "path": "docs/image-presentation-stability.md",
@@ -5659,7 +5703,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "73ecdea5883a495130eef4bf3d8b79903ed4ee64"
+      "sha": "6d4264b771ea8e2241c5d83e901e31a8a012e0a1"
     },
     {
       "path": "docs/release-artwork.md",
