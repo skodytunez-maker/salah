@@ -6,6 +6,7 @@ import {pushPreferences} from '../dist/js/push-reminders.js';
 import {buildPrayerWidgetSnapshot} from '../dist/js/native-widget.js';
 import vm from 'node:vm';
 import {APP_VERSION} from '../dist/js/app-release.js';
+import {ADVANCED_SKY_AVAILABLE} from '../dist/js/sky-feature-policy.js';
 const root=new URL('../',import.meta.url),day='2026-10-05',memory=new Map(),calls=[];
 globalThis.localStorage={getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)};
 const read=async file=>JSON.parse(await readFile(new URL('dist/data/'+file,root),'utf8'));
@@ -75,6 +76,7 @@ const element=id=>{if(!elements.has(id))elements.set(id,{value:'',checked:false,
 const rootElement={innerHTML:'',querySelectorAll:()=>[]};
 const context=vm.createContext({t,translateUi,getLocale,languageSettingsMarkup,stopLanguageSettings:null,mountLanguageSettings:()=>()=>{},stopSettingsScreens:null,mountSettingsScreens:()=>()=>{},personalDataAllowed,mountTravelSettings:()=>{},travelHooks:{},mountPrayerOffline:()=>{},mountCacheSettings:el=>{assert.equal(el,element('cache-storage-settings'));cacheMounts++;},mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:{getElementById:element},usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
 context.uiLeaf=(await import('../dist/js/ui.js')).uiLeaf;
+context.ADVANCED_SKY_AVAILABLE=ADVANCED_SKY_AVAILABLE;
 vm.runInContext(appSource.slice(appSource.indexOf('const settingsIconPaths='),appSource.indexOf('let historyPeriod=')),context);
 vm.runInContext(appSource.split('\n').filter(line=>/^function (tyumenSourceSettings|tyumenSourceNote|settingsPage)\(/.test(line)).join('\n'),context);
 // Full translated Settings DOM/lifecycle is covered by check-interface-shell.

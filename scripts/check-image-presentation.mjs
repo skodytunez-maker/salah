@@ -1,3 +1,5 @@
+// Closed public feature: explicit owner-pilot policy below exercises the retained advanced implementation.
+const OWNER_PILOT_ADVANCED_SKY_AVAILABLE=true;
 import assert from 'node:assert/strict';
 import{readFile}from 'node:fs/promises';
 import vm from 'node:vm';
@@ -5,6 +7,7 @@ import{createHash}from 'node:crypto';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{waitDecodedImage,loadDecodedImage,createImagePresenter,watchDecodedImages}from '../dist/js/image-presentation.js';
 import{wallpapers,skyProjectionFrame,projectSkyObjects,moonAppearance,moonPhasePath}from '../dist/js/wallpapers.js';
+import{layoutSkyObjects}from '../dist/js/sky-ui-layout.js';
 import{applyWallpaperLayout}from '../dist/js/wallpaper-layout.js';
 import{createLandmarkLoader}from '../dist/js/landmarks.js';
 import{t}from '../dist/js/i18n.js';
@@ -31,10 +34,10 @@ observerRoot.innerHTML='<img data-image-pending src="photo.jpg" loading="lazy">'
 // The real Home renderer keeps CSS backgrounds and weather masked until the
 // selected pair and masks finish; stale choices cannot replace newer artwork.
 const w=new Window({url:'https://fixture.invalid/#home'}),doc=w.document;doc.body.classList.add('home-page');doc.body.innerHTML='<div id="atmosphere"></div><div id="weather-layer"></div>';Object.defineProperty(doc.documentElement,'clientWidth',{value:390,configurable:true});w.innerWidth=390;w.innerHeight=844;
-const calls=[],fakeLoad=(url,{signal}={})=>{const task=deferred();calls.push({url,signal,...task});return task.promise;},settings={backgroundMode:'dark',wallpaper:'mosque',landmarkCity:'auto',city:{latitude:57,longitude:65},motion:false,transitions:true,weather:false,weatherAnimation:false};
+const calls=[],fakeLoad=(url,{signal}={})=>{const task=deferred();calls.push({url,signal,...task});return task.promise;},settings={liveSky:true,backgroundMode:'dark',wallpaper:'mosque',landmarkCity:'auto',city:{latitude:57,longitude:65},motion:false,transitions:true,weather:false,weatherAnimation:false};
 const frame={day:0,dawn:0,dusk:0,phase:'night'},landmarks=[],blobIds=[];let lastBlob=0;
 const loadLandmark=async()=>{const task=deferred();landmarks.push(task);return task.promise;};loadLandmark.invalidate=async(entry,key)=>{blobIds.push('invalid:'+entry.id+':'+key);};
-const context=vm.createContext({wallpapers,loadDecodedImage:fakeLoad,watchDecodedImages:()=>()=>{},loadLandmark,t,uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute,skyProjectionFrame,projectSkyObjects,moonAppearance,moonPhasePath,applyWallpaperLayout,document:doc,window:w,settings,sceneForMode:()=>frame,sceneAt:()=>frame,previewScene:()=>frame,weatherFrame:()=>({kind:'clear',fresh:false,clouds:0,precipitation:0}),skyObjects:()=>({sunX:0,sunY:0,sun:0,moonX:0,moonY:0,moon:0}),performance:{now:()=>0},Date,AbortController,URL:{createObjectURL:()=>{const url='blob:fixture-'+(++lastBlob);blobIds.push(url);return url;},revokeObjectURL:url=>blobIds.push('revoked:'+url)},requestAnimationFrame:()=>1,cancelAnimationFrame(){}});
+const context=vm.createContext({ADVANCED_SKY_AVAILABLE:OWNER_PILOT_ADVANCED_SKY_AVAILABLE,layoutSkyObjects,wallpapers,loadDecodedImage:fakeLoad,watchDecodedImages:()=>()=>{},loadLandmark,t,uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute,skyProjectionFrame,projectSkyObjects,moonAppearance,moonPhasePath,applyWallpaperLayout,document:doc,window:w,settings,sceneForMode:()=>frame,sceneAt:()=>frame,previewScene:()=>frame,weatherFrame:()=>({kind:'clear',fresh:false,clouds:0,precipitation:0}),skyObjects:()=>({sunX:0,sunY:0,sun:0,moonX:0,moonY:0,moon:0}),performance:{now:()=>0},Date,AbortController,URL:{createObjectURL:()=>{const url='blob:fixture-'+(++lastBlob);blobIds.push(url);return url;},revokeObjectURL:url=>blobIds.push('revoked:'+url)},requestAnimationFrame:()=>1,cancelAnimationFrame(){}});
 const source=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');vm.runInContext(source.split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
 const tick=()=>context.atmosphere(1760000000000,null,null),finish=call=>call.resolve({complete:true,naturalWidth:853,naturalHeight:1844});tick();const scene=doc.getElementById('home-scene');assert.equal(scene.dataset.imagePending,'true');assert.equal(calls.length,2);finish(calls[0]);await turns();assert.equal(scene.dataset.imagePending,'true');finish(calls[1]);await turns();assert.equal(scene.dataset.imagePending,undefined);assert.ok(scene.querySelector('.scene-night').style.backgroundImage.includes('night-mosque.webp'));
 settings.wallpaper='new-york';tick();const stale=calls.slice(-4);assert.equal(scene.dataset.imagePending,'true');settings.wallpaper='mosque';tick();for(const call of stale){assert.equal(call.signal.aborted,true);finish(call);}for(const call of calls.slice(-2))finish(call);await turns();assert.equal(scene.dataset.wallpaper,'mosque');assert.ok(scene.querySelector('.scene-night').style.backgroundImage.includes('night-mosque.webp'));

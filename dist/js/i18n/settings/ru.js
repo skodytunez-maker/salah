@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"Живое небо",
+ "settingsExtra.liveSkyHint":"Солнце, Луна, облака и погода. Выключено — обычная смена дня и ночи.",
  'settingsExtra.method':'Метод расчёта',
  'settingsExtra.school':'Расчёт Асра',
  'settingsExtra.schoolStandard':'Шафиитский, Маликитский, Ханбалитский',

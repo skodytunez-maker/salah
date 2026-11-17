@@ -152,7 +152,9 @@ export function createSkyAtmosphere({canvasFactory,texture=null}={}){
    fieldCanvas??=canvasFactory(nextW,nextH);
    if(nextW!==fw||nextH!==fh){fw=nextW;fh=nextH;fieldCanvas.width=fw;fieldCanvas.height=fh;fieldImage=fieldCanvas.getContext('2d').createImageData(fw,fh);}
    const data=fieldImage.data,aspect=width/skyHeight;
-   const light=clamp(style.skyLight*.88+.075);
+   // A little diffuse blue night ambient keeps opaque clouds readable. This
+   // vanishes before ordinary twilight/daylight and never changes body gates.
+   const nightRelief=1-smooth(style.skyLight/.16),light=clamp(style.skyLight*.88+.075+nightRelief*.04);
    const warmLuma=style.warmColor[0]*.2126+style.warmColor[1]*.7152+style.warmColor[2]*.0722,warmRGB=style.warmColor.map(c=>c/warmLuma);
    for(let y=0;y<fh;y++)for(let x=0;x<fw;x++){
     const u=x/(fw-1||1),v=y/(fh-1||1),f=densityAt(u,v,style,motion,aspect),i=(y*fw+x)*4;
@@ -167,7 +169,7 @@ export function createSkyAtmosphere({canvasFactory,texture=null}={}){
     const litShape=(edge*.55+.45*(.35+.65*f.light))*face,denseShade=1-smooth((style.clouds-.83)/.11);
     const warm=clamp(afterglow*litShape*style.edgeWarmth*style.lightStrength*(1-style.fog)*(1-style.clouds*.40)*denseShade);
     const luminance=(45+f.light*200)*light+edge*face*style.skyLight*18+afterglow*litShape*46*style.lightStrength*(1-style.fog)*(1-style.clouds*.55)*denseShade;
-    data[i]=clamp(luminance*mix(.96,warmRGB[0],warm),0,255);data[i+1]=clamp(luminance*mix(.99,warmRGB[1],warm),0,255);data[i+2]=clamp(luminance*mix(1.045,warmRGB[2],warm),0,255);
+    data[i]=clamp(luminance*mix(.96,warmRGB[0],warm)+nightRelief*2,0,255);data[i+1]=clamp(luminance*mix(.99,warmRGB[1],warm)+nightRelief*5,0,255);data[i+2]=clamp(luminance*mix(1.045,warmRGB[2],warm)+nightRelief*10,0,255);
     data[i+3]=Math.round(f.alpha*255*(1-style.fog*.3));
    }
    fieldCanvas.getContext('2d').putImageData(fieldImage,0,0);cloud.imageSmoothingEnabled=true;cloud.drawImage(fieldCanvas,0,0,width,skyHeight);

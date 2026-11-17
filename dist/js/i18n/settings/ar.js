@@ -1,4 +1,6 @@
 export default Object.freeze({
+ "settingsExtra.liveSky":"سماء حية",
+ "settingsExtra.liveSkyHint":"الشمس والقمر والسحب والطقس. عند الإيقاف: خلفيات عادية للنهار والليل.",
   "settingsExtra.method": "طريقة الحساب",
   "settingsExtra.school": "حساب وقت العصر",
   "settingsExtra.schoolStandard": "الشافعي والمالكي والحنبلي",

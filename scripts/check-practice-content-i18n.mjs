@@ -30,6 +30,31 @@ const stored=()=>JSON.stringify(Object.fromEntries(Object.keys(localStorage).fil
 const click=async selector=>{const node=host.querySelector(selector);assert.ok(node,selector);await node.onclick({currentTarget:node,target:node,stopPropagation(){},preventDefault(){}});};
 const assertKeys=()=>{if(process.env.REPORT_PRACTICE_UI){const leftovers=[];const walk=node=>{if(node.nodeType===3&&/[А-Яа-я]/.test(node.textContent)&&!node.parentElement.closest('[lang="ru"],[lang="ar"],[translate="no"],[data-i18n]'))leftovers.push(node.textContent.trim());for(const child of node.childNodes||[])walk(child)};walk(host);console.log(location.hash,JSON.stringify(leftovers));}for(const node of host.querySelectorAll('[data-i18n],[data-i18n-aria-label],[data-i18n-placeholder]'))for(const attribute of['data-i18n','data-i18n-aria-label','data-i18n-placeholder']){const key=node.getAttribute(attribute);if(key)assert.notEqual(t(key),key,'Missing UI key '+key);}};
 
+// Render the real hub and its shipped cascade: a translated label is text,
+// while its localized number owns exactly one badge, without a nested badge.
+const hubStyle=doc.createElement('style');hubStyle.textContent=await readFile(new URL('../dist/style.css',import.meta.url),'utf8')+'\n'+await readFile(new URL('../dist/css/adhkar-hub.css',import.meta.url),'utf8');doc.head.append(hubStyle);
+setInterfaceLanguage('ru');location.hash='#adhkar';await showAdhkar(host,'morning');
+const hub=host.firstElementChild,library=host.querySelector('.hybrid-library'),hubRequests=fetches,hubProgress=stored();
+const libraryButtons=[...library.querySelectorAll('button')],labels=libraryButtons.map(button=>button.querySelector('[data-i18n]')),counts=libraryButtons.map(button=>button.querySelector('[data-practice-number]'));
+for(const [index,button]of libraryButtons.entries()){
+ assert.equal(w.getComputedStyle(labels[index]).backgroundColor,'transparent','A library label must not receive the numeric badge background');
+ assert.equal(labels[index].className,'hybrid-library-label');assert.equal(counts[index].className,'hybrid-library-count');
+ assert.equal(counts[index].parentElement,button,'The numeric leaf is the badge, with no extra badge wrapper');
+ assert.equal(button.querySelectorAll('span').length,2,'Each library button has one text label and one numeric badge');
+ assert.notEqual(w.getComputedStyle(counts[index]).backgroundColor,'rgba(0, 0, 0, 0)');assert.equal(w.getComputedStyle(counts[index]).display,'grid');assert.equal(counts[index].getAttribute('dir'),'ltr');
+}
+for(const language of['ru','en','az','tg','uz','kk','de','ar']){
+ setInterfaceLanguage(language);assert.equal(host.firstElementChild,hub);assert.equal(host.querySelector('.hybrid-library'),library);
+ for(const[index,key]of['adhkarUi.allAdhkar','adhkarUi.favoriteAdhkar'].entries()){
+  assert.equal(libraryButtons[index].querySelector('[data-i18n]'),labels[index]);assert.equal(libraryButtons[index].querySelector('[data-practice-number]'),counts[index]);
+  assert.equal(labels[index].textContent,t(key));assert.equal(counts[index].textContent,new Intl.NumberFormat(language).format(index?0:adhkar.items.length));assert.equal(libraryButtons[index].querySelectorAll('span').length,2);
+ }
+ assert.equal(fetches,hubRequests);assert.equal(stored(),hubProgress,'Changing labels must not alter dhikr progress or preferences');
+}
+await click('#all-dhikr');assert.equal(host.querySelectorAll('.dhikr-list-card').length,adhkar.items.length,'The all-adhkar button keeps its original action');await click('#dhikr-back');await click('#favorite-dhikr');assert.equal(host.querySelectorAll('.dhikr-list-card').length,0);assert.ok(host.querySelector('[data-i18n="adhkarUi.favoriteHint"]'),'The favorites button keeps its empty-state action');
+stopAdhkar();hubStyle.remove();
+console.log('PASS: actual Adhkar hub and shipped CSS keep one unboxed label plus one numeric badge in all 8 languages, including RTL; locale updates preserve nodes, progress, requests and both library navigation actions.');
+
 setInterfaceLanguage('ru');location.hash='#adhkar?group=morning&view=card&item=tasbih';await showAdhkar(host,'morning');
 assert.ok(host.querySelector('#adhkar-count'));const screen=host.firstElementChild,original=host.querySelector('.dhikr-passage'),sourceText=original.querySelector('.transliteration').textContent;
 await click('#dhikr-play');const audio=Audio.instances.at(-1),progress=stored(),requests=fetches;

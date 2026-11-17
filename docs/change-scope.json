@@ -1,83 +1,295 @@
 {
   "schema": 1,
-  "version": 510,
-  "baseCommit": "4c8be103fdd54db1858baaf99814a5b6baf12c63",
-  "baseTree": "deaf8c87d3eaa3f4fcc69edfd5e602162f8634e2",
-  "note": "Only the explicitly reviewed changes of this release are authorized. Preserve every unrelated baseline file. Notify the owner before a necessary dependency changes another section.",
+  "version": 513,
+  "baseCommit": "193fd2c366218195a6c6122661f3fade2e8b84fe",
+  "baseTree": "16b603677481746b43dbad3922e0a70cbd3383ba",
+  "note": "Owner-authorized combined basic-photo, interface, pause, Adhkar, navigation and startup fixes. The advanced living sky is unavailable publicly and remains in the isolated owner pilot; preserve all unrelated published510 sources.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Preserve the owner's shared coherent sky, source-specific foreground, deterministic daily variation and safe fallback requirements."
+      "reason": "Record the owner-authorized combined basic/fix release and keep the novel animated sky restricted to the separate owner-phone pilot."
     },
     {
-      "path": "dist/day-night.css",
-      "reason": "Layer the coherent atmosphere below independently matted sharp foregrounds and keep celestial layout/source crops aligned."
+      "path": "dist/css/adhkar-hub.css",
+      "reason": "Correct only the existing Adhkar label presentation while preserving approved card geometry, religious text and counter behavior."
+    },
+    {
+      "path": "dist/js/adhkar.js",
+      "reason": "Correct the existing Adhkar UI label binding without changing sourced religious content, counts or reading logic."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Set candidate version510 while preserving announcement505, its content, acknowledgement and expiry."
+      "reason": "Advance the combined minor release to513 while preserving announcement505 acknowledgement, expiry and honest basic-photo wording."
+    },
+    {
+      "path": "dist/js/app-start.js",
+      "reason": "Recover the reviewed startup/navigation state reliably without leaving a stale player overlay or losing the actual selected route."
+    },
+    {
+      "path": "dist/js/app.js",
+      "reason": "Keep closed advanced sky/weather/demo controls hidden and their handlers fail closed; ordinary settings and languages remain intact."
+    },
+    {
+      "path": "dist/js/edge-back.js",
+      "reason": "Respect the reviewed player overlay/back handling before page navigation without changing unrelated routes or gesture geometry."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
+    },
+    {
+      "path": "dist/js/i18n/settings/ar.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/az.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/de.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/en.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/kk.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/ru.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/tg.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/settings/uz.js",
+      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/ar.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/az.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/de.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/en.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/kk.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/ru.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/tg.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/i18n/skyRelease/uz.js",
+      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+    },
+    {
+      "path": "dist/js/quran-audio.js",
+      "reason": "Keep explicit Pause authoritative across every pending per-Audio app Play attempt and preserve spontaneous native Play after attempts settle, without changing unrelated audio ownership or real media progress."
+    },
+    {
+      "path": "dist/js/quran-player-navigation.js",
+      "reason": "Centralize the reviewed player back/navigation contract so a swipe or close respects actual route history and leaves underlying playback ownership intact."
+    },
+    {
+      "path": "dist/js/quran-player-window.js",
+      "reason": "Use the shared reviewed player-navigation contract for window close/swipe handling while preserving the current player layout and media state."
+    },
+    {
+      "path": "dist/js/quran-session.js",
+      "reason": "Preserve the authoritative paused state across session recovery and pending transitions without restarting Quran playback after a user pause."
+    },
+    {
+      "path": "dist/js/release-gallery.js",
+      "reason": "Keep the existing public release gallery honest for the basic-photo rollout, omitting unavailable advanced-sky motion while preserving announcement505 receipt, expiry and unrelated cards."
+    },
+    {
+      "path": "dist/js/release-illustrations.js",
+      "reason": "Map the basic-photo announcement wording to the existing feature-specific home-sky illustration family."
     },
     {
       "path": "dist/js/sky-atmosphere.js",
-      "reason": "New pure bounded photographic atmosphere painter with local illumination/occlusion and continuous date/location/weather variations."
+      "reason": "Restore restrained night-cloud ambient detail without changing daylight/sunset/clear-night output or real dense-weather visibility."
+    },
+    {
+      "path": "dist/js/sky-feature-policy.js",
+      "reason": "New explicit false public-availability policy; advanced sky remains private until post-phone-test approval."
     },
     {
       "path": "dist/js/sky-matte-data.js",
-      "reason": "Reviewed source-specific alpha data for the unchanged existing catalogue photographs, including small sky, trees, cables and mountain edges."
+      "reason": "Repair only visually confirmed source-specific roof/mountain-alpha defects across the existing catalogue; preserve all photographs and every unaffected atlas entry."
     },
     {
-      "path": "dist/js/sky-matte.js",
-      "reason": "New safe source-keyed lossless matte decoder and selected-source foreground preparation; no model, network or runtime classification."
+      "path": "dist/js/sky-release-news.js",
+      "reason": "Demonstrate only existing original day/night photos, without promoting closed celestial/weather animation."
+    },
+    {
+      "path": "dist/js/sky-ui-layout.js",
+      "reason": "Keep visible celestial discs clear of measured Home text/player rectangles in the schematic photo projection; preserve astronomy, visibility and actual horizon."
+    },
+    {
+      "path": "dist/js/storage.js",
+      "reason": "Default liveSky strictly false for fresh/missing/invalid preferences and preserve only explicit valid opt-in through settings/backup normalization."
     },
     {
       "path": "dist/js/weather.js",
-      "reason": "Integrate the shared atmosphere, decoded source mattes, premultiplied foreground sum, coherent weather changes and bounded motion on Home only."
+      "reason": "Restore original photo-only baseline and hard-gate all advanced work, saved opt-in and transient previews behind unavailable public policy."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Version510 offline shell and precache the three new local sky modules without changing application update policy."
+      "reason": "Advance cache/release metadata to513 and precache the reviewed player-navigation module exactly once; preserve downloaded stores and update safety."
     },
     {
       "path": "dist/weather.css",
-      "reason": "Replace old overlaid cloud photograph/grey treatment with bounded shared sky/cloud canvas presentation and lifecycle styling."
+      "reason": "Keep basic mode as sharp source day/night photos with no advanced layers or extra exposure reduction; preserve advanced appearance."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Immutable reviewed509 baseline and exact510 file scope; preserve every unrelated source."
+      "reason": "Record the exact authorized combined513 basic/language, pause, Adhkar, navigation and startup changes against published510; preserve every unrelated baseline file."
     },
     {
-      "path": "docs/home-sky-510.md",
-      "reason": "Document the rendering contract, local matte preparation provenance, actual references and visual/device limitations."
-    },
-    {
-      "path": "docs/product-ideas.md",
-      "reason": "Record the owner's newly stated future SALAH business ecosystem as a deferred internal idea, without implementing or announcing business services."
+      "path": "docs/home-basic-512.md",
+      "reason": "Document public basic-mode authorization, closed advanced-sky policy, source scope and physical-device limits."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record this continuation of the existing505 sky feature without resetting its announcement or sending an external push."
+      "reason": "Record honest basic-only public512 availability with existing505 identity/receipt/expiry and no external push."
+    },
+    {
+      "path": "scripts/check-account-experience.mjs",
+      "reason": "Bind the real release-photo helper into the existing account/release VM fixture after the public basic-photo news renderer gained that dependency; preserve every account, dialog and announcement assertion."
+    },
+    {
+      "path": "scripts/check-app-start.mjs",
+      "reason": "Verify the reviewed startup recovery and navigation behavior while preserving existing bootstrap and safety assertions."
+    },
+    {
+      "path": "scripts/check-bootstrap-storage.mjs",
+      "reason": "Verify missing/invalid/denied storage starts basic and preserves only explicit valid opt-in."
     },
     {
       "path": "scripts/check-image-presentation.mjs",
-      "reason": "Adapt only Home image-presentation assertions to the coherent atmosphere and atomic foreground pipeline; preserve unrelated image checks."
+      "reason": "Bind the real new Home UI-layout helper into the existing image-presentation VM fixture without changing unrelated image assertions."
+    },
+    {
+      "path": "scripts/check-interface-shell.mjs",
+      "reason": "Verify the actual public Settings shell remains usable across all8 interface languages with the advanced controls absent; preserve form drafts, audio and existing navigation assertions."
+    },
+    {
+      "path": "scripts/check-live-sky-opt-in.mjs",
+      "reason": "New actual-controller lifecycle regression for basic no-work, retained-photo opt-in, cancellation/stale results, hidden/reduced/demo exit."
+    },
+    {
+      "path": "scripts/check-player-language.mjs",
+      "reason": "Bind the real player-window history helper into the existing player-language VM fixture after navigation gained that dependency; preserve every language, focus, RTL, plural, audio-passivity and cleanup assertion."
+    },
+    {
+      "path": "scripts/check-practice-content-i18n.mjs",
+      "reason": "Protect the corrected Adhkar label and language binding with the existing practice-content assertions intact."
+    },
+    {
+      "path": "scripts/check-public-sky-policy.mjs",
+      "reason": "Verify actual false public policy cannot activate heavy sky from stored preferences, direct previews or visible controls."
+    },
+    {
+      "path": "scripts/check-quran-audio-session.mjs",
+      "reason": "Verify real session pause/recovery behavior after the authoritative pause fix, preserving existing playback and persistence assertions."
+    },
+    {
+      "path": "scripts/check-quran-lockscreen.mjs",
+      "reason": "Preserve the original direct native interruption/resume assertion and extend pending-play regressions so native Play works without a MediaSession callback while late app-initiated Play remains unable to override Pause."
+    },
+    {
+      "path": "scripts/check-quran-pause-authority.mjs",
+      "reason": "Exercise delayed play completions and explicit user pause authority without synthetic listening credit or unrelated audio changes."
+    },
+    {
+      "path": "scripts/check-quran-player-navigation.mjs",
+      "reason": "Cover the real shared player history, swipe and back behavior with delayed/stale completion and actual route-state regressions."
+    },
+    {
+      "path": "scripts/check-release-illustrations.mjs",
+      "reason": "Recognize the basic photo feature mapping without weakening the existing release gallery checks."
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "reason": "Exercise actual Home source readiness/fallback, foreground composition, cloud transitions, resize and hidden/reduced-motion lifecycle."
+      "reason": "Protect foreground backing resolution/high-quality interpolation and unchanged resource/crop/lifecycle bounds."
+    },
+    {
+      "path": "scripts/check-settings.mjs",
+      "reason": "Verify live-sky boolean normalization and actual backup import/export without inferring consent from older flags."
     },
     {
       "path": "scripts/check-sky-atmosphere.mjs",
-      "reason": "Verify deterministic days/midnight continuity, photographic asymmetric flow, local occlusion, weather constraints and resource/readiness bounds."
+      "reason": "Verify readable low-light clouds while preserving daytime, clear-night, determinism and dense-weather/horizon gates."
     },
     {
       "path": "scripts/check-sky-matte.mjs",
-      "reason": "Verify source hashes, catalogue coverage, lossless alpha bounds, critical retained detail/sky gaps and safe selected-source preparation."
+      "reason": "Protect visually verified source-bound roof, dome and mountain ridge details/sky gaps with regressions."
+    },
+    {
+      "path": "scripts/check-sky-release-news.mjs",
+      "reason": "Test honest basic photo news, its shared motion/hidden/reduced lifecycle and preserved historical illustration geometry."
+    },
+    {
+      "path": "scripts/check-sky-ui-layout.mjs",
+      "reason": "Exercise Home text/player collisions, visible-sky/crop bounds, deterministic placement and unchanged absent/hidden/subhorizon cases."
+    },
+    {
+      "path": "scripts/check-tyumen-sources.mjs",
+      "reason": "Inject the real advanced-sky availability policy into the existing Settings VM dependency context; preserve all prayer, reminder, widget and timetable-source assertions."
     }
   ],
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "The unchanged Pages workflow refreshes the official imam schedule."
+      "reason": "The unchanged Pages workflow refreshes the official imam schedule before verification."
     }
   ],
   "baseline": [
@@ -131,7 +343,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "91fb0fdb7bab2e132e722281c6e3e5026051f67d"
+      "sha": "580655a8eec8b9a4b03c97dd27b208847d14a1f6"
     },
     {
       "path": "ANALYTICS.md",
@@ -2491,7 +2703,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "9cf1f1f14d41509b974b7e6fd78232656c2ccb8a"
+      "sha": "0b526708f7a3996855d8698be09a59ffdca8b749"
     },
     {
       "path": "dist/delete-account.html",
@@ -2647,7 +2859,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "2c642f7f8d6f91f9113de832551153b2ee3d43eb"
+      "sha": "d53085e46cb7cc49dff733d28c411e1d67578019"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4530,6 +4742,18 @@
       "sha": "83ff178cefa3e0082eca7d57db6f4f56fd5987b6"
     },
     {
+      "path": "dist/js/sky-atmosphere.js",
+      "sha": "e9130a145d8b17582d427a359156f7fa2d15627d"
+    },
+    {
+      "path": "dist/js/sky-matte-data.js",
+      "sha": "504b6fb1dbafc8aaa996344651fccfdf968d8a7f"
+    },
+    {
+      "path": "dist/js/sky-matte.js",
+      "sha": "3137b68820257d303befab02d6df918b3c28a16d"
+    },
+    {
       "path": "dist/js/sky-release-news.js",
       "sha": "ad4913128349209406812e8869485c645eb6d5f0"
     },
@@ -4811,7 +5035,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "2fc222f57bcc8c1efb3f0c0bac648681e2115103"
+      "sha": "bf8968ec093616deaeae46f78e6a459684224f9d"
     },
     {
       "path": "dist/knowledge.css",
@@ -4883,7 +5107,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "23ca65aa592e9952cbd27f000084b6d75ded501c"
+      "sha": "c83a446a220232aa429bee60d3d9e59a020418a4"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5275,7 +5499,7 @@
     },
     {
       "path": "dist/weather.css",
-      "sha": "80802fbe7a23fd28e64c2e41a279f5f96663f1e0"
+      "sha": "a6e4385dc18484f446af650394d087e1d6b6d565"
     },
     {
       "path": "docs/about-layout-evidence.md",
@@ -5347,7 +5571,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "00317be9dfe114bbdda7bd4489b1df945b8b0a24"
+      "sha": "290ea70b6e360b8a88655f0d4b8f7726ff013ec1"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5440,6 +5664,10 @@
     {
       "path": "docs/home-sky-506.md",
       "sha": "2630842707c1b4226efab14c2d6acf758d3502de"
+    },
+    {
+      "path": "docs/home-sky-510.md",
+      "sha": "a317c76bdf1edbc45c80d12b83b4f1987910c900"
     },
     {
       "path": "docs/home-sky-moon-505.json",
@@ -5559,7 +5787,7 @@
     },
     {
       "path": "docs/product-ideas.md",
-      "sha": "bfb3f39b3633a058943b1924e6fca82e26cb7279"
+      "sha": "6c7d1811395ab03b2f0153febbe22fc5ae262557"
     },
     {
       "path": "docs/profile-avatars.md",
@@ -5715,7 +5943,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "2e21088b3ed9f93d9e9ec85f7bd2d9763369e1c6"
+      "sha": "40dc8165568e3875dad536f9200ff4847ce5b31e"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6519,7 +6747,7 @@
     },
     {
       "path": "scripts/check-image-presentation.mjs",
-      "sha": "5edbe83018a42d9ff1864ffe25effe97e54307a8"
+      "sha": "50a2ae43f43bcc7833a0b892f26ee913d2bc1c8e"
     },
     {
       "path": "scripts/check-image-response.mjs",
@@ -7151,7 +7379,7 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "4fa5e9b60b4e3d55a43ddaa43a81e42652f5d4ad"
+      "sha": "b5ac03d0a2ec19f70243835b4f2a8138b57527a7"
     },
     {
       "path": "scripts/check-security.mjs",
@@ -7188,6 +7416,14 @@
     {
       "path": "scripts/check-short-dhikr.mjs",
       "sha": "a2b4f67dfcc77dee43dad8279a633b57831b0466"
+    },
+    {
+      "path": "scripts/check-sky-atmosphere.mjs",
+      "sha": "2924a0a51cd801e32abf4b27bdf11a83ba4e4e1d"
+    },
+    {
+      "path": "scripts/check-sky-matte.mjs",
+      "sha": "8dcddb8e1972ac9882d051e4224fd28ae01c46c0"
     },
     {
       "path": "scripts/check-sky-release-news.mjs",

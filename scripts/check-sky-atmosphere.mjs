@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {createSkyAtmosphere,skyAtmosphereStyle} from '../dist/js/sky-atmosphere.js';
+import {skyObjects} from '../dist/js/wallpapers.js';
 
 // A controlled photographed-light field exercises actual density extraction,
 // flow, local occlusion and cache lifetimes without a browser or native addon.
@@ -87,4 +88,22 @@ for(let i=0;i<17;i++){
 // forward span. The real sampler retains57%; a mirrored negative control
 // measured49%, so55% distinguishes the rejected reversal without a pixel hash.
 assert.ok(positive/(positive+negative)>.55,'Source orientation must not flip bilaterally on alternate repeated tiles: '+positive+'/'+(positive+negative));rampPainter.dispose();
+
+// Published510 regression captures, using the controlled photograph above and
+// renderer SHA d6a8c221... . Only very-low-light cloud RGB may change; daytime,
+// actual sunset, clear-night sky and the photographic alpha remain identical.
+const nightPainter=createSkyAtmosphere({canvasFactory:factory,texture});
+for(const [day,altitude,clouds,expected]of [[1,30,.64,'d55221d7b52b21e28ba1078289ea37b79edf3d91b96b05ef728e1a6ffb80bf91'],[.28,-.35,.64,'fedb5599d6739f41b02569550ab4bca922821106f0be479352c2c415a76241b8'],[0,-10.087301890341381,0,'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855']]){
+ const cloudCanvas=canvas();nightPainter.render({...base,skyCanvas:canvas(),cloudCanvas,day,clouds,sun:{...base.sun,altitude}});
+ assert.equal(createHash('sha256').update(cloudCanvas.context.pixels||new Uint8Array()).digest('hex'),expected,'Published daytime/sunset/clear cloud pixels are unchanged');
+}
+const nightCloud=canvas(),nightFrame={...base,skyCanvas:canvas(),cloudCanvas:nightCloud,instant:Date.parse('2026-11-17T12:42:00Z'),day:0,clouds:1,sun:{...base.sun,altitude:-10.087301890341381}},nightInfo=nightPainter.render(nightFrame),nightPixels=nightCloud.context.pixels,means=[0,0,0];
+for(let i=0;i<nightPixels.length;i+=4)for(let c=0;c<3;c++)means[c]+=nightPixels[i+c]/(nightPixels.length/4);
+assert.ok(means[2]>means[1]+3&&means[1]>means[0]+2,'Opaque night clouds retain a restrained blue ambient');
+assert.ok(means[2]>18&&means[2]<40&&means[0]<30,'Cloud relief is readable while remaining genuinely dark');
+assert.equal(nightInfo.skyVisibility,0);assert.equal(nightInfo.discVisibility,0);assert.equal(nightInfo.moonVisibility,0,'Night relief never shines a Moon through opaque weather');
+const physical=skyObjects(nightFrame.instant,null,'auto',null,{latitude:base.latitude,longitude:base.longitude});assert.equal(physical.sun,0);assert.ok(physical.moon>0);assert.equal(physical.moon*nightInfo.skyVisibility,0,'The real above-horizon Moon still obeys the dense-cloud gate');
+nightPainter.render({...nightFrame,instant:base.instant,clouds:.64});const alpha=Uint8Array.from({length:nightCloud.context.pixels.length/4},(_,i)=>nightCloud.context.pixels[i*4+3]);assert.equal(createHash('sha256').update(alpha).digest('hex'),'b55b7fbc9260cdb84c8f6bdbc5ca4455fb6d09928227451af86d4d4f8b4b0d2e','Night relief does not alter cloud shape or opacity');
+assert.equal(nightPainter.render({...nightFrame,clouds:0,fog:1}).skyVisibility,0);
+const clearNight=skyAtmosphereStyle({...nightFrame,clouds:0});assert.deepEqual([clearNight.zenith,clearNight.middle,clearNight.horizon],[[4,10,24],[8,16,32],[12,21,38]],'The approved clear-night navy remains exact');nightPainter.dispose();
 console.log('PASS: deterministic daily/location variation without midnight seams; continuous opaque sky; photographic local cloud density; independent bounded flow; fog/overcast gates; tiny skies; frozen/remount/seek stability; source readiness and disposal.');

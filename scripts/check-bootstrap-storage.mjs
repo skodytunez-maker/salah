@@ -10,6 +10,7 @@ const[{createNotificationInvite,INVITE_KEY},{createOwnerReleaseCard},{createTeam
  import('../dist/js/notification-invite.js'),import('../dist/js/owner-release-card.js'),import('../dist/js/team-preview-news.js'),import('../dist/js/app-release.js'),import('../dist/js/storage.js')
 ]);
 assert.equal(storageAvailable,false,'The normal guarded settings reader reports denied storage');
+assert.equal(settings.liveSky,false,'Denied storage cannot opt into advanced sky work');
 const app=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8'),initializers=app.split(/\r?\n/).filter(line=>/^const (notificationInvite|ownerReleaseCard|teamPreviewNews)=/.test(line));assert.equal(initializers.length,3);
 doc.body.innerHTML='<main id="app"></main><div id="invite"></div><div id="owner"></div><div id="team"></div>';
 let authCalls=0,permissionCalls=0,mutations=0;

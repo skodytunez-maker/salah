@@ -6,7 +6,7 @@ class Audio{constructor(src){this.src=src;this.paused=true;this.ended=false;this
 const flush=async()=>{for(let i=0;i<4;i++)await new Promise(r=>setImmediate(r));};
 const native=new Session(),tracks=[],states=[],player=createQuranPlayer({surah:{number:1,verses:[{number:1,ayah:1}]},reciter:'ar.badralturki',audioNavigator:{audioSession:native},createAudio:src=>{const a=new Audio(src);tracks.push(a);return a;},getAudio:async()=>null,loadTimings:async()=>null,onState:s=>states.push(s),onVerse:()=>{},onError:()=>assert.fail('Interruption must not turn into a network error')});
 await player.play();const audio=tracks[0];audio.currentTime=79;assert.equal(native.type,'playback');native.change('interrupted');audio.pause();assert.equal(player.state.status,'paused');const calls=audio.calls;await flush();assert.equal(audio.calls,calls,'Never resume while the OS still reports interruption');
-native.change('active');await flush();assert.equal(audio.calls,calls+1);assert.equal(audio.currentTime,79,'Resume the same source and position');assert.equal(tracks.length,1);assert.equal(player.state.status,'playing');
+native.change('active');await flush();assert.equal(audio.calls,calls,'A real native pause remains authoritative after the interruption ends');assert.equal(audio.paused,true);await player.resume();await flush();assert.equal(audio.calls,calls+1);assert.equal(audio.currentTime,79,'Resume the same source and position');assert.equal(tracks.length,1);assert.equal(player.state.status,'playing');
 native.change('active');await flush();assert.equal(audio.calls,calls+1,'No repeated retry loop');
 native.change('interrupted');audio.pause();player.pause();native.change('active');await flush();assert.equal(audio.calls,calls+1,'User pause during interruption must win');assert.equal(native.type,'playback','Explicit pause keeps the playback category for Control Center resume');
 player.toggle();await flush();assert.equal(native.type,'playback');const before=audio.calls;
@@ -15,10 +15,10 @@ player.toggle();await flush();native.change('interrupted');audio.pause();native.
 const unsupported=createPlaybackAudioSession({nav:{}});unsupported.setIntent(true);unsupported.setIntent(false);unsupported.destroy();
 const inaccessible=createPlaybackAudioSession({nav:{get audioSession(){throw Error('Unavailable')}}});inaccessible.setIntent(true);inaccessible.destroy();
 const first=createPlaybackAudioSession({nav:{audioSession:native}}),second=createPlaybackAudioSession({nav:{audioSession:native}});first.setIntent(true);second.setIntent(true);first.destroy();assert.equal(native.type,'playback','Old owner cleanup must not reset the new owner');second.destroy();assert.equal(native.type,'auto');
-// Rejected recovery keeps a usable paused player and never switches recording hosts.
+// Rejected explicit resume keeps a usable paused player and never switches recording hosts.
 const deniedSession=new Session(),deniedTracks=[],denied=createQuranPlayer({surah:{number:1,verses:[{number:1,ayah:1}]},reciter:'ar.badralturki',audioNavigator:{audioSession:deniedSession},createAudio:src=>{const a=new Audio(src);deniedTracks.push(a);return a;},getAudio:async()=>null,loadTimings:async()=>null,onState:()=>{},onVerse:()=>{},onError:()=>assert.fail('No fallback on a permission rejection')});
-await denied.play();deniedSession.change('interrupted');deniedTracks[0].pause();deniedTracks[0].play=async()=>{throw Object.assign(Error('blocked'),{name:'NotAllowedError'});};deniedSession.change('active');await flush();assert.equal(denied.state.status,'paused');assert.equal(deniedTracks.length,1);denied.destroy();
-console.log('PASS: playback category, same-source OS interruption recovery, manual pause, no generic-pause retries, rejected resume, unsupported browser and owner cleanup');
+await denied.play();deniedSession.change('interrupted');deniedTracks[0].pause();deniedTracks[0].play=async()=>{throw Object.assign(Error('blocked'),{name:'NotAllowedError'});};deniedSession.change('active');await flush();await denied.resume();await flush();assert.equal(denied.state.status,'paused');assert.equal(deniedTracks.length,1);denied.destroy();
+console.log('PASS: playback category, native-pause authority and explicit same-source OS resume, manual pause, no generic-pause retries, rejected resume, unsupported browser and owner cleanup');
 
 // Safari's shipping type-only API: no state property and no statechange signal.
 class Page extends EventTarget{hidden=false;focused=true;hasFocus(){return this.focused;}hide(){this.hidden=true;this.dispatchEvent(new Event('visibilitychange'));}show(){this.hidden=false;this.dispatchEvent(new Event('visibilitychange'));}}
@@ -30,24 +30,24 @@ function safariFixture(){
 const sf=safariFixture();await sf.player.play();const sa=sf.tracks[0];sa.currentTime=83;
 sf.doc.hide();sa.pause();await flush();const safariCalls=sa.calls;
 assert.equal(sf.player.state.status,'paused');assert.equal(sa.calls,safariCalls,'No blind background retry while another app owns audio');
-sf.doc.show();await flush();assert.equal(sa.calls,safariCalls+1,'Type-only Safari recovers on a foreground return');
+sf.doc.show();await flush();assert.equal(sa.calls,safariCalls,'A foreground return cannot undo a native pause');assert.equal(sa.paused,true);await sf.player.resume();await flush();assert.equal(sa.calls,safariCalls+1,'Explicit Play resumes the retained source');
 assert.equal(sa.currentTime,83);assert.equal(sf.tracks.length,1,'No new audio element or recording URL');assert.equal(sf.player.state.status,'playing');
 sf.win.dispatchEvent(new Event('focus'));sf.win.dispatchEvent(new Event('pageshow'));sf.doc.show();await flush();assert.equal(sa.calls,safariCalls+1,'Focus/pageshow cannot retry a consumed interruption');
 // Foreground state and focus may arrive in either order.
 sf.doc.hide();sa.pause();sf.doc.focused=false;sf.doc.show();await flush();assert.equal(sa.paused,true,'Visible background window cannot steal audio');
-sf.doc.focused=true;sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.paused,false);
+sf.doc.focused=true;sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.paused,true,'Focus alone cannot undo the native pause');await sf.player.resume();await flush();assert.equal(sa.paused,false);
 // WebKit can deliver the pause event after the visibility event.
-sf.doc.hide();sf.doc.show();sa.pause();await flush();assert.equal(sa.paused,false,'Late pause after return still recovers');
+sf.doc.hide();sf.doc.show();sa.pause();await flush();assert.equal(sa.paused,true,'A late native pause after return is still authoritative');await sf.player.resume();await flush();assert.equal(sa.paused,false);
 // A foreground pause without a background transition is not an interruption.
 const beforeGeneric=sa.calls;sa.pause();sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.calls,beforeGeneric,'Generic visible pause must not restart');
 sf.player.toggle();await flush();
 // Explicit pause while backgrounded cancels the recovery ticket.
 sf.doc.hide();sa.pause();sf.player.pause();const manuallyPaused=sa.calls;sf.doc.show();sf.win.dispatchEvent(new Event('focus'));await flush();assert.equal(sa.calls,manuallyPaused,'User pause during a type-only interruption wins');assert.equal(sf.nav.audioSession.type,'playback','Manual pause keeps resumable system controls without playback intent');
-// A queued foreground recovery is cancelled by an immediate manual pause.
+// Explicit pause keeps its priority across foreground lifecycle events.
 sf.player.toggle();await flush();sf.doc.hide();sa.pause();sf.doc.show();sf.player.pause();await flush();assert.equal(sa.calls,manuallyPaused+1,'Manual pause cancels the queued promise');
 sf.player.toggle();await flush();sf.doc.hide();sa.pause();sf.doc.show();sf.player.destroy();const destroyedCalls=sa.calls;await flush();sf.win.dispatchEvent(new Event('focus'));sf.doc.show();await flush();assert.equal(sa.calls,destroyedCalls,'Destroyed player and listeners cannot resume');
-// Rejection consumes the ticket rather than retrying on every foreground event.
-const blocked=safariFixture();await blocked.player.play();const ba=blocked.tracks[0];let blockedCalls=0;ba.play=async()=>{blockedCalls++;throw Object.assign(Error('not allowed'),{name:'NotAllowedError'});};blocked.doc.hide();ba.pause();blocked.doc.show();await flush();blocked.win.dispatchEvent(new Event('focus'));blocked.doc.show();await flush();assert.equal(blockedCalls,1);assert.equal(blocked.player.state.status,'paused');assert.equal(blocked.tracks.length,1);blocked.player.destroy();
+// Rejected explicit Play consumes intent rather than retrying on foreground events.
+const blocked=safariFixture();await blocked.player.play();const ba=blocked.tracks[0];let blockedCalls=0;ba.play=async()=>{blockedCalls++;throw Object.assign(Error('not allowed'),{name:'NotAllowedError'});};blocked.doc.hide();ba.pause();blocked.doc.show();await flush();assert.equal(blockedCalls,0,'No implicit recovery after native pause');await blocked.player.resume();await flush();blocked.win.dispatchEvent(new Event('focus'));blocked.doc.show();await flush();assert.equal(blockedCalls,1);assert.equal(blocked.player.state.status,'paused');assert.equal(blocked.tracks.length,1);blocked.player.destroy();
 // Desktop/browser tabs do not opt into this standalone-only recovery.
 const ordinary=safariFixture();ordinary.player.destroy();ordinary.nav.standalone=false;let ordinaryPaused=false,ordinaryResumes=0;
 const ordinaryController=createPlaybackAudioSession({nav:ordinary.nav,doc:ordinary.doc,win:ordinary.win,canResume:()=>ordinaryPaused,resume:()=>ordinaryResumes++});ordinaryController.setIntent(true);ordinary.doc.hide();ordinaryPaused=true;ordinaryController.notifyPause();ordinary.doc.show();await flush();assert.equal(ordinaryResumes,0);ordinaryController.destroy();
@@ -57,7 +57,7 @@ const late=createPlaybackAudioSession({nav:{standalone:true,audioSession:{type:'
 late.setIntent(true);lateDoc.hide();lateDoc.show();clock=5000;latePaused=true;late.notifyPause();lateWin.dispatchEvent(new Event('focus'));await flush();assert.equal(lateResumes,0);late.destroy();
 // Full implementations can report active before dispatching the media pause.
 const orderSession=new Session(),orderTracks=[],orderPlayer=createQuranPlayer({surah:{number:1,verses:[{number:1,ayah:1}]},reciter:'ar.badralturki',audioNavigator:{audioSession:orderSession},createAudio:src=>{const a=new Audio(src);orderTracks.push(a);return a;},getAudio:async()=>null,loadTimings:async()=>null,onState:()=>{},onVerse:()=>{},onError:()=>assert.fail('No fallback expected')});
-await orderPlayer.play();orderSession.change('interrupted');orderSession.change('active');await flush();const oa=orderTracks[0],beforeOrder=oa.calls;oa.pause();await flush();assert.equal(oa.calls,beforeOrder+1,'Active-before-pause is not lost');orderPlayer.destroy();
+await orderPlayer.play();orderSession.change('interrupted');orderSession.change('active');await flush();const oa=orderTracks[0],beforeOrder=oa.calls;oa.pause();await flush();assert.equal(oa.calls,beforeOrder,'An active-before-pause event cannot restart a real pause');await orderPlayer.resume();await flush();assert.equal(oa.calls,beforeOrder+1,'The same native source remains explicitly resumable');orderPlayer.destroy();
 // Full API inactive is not permission to restart; no foreground fallback there.
 let fullPaused=true,fullResumes=0;const fullState=new Session(),fullDoc=new Page(),fullWin=new EventTarget();const full=createPlaybackAudioSession({nav:{standalone:true,audioSession:fullState},doc:fullDoc,win:fullWin,canResume:()=>fullPaused,resume:()=>fullResumes++});full.setIntent(true);fullState.change('interrupted');full.notifyPause();fullState.change('inactive');fullDoc.hide();fullDoc.show();fullWin.dispatchEvent(new Event('focus'));await flush();assert.equal(fullResumes,0);full.destroy();
 // A late lifecycle event from an old owner must not interrupt its replacement.
