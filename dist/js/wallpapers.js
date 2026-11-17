@@ -121,7 +121,10 @@ export function projectSkyObjects(sky,{width,height,wallpaper='mosque',landmark=
  const xPad=(right-left)*.07,x0=left+xPad,x1=right-xPad,ceiling=top+(bottom-top)*.07;
  const floor=Math.max(ceiling+.04,Math.min(horizon,bottom-(bottom-top)*.16));
  const output={...sky,horizonY:floor*100};
- for(const body of ['sun','moon']){const progress=clamp((sky[body+'X']-8)/84),altitude=(skyGeometry.horizon/skyGeometry.height*100-sky[body+'Y'])/100;
-  output[body+'X']=(x0+(x1-x0)*progress)*100;output[body+'Y']=Math.max(ceiling,Math.min(floor+.012,floor-altitude))*100;}
+ // bodyPoint encodes90° as50 panorama percentage points. Fit that elevation
+ // into this artwork's actual sky budget, rather than clipping a high Sun
+ // against the top for hours on photographs with a shallow visible sky.
+ for(const body of ['sun','moon']){const progress=clamp((sky[body+'X']-8)/84),elevation=(skyGeometry.horizon/skyGeometry.height*100-sky[body+'Y'])/50;
+  output[body+'X']=(x0+(x1-x0)*progress)*100;output[body+'Y']=Math.max(ceiling,Math.min(floor+.012,floor-(floor-ceiling)*elevation))*100;}
  return output;
 }

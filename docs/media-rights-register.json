@@ -3683,6 +3683,15 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/release-artwork.md",
       "note": "Original SALAH release505 illustration authored directly as repository SVG paths, gradients and circles: mosque skyline, Sun arc and lunar phases. No external or embedded images, fonts, third-party artwork, religious text or user content; this SVG does not embed the separate NASA Moon texture. Provenance supports project origin without claiming exclusive copyright or blanket clearance."
+    },
+    {
+      "path": "dist/assets/home-clouds-509.webp",
+      "gitBlobSha": "745750a0d5dc74305aa42ba3ab5f5ca811be7d3e",
+      "bytes": 24372,
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/home-clouds-509.md",
+      "note": "Original photographic cloud texture generated for SALAH with the built-in OpenAI image tool on2026-11-17 from an owner-supplied sky reference. No buildings, people, text, sun or moon disc are included. The source generation and final WebP fingerprint are recorded in the dedicated Home509 document. Project provenance is supported without a claim of exclusive copyright or blanket rights clearance."
     }
   ],
   "wallpaperSets": [

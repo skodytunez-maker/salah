@@ -2,7 +2,7 @@
 #home-scene{display:none;position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--scene-day:0;--scene-dawn:0;--scene-dusk:0;background:#061020}
 .home-page #home-scene{display:block}
 .home-page:before{display:none}
-#home-scene[data-image-pending=true]>.scene-night,#home-scene[data-image-pending=true]>.scene-day,#home-scene[data-image-pending=true]>.scene-sky,#home-scene img[data-image-pending],body[data-scene-image-pending=true] #weather-layer{visibility:hidden}
+#home-scene[data-image-pending=true]>.scene-night,#home-scene[data-image-pending=true]>.scene-day,#home-scene[data-image-pending=true]>.scene-sky,#home-scene[data-image-pending=true]>.scene-weather-sky,#home-scene[data-image-pending=true]>.scene-weather-texture,#home-scene img[data-image-pending],body[data-scene-image-pending=true] #weather-layer{visibility:hidden}
 #home-scene>div{position:absolute;inset:0;pointer-events:none}
 .scene-night,.scene-day{background-size:cover;background-position:85% center;background-repeat:no-repeat}
 .scene-night{background-image:url('./assets/night-mosque.webp')}
@@ -78,10 +78,10 @@ body[data-wallpaper="landmark"] #weather-layer{clip-path:none;-webkit-mask-image
 
 .scene-preview:not(.reduce-motion) #home-scene>.scene-day,.scene-preview:not(.reduce-motion) #home-scene>.scene-dawn,.scene-preview:not(.reduce-motion) #home-scene>.scene-dusk{transition:none}
 
-/* Cloud cover changes the light on the photograph, not only the sky overlay. */
+/* Keep the photograph's detail and baseline lighting; clouds have their own sky layer. */
 #home-scene{--scene-clouds:0;--scene-direct-light:1;--scene-sky-visibility:1;--scene-mist:0}
-#home-scene .scene-day,#home-scene[data-wallpaper="new-york"] .scene-day,#home-scene[data-wallpaper="landmark"] .scene-day{filter:brightness(calc(.74 + var(--scene-day)*.2 - var(--scene-clouds)*.14)) saturate(calc(.78 + var(--scene-day)*.15 - var(--scene-clouds)*.12));transition:opacity 4s linear,filter 6s ease}
-#home-scene .scene-night{filter:brightness(calc(1 - var(--scene-clouds)*.1)) saturate(.92);transition:filter 6s ease}
+#home-scene .scene-day,#home-scene[data-wallpaper="new-york"] .scene-day,#home-scene[data-wallpaper="landmark"] .scene-day{filter:brightness(calc((.74 + var(--scene-day)*.2)*var(--scene-photo-exposure,1))) saturate(calc(.78 + var(--scene-day)*.15));transition:opacity 4s linear,filter 6s ease}
+#home-scene .scene-night{filter:brightness(var(--scene-photo-exposure,1)) saturate(.92);transition:filter 6s ease}
 #home-scene .scene-dawn{opacity:calc(var(--scene-dawn)*var(--scene-direct-light));transition:opacity 6s ease}
 #home-scene .scene-dusk{opacity:calc(var(--scene-dusk)*var(--scene-direct-light));transition:opacity 6s ease}
 #home-scene .scene-sky{opacity:var(--scene-sky-visibility);transition:opacity 6s ease}

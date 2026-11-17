@@ -4358,6 +4358,11 @@
       "path": "dist/assets/updates/home-sky-505.svg",
       "gitBlobSha": "9e15e779c638a9f7cdaad151879b8659386d676a",
       "bytes": 3669
+    },
+    {
+      "path": "dist/assets/home-clouds-509.webp",
+      "gitBlobSha": "745750a0d5dc74305aa42ba3ab5f5ca811be7d3e",
+      "bytes": 24372
     }
   ],
   "incrementalEvidence": [
@@ -4553,6 +4558,15 @@
       "evidence": "docs/release-artwork.md",
       "baseCommit": "e2656d149add1ab287f0967561d28bf4405889ea",
       "note": "Original repository-authored release505 SVG for the Home sky feature, with final-file fingerprint recorded in entries and media-rights-register. It uses project-authored vector shapes only and does not embed the NASA Moon JPEG. Origin support is not a claim of exclusive copyright or blanket clearance."
+    },
+    {
+      "date": "2026-11-17",
+      "paths": [
+        "dist/assets/home-clouds-509.webp"
+      ],
+      "evidence": "docs/home-clouds-509.md",
+      "baseCommit": "7b50154205fc623171ad4200b6ae73222e69769b",
+      "note": "Owner-reviewed original generative photographic sky texture for Home509. The final24372-byte WebP and its SHA-256/Git blob are pinned; historical sourceCommit and all earlier evidence records remain unchanged."
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"
