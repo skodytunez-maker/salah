@@ -3,7 +3,7 @@ import{randomUUID}from 'node:crypto';
 import{supportFixture}from '../tests/support/chat-fixture.mjs';
 const f=await supportFixture(),{db,owner,user,other,actor}=f;
 const invoke=async(action,args={},asOwner=true)=>(await db.query('select public.support_conversation_request($1,$2,$3,$4::jsonb) data',['salah',asOwner,action,JSON.stringify(args)])).rows[0].data;
-async function makeCase(who,subject,at,status='open',app='salah'){const id=randomUUID();await db.query('insert into public.support_threads(id,user_id,app,subject,version,status,created_at,updated_at)values($1,$2,$3,$4,$5,$6,$7,$7)',[id,who,app,subject,'516',status,at]);return id;}
+async function makeCase(who,subject,at,status='open',app='salah'){const id=randomUUID();await db.query('insert into public.support_threads(id,user_id,app,subject,version,status,created_at,updated_at,owner_seen_at)values($1,$2,$3,$4,$5,$6,$7,$7,$8)',[id,who,app,subject,'516',status,at,'-infinity']);return id;}
 async function message(thread,who,body,at,answer=false){const id=randomUUID();await db.query('insert into public.support_messages(id,thread_id,author_id,owner_reply,body,created_at)values($1,$2,$3,$4,$5,$6)',[id,thread,who,answer,body,at]);return id;}
 const T1=await makeCase(user,'Старая тема','2026-11-17T10:00:00Z'),T2=await makeCase(user,'Новая тема','2026-11-18T10:00:00Z'),T3=await makeCase(other,'Другое лицо','2026-11-18T10:00:00Z'),S=await makeCase(user,'Другое приложение','2026-11-18T10:00:00Z','open','sahaba');
 await db.query("update auth.users set raw_user_meta_data='{\"nickname\":\"Одинаковое имя\"}' where id=any($1::uuid[])",[[user,other]]);
