@@ -38,6 +38,16 @@
 PR388 объединён; commit13a82eddf379f283988798852bb6b51b2aed1bb1, treee95cdb0692d4d338b8b5aee973f0c7d5f02c7acd. Все334 проверки приложения и проверка публикации Pages44373051268 завершились успешно. Проверка на iPhone ожидается. Прямой HTTP-контроль из этой среды недоступен; доставку на конкретный телефон не объявлять подтверждённой. Новое небо, награды, названия сур, оформление настроек и прогресс обновления не включены.
 
 
-## 2026-11-19: real 520 phone regressions take priority
+## Support521 correction, 19 November
 
-Habib Malik and Sarvinoz cards unavailable; right Back shakes and can leave the conversation for Menu. Recording reviewed. Candidate521 uses a protected account-ID resolver, separate native Back history entry and a shorter deliberate Support swipe. Both new regression checks fail on520 and pass on521; both reported accounts resolve in the production read-only SQL query. Targeted10 checks pass. Not published or physically retested yet. All settings, awards, surah names, updater progress/ETA, location and owner-only sky requests remain queued.
+Real520 Habib Malik/Sarvinoz card failures and native Back were reproduced. Production auth/server integration and same-URL conversation Back corrected; 335/335 exact-head CI checks, database/DOM, native Android/Play/iOS, rights and tablet checks passed. Server owner-access v36 deployed and read back exactly. PR389 merged (5140b111c12481c9955eed3331e5e1071443d815; tree20ff9d2349d21008c3b77a927ff39be50e1d406d). Pages publication pending; phone confirmation outstanding. Future private sky must be rebased onto521 or later, never replace these Support fixes with518/519 source. Other queue items remain unfinished.
+
+
+### 521 publication completed
+
+Published through ordinary installed SALAH on19November: Pages44379775146/job135068514477 succeeded on exact merge51611e8ed0788b20e5a854049f5059d8f606f28f (tree4a2849e2a881a1ae655ee00af397fa94bc7b6466). Follow-upPR390 restored the exact existing generated official-imam schedule entry omitted in the initial scope manifest; no checker/workflow weakening. Final exact head again335/335 application checks plus database/DOM checks passed. Backend36 verified byte-for-byte and both reported contacts resolve in the updated production query. No physical iPhone retest yet and no direct public-byte/hash HTTP probe; Pages deployment source/manifest evidence retained. The owner needs521 installed to verify avatar cards and card→chat→inbox right Back. Other queue items are unfinished; next private sky must incorporate521 fixes.
+
+
+## Support522: profile appearance
+
+The owner sent two screenshots of the now-loaded card and requested orderly presentation. Candidate522 restores the established profile CSS context and adds only scoped modal/toolbar spacing and focus handling. Five layout variants and eight related regressions pass; the layout regression fails on521. Not yet published or physically checked. Other queued settings, rewards, localized surah names, updater progress/ETA, geolocation and owner-only sky remain unfinished.

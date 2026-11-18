@@ -32,3 +32,7 @@ Owner518 screenshot: participant name crosses installed status fade. Support-onl
 ## Support521
 
 Real 520 phone recording reviewed (23:52:18, 8.32 seconds). Account-to-ranking ID mismatch reproduced; native chat history step missing. Isolated 521 corrects both without altering photographs, sky or other sections. See docs/support-profile-back-521.md. Physical iPhone check still required after installation.
+
+## Support522 card presentation
+
+Owner supplied two real-phone screenshots of a loaded profile. Cause: the reused card was missing its owner-profile-screen CSS context. Reused that context inside the Support modal, added scoped compact toolbar/section spacing and moved initial focus to the labelled dialog. The actual complete stylesheet cascade is tested at320/393/852/1440px and RTL; the same test reproduces23px fallback headings on521. This does not claim physical Safari rendering.

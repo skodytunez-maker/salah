@@ -1,0 +1,7 @@
+# Support522: consistent private card presentation
+
+The loaded Support profile in the owner's screenshots fell back to large serif headings and ungrouped content because its reusable markup lacked the owner-profile-screen styling context. The Support modal now supplies that context. Listening, reading, adhkar, favorite reciters, awards and account fields use the existing owner-card presentation. Extra scoped rules give the modal a640px reading width, even card spacing and rounded44px toolbar controls with existing localized labels and SVG icons. Initial focus belongs to the labelled modal, avoiding an automatic Back-button rectangle; keyboard focus rings remain visible. The scroll container and safe insets remain in place.
+
+The new regression loads the real stylesheet order and real profile markup across narrow phone, iPhone-sized, landscape, desktop and RTL fixtures. It fails on521 and passes on522, including compact type, metric grid, award/reciter sections, zero-height nested spacer, header focus and retained conversation. Existing transport, profile/back/draft, access continuity, Support layout, live-listening and release checks pass. Physical-phone rendering remains to be confirmed after installation.
+
+No backend/schema, identity lookup, account data, other owner screens, sky, photograph, player or news515 changes. Preserve the existing generated official-imam schedule entry in the release scope.
