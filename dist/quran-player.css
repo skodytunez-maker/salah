@@ -302,3 +302,6 @@ body.reduce-motion .quran-player-dialog,body.no-transitions .quran-player-dialog
 
 /* Keep elastic page scrolling outside the open player; its settings still scroll inside. */
 html.quran-player-scroll-locked,body.has-player-window{overscroll-behavior:none}
+
+/* Keep connected focus after pointer window moves without a touch-only ring. */
+#quran-global-player button[data-player-pointer-focus]:focus{outline:none}

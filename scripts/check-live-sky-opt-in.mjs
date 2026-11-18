@@ -42,12 +42,12 @@ const assertBasic=()=>{
  const photo=doc.getElementById('home-scene');assert.equal(photo.dataset.liveSky,'off');assert.equal(photo.dataset.unifiedSky,'off');assert.equal(photo.style.getPropertyValue('--scene-photo-exposure'),'1');
  for(const selector of ['.scene-sky','.scene-foreground','.scene-dawn','.scene-dusk'])assert.equal(w.getComputedStyle(photo.querySelector(selector)).display,'none');
  for(const selector of ['.scene-day','.scene-night'])assert.equal(w.getComputedStyle(photo.querySelector(selector)).filter,'none');
- assert.equal(w.getComputedStyle(doc.getElementById('weather-layer')).display,'none');assert.equal(photo.querySelector('[data-moon-disc]').getAttribute('src'),null);assert.equal(raf.size,0);
+ assert.equal(doc.getElementById('weather-layer').dataset.unifiedSky,'off','Legacy weather remains separate from the advanced sky');assert.equal(photo.querySelector('[data-moon-disc]').getAttribute('src'),null);assert.equal(raf.size,0);
  for(const canvas of photo.querySelectorAll('canvas'))assert.equal(canvas.width*canvas.height,0,'Basic mode releases all advanced backing buffers');
 };
 
 // Missing legacy preference plus enabled old weather flags is still photo-only.
-tick();assert.equal(photos.length,2);assertBasic();assert.equal(mattes.length,0);assert.equal(clouds.length,0);assert.equal(skyCalls,0);assert.equal(moonCalls,0);assert.equal(contexts,0);assert.equal(uiReads,0);assert.equal(doc.getElementById('weather-layer').children.length,0);
+tick();assert.equal(photos.length,2);assertBasic();assert.equal(mattes.length,0);assert.equal(clouds.length,0);assert.equal(skyCalls,0);assert.equal(moonCalls,0);assert.equal(contexts,0);assert.equal(uiReads,0);assert.equal(doc.getElementById('weather-layer').dataset.source,'live','Legacy weather is not disabled by basic photo mode');
 // Switching off must not cancel an ordinary in-progress photograph download.
 saved.liveSky=true;tick();saved.liveSky=false;tick();assert.ok(photos.every(task=>!task.signal.aborted));
 for(const task of photos)task.resolve({complete:true,naturalWidth:1536,naturalHeight:1024});await turns();

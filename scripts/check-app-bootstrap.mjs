@@ -18,6 +18,7 @@ const nativeHtml=html.replace(webEntry,nativeEntry);
 function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=false,missingSettings=false,alreadyRendered=false,documentHtml=html,native=false}={}){
  const win=new Window({url:'https://example.test/salah/?from=phone#quran?view=surah&n=5',settings:{disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true,disableCSSFileLoading:true}}),doc=win.document;
  doc.write(documentHtml);doc.close();
+ const startupStyle=doc.createElement('style');startupStyle.textContent=css;doc.head.append(startupStyle);
  const host=doc.getElementById('app'),panel=doc.getElementById('app-bootstrap'),entry=doc.querySelector('script[type="module"][src="./js/app.js"],script[type="module"][src="./js/native-entry.js"]');
  assert.ok(panel&&panel.parentNode===host,'A failed or missing module leaves a real visible SALAH/loading section in the actual HTML');
  assert.equal(panel.querySelector('h1').textContent,'SALAH');assert.ok(panel.querySelector('[role=status]').textContent.trim());
@@ -46,6 +47,8 @@ const flush=()=>new Promise(resolve=>setImmediate(resolve));
 // single timeout exposes explicit actions without navigating or clearing data.
 {
  const f=setup();assert.equal(f.timers.size,1);const actions=f.panel.querySelector('[data-bootstrap-actions]');f.fireTimers();assert.equal(actions.hidden,false);assert.equal(f.panel.getAttribute('aria-busy'),'false');assert.match(f.panel.textContent,/больше времени/);assert.equal(f.state.reloads,0);assert.equal(f.state.writes,0);assert.equal(f.state.forbidden,0);assert.equal(f.doc.documentElement.lang,'ru');
+ const style=f.win.getComputedStyle(f.panel);assert.equal(style.position,'fixed');assert.equal(style.backgroundColor,'#070b16','The loading screen covers the unfinished app with one opaque surface');
+ for(const selector of ['.sidebar','.workspace>header','.workspace>footer','#app-bottom-dock'])assert.equal(f.win.getComputedStyle(f.doc.querySelector(selector)).visibility,'hidden','No duplicate brand or empty navigation during a slow/failed startup: '+selector);
  f.panel.querySelector('[data-bootstrap-retry]').click();assert.equal(f.state.reloads,1,'Reload happens only after an explicit retry click');assert.equal(f.win.location.href,f.url);await f.close();
 }
 // Module fetch/parse errors and pre-render module evaluation failures reveal the
@@ -68,6 +71,7 @@ for(const afterWarning of [false,true]){
  f.host.innerHTML='<section><textarea id="draft">Неотправленный текст</textarea><audio id="playing"></audio><p>Рабочий раздел</p></section>';
  const draft=f.doc.getElementById('draft'),audio=f.doc.getElementById('playing');draft.focus();audio.pause=()=>{f.state.forbidden++;};audio.load=audio.pause;
  await flush();assert.equal(f.timers.size,0,'A completed startup cancels its fallback timer');assert.equal(f.state.disconnected,1);assert.equal(f.state.windowErrorListeners,0);assert.equal(f.state.entryErrorListeners,0);
+ for(const selector of ['.sidebar','.workspace>header','.workspace>footer','#app-bottom-dock'])assert.notEqual(f.win.getComputedStyle(f.doc.querySelector(selector)).visibility,'hidden','Startup-only hiding ends immediately when the real view takes over: '+selector);
  oldRetry.click();f.entry.dispatchEvent(new f.win.Event('error'));f.win.dispatchEvent(new f.win.ErrorEvent('error',{filename:'https://example.test/salah/js/app.js'}));f.fireTimers();
  assert.equal(f.state.reloads,0);assert.equal(f.doc.getElementById('draft'),draft);assert.equal(draft.value,'Неотправленный текст');assert.equal(f.doc.activeElement,draft);assert.equal(f.doc.getElementById('playing'),audio);assert.equal(f.state.forbidden,0);assert.equal(f.state.writes,0);await f.close();
 }

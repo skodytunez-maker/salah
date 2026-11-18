@@ -1,5 +1,7 @@
 # SALAH release announcements
 
+Release514 restores the verified owner’s atmosphere controls while keeping only the new living sky closed to ordinary users. It also repairs system-pause failure paths, touch focus on player arrows and the unfinished startup shell; see `stability-514.md`. Preserve announcement505, its artwork, acknowledgement and expiry. The owner explicitly authorized releasing these stability fixes to all users; a further phone check is a follow-up, not a publication hold. Fixture passes do not prove that the recorded iOS pause problem is resolved on the physical device. No external push, backend change or replacement wallpaper is included.
+
 ## Version505 — sky for the selected prayer city (17 November2026)
 
 The new announcement505 contains exactly one public change: «Небо в вашем городе: плавный рассвет и закат, движение Солнца и Луны, сегодняшняя лунная фаза. Туман и плотные облака скрывают светила.» It expires on 24 November2026 at23:59:59UTC. Earlier announcement receipts remain unchanged; the new edition uses the normal confirmation-only acknowledgement.

@@ -1,5 +1,8 @@
 /* Startup fallback only; removed together with its section by the real app. */
-#app>.app-bootstrap{min-block-size:min(58svh,440px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:40px 16px;text-align:center;max-inline-size:440px;margin-inline:auto}
+#app>.app-bootstrap{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;inline-size:100%;min-block-size:100%;margin:0;padding:calc(40px + env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));background:#070b16;text-align:center;overflow:auto}
+/* The real app owns these controls after its first render. During startup the
+   empty dock and second footer brand must not appear beside the loading screen. */
+body[data-app-starting] :is(.sidebar,.workspace>header,.workspace>footer,#app-bottom-dock,#connection){visibility:hidden}
 .app-bootstrap__brand{margin:0;color:var(--gold,#c9b47f);font:400 clamp(34px,8vw,48px)/1.25 'Prata',Georgia,serif;letter-spacing:.17em;padding-inline-start:.17em;direction:ltr}
 .app-bootstrap__status{margin:0;color:var(--muted,#9ca5c1);font-size:15px;line-height:1.7;max-inline-size:34ch;overflow-wrap:anywhere}
 .app-bootstrap__actions{display:flex;flex-direction:column;align-items:stretch;gap:14px;inline-size:min(100%,300px)}

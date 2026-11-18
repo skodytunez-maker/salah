@@ -30,18 +30,19 @@ const tick=()=>{context.atmosphere(wall,null,{weather_code:45,cloud_cover:100,pr
 tick();await turns();tick();const scene=doc.getElementById('home-scene');assert.equal(photos.length,2);assert.ok(scene.querySelector('.scene-day').style.backgroundImage);assert.ok(scene.querySelector('.scene-night').style.backgroundImage);
 const assertClosed=()=>{
  assert.equal(scene.dataset.liveSky,'off');assert.equal(scene.dataset.unifiedSky,'off');assert.equal(scene.style.getPropertyValue('--scene-photo-exposure'),'1');
- assert.equal(scene.querySelector('[data-moon-disc]').getAttribute('src'),null);assert.equal(doc.querySelector('#scene-preview-controls,#weather-preview-controls'),null);
+ assert.equal(scene.querySelector('[data-moon-disc]').getAttribute('src'),null);
  for(const selector of ['.scene-sky','.scene-foreground','.scene-dawn','.scene-dusk'])assert.equal(w.getComputedStyle(scene.querySelector(selector)).display,'none');
- for(const selector of ['.scene-day','.scene-night'])assert.equal(w.getComputedStyle(scene.querySelector(selector)).filter,'none');assert.equal(w.getComputedStyle(doc.getElementById('weather-layer')).display,'none');
+ for(const selector of ['.scene-day','.scene-night'])assert.equal(w.getComputedStyle(scene.querySelector(selector)).filter,'none');assert.equal(w.getComputedStyle(doc.getElementById('weather-layer')).display,'block','Fresh legacy weather remains visible without the new sky');
  for(const canvas of scene.querySelectorAll('canvas'))assert.equal(canvas.width*canvas.height,0);
  assert.deepEqual({contexts,celestialCalls,uiReads,rafCalls,advancedLoads},{contexts:0,celestialCalls:0,uiReads:0,rafCalls:0,advancedLoads:0});
 };
 assertClosed();
-// Old/imported preferences and both exported demonstration entry points are
-// insufficient to open the closed feature, even while Home is visible/online.
+// Old/imported preferences and both exported legacy demonstration entry points are
+// insufficient to open the new sky feature, even while Home is visible/online.
 for(const persisted of [true,false,'true',1,null,undefined]){
- settings.liveSky=persisted;assert.equal(context.startScenePreview(),false);assert.equal(context.startWeatherPreview(),false);tick();await turns();assertClosed();
- assert.equal(vm.runInContext('previewRequested',context),false);assert.equal(vm.runInContext('previewStarted',context),null);assert.equal(vm.runInContext('weatherPreview',context),null);
+ settings.liveSky=persisted;assert.equal(context.startScenePreview(),true);tick();await turns();assertClosed();assert.ok(doc.getElementById('scene-preview-controls'),'Ordinary Day/Night demonstration uses the original photographs');context.stopScenePreview();
+ assert.equal(context.startWeatherPreview(),true);tick();await turns();assertClosed();assert.ok(doc.getElementById('weather-preview-controls'));assert.equal(doc.getElementById('weather-layer').dataset.rain,'on','The existing rain demonstration is functional without advanced assets');assert.equal(doc.getElementById('weather-layer').dataset.source,'preview');context.stopWeatherPreview();tick();
+ assert.equal(vm.runInContext('previewRequested',context),false);assert.equal(vm.runInContext('previewStarted',context),null);assert.equal(vm.runInContext('weatherPreview',context),null);assert.equal(doc.querySelector('#scene-preview-controls,#weather-preview-controls'),null);
 }
 for(const mode of ['light','dark','auto']){
  settings.liveSky=true;settings.backgroundMode=mode;const expected=sceneForMode(wall,null,mode,settings.city);tick();assert.equal(scene.style.getPropertyValue('--scene-day'),expected.day.toFixed(4),'Ordinary photo lighting choices still work');assertClosed();
@@ -49,4 +50,4 @@ for(const mode of ['light','dark','auto']){
 w.dispatchEvent(new w.Event('pagehide'));doc.hidden=true;doc.dispatchEvent(new w.Event('visibilitychange'));tick();doc.hidden=false;w.dispatchEvent(new w.Event('pageshow'));tick();assertClosed();
 assert.equal(photos.length,2,'Public preference/demo calls do not redownload photographs');assert.equal(settings.weather,true);assert.equal(settings.weatherAnimation,true);assert.equal(doc.getElementById('countdown').textContent,'00:21:41');
 await w.happyDOM.close();
-console.log('PASS: actual public feature policy is closed for stored/imported true and direct preview calls; no advanced assets, contexts, celestial placement, UI reads or RAF; original photo lighting and unrelated preferences remain intact.');
+console.log('PASS: actual public feature policy is closed for stored/imported true and functional basic previews; no advanced assets, contexts, celestial placement, UI reads or RAF; original photo lighting and unrelated preferences remain intact.');
