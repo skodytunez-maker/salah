@@ -42,13 +42,13 @@ export function createSupportUserProfile({host,actorId,isActive=()=>true,getActo
   open(person,source){
    if(!active()||!validOwnerUserId(person?.id))return false;
    if(dialog)return false;if(!history.open())return false;selected=person.id;opener=source;
-   dialog=doc.createElement('dialog');dialog.className='support-user-profile';dialog.setAttribute('aria-label',t('ownerUi.userCard'));
-   dialog.innerHTML='<header class="support-profile-header"><button type="button" class="text-button" data-support-profile-back><span aria-hidden="true">‹</span> '+uiLeaf('common.back')+'</button><button type="button" class="text-button" data-support-profile-refresh>'+uiLeaf('settingsExtra.update')+'</button></header><div class="support-profile-body"><div data-support-profile-card></div></div>';
+   dialog=doc.createElement('dialog');dialog.className='support-user-profile';dialog.tabIndex=-1;dialog.setAttribute('aria-label',t('ownerUi.userCard'));
+   dialog.innerHTML='<header class="support-profile-header"><button type="button" class="text-button" data-support-profile-back><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg> '+uiLeaf('common.back')+'</button><button type="button" class="text-button" data-support-profile-refresh><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 7v5h-5M19 12a7 7 0 1 1-2-5l3 5"/></svg>'+uiLeaf('settingsExtra.update')+'</button></header><div class="support-profile-body"><div class="owner-profile-screen" data-support-profile-card></div></div>';
    host.append(dialog);card=dialog.querySelector('[data-support-profile-card]');
    dialog.querySelector('[data-support-profile-back]').onclick=()=>history.back();dialog.querySelector('[data-support-profile-refresh]').onclick=()=>void refresh();
    dialog.addEventListener('cancel',event=>{if(event.target===dialog){event.preventDefault();history.back();}});
    stopSwipe=bindSwipeMotion(dialog,{win,canStart:()=>active()&&!dialog.querySelector('dialog[open]')&&!doc.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'),swipeThreshold:{minDistance:48,maxDistance:100,distanceRatio:.18},canMove:direction=>direction===1,commit:()=>history.back()});
-   watchOwnerUi(dialog,()=>dialog?.setAttribute('aria-label',t('ownerUi.userCard')));dialog.showModal();void refresh();return true;
+   watchOwnerUi(dialog,()=>dialog?.setAttribute('aria-label',t('ownerUi.userCard')));dialog.showModal();dialog.focus({preventScroll:true});void refresh();return true;
   },
   dispose(){if(disposed)return;clear();disposed=true;history.dispose();}
  };

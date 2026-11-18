@@ -1,65 +1,49 @@
 {
   "schema": 1,
-  "version": 521,
-  "baseCommit": "13a82eddf379f283988798852bb6b51b2aed1bb1",
-  "baseTree": "e95cdb0692d4d338b8b5aee973f0c7d5f02c7acd",
-  "note": "Only real520 Support profile/Back corrections; additive guarded owner backend; no schema, sky, news or other section change.",
+  "version": 522,
+  "baseCommit": "51611e8ed0788b20e5a854049f5059d8f606f28f",
+  "baseTree": "4a2849e2a881a1ae655ee00af397fa94bc7b6466",
+  "note": "Only Support profile presentation and focus; existing521 account lookup/history retained. No backend or sky change.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
       "path": "design-qa.md",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
+    },
+    {
+      "path": "dist/css/support.css",
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
-    },
-    {
-      "path": "dist/js/owner-auth.js",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
-    },
-    {
-      "path": "dist/js/support-chat-view.js",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
-    },
-    {
-      "path": "dist/js/support-client.js",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
       "path": "dist/js/support-user-profile.js",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed521 baseline and exact Support file scope."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
-      "path": "docs/support-profile-back-521.md",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "path": "docs/support-profile-style-522.md",
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     },
     {
-      "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
-    },
-    {
-      "path": "scripts/check-support-profile-transport.mjs",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
-    },
-    {
-      "path": "supabase/functions/owner-access/index.ts",
-      "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
+      "path": "scripts/check-support-profile-layout.mjs",
+      "reason": "Requested Support profile presentation, meaningful layout regression and release evidence."
     }
   ],
   "generated": [
@@ -119,7 +103,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "6db037377263aeefa5ae87265970c8a363c38661"
+      "sha": "a0067f1b36794679bbf39758d6bec70d45752d88"
     },
     {
       "path": "ANALYTICS.md",
@@ -135,7 +119,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "830d168ffad8b3cd36494a3072ac299baa2f1429"
+      "sha": "8e436492bbad6706ca1ab073db3ae3c80b4ed8ba"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2643,7 +2627,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "4b53466250cf0257d8eb379bdd64289a2d718aa0"
+      "sha": "8bc4913af35713d79cfd6f3d276f7ab06950567d"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4111,7 +4095,7 @@
     },
     {
       "path": "dist/js/owner-auth.js",
-      "sha": "c44c883aa0046df1d70523b9d783e1db1038bf31"
+      "sha": "2c925c230dabbdc9ce70cc9892074d2939501b40"
     },
     {
       "path": "dist/js/owner-card-navigation.js",
@@ -4703,11 +4687,11 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "fb50ad53b995663e722f7e5fc4600fd4f0e93402"
+      "sha": "b1a9e3295d37ff2532e90c046b8c83e662abd04d"
     },
     {
       "path": "dist/js/support-client.js",
-      "sha": "d6a9617aa0382c98f00a7db56c5887e493d19ec9"
+      "sha": "ecf1475082f8d2d4bfb60a0072d070d373ac1d0c"
     },
     {
       "path": "dist/js/support-diagnostics.js",
@@ -4735,7 +4719,7 @@
     },
     {
       "path": "dist/js/support-user-profile.js",
-      "sha": "0e66ffab7fc6322ba298388051a2e6b4bef4f808"
+      "sha": "4035eafeebbff2c11781934117e5e071d7c93ccc"
     },
     {
       "path": "dist/js/support.js",
@@ -5003,7 +4987,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "826b3963a012716d9da9496bd0b6515279d0078b"
+      "sha": "91eb63c2900f220844bb2e7896c1869fdbac5fb1"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5467,7 +5451,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "dcdf147bc78a3792d2a34fbccf6523789e62e91b"
+      "sha": "e812bbfb41af4b2277545d205b094681ac622942"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5922,6 +5906,10 @@
       "sha": "7314073b27b0e99b0c7554b9318e9de6d724beaa"
     },
     {
+      "path": "docs/support-profile-back-521.md",
+      "sha": "1a3b3e9ef1d770f9bf420d277a2ed0964ea1b032"
+    },
+    {
       "path": "docs/tablet-wallpapers.md",
       "sha": "8aff82c4f356d50bf5a634fbad5380470b31340a"
     },
@@ -5963,7 +5951,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "cf191cde2976d2a4abf260837b19dcdf56f91697"
+      "sha": "34e60fa6160c9a326433f86635e64f1a1bafeb2d"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7507,7 +7495,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "bb8263a61f5e3eeaae0f6740859561a0475e20d6"
+      "sha": "e3ea97f560b32cb32195ab2e344ddd741bd959fd"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7540,6 +7528,10 @@
     {
       "path": "scripts/check-support-photos.mjs",
       "sha": "f76eec34d97623702de3c485dc4bce1a5ddb1b34"
+    },
+    {
+      "path": "scripts/check-support-profile-transport.mjs",
+      "sha": "62caab20d194698cbb219aed41309964128ec9e5"
     },
     {
       "path": "scripts/check-support-request-actor.mjs",
@@ -7891,7 +7883,7 @@
     },
     {
       "path": "supabase/functions/owner-access/index.ts",
-      "sha": "25f547aede61efa5522c9b19c52f02946d7e9ad5"
+      "sha": "fe6d33ddc05930e17e0e6b1b557fec8d1c3497a7"
     },
     {
       "path": "supabase/functions/owner-reminders/core.mjs",

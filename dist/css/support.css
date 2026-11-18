@@ -144,3 +144,23 @@ dialog.support-user-profile[open]{display:flex;flex-direction:column}
 .support-user-profile .support-profile-header{display:flex;justify-content:space-between;align-items:center;flex:none;height:auto;min-height:52px;gap:12px;width:min(100%,860px);margin:0 auto;border-bottom:1px solid rgba(180,190,210,.18)}
 .support-profile-header .text-button{min-height:44px;margin:0;white-space:normal}
 .support-user-profile .support-profile-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;max-width:860px;width:100%;margin:0 auto;padding-block:16px}
+
+/* Support profiles share the established owner-card sections, within this modal only. */
+dialog.support-user-profile{outline:none}
+.support-user-profile .support-profile-header,.support-user-profile .support-profile-body{max-width:640px}
+.support-user-profile .support-profile-header{padding-block:4px 10px;gap:12px}
+.support-user-profile .support-profile-header .text-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:44px;min-height:44px;padding:8px 12px;border:1px solid rgba(201,180,127,.18);border-radius:14px;background:rgba(201,180,127,.045);font:inherit;font-size:13px;line-height:1.4;color:var(--gold,#c9b47f);box-shadow:none}
+.support-user-profile .support-profile-header .text-button svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.support-user-profile .support-profile-header .text-button:focus:not(:focus-visible){outline:none}
+.support-user-profile .support-profile-header .text-button:focus-visible{outline:2px solid var(--gold,#c9b47f);outline-offset:3px}
+.support-user-profile .support-profile-header .text-button:active{background:rgba(201,180,127,.12)}
+.support-user-profile .support-profile-header .text-button:disabled{opacity:.55;cursor:wait}
+[dir=rtl] .support-user-profile [data-support-profile-back] svg{transform:scaleX(-1)}
+.support-user-profile .support-profile-body{padding-block:18px 24px;scroll-padding-block:18px 24px}
+.support-user-profile .owner-profile-screen{min-height:0;padding:0;background:transparent}
+.support-user-profile .owner-profile{margin:0;padding:0;border:0;border-radius:0;background:transparent}
+.support-user-profile .owner-profile-screen .owner-profile-identity{padding:8px 0 22px}
+.support-user-profile .owner-profile-sections{gap:14px}
+.support-user-profile .owner-profile-screen .owner-profile-panel{padding:18px;border-radius:20px}
+.support-user-profile .owner-profile-screen .owner-profile-account dd,.support-user-profile .owner-profile-screen .owner-profile-context dd{text-align:end;overflow-wrap:anywhere}
+@media(max-width:359px){.support-user-profile .owner-profile-screen .owner-profile-panel{padding:15px}.support-user-profile .owner-profile-screen .owner-profile-periods{gap:8px}.support-user-profile .owner-profile-screen .owner-profile-account>dl>div{gap:10px}}
