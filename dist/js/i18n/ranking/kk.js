@@ -217,6 +217,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "Марапат табыстау · {title}",
   "rankingUi.celebrationAward": "SALAH МАРАПАТЫ",
   "rankingUi.celebrationThanks": "Рақмет",
+  "rankingUi.celebrationBlessing": "Алла Тағала еңбегіңді қабыл етсін.",
+  "rankingUi.celebrationAmeen": "Әмин",
   "rankingUi.celebrationStreakAria": {
     "one": "{count} күн қатарынан",
     "other": "{count} күн қатарынан"

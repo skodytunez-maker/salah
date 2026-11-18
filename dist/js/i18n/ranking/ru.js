@@ -227,6 +227,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "Вручение награды · {title}",
   "rankingUi.celebrationAward": "НАГРАДА SALAH",
   "rankingUi.celebrationThanks": "Спасибо",
+  "rankingUi.celebrationBlessing": "Пусть Всевышний примет твоё усердие.",
+  "rankingUi.celebrationAmeen": "Аминь",
   "rankingUi.celebrationStreakAria": {
     "one": "{count} день в серии",
     "few": "{count} дня в серии",

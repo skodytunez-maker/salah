@@ -1,7 +1,7 @@
 # Текущий статус —19 ноября2026
 
-- Публичная база:522, commit41419b922cd25d675dc1440c7b26b05137d1774a. Локальные темы523 ещё не опубликованы; на телефоне не проверены.
-- Сейчас: восемь одобренных тёмных тем и исходный вид для карточки в обращениях, переписок поддержки и внутренних чатов администратора/преподавателя. Код и целевые проверки готовы; общий прогон и визуальная проверка отмечаются по фактическим результатам. Выбор личный, по аккаунту/переписке на этом устройстве; свои фото остаются локально.
+- Публичная база:524, commit7746ec9d07fc5539464a469c07d7b462aaacbb12. Исправление оформления обращений опубликовано; установка и внешний вид на телефоне не подтверждены.
+- Сейчас: следующий отдельный кандидат525 — оформление настроек/напоминаний и пожелание с «Аминь» в наградах. Новое живое небо по-прежнему закрыто. Темы523 и исправление524 уже опубликованы.
 - Следующая ближайшая задача: измерить и устранить подтверждённые задержки открытий/переключений; предварительные точки ожидания записаны в outputs/salah-navigation-performance-triage-2026-11-19.json. Пока ускорение не заявлять.
 - В очереди остаются: оформление значков и напоминаний, пожелание и «Аминь» в наградах, названия сур по языку интерфейса, геолокация, честный прогресс обновления; отдельное новое небо требует переноса на актуальную базу и проверки владельцем.
 - Последующие идеи: возобновление после внешнего микрофона, отправитель «лично / SALAH · Поддержка», набор аватаров, «Тёплый песок» как светлая тема всего приложения, подарки Рамадана, формат живого радио и бизнес-экосистема.
@@ -184,3 +184,46 @@ Candidate524 package checks also pass: updates, Pages, sharing, reviewed file sc
 ### Explicit524 publication instruction
 
 After being told the corrected Support candidate was prepared, its targeted checks passed, no browser was opened and physical iPhone appearance was unverified, the owner instructed «Отправь». Publish this scoped524 maintenance package through the ordinary installed application without another approval request. This current instruction supersedes the earlier phone-first hold for this specific package; it does not establish a phone visual pass or authorize new sky/public feature changes. Preserve announcement523/receipt/expiry and send no external push.
+
+
+### 524 publication completed; sequential work continues
+
+The owner explicitly said «Отправь» and then requested continued sequential work on agreed items. PR393 merged as7746ec9d07fc5539464a469c07d7b462aaacbb12, exact head3a5ba00afbfbd7cb3221abba52a104b396a5ed75, tree7a3429f0f89ff867ff8f19c70b3bf595ec8b4415. All339 app checks plus real database/DOM, Android/Play, exact-source iOS/native foundation and rights/tablet checks passed. The duplicate PR iOS job was still queued at merge; the successful push iOS job tested the same exact source and the simulated merge tree was verified identical. No protection was changed or bypassed. Actual Pages run44409069245/job135172033455 succeeded on the merge source. Native manifest524 is102337132 bytes, SHA25690587b4608f6dcff3cad3c6e6b84872d345bc5bdabe442c91cede074ff0414aa. Announcement523/receipts/expiry retained; no external push or phone visual/install claim. All228 raster images unchanged. Evidence: outputs/salah-524-public-release-complete.json.
+
+System Pause source review: six current regression suites pass; existing command path stops native Quran/nature audio before observers, invalidates stale Play and silences retained chapter sources. No new audio source change or real-device fix was made. The physical iPhone/Control Center report remains open. Navigation review confirms Support/staff render an initial shell before authorization/RPC; no measured device timings or acceleration claim. Continue measured investigation later without bypassing auth or rewriting private caches.
+
+Next candidate525 is separate and unpublished: shared decorative icons/consistent subsection headers in Atmosphere, glass, sounds, Adhkar, dhikr, Jumuah, background and iPhone reminder controls; remove only the requested live-sky explanatory line, retain the owner-only gate and existing controls/storage. Settings language/functional tests pass; actual template evaluated in eight languages with public/owner states. Previously prepared blessing/«Аминь» presentation and eight translations have been reviewed/rebased; seven award/language suites pass. News confirmation stays unchanged. No physical visual approval or525 publication.
+
+
+### 525 prepared: settings hierarchy and award greeting
+
+Settings: one decorative line-icon system, consistent subsection headers and spacing for atmosphere switches, glass, sounds, Adhkar/dhikr/Jumuah, background and iPhone help. Actual template/public-owner modes checked in all eight languages, unchanged controls/values and no dangling live-sky hint. Existing shell tests retain owner grant refresh/revocation and saved methods/offsets; no live-sky exposure. Award/founder greeting rebased from the earlier partial draft: blessing and «Аминь» with eight translations, no eligibility/history/news-confirmation changes. Language catalogues rebuilt from current source, preserving themes. Targeted award/reminder/settings tests pass after VM fixtures were given the real imported decorative helper. This is not a browser/phone visual pass or publication. Current public version remains524. Next items stay open: list-surah localisation, measured navigation delays, device Pause verification, geolocation/update progress and private sky. Future-only ideas remain deferred.
+
+
+### Explicit525 publication instruction
+
+After being told525 settings/reward changes were prepared,36 targeted checks passed, the package was not published and iPhone rendering remained unverified, the owner instructed to publish immediately and not wait for them («Опубликую сразу, не надо меня ждать» in context). Publish this scoped525 package through the ordinary installed SALAH channel after complete required checks/builds, without another phone-approval request. This supersedes the phone-first hold for this package, while preserving the declined browser automation preference, private living sky and no external update push. Do not claim a phone visual/install pass.
+
+
+### Owner publication workflow and morning checklist
+
+The owner reaffirmed: publish agreed checked corrections without waiting for another message and provide a full phone-check list in the morning. Continue to preserve explicit private-living-sky and future-only boundaries. For525 this is an explicit immediate publication instruction, not a claim that physical visual QA occurred. Prepare next agreed changes sequentially, test/review scope before publishing and maintain evidence rather than marking promises complete. A one-time current-thread morning checklist was created through Codex automation salah-2 for09:00Asia/Yekaterinburg on19November2026 (daily rule with count1). Its report must reconcile real published versions and the queue, separate incomplete work and provide concrete expected phone behavior. No external user push was sent.
+
+
+### Latest owner request: raise the Support header
+
+The owner supplied fresh phone screenshots comparing native messenger headers with the low SALAH conversation header and explicitly requested raising it. The screenshots establish header placement; the6.49-second native messenger recording was subsequently sampled at0.75-second intervals to inspect the scroll edge. They do not show an installed version number. Remove the extra40px second status-bar allowance only from the grouped Support chat viewport. New top padding is max(8px,4px+actual safe-area top): at59px inset it is63px rather than107px. Preserve Dynamic Island/sensor insets,44px controls, fixed keyboard viewport, full wallpaper, bottom actions and card→chat→inbox behavior. The private profile and other section clearances remain unchanged. This current owner request supersedes the earlier instruction to retain the extra chat allowance. Seven Support/theme/scroll regressions pass, including actual stylesheet order, default/themed modes, keyboard-sized viewport and newer62px insets. Physical iPhone fade/appearance remains unverified. Include this correction in the still-unpublished525 release and rerun exact-head checks/builds after the new commit. Add a morning check that the raised name/avatar remain sharp and do not enter the status fade.
+
+
+### Reference video: soft top scroll edge
+
+The owner explicitly requested the message exit/entry effect near the header and reiterated independent publication plus the morning change list. The6.49s reference recording is a native messenger, distinct from the separate WhatsApp height screenshot. Nine sampled reference frames show messages moving under the upper region while participant controls stay fixed. Keep source frames outside the application and do not copy third-party chat contents into product/news. Add a static16px alpha fade only to scrolled grouped Support history; at scrollTop0 the first message stays opaque. Use an event-driven passive scroll listener with cleanup, standard/WebKit CSS masks, no new animation loop, timer, blur on the header or original wallpaper. Reading position, message nodes and drafts remain unchanged. Actual DOM/cascade/navigation/disposal tests pass after validating the standard mask property (HappyDOM does not expose prefixed computed masks). No rendered implementation/Safari pass is claimed. Morning: confirm the raised header is clear, top fade works in both directions, first-message content is fully visible at the start and no jump occurs while reading old messages.
+
+
+### Scheduling outcome
+
+The one-time morning report automation salah-2 was created successfully for09:00. An additional attempted recurring overnight coding/publication automation was rejected by automatic approval review as ongoing external side effects beyond current-release approval. It was not created and must not be treated as running, retried through a workaround or used as evidence of future work. Current explicitly authorized525 publication continues in the active turn. The morning report is read/report only.
+
+Morning checklist source prepared outside application source: outputs/salah-morning-phone-checklist-2026-11-19.json. Reconcile its pending525 field with actual release evidence before reporting; do not call open items implemented.
+
+525 exact-head full CI found339/340 passing: check-account-experience still expected the old founder Спасибо label. Updated that actual presentation contract to localized celebrationAmeen and verified blessing, preserving all eligibility/Auth/acknowledgement/replay/device/news assertions. Local account-experience checks pass. Rerun full exact-head QA after the contract-only follow-up; do not merge a failed340 suite.

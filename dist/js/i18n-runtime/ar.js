@@ -2869,8 +2869,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "بطاقة الجائزة",
  "rankingUi.awardWins": "الانتصارات: {count}",
  "rankingUi.cancel": "إلغاء",
+ "rankingUi.celebrationAmeen": "آمين",
  "rankingUi.celebrationAria": "تكريم بالجائزة · {title}",
  "rankingUi.celebrationAward": "جائزة SALAH",
+ "rankingUi.celebrationBlessing": "تقبّل الله سعيك.",
  "rankingUi.celebrationPreview": "معاينة الحركة",
  "rankingUi.celebrationPreviewNote": "لا يتغير العدّاد",
  "rankingUi.celebrationStreakAria": {

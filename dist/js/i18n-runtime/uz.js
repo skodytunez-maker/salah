@@ -2785,8 +2785,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "Mukofot kartasi",
  "rankingUi.awardWins": "G‘alabalar: {count}",
  "rankingUi.cancel": "Bekor qilish",
+ "rankingUi.celebrationAmeen": "Omin",
  "rankingUi.celebrationAria": "Mukofot taqdimoti · {title}",
  "rankingUi.celebrationAward": "SALAH MUKOFOTI",
+ "rankingUi.celebrationBlessing": "Alloh sa’y-harakatlaringizni qabul qilsin.",
  "rankingUi.celebrationPreview": "Animatsiya ko‘rinishi",
  "rankingUi.celebrationPreviewNote": "Hisoblagich o‘zgarmaydi",
  "rankingUi.celebrationStreakAria": {

@@ -218,6 +218,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "Тақдими ҷоиза · {title}",
   "rankingUi.celebrationAward": "ҶОИЗАИ SALAH",
   "rankingUi.celebrationThanks": "Ташаккур",
+  "rankingUi.celebrationBlessing": "Бигзор Худованд кӯшишҳои туро қабул кунад.",
+  "rankingUi.celebrationAmeen": "Омин",
   "rankingUi.celebrationStreakAria": {
     "one": "{count} рӯз пайдарпай",
     "other": "{count} рӯз пайдарпай"

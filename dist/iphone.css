@@ -404,3 +404,27 @@ html:has(body.home-page),body.home-page{overscroll-behavior-y:none}
  body.adhkar-reading .adhkar-shell>.dhikr-counter-dock{position:relative;flex:0 0 auto;inset:auto;left:auto;bottom:auto;transform:none;width:100%;max-width:none;margin:8px 0 0;backdrop-filter:none}
  body.adhkar-reading.has-quran-audio .adhkar-reading-content{padding-bottom:136px;scroll-padding-bottom:136px}
 }
+
+/* Settings-only visual hierarchy; native inputs and disclosure behavior stay intact. */
+#settings-form .settings-section-label{display:flex;align-items:center;gap:12px;min-width:0;text-align:start}
+#settings-form .settings-section-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border:1px solid #d5c49b26;border-radius:12px;background:linear-gradient(145deg,#e3cf9e12,#e3cf9e04);color:var(--gold,#d6c387)}
+#settings-form .settings-section-icon svg{display:block;width:21px;height:21px}
+#settings-form .settings-section-text{min-width:0;line-height:1.45;overflow-wrap:anywhere}
+#settings-form .switch-row>.settings-section-label{flex:1}
+#settings-form .switch-row:has(>.settings-section-label){min-height:62px;gap:16px}
+#settings-form .switch-row>.settings-section-label+input{flex:none}
+#settings-form .settings-subsection{margin:14px 0;padding:0 14px;border:1px solid #aebdd21c;border-radius:18px;background:linear-gradient(145deg,#14213766,#0c152638);min-width:0}
+#settings-form details.settings-subsection>summary{display:flex;align-items:center;gap:12px;min-height:64px;padding:10px 0;box-sizing:border-box;list-style:none;font-family:inherit;font-size:15px;font-weight:600;line-height:1.45;color:var(--ivory);cursor:pointer}
+#settings-form details.settings-subsection>summary::-webkit-details-marker{display:none}
+#settings-form details.settings-subsection>summary>.settings-section-label{flex:1}
+#settings-form details.settings-subsection>summary::after{content:'';flex:0 0 7px;width:7px;height:7px;margin-inline:2px 4px;border:solid #b9b3a5;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);transition:transform .18s ease}
+#settings-form details.settings-subsection[open]{padding-bottom:14px}
+#settings-form details.settings-subsection[open]>summary::after{transform:rotate(225deg)}
+#settings-form details.settings-subsection>summary:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:10px}
+#settings-form .reminder-background.settings-subsection{padding:14px}
+#settings-form .reminder-background.settings-subsection>h3{font-size:15px;font-weight:600;line-height:1.45;font-family:inherit;margin:0 0 10px}
+#settings-form .settings-subsection p{font-size:13px;line-height:1.65}
+#settings-form .reminder-background .reminder-preview{flex-wrap:wrap}
+#settings-form .reminder-background .reminder-preview>button{flex:1 1 150px}
+@media(prefers-reduced-motion:reduce){#settings-form details.settings-subsection>summary::after{transition:none}}
+body.reduce-motion #settings-form details.settings-subsection>summary::after,body.no-transitions #settings-form details.settings-subsection>summary::after{transition:none}

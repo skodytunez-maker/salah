@@ -2785,8 +2785,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "Марапат карточкасы",
  "rankingUi.awardWins": "Жеңістер: {count}",
  "rankingUi.cancel": "Бас тарту",
+ "rankingUi.celebrationAmeen": "Әмин",
  "rankingUi.celebrationAria": "Марапат табыстау · {title}",
  "rankingUi.celebrationAward": "SALAH МАРАПАТЫ",
+ "rankingUi.celebrationBlessing": "Алла Тағала еңбегіңді қабыл етсін.",
  "rankingUi.celebrationPreview": "Анимацияны алдын ала көру",
  "rankingUi.celebrationPreviewNote": "Есептегіш өзгермейді",
  "rankingUi.celebrationStreakAria": {

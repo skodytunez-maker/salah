@@ -237,6 +237,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "تكريم بالجائزة · {title}",
   "rankingUi.celebrationAward": "جائزة SALAH",
   "rankingUi.celebrationThanks": "شكرًا",
+  "rankingUi.celebrationBlessing": "تقبّل الله سعيك.",
+  "rankingUi.celebrationAmeen": "آمين",
   "rankingUi.celebrationStreakAria": {
     "zero": "{count} يوم في السلسلة",
     "one": "يوم واحد في السلسلة",

@@ -1,3 +1,4 @@
+import{settingsSectionLabel}from './settings-section-label.js';
 import {createNativeReminderConnection} from './native-reminders.js';
 import {normalizeReminders} from './reminder-events.js';
 import {readDhikrActivity} from './dhikr-reminder.js';
@@ -30,7 +31,7 @@ export function createNativeBackgroundReminders({getSettings,getContext,toast=()
  function draw(){
   if(!mounted?.isConnected||destroyed)return;
   const status=connection.status(),enabled=getSettings().reminders?.enabled===true;
-  mounted.innerHTML='<h3>'+noticeLeaf('backgroundTitle')+'</h3><p class="reminder-voice-note">'+noticeLeaf('offlineNotifications')+'</p>'+(!adhanSupported?'<p class="reminder-voice-note">'+noticeLeaf('fullAdhanOpen')+'</p>':'')+'<button type="button" class="button secondary" data-native-enable'+(busy||!enabled||!getSettings().city?' disabled':'')+'>'+noticeLeaf(busy?'connecting':status.status==='connected'?'checkConnection':'connect')+'</button><p class="reminder-status" role="status">'+noticeLeaf(messages[status.status]||'checkHint')+'</p>';
+  mounted.innerHTML='<h3>'+settingsSectionLabel('background',noticeLeaf('backgroundTitle'))+'</h3><p class="reminder-voice-note">'+noticeLeaf('offlineNotifications')+'</p>'+(!adhanSupported?'<p class="reminder-voice-note">'+noticeLeaf('fullAdhanOpen')+'</p>':'')+'<button type="button" class="button secondary" data-native-enable'+(busy||!enabled||!getSettings().city?' disabled':'')+'>'+noticeLeaf(busy?'connecting':status.status==='connected'?'checkConnection':'connect')+'</button><p class="reminder-status" role="status">'+noticeLeaf(messages[status.status]||'checkHint')+'</p>';
   mounted.querySelector('[data-native-enable]').onclick=enable;
  }
  async function sync(force=false){
