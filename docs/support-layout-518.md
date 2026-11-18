@@ -1,0 +1,9 @@
+# Support518: stable layout and operator continuation
+
+The owner reported the grouped closed-case screen and requested correct placement/design plus continuing closed correspondence as owner and later as administrator. The original generic panel selector overrode the full-screen chat background/padding; the fixed view now retains an opaque surface, safe-area insets, compact header, independently scrolling history and one bottom status/composer/case-action bar. The last-message control follows the measured footer height.
+
+The owner may explicitly reopen the selected latest closed case. Existing administrators may reopen only cases explicitly shared with the team. Existing moderators and other users receive no new operator capability. Authorization stays in the database behind the current fresh-session/MFA staff actor; user-editable metadata is never authority. Reopening keeps original case/message identities, cleared/hidden history, attachments, drafts and prior replies. An operator reopening does not create a user message, fake answer, acknowledgement or notification. Action retries return current state without undoing a later close, real reply or pending user message.
+
+The shared staff Support UI keeps its approved message markup and gains only the administrator/owner continuation action, which uses a stable operation id. No new roles are assigned to real accounts. The original user continuation/new-request workflow remains supported.
+
+Common corrections follow the owner's standing public-fixes direction. The new living-sky experiment is isolated in a separate local candidate, excluded from518, and remains owner-private. Public515 announcement/card/acknowledgement/expiry are preserved; no external update push. No real conversations are reopened by tests. The four viewport CSS fixtures and actual SQL/DOM tests are not physical iPhone/Safari verification.

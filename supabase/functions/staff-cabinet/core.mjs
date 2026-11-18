@@ -51,6 +51,7 @@ export function validateAction(action,args){
  if(action==='support.share'){exactObject(args,['id','visible']);if(typeof args.visible!=='boolean')fail();return{id:id(args.id),visible:args.visible};}
  if(action==='support.list'){exactObject(args,['before']);return{before:timestamp(args.before)};}
  if(action==='support.read'||action==='support.close'){exactObject(args,['id']);return{id:id(args.id)};}
+ if(action==='support.reopen'){exactObject(args,['id','operationId']);return{id:id(args.id),operationId:id(args.operationId)};}
  if(action==='support.reply'){exactObject(args,['id','messageId','body']);return{id:id(args.id),messageId:id(args.messageId),body:cleanText(args.body,3000)};}
  if(action==='chat.push.status'){exactObject(args,['device']);return{device:id(args.device)};}
  if(action==='chat.push.remove'){exactObject(args,['device','account']);return{device:id(args.device),account:id(args.account)};}
@@ -110,6 +111,7 @@ export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()
    if(action==='gate')return reply(200,{data:actor});
    if(actor.mfaRequired)return reply(403,{error:'mfa_required'});if(action==='chat.push.register'&&args.platform==='android'&&!nativeSenderReady())return reply(503,{error:'sender_unavailable'});
    if(OWNER_ACTIONS.has(action)&&!actor.owner)return reply(403,{error:'owner_only'});
+   if(action==='support.reopen'&&!actor.owner&&actor.role!=='admin')return reply(403,{error:'staff_only'});
    let data;
    if(action==='asset.upload'){
     const draft=await rpc('draft.get',{id:args.id,kind:args.kind},claims);if(!['draft','changes_requested'].includes(draft.status))fail('draft_locked',409);const picture=jpegUpload(args.data),assetId=uuid(),path=actor.id+'/'+args.id+'/'+assetId+'.jpg';

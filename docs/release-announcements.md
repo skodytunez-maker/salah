@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Silent518 — Support layout and operator continuation (18 November2026)
+
+The owner requested stable closed-conversation placement and owner continuation, with the existing administrator role restricted to explicitly team-shared cases. Keep public515 cards, acknowledgement and expiry. These ordinary Support corrections follow the standing public-fixes direction; no new public Support news or external update push. The independent living-sky refinement is excluded. Physical-phone verification is not claimed.
+
 ## Silent516 — Support conversations (18 November2026)
 
 The owner explicitly authorized publication, then clarified: «Только новость; обращения оставить доступными». Release the reviewed Support inbox, message actions and case workflow to authorized users without a new public Support news card. Preserve announcement515, its two existing pictures/captions, acknowledgement and25November2026 expiry.516 changes the installed version and cache only; no external update push. The reviewed Support migration/function precede the frontend. Physical-phone verification is not claimed.
