@@ -216,7 +216,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":520,"date":"2026-11-18","changes":["Стеклянный режим: отдельная прозрачность таблицы намаза и мини-плеера. Включается по желанию в настройках оформления.","Сообщения команды: ответы, копирование, удаление выбранного сообщения или всего чата у себя либо у всех участников."],"announcement":{"version":515,"date":"2026-11-18","changes":["Стеклянный режим: отдельная прозрачность таблицы намаза и мини-плеера. Включается по желанию в настройках оформления.","Сообщения команды: ответы, копирование, удаление выбранного сообщения или всего чата у себя либо у всех участников."]}};
+const RELEASE={"version":521,"date":"2026-11-19","changes":["Стеклянный режим: отдельная прозрачность таблицы намаза и мини-плеера. Включается по желанию в настройках оформления.","Сообщения команды: ответы, копирование, удаление выбранного сообщения или всего чата у себя либо у всех участников."],"announcement":{"version":515,"date":"2026-11-18","changes":["Стеклянный режим: отдельная прозрачность таблицы намаза и мини-плеера. Включается по желанию в настройках оформления.","Сообщения команды: ответы, копирование, удаление выбранного сообщения или всего чата у себя либо у всех участников."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_LESSON_ACCOUNT'){event.waitUntil(lessonAccountMessage(event));return;}if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
