@@ -26,6 +26,10 @@
       "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
     },
     {
+      "path": "dist/js/conversation-theme-assets.js",
+      "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
+    },
+    {
       "path": "dist/js/conversation-theme-news.js",
       "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
     },
@@ -238,12 +242,20 @@
       "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
     },
     {
+      "path": "mobile/scripts/build-web-update.mjs",
+      "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
+    },
+    {
       "path": "scripts/check-conversation-themes.mjs",
       "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
       "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
+    },
+    {
+      "path": "scripts/check-theme-assets.mjs",
+      "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
     },
     {
       "path": "scripts/check-theme-news.mjs",

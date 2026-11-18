@@ -21,3 +21,7 @@ Owner explicitly requested publication after disclosure of pending phone renderi
 ## Requested theme announcement
 
 The owner subsequently explicitly requested an animated theme card in news. Current announcement becomes523 with only this new feature;515 historical receipts are preserved. Eight actual thumbnail/palette scenes use the shared alternating24s gallery lifecycle and8-language captions; no old feature promotion, system-pause claim or external push. The current expiry is2026-11-26T23:59:59Z.
+
+## Native update size correction
+
+The first Android archive check exceeded the existing100MiB limit. Keep that native limit unchanged. Native packing now derives the seven lazy full-size theme paths directly from the catalogue; all small news/picker thumbnails, the existing Medina original and normal Home photos stay bundled. Selected native theme originals load from immutable parent commit c041fd9e9440a07ba240075c7998731a8dfddc5a, through an already allowed public source, and are cached as unmodified public Blobs on this device. Cache errors keep a valid online image usable; invalid MIME/oversize/cancelled responses are rejected. Web/PWA relative images and existing optional offline worker cache are unchanged. Private custom photos remain local and actor-scoped. No photograph is recompressed and no native installer limit is raised.

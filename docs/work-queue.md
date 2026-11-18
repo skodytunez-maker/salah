@@ -158,3 +158,8 @@ Owner separately attached ScreenRecording_11-18-2026 01-54-36_1.mp4 and asked to
 ### Explicit animated theme-news request
 
 Owner requested an attractive theme animation in news while523 publication was being prepared. New523 edition contains only the new conversation themes: eight real thumbnail/palette scenes travel smoothly forward and backward on the existing gallery motion lifecycle. Old515 acknowledgement records remain; the current edition is now523 by explicit request. Eight-language captions, hidden/closed/reduced-motion pause and no personal messages. Theme-news and existing release/update checks pass locally. No new system Pause fix or navigation-speed claim.
+
+
+### 523 native archive compatibility correction
+
+First exact-head application QA passed338/338, but Android correctly rejected an archive over its existing100MiB limit. Preserve the limit and original image quality: exclude catalogue full-size theme files from native archives, retain all preview thumbnails and existing Medina/Home photos, fetch only the selected stock original from immutable parent commit c041fd9e9440a07ba240075c7998731a8dfddc5a and cache it unchanged locally. Existing PWA image paths/cache stay intact. Dedicated asset/cancellation/offline/packing and real-controller URL-disposal checks pass; rerun full CI on the corrected exact head before publication.

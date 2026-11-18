@@ -1,3 +1,4 @@
+import{CONVERSATION_THEMES}from '../../dist/js/conversation-themes.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -9,7 +10,8 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 // Recognition v1 remains a repository/build input and a Pages asset for old clients.
 // Current clients load catalog-v2 and its pinned fingerprints; they never request v1.
 const legacyRecognitionInputs=new Set(['data/recognition/catalog-v1.json','data/recognition/fingerprints-v1.bin.gz']);
-export const excludeFromWebBundle=name=>name==='mobile-updates'||name.startsWith('mobile-updates/')||/^assets\/player-nature-video-\d+(?:\/|$)/.test(name)||legacyRecognitionInputs.has(name);
+const lazyThemeImages=new Set(CONVERSATION_THEMES.filter(theme=>theme.wallpaper?.startsWith('./themes/')).map(theme=>theme.wallpaper.slice(2)));
+export const excludeFromWebBundle=name=>name==='mobile-updates'||name.startsWith('mobile-updates/')||/^assets\/player-nature-video-\d+(?:\/|$)/.test(name)||legacyRecognitionInputs.has(name)||lazyThemeImages.has(name);
 export function crc32(bytes){let crc=0xffffffff;for(const b of bytes){crc^=b;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
 export function packZip(files){
  const chunks=[],central=[];let offset=0;

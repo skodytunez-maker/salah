@@ -1,3 +1,4 @@
+import{conversationThemeAsset}from './conversation-theme-assets.js';
 import{CONVERSATION_THEMES,conversationTheme,themePreferenceKey,createThemePhotoStore,createThemePreferences}from './conversation-themes.js';
 import{createOwnerCardHistory}from './owner-card-navigation.js';
 import{loadDecodedImage}from './image-presentation.js';
@@ -20,9 +21,10 @@ export function mountConversationTheme(surface,{actorId,scope,isActive=()=>true,
  function cancel(){request++;controller?.abort();controller=null;pending=false;}
  function status(name,error=false){if(!dialog)return;const node=dialog.querySelector('[data-theme-status]');node.innerHTML=name?uiLeaf('conversationThemeUi.'+name):'';node.classList.toggle('is-error',error);}
  function selection(){if(!dialog)return;for(const b of dialog.querySelectorAll('[data-theme-choice]'))b.setAttribute('aria-pressed',String(b.dataset.themeChoice===current.theme));dialog.querySelector('[data-theme-photo]')?.setAttribute('aria-pressed',String(current.theme==='custom'));}
- function apply(value,url){
+ function apply(value,asset){
+  const url=asset?.url||null;
   const theme=conversationTheme(value.theme==='custom'?'ornament':value.theme);
-  const previous=ownedUrl;ownedUrl=value.theme==='custom'?url:null;
+  const previous=ownedUrl;ownedUrl=asset?.owned?url:null;
   current=value;
   if(value.theme==='default'){surface.removeAttribute('data-conversation-theme');for(const name of ['image','base','panel','incoming','outgoing','accent'])surface.style.removeProperty('--conversation-theme-'+name);}
   else{surface.dataset.conversationTheme=value.theme;for(const name of ['base','panel','incoming','outgoing','accent'])surface.style.setProperty('--conversation-theme-'+name,theme[name]);surface.style.setProperty('--conversation-theme-image',url?'url("'+url+'")':'none');}
@@ -30,26 +32,26 @@ export function mountConversationTheme(surface,{actorId,scope,isActive=()=>true,
  }
  async function prepare(value,signal,blob=null){
   if(value.theme==='default')return null;
-  let url=conversationTheme(value.theme).wallpaper,owned=false;
+  let url=null,owned=false;
   if(value.theme==='custom'){
    const file=blob||await prefs.photo(value);
    if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>25*1024*1024)throw Error('invalid_theme_photo');
    url=win.URL.createObjectURL(file);owned=true;
-  }else url=new URL(url,doc.baseURI).href;
-  try{const image=await decode(url,signal);if(signal.aborted)throw Error('cancelled');if(image.naturalWidth*image.naturalHeight>50000000||Math.min(image.naturalWidth,image.naturalHeight)<64)throw Error('invalid_theme_dimensions');return url;}
+  }else{const asset=await conversationThemeAsset(conversationTheme(value.theme),{win,baseURI:doc.baseURI,store:photoStore,signal});url=asset.url;owned=asset.owned;}
+  try{const image=await decode(url,signal);if(signal.aborted)throw Error('cancelled');if(image.naturalWidth*image.naturalHeight>50000000||Math.min(image.naturalWidth,image.naturalHeight)<64)throw Error('invalid_theme_dimensions');return{url,owned};}
   catch(error){if(owned)win.URL.revokeObjectURL(url);throw error;}
  }
  async function change(value,{save=false,blob=null}={}){
   cancel();const ticket=request,abort=new win.AbortController();controller=abort;pending=true;if(save)status('loading');
-  let url=null,applied=false;
+  let asset=null,applied=false;
   const valid=()=>live()&&request===ticket&&!abort.signal.aborted;
   try{
-   url=await prepare(value,abort.signal,blob);if(!valid())return;
+   asset=await prepare(value,abort.signal,blob);if(!valid())return;
    if(save&&!await prefs.save(value,{blob,canCommit:valid}))return;
    if(!valid())return;
-   apply(value,url);applied=true;if(save)status('saved');
+   apply(value,asset);applied=true;if(save)status('saved');
   }catch(error){if(valid()){status('failed',true);if(!save)apply({theme:'default'},null);}}
-  finally{if(value.theme==='custom'&&url&&!applied)win.URL.revokeObjectURL(url);if(request===ticket){pending=false;dialog?.removeAttribute('aria-busy');}}
+  finally{if(asset?.owned&&!applied)win.URL.revokeObjectURL(asset.url);if(request===ticket){pending=false;dialog?.removeAttribute('aria-busy');}}
  }
  function clearPicker({reload=true}={}){
   const resumeSaved=reload&&!!dialog&&pending;
