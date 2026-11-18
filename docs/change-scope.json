@@ -30,6 +30,10 @@
       "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
     },
     {
+      "path": "dist/sw.js",
+      "reason": "Precache the newly imported Support chat module so the existing offline module graph stays complete; retain worker/version/news policy."
+    },
+    {
       "path": "docs/change-scope.json",
       "reason": "Record the owner-requested Support scope, exact public515 baseline and unpublished deployment boundary."
     },
