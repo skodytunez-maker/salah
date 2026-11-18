@@ -48,18 +48,20 @@ export function skyAtmosphereStyle(frame={}){
   warmColor,glowStrength:mix(.30,.52,seed(10)),edgeWarmth:mix(.66,1.12,seed(8)),lightStrength:mix(.65,1.35,seed(11))};
 }
 
-export function createSkyAtmosphere({canvasFactory,texture=null}={}){
+export function createSkyAtmosphere({canvasFactory,texture=null,cloudDetail='balanced'}={}){
  if(typeof canvasFactory!=='function')throw new TypeError('A canvasFactory is required');
  let disposed=false,textureReference=null,textureWidth=0,textureHeight=0,map=null,sourceReady=false;
  let sourceCanvas=null,fieldCanvas=null,fieldImage=null,fw=0,fh=0;
- const MAX_SOURCE_W=256,MAX_FIELD_W=224,MAX_FIELD_H=272;
+ // Fine sampling is an explicit opt-in of the closed Home sky candidate.
+ // The balanced path remains pixel-identical for existing consumers.
+ const fine=cloudDetail==='fine',MAX_SOURCE_W=fine?512:256,MAX_FIELD_W=fine?256:224,MAX_FIELD_H=fine?320:272;
  function setTexture(image){
   if(disposed)return false;
   const width=finite(Number.isFinite(image?.naturalWidth)?image.naturalWidth:image?.width),height=finite(Number.isFinite(image?.naturalHeight)?image.naturalHeight:image?.height);
   if(image===textureReference&&width===textureWidth&&height===textureHeight)return sourceReady;
   textureReference=image;textureWidth=width;textureHeight=height;sourceReady=false;map=null;
   if(!image||width<=0||height<=0)return false;
-  const w=Math.min(MAX_SOURCE_W,Math.max(2,Math.round(width))),h=Math.max(2,Math.min(256,Math.round(w*height/width)));
+  const w=Math.min(MAX_SOURCE_W,Math.max(2,Math.round(width))),h=Math.max(2,Math.min(MAX_SOURCE_W,Math.round(w*height/width)));
   try{
    sourceCanvas??=canvasFactory(w,h);sourceCanvas.width=w;sourceCanvas.height=h;
    const c=sourceCanvas.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,w,h);c.drawImage(image,0,0,w,h);
@@ -86,33 +88,29 @@ export function createSkyAtmosphere({canvasFactory,texture=null}={}){
   return sourceReady;
  }
  setTexture(texture);
+ // Scratch samples belong to this synchronous painter only; no per-pixel
+ // objects or repeated per-pixel trigonometry enter the animation loop.
+ const sampleA={},sampleB={},fieldSample={},densitySample={};let flow=null;
  const wrap=v=>((v%1)+1)%1;
- function sample(u,v){
+ function sample(u,v,out){
   const x=wrap(u)*map.w,y=wrap(v)*map.h,ix=x|0,iy=y|0,fx=x-ix,fy=y-iy,x1=(ix+1)%map.w,y1=(iy+1)%map.h;
   const a=(iy*map.w+ix)*4,b=(iy*map.w+x1)*4,c=(y1*map.w+ix)*4,d=(y1*map.w+x1)*4;
   const wa=(1-fx)*(1-fy),wb=fx*(1-fy),wc=(1-fx)*fy,wd=fx*fy,f=map.field;
-  return{rank:f[a]*wa+f[b]*wb+f[c]*wc+f[d]*wd,light:f[a+1]*wa+f[b+1]*wb+f[c+1]*wc+f[d+1]*wd,
-   gx:f[a+2]*wa+f[b+2]*wb+f[c+2]*wc+f[d+2]*wd,gy:f[a+3]*wa+f[b+3]*wb+f[c+3]*wc+f[d+3]*wd};
+  out.rank=f[a]*wa+f[b]*wb+f[c]*wc+f[d]*wd;out.light=f[a+1]*wa+f[b+1]*wb+f[c+1]*wc+f[d+1]*wd;
+  out.gx=f[a+2]*wa+f[b+2]*wb+f[c+2]*wc+f[d+2]*wd;out.gy=f[a+3]*wa+f[b+3]*wb+f[c+3]*wc+f[d+3]*wd;return out;
  }
  function fieldAt(u,v,style,motion,aspect){
-  const drift=motion*style.windSpeed+style.windOffset;
-  // Scale photographic features from viewport width, then crop vertically.
-  // A narrow visible sky must show a narrow crop, not the entire photograph
-  // squashed into a horizontal ribbon. Both flow layers preserve source aspect.
-  const frequency=style.scale*.95,verticalRange=frequency/aspect*(map.w/map.h);
-  const aU=u*frequency+style.cropX+drift,aV=v*verticalRange+style.cropY;
-  const bU=u*frequency*.71+style.cropX*.6+.48+drift*.63,bV=v*verticalRange*.71+style.cropY*.7+.41+Math.sin(motion*.003+style.phase)*.025;
-  const weight=style.layerMix+Math.sin(motion*.004+style.phase)*.035;
-  const a=sample(aU,aV),b=sample(bU,bV);
-  return {rank:mix(a.rank,b.rank,weight),light:mix(a.light,b.light,weight),gx:mix(a.gx,b.gx*.71,weight),gy:mix(a.gy,b.gy*.71,weight)};
+  if(!flow||flow.style!==style||flow.motion!==motion||flow.aspect!==aspect){
+   const frequency=style.scale*.95;flow={style,motion,aspect,frequency,verticalRange:frequency/aspect*(map.w/map.h),drift:motion*style.windSpeed+style.windOffset,weight:style.layerMix+Math.sin(motion*.004+style.phase)*.035,vMotion:Math.sin(motion*.003+style.phase)*.025};
+  }
+  const q=flow,aU=u*q.frequency+style.cropX+q.drift,aV=v*q.verticalRange+style.cropY,bU=u*q.frequency*.71+style.cropX*.6+.48+q.drift*.63,bV=v*q.verticalRange*.71+style.cropY*.7+.41+q.vMotion;
+  const a=sample(aU,aV,sampleA),b=sample(bU,bV,sampleB),weight=q.weight;
+  fieldSample.rank=mix(a.rank,b.rank,weight);fieldSample.light=mix(a.light,b.light,weight);fieldSample.gx=mix(a.gx,b.gx*.71,weight);fieldSample.gy=mix(a.gy,b.gy*.71,weight);return fieldSample;
  }
  function densityAt(u,v,style,motion,aspect){
-  if(!map||style.clouds===0)return{alpha:0,light:.6,gx:0,gy:0};
-  const f=fieldAt(u,v,style,motion,aspect);
-  // A continuous optical-depth field keeps photographic cloud wisps. Hard
-  // thresholding a photograph would create flat cut-out islands and rims.
-  const exponent=clamp((1-style.clouds)/Math.max(.001,style.clouds),.01,32);
-  return{alpha:style.clouds===1?1:Math.pow(clamp(f.rank),exponent),light:f.light,gx:f.gx,gy:f.gy};
+  if(!map||style.clouds===0){densitySample.alpha=0;densitySample.light=.6;densitySample.gx=densitySample.gy=0;return densitySample;}
+  const f=fieldAt(u,v,style,motion,aspect),exponent=clamp((1-style.clouds)/Math.max(.001,style.clouds),.01,32);
+  densitySample.alpha=style.clouds===1?1:Math.pow(clamp(f.rank),exponent);densitySample.light=f.light;densitySample.gx=f.gx;densitySample.gy=f.gy;return densitySample;
  }
  function visibility(body,style,motion,width,skyHeight){
   if(style.fog>=.78||style.clouds>=.94)return 0;
@@ -182,6 +180,6 @@ export function createSkyAtmosphere({canvasFactory,texture=null}={}){
   return{sourceReady,skyVisibility:style.fog>=.78||style.clouds>=.94?0:1,discVisibility:visibility(sun,style,motion,width,skyHeight),moonVisibility:visibility(frame.moon,style,motion,width,skyHeight),
    styleKey:style.styleKey,cloudDensity:style.clouds,style,width,height,skyHeight,solarAltitude:altitude};
  }
- function dispose(){disposed=true;textureReference=null;map=null;fieldImage=null;sourceReady=false;if(sourceCanvas){sourceCanvas.width=0;sourceCanvas.height=0;}if(fieldCanvas){fieldCanvas.width=0;fieldCanvas.height=0;}sourceCanvas=null;fieldCanvas=null;}
+ function dispose(){disposed=true;textureReference=null;map=null;flow=null;fieldImage=null;sourceReady=false;if(sourceCanvas){sourceCanvas.width=0;sourceCanvas.height=0;}if(fieldCanvas){fieldCanvas.width=0;fieldCanvas.height=0;}sourceCanvas=null;fieldCanvas=null;}
  return{render,setTexture,dispose};
 }

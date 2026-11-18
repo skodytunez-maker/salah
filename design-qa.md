@@ -23,3 +23,8 @@ Publication scope: the owner’s standing instruction sends common corrections t
 ## Support518 candidate
 
 Closed-case screenshot regression: generic panel specificity erased the full-screen Support background and safe padding. Actual complete stylesheet-order fixtures now preserve an opaque viewport and safe insets. Header, scrolling log and footer have separate space; no outside page branding bleeds through. Owner/admin reopening is checked against real local SQL and the actual staff Support function, including role/MFA/sharing revocation, replay and offline retry. These checks do not establish physical iPhone rendering. Living-sky work remains isolated.
+
+
+## Owner-only sky519
+
+Bounded256×320 cloud detail with512px source sampling; balanced output remains exact. The fine sampler is constrained by independent public518 mathematical-reference captures, including movement, light, resize, night/fog and disposal. Offline native photo audit checks all63 immutable originals and45,407,422 opaque foreground pixels. The actual candidate produces a three-wallpaper/day/weather video study. These artifacts do not establish physical iPhone/Safari appearance or performance. Public518 and server state stay unchanged.
