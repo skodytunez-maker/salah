@@ -166,6 +166,10 @@
       "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
     },
     {
+      "path": "scripts/check-interface-shell.mjs",
+      "reason": "Exercise the requested common glass control through the actual settings shell, including unchanged drafts and in-place language refresh."
+    },
+    {
       "path": "scripts/check-message-scroll.mjs",
       "reason": "Regress the requested behavior against actual components, HTTP validation and SQL."
     },
