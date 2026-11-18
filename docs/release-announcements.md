@@ -801,3 +801,7 @@ Quran translations are a separate choice. Preserve the bundled Kuliev edition, a
 
 No billing, staff, owner geography, previous reciter, nature wallpaper or radio announcement is included in the new public gallery. This is a release candidate until the owner approves publication; server reminder-locale deployment is part of that publication step.
 
+
+
+## Candidate517 — no new announcement
+Grouped Support contacts, navigation/latest-message fixes, messenger presentation and common glass control are prepared as one candidate. Retain the515 edition, artwork, acknowledgement and expiry; do not create Support news or an external update push. Physical-phone review and the owner release decision are not claimed.

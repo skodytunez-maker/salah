@@ -41,7 +41,7 @@ export async function uploadSupportPhotos(storage,args,claims,register){
   if(!error)created.push(path);await register(path,photos[slot].length,slot);
  }}catch(error){if(created.length){try{await storage.remove(created)}catch{}}throw error;}
 }
-const SHAPES={support_chat_request:['p_app','p_owner','p_action','p_args'],support_owner_recipient:['p_user','p_app'],support_owner_create:['p_id','p_user','p_app','p_subject','p_body','p_version'],support_user_status:['p_app'],support_owner_status:['p_app'],support_list:['p_app','p_owner','p_before'],support_read:['p_id','p_app','p_owner'],support_create:['p_id','p_app','p_subject','p_body','p_version'],support_create_photo:['p_id','p_app','p_subject','p_body','p_version','p_photo'],support_create_photos:['p_id','p_app','p_subject','p_body','p_version','p_photos'],support_reply:['p_thread','p_app','p_id','p_body','p_owner'],support_close:['p_id','p_app']};
+const SHAPES={support_conversation_request:['p_app','p_owner','p_action','p_args'],support_chat_request:['p_app','p_owner','p_action','p_args'],support_owner_recipient:['p_user','p_app'],support_owner_create:['p_id','p_user','p_app','p_subject','p_body','p_version'],support_user_status:['p_app'],support_owner_status:['p_app'],support_list:['p_app','p_owner','p_before'],support_read:['p_id','p_app','p_owner'],support_create:['p_id','p_app','p_subject','p_body','p_version'],support_create_photo:['p_id','p_app','p_subject','p_body','p_version','p_photo'],support_create_photos:['p_id','p_app','p_subject','p_body','p_version','p_photos'],support_reply:['p_thread','p_app','p_id','p_body','p_owner'],support_close:['p_id','p_app']};
 export function createSupportHandler({getUser,getClaims,invoke}){
  return async req=>{
   const origin=req.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff'};
@@ -58,6 +58,13 @@ export function createSupportHandler({getUser,getClaims,invoke}){
   const {name,args}=body||{};if(!Object.hasOwn(SHAPES,name)||Object.keys(body).some(key=>!['name','args'].includes(key))||!args||typeof args!=='object'||Array.isArray(args)||SHAPES[name].some(key=>!Object.hasOwn(args,key))||Object.keys(args).some(key=>!SHAPES[name].includes(key))||!['salah','sahaba'].includes(args.p_app))return reply(400,{error:'22023'});
   if(origin&&ORIGINS.get(origin)!==args.p_app)return reply(403,{error:'42501'});
   if(Object.hasOwn(args,'p_owner')&&typeof args.p_owner!=='boolean')return reply(400,{error:'22023'});
+  if(name==='support_conversation_request'){
+   const shapes={list:['before'],read:['threadId','before','around'],clear:['threadId','scope','operationId'],close:['threadId','operationId']},keys=typeof args.p_action==='string'&&Object.hasOwn(shapes,args.p_action)?shapes[args.p_action]:null,a=args.p_args;
+   if(args.p_app!=='salah'||!keys||!a||typeof a!=='object'||Array.isArray(a)||Object.keys(a).some(k=>!keys.includes(k))||args.p_action!=='list'&&!UUID.test(a.threadId))return reply(400,{error:'22023'});
+   if(a.around!=null&&(!UUID.test(a.around)||a.before!=null))return reply(400,{error:'22023'});
+   if(a.before!=null&&(typeof a.before!=='object'||Array.isArray(a.before)||Object.keys(a.before).some(k=>!['at','id'].includes(k))||typeof a.before.at!=='string'||!Number.isFinite(Date.parse(a.before.at))||!UUID.test(a.before.id)))return reply(400,{error:'22023'});
+   if(['clear','close'].includes(args.p_action)&&(!UUID.test(a.operationId)||args.p_action==='clear'&&!['self','everyone'].includes(a.scope)))return reply(400,{error:'22023'});
+  }
   if(name==='support_chat_request'){const shapes={read:['threadId'],reply:['threadId','messageId','body','replyTo'],delete:['threadId','messageId','scope','operationId'],clear:['threadId','scope','operationId'],reopen:['threadId','operationId'],close:['threadId','operationId']},keys=typeof args.p_action==='string'&&Object.hasOwn(shapes,args.p_action)?shapes[args.p_action]:null,a=args.p_args;if(args.p_app!=='salah'||!keys||!a||typeof a!=='object'||Array.isArray(a)||Object.keys(a).some(k=>!keys.includes(k))||!UUID.test(a.threadId))return reply(400,{error:'22023'});if(args.p_action==='reply'&&(!UUID.test(a.messageId)||typeof a.body!=='string'||!a.body.trim()||a.body.length>3000||a.replyTo!=null&&!UUID.test(a.replyTo)))return reply(400,{error:'22023'});if(['delete','clear','reopen','close'].includes(args.p_action)&&(!UUID.test(a.operationId)||!['reopen','close'].includes(args.p_action)&&!['self','everyone'].includes(a.scope)||args.p_action==='delete'&&!UUID.test(a.messageId)))return reply(400,{error:'22023'});}
 
   for(const key of ['p_id','p_thread','p_user'])if(Object.hasOwn(args,key)&&!UUID.test(args[key]))return reply(400,{error:'22023'});
@@ -86,6 +93,13 @@ if(typeof Deno!=='undefined'){
    else if(name==='support_user_status')rows=await tx`select public.support_user_status(${a.p_app}::text) as data`;
    else if(name==='support_owner_status')rows=await tx`select public.support_owner_status(${a.p_app}::text) as data`;
    else if(name==='support_list')rows=await tx`select public.support_list(${a.p_app}::text,${a.p_owner}::boolean,${a.p_before}::timestamptz) as data`;
+   else if(name==='support_conversation_request'){
+    rows=await tx`select public.support_conversation_request(${a.p_app}::text,${a.p_owner}::boolean,${a.p_action}::text,${tx.json(a.p_args)}::jsonb) as data`;
+    if(a.p_action==='read'){
+     const manifest=rows[0].data.photoManifest||[];delete rows[0].data.photoManifest;
+     rows[0].data.photos=await Promise.all(manifest.map(async photo=>{const {data,error}=await storage.createSignedUrl(photo.path,300);return error?{message_id:photo.message_id,unavailable:true}:{message_id:photo.message_id,url:data.signedUrl};}));
+    }
+   }
    else if(name==='support_read'||name==='support_chat_request'&&a.p_action==='read'){
     const threadId=name==='support_read'?a.p_id:a.p_args.threadId;
     rows=name==='support_read'?await tx`select public.support_read(${threadId}::uuid,${a.p_app}::text,${a.p_owner}::boolean) as data`:await tx`select public.support_chat_request(${a.p_app}::text,${a.p_owner}::boolean,${a.p_action}::text,${tx.json(a.p_args)}::jsonb) as data`;

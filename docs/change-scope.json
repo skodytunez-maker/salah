@@ -1,149 +1,201 @@
 {
   "schema": 1,
-  "version": 516,
-  "baseCommit": "888d43d32bd0f8626cb47477bff896af8ecbacd4",
-  "baseTree": "4edd92628e2909478addfb0031fb488ed8ddcb01",
-  "note": "Silent public516 explicitly authorized. Owner clarified: hide only the Support news, keep Support available. Retain515 announcement, acknowledgement and expiry; update installed version/cache to516. Apply reviewed Support backend before frontend. No external push or public living sky.",
+  "version": 517,
+  "baseCommit": "9c4cfdf96314429062c0b398688e7be5e6f1a62c",
+  "baseTree": "91d6da27a5f5e54d0bbcd770c65dd7a28c677680",
+  "note": "Requested grouped Support, list-first Back, latest-message opening, messenger interface and unified clearer glass. Preserve515 announcement/expiry/acknowledgement; no external push or public living sky. Candidate only pending the owner release decision.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record the owner-requested Support scope, exact public515 baseline and unpublished deployment boundary."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "design-qa.md",
-      "reason": "Record screenshot grounding and the blocked rendered/phone verification without claiming a visual pass."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/css/staff-messenger.css",
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "dist/css/support.css",
-      "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/home-selected.css",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Bump installed version to516 while preserving515 changes, announcement, acknowledgement and expiry under the owner explicit news-audience correction."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/js/edge-back.js",
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/js/glass-settings.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
-      "path": "dist/js/i18n-source-catalogues.js",
-      "reason": "Register only the new Support case lifecycle/system-acknowledgement namespace."
+      "path": "dist/js/i18n/settings/ar.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/az.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/de.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/en.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/kk.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/ru.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/tg.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "dist/js/i18n/settings/uz.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
     },
     {
       "path": "dist/js/i18n/supportConversation/index.js",
-      "reason": "Provide matching eight-language case completion/reopening and explicit automatic acknowledgement labels."
+      "reason": "Compile only the requested message-history and common-glass labels for all eight languages."
     },
     {
-      "path": "dist/js/owner-support-status.js",
-      "reason": "Keep the existing owner menu red until a real answer or explicit resolution, with accurate labels for new pending-answer server state and unchanged legacy-server fallback."
+      "path": "dist/js/message-scroll.js",
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/js/staff-cabinet.js",
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "dist/js/staff-message-actions.js",
-      "reason": "Add an optional closed-case Reply predicate; preserve default messenger behavior."
+      "reason": "Allow the Support conversation to load a visible quoted source from another history page; default messenger behavior stays unchanged."
+    },
+    {
+      "path": "dist/js/staff-messenger.js",
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/js/storage.js",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "dist/js/support-client.js",
-      "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
-    },
-    {
-      "path": "dist/js/support-transport.js",
-      "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "dist/js/support.js",
-      "reason": "Pass the existing verified-owner avatar reader only to the owner Support inbox; ordinary users receive no avatar capability."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
+    },
+    {
+      "path": "dist/quran-player.css",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Precache the newly imported Support chat module so the existing offline module graph stays complete; retain worker/version/news policy."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record the owner-requested Support scope, exact public515 baseline and unpublished deployment boundary."
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record silent516 and the explicit instruction not to show Support news to ordinary users."
+      "reason": "Document and test the requested candidate scope; no new public Support announcement."
     },
     {
-      "path": "docs/support-chat-516.md",
-      "reason": "Record the owner-requested Support scope, exact public515 baseline and unpublished deployment boundary."
+      "path": "docs/support-conversations-517.md",
+      "reason": "Implement and document only the requested message/navigation and release scope, preserving other application sections."
     },
     {
-      "path": "scripts/check-experience-release-news.mjs",
-      "reason": "Keep515 gallery regression historical instead of pinning the current app version to515."
+      "path": "scripts/check-glass-settings.mjs",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "scripts/check-glass-style.mjs",
+      "reason": "Implement the explicitly requested common glass level and stronger maximum, preserving other settings, audio, photographs and surface geometry."
+    },
+    {
+      "path": "scripts/check-message-scroll.mjs",
+      "reason": "Regress the requested behavior against actual components, HTTP validation and SQL."
     },
     {
       "path": "scripts/check-owner-support.mjs",
-      "reason": "Extend the real Support route regression fixture for the newly wired owner-only avatar reader."
+      "reason": "Document and test the requested candidate scope; no new public Support announcement."
     },
     {
-      "path": "scripts/check-support-case-lifecycle.mjs",
-      "reason": "Verify read versus real-answer state, owner completion, user reopening, retry/cooldown and SAHABA separation in actual PostgreSQL."
+      "path": "scripts/check-support-conversation-database.mjs",
+      "reason": "Regress the requested behavior against actual components, HTTP validation and SQL."
     },
     {
-      "path": "scripts/check-support-chat-client.mjs",
-      "reason": "Regress actual Support UI, initiating-account transport, database and HTTP privacy behavior."
+      "path": "scripts/check-support-conversation-server.mjs",
+      "reason": "Regress the requested behavior against actual components, HTTP validation and SQL."
     },
     {
-      "path": "scripts/check-support-chat-database.mjs",
-      "reason": "Regress actual Support UI, initiating-account transport, database and HTTP privacy behavior."
-    },
-    {
-      "path": "scripts/check-support-chat-server.mjs",
-      "reason": "Regress actual Support UI, initiating-account transport, database and HTTP privacy behavior."
-    },
-    {
-      "path": "scripts/check-support-inbox.mjs",
-      "reason": "Exercise compact Support rows, eight languages, preview escaping, account-specific avatar cleanup and retained drafts in actual components."
-    },
-    {
-      "path": "scripts/check-support-request-actor.mjs",
-      "reason": "Regress actual Support UI, initiating-account transport, database and HTTP privacy behavior."
+      "path": "scripts/check-support-conversation-ui.mjs",
+      "reason": "Regress the requested behavior against actual components, HTTP validation and SQL."
     },
     {
       "path": "supabase/functions/support-messages/index.ts",
-      "reason": "Authenticated Support reply/deletion protocol and legacy visibility/photo/notification filtering, isolated from SAHABA."
+      "reason": "Add account-grouped Support reads and atomic conversation actions with existing Auth/MFA and case visibility; preserve old protocols."
     },
     {
-      "path": "supabase/migrations/20261118103824_support_chat_actions_516.sql",
-      "reason": "Authenticated Support reply/deletion protocol and legacy visibility/photo/notification filtering, isolated from SAHABA."
+      "path": "supabase/migrations/20261118144430_support_conversations_517.sql",
+      "reason": "Add account-grouped Support reads and atomic conversation actions with existing Auth/MFA and case visibility; preserve old protocols."
     },
     {
       "path": "tests/support/chat-fixture.mjs",
-      "reason": "Reuse the actual Support/staff migration stack for isolated deletion and lifecycle database regressions."
+      "reason": "Regress the requested behavior against actual components, HTTP validation and SQL."
     }
   ],
   "baseline": [
@@ -197,23 +249,15 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "ec90370a325633135be1665e7afddac93107167a"
+      "sha": "070000bb0221a5ad3e6a0e50ae2e1f3911ebd4ea"
     },
     {
       "path": "ANALYTICS.md",
       "sha": "edfcf0f561614d17c721046a6b474030b754d33c"
     },
     {
-      "path": "README.md",
-      "sha": "9591ca669d3cc5be20227b3fa58eb544d80ff65d"
-    },
-    {
-      "path": "SECURITY.md",
-      "sha": "7fce1b3883c7cd2005bf57f482bcef1b52a40cd4"
-    },
-    {
       "path": "design-qa.md",
-      "sha": "613e3f0dda5e6dc206b5856e3e87ff8aee152f46"
+      "sha": "c4c58ad3164b649f4609bf16302bbc61996f77ac"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -226,10 +270,6 @@
     {
       "path": "dist/alphabet-audio-credits.html",
       "sha": "e752d515bae7ad39f18a1adcd1d9b7fa12f690b0"
-    },
-    {
-      "path": "dist/assets/alphabet-audio/LICENSE.txt",
-      "sha": "9ba1106d0e6795e4c52413a9985d4a9b567ee240"
     },
     {
       "path": "dist/assets/alphabet-audio/alif.mp3",
@@ -290,6 +330,10 @@
     {
       "path": "dist/assets/alphabet-audio/lam.mp3",
       "sha": "f51c32fb36102a51d55b6bc3e04713abe13d9fea"
+    },
+    {
+      "path": "dist/assets/alphabet-audio/LICENSE.txt",
+      "sha": "9ba1106d0e6795e4c52413a9985d4a9b567ee240"
     },
     {
       "path": "dist/assets/alphabet-audio/mim.mp3",
@@ -644,12 +688,12 @@
       "sha": "513d2c80b6cb0c9102c0b1de688604bd1dfb1fd3"
     },
     {
-      "path": "dist/assets/fonts/prata-OFL.txt",
-      "sha": "08d5c60ccb7ace797ec571aaf3da45da9e9259f3"
-    },
-    {
       "path": "dist/assets/fonts/prata-counter-regular.ttf",
       "sha": "afe3059e1f7f4b92792fd3312b85e350fa1520f0"
+    },
+    {
+      "path": "dist/assets/fonts/prata-OFL.txt",
+      "sha": "08d5c60ccb7ace797ec571aaf3da45da9e9259f3"
     },
     {
       "path": "dist/assets/fonts/scheherazade-new-OFL.txt",
@@ -684,10 +728,6 @@
       "sha": "cb57f687a7eb44b9c9f0e9e9d4e54f7cc4df46a6"
     },
     {
-      "path": "dist/assets/icons/Font-Awesome-LICENSE.txt",
-      "sha": "e69c5e39a30ce8d112e012cac36289e77691a9b7"
-    },
-    {
       "path": "dist/assets/icons/arrows-rotate.svg",
       "sha": "f387bb72df8eb615cd963096f61c83cb9b4cc382"
     },
@@ -698,6 +738,10 @@
     {
       "path": "dist/assets/icons/book-open.svg",
       "sha": "7a6a9c026971cf98e733fe7d7f1a5f40771e08d6"
+    },
+    {
+      "path": "dist/assets/icons/Font-Awesome-LICENSE.txt",
+      "sha": "e69c5e39a30ce8d112e012cac36289e77691a9b7"
     },
     {
       "path": "dist/assets/icons/gem.svg",
@@ -1525,7 +1569,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "52fcd6084d6c516832fd4dba3ab0e646406559ae"
+      "sha": "ed0f654f40efb28accf87249516d05f997d2a0ba"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -1584,16 +1628,16 @@
       "sha": "1a7cbdafedce07c2d18f0f212956c7e9dbc049a8"
     },
     {
-      "path": "dist/data/mushaf-print/SOURCES.txt",
-      "sha": "9d1833d8dcc72b39f657a95eadbd0cea8276e414"
-    },
-    {
       "path": "dist/data/mushaf-print/layout.json",
       "sha": "936d7f8e6af9432c173b8b338d2256631b4a3dbb"
     },
     {
       "path": "dist/data/mushaf-print/madani-layout.json",
       "sha": "75c750643656e5770129cc30f1244bf81485f821"
+    },
+    {
+      "path": "dist/data/mushaf-print/SOURCES.txt",
+      "sha": "9d1833d8dcc72b39f657a95eadbd0cea8276e414"
     },
     {
       "path": "dist/data/nature-sources-493.json",
@@ -2532,10 +2576,6 @@
       "sha": "5298dd3a73abd6aa75308de80cd99164a1d8f3b9"
     },
     {
-      "path": "dist/data/recognition/SOURCES.txt",
-      "sha": "f907b6d09742d3f3aab968054835febab60140d1"
-    },
-    {
       "path": "dist/data/recognition/catalog-v1.json",
       "sha": "2b00328bcc414a87c1a7b1baee0ad8695522480b"
     },
@@ -2550,6 +2590,10 @@
     {
       "path": "dist/data/recognition/fingerprints-v2.bin.gz",
       "sha": "131b88aac0a9b234868046210b435640c1ff2d39"
+    },
+    {
+      "path": "dist/data/recognition/SOURCES.txt",
+      "sha": "f907b6d09742d3f3aab968054835febab60140d1"
     },
     {
       "path": "dist/data/tyumen-first-asr.json",
@@ -2721,7 +2765,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "3ff4186472272b960a57a0e303c58fbdc4798f9d"
+      "sha": "6071c251248242836d3b6e18b4967cf86b6c9ee9"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3017,39 +3061,39 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "c854381e6ea5b9bbd4724394c3cba20726e4b5d6"
+      "sha": "95b76c22aa698cb1646e91c6f74c146968d1ab97"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "74fab1747cc2ce9a136aea658c7afefdd80aa6ef"
+      "sha": "3c22d34e4b8aa8a8671b15bd63588d47c3cd0ffb"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "28f4d5d2195b0cb5ae47125d3dfa8797cd2cf4e9"
+      "sha": "d2ed1e8e2b84972bf0540b8c1dfad4870aab3095"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "98132aae101084ea2c7e1e7aecf0cf43eff72f28"
+      "sha": "3a65269fe5b3d84ce76a93dcb0189db0296b20eb"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "4cb216cd62165a86fda65278389f297dbc265234"
+      "sha": "dd01e4930804c22124007edb6829a5a4a4213f9a"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "36f06dcebde2ec8a9c9789ea7c66d509ed5b0bb9"
+      "sha": "ed5f2993d9fdd86639e393150229435684b53c2f"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "2c27a3ee619c18780b4c4616fd32c521d496920d"
+      "sha": "95f1cf6b48e173a18bc9c50e2cef6b6ac3769848"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "d34ef86646a4e25500bdd694cad6b4e8f2932361"
+      "sha": "64b0d735325625b537d9823ff6fb39317b777f8b"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
-      "sha": "b87dba2f7e8605f33c9d0d4e8a206fbdcb22af08"
+      "sha": "debfdef137a59a94de01d9a37379ea78c0d67bb8"
     },
     {
       "path": "dist/js/i18n.js",
@@ -3436,42 +3480,6 @@
       "sha": "13b0ec50c36a31548746f3b6c971839da65ee945"
     },
     {
-      "path": "dist/js/i18n/offlineRelease/ar.js",
-      "sha": "8ca0fcd74c2adddeaddd5e854be2352fc700a7f0"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/az.js",
-      "sha": "ddda3858a27e9917749f4036d085a9c97fe5bbbc"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/de.js",
-      "sha": "988e83c779af5ca62bc5d81738e518d495e686f9"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/en.js",
-      "sha": "8482325677755c29221826222573ef4fa657debd"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/index.js",
-      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/kk.js",
-      "sha": "a12523824bea68ada4dc92ffd8de206212cb3ef0"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/ru.js",
-      "sha": "a587f5ad940c8df9a393dbf0a34a069ed707ef25"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/tg.js",
-      "sha": "010641b16a2c742dc458cc525db35cbafc98b368"
-    },
-    {
-      "path": "dist/js/i18n/offlineRelease/uz.js",
-      "sha": "9721240962f2a6f9250b80bae14ec0abe9b100c7"
-    },
-    {
       "path": "dist/js/i18n/offlineaudio/ar.js",
       "sha": "61ae1bc41d59193728be6d0acfb910964a0ce7ca"
     },
@@ -3506,6 +3514,42 @@
     {
       "path": "dist/js/i18n/offlineaudio/uz.js",
       "sha": "f230655db7db186578c8c126285962f7eb4e120d"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/ar.js",
+      "sha": "8ca0fcd74c2adddeaddd5e854be2352fc700a7f0"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/az.js",
+      "sha": "ddda3858a27e9917749f4036d085a9c97fe5bbbc"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/de.js",
+      "sha": "988e83c779af5ca62bc5d81738e518d495e686f9"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/en.js",
+      "sha": "8482325677755c29221826222573ef4fa657debd"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/kk.js",
+      "sha": "a12523824bea68ada4dc92ffd8de206212cb3ef0"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/ru.js",
+      "sha": "a587f5ad940c8df9a393dbf0a34a069ed707ef25"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/tg.js",
+      "sha": "010641b16a2c742dc458cc525db35cbafc98b368"
+    },
+    {
+      "path": "dist/js/i18n/offlineRelease/uz.js",
+      "sha": "9721240962f2a6f9250b80bae14ec0abe9b100c7"
     },
     {
       "path": "dist/js/i18n/owner/ar.js",
@@ -3908,6 +3952,10 @@
       "sha": "cd35c2d6d62aaeb10dc1213ab1fb8714f763973a"
     },
     {
+      "path": "dist/js/i18n/supportConversation/index.js",
+      "sha": "1af873938ebb53077b49592bd0c4bd490f8d0c29"
+    },
+    {
       "path": "dist/js/i18n/team/ar.js",
       "sha": "cc353e5c24ea96e4e438b20072cbb67e00eb5c14"
     },
@@ -4253,7 +4301,7 @@
     },
     {
       "path": "dist/js/owner-support-status.js",
-      "sha": "a88eefe6e7f84dbb119a5c7d5436b50b97bee8b2"
+      "sha": "e54b46ca05fa9aae26f5c0b03f59d514811e94e1"
     },
     {
       "path": "dist/js/owner-team-avatars.js",
@@ -4729,7 +4777,7 @@
     },
     {
       "path": "dist/js/staff-message-actions.js",
-      "sha": "723563951db4258cf7c5dd6ad9c6782f83db0872"
+      "sha": "3b5e43e48e7fdd9d89f1cb30b26fe1a4391f2595"
     },
     {
       "path": "dist/js/staff-message-status.js",
@@ -4772,8 +4820,12 @@
       "sha": "a1d78ab8ef832321fb96a65ed4ab4c50247bdb32"
     },
     {
+      "path": "dist/js/support-chat-view.js",
+      "sha": "5dd361d41ca95739057a7777f4be0983fd913e56"
+    },
+    {
       "path": "dist/js/support-client.js",
-      "sha": "a013b0b7f45c53b7f89bb405c7c35142a3c50055"
+      "sha": "22a1d16203ca67e15d115fc5ce58ee62443ea4b4"
     },
     {
       "path": "dist/js/support-diagnostics.js",
@@ -4797,11 +4849,11 @@
     },
     {
       "path": "dist/js/support-transport.js",
-      "sha": "d53d1feca5b45cb93f590c9741cda1a5fa5a2797"
+      "sha": "53d4ce796f51130650f7f5f3d3af9c16704dfc98"
     },
     {
       "path": "dist/js/support.js",
-      "sha": "a206097c9c2f21505f23197068bd20dda5de40c4"
+      "sha": "0eb9d9a47bff08e33aa257c7fd158d7cb3cfa48f"
     },
     {
       "path": "dist/js/swipe-motion.js",
@@ -4892,10 +4944,6 @@
       "sha": "99ea9df26907009e5553233ffe03c529c1521739"
     },
     {
-      "path": "dist/js/vendor/leaflet/LICENSE",
-      "sha": "bcb3ba1aca095155857556d96e3193a50fe1bd11"
-    },
-    {
       "path": "dist/js/vendor/leaflet/images/layers-2x.png",
       "sha": "200c333dca9652ac4cba004d609e5af4eee168c1"
     },
@@ -4922,6 +4970,10 @@
     {
       "path": "dist/js/vendor/leaflet/leaflet.js",
       "sha": "a3bf693d0fcaff885cc5f21b3a699aaa567b3533"
+    },
+    {
+      "path": "dist/js/vendor/leaflet/LICENSE",
+      "sha": "bcb3ba1aca095155857556d96e3193a50fe1bd11"
     },
     {
       "path": "dist/js/vendor/maplibre/LICENSE.txt",
@@ -5065,7 +5117,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "c1489acdeb2ce32e27f615d8cddf7157e412023d"
+      "sha": "dd645f1055eba4d33512af71859a92c3c78c0b56"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5529,7 +5581,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "0cd5a6d12607cc8a01383f03dea9f2edccd43083"
+      "sha": "d2d0d002a92ea2f9deda51a38889244876214e81"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5913,7 +5965,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "8fc7096fda1205b5b331c305903cd4eca156ebbd"
+      "sha": "7c63d707ad32d1f37be2e535a20705ef6bb029bd"
     },
     {
       "path": "docs/release-artwork.md",
@@ -5966,6 +6018,10 @@
     {
       "path": "docs/staff-cabinet.md",
       "sha": "70f7f48dd7dd08ae33d65f615fc746749d02c218"
+    },
+    {
+      "path": "docs/support-chat-516.md",
+      "sha": "2977a244194967dc1c6c3b544ffef6ec66daf3a6"
     },
     {
       "path": "docs/tablet-wallpapers.md",
@@ -6032,10 +6088,6 @@
       "sha": "e034086ec80543eb101591c806fd6f9845842469"
     },
     {
-      "path": "mobile/README.md",
-      "sha": "1aaaacfb1f8c9628e4c6d895616c4b16849de947"
-    },
-    {
       "path": "mobile/capacitor.config.json",
       "sha": "2f851cd24ac9d170cc1ab988e4311c09ee6b0c09"
     },
@@ -6052,8 +6104,28 @@
       "sha": "b0f63467db7fb88de17345152fbd85254783a7b6"
     },
     {
+      "path": "mobile/native/android/google-services.json",
+      "sha": "5147e16d61669ab2d5649156feafa2297354389c"
+    },
+    {
       "path": "mobile/native/android/MainActivity.java",
       "sha": "4409a2604be5c81e7c53d1f58361be343e14e692"
+    },
+    {
+      "path": "mobile/native/android/salah_notification.xml",
+      "sha": "7e61b90323e4ccfe5eb366c98e7bf0d9d457c695"
+    },
+    {
+      "path": "mobile/native/android/salah_widget_bg.xml",
+      "sha": "05fa0fdac00f05414c8eef7bf6db1a3ce21acd16"
+    },
+    {
+      "path": "mobile/native/android/salah_widget_info.xml",
+      "sha": "750b74dea2f83fbbb494fadba14679bea09cc4a7"
+    },
+    {
+      "path": "mobile/native/android/salah_widget.xml",
+      "sha": "83bce934a8f44a5f3ef61500a6048b3bfe2decc8"
     },
     {
       "path": "mobile/native/android/SalahAdhanPolicy.java",
@@ -6148,26 +6220,6 @@
       "sha": "c284464132a99bc183262ec8ffa8777a9eb70cb8"
     },
     {
-      "path": "mobile/native/android/google-services.json",
-      "sha": "5147e16d61669ab2d5649156feafa2297354389c"
-    },
-    {
-      "path": "mobile/native/android/salah_notification.xml",
-      "sha": "7e61b90323e4ccfe5eb366c98e7bf0d9d457c695"
-    },
-    {
-      "path": "mobile/native/android/salah_widget.xml",
-      "sha": "83bce934a8f44a5f3ef61500a6048b3bfe2decc8"
-    },
-    {
-      "path": "mobile/native/android/salah_widget_bg.xml",
-      "sha": "05fa0fdac00f05414c8eef7bf6db1a3ce21acd16"
-    },
-    {
-      "path": "mobile/native/android/salah_widget_info.xml",
-      "sha": "750b74dea2f83fbbb494fadba14679bea09cc4a7"
-    },
-    {
       "path": "mobile/native/android/widget_strings.xml",
       "sha": "12179a65166f88337a531db29f96c472134e5140"
     },
@@ -6206,6 +6258,10 @@
     {
       "path": "mobile/package.json",
       "sha": "5764e3c6a6080fc11e462acbd6aee3824fe64f9b"
+    },
+    {
+      "path": "mobile/README.md",
+      "sha": "1aaaacfb1f8c9628e4c6d895616c4b16849de947"
     },
     {
       "path": "mobile/scripts/android-icons.mjs",
@@ -6288,12 +6344,12 @@
       "sha": "159dd38498effa4854e416baaddf34b8cf8bbb6d"
     },
     {
-      "path": "mobile/shared/README.md",
-      "sha": "d6a0fc5816ccc989b7052af16a39011dfe532be6"
-    },
-    {
       "path": "mobile/shared/prayer-widget.schema.json",
       "sha": "e90c66762511ebe55bb83e852d312a078333efe0"
+    },
+    {
+      "path": "mobile/shared/README.md",
+      "sha": "d6a0fc5816ccc989b7052af16a39011dfe532be6"
     },
     {
       "path": "mobile/store/data-safety-draft.json",
@@ -6326,6 +6382,10 @@
     {
       "path": "mobile/tests/platform-licenses.mjs",
       "sha": "7268f8c6352f498a6bfc39942f9997f658170cbf"
+    },
+    {
+      "path": "README.md",
+      "sha": "9591ca669d3cc5be20227b3fa58eb544d80ff65d"
     },
     {
       "path": "scripts/build-account-location.mjs",
@@ -6641,7 +6701,7 @@
     },
     {
       "path": "scripts/check-experience-release-news.mjs",
-      "sha": "4a5ce036802a1e3db0f8468e5d019b734a02a5d7"
+      "sha": "1144af0cd8ddce0cf8dd8607d8ac585f617ea4f6"
     },
     {
       "path": "scripts/check-extra-language.mjs",
@@ -7041,7 +7101,7 @@
     },
     {
       "path": "scripts/check-owner-support.mjs",
-      "sha": "6fca7812d53d3c1ed814e0be2b03b9a47ce4d342"
+      "sha": "32a4b58548a496c50ef40b8b7ad15061021314e1"
     },
     {
       "path": "scripts/check-owner-user-list.mjs",
@@ -7512,12 +7572,32 @@
       "sha": "b7c52ee129acfe5445000a3b7f34eebe0dc20cf3"
     },
     {
+      "path": "scripts/check-support-case-lifecycle.mjs",
+      "sha": "ad1f6e927b85e0e6febd4624c8386f8081410492"
+    },
+    {
+      "path": "scripts/check-support-chat-client.mjs",
+      "sha": "a55788fddb958f607e44fe3ec830078de18cd467"
+    },
+    {
+      "path": "scripts/check-support-chat-database.mjs",
+      "sha": "f2e0255de27b0f49c8f00255b41ba3603e7dce3b"
+    },
+    {
+      "path": "scripts/check-support-chat-server.mjs",
+      "sha": "66213394ae87365aa07cd6ad00edd042bd1d6c1d"
+    },
+    {
       "path": "scripts/check-support-client.mjs",
       "sha": "677fb519cc18e0d6f01b2984a2d28f2748dee311"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
       "sha": "13bdc3a6996b14e27d8b4150f248d727776b42e5"
+    },
+    {
+      "path": "scripts/check-support-inbox.mjs",
+      "sha": "0ac0c659fd805234b4d1a85c1a0cb58a291ef6f9"
     },
     {
       "path": "scripts/check-support-multiple.mjs",
@@ -7530,6 +7610,10 @@
     {
       "path": "scripts/check-support-photos.mjs",
       "sha": "f76eec34d97623702de3c485dc4bce1a5ddb1b34"
+    },
+    {
+      "path": "scripts/check-support-request-actor.mjs",
+      "sha": "2cc3e3c5b810fc16cdb85c07ce85768945736e6e"
     },
     {
       "path": "scripts/check-support-server.mjs",
@@ -7668,6 +7752,10 @@
       "sha": "6639ebc7eddb70f85253892268db9499c2a78920"
     },
     {
+      "path": "SECURITY.md",
+      "sha": "7fce1b3883c7cd2005bf57f482bcef1b52a40cd4"
+    },
+    {
       "path": "supabase/activity-presence.sql",
       "sha": "78503b84801370666d0c9eed77c6bd54fae84bd9"
     },
@@ -7708,10 +7796,6 @@
       "sha": "24b44bdba419c61cb107603f6dd3add4fb59117c"
     },
     {
-      "path": "supabase/functions/background-reminders/README.md",
-      "sha": "3848c4de6105553aa6632cfc6bcb06881d1a4b35"
-    },
-    {
       "path": "supabase/functions/background-reminders/classroom-push.mjs",
       "sha": "1edc31c2a63ef5b92a544e072f2db760927a9401"
     },
@@ -7746,6 +7830,10 @@
     {
       "path": "supabase/functions/background-reminders/owner-return.mjs",
       "sha": "70362ae57de1792e222cd2ce2fb87fc7cfb40778"
+    },
+    {
+      "path": "supabase/functions/background-reminders/README.md",
+      "sha": "3848c4de6105553aa6632cfc6bcb06881d1a4b35"
     },
     {
       "path": "supabase/functions/background-reminders/runtime.txt",
@@ -8001,19 +8089,11 @@
     },
     {
       "path": "supabase/functions/support-messages/index.ts",
-      "sha": "4e3f1e2afb531445b3bf3baa70c76e8bfac1448d"
+      "sha": "79781227177ae5641be2709db659e074dd53e398"
     },
     {
       "path": "supabase/guest-competition.sql",
       "sha": "6357fe00b4d6b62eecc37ebc20d42887c698ba48"
-    },
-    {
-      "path": "supabase/migrations/2026100201_background_reminders.sql",
-      "sha": "607bab8375ef0ac1e16fdde004379f6f7d5c9fd7"
-    },
-    {
-      "path": "supabase/migrations/2026100202_background_reminders_cron.sql",
-      "sha": "251df95803240d223d714886810edf47c842ad1c"
     },
     {
       "path": "supabase/migrations/20261002_adhkar_accounts.sql",
@@ -8022,6 +8102,14 @@
     {
       "path": "supabase/migrations/20261002_owner_presence.sql",
       "sha": "ae3cb3e5a81d194a36bcd48c653557d948304e61"
+    },
+    {
+      "path": "supabase/migrations/2026100201_background_reminders.sql",
+      "sha": "607bab8375ef0ac1e16fdde004379f6f7d5c9fd7"
+    },
+    {
+      "path": "supabase/migrations/2026100202_background_reminders_cron.sql",
+      "sha": "251df95803240d223d714886810edf47c842ad1c"
     },
     {
       "path": "supabase/migrations/20261004_notification_status.sql",
@@ -8124,16 +8212,16 @@
       "sha": "c7a511101a39309e4a2db30fce141c0b76fe55a0"
     },
     {
+      "path": "supabase/migrations/20261102_owner_reading_context.sql",
+      "sha": "fa029f635874f014ffeaa8375ef3d3fd7b20ba21"
+    },
+    {
       "path": "supabase/migrations/20261102133755_owner_return_campaigns.sql",
       "sha": "33645ab52af10d3508c75d3e0bcc2cf21622834b"
     },
     {
       "path": "supabase/migrations/20261102174057_owner_account_geography.sql",
       "sha": "7ed8651925cfcdbdceae99727565bf91dd1ef0b6"
-    },
-    {
-      "path": "supabase/migrations/20261102_owner_reading_context.sql",
-      "sha": "fa029f635874f014ffeaa8375ef3d3fd7b20ba21"
     },
     {
       "path": "supabase/migrations/20261103080537_guest_device_visits.sql",
@@ -8190,6 +8278,10 @@
     {
       "path": "supabase/migrations/20261118084403_staff_message_deletion.sql",
       "sha": "9414e4972f48b3371a9fa267ecb8ac8a17aa9bda"
+    },
+    {
+      "path": "supabase/migrations/20261118103824_support_chat_actions_516.sql",
+      "sha": "9c042434e854e3b179eb080436f1a7dd29ee0c44"
     },
     {
       "path": "supabase/native-support-devices.sql",
@@ -8308,6 +8400,10 @@
       "sha": "6e7b844d9f49cdf72b78ad9b8f26633fe0659529"
     },
     {
+      "path": "tests/support/chat-fixture.mjs",
+      "sha": "0a7aa59c65d147364ac11224ebe04851ff385fe6"
+    },
+    {
       "path": "tests/support/check-unlink.cjs",
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
@@ -8315,7 +8411,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "The unchanged Pages workflow refreshes the official imam schedule."
+      "reason": "The unchanged Pages workflow refreshes official imam records."
     }
   ]
 }

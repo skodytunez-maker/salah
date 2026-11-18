@@ -11,3 +11,7 @@ Browser automation is prohibited by the established user preference. No rendered
 Phone review at320/390/430 CSS-pixel widths: long/Cyrillic/Arabic names, unread and closed cases, image/avatar fallback, large text, keyboard and player open, final list row above navigation, notification permission result, same-case draft after return, quote/source jump, self/everyone deletion and network interruption. Adjust only Support styling if a mismatch is found.
 
 Additional requested states: the owner can complete a case; the requesting user can reopen the same history or create a new case. The automatic acknowledgement is a distinctly labelled service notice. Check that merely reading a request leaves the owner row/indicator red and that a real answer or explicit completion resolves that state. These functional states are covered by database and real-component tests; their rendered appearance remains unverified.
+
+
+## Candidate517
+References: owner videos19:33/19:34 show inner Back reaching Menu and repeated Support headers;19:57 Telegram reference shows fixed header, independently scrolling content and return-to-latest. The20:01 glass screenshot requests one shared slider, preview above controls and a clearer maximum. Local SQL, DOM and CSS-state checks cover behavior and scope. Browser automation remains prohibited; physical iPhone/Safari, keyboard, safe-area and glass legibility comparison remain unclaimed. Public release remains516 while this candidate is prepared.
