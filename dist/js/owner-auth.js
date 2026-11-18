@@ -141,6 +141,14 @@ export async function ownerRankUser(id){
  return result.user;
 }
 
+// Private account lookup for Support; never feed an account ID to rank-user.
+export async function ownerAccountUser(id){
+ if(typeof id!=='string'||! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw uiError('ownerAuthUi.user');
+ const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
+ const result=await callOwner(data.session,'?mode=account-user&ids='+encodeURIComponent(id));
+ return result.user;
+}
+
 export async function ownerUserDetails(id){
  if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw uiError('ownerAuthUi.user');
  const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
