@@ -112,7 +112,7 @@
 
 body.support-conversation-open{overflow:hidden}
 body.support-conversation-open #mobile-nav{visibility:hidden;pointer-events:none}
-#support-root.support-chat-shell[data-support-grouped]{position:fixed;z-index:145;inset-inline:0;top:var(--support-chat-top,0px);height:var(--support-chat-height,100dvh);box-sizing:border-box;padding:calc(8px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:var(--bg,#09101d);overflow:hidden}
+#support-root.support-chat-shell[data-support-grouped]{position:fixed;z-index:145;inset-inline:0;top:var(--support-chat-top,0px);height:var(--support-chat-height,100dvh);box-sizing:border-box;--support-toolbar-inset:calc(env(safe-area-inset-top,0px) + min(40px,env(safe-area-inset-top,0px)));padding:calc(8px + var(--support-toolbar-inset)) max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:var(--bg,#09101d);overflow:hidden}
 .support-chat-shell[data-support-grouped]>.support-panel{display:flex;flex-direction:column;height:100%;min-height:0;max-width:860px;margin:0 auto;position:relative}
 .support-chat-shell[data-support-grouped] .support-panel>.support-chat-header,.support-chat-shell[data-support-grouped] .support-chat-options,.support-chat-shell[data-support-grouped] .support-history-toolbar,.support-chat-shell[data-support-grouped] [data-support-status],.support-chat-shell[data-support-grouped] [data-support-reply],.support-chat-shell[data-support-grouped] .support-case-closed{flex:none}
 .support-chat-shell[data-support-grouped] .support-messages{flex:1 1 0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:8px 1px 16px;margin:0 0 8px}
@@ -135,3 +135,12 @@ body.support-conversation-open #mobile-nav{visibility:hidden;pointer-events:none
 .support-chat-shell[data-support-grouped] .support-case-closed .button{flex:1;max-width:360px;min-height:46px}
 .support-chat-shell[data-support-grouped] .support-history-toolbar[hidden]{display:none}
 body.support-conversation-open .workspace>header,body.support-conversation-open .workspace>footer,body.support-conversation-open>.sidebar{visibility:hidden;pointer-events:none}
+
+/* Keep Support controls below the installed iPhone status-bar fade. */
+.support-chat-header button.support-person-avatar{min-width:44px;min-height:44px;flex-basis:44px;width:44px;height:44px;padding:0;cursor:pointer;box-shadow:none}
+.support-chat-header button.support-person-avatar:focus-visible{outline:2px solid var(--gold,#d9c58f);outline-offset:3px}
+dialog.support-user-profile{inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;padding:calc(8px + env(safe-area-inset-top,0px) + min(40px,env(safe-area-inset-top,0px))) max(14px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));border:0;border-radius:0;background:var(--bg,#09101d);color:var(--ivory,#f4f0e5);overflow:hidden;box-sizing:border-box}
+dialog.support-user-profile[open]{display:flex;flex-direction:column}
+.support-user-profile .support-profile-header{display:flex;justify-content:space-between;align-items:center;flex:none;height:auto;min-height:52px;gap:12px;width:min(100%,860px);margin:0 auto;border-bottom:1px solid rgba(180,190,210,.18)}
+.support-profile-header .text-button{min-height:44px;margin:0;white-space:normal}
+.support-user-profile .support-profile-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;max-width:860px;width:100%;margin:0 auto;padding-block:16px}

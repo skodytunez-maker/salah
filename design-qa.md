@@ -23,3 +23,8 @@ Publication scope: the owner’s standing instruction sends common corrections t
 ## Support518 candidate
 
 Closed-case screenshot regression: generic panel specificity erased the full-screen Support background and safe padding. Actual complete stylesheet-order fixtures now preserve an opaque viewport and safe insets. Header, scrolling log and footer have separate space; no outside page branding bleeds through. Owner/admin reopening is checked against real local SQL and the actual staff Support function, including role/MFA/sharing revocation, replay and offline retry. These checks do not establish physical iPhone rendering. Living-sky work remains isolated.
+
+
+## Support520
+
+Owner518 screenshot: participant name crosses installed status fade. Support-only toolbar inset, owner-only avatar to existing private profile, same-actor verification continuity and actor-bound in-memory restoration. Actual pointer Back returns to unchanged chat/draft; another actor discards old state. Physical iPhone remains unverified. Public sky/photo/news/player and backend stay exact.
