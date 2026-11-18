@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Silent516 — Support conversations (18 November2026)
+
+The owner explicitly authorized publication, then clarified: «Только новость; обращения оставить доступными». Release the reviewed Support inbox, message actions and case workflow to authorized users without a new public Support news card. Preserve announcement515, its two existing pictures/captions, acknowledgement and25November2026 expiry.516 changes the installed version and cache only; no external update push. The reviewed Support migration/function precede the frontend. Physical-phone verification is not claimed.
+
 ## Candidate515 — optional glass and messenger actions (18 November2026)
 
 The new announcement contains only the two new feature families: optional independent timetable/mini-player glass transparency, and team/direct messenger reply, copy and deletion of selected messages or whole chats. Both have dedicated original SVG UI illustrations and explicit captions in the eight interface languages. The selected-message Everyone action is author-only; whole direct-chat clearing is participant-only and team-room clearing is owner-only. The new edition has its own515 acknowledgement and expires on25November2026 at23:59:59UTC. It includes no old Quran, map, sky, billing or support-ticket cards. The private Home weather continuity correction does not advertise the experimental sky to ordinary users. The migration and Edge function are staged with isolated authorization/cache-race tests; no real conversation is cleared during verification. See experience-515.md for source and physical-device limits. The owner explicitly authorized public515 after receiving its private preview; ordinary users retain the existing closed advanced-sky policy. Physical-phone review is not claimed.

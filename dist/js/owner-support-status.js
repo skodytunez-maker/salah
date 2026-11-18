@@ -7,7 +7,7 @@ export function createOwnerSupportStatus({getOwnerId,getRpc,root=globalThis.docu
   const id=getOwnerId();
   for(const dot of root.querySelectorAll('[data-owner-support-status]')){
    const known=Boolean(id&&snapshot?.owner===id);dot.hidden=!known;
-   if(known){const waiting=snapshot.pending>0;dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');uiAttribute(dot,'aria-label',waiting?'ownerUi.unreadMessages':'ownerUi.allMessagesRead',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены');uiAttribute(dot,'title',waiting?'ownerUi.unreadMessages':'ownerUi.allMessagesRead',waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены')}
+   if(known){const waiting=snapshot.pending>0,key=snapshot.answerState?(waiting?'supportConversationUi.pending':'supportConversationUi.noPending'):(waiting?'ownerUi.unreadMessages':'ownerUi.allMessagesRead'),fallback=snapshot.answerState?(waiting?'Есть обращения без ответа':'Нет обращений без ответа'):(waiting?'Есть непрочитанные сообщения':'Все сообщения просмотрены');dot.setAttribute('data-state',waiting?'waiting':'clear');dot.setAttribute('role','img');uiAttribute(dot,'aria-label',key,fallback);uiAttribute(dot,'title',key,fallback)}
   }
  }
  async function refresh({force=false}={}){
@@ -22,7 +22,7 @@ export function createOwnerSupportStatus({getOwnerId,getRpc,root=globalThis.docu
    const result=await getRpc()('support_owner_status',{p_app:'salah'}).abortSignal(request.signal);
    if(request.signal.aborted||id!==revision||getOwnerId()!==owner)return;
    if(result.error||!Number.isSafeInteger(result.data?.pending)||result.data.pending<0)throw Error('unavailable');
-   snapshot={owner,pending:result.data.pending};lastCheck=Date.now();paint();supportNotice({actor:owner,owner:true,pending:result.data.pending,latest:result.data.latest,documentRef,windowRef});
+   snapshot={owner,pending:result.data.pending,answerState:Number.isSafeInteger(result.data.unread)&&result.data.unread>=0};lastCheck=Date.now();paint();supportNotice({actor:owner,owner:true,pending:result.data.pending,latest:result.data.latest,documentRef,windowRef});
   }catch{if(id===revision){snapshot=null;paint()}}
   finally{clearTimeout(timeout);if(controller===request){controller=null;if(again){again=false;void refresh({force:true})}}}
  }

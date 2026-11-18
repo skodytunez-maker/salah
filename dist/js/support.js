@@ -5,7 +5,7 @@ import{prepareSupportPhoto}from './support-photo.js';
 import{createSupportRpc}from './support-transport.js';
 import{mountSupportPanel}from './support-client.js';
 import{createSupportDiagnostics}from './support-diagnostics.js';
-import{accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa}from './owner-auth.js';
+import{accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,ownerUserAvatar}from './owner-auth.js';
 import{APP_VERSION}from './app-release.js';
 import{title,uiLeaf,uiMessage}from './ui.js';
 import{validOwnerUserId}from './owner-user-card.js';
@@ -24,6 +24,6 @@ export async function showSupport(app){
  }
  if(id!==screen||!app.isConnected||location.hash!==hash)return;
  if(!owner&&(requested||ownerNeedsMfa())){app.innerHTML='<section class="panel section"><a class="button" href="#account?owner=1">'+uiLeaf('supportUi.ownerSignIn')+'</a></section>';return}
- app.innerHTML='<a class="settings-back" href="'+(owner?'#account':'#more')+'"><span aria-hidden="true">‹</span>'+uiLeaf(owner?'accountUi.myAccount':'nav.menu')+'</a>'+title(t(owner?'menu.supportOwner':'menu.supportUser')).replace('<h1>','<h1 data-i18n="'+(owner?'menu.supportOwner':'menu.supportUser')+'">')+'<section class="panel section" id="support-root"></section>';
- const client=accountAuthClient();cleanup=mountSupportPanel(app.querySelector('#support-root'),{auth:{auth:client.auth,rpc:createSupportRpc(client)},app:'salah',version:APP_VERSION,owner,enableNotifications:enableSupportNotifications,signInHref:'#account',preparePhoto:owner?undefined:prepareSupportPhoto,createDiagnostics:owner?undefined:()=>createSupportDiagnostics({version:APP_VERSION}),setTeamVisibility:owner?((id,visible)=>staffRequest('support.share',{id,visible})):undefined,initialThreadId:new URLSearchParams(hash.split('?')[1]||'').get('thread'),recipientId:owner&&validOwnerUserId(new URLSearchParams(hash.split('?')[1]||'').get('user'))?new URLSearchParams(hash.split('?')[1]||'').get('user'):null});
+ app.innerHTML='<a class="settings-back" href="'+(owner?'#account':'#more')+'"><span aria-hidden="true">‹</span>'+uiLeaf(owner?'accountUi.myAccount':'nav.menu')+'</a>'+title(t(owner?'supportUi.requests':'supportUi.support')).replace('<h1>','<h1 data-i18n="'+(owner?'supportUi.requests':'supportUi.support')+'">')+'<section class="panel section" id="support-root"></section>';
+ const client=accountAuthClient();cleanup=mountSupportPanel(app.querySelector('#support-root'),{auth:{auth:client.auth,rpc:createSupportRpc(client)},app:'salah',version:APP_VERSION,owner,loadSupportAvatar:owner?ownerUserAvatar:undefined,enableNotifications:enableSupportNotifications,signInHref:'#account',preparePhoto:owner?undefined:prepareSupportPhoto,createDiagnostics:owner?undefined:()=>createSupportDiagnostics({version:APP_VERSION}),setTeamVisibility:owner?((id,visible)=>staffRequest('support.share',{id,visible})):undefined,initialThreadId:new URLSearchParams(hash.split('?')[1]||'').get('thread'),recipientId:owner&&validOwnerUserId(new URLSearchParams(hash.split('?')[1]||'').get('user'))?new URLSearchParams(hash.split('?')[1]||'').get('user'):null});
 }
