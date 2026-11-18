@@ -809,3 +809,8 @@ No billing, staff, owner geography, previous reciter, nature wallpaper or radio 
 
 ## Candidate517 — no new announcement
 Grouped Support contacts, navigation/latest-message fixes, messenger presentation and common glass control are prepared as one candidate. Retain the515 edition, artwork, acknowledgement and expiry; do not create Support news or an external update push. Physical-phone review is unclaimed. Publication follows the owner standing direction to send common fixes to all users while keeping only new living sky in trial.
+
+
+## 523 — conversation themes
+
+The owner explicitly requested an animated theme introduction while authorizing publication. One new card only: eight dark theme backgrounds and their matching incoming/outgoing palettes, taken directly from the real catalogue. A24-second tour moves across eight scenes and reverses through the shared release-motion-preview lifecycle; hidden/closed cards pause, reduced-motion modes show the first static scene. Lightweight real thumbnails total61116 bytes; the full-resolution conversation backgrounds remain unchanged. Captions and preview-only fictional text use all eight interface languages. Current edition523 runs through2026-11-26; historical515 acknowledgement data remains intact. Confirm only on the existing «Понятно» action. No unrelated prior feature cards, Support-case announcement, external push, new living-sky availability or player fix is included. Physical-phone rendering remains unverified and publication follows the owner’s explicit instruction.

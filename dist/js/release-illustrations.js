@@ -1,3 +1,4 @@
+import{conversationThemeReleaseCard}from './conversation-theme-news.js';
 import{homeActivityIcon}from './home-activity-icons.js';
 import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{esc}from './ui.js';
@@ -30,6 +31,7 @@ const guestRegistrationPreview=()=>'<div class="release-player-settings-demo rel
 
 // Public notes must use a feature picture. New categories require artwork before publishing.
 const changeFeatures=[
+ {id:'conversation-themes-523',match:/^Темы переписок:/iu,title:'Темы переписок',art:()=>'',where:''},
  {id:'glass-controls-515',match:/^Стеклянный режим:/iu,title:'Стеклянный режим',art:()=>'',where:''},
  {id:'message-actions-515',match:/^Сообщения команды:/iu,title:'Ответы и удаление сообщений',art:()=>'',where:''},
  {id:'home-sky-505',match:/^(?:Небо в вашем городе|Обои на главной):/iu,title:'Чёткие обои на главной',art:()=>'',where:''},
@@ -88,7 +90,7 @@ const changeFeatures=[
 ];
 export function isPublicReleaseChange(value){return typeof value==='string'&&value.trim()&&value.length<=240&&!/владел|админ|owner|admin|подписк|поддержк|оплат|плат[её]ж|(?:^|[^а-яё])списани|ю[кk](?:асс|ass)|yookassa/iu.test(value);}
 export function releaseFeatureForChange(text){return typeof text==='string'?changeFeatures.find(feature=>feature.match.test(text))?.id||null:null;}
-function changeCard(text){const feature=changeFeatures.find(item=>item.match.test(text))||changeFeatures.find(item=>item.id==='quran');if(['glass-controls-515','message-actions-515'].includes(feature.id))return experienceReleaseCard(feature.id);if(feature.id==='home-sky-505')return skyReleaseCard();if(['quran-offline-502','prayer-offline-502','audio-offline-502'].includes(feature.id))return offlineReleaseCard(feature.id);if(['interface-languages-501','quran-translations-501'].includes(feature.id))return interfaceReleaseCard(feature.id);return card(feature.art(),feature.title,text,feature.where,feature.id==='reciters'?'release-reciter-art':'release-screen-art');}
+function changeCard(text){const feature=changeFeatures.find(item=>item.match.test(text))||changeFeatures.find(item=>item.id==='quran');if(feature.id==='conversation-themes-523')return conversationThemeReleaseCard();if(['glass-controls-515','message-actions-515'].includes(feature.id))return experienceReleaseCard(feature.id);if(feature.id==='home-sky-505')return skyReleaseCard();if(['quran-offline-502','prayer-offline-502','audio-offline-502'].includes(feature.id))return offlineReleaseCard(feature.id);if(['interface-languages-501','quran-translations-501'].includes(feature.id))return interfaceReleaseCard(feature.id);return card(feature.art(),feature.title,text,feature.where,feature.id==='reciters'?'release-reciter-art':'release-screen-art');}
 function majorReleaseCards(){return [
  card(readerFigures([['islamsobhi.jpg','Ислам Субхи'],['abdulrahmanalawsi.jpg','Абдуррахман аль-Ауси'],['saadalghamdi.jpg','Саад аль-Гамиди'],['ahmadalajmi.jpg','Ахмад аль-Аджми'],['faresabbad.jpg','Фарис Аббад']]),'13 новых чтецов','Ислам Субхи, Абдуррахман аль-Ауси, Саад аль-Гамиди, Ахмад аль-Аджми и Фарис Аббад.','Коран → Чтецы → Новые. Ещё восемь голосов — на следующей карточке.','release-reciter-art'),
  card(readerFigures([['ahmadalnufais.jpg','Ахмад ан-Нуфайс'],['khalidaljalil.jpg','Халид аль-Джалиль'],['wadeealyamani.jpg','Вади аль-Ямани'],['abdullahkamel.jpg','Абдуллах Камиль'],['haniarrifai.jpg','Хани ар-Рифаи'],['alijaber.jpg','Али Джабир'],['muhammadayyub.jpg','Мухаммад Айюб'],['salahbukhatir.jpg','Салах Бухатир']]),'Ещё восемь голосов','В каталоге 46 чтецов. Избранные остаются под рукой; для недавних добавлений есть фильтр «Новые».','','release-reciter-art'),

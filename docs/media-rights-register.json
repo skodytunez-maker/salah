@@ -3710,6 +3710,141 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/release-artwork.md",
       "note": "Original SALAH release515 vector UI illustration authored directly in repository code, showing the actual optional glass controls or message reply/deletion menu. No external pictures, embedded fonts, religious quotations, user content or scripts. Project-origin evidence is not a claim of exclusive copyright."
+    },
+    {
+      "path": "dist/themes/amethyst-thumb.webp",
+      "bytes": 1554,
+      "gitBlobSha": "a0fa567d257764ba7a3d91449ffbfc7a61451676",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/amethyst.webp",
+      "bytes": 856132,
+      "gitBlobSha": "7dbad71ec263d0204d695fe1ffbe7a35d4bc8904",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/bronze-thumb.webp",
+      "bytes": 4590,
+      "gitBlobSha": "9ea31a9baf800a590797849f09a2366d9182f43c",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/bronze.webp",
+      "bytes": 1188412,
+      "gitBlobSha": "89e508e1fa45e72efc06e11be30e41ecc77f9e6c",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/emerald-thumb.webp",
+      "bytes": 5288,
+      "gitBlobSha": "b963816cb2edf8985833c1286e80c4c0bebd445d",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/emerald.webp",
+      "bytes": 1489588,
+      "gitBlobSha": "985d187232d943ab053e951c2df5f6a868bb2d51",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/graphite-thumb.webp",
+      "bytes": 1716,
+      "gitBlobSha": "94c1a87cfa963961ad3f5689c3962fb12c798b4b",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/graphite.webp",
+      "bytes": 1133446,
+      "gitBlobSha": "6838c79ddb8ba4c3b19f87531f70db4de5229979",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/lake-thumb.webp",
+      "bytes": 11146,
+      "gitBlobSha": "124e899fa90aa369e87bb95d1003d34faaa6c3f6",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/lake.webp",
+      "bytes": 1318982,
+      "gitBlobSha": "f2de5635d712b1dfec27686caf7ef1c4cdad2b0e",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/medina-thumb.webp",
+      "bytes": 24118,
+      "gitBlobSha": "e627a65acaa1612ca589db55374babbe6f15f9a0",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Thumbnail derived from the unchanged existing Medina wallpaper. Existing photographic provenance and review status remain applicable; no new clearance asserted."
+    },
+    {
+      "path": "dist/themes/ornament-thumb.webp",
+      "bytes": 9984,
+      "gitBlobSha": "683b23a80b105cc1fb8cc34c12f6d000dfda3670",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/ornament.webp",
+      "bytes": 1219916,
+      "gitBlobSha": "b3ee0e00b90e06998ef176683c33d4cfd0db1696",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/stars-thumb.webp",
+      "bytes": 2720,
+      "gitBlobSha": "8f3eded992a563cedaf7109645a3e87ebbc7dcbb",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/themes/stars.webp",
+      "bytes": 1222816,
+      "gitBlobSha": "5186ac62b0237d9c65964ec7bbb6bd8af5181693",
+      "kind": "image",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/conversation-theme-assets-523.json",
+      "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
     }
   ],
   "wallpaperSets": [

@@ -1,0 +1,183 @@
+{
+  "date": "2026-11-19",
+  "status": "local-candidate-not-published",
+  "source": {
+    "ornament": [
+      "01a1f04d-3ecc-7fd1-ab65-5cdb6cd7a0ac",
+      "exec-5abff91e-b14a-46d6-9d3b-9cb1796f8af2.png",
+      "exec-48ed7fbc-1b9c-485a-8016-f4b1288a2347.png"
+    ],
+    "emerald": [
+      "01a1f04d-3ecc-7fd1-ab65-5cdb6cd7a0ac",
+      "exec-fd44ab1a-573e-4509-b0c4-f458884e59bc.png",
+      "exec-23e43e01-5dd1-4db8-aa6e-cd1cc05e7ca5.png"
+    ],
+    "graphite": [
+      "01a1f04d-3ecc-7fd1-ab65-5cdb6cd7a0ac",
+      "exec-6896cc56-dffb-4e54-8cc8-c6d66f5de413.png",
+      "exec-bcf167f0-a473-4a51-b58f-a5db307ea9de.png"
+    ],
+    "bronze": [
+      "01a1f04d-61e7-7811-9966-41fe894ab8a7",
+      "exec-8cda9f3f-5b14-49f1-8296-93dd89837511.png",
+      "exec-3704673d-c816-4535-8c9d-39a5d0a62a20.png"
+    ],
+    "amethyst": [
+      "01a1f04d-61e7-7811-9966-41fe894ab8a7",
+      "exec-5c0c870c-0c32-4b74-b3e4-0750b650c3dc.png",
+      "exec-7e05517a-d1f6-4e96-8ff7-4b7608e17b93.png"
+    ],
+    "lake": [
+      "01a1f04d-8b49-73b3-a9c2-b746dbdd202e",
+      "exec-4d50639e-37be-434f-b2c6-7485ce34f50d.png",
+      "exec-1d2ecf4a-c222-4e1e-88bd-5dfe3c2f1a81.png"
+    ],
+    "stars": [
+      "01a1f04d-8b49-73b3-a9c2-b746dbdd202e",
+      "exec-4bf35db6-ca5d-47b6-837a-aa631105bc21.png",
+      "exec-ef415aaf-41e9-4fa5-83ae-08f5569c4a3b.png"
+    ]
+  },
+  "sourceRoot": "CODEX_HOME/generated_images",
+  "referencesThread": "01a0f25b-270d-77d3-a76e-633ece56c374",
+  "generation": "Built-in OpenAI ImageGen: clean wallpaper only, from owner-approved theme mockups; no copied messenger art, private messages, people or UI.",
+  "medina": "Reuses unchanged dist/wallpapers/madinah/night-phone-v1.webp; thumbnail derivative only.",
+  "encoding": "Seven full-resolution WebP files use FFmpeg libwebp lossless=1. RGBA pixel MD5 equals original PNG. 256px thumbnails are separate lossy derivatives, never displayed as the full background.",
+  "pixelEquality": [
+    {
+      "id": "ornament",
+      "originalBytes": 1609539,
+      "webpBytes": 1219916,
+      "decodedRgbaMd5": "MD5=3773c59ecd889a3c5db203f5dafc63f6"
+    },
+    {
+      "id": "emerald",
+      "originalBytes": 2006602,
+      "webpBytes": 1489588,
+      "decodedRgbaMd5": "MD5=72cab90d3c4038304a71c00881dd0d15"
+    },
+    {
+      "id": "graphite",
+      "originalBytes": 2092032,
+      "webpBytes": 1133446,
+      "decodedRgbaMd5": "MD5=3373a6337708cd1056183484cf57f977"
+    },
+    {
+      "id": "bronze",
+      "originalBytes": 1909623,
+      "webpBytes": 1188412,
+      "decodedRgbaMd5": "MD5=655d1d8df9d1c2aa1233fcb7cb7adf5b"
+    },
+    {
+      "id": "lake",
+      "originalBytes": 1944130,
+      "webpBytes": 1318982,
+      "decodedRgbaMd5": "MD5=c8b942c5f5b91a0153fe568ad3a84ce4"
+    },
+    {
+      "id": "amethyst",
+      "originalBytes": 1511236,
+      "webpBytes": 856132,
+      "decodedRgbaMd5": "MD5=be41061132d693d7c9fbea0c099fbcbd"
+    },
+    {
+      "id": "stars",
+      "originalBytes": 1886504,
+      "webpBytes": 1222816,
+      "decodedRgbaMd5": "MD5=609c4bf59297541a7143d855770b5c86"
+    }
+  ],
+  "thumbnailBytes": 61116,
+  "assets": [
+    {
+      "path": "dist/themes/amethyst-thumb.webp",
+      "bytes": 1554,
+      "gitBlobSha": "a0fa567d257764ba7a3d91449ffbfc7a61451676",
+      "sha256": "2db908f772779f250a92c86da0b2fa6dd6fbf4767af02fef13e416f109d3bbea"
+    },
+    {
+      "path": "dist/themes/amethyst.webp",
+      "bytes": 856132,
+      "gitBlobSha": "7dbad71ec263d0204d695fe1ffbe7a35d4bc8904",
+      "sha256": "70599791d0cf16a98e0aadc5f836f451b40183821a6cdeccefc9c88f317e093b"
+    },
+    {
+      "path": "dist/themes/bronze-thumb.webp",
+      "bytes": 4590,
+      "gitBlobSha": "9ea31a9baf800a590797849f09a2366d9182f43c",
+      "sha256": "069938290cd929a2b1c53f61ba9b61cf16ff9651f4c2b4cba0173ec07a6bdf2e"
+    },
+    {
+      "path": "dist/themes/bronze.webp",
+      "bytes": 1188412,
+      "gitBlobSha": "89e508e1fa45e72efc06e11be30e41ecc77f9e6c",
+      "sha256": "50ae50ef7ca04f5b084d1b12bcd9d053b2ff470f041c646453b637266b58b263"
+    },
+    {
+      "path": "dist/themes/emerald-thumb.webp",
+      "bytes": 5288,
+      "gitBlobSha": "b963816cb2edf8985833c1286e80c4c0bebd445d",
+      "sha256": "3307896a3e65fb58f6fc4af8b9be9993723eee4e449452ca4f8637bb317c5bf2"
+    },
+    {
+      "path": "dist/themes/emerald.webp",
+      "bytes": 1489588,
+      "gitBlobSha": "985d187232d943ab053e951c2df5f6a868bb2d51",
+      "sha256": "d1ef8271bad1ea440dbbc8be123a378d8ad0978a16073b236fa0ffd747de6566"
+    },
+    {
+      "path": "dist/themes/graphite-thumb.webp",
+      "bytes": 1716,
+      "gitBlobSha": "94c1a87cfa963961ad3f5689c3962fb12c798b4b",
+      "sha256": "99b290ff1b0daa0d23af4df524ba436a0ac4b3fa9da7f000e29a5e152161272b"
+    },
+    {
+      "path": "dist/themes/graphite.webp",
+      "bytes": 1133446,
+      "gitBlobSha": "6838c79ddb8ba4c3b19f87531f70db4de5229979",
+      "sha256": "97b06267d82e6b95894249c491fdccbd93ebc8ab33aaeeed3f7fabf0ad650964"
+    },
+    {
+      "path": "dist/themes/lake-thumb.webp",
+      "bytes": 11146,
+      "gitBlobSha": "124e899fa90aa369e87bb95d1003d34faaa6c3f6",
+      "sha256": "17cfb8ba79b5c3e427513af679ba337b91450ca15024d37e896862f1eb190a33"
+    },
+    {
+      "path": "dist/themes/lake.webp",
+      "bytes": 1318982,
+      "gitBlobSha": "f2de5635d712b1dfec27686caf7ef1c4cdad2b0e",
+      "sha256": "cdefe7c588c5354736c84f4407847c2ec1b9a248c82ef4918da85c6714e14ecf"
+    },
+    {
+      "path": "dist/themes/medina-thumb.webp",
+      "bytes": 24118,
+      "gitBlobSha": "e627a65acaa1612ca589db55374babbe6f15f9a0",
+      "sha256": "dac5ea8ff749d1f134da8d148e25ddc6871ca8185012d5b17c9cca16f1ccbb9c"
+    },
+    {
+      "path": "dist/themes/ornament-thumb.webp",
+      "bytes": 9984,
+      "gitBlobSha": "683b23a80b105cc1fb8cc34c12f6d000dfda3670",
+      "sha256": "d966830405188975dabccb617e2a58acb5150b616f86c14e4033c7748a33e1f4"
+    },
+    {
+      "path": "dist/themes/ornament.webp",
+      "bytes": 1219916,
+      "gitBlobSha": "b3ee0e00b90e06998ef176683c33d4cfd0db1696",
+      "sha256": "e8217a337e2ab020fb31f221a17ae2a577bfffdb04b9e1b248516f50f717793b"
+    },
+    {
+      "path": "dist/themes/stars-thumb.webp",
+      "bytes": 2720,
+      "gitBlobSha": "8f3eded992a563cedaf7109645a3e87ebbc7dcbb",
+      "sha256": "d5aeab4e9b7b134ad3ece2a49b92be32ec0baba6e98a109030b1987ac1cb8f7c"
+    },
+    {
+      "path": "dist/themes/stars.webp",
+      "bytes": 1222816,
+      "gitBlobSha": "5186ac62b0237d9c65964ec7bbb6bd8af5181693",
+      "sha256": "1a22937e34c6a98cdf98354b473b843676e56edbaa35a1d9ea6d48dab767258a"
+    }
+  ]
+}
