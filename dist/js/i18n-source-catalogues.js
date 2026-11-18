@@ -33,8 +33,7 @@ import skyRelease from './i18n/skyRelease/index.js';
 import messageDeletion from './i18n/messageDeletion/index.js';
 import experienceRelease from './i18n/experience-release/index.js';
 import supportConversation from './i18n/supportConversation/index.js';
-import supportRelease from './i18n/supportRelease/index.js';
-const groups=[{ru,en,az,tg,uz,kk,de,ar},settings,quran,practice,notifications,account,translations,learning,ranking,team,publicUi,owner,staff,classroom,extra,lessons,release,subscription,nativeSupport,offlineaudio,offlineRelease,offline,prayerOffline,skyRelease,messageDeletion,experienceRelease,supportConversation,supportRelease];
+const groups=[{ru,en,az,tg,uz,kk,de,ar},settings,quran,practice,notifications,account,translations,learning,ranking,team,publicUi,owner,staff,classroom,extra,lessons,release,subscription,nativeSupport,offlineaudio,offlineRelease,offline,prayerOffline,skyRelease,messageDeletion,experienceRelease,supportConversation];
 const merged=Object.create(null);
 for(const code of UI_LANGUAGE_CODES){
  const messages=Object.create(null);

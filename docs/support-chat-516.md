@@ -1,6 +1,6 @@
 # Support conversation candidate
 
-Status: public516 explicitly authorized by the owner with «Опубликуй» after implementation and source-bound checks. Prepare the516 metadata/news, reverify the exact release, apply the reviewed Support migration/function and publish through the normal installed application. No external update push; living sky remains owner-private. Physical-phone verification is not claimed.
+Status: public516 explicitly authorized by the owner with «Опубликуй» after implementation and source-bound checks. Prepare the516 version/cache metadata without a Support news announcement, reverify the exact release, apply the reviewed Support migration/function and publish through the normal installed application. No external update push; living sky remains owner-private. Physical-phone verification is not claimed.
 
 The owner's request is «В обращениях добавь этот же механизм чатов». The owner and user Support screen now reuses the messenger action component: own messages on the right, incoming messages on the left, time, accessible action button and touch hold, Reply with a quoted preview and cancellation, source jump, Copy, selected-message Self/Everyone removal and conversation-history Self/Everyone removal. Individual Everyone removal remains author-only. Closed cases retain read/copy/delete actions and hide Reply. Case status, subject, recipient resolution and diagnostics remain on the existing Support protocol.
 
@@ -35,3 +35,6 @@ The migration was created by the existing Supabase CLI2.81.3 and tested against 
 Checks cover actual database functions, HTTP action validation, transport actor binding and the real Support components in HappyDOM. These checks do not establish physical iPhone/Safari behavior. Phone verification must include hold/menu/cancel, quote/source jump, two-account deletion, photos, offline retry, returning to another case and sign-out/account switch.
 
 `design-qa.md` records the screenshot reference and the blocked rendered comparison: browser automation is prohibited by the user's established preference. Do not present DOM assertions as a visual or physical-phone pass.
+
+
+Publication clarification: the owner selected «Только новость; обращения оставить доступными». Release the new Support behaviour to all authorized users, but retain the existing515 public announcement, acknowledgement and expiry. APP_VERSION and worker cache/release version become516; APP_CHANGES/APP_ANNOUNCEMENT remain the existing515 public edition. No new Support news card or external update push is published.

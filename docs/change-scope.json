@@ -3,7 +3,7 @@
   "version": 516,
   "baseCommit": "888d43d32bd0f8626cb47477bff896af8ecbacd4",
   "baseTree": "4edd92628e2909478addfb0031fb488ed8ddcb01",
-  "note": "Public516 explicitly authorized with «Опубликуй». Reviewed Support implementation is unchanged from the325-tested candidate; release metadata and one feature-specific eight-language Support news card added. Apply reviewed Support backend before frontend. No external update push or public living sky.",
+  "note": "Silent public516 explicitly authorized. Owner clarified: hide only the Support news, keep Support available. Retain515 announcement, acknowledgement and expiry; update installed version/cache to516. Apply reviewed Support backend before frontend. No external push or public living sky.",
   "allowed": [
     {
       "path": "AGENTS.md",
@@ -14,48 +14,44 @@
       "reason": "Record screenshot grounding and the blocked rendered/phone verification without claiming a visual pass."
     },
     {
-      "path": "dist/assets/updates/support-inbox-516.svg",
-      "reason": "Original code-authored Support conversation/inbox/receipt/case-controls illustration without external media or private data."
-    },
-    {
       "path": "dist/css/support.css",
       "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Set516 public version and one Support feature announcement under explicit publication authorization."
+      "reason": "Bump installed version to516 while preserving515 changes, announcement, acknowledgement and expiry under the owner explicit news-audience correction."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Compile eleven Support case-state and three Support release-caption keys; retain every pre515 translation unchanged."
+      "reason": "Compile eleven Support lifecycle/pending-answer keys; every pre515 translation remains unchanged and no new public Support news captions are added."
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -66,16 +62,8 @@
       "reason": "Provide matching eight-language case completion/reopening and explicit automatic acknowledgement labels."
     },
     {
-      "path": "dist/js/i18n/supportRelease/index.js",
-      "reason": "Three explicit Support release captions in all eight interface languages."
-    },
-    {
       "path": "dist/js/owner-support-status.js",
       "reason": "Keep the existing owner menu red until a real answer or explicit resolution, with accurate labels for new pending-answer server state and unchanged legacy-server fallback."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "Map the new Support change to its own picture; retain historical515 feature mapping."
     },
     {
       "path": "dist/js/staff-message-actions.js",
@@ -88,10 +76,6 @@
     {
       "path": "dist/js/support-client.js",
       "reason": "Apply the existing chat mechanism only to owner/user Support conversations; preserve composer, attachments and case lifecycle."
-    },
-    {
-      "path": "dist/js/support-release-news.js",
-      "reason": "Use the existing gallery for one static Support card with live translated captions."
     },
     {
       "path": "dist/js/support-transport.js",
@@ -111,7 +95,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record the explicitly authorized516 Support-only edition and no external push."
+      "reason": "Record silent516 and the explicit instruction not to show Support news to ordinary users."
     },
     {
       "path": "docs/support-chat-516.md",
@@ -124,10 +108,6 @@
     {
       "path": "scripts/check-owner-support.mjs",
       "reason": "Extend the real Support route regression fixture for the newly wired owner-only avatar reader."
-    },
-    {
-      "path": "scripts/check-release-illustrations.mjs",
-      "reason": "Verify the actual516 dialog, single Support artwork, eight languages, retained focus/image and explicit acknowledgement."
     },
     {
       "path": "scripts/check-support-case-lifecycle.mjs",

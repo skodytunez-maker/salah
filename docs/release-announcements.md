@@ -1,8 +1,8 @@
 # SALAH release announcements
 
-## Public516 — Support conversations (18 November2026)
+## Silent516 — Support conversations (18 November2026)
 
-The owner explicitly requested publication with «Опубликуй». The new edition contains only the Support inbox, quote/copy/deletion and case completion/reopening workflow. Its original support-inbox-516.svg picture has three explicit captions in all eight interface languages. The automated receipt is a system acknowledgement, never a human answer; owner pending-answer red remains until a real authorized reply or explicit resolution. Historical515 glass/messenger cards remain available only in their historical edition. Announcement516 has a new acknowledgement and the same25November2026 expiry; no external update push. Apply the reviewed Support migration/function before frontend publication. Physical-phone visual verification remains unclaimed.
+The owner explicitly authorized publication, then clarified: «Только новость; обращения оставить доступными». Release the reviewed Support inbox, message actions and case workflow to authorized users without a new public Support news card. Preserve announcement515, its two existing pictures/captions, acknowledgement and25November2026 expiry.516 changes the installed version and cache only; no external update push. The reviewed Support migration/function precede the frontend. Physical-phone verification is not claimed.
 
 ## Candidate515 — optional glass and messenger actions (18 November2026)
 
