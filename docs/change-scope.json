@@ -1,269 +1,53 @@
 {
   "schema": 1,
-  "version": 523,
-  "baseCommit": "41419b922cd25d675dc1440c7b26b05137d1774a",
-  "baseTree": "2bef48d88e742cc9e9ebea15b3311c9f58dc4514",
-  "note": "Owner-authorized523 publication: eight persistent dark conversation/profile themes and explicitly requested animated theme news. Local image/private photo boundaries and unchanged backend/Home/player policy preserved. Physical phone rendering unverified.",
+  "version": 524,
+  "baseCommit": "0d2f49d1451729d2d184e65c767dfad32dc668cf",
+  "baseTree": "f39c642d98b2b37e72172511c671d98069315a88",
+  "note": "Owner explicitly authorized524 publication after preparation/test status and missing phone visual check were disclosed. Scoped Support screenshot correction; browser declined. Preserve original image bytes and current523 announcement/ack/expiry, private living sky and all unrelated source.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
     },
     {
       "path": "design-qa.md",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
     },
     {
       "path": "dist/css/conversation-themes.css",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/index.html",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/js/app-release.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/js/conversation-theme-assets.js",
-      "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
-    },
-    {
-      "path": "dist/js/conversation-theme-news.js",
-      "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
-    },
-    {
-      "path": "dist/js/conversation-theme-view.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/js/conversation-themes.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n-source-catalogues.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/ar.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/az.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/de.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/en.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/index.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/kk.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/ru.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/tg.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/uz.js",
-      "reason": "Eight-language labels for the shared conversation theme picker."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
-    },
-    {
-      "path": "dist/js/staff-cabinet.js",
-      "reason": "Pass the existing actor/view guard into the internal messenger theme lifecycle; no requests or permissions changed."
-    },
-    {
-      "path": "dist/js/staff-message-actions.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/js/staff-messenger.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
     },
     {
-      "path": "dist/js/support-user-profile.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/owner.html",
-      "reason": "Load the identical shared theme stylesheet in the installed owner launch page, preserving its existing guarded entry."
-    },
-    {
-      "path": "dist/share.html",
-      "reason": "Keep the shared-link app entry stylesheet identical to index.html; preserve sharing metadata and behavior."
+      "path": "dist/js/app-release.js",
+      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "dist/themes/amethyst-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/amethyst.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/bronze-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/bronze.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/emerald-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/emerald.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/graphite-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/graphite.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/lake-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/lake.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/medina-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/ornament-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/ornament.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/stars-thumb.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "dist/themes/stars.webp",
-      "reason": "Approved theme raster/thumbnail asset; original source quality preserved."
-    },
-    {
-      "path": "docs/change-scope.json",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "docs/conversation-theme-assets-523.json",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "docs/conversation-themes-523.md",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "docs/media-rights-register.json",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
-    },
-    {
-      "path": "docs/release-artwork.md",
-      "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
-    },
-    {
-      "path": "docs/rights-source-manifest.json",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
+      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
     },
     {
-      "path": "mobile/scripts/build-web-update.mjs",
-      "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
+      "path": "docs/change-scope.json",
+      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
     },
     {
-      "path": "mobile/tests/licenses.mjs",
-      "reason": "Provide the new pure theme catalogue to the isolated license fixture, retain its license assertions, and verify real sync excludes originals while bundling previews."
+      "path": "scripts/check-support-layout.mjs",
+      "reason": "Regression for actual mounted Support theme viewport/cleanup and real stylesheet cascade."
     },
     {
-      "path": "scripts/check-conversation-themes.mjs",
-      "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
-    },
-    {
-      "path": "scripts/check-release-illustrations.mjs",
-      "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
-    },
-    {
-      "path": "scripts/check-theme-assets.mjs",
-      "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
-    },
-    {
-      "path": "scripts/check-theme-news.mjs",
-      "reason": "Explicitly requested animated theme announcement, shared motion/localisation and its regression/provenance documentation."
+      "path": "scripts/check-support-conversation-ui.mjs",
+      "reason": "Regression for actual mounted Support theme viewport/cleanup and real stylesheet cascade."
     }
   ],
   "generated": [
@@ -323,7 +107,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "fbb6c7b55452c085b28f45e7bf1cdbf51b99b3c4"
+      "sha": "007fc313d60db9f0d8fd2347fdab6fcfba654958"
     },
     {
       "path": "ANALYTICS.md",
@@ -331,7 +115,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "57529e53cc58081eb48830934690e63ea3c0f794"
+      "sha": "77342039c73f2dc11477bedca2f170132304f9ff"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1570,6 +1354,10 @@
       "sha": "6b4443c8a0b19bb8c2f2cb6922e7bc96c6468b01"
     },
     {
+      "path": "dist/css/conversation-themes.css",
+      "sha": "24a08810b25676d4dcc52688b6dc996ede9ca4f3"
+    },
+    {
       "path": "dist/css/error-summary.css",
       "sha": "606bad7dc6c87a6da0f07739c479bfa6dafa9b6a"
     },
@@ -2715,7 +2503,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha": "febfa414671ef15326990978a82b895bac1fcf2b"
+      "sha": "e83f1ea46774d90f37c9a1153afa08795678f034"
     },
     {
       "path": "dist/iphone.css",
@@ -2839,7 +2627,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "ba208bb6fedc406f91d49c7492c9ee637f879d0d"
+      "sha": "67f5c6c182cc64ac21b07d2f5ad7748217ae0f6a"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2972,6 +2760,22 @@
     {
       "path": "dist/js/competition-view.js",
       "sha": "5e75d0a17bfa8765d3685fe7f24e2ddf89d975e7"
+    },
+    {
+      "path": "dist/js/conversation-theme-assets.js",
+      "sha": "1e1f243eefdf00997bda77ccdc80a4fac24c8fa8"
+    },
+    {
+      "path": "dist/js/conversation-theme-news.js",
+      "sha": "9cadc131e4f172530ac644a92077b2ed1f162967"
+    },
+    {
+      "path": "dist/js/conversation-theme-view.js",
+      "sha": "d83e4f5cbefff5af7e70f44d1e18fd37ba04c77f"
+    },
+    {
+      "path": "dist/js/conversation-themes.js",
+      "sha": "38aebf399e279920d41b187dd1ee66641ad4dfa9"
     },
     {
       "path": "dist/js/counter-account.js",
@@ -3135,39 +2939,39 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "4a7d2eb4bf2b414b16e9cf991b9a285aaf465ab8"
+      "sha": "1039db23d67f3cbec11359a7a805ec3fada95923"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "f6ce4d8bcc4f9556fbe19d5f92c0d6636d42371e"
+      "sha": "aef276d1a759aabe2ea05f9f5a392f6b80949c17"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "33abfef0969434553feb202b96e089958b37e423"
+      "sha": "ab9491e88727b735c6615711661748e3284fc571"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "239e68dd0d3c5b1c660b4ab84dd213027c410ffb"
+      "sha": "edd6f6e8b2f379dffbc31d6f19348e0bf3b31b83"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "865690b9690fcb315406284af584beee96ef2421"
+      "sha": "213d9c0f3686f46e276dee5acf1b4ae09329b9d8"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "beb3d902a5f24d5df1b970782124482cc58c6fdc"
+      "sha": "fcf44a13cf5816d69dee81254cf02be1ec8e2580"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "fc420d26b889add7db4f119d69b9c370b146b03c"
+      "sha": "f076345136acad076f37a444c7f0bc6e910e2da9"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "5b7123a00e225f90ebce20d0c4daafecd0c0c147"
+      "sha": "003d918b422d4f6e19fb7b9dbeb2bb87da09a82e"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
-      "sha": "debfdef137a59a94de01d9a37379ea78c0d67bb8"
+      "sha": "0d3d9e9c41e8034f80beb5d7a797996349d24975"
     },
     {
       "path": "dist/js/i18n.js",
@@ -3252,6 +3056,42 @@
     {
       "path": "dist/js/i18n/classroom/uz.js",
       "sha": "7321c86be8820382002aad1b002045d37d6aa700"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/ar.js",
+      "sha": "031bed94d1f9b103d77432b4e87d3517e0366c99"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/az.js",
+      "sha": "d94038bc47a4379ebd0dfad2780936e39cac2d5f"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/de.js",
+      "sha": "bf850117924eba7949cbcf88e24169fc11522961"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/en.js",
+      "sha": "94b1c97b7bdceb247fdb3b4d89be732d83ad3299"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/index.js",
+      "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/kk.js",
+      "sha": "48dc2a771cbd9e1fbbfd8a4d0149462cd6af7adf"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/ru.js",
+      "sha": "42c9ca99607efa0b4e271a2f8e9fcea938a42908"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/tg.js",
+      "sha": "2bf557a73050c6dc1af5d5e9741576b1cf600a0c"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/uz.js",
+      "sha": "226a84795264f8baec0e0e3ff8f4e41e327aa704"
     },
     {
       "path": "dist/js/i18n/de.js",
@@ -4775,7 +4615,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "3dea9ec7934d073905e36c6d57d157d272fb6460"
+      "sha": "679271ac8c249abe287f5dc4afd5c4591feb1406"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -4847,7 +4687,7 @@
     },
     {
       "path": "dist/js/staff-cabinet.js",
-      "sha": "d538604f5fad6db140bde193845defcb9ff470f7"
+      "sha": "3983009bb6115247c2f37b28686d78d978bcad14"
     },
     {
       "path": "dist/js/staff-markup.js",
@@ -4855,7 +4695,7 @@
     },
     {
       "path": "dist/js/staff-message-actions.js",
-      "sha": "7430315bb1b8b6468c6f2339cbd990b55094324d"
+      "sha": "ffc256d0a48e54885fc306de0731ff20cfddc92d"
     },
     {
       "path": "dist/js/staff-message-status.js",
@@ -4863,7 +4703,7 @@
     },
     {
       "path": "dist/js/staff-messenger.js",
-      "sha": "f0730be99598723ae181a1fb4093703e89d29af3"
+      "sha": "9f3b0def30dfaf694c89733a2987323ef14b0fa3"
     },
     {
       "path": "dist/js/staff-push-core.js",
@@ -4899,7 +4739,7 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "b1a9e3295d37ff2532e90c046b8c83e662abd04d"
+      "sha": "649f01139b7bb6e04fd5ade5f11a33c658631fc2"
     },
     {
       "path": "dist/js/support-client.js",
@@ -4931,7 +4771,7 @@
     },
     {
       "path": "dist/js/support-user-profile.js",
-      "sha": "122c0ecdf47911b6a85f66fe47276b79278e6a85"
+      "sha": "cade281fcfd53c827a3317855aa977cb3373b674"
     },
     {
       "path": "dist/js/support.js",
@@ -5155,7 +4995,7 @@
     },
     {
       "path": "dist/owner.html",
-      "sha": "0449f47ad95b32aecf4ac5c420a365e427b26727"
+      "sha": "ebc31c9917e12db732a62784b2e67f5c0ad458e2"
     },
     {
       "path": "dist/privacy.html",
@@ -5187,7 +5027,7 @@
     },
     {
       "path": "dist/share.html",
-      "sha": "21c969d3966d3d93f42d6cbf8beaa145f7f64cee"
+      "sha": "a42a15638ce3ce8f7433a969c3f14bb1b986dcb8"
     },
     {
       "path": "dist/soft-depth.css",
@@ -5199,11 +5039,71 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "0fdfcfb778f47197ca6291fe12411262816759b2"
+      "sha": "95e731e9c148ab217d1f58172a14a9b5561c0de1"
     },
     {
       "path": "dist/theme-boot.js",
       "sha": "561b45e16b255a136c1ed9235b29d8e63307d914"
+    },
+    {
+      "path": "dist/themes/amethyst-thumb.webp",
+      "sha": "a0fa567d257764ba7a3d91449ffbfc7a61451676"
+    },
+    {
+      "path": "dist/themes/amethyst.webp",
+      "sha": "7dbad71ec263d0204d695fe1ffbe7a35d4bc8904"
+    },
+    {
+      "path": "dist/themes/bronze-thumb.webp",
+      "sha": "9ea31a9baf800a590797849f09a2366d9182f43c"
+    },
+    {
+      "path": "dist/themes/bronze.webp",
+      "sha": "89e508e1fa45e72efc06e11be30e41ecc77f9e6c"
+    },
+    {
+      "path": "dist/themes/emerald-thumb.webp",
+      "sha": "b963816cb2edf8985833c1286e80c4c0bebd445d"
+    },
+    {
+      "path": "dist/themes/emerald.webp",
+      "sha": "985d187232d943ab053e951c2df5f6a868bb2d51"
+    },
+    {
+      "path": "dist/themes/graphite-thumb.webp",
+      "sha": "94c1a87cfa963961ad3f5689c3962fb12c798b4b"
+    },
+    {
+      "path": "dist/themes/graphite.webp",
+      "sha": "6838c79ddb8ba4c3b19f87531f70db4de5229979"
+    },
+    {
+      "path": "dist/themes/lake-thumb.webp",
+      "sha": "124e899fa90aa369e87bb95d1003d34faaa6c3f6"
+    },
+    {
+      "path": "dist/themes/lake.webp",
+      "sha": "f2de5635d712b1dfec27686caf7ef1c4cdad2b0e"
+    },
+    {
+      "path": "dist/themes/medina-thumb.webp",
+      "sha": "e627a65acaa1612ca589db55374babbe6f15f9a0"
+    },
+    {
+      "path": "dist/themes/ornament-thumb.webp",
+      "sha": "683b23a80b105cc1fb8cc34c12f6d000dfda3670"
+    },
+    {
+      "path": "dist/themes/ornament.webp",
+      "sha": "b3ee0e00b90e06998ef176683c33d4cfd0db1696"
+    },
+    {
+      "path": "dist/themes/stars-thumb.webp",
+      "sha": "8f3eded992a563cedaf7109645a3e87ebbc7dcbb"
+    },
+    {
+      "path": "dist/themes/stars.webp",
+      "sha": "5186ac62b0237d9c65964ec7bbb6bd8af5181693"
     },
     {
       "path": "dist/umrah.css",
@@ -5663,7 +5563,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "89f51ce115793e4858ed6b4e7394befc2480e81d"
+      "sha": "1999034b42a445fee4fb8eec99f3aba9508d595d"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5688,6 +5588,14 @@
     {
       "path": "docs/control-center-resume-425.md",
       "sha": "3edd04cdc6c814451166a751db446ec0b24c745e"
+    },
+    {
+      "path": "docs/conversation-theme-assets-523.json",
+      "sha": "81661b37f043dbad59550b7d8a80885bb93d5641"
+    },
+    {
+      "path": "docs/conversation-themes-523.md",
+      "sha": "1be4d75d52e39d78c91c1376834d9d40616b2e78"
     },
     {
       "path": "docs/daily-reminder-sources-497.json",
@@ -5819,7 +5727,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "a3e388ea3dda0164fb4fc4c5ec88a12b81095c6c"
+      "sha": "7f20b9b4bcbdb480356da59c6ca38952081ef25a"
     },
     {
       "path": "docs/message-actions-515.md",
@@ -6047,11 +5955,11 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "ebc2dc8be84d9062ba725f3878e0a5ee58236f4e"
+      "sha": "b460f863b8305417be454b56debf5e9365ccc7af"
     },
     {
       "path": "docs/release-artwork.md",
-      "sha": "a965a9f2f3c502c4c6e7d125d299b2cde5d3aee0"
+      "sha": "75ac1c33a4931854647fd90294816e3ebe0c08c0"
     },
     {
       "path": "docs/rights-audit.md",
@@ -6063,7 +5971,7 @@
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "sha": "92392cfbcc30ee318b559a649f6b0b1b816e2c28"
+      "sha": "8643ec0386cd4b5681d60f0984e2cbfa91eb42d8"
     },
     {
       "path": "docs/ruqyah-listening-336.md",
@@ -6167,7 +6075,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "d22c872592b70947832909ef9f75d11970bdb972"
+      "sha": "40f1be88e6673e6ca1cc4714a60cfb627cd815c9"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6383,7 +6291,7 @@
     },
     {
       "path": "mobile/scripts/build-web-update.mjs",
-      "sha": "0215e9add3d0ea5f3893bd4a3c26a931c96ece97"
+      "sha": "eab7c133b078d8f429465eb994ac101de97b5c19"
     },
     {
       "path": "mobile/scripts/check-web-update.py",
@@ -6483,7 +6391,7 @@
     },
     {
       "path": "mobile/tests/licenses.mjs",
-      "sha": "ff28ba82223256aaf0dfb78294d2e817dbfbadf6"
+      "sha": "e2e459edd650e2829b751a4304c8f67f2f4bdf17"
     },
     {
       "path": "mobile/tests/platform-licenses.mjs",
@@ -6760,6 +6668,10 @@
     {
       "path": "scripts/check-competition-sql.mjs",
       "sha": "5ab5e39fef590329d7714d036b2b9497012b065a"
+    },
+    {
+      "path": "scripts/check-conversation-themes.mjs",
+      "sha": "c97695928e5b4c30eaf170354053a58023a148ab"
     },
     {
       "path": "scripts/check-counter-account.mjs",
@@ -7551,7 +7463,7 @@
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
-      "sha": "1ad83ce8dcd0d9104745aa24dfcc89c224dda0fe"
+      "sha": "0bc5cc2ae1c8e10c1f424eb75344ae143af92a72"
     },
     {
       "path": "scripts/check-rights-register.mjs",
@@ -7820,6 +7732,14 @@
     {
       "path": "scripts/check-team-preview-ui.mjs",
       "sha": "e7ef43b400eacef9e9279d94b8aeec02aad5761a"
+    },
+    {
+      "path": "scripts/check-theme-assets.mjs",
+      "sha": "6f4adeefe4a0d6141981c8aa8cdd475443fa98b7"
+    },
+    {
+      "path": "scripts/check-theme-news.mjs",
+      "sha": "086f02736789dd79c43c85b9d1fea677f4029aea"
     },
     {
       "path": "scripts/check-transcription.mjs",

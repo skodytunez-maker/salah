@@ -814,3 +814,10 @@ Grouped Support contacts, navigation/latest-message fixes, messenger presentatio
 ## 523 — conversation themes
 
 The owner explicitly requested an animated theme introduction while authorizing publication. One new card only: eight dark theme backgrounds and their matching incoming/outgoing palettes, taken directly from the real catalogue. A24-second tour moves across eight scenes and reverses through the shared release-motion-preview lifecycle; hidden/closed cards pause, reduced-motion modes show the first static scene. Lightweight real thumbnails total61116 bytes; the full-resolution conversation backgrounds remain unchanged. Captions and preview-only fictional text use all eight interface languages. Current edition523 runs through2026-11-26; historical515 acknowledgement data remains intact. Confirm only on the existing «Понятно» action. No unrelated prior feature cards, Support-case announcement, external push, new living-sky availability or player fix is included. Physical-phone rendering remains unverified and publication follows the owner’s explicit instruction.
+
+
+## 524 — prepared Support theme polish, no new news edition
+
+Support-only visual correction after the owner’s523 phone screenshot. Wallpaper covers the fixed chat viewport; header/footer become transparent, Stars messages use restrained navy/petrol tones and the continuation button is compact. No asset recompression or new feature card. Preserve announcement523, existing acknowledgement and2026-11-26 expiry. Candidate only: no phone visual check, global publication or external push.
+
+The owner subsequently instructed «Отправь» after being told524 was prepared but not yet published and had no iPhone visual check. Release this correction with no new news edition; physical rendering remains unverified.

@@ -163,3 +163,24 @@ Owner requested an attractive theme animation in news while523 publication was b
 ### 523 native archive compatibility correction
 
 First exact-head application QA passed338/338, but Android correctly rejected an archive over its existing100MiB limit. Preserve the limit and original image quality: exclude catalogue full-size theme files from native archives, retain all preview thumbnails and existing Medina/Home photos, fetch only the selected stock original from immutable parent commit c041fd9e9440a07ba240075c7998731a8dfddc5a and cache it unchanged locally. Existing PWA image paths/cache stay intact. Dedicated asset/cancellation/offline/packing and real-controller URL-disposal checks pass; rerun full CI on the corrected exact head before publication.
+
+
+### 523 publication completed
+
+Published after the owner explicitly requested the update and animated theme news. PR392, exact head d1a9c390b7d46c9486ea9b477c5146ec7afec111;339/339 app checks plus database/DOM and all Android/Play/iOS/foundation/rights/tablet checks passed. Verified2107-file tree f39c642d98b2b37e72172511c671d98069315a88 merged as0d2f49d1451729d2d184e65c767dfad32dc668cf. Actual Pages run44401972508/job135147133966 succeeded on that source. Version523 is published through the ordinary installed application, including the new eight-theme animated news. No physical phone installation/rendering verification is claimed. Native100MiB limit retained through selected-original lazy delivery with local cache; image pixels are unchanged.
+
+Next near-term tasks remain the reattached iPhone system Pause/Control Center report and measured navigation/control delays. Do not mark either fixed by523. The remaining settings/icons, award «Аминь», surah localisation and other ideas remain queued; new living sky remains private.
+
+
+### 524 prepared: reported Support theme seams (not published)
+
+The owner’s fresh523 iPhone screenshot shows the Stars wallpaper inset below an opaque rectangular header/footer, heavy lavender outgoing bubbles and an oversized continuation button. Scope the correction to Support conversations: mount the existing theme controller on the fixed conversation root so its wallpaper also covers side gutters and safe insets; transparent Support toolbar/footer over a gentle top/bottom scrim; restrained navy/petrol Stars bubbles; compact44px continuation action. Preserve the reviewed status-fade clearance, message scroll position, draft, card→chat→inbox history and all permissions. A partly clipped older message at the latest-message scroll boundary is normal and is not a reason to force history to the top.
+
+The user explicitly declined browser checking («Пока без браузера»). No browser automation, rendered preview, phone installation, visual pass or public deployment is claimed.16 targeted DOM/CSS/controller regressions passed, including actual mounted Support theme-root/cleanup behavior, four viewport/inset cases with default and themed styles, profiles/internal chats, message actions/tail and mandatory live listening total. All source wallpapers remain byte-identical. Minor candidate524 preserves announcement523, its acknowledgement and expiry; no external push. Prepare for owner phone review before a new global rollout; the special523 publication instruction applied to523 only.
+
+Candidate524 package checks also pass: updates, Pages, sharing, reviewed file scope, current rights register, release illustrations and theme news. Exact scope:11 files; all228 raster source images unchanged. Evidence: outputs/salah-524-prepared-evidence.json and outputs/salah-524-theme-polish.patch. No publication.
+
+
+### Explicit524 publication instruction
+
+After being told the corrected Support candidate was prepared, its targeted checks passed, no browser was opened and physical iPhone appearance was unverified, the owner instructed «Отправь». Publish this scoped524 maintenance package through the ordinary installed application without another approval request. This current instruction supersedes the earlier phone-first hold for this specific package; it does not establish a phone visual pass or authorize new sky/public feature changes. Preserve announcement523/receipt/expiry and send no external push.

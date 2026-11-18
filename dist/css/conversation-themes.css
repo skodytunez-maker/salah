@@ -54,3 +54,20 @@ body.reduce-motion .release-theme-track,body.no-transitions .release-theme-track
 
 .release-feature[dir="rtl"] .release-theme-demo{direction:rtl}
 #modal:not([open]) .release-theme-track{will-change:auto}
+
+/* Support-only polish; other theme surfaces retain their approved presentation. */
+#support-root.support-chat-shell[data-conversation-theme]{background-image:linear-gradient(180deg,#040916b8 0%,#0409161f 28%,#0409161f 72%,#04091699 100%),var(--conversation-theme-image)!important}
+#support-root.support-chat-shell[data-conversation-theme=stars]{--conversation-theme-incoming:#12263bf2!important;--conversation-theme-outgoing:#253e4cf2!important;--conversation-theme-accent:#d9cead!important}
+#support-root.support-chat-shell[data-conversation-theme] .support-chat-header,#support-root.support-chat-shell[data-conversation-theme] .support-chat-footer{background:transparent!important}
+#support-root.support-chat-shell[data-conversation-theme] .staff-bubble{border-color:#ffffff14!important;box-shadow:0 2px 9px #00000016}
+/* A themed conversation is one edge-to-edge scene; controls float over it. */
+#support-root.support-chat-shell[data-conversation-theme]>.support-panel{background:transparent;isolation:isolate}
+#support-root.support-chat-shell[data-conversation-theme] .support-chat-header{border-bottom:0;margin-bottom:6px}
+#support-root.support-chat-shell[data-conversation-theme] .support-chat-footer{border-top:0;padding:12px 0 2px}
+#support-root.support-chat-shell[data-conversation-theme] .support-messages{gap:11px;padding-block:12px 18px}
+#support-root.support-chat-shell[data-conversation-theme] .support-chat-options{margin-bottom:6px}
+#support-root.support-chat-shell[data-conversation-theme] [data-support-team]{padding:6px 12px;border:1px solid #ffffff12;border-radius:14px;background:#09152370;font-size:11px;color:#d2c8ad}
+#support-root.support-chat-shell[data-conversation-theme] .support-case-closed>p{color:#c0c9d5;font-size:12px;margin-bottom:10px}
+#support-root.support-chat-shell[data-conversation-theme] [data-support-reopen]{flex:0 1 280px;max-width:280px;min-height:44px;border:1px solid #dfcfae45;border-radius:16px;background:#102033b8;color:#e2d3b1;box-shadow:none;font-size:13px;font-weight:600;padding:10px 16px}
+#support-root.support-chat-shell[data-conversation-theme] [data-support-reopen]:active{background:#1a3045e6}
+#support-root.support-chat-shell[data-conversation-theme] [data-support-reopen]:focus-visible{outline:2px solid #dfcfae;outline-offset:3px}
