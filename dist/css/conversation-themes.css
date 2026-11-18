@@ -1,0 +1,56 @@
+/* Theme boundaries are conversation/profile surfaces, never the whole app. */
+[data-conversation-theme]{background-color:var(--conversation-theme-base)!important;background-image:var(--conversation-theme-image)!important;background-size:cover!important;background-position:center!important;color:#f1f1f2}
+[data-conversation-theme] .support-chat-header,[data-conversation-theme] .support-chat-footer,[data-conversation-theme] .staff-chat-heading,[data-conversation-theme] .staff-composer,[data-conversation-theme] .support-profile-header{background:var(--conversation-theme-panel)!important;color:#f1f1f2}
+[data-conversation-theme] .staff-bubble{background:var(--conversation-theme-incoming)!important;color:#f1f1f2!important;border-color:#ffffff20!important;box-shadow:0 3px 12px #0000001f}
+[data-conversation-theme] .is-mine>.staff-bubble{background:var(--conversation-theme-outgoing)!important}
+[data-conversation-theme] .staff-message:not(.is-team-message) .staff-message-heading strong,[data-conversation-theme] .staff-message:not(.is-team-message) .staff-bubble>strong,[data-conversation-theme] .staff-bubble a,[data-conversation-theme] .staff-message-reply strong{color:var(--conversation-theme-accent)!important}
+[data-conversation-theme] .staff-bubble time{color:#d1d4db!important}
+[data-conversation-theme] .support-profile-body,[data-conversation-theme] .owner-profile-screen,[data-conversation-theme] .owner-profile,[data-conversation-theme] .staff-chat-messages,[data-conversation-theme] .support-messages{background:transparent!important}
+[data-conversation-theme] .owner-profile-panel,[data-conversation-theme] .owner-profile-identity{background:var(--conversation-theme-panel)!important;border-color:#ffffff20!important}
+[data-conversation-theme] .owner-profile-name,[data-conversation-theme] h3{color:#f1f1f2}
+.conversation-theme-button{flex:none;width:44px!important;height:44px!important;padding:10px!important;min-width:44px!important;color:var(--conversation-theme-accent,#d9c99a)!important}
+.conversation-theme-button svg{width:22px;height:22px}
+.staff-chat-heading>div{min-width:0;flex:1}
+.support-profile-header .conversation-theme-button{margin-inline-start:auto}
+.conversation-theme-picker{box-sizing:border-box;width:min(620px,calc(100vw - 24px));max-width:620px;max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px);overflow:auto;overscroll-behavior:contain;border:1px solid #445066;border-radius:24px;padding:20px;background:#0c1422;color:#f1f1f2;box-shadow:0 18px 70px #0009;font-family:inherit;text-align:start}
+.conversation-theme-picker::backdrop{background:#020611b8}
+.conversation-theme-picker>header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.conversation-theme-picker h2{font-size:21px;font-weight:600;line-height:1.3;margin:0;font-family:inherit}
+.conversation-theme-picker .staff-icon-button{width:44px;height:44px;flex:none;color:#d9c99a}
+.conversation-theme-picker .staff-icon-button svg{width:22px;height:22px}
+.conversation-theme-hint,.conversation-theme-custom p{font-size:13px;line-height:1.6;color:#b9c1cd}
+.conversation-theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-block:18px}
+.conversation-theme-grid button{display:flex;flex-direction:column;gap:9px;align-items:stretch;border:1px solid #3c475a;border-radius:15px;background:#111d2e;color:#e8eaf0;padding:6px 6px 10px;min-width:0;font:inherit;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.conversation-theme-grid button[aria-pressed=true]{border-color:#e2cc91;box-shadow:0 0 0 2px #e2cc9140;color:#ecd9ab}
+.conversation-theme-grid button:focus-visible,.conversation-theme-picker button:focus-visible{outline:2px solid #e2cc91;outline-offset:3px}
+.conversation-theme-swatch{display:flex;align-items:center;justify-content:center;aspect-ratio:4/5;overflow:hidden;border-radius:10px;background:#070b16}
+.conversation-theme-swatch img{width:100%;height:100%;object-fit:cover;filter:none}
+.conversation-theme-swatch svg{width:28px;height:28px;color:#c6b893}
+.conversation-theme-picker .button{width:100%;justify-content:center;gap:10px;min-height:46px}
+.conversation-theme-custom svg{width:22px;height:22px;flex:none}
+.conversation-theme-picker [data-theme-status]{min-height:1.5em;font-size:13px;color:#d9c99a}
+.conversation-theme-picker [data-theme-status].is-error{color:#f4b2ae}
+@media(max-width:359px){.conversation-theme-picker{padding:14px}.conversation-theme-grid{gap:8px}.conversation-theme-grid button{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.conversation-theme-picker *{transition:none!important;animation:none!important}}
+
+/* The news tour visits the eight actual themes, then reverses without a jump. */
+.release-theme-preview{position:relative;width:100%;aspect-ratio:640/420;overflow:hidden;border:1px solid #ffffff20;border-radius:18px;background:#0a1321}
+.release-theme-track{position:absolute;top:0;left:0;bottom:0;display:flex;width:800%;height:100%;direction:ltr;transform:translateX(0);will-change:transform}
+.release-theme-track[data-release-motion-part="element"]{animation-duration:24s}
+.release-theme-scene{position:relative;flex:0 0 12.5%;min-width:0;height:100%;overflow:hidden;color:#f1f1f2}
+.release-new-art .release-theme-scene>img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center}
+.release-theme-scene-shade{position:absolute;inset:0;background:#03081030}
+.release-theme-demo{position:relative;display:flex;flex-direction:column;gap:clamp(8px,2vw,14px);padding:clamp(12px,3vw,22px);height:100%;box-sizing:border-box;text-align:start;font-family:inherit;font-size:clamp(11px,2.8vw,17px)}
+.release-theme-demo>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;margin:0;height:auto;min-height:0;color:#f1f1f2;background:transparent;font-size:clamp(9px,2.2vw,13px)}
+.release-theme-demo>header strong{letter-spacing:.14em;color:var(--theme-preview-accent)}
+.release-theme-demo>header span{font-size:inherit;overflow-wrap:anywhere;text-align:end}
+.release-theme-bubble{align-self:flex-start;max-width:79%;padding:clamp(9px,2.5vw,16px);border:1px solid #ffffff26;border-radius:15px 15px 15px 4px;background:var(--theme-preview-in);color:#f1f1f2;line-height:1.5;box-shadow:0 4px 14px #0002}
+.release-theme-bubble.is-mine{align-self:flex-end;border-radius:15px 15px 4px 15px;background:var(--theme-preview-out);color:var(--theme-preview-accent)}
+.release-theme-demo-input{margin-top:auto;border:1px solid #ffffff35;border-radius:18px;background:var(--theme-preview-in);height:clamp(22px,5vw,34px);display:flex;align-items:center;padding-inline:12px}
+.release-theme-demo-input span{display:block;width:38%;height:3px;border-radius:3px;background:#cdd5e45c}
+@keyframes release-theme-tour{0%,8%{transform:translateX(0)}12%,21%{transform:translateX(-12.5%)}25%,34%{transform:translateX(-25%)}38%,47%{transform:translateX(-37.5%)}51%,60%{transform:translateX(-50%)}64%,73%{transform:translateX(-62.5%)}77%,86%{transform:translateX(-75%)}90%,100%{transform:translateX(-87.5%)}}
+@media(prefers-reduced-motion:reduce){.release-theme-track{will-change:auto}}
+body.reduce-motion .release-theme-track,body.no-transitions .release-theme-track{will-change:auto}
+
+.release-feature[dir="rtl"] .release-theme-demo{direction:rtl}
+#modal:not([open]) .release-theme-track{will-change:auto}

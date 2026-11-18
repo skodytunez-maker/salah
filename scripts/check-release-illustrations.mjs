@@ -98,7 +98,13 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- if(APP_ANNOUNCEMENT.version===515){
+ if(APP_ANNOUNCEMENT.version===523){
+  assert.equal(releaseModal.querySelectorAll('.release-feature').length,1);assert.equal(releaseModal.querySelectorAll('[data-theme-news]').length,1);assert.equal(releaseModal.querySelectorAll('.release-theme-scene').length,8);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,1);
+  const selected=releaseModal.querySelector('[data-theme-news]'),picture=selected.querySelector('img'),track=selected.querySelector('[data-release-motion-part]'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();
+  assert.equal(track.style.getPropertyValue('--release-motion-keyframes'),'release-theme-tour');
+  for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(releaseModal.querySelector('[data-theme-news]'),selected);assert.equal(selected.querySelector('img'),picture);assert.equal(selected.querySelector('h3').textContent,t('conversationThemeUi.newsTitle'));assert.equal(selected.querySelector('p').textContent,t('conversationThemeUi.newsText'));assert.equal(doc.activeElement,confirmation);assert.equal(hasSeenAnnouncement(),false);}
+  setInterfaceLanguage('ru');assert.doesNotMatch(releaseModal.textContent,/Стеклянные панели|Ответы и удаление|Небо в вашем городе|Радио|Тафсир/iu,'Only the newly requested themes belong in523 news');
+ }else if(APP_ANNOUNCEMENT.version===515){
   assert.equal(releaseModal.querySelectorAll('.release-feature').length,2);
   assert.deepEqual([...releaseModal.querySelectorAll('[data-experience-release]')].map(card=>card.dataset.experienceRelease),['glass-controls-515','message-actions-515']);
   assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,0,'Static UI artwork has no independent motion');

@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import{readFile}from 'node:fs/promises';
+import{conversationThemeAsset,THEME_ASSET_COMMIT}from '../dist/js/conversation-theme-assets.js';
+import{CONVERSATION_THEMES}from '../dist/js/conversation-themes.js';
+import{excludeFromWebBundle}from '../mobile/scripts/build-web-update.mjs';
+const blobs=new Map(),store={get:async k=>blobs.get(k),put:async(k,v)=>{blobs.set(k,v);}};
+let calls=0,offline=false,returnedBlob;const created=[];
+const win={AbortController,setTimeout,clearTimeout,Capacitor:{isNativePlatform:()=>true},URL:{createObjectURL:blob=>{created.push(blob);return'blob:test-'+created.length;}}};
+const fetchImage=async(url,options)=>{calls++;assert(url.includes('/'+THEME_ASSET_COMMIT+'/dist/themes/'));assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');if(offline)throw Error('offline');const bytes=await readFile(new URL('../dist/'+new URL(url).pathname.split('/dist/')[1],import.meta.url));returnedBlob=new Blob([bytes],{type:'image/webp'});return new Response(returnedBlob,{headers:{'Content-Type':'image/webp'}});};
+const theme=CONVERSATION_THEMES.find(t=>t.id==='lake');
+const online=await conversationThemeAsset(theme,{win,baseURI:'https://localhost/',store,fetchImage});assert(online.owned);assert.equal(calls,1);assert.equal(created.at(-1).size,returnedBlob.size);assert.deepEqual(new Uint8Array(await created.at(-1).arrayBuffer()),new Uint8Array(await returnedBlob.arrayBuffer()),'The cached original is not resized or recompressed');
+offline=true;const cached=await conversationThemeAsset(theme,{win,baseURI:'https://localhost/',store,fetchImage});assert(cached.owned);assert.equal(calls,1,'Cached selected native wallpaper works offline without a fetch');
+win.Capacitor.isNativePlatform=()=>false;const web=await conversationThemeAsset(theme,{win,baseURI:'https://example.invalid/salah/',store,fetchImage});assert.equal(web.url,'https://example.invalid/salah/themes/lake.webp');assert.equal(web.owned,false);assert.equal(calls,1);
+win.Capacitor.isNativePlatform=()=>true;const medina=await conversationThemeAsset(CONVERSATION_THEMES.find(t=>t.id==='medina'),{win,baseURI:'https://localhost/',store,fetchImage});assert.equal(medina.url,'https://localhost/wallpapers/madinah/night-phone-v1.webp');assert.equal(calls,1);
+const cancelled=new AbortController();cancelled.abort();await assert.rejects(conversationThemeAsset(theme,{win,baseURI:'https://localhost/',store,fetchImage,signal:cancelled.signal}));assert.equal(calls,1);
+for(const chosen of CONVERSATION_THEMES.filter(t=>t.wallpaper?.startsWith('./themes/'))){assert(excludeFromWebBundle(chosen.wallpaper.slice(2)),'Full native theme original must be lazy');assert(!excludeFromWebBundle(chosen.thumbnail.slice(2)),'News and picker previews remain bundled');}
+assert(!excludeFromWebBundle('wallpapers/madinah/night-phone-v1.webp'));assert(!excludeFromWebBundle('js/conversation-theme-assets.js'));
+await assert.rejects(conversationThemeAsset(CONVERSATION_THEMES.find(t=>t.id==='stars'),{win,baseURI:'https://localhost/',store,fetchImage:async()=>new Response('error',{headers:{'Content-Type':'text/html'}})}));
+await assert.rejects(conversationThemeAsset(CONVERSATION_THEMES.find(t=>t.id==='stars'),{win,baseURI:'https://localhost/',store,fetchImage:async()=>new Response(new Uint8Array(3*1024*1024+1),{headers:{'Content-Type':'image/webp'}})}));
+const denied={get:async()=>{throw Error('storage');},put:async()=>{throw Error('quota');}};offline=false;assert((await conversationThemeAsset(theme,{win,baseURI:'https://localhost/',store:denied,fetchImage})).owned,'Online original remains usable if device caching fails');
+const controller=new AbortController();await assert.rejects(conversationThemeAsset(theme,{win,baseURI:'https://localhost/',store:{get:async()=>{controller.abort();return returnedBlob;}},fetchImage,signal:controller.signal}));
+console.log('PASS native theme assets: originals fetched only on selection from an immutable verified commit, exact bytes cached locally and reused offline, bundled previews/Medina preserved, current native archive limit unchanged, web routes untouched, cancellation/type/size/quota paths safe.');
