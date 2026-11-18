@@ -117,7 +117,7 @@ const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const OWNER_RELEASES={salah:[{date:'2026-10-16',version:'339',changes:['Профили пользователей открываются из списка: фото, сохранённое время прослушивания, любимые чтецы и полученные награды.','Доступ к профилям и фото проверяется на сервере при каждом запросе: только владелец с действующей сессией и вторым фактором.']},{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readRankUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,readLiveActivity=null,readAppState=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readRankUser=null,readAccountUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,readLiveActivity=null,readAppState=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -184,13 +184,17 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
    if(!readProfiles)return reply(503,{error:'profiles_unavailable'});
    try{const rows=await readProfiles(ids);if(!Array.isArray(rows))throw Error('invalid');return reply(200,{profiles:rows.filter(row=>ids.includes(row.id)).slice(0,50).map(row=>({id:row.id,nickname:typeof row.nickname==='string'?row.nickname.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40):''}))});}catch{return reply(503,{error:'profiles_unavailable'});}
   }
-  if(mode==='rank-user'){
+  if(mode==='rank-user'||mode==='account-user'){
    const id=url.searchParams.get('ids')||'';
    if(url.searchParams.size!==2||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))return reply(400,{error:'invalid_parameters'});
-   if(!readRankUser)return reply(503,{error:'user_unavailable'});
+   // Rankings use a public listener identity; Support supplies a private account
+   // identity. Both paths remain behind the same live owner/session/MFA gate.
+   const read=mode==='rank-user'?readRankUser:readAccountUser;
+   if(!read)return reply(503,{error:'user_unavailable'});
    try{
-    const row=await readRankUser(id.toLowerCase());
+    const row=await read(id.toLowerCase());
     if(!row)return reply(404,{error:'not_found'});
+    if(mode==='account-user'&&row.id!==id.toLowerCase())return reply(503,{error:'user_unavailable'});
     const [user]=safeOwnerUsers({total:1,online:row.online===true?1:0,users:[row]},1,now).users;
     return reply(200,{user});
    }catch{return reply(503,{error:'user_unavailable'});}
@@ -324,7 +328,7 @@ export async function readOwnerUserDetails(sql,id,activityDay=null){
  });
 }
 
-export function readOwnerUserSummaries(sql,page,listenerId=null){
+export function readOwnerUserSummaries(sql,page,listenerId=null,accountId=null){
  return sql`select u.id::text as id,u.raw_user_meta_data->>'nickname' as nickname,u.created_at as "joinedAt",u.last_sign_in_at as "lastSignInAt",p.last_seen as "lastSeenAt",coalesce(p.online,false) as online,v.app_version as "appVersion",v.version_checked_at as "versionCheckedAt",c.saved_at as "lastSavedAt",n.checked_at as "notificationCheckedAt",n.enabled as "notificationEnabled",n.granted as "notificationGranted",n.denied as "notificationDenied",n.background as "notificationBackground" from auth.users u left join lateral(select max(last_seen) as last_seen,bool_or(active and last_seen>=now()-interval '90 seconds') as online from public.app_presence where user_id=u.id and app='salah') p on true left join lateral(select app_version,version_checked_at from public.app_presence where user_id=u.id and app='salah' and app_version is not null and version_checked_at is not null order by version_checked_at desc,tab_id limit 1) v on true left join lateral(select max(saved_at) as saved_at from salah_counter_private.components where user_id=u.id) c on true left join lateral(
  select max(n.checked_at) as checked_at,bool_or(n.enabled) as enabled,bool_or(n.enabled and n.permission='granted') as granted,bool_or(n.enabled) and bool_and(not n.enabled or n.permission='denied') as denied,
  bool_or(n.enabled and n.permission='granted' and ((n.native_until>now() and n.native_until<=n.checked_at+interval '14 days') or (coalesce(d.enabled,false) and d.subscription is not null and d.preferences is not null and d.updated_at>now()-interval '90 days' and d.preferences->'reminders'->>'enabled'='true' and exists(select 1 from jsonb_each(coalesce(d.preferences->'reminders'->'prayers','{}'::jsonb)) r where r.key in('Fajr','Dhuhr','Asr','Maghrib','Isha') and (r.value->>'atTime'='true' or r.value->>'beforeMinutes' in('5','10','15','30')))))) as background
@@ -332,6 +336,7 @@ export function readOwnerUserSummaries(sql,page,listenerId=null){
  left join salah_push_private.devices d on d.id=n.push_device_id
  ) n on true where u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false
  and (${listenerId}::uuid is null or u.id=(select l.user_id from public.reciter_listener_visibility l join salah_competition_private.preferences pref on pref.user_id=l.user_id and pref.enabled where l.public_id=${listenerId}::uuid and l.mode in('initial','profile')))
+ and (${accountId}::uuid is null or u.id=${accountId}::uuid)
  order by coalesce(p.online,false) desc,p.last_seen desc nulls last,u.id limit 50 offset ${(page-1)*50}`;
 }
 
@@ -350,5 +355,5 @@ if(typeof Deno!=='undefined'){
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readRankUser:async id=>(await readOwnerUserSummaries(sql,1,id))[0]||null,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readLiveActivity:(kind,page)=>readOwnerLiveActivity(sql,kind,page),readAppState:page=>readOwnerAppState(sql,page),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid and (not_after is null or not_after>now())) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readRankUser:async id=>(await readOwnerUserSummaries(sql,1,id))[0]||null,readAccountUser:async id=>(await readOwnerUserSummaries(sql,1,null,id))[0]||null,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readLiveActivity:(kind,page)=>readOwnerLiveActivity(sql,kind,page),readAppState:page=>readOwnerAppState(sql,page),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid and (not_after is null or not_after>now())) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

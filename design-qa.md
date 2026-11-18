@@ -28,3 +28,7 @@ Closed-case screenshot regression: generic panel specificity erased the full-scr
 ## Support520
 
 Owner518 screenshot: participant name crosses installed status fade. Support-only toolbar inset, owner-only avatar to existing private profile, same-actor verification continuity and actor-bound in-memory restoration. Actual pointer Back returns to unchanged chat/draft; another actor discards old state. Physical iPhone remains unverified. Public sky/photo/news/player and backend stay exact.
+
+## Support521
+
+Real 520 phone recording reviewed (23:52:18, 8.32 seconds). Account-to-ranking ID mismatch reproduced; native chat history step missing. Isolated 521 corrects both without altering photographs, sky or other sections. See docs/support-profile-back-521.md. Physical iPhone check still required after installation.

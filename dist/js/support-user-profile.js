@@ -1,4 +1,4 @@
-import{ownerRankUser,ownerUserDetails,ownerUserAvatar,verifiedOwnerId}from './owner-auth.js';
+import{ownerAccountUser,ownerUserDetails,ownerUserAvatar,verifiedOwnerId}from './owner-auth.js';
 import{createOwnerUserDetail}from './owner-user-detail.js';
 import{ownerUserCard,ownerUserCardPreview,validOwnerUserId,bindOwnerNotificationInfo,bindOwnerAwardHistory}from './owner-user-card.js';
 import{createOwnerCardHistory}from './owner-card-navigation.js';
@@ -9,7 +9,7 @@ import{t}from './i18n.js';
 
 // This private overlay belongs to the current Support mount and actor. Closing
 // it never reloads the conversation or creates a second Support request.
-export function createSupportUserProfile({host,actorId,isActive=()=>true,getActor=verifiedOwnerId,loadUser=ownerRankUser,loadDetails=ownerUserDetails,loadAvatar=ownerUserAvatar}={}){
+export function createSupportUserProfile({host,actorId,isActive=()=>true,getActor=verifiedOwnerId,loadUser=ownerAccountUser,loadDetails=ownerUserDetails,loadAvatar=ownerUserAvatar}={}){
  const doc=host.ownerDocument,win=doc.defaultView;
  let dialog=null,card=null,detail=null,opener=null,selected=null,user=null,epoch=0,disposed=false,stopSwipe=null;
  const active=()=>!disposed&&host.isConnected&&isActive()&&getActor()===actorId;
@@ -47,7 +47,7 @@ export function createSupportUserProfile({host,actorId,isActive=()=>true,getActo
    host.append(dialog);card=dialog.querySelector('[data-support-profile-card]');
    dialog.querySelector('[data-support-profile-back]').onclick=()=>history.back();dialog.querySelector('[data-support-profile-refresh]').onclick=()=>void refresh();
    dialog.addEventListener('cancel',event=>{if(event.target===dialog){event.preventDefault();history.back();}});
-   stopSwipe=bindSwipeMotion(dialog,{win,canStart:()=>active()&&!dialog.querySelector('dialog[open]')&&!doc.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'),canMove:direction=>direction===1,commit:()=>history.back()});
+   stopSwipe=bindSwipeMotion(dialog,{win,canStart:()=>active()&&!dialog.querySelector('dialog[open]')&&!doc.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'),swipeThreshold:{minDistance:48,maxDistance:100,distanceRatio:.18},canMove:direction=>direction===1,commit:()=>history.back()});
    watchOwnerUi(dialog,()=>dialog?.setAttribute('aria-label',t('ownerUi.userCard')));dialog.showModal();void refresh();return true;
   },
   dispose(){if(disposed)return;clear();disposed=true;history.dispose();}
