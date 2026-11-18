@@ -176,6 +176,10 @@
     {
       "path": "scripts/check-support-conversation-ui.mjs",
       "reason": "Explicit reference-video request: passive scoped top-edge mask state, first-message visibility, message retention and cleanup; preserve routing/drafts/access."
+    },
+    {
+      "path": "scripts/check-account-experience.mjs",
+      "reason": "Keep the real founder/account eligibility, presentation acknowledgement, replay, account-change and device/news checks; update only the obsolete Thanks-label expectation to the explicitly requested localized Ameen and blessing."
     }
   ],
   "generated": [

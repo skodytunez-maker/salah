@@ -218,3 +218,12 @@ The owner supplied fresh phone screenshots comparing native messenger headers wi
 ### Reference video: soft top scroll edge
 
 The owner explicitly requested the message exit/entry effect near the header and reiterated independent publication plus the morning change list. The6.49s reference recording is a native messenger, distinct from the separate WhatsApp height screenshot. Nine sampled reference frames show messages moving under the upper region while participant controls stay fixed. Keep source frames outside the application and do not copy third-party chat contents into product/news. Add a static16px alpha fade only to scrolled grouped Support history; at scrollTop0 the first message stays opaque. Use an event-driven passive scroll listener with cleanup, standard/WebKit CSS masks, no new animation loop, timer, blur on the header or original wallpaper. Reading position, message nodes and drafts remain unchanged. Actual DOM/cascade/navigation/disposal tests pass after validating the standard mask property (HappyDOM does not expose prefixed computed masks). No rendered implementation/Safari pass is claimed. Morning: confirm the raised header is clear, top fade works in both directions, first-message content is fully visible at the start and no jump occurs while reading old messages.
+
+
+### Scheduling outcome
+
+The one-time morning report automation salah-2 was created successfully for09:00. An additional attempted recurring overnight coding/publication automation was rejected by automatic approval review as ongoing external side effects beyond current-release approval. It was not created and must not be treated as running, retried through a workaround or used as evidence of future work. Current explicitly authorized525 publication continues in the active turn. The morning report is read/report only.
+
+Morning checklist source prepared outside application source: outputs/salah-morning-phone-checklist-2026-11-19.json. Reconcile its pending525 field with actual release evidence before reporting; do not call open items implemented.
+
+525 exact-head full CI found339/340 passing: check-account-experience still expected the old founder Спасибо label. Updated that actual presentation contract to localized celebrationAmeen and verified blessing, preserving all eligibility/Auth/acknowledgement/replay/device/news assertions. Local account-experience checks pass. Rerun full exact-head QA after the contract-only follow-up; do not merge a failed340 suite.
