@@ -1,5 +1,9 @@
 # Public release roundup
 
+## Candidate515 — glass and message actions
+
+Two original code-authored SVGs show the actual controls: a prayer timetable and mini-player with independent transparency sliders; incoming/outgoing chat bubbles, a reply quote and the selected own-message action menu. They contain no third-party media, embedded fonts, religious quotations, private content, scripts or independent animation. Both include accessible title/description metadata. The static illustrations use the existing gallery; captions and navigation are translated into all eight interface languages. The Everyone option is explicitly limited to the author’s own messages. Final byte counts and Git blob fingerprints are appended to both rights registers. This is candidate preparation, not evidence of publication or physical-device review.
+
 ## 505 — the sky in your city
 
 The new public announcement contains one sky feature only. `home-sky-505.svg` is original, repository-authored vector artwork: a mosque silhouette, sunrise arc, warm horizon and a sequence of shaded lunar discs. It embeds no external pictures, fonts, religious quotations, personal data or third-party artwork. The card adds its own vector Sun, phase-shaded Moon and cloud/fog layers; the Sun follows the illustrated arc and clouds cover the light sources. These are explanatory examples, not a live astronomical observation inside the news card.

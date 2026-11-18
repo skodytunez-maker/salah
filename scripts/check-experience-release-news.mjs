@@ -1,0 +1,29 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import crypto from 'node:crypto';
+import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import {experienceReleaseCard} from '../dist/js/experience-release-news.js';
+import {illustratedReleaseMarkup,bindIllustratedRelease} from '../dist/js/release-gallery.js';
+import {APP_VERSION,APP_CHANGES,APP_ANNOUNCEMENT} from '../dist/js/app-release.js';
+import {t,setInterfaceLanguage} from '../dist/js/i18n.js';
+import source from '../dist/js/i18n/experience-release/index.js';
+
+assert.equal(APP_VERSION,515);assert.equal(APP_ANNOUNCEMENT.version,515);assert.equal(APP_CHANGES.length,2,'This edition contains only the two new experiences');
+const kinds=['glass-controls-515','message-actions-515'],prefixes=['glass','messages'];
+for(const bad of ['unknown','__proto__','toString','https://fixture.invalid/other'])assert.throws(()=>experienceReleaseCard(bad));
+const expectedKeys=prefixes.flatMap(p=>['Title','Text','Where'].map(part=>'experienceReleaseUi.'+p+part)).sort();
+for(const language of ['ru','en','az','tg','uz','kk','de','ar'])assert.deepEqual(Object.keys(source[language]).sort(),expectedKeys);
+const artExpected={
+ 'glass-controls-515':{bytes:4618,sha256:'18a2a9b865abebab56eff0dc40b917b18ea1fce1e7cedb1387e42aa7e7388668'},
+ 'message-actions-515':{bytes:3651,sha256:'8c683aec96e9f508d7df9b357a3dc890d20e386e05c16843da1107fcff6b2213'}
+};
+for(const kind of kinds){const b=await fs.readFile(new URL('../dist/assets/updates/'+kind+'.svg',import.meta.url)),svg=b.toString('utf8');assert.equal(b.length,artExpected[kind].bytes);assert.equal(crypto.createHash('sha256').update(b).digest('hex'),artExpected[kind].sha256);assert.match(svg,/viewBox=["']0 0 640 420["']/);assert.match(svg,/<title[\s>]/);assert.match(svg,/<desc[\s>]/);assert.doesNotMatch(svg,/<(?:script|image|foreignObject|animate|animateTransform)\b/i,'Feature artwork is a self-contained static vector, not generic external media');assert.doesNotMatch(svg,/(?:href|url)\s*[=(]\s*["']?(?:https?:|data:)/i);}
+const w=new Window({url:'https://fixture.invalid/#more'}),doc=w.document;Object.defineProperty(doc,'hidden',{value:false,writable:true,configurable:true});Object.assign(globalThis,{window:w,document:doc,matchMedia:w.matchMedia.bind(w),MutationObserver:w.MutationObserver});
+let mediaCalls=0;w.HTMLMediaElement.prototype.play=w.HTMLMediaElement.prototype.pause=()=>{mediaCalls++;};
+doc.body.innerHTML='<dialog><div id="release-root"></div></dialog><input id="draft" value="keep">';const dialog=doc.querySelector('dialog'),root=doc.getElementById('release-root');
+setInterfaceLanguage('ru');root.innerHTML=illustratedReleaseMarkup(515,APP_CHANGES);const cards=[...root.querySelectorAll('.release-feature')];assert.equal(cards.length,2);assert.deepEqual(cards.map(c=>c.dataset.experienceRelease),kinds);assert.deepEqual([...root.querySelectorAll('.release-new-art img')].map(i=>i.getAttribute('src')),kinds.map(k=>'./assets/updates/'+k+'.svg'));assert.equal(root.querySelector('.release-motion-preview,[data-release-motion-part],audio,video'),null,'Static cards introduce no motion or playback loop');
+for(const card of cards){const picture=card.querySelector('.release-new-art');assert.equal(picture.getAttribute('aria-hidden'),'true');assert.equal(picture.querySelector('img').getAttribute('alt'),'');}
+bindIllustratedRelease(root);dialog.showModal();const next=root.querySelector('[data-release-next]'),page=root.querySelector('[data-release-page]'),initialImages=[...root.querySelectorAll('.release-new-art img')],initialCards=cards.slice();next.focus();next.click();assert.equal(page.textContent,'2/2');
+for(const language of ['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);for(const[i,card]of cards.entries()){assert.equal(card,initialCards[i]);assert.equal(card.dir,language==='ar'?'rtl':'ltr');assert.equal(card.querySelector('h3').textContent,source[language]['experienceReleaseUi.'+prefixes[i]+'Title']);assert.equal(card.querySelector('h3').textContent,t('experienceReleaseUi.'+prefixes[i]+'Title'));assert.equal(card.querySelector('p').textContent,source[language]['experienceReleaseUi.'+prefixes[i]+'Text']);assert.equal(card.querySelector('.release-feature-note').textContent,source[language]['experienceReleaseUi.'+prefixes[i]+'Where']);assert.equal(card.querySelector('img'),initialImages[i]);assert.ok(card.textContent.trim().length>80);}assert.equal(doc.activeElement,next);assert.equal(page.textContent,'2/2','Language changes retain the selected gallery card');assert.equal(root.querySelector('.release-gallery-strip').dir,'ltr');}
+setInterfaceLanguage('ru');assert.match(cards[0].textContent,/по умолчанию/);assert.match(cards[0].textContent,/отдельно/);assert.ok(cards[0].textContent.includes(t('common.settings')+' → '+t('settings.appearance')));assert.match(cards[1].textContent,/сообщения или чаты/);assert.match(cards[1].textContent,/когда доступно/);assert.match(cards[1].textContent,/Отдельное сообщение у всех удаляет только его автор/);assert.match(cards[1].textContent,/личных и командных чатах сотрудников/);assert.doesNotMatch(cards[1].textContent,/поддержк/iu,'This feature is scoped to staff messaging, not Support');assert.equal(root.querySelector('[data-experience-release="home-sky-505"]'),null);assert.equal(mediaCalls,0);assert.equal(doc.getElementById('draft').value,'keep');assert.equal(w.location.hash,'#more');dialog.close();root.remove();await w.happyDOM.close();
+console.log('PASS:515 has exactly2 feature-specific static pictures and6×8 localized captions; optional glass/defaults/where, selected-message reply/copy, message/chat removal, individual author-only Everyone and staff scope, actual gallery language/focus/RTL/card retention and no media/navigation actions.');

@@ -298,7 +298,9 @@ function paintWeather(effect,now,weather,frame,home,scene){
  // Dense cloud hides celestial discs and removes warm, direct sunlight.
  scene.style.setProperty('--scene-clouds',String(clouds));
  const fog=active&&view.kind==='fog',opaque=clouds>=.94;
- lastCloudCover=clouds;const weatherReset=setSkyWeather({clouds,fog:fog?1:0},scenePreview||!active||weatherPreview===null&&!settings.weather||reduced||!settings.transitions);
+ // Leaving Home only pauses its renderer. Keep its weather snapshot and any
+ // real transition so returning never replays a clear-to-cloudy introduction.
+ lastCloudCover=clouds;const weatherReset=home&&setSkyWeather({clouds,fog:fog?1:0},scenePreview||!active||weatherPreview===null&&!settings.weather||reduced||!settings.transitions);
  prepareCloudTexture(scene,home&&!!skySurface?.valid&&scene.dataset.imagePending!=='true');
  scene.style.setProperty('--scene-sky-visibility',String(fog||opaque?0:Math.max(0,1-clouds*clouds*1.08)));
  scene.style.setProperty('--scene-direct-light',String(fog||opaque?0:1-clouds*.92));

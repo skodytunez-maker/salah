@@ -41,9 +41,9 @@ export function read(key,fallback){
 export function write(key,value){
  try{localStorage.setItem('salah:'+key,JSON.stringify(value));return true}catch{storageProblem('Не удалось сохранить данные. Проверьте свободное место и доступ к хранилищу.');return false}
 }
-export const defaults={uiLanguage:'auto',tyumenTimeSource:'auto',madhhab:'general',city:null,travelEnabled:false,travelHomeCity:null,travelCity:null,travelActive:'home',method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,liveSky:false,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
+export const defaults={uiLanguage:'auto',tyumenTimeSource:'auto',madhhab:'general',city:null,travelEnabled:false,travelHomeCity:null,travelCity:null,travelActive:'home',method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,liveSky:false,glassEnabled:false,glassTableTransparency:80,glassPlayerTransparency:65,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
 const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-const BOOLEAN_FIELDS=['travelEnabled','weather','weatherAnimation','liveSky','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
+const BOOLEAN_FIELDS=['travelEnabled','weather','weatherAnimation','liveSky','glassEnabled','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
 const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders','colorTheme']);
 const validTime=value=>typeof value==='string'&&(value===''||personalTime(value)!=='');
 export function normalizeSettings(value,{strict=false,warnings=[]}={}){
@@ -74,6 +74,7 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
  }
  if(Object.hasOwn(value,'ambientSound')){if(['rain','wind'].includes(value.ambientSound))result.ambientSound=value.ambientSound;else bad('Некорректный звук атмосферы.')}
  if(Object.hasOwn(value,'ambientVolume')){if(Number.isInteger(value.ambientVolume)&&value.ambientVolume>=0&&value.ambientVolume<=60)result.ambientVolume=value.ambientVolume;else bad('Некорректная громкость атмосферы.')}
+ for(const key of ['glassTableTransparency','glassPlayerTransparency'])if(Object.hasOwn(value,key)){if(Number.isInteger(value[key])&&value[key]>=0&&value[key]<=100)result[key]=value[key];else bad('Некорректная настройка «'+key+'».')}
  result.wallpaper=wallpaperChoice(value.wallpaper);
  result.backgroundMode=backgroundMode(value.backgroundMode,result.dynamic);result.dynamic=result.backgroundMode==='auto';
  if(Object.hasOwn(value,'travelActive')){if(['home','away'].includes(value.travelActive))result.travelActive=value.travelActive;else bad('Некорректная местность режима путника.');}
@@ -126,7 +127,8 @@ export const settings=normalizeSettings(read('settings',{}),{warnings:storageWar
 export const history=normalizeHistory(read('history',{}),{warnings:storageWarnings});
 const replace=(target,value)=>{for(const key of Object.keys(target))delete target[key];Object.assign(target,value)};
 // Keep live references used by the app and other modules when restoring data.
-export function replacePersonalState(nextSettings,nextHistory){replace(settings,nextSettings);replace(history,nextHistory)}
+function notifySettingsChanged(){if(typeof window==='undefined'||typeof window.dispatchEvent!=='function')return;try{const EventType=window.Event||globalThis.Event;if(typeof EventType==='function')window.dispatchEvent(new EventType('salah:settings-changed'));}catch{}}
+export function replacePersonalState(nextSettings,nextHistory){replace(settings,nextSettings);replace(history,nextHistory);notifySettingsChanged()}
 export function updateSettings(value){
  if(!isRecord(value))return false;
  // A resumed tab may have an older in-memory snapshot. Partial changes must
@@ -134,7 +136,7 @@ export function updateSettings(value){
  const latest=normalizeSettings(read('settings',settings),{warnings:storageWarnings});
  const merged={...latest,...value,offsets:{...latest.offsets,...(isRecord(value.offsets)?value.offsets:{})},tableOffsets:{...latest.tableOffsets,...(isRecord(value.tableOffsets)?value.tableOffsets:{})},mosqueTimes:{...latest.mosqueTimes,...(isRecord(value.mosqueTimes)?value.mosqueTimes:{})}};
  if(!Object.hasOwn(value,'backgroundMode')&&Object.hasOwn(value,'dynamic'))merged.backgroundMode=value.dynamic===false?'dark':'auto';
- const normalized=normalizeSettings(merged,{warnings:storageWarnings});replace(settings,normalized);const saved=write('settings',settings);if(saved&&typeof window!=='undefined')window.dispatchEvent(new Event('salah:settings-changed'));return saved;
+ const normalized=normalizeSettings(merged,{warnings:storageWarnings});replace(settings,normalized);const saved=write('settings',settings);if(saved)notifySettingsChanged();return saved;
 }
 export function markPrayer(day,key,value){
  if(!validDay(day)||!PRAYERS.includes(key)||!['done','ontime','later',null].includes(value))return false;

@@ -46,3 +46,50 @@ body.staff-messenger-open #mobile-nav{display:none!important}
 .staff-cabinet .staff-messenger .staff-conversation-window.is-mobile.is-keyboard-open .staff-composer{padding-bottom:8px}
 
 .staff-cabinet .staff-messenger .staff-composer>.salah-emoji-panel{margin-top:8px}
+
+/* Message layout and actions belong only to the actual personal/team messenger. */
+.staff-cabinet .staff-messenger .staff-message{display:flex;justify-content:flex-start;direction:ltr;margin-bottom:9px}
+.staff-cabinet .staff-messenger .staff-message.is-mine{justify-content:flex-end}
+.staff-cabinet .staff-messenger .staff-bubble{width:fit-content;max-width:min(90%,620px);min-width:80px;padding:7px 10px;border-radius:15px 15px 15px 4px;text-align:start}
+.staff-cabinet .staff-messenger .staff-message.is-mine .staff-bubble{border-radius:15px 15px 4px 15px}
+.staff-cabinet .staff-messenger .staff-bubble::after{content:"";display:block;clear:both}
+.staff-messenger .staff-message-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.staff-messenger .staff-message-heading>strong{min-width:0;overflow-wrap:anywhere}
+.staff-cabinet .staff-messenger .staff-message-actions{display:flex;align-items:center;justify-content:center;flex:none;width:36px;min-width:36px;height:36px;min-height:36px;margin:-5px -7px -3px 0;padding:4px;border:0;border-radius:10px;background:transparent;color:#b8c5d5;font-size:25px;line-height:1;cursor:pointer}
+.staff-messenger .staff-message-actions:focus-visible{outline:2px solid var(--gold,#d9c58f);outline-offset:-2px}
+.staff-cabinet .staff-messenger .staff-bubble>p{display:inline;white-space:pre-wrap;margin:0;line-height:1.5;overflow-wrap:anywhere}
+.staff-cabinet .staff-messenger .staff-bubble>time{display:inline;float:right;margin:7px 0 -1px 12px;font-size:10px;line-height:1.3;white-space:nowrap;direction:ltr;color:#b6c1cf}
+.staff-messenger .staff-message-reply{display:flex;flex-direction:column;gap:3px;margin:4px 0 7px;padding:7px 9px;border-inline-start:3px solid #b6a479;border-radius:7px;background:rgba(0,0,0,.18);font-size:12px;line-height:1.4;overflow:hidden}
+.staff-messenger .staff-message-reply>strong,.staff-messenger .staff-message-reply>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.staff-cabinet .staff-messenger .staff-composer-reply{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding:7px 8px;border-inline-start:3px solid #d9c58f;background:#182437;border-radius:8px;min-width:0}
+.staff-messenger .staff-composer-reply>div{flex:1;min-width:0}
+.staff-messenger .staff-composer-reply strong,.staff-messenger .staff-composer-reply span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:1.5}
+.staff-messenger .staff-composer-reply span{color:#aebbd0}
+.staff-messenger .staff-message-menu{position:fixed;inset:0;margin:auto;width:min(360px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:10px;border:1px solid #4a4b44;border-radius:18px;color:#e6edf6;background:#111d2e;box-shadow:0 16px 50px #0009;overflow:auto;overscroll-behavior:contain}
+.staff-messenger .staff-message-menu::backdrop{background:rgba(3,9,18,.72)}
+.staff-messenger .staff-message-menu:not([open]){display:none}
+body.staff-message-menu-open{overflow:hidden}
+.staff-messenger .staff-message-selection{padding:10px 12px;margin-bottom:6px;border-radius:12px;background:#233246;border:1px solid #445066;text-align:start;overflow-wrap:anywhere;max-height:35dvh;overflow:auto}
+.staff-messenger .staff-message-selection strong{font-size:12px;color:#d9c58f}
+.staff-messenger .staff-message-selection p{margin:5px 0 0;white-space:pre-wrap;font-size:14px;line-height:1.5}
+.staff-messenger .staff-message-menu-buttons{display:flex;flex-direction:column;gap:2px}
+.staff-messenger .staff-message-menu-buttons button{min-height:46px;width:100%;border:0;border-radius:10px;background:transparent;color:inherit;text-align:start;padding:10px 12px;font:inherit;cursor:pointer}
+.staff-messenger .staff-message-menu-buttons button:hover,.staff-messenger .staff-message-menu-buttons button:focus-visible{background:#26374e;outline:2px solid #d9c58f;outline-offset:-2px}
+.staff-messenger .staff-copy-buffer{position:fixed;inset:0 auto auto -10000px;width:1px;height:1px;opacity:0}
+
+
+.staff-cabinet .staff-messenger .staff-chat-heading>div{flex:1}
+.staff-cabinet .staff-messenger .staff-chat-actions{flex:none;min-width:44px;min-height:44px;background:transparent;border:0;color:#d9c58f;font-size:25px}
+
+.staff-messenger button.staff-message-reply{width:100%;text-align:start;color:inherit;border:0;border-inline-start:3px solid #b6a479;cursor:pointer}
+.staff-messenger button.staff-message-reply:focus-visible{outline:2px solid var(--gold,#d9c58f);outline-offset:2px}
+.staff-messenger .staff-message.is-reply-source .staff-bubble{outline:2px solid var(--gold,#d9c58f);outline-offset:2px}
+
+/* Group-only sender gutter and stable, readable name colours. */
+.staff-messenger .staff-message.is-team-message:not(.is-mine){position:relative;padding-inline-start:36px}
+.staff-messenger .staff-message-avatar{position:absolute;inset-inline-start:0;bottom:2px;width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#23354a;color:#e1e8f0;font-size:10px;overflow:hidden}
+.staff-messenger .staff-message-avatar img{width:100%;height:100%;object-fit:cover}
+.staff-messenger .is-team-message[data-author-color="0"] .staff-message-heading>strong{color:#c7dbb4}
+.staff-messenger .is-team-message[data-author-color="1"] .staff-message-heading>strong{color:#b9d4ee}
+.staff-messenger .is-team-message[data-author-color="2"] .staff-message-heading>strong{color:#dfc2e5}
+.staff-messenger .is-team-message[data-author-color="3"] .staff-message-heading>strong{color:#ebcf9b}

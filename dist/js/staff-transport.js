@@ -1,8 +1,13 @@
 import{accountAuthClient,OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
 import{staffUiError}from './staff-ui.js';
 const messages={invalid_subscription:'Телефон не подтвердил подключение уведомлений.',device_limit:'Достигнут лимит подключённых устройств.',sender_unavailable:'Сервис доставки временно недоступен.',sign_in_required:'Войдите в свой аккаунт.',invalid_session:'Войдите в аккаунт снова.',staff_only:'Доступ к команде не назначен.',forbidden:'Доступ закрыт. Обновите кабинет.',owner_only:'Это действие доступно владельцу.',mfa_required:'Подтвердите защищённый вход.',workspace_unavailable:'Кабинет пока недоступен. Попробуйте позже.',auth_unavailable:'Не удалось проверить вход.',revision_conflict:'Черновик уже изменён. Откройте его заново.',catalog_conflict:'Материал уже обновлён. Создайте новый черновик.',draft_locked:'Черновик уже отправлен. Дождитесь проверки.',unsupported_file:'Поддерживаются фото, PDF, TXT, ZIP и документы Office.',file_too_large:'Файл должен быть не больше 10 МБ.',paired_images_required:'Добавьте дневную и ночную версии для обоих размеров.',paired_dimensions_required:'День и ночь должны быть одного размера.',image_orientation_required:'Для телефона нужен вертикальный фон, для планшета — горизонтальный.',incomplete_reciter:'Добавьте портрет и адрес записи.',invalid_audio_source:'Проверьте адрес записи из поддерживаемой библиотеки.',invalid_image:'Не удалось прочитать фото.',chat_rate_limit:'Сообщений слишком много. Подождите минуту.',chat_upload_limit:'Лимит файлов за день достигнут.',support_rate_limit:'Подождите минуту перед следующим ответом.',invalid_parameters:'Проверьте заполненные поля.'};
-export async function staffRequest(action,args={},signal){
- const {data,error}=await accountAuthClient().auth.getSession();if(error||!data?.session)throw staffUiError(messages.sign_in_required,'sign_in_required');
+const cancelledRequest=()=>Object.assign(Error('staff_request_aborted'),{name:'AbortError'});
+export async function staffRequest(action,args={},signal,{expectedActor}={}){
+ if(signal?.aborted)throw cancelledRequest();
+ const {data,error}=await accountAuthClient().auth.getSession();
+ if(signal?.aborted)throw cancelledRequest();
+ if(error||!data?.session)throw staffUiError(messages.sign_in_required,'sign_in_required');
+ if(signal?.aborted||expectedActor!==undefined&&data.session.user?.id!==expectedActor)throw cancelledRequest();
  const response=await fetch(OWNER_PROJECT_URL+'/functions/v1/staff-cabinet',{method:'POST',headers:{apikey:OWNER_PUBLIC_KEY,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify({action,args}),credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store',signal:signal||AbortSignal.timeout(30000)});
  let result;try{result=await response.json();}catch{throw staffUiError(messages.workspace_unavailable);}
  if(!response.ok)throw Object.assign(staffUiError(messages[result.error]||messages.workspace_unavailable,result.error),{code:result.error});return result.data;

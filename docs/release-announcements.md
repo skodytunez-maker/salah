@@ -1,5 +1,9 @@
 # SALAH release announcements
 
+## Candidate515 — optional glass and messenger actions (18 November2026)
+
+The new announcement contains only the two new feature families: optional independent timetable/mini-player glass transparency, and team/direct messenger reply, copy and deletion of selected messages or whole chats. Both have dedicated original SVG UI illustrations and explicit captions in the eight interface languages. The selected-message Everyone action is author-only; whole direct-chat clearing is participant-only and team-room clearing is owner-only. The new edition has its own515 acknowledgement and expires on25November2026 at23:59:59UTC. It includes no old Quran, map, sky, billing or support-ticket cards. The private Home weather continuity correction does not advertise the experimental sky to ordinary users. The migration and Edge function are staged with isolated authorization/cache-race tests; no real conversation is cleared during verification. See experience-515.md for source and physical-device limits. The owner explicitly authorized public515 after receiving its private preview; ordinary users retain the existing closed advanced-sky policy. Physical-phone review is not claimed.
+
 Release514 restores the verified owner’s atmosphere controls while keeping only the new living sky closed to ordinary users. It also repairs system-pause failure paths, touch focus on player arrows and the unfinished startup shell; see `stability-514.md`. Preserve announcement505, its artwork, acknowledgement and expiry. The owner explicitly authorized releasing these stability fixes to all users; a further phone check is a follow-up, not a publication hold. Fixture passes do not prove that the recorded iOS pause problem is resolved on the physical device. No external push, backend change or replacement wallpaper is included.
 
 ## Version505 — sky for the selected prayer city (17 November2026)

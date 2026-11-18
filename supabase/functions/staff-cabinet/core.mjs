@@ -57,7 +57,9 @@ export function validateAction(action,args){
  if(action==='chat.push.register'){exactObject(args,['device','account','platform','subscription','token','renew']);if(!['web','android'].includes(args.platform)||args.renew!==undefined&&typeof args.renew!=='boolean')fail();const out={device:id(args.device),account:id(args.account),platform:args.platform,renew:args.renew===true};if(args.platform==='web'){if(args.token!==undefined)fail();out.subscription=staffPushSubscription(args.subscription);}else{if(args.subscription!==undefined||typeof args.token!=='string'||args.token.length<100||args.token.length>4096||!/^[-\w:.]+$/.test(args.token))fail();out.token=args.token;}return out;}
  if(action==='chat.open'){exactObject(args,['userId']);return{userId:id(args.userId)};}
  if(action==='chat.read'){exactObject(args,['roomId','before','beforeId']);if(args.beforeId&&!args.before)fail();return{roomId:id(args.roomId),before:timestamp(args.before),...(args.beforeId?{beforeId:id(args.beforeId)}:{})};}
- if(action==='chat.send'){exactObject(args,['roomId','messageId','body','files']);if(!Array.isArray(args.files)||args.files.length>5||new Set(args.files).size!==args.files.length)fail('invalid_files');const body=cleanText(args.body||'',5000,{empty:true});if(!body&&!args.files.length)fail('invalid_message');return{roomId:id(args.roomId),messageId:id(args.messageId),body,files:args.files.map(id)};}
+ if(action==='chat.clear'){exactObject(args,['roomId','scope','operationId']);if(!['self','everyone'].includes(args.scope))fail();return{roomId:id(args.roomId),scope:args.scope,operationId:id(args.operationId)};}
+ if(action==='chat.delete'){exactObject(args,['roomId','messageId','scope']);if(!['self','everyone'].includes(args.scope))fail();return{roomId:id(args.roomId),messageId:id(args.messageId),scope:args.scope};}
+ if(action==='chat.send'){exactObject(args,['roomId','messageId','body','files','replyTo']);if(!Array.isArray(args.files)||args.files.length>5||new Set(args.files).size!==args.files.length)fail('invalid_files');const body=cleanText(args.body||'',5000,{empty:true});if(!body&&!args.files.length)fail('invalid_message');return{roomId:id(args.roomId),messageId:id(args.messageId),body,files:args.files.map(id),...(args.replyTo===undefined||args.replyTo===null?{}:{replyTo:id(args.replyTo)})};}
  if(action==='asset.upload'){exactObject(args,['id','kind','data']);if(typeof args.data!=='string'||args.data.length>2800000)fail('invalid_image');return{id:id(args.id),kind:kind(args.kind),data:args.data};}
  if(action==='chat.file.upload'){exactObject(args,['roomId','filename','data']);if(typeof args.data!=='string'||args.data.length>14000000)fail('invalid_file');return{roomId:id(args.roomId),filename:cleanFilename(args.filename),data:args.data};}
  fail('invalid_action');
@@ -133,7 +135,7 @@ export function createStaffHandler({getUser,getClaims,rpc,storage,sha256,uuid=()
    if(error.status)return reply(error.status,{error:error.message});
    if(error.code==='42501')return reply(403,{error:'forbidden'});
    if(['22023','22P02','23514','23502'].includes(error.code))return reply(400,{error:'invalid_parameters'});
-   if(['revision_conflict','catalog_conflict','draft_locked'].includes(error.message))return reply(409,{error:error.message});
+   if(['revision_conflict','catalog_conflict','draft_locked','reply_unavailable'].includes(error.message))return reply(409,{error:error.message});
    if(['support_rate_limit','chat_rate_limit','chat_upload_limit','draft_limit','asset_limit','catalog_limit'].includes(error.message))return reply(429,{error:error.message});
    return reply(503,{error:'workspace_unavailable'});
   }
