@@ -107,3 +107,66 @@ nightPainter.render({...nightFrame,instant:base.instant,clouds:.64});const alpha
 assert.equal(nightPainter.render({...nightFrame,clouds:0,fog:1}).skyVisibility,0);
 const clearNight=skyAtmosphereStyle({...nightFrame,clouds:0});assert.deepEqual([clearNight.zenith,clearNight.middle,clearNight.horizon],[[4,10,24],[8,16,32],[12,21,38]],'The approved clear-night navy remains exact');nightPainter.dispose();
 console.log('PASS: deterministic daily/location variation without midnight seams; continuous opaque sky; photographic local cloud density; independent bounded flow; fog/overcast gates; tiny skies; frozen/remount/seek stability; source readiness and disposal.');
+
+// Reference captures use the unmodified public518 mathematical painter with
+// only source/field bounds512/256/320. They independently constrain the
+// allocation-free sampler through motion, moved sunlight, resizing and night.
+const fineFixtures=[
+  {
+    "frame": {},
+    "hash": "288af5a76cba5049136755d630cce6dc4b932f3c17d1c7828f0cfaaecd0f89b4"
+  },
+  {
+    "frame": {
+      "motionTime": 24
+    },
+    "hash": "758cffdd7988639b6ec74dbff0be43a9f05ce1fce53bc2bd9273230a05869666"
+  },
+  {
+    "frame": {
+      "sun": {
+        "x": 80,
+        "y": 160,
+        "altitude": 11
+      }
+    },
+    "hash": "4c694e90a9f54d620438b1590954fa2502d05d23848fdd3ff14cb4ea31cb1959"
+  },
+  {
+    "frame": {
+      "width": 853,
+      "height": 1844,
+      "horizonY": 70
+    },
+    "hash": "23f3940568414b342a02c789ab314d041500b2a42ed8f8155bb334ef97a65fd8"
+  },
+  {
+    "frame": {
+      "width": 393,
+      "height": 852,
+      "horizonY": 520,
+      "clouds": 1,
+      "day": 0,
+      "sun": {
+        "x": 230,
+        "y": 510,
+        "altitude": -15
+      }
+    },
+    "hash": "59d75dc5b4d48fcf9bd61d0c66398c185a46748df889ef54eac7369dc7ab52d2"
+  },
+  {
+    "frame": {
+      "clouds": 0,
+      "fog": 1
+    },
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+];
+const finePainter=createSkyAtmosphere({canvasFactory:factory,texture,cloudDetail:'fine'}),fineSky=canvas(),fineCloud=canvas();
+for(const row of fineFixtures){finePainter.render({...base,...row.frame,skyCanvas:fineSky,cloudCanvas:fineCloud});assert.equal(createHash('sha256').update(fineCloud.context.pixels||new Uint8Array()).digest('hex'),row.hash,'Fine output preserves the independent reference after state changes');assert.ok((fineCloud.context.pixels?.length||0)<=256*320*4,'Fine raster work is bounded');}
+finePainter.render({...base,skyCanvas:fineSky,cloudCanvas:fineCloud});const fineAllocations=allocations,fineReads=reads;
+for(let i=0;i<8;i++)finePainter.render({...base,skyCanvas:fineSky,cloudCanvas:fineCloud,motionTime:i/12});
+assert.equal(allocations,fineAllocations,'Fine movement reuses its raster surfaces');assert.equal(reads,fineReads,'Fine movement never rereads the source photograph');
+finePainter.dispose();assert.equal(finePainter.render({...base,skyCanvas:fineSky,cloudCanvas:fineCloud}).sourceReady,false);
+console.log('PASS fine sky: independent reference pixels, motion/light/resize/night/fog transitions,256x320 bounded field, reusable surfaces/source and disposal.');

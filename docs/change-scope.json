@@ -1,85 +1,45 @@
 {
   "schema": 1,
-  "version": 518,
-  "baseCommit": "e3c8c939b5405f366a12226816731469d3fa777d",
-  "baseTree": "c2ee27dd9a7c87b33f1d0e92b8624b98541b4fe9",
-  "note": "Requested Support layout and owner/admin continuation; public common corrections, no new Support news or external push. Advanced living sky and every photo excluded.",
+  "version": 519,
+  "baseCommit": "8bac874389ddd29781852d7534ff2aada01b89e5",
+  "baseTree": "7f26cb0f33b43c72fbe7461614a76aef0044df94",
+  "note": "Owner-only sky candidate519 for review. Preserve public518 and all Support fixes; no global merge, public latest update, ordinary-user living sky, backend change or external push before phone review.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "reason": "Document and bind the isolated candidate for review; preserve515 news and current public518."
     },
     {
       "path": "design-qa.md",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
-    },
-    {
-      "path": "dist/css/support.css",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "reason": "Document and bind the isolated candidate for review; preserve515 news and current public518."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "reason": "Document and bind the isolated candidate for review; preserve515 news and current public518."
     },
     {
-      "path": "dist/js/staff-cabinet.js",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "path": "dist/js/sky-atmosphere.js",
+      "reason": "Bound only explicit advanced sky detail and reuse synchronous sample/flow state; keep original astronomy, weather gates and photographs."
     },
     {
-      "path": "dist/js/support-chat-view.js",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
-    },
-    {
-      "path": "dist/js/support-client.js",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "path": "dist/js/weather.js",
+      "reason": "Bound only explicit advanced sky detail and reuse synchronous sample/flow state; keep original astronomy, weather gates and photographs."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "reason": "Document and bind the isolated candidate for review; preserve515 news and current public518."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "reason": "Document and bind the isolated candidate for review; preserve515 news and current public518."
     },
     {
-      "path": "docs/release-announcements.md",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
+      "path": "docs/home-sky-detail-519.md",
+      "reason": "Document and bind the isolated candidate for review; preserve515 news and current public518."
     },
     {
-      "path": "docs/support-layout-518.md",
-      "reason": "Only the requested Support placement, footer and continuation control; preserve existing news, sky, photos and other sections."
-    },
-    {
-      "path": "scripts/check-support-case-lifecycle.mjs",
-      "reason": "Regress the reported layout, closed-case continuation and existing behavior using actual CSS/DOM/SQL."
-    },
-    {
-      "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Regress the reported layout, closed-case continuation and existing behavior using actual CSS/DOM/SQL."
-    },
-    {
-      "path": "scripts/check-support-layout.mjs",
-      "reason": "Regress the reported layout, closed-case continuation and existing behavior using actual CSS/DOM/SQL."
-    },
-    {
-      "path": "scripts/check-support-operator-reopen.mjs",
-      "reason": "Regress the reported layout, closed-case continuation and existing behavior using actual CSS/DOM/SQL."
-    },
-    {
-      "path": "scripts/check-support-operator-ui.mjs",
-      "reason": "Regress the reported layout, closed-case continuation and existing behavior using actual CSS/DOM/SQL."
-    },
-    {
-      "path": "supabase/functions/staff-cabinet/core.mjs",
-      "reason": "Enable explicit operator continuation using existing fresh-session/MFA owner/admin authority; preserve private/shared case boundaries."
-    },
-    {
-      "path": "supabase/migrations/20261118162151_support_operator_reopen_518.sql",
-      "reason": "Enable explicit operator continuation using existing fresh-session/MFA owner/admin authority; preserve private/shared case boundaries."
-    },
-    {
-      "path": "tests/support/chat-fixture.mjs",
-      "reason": "Regress the reported layout, closed-case continuation and existing behavior using actual CSS/DOM/SQL."
+      "path": "scripts/check-sky-atmosphere.mjs",
+      "reason": "Regress independent public518 reference output at the new bounds, plus existing source/phase/motion/lifecycle contracts."
     }
   ],
   "baseline": [
@@ -133,19 +93,19 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "2e6b35aaa4dbdb80ea2bdb21ca779a0a65a7d619"
+      "sha": "3c06cc6bf1c6d91bfb1944f09705cf89d3e51f96"
     },
     {
       "path": "ANALYTICS.md",
       "sha": "edfcf0f561614d17c721046a6b474030b754d33c"
     },
     {
-      "path": "design/window-wallpaper-assets.json",
-      "sha": "e0f970da203faf2f421bb4e6749af0e7ffd31072"
+      "path": "design-qa.md",
+      "sha": "8b8a92a2d42e488d44e3e663c23bf04164bf5e3c"
     },
     {
-      "path": "design-qa.md",
-      "sha": "f6ad57f85007d195696f223b2972ab933824babf"
+      "path": "design/window-wallpaper-assets.json",
+      "sha": "e0f970da203faf2f421bb4e6749af0e7ffd31072"
     },
     {
       "path": "dist/.nojekyll",
@@ -1453,7 +1413,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "1c35d1b6fe8d84dafceaeeee73a48a522d55f90f"
+      "sha": "1bcd5ff22452ef55c33b1a38d9ffe3e092c6896a"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -1532,464 +1492,12 @@
       "sha": "364df30663f3d5f2b273896e85607c33c3573628"
     },
     {
-      "path": "dist/data/quran/1.json",
-      "sha": "a7d58d8697f8ccccf0826c2dc01dec58b9b9f502"
-    },
-    {
-      "path": "dist/data/quran/10.json",
-      "sha": "967b6af1e2f87096d65f5d489398c8bb7778c84f"
-    },
-    {
-      "path": "dist/data/quran/100.json",
-      "sha": "ccf0d0bb85cb06af07cc8a8121632f58be390d51"
-    },
-    {
-      "path": "dist/data/quran/101.json",
-      "sha": "bc1d64252f6954467510c24e4b9893344150f6ca"
-    },
-    {
-      "path": "dist/data/quran/102.json",
-      "sha": "6a35d2be76798d7cbdb246b354b08614d506142e"
-    },
-    {
-      "path": "dist/data/quran/103.json",
-      "sha": "c716c5c06a3c546fe38fb9ca88aefc159ef7c797"
-    },
-    {
-      "path": "dist/data/quran/104.json",
-      "sha": "a15b9fe6bef6268f7db9170d9024a886e8dabace"
-    },
-    {
-      "path": "dist/data/quran/105.json",
-      "sha": "db7df38cd694ede665f53009f20279151ce8e846"
-    },
-    {
-      "path": "dist/data/quran/106.json",
-      "sha": "50604ad916e468fcc19fac2e986ef8f5f309e245"
-    },
-    {
-      "path": "dist/data/quran/107.json",
-      "sha": "05bfcf18144a3d6796fbf9e3acf5d347e402e0f0"
-    },
-    {
-      "path": "dist/data/quran/108.json",
-      "sha": "5f65ca5f000af5d480b0dd097c70e1f9dfe9356a"
-    },
-    {
-      "path": "dist/data/quran/109.json",
-      "sha": "acc026e2f153aafaf26bf51f0ecabe2da9a7d1bd"
-    },
-    {
-      "path": "dist/data/quran/11.json",
-      "sha": "95122f527f7b39761cf317afd75c6b3b38471338"
-    },
-    {
-      "path": "dist/data/quran/110.json",
-      "sha": "7127d06925ec002848c9361767540984cd90cd1a"
-    },
-    {
-      "path": "dist/data/quran/111.json",
-      "sha": "a4670c26ff0a0b17a9000982b653b5f40915ae51"
-    },
-    {
-      "path": "dist/data/quran/112.json",
-      "sha": "373bd900badd5965d4de38eaf4e77a076fda8350"
-    },
-    {
-      "path": "dist/data/quran/113.json",
-      "sha": "d99d990208d5affbf96961ffed967a2ee31b9248"
-    },
-    {
-      "path": "dist/data/quran/114.json",
-      "sha": "4ecabacfcd87fbafb016ab031c11ff9d8c820979"
-    },
-    {
-      "path": "dist/data/quran/12.json",
-      "sha": "fd0d1f65ebdc958111afc5dc792746baa17fbbe1"
-    },
-    {
-      "path": "dist/data/quran/13.json",
-      "sha": "b4b85c5165eb23fea2112af3624f32796eb76457"
-    },
-    {
-      "path": "dist/data/quran/14.json",
-      "sha": "8c043bb89f2f71e8d5ae89670b593819b1eb2e56"
-    },
-    {
-      "path": "dist/data/quran/15.json",
-      "sha": "f673552ae55f44c2065fd822486688f62c7550d4"
-    },
-    {
-      "path": "dist/data/quran/16.json",
-      "sha": "8d2bc16e70551d9344ce6fa486e50e1e95d181fa"
-    },
-    {
-      "path": "dist/data/quran/17.json",
-      "sha": "93092690ef54348d80be6214e6d50274f2960815"
-    },
-    {
-      "path": "dist/data/quran/18.json",
-      "sha": "2b08dd6efb7cbbfcd64d67820794e9016b765dc3"
-    },
-    {
-      "path": "dist/data/quran/19.json",
-      "sha": "d9c5687946be82fbda407592900a99f9ff6efaa2"
-    },
-    {
-      "path": "dist/data/quran/2.json",
-      "sha": "c437696d2f00d57f3a2780062ba32989e26a1cc0"
-    },
-    {
-      "path": "dist/data/quran/20.json",
-      "sha": "bd69e0daf2e5d142d29287e4319e3b0f53594052"
-    },
-    {
-      "path": "dist/data/quran/21.json",
-      "sha": "a23c644661b91b56548cb275ff245873747c4d54"
-    },
-    {
-      "path": "dist/data/quran/22.json",
-      "sha": "14916bbf5af8b9fa1df89764134c06017ccb3557"
-    },
-    {
-      "path": "dist/data/quran/23.json",
-      "sha": "86dd553b9923a9dd2eb89a7e07cd384a964493bb"
-    },
-    {
-      "path": "dist/data/quran/24.json",
-      "sha": "a4153bee365ab3487e7ddc8942d22a5b184c5b87"
-    },
-    {
-      "path": "dist/data/quran/25.json",
-      "sha": "f685e7f9894ad1e6aa39183c81dfcb6d5420e9b8"
-    },
-    {
-      "path": "dist/data/quran/26.json",
-      "sha": "70ace6087d5ece1f6e2df397a93eb86ac6678874"
-    },
-    {
-      "path": "dist/data/quran/27.json",
-      "sha": "93920a30e025efaabca14818210891530cc81c96"
-    },
-    {
-      "path": "dist/data/quran/28.json",
-      "sha": "5cf19afc86096efe14253751ed6f89494d96c6c5"
-    },
-    {
-      "path": "dist/data/quran/29.json",
-      "sha": "ce8c3d7a956edb1e57c669389e0b68a41ed19ee5"
-    },
-    {
-      "path": "dist/data/quran/3.json",
-      "sha": "be281974f79f231eae244b99c196e4bcff5d6c00"
-    },
-    {
-      "path": "dist/data/quran/30.json",
-      "sha": "755828a1077349e67760a627e54acd65dee18987"
-    },
-    {
-      "path": "dist/data/quran/31.json",
-      "sha": "f04abb988a935940408b7d2221b71cf2cef73ed8"
-    },
-    {
-      "path": "dist/data/quran/32.json",
-      "sha": "f51eebabd96733d834ad2365772cecf4a77434e5"
-    },
-    {
-      "path": "dist/data/quran/33.json",
-      "sha": "2f1601a0d952cb955516bde4aec122aecd04cf1c"
-    },
-    {
-      "path": "dist/data/quran/34.json",
-      "sha": "ffe96705e9a4d0269f4b2eda1f56aed37858b30f"
-    },
-    {
-      "path": "dist/data/quran/35.json",
-      "sha": "ea5bf3f0c0599583620c516292114097ebd47a12"
-    },
-    {
-      "path": "dist/data/quran/36.json",
-      "sha": "9dade826641effdcf24d7c9a0282fe99c6cd857e"
-    },
-    {
-      "path": "dist/data/quran/37.json",
-      "sha": "1dba3e547a3d669f73d808f663f67d31934fb7bb"
-    },
-    {
-      "path": "dist/data/quran/38.json",
-      "sha": "330bc346dbc1230d035943621084a608cc09afbc"
-    },
-    {
-      "path": "dist/data/quran/39.json",
-      "sha": "3cd3ff91bc512a3ed12f15946a6663abe3b892f4"
-    },
-    {
-      "path": "dist/data/quran/4.json",
-      "sha": "978c8a1993eb01553a574cba58db18cf2afaf58e"
-    },
-    {
-      "path": "dist/data/quran/40.json",
-      "sha": "e9cfb1cea8a8159dce14558277f6b62b90f5fd42"
-    },
-    {
-      "path": "dist/data/quran/41.json",
-      "sha": "fe9a81f83dbbab9073b05bb7d930b9da903a55a4"
-    },
-    {
-      "path": "dist/data/quran/42.json",
-      "sha": "f11dbacc389d39f9a06313172a5823b8ab53ffca"
-    },
-    {
-      "path": "dist/data/quran/43.json",
-      "sha": "a3e965aed154da518348c0f49570ea5129c855c4"
-    },
-    {
-      "path": "dist/data/quran/44.json",
-      "sha": "d6302444c41fe7f2a79f3f657e46ed5e48fba326"
-    },
-    {
-      "path": "dist/data/quran/45.json",
-      "sha": "df979fade86089f202665c35bf07d35067c86896"
-    },
-    {
-      "path": "dist/data/quran/46.json",
-      "sha": "2a5f2a9d6556160fb9675d4c331bd91509f30498"
-    },
-    {
-      "path": "dist/data/quran/47.json",
-      "sha": "6b566ab96bbcd8f5829fa63a625eca010982d123"
-    },
-    {
-      "path": "dist/data/quran/48.json",
-      "sha": "4c01ea871e955a9b8870fd9f56c3cbd349588ec4"
-    },
-    {
-      "path": "dist/data/quran/49.json",
-      "sha": "f3ad7825e3f898e0d245333d3279c7399f06649a"
-    },
-    {
-      "path": "dist/data/quran/5.json",
-      "sha": "7cfddc48c44570cd1e65a63b48b2c87389422b21"
-    },
-    {
-      "path": "dist/data/quran/50.json",
-      "sha": "877ec2b77a37d2f5f3c70015e7d3b5c4dcbf696b"
-    },
-    {
-      "path": "dist/data/quran/51.json",
-      "sha": "40cf1ddf18d3adc63c6d508b816fa1e47496acd2"
-    },
-    {
-      "path": "dist/data/quran/52.json",
-      "sha": "8b50174c815ecede68b337553c6ae4ea8e3a3eac"
-    },
-    {
-      "path": "dist/data/quran/53.json",
-      "sha": "34c8b54d0f6b5e81b6b8027ef7e78726815c72a1"
-    },
-    {
-      "path": "dist/data/quran/54.json",
-      "sha": "c399de0fe6891effe4295fd6bf16be76fb0a36c4"
-    },
-    {
-      "path": "dist/data/quran/55.json",
-      "sha": "ff1ab9ffca8fcbe5c189481a86ad16002b11cf5b"
-    },
-    {
-      "path": "dist/data/quran/56.json",
-      "sha": "5f4369d123b2b1abb82d18a1a53878672f31ae02"
-    },
-    {
-      "path": "dist/data/quran/57.json",
-      "sha": "8393fbcd124e831b33b8d4c8b96974b0e0261f0c"
-    },
-    {
-      "path": "dist/data/quran/58.json",
-      "sha": "2ed8521573f48581ed140e8f855fc7c5f10b4560"
-    },
-    {
-      "path": "dist/data/quran/59.json",
-      "sha": "5e9890e5a12db74615900582f65dc822b7adecfa"
-    },
-    {
-      "path": "dist/data/quran/6.json",
-      "sha": "74821fed564824b5d49bf7d933d551bf95f37385"
-    },
-    {
-      "path": "dist/data/quran/60.json",
-      "sha": "ad202c38f9ff82f1f4d2b9c89c66455af0053594"
-    },
-    {
-      "path": "dist/data/quran/61.json",
-      "sha": "9024a91ec320afc217908a462bc77a43e491a7d9"
-    },
-    {
-      "path": "dist/data/quran/62.json",
-      "sha": "3f238b1d0b31228acad0af6b5c97a2f3b96ef01d"
-    },
-    {
-      "path": "dist/data/quran/63.json",
-      "sha": "8ce05fd1bf6d998fbfdff803578f23b3bcad2134"
-    },
-    {
-      "path": "dist/data/quran/64.json",
-      "sha": "f4a10721a9a8a811d832b99ab6347c4ff526ccc4"
-    },
-    {
-      "path": "dist/data/quran/65.json",
-      "sha": "b8ce1e287affa992aba8412ac49a2eb385305652"
-    },
-    {
-      "path": "dist/data/quran/66.json",
-      "sha": "71908754ad84dfc320e009eb460afea1e137112b"
-    },
-    {
-      "path": "dist/data/quran/67.json",
-      "sha": "a5707eb1cb0f6afdf32407e9ff936729d082d01e"
-    },
-    {
-      "path": "dist/data/quran/68.json",
-      "sha": "c50646691dd02f66790c1a2d9fb60d1216b55a27"
-    },
-    {
-      "path": "dist/data/quran/69.json",
-      "sha": "31da1a86b4e7a0fd6e5bb5b072286c74e283cc37"
-    },
-    {
-      "path": "dist/data/quran/7.json",
-      "sha": "c5f626d8186afc9a98d7020c1a6a08cf902deae6"
-    },
-    {
-      "path": "dist/data/quran/70.json",
-      "sha": "ca6a6f54902a39dce4e76675000438f22bd79548"
-    },
-    {
-      "path": "dist/data/quran/71.json",
-      "sha": "5f8c8809bad024815be703b5b3ac624ac7e37acc"
-    },
-    {
-      "path": "dist/data/quran/72.json",
-      "sha": "608715254a9cf006be28e5529b674aa420f70df1"
-    },
-    {
-      "path": "dist/data/quran/73.json",
-      "sha": "3cedf3b04b611d35ade40ee68d83867af5e0cda1"
-    },
-    {
-      "path": "dist/data/quran/74.json",
-      "sha": "60c2f667999d4fb5042ee61da1593bef621b0984"
-    },
-    {
-      "path": "dist/data/quran/75.json",
-      "sha": "7917f59ebaa7afe8af384ec8229c5f54c32c1b7f"
-    },
-    {
-      "path": "dist/data/quran/76.json",
-      "sha": "2b998c3a8b9dcce2a1ba1f79c7a8fcf79f62c64f"
-    },
-    {
-      "path": "dist/data/quran/77.json",
-      "sha": "e02d8b2a48bf03ef2d1139372328d6af546e23e5"
-    },
-    {
-      "path": "dist/data/quran/78.json",
-      "sha": "15dbe3f86ba989c1192e5d930fbfad7aa9948d98"
-    },
-    {
-      "path": "dist/data/quran/79.json",
-      "sha": "7cfc0cfdcd4730bb8aaeae9aa43fef35f0d4c026"
-    },
-    {
-      "path": "dist/data/quran/8.json",
-      "sha": "818a87ee3dd5466dc78eb8d801cc44ca19617cf3"
-    },
-    {
-      "path": "dist/data/quran/80.json",
-      "sha": "3daad39fe48dffddd4a93da30b597ec410546b75"
-    },
-    {
-      "path": "dist/data/quran/81.json",
-      "sha": "99bae5109550011888be2f501006b61e6df300c0"
-    },
-    {
-      "path": "dist/data/quran/82.json",
-      "sha": "10bb80552c61e8716ba15cb153c33e7c9284c61c"
-    },
-    {
-      "path": "dist/data/quran/83.json",
-      "sha": "b608228ba5e35287eeca524cf89299ade5a992ae"
-    },
-    {
-      "path": "dist/data/quran/84.json",
-      "sha": "f851d95e4dc03a3088302565aa1ec07a63bb71ca"
-    },
-    {
-      "path": "dist/data/quran/85.json",
-      "sha": "f00f4b540359a1b2095484dad3fab9bfb8bdc99c"
-    },
-    {
-      "path": "dist/data/quran/86.json",
-      "sha": "5c2d9bf48a57fcb5a503e3d11031f54fcd21eb4a"
-    },
-    {
-      "path": "dist/data/quran/87.json",
-      "sha": "aed75074f605781e534b19671dd23e16d9f25a7d"
-    },
-    {
-      "path": "dist/data/quran/88.json",
-      "sha": "ec580e9e8dedbcc55b2e38730260cc393451beb9"
-    },
-    {
-      "path": "dist/data/quran/89.json",
-      "sha": "3855696afb99a5bc219756848a6c66ba20813c75"
-    },
-    {
-      "path": "dist/data/quran/9.json",
-      "sha": "f1e61334df7b1aaae697ce87044856b16e467a0d"
-    },
-    {
-      "path": "dist/data/quran/90.json",
-      "sha": "2f6e872265627fad3ddd0c99934a40d1e841d387"
-    },
-    {
-      "path": "dist/data/quran/91.json",
-      "sha": "951714b030d7053f6081b486be83e13f6d0696ce"
-    },
-    {
-      "path": "dist/data/quran/92.json",
-      "sha": "c7975e9da4a40f088ff00e8d0a99a74f7f8b358f"
-    },
-    {
-      "path": "dist/data/quran/93.json",
-      "sha": "b82c71d8979f7c4c7fecc3e3e13493ff9bd8defb"
-    },
-    {
-      "path": "dist/data/quran/94.json",
-      "sha": "cb26dd4af4a75dc88f26c40f211289f22cdeff86"
-    },
-    {
-      "path": "dist/data/quran/95.json",
-      "sha": "c76e7c5168c8d6c45ba19dec928ad8843737a982"
-    },
-    {
-      "path": "dist/data/quran/96.json",
-      "sha": "3b408190515467d47ed17c7592070c150f99c06a"
-    },
-    {
-      "path": "dist/data/quran/97.json",
-      "sha": "3035e2734861cbdfb92b664d43b8c2ec297ca11a"
-    },
-    {
-      "path": "dist/data/quran/98.json",
-      "sha": "386a8afcfa804f697da0215ef9d607b0a416892d"
-    },
-    {
-      "path": "dist/data/quran/99.json",
-      "sha": "5298dd3a73abd6aa75308de80cd99164a1d8f3b9"
-    },
-    {
       "path": "dist/data/quran-index.json",
       "sha": "dbfb1a62c0155d97953372371175db2e27187e19"
+    },
+    {
+      "path": "dist/data/quran-reading-LICENSE.txt",
+      "sha": "7549c2bee92ceb61038aa43c12960e298d59c1c2"
     },
     {
       "path": "dist/data/quran-reading/1.json",
@@ -2448,16 +1956,468 @@
       "sha": "394fa3d8cd1f8a3c6ea930a01a7be68f5d209e60"
     },
     {
-      "path": "dist/data/quran-reading-LICENSE.txt",
-      "sha": "7549c2bee92ceb61038aa43c12960e298d59c1c2"
-    },
-    {
       "path": "dist/data/quran-search.json",
       "sha": "a3f7ceab049868a743697fe861c2b8893dbb85f4"
     },
     {
       "path": "dist/data/quran-translation-manifest.json",
       "sha": "4043f011057058fa80aa69489f6ebd7f7a6e08c2"
+    },
+    {
+      "path": "dist/data/quran/1.json",
+      "sha": "a7d58d8697f8ccccf0826c2dc01dec58b9b9f502"
+    },
+    {
+      "path": "dist/data/quran/10.json",
+      "sha": "967b6af1e2f87096d65f5d489398c8bb7778c84f"
+    },
+    {
+      "path": "dist/data/quran/100.json",
+      "sha": "ccf0d0bb85cb06af07cc8a8121632f58be390d51"
+    },
+    {
+      "path": "dist/data/quran/101.json",
+      "sha": "bc1d64252f6954467510c24e4b9893344150f6ca"
+    },
+    {
+      "path": "dist/data/quran/102.json",
+      "sha": "6a35d2be76798d7cbdb246b354b08614d506142e"
+    },
+    {
+      "path": "dist/data/quran/103.json",
+      "sha": "c716c5c06a3c546fe38fb9ca88aefc159ef7c797"
+    },
+    {
+      "path": "dist/data/quran/104.json",
+      "sha": "a15b9fe6bef6268f7db9170d9024a886e8dabace"
+    },
+    {
+      "path": "dist/data/quran/105.json",
+      "sha": "db7df38cd694ede665f53009f20279151ce8e846"
+    },
+    {
+      "path": "dist/data/quran/106.json",
+      "sha": "50604ad916e468fcc19fac2e986ef8f5f309e245"
+    },
+    {
+      "path": "dist/data/quran/107.json",
+      "sha": "05bfcf18144a3d6796fbf9e3acf5d347e402e0f0"
+    },
+    {
+      "path": "dist/data/quran/108.json",
+      "sha": "5f65ca5f000af5d480b0dd097c70e1f9dfe9356a"
+    },
+    {
+      "path": "dist/data/quran/109.json",
+      "sha": "acc026e2f153aafaf26bf51f0ecabe2da9a7d1bd"
+    },
+    {
+      "path": "dist/data/quran/11.json",
+      "sha": "95122f527f7b39761cf317afd75c6b3b38471338"
+    },
+    {
+      "path": "dist/data/quran/110.json",
+      "sha": "7127d06925ec002848c9361767540984cd90cd1a"
+    },
+    {
+      "path": "dist/data/quran/111.json",
+      "sha": "a4670c26ff0a0b17a9000982b653b5f40915ae51"
+    },
+    {
+      "path": "dist/data/quran/112.json",
+      "sha": "373bd900badd5965d4de38eaf4e77a076fda8350"
+    },
+    {
+      "path": "dist/data/quran/113.json",
+      "sha": "d99d990208d5affbf96961ffed967a2ee31b9248"
+    },
+    {
+      "path": "dist/data/quran/114.json",
+      "sha": "4ecabacfcd87fbafb016ab031c11ff9d8c820979"
+    },
+    {
+      "path": "dist/data/quran/12.json",
+      "sha": "fd0d1f65ebdc958111afc5dc792746baa17fbbe1"
+    },
+    {
+      "path": "dist/data/quran/13.json",
+      "sha": "b4b85c5165eb23fea2112af3624f32796eb76457"
+    },
+    {
+      "path": "dist/data/quran/14.json",
+      "sha": "8c043bb89f2f71e8d5ae89670b593819b1eb2e56"
+    },
+    {
+      "path": "dist/data/quran/15.json",
+      "sha": "f673552ae55f44c2065fd822486688f62c7550d4"
+    },
+    {
+      "path": "dist/data/quran/16.json",
+      "sha": "8d2bc16e70551d9344ce6fa486e50e1e95d181fa"
+    },
+    {
+      "path": "dist/data/quran/17.json",
+      "sha": "93092690ef54348d80be6214e6d50274f2960815"
+    },
+    {
+      "path": "dist/data/quran/18.json",
+      "sha": "2b08dd6efb7cbbfcd64d67820794e9016b765dc3"
+    },
+    {
+      "path": "dist/data/quran/19.json",
+      "sha": "d9c5687946be82fbda407592900a99f9ff6efaa2"
+    },
+    {
+      "path": "dist/data/quran/2.json",
+      "sha": "c437696d2f00d57f3a2780062ba32989e26a1cc0"
+    },
+    {
+      "path": "dist/data/quran/20.json",
+      "sha": "bd69e0daf2e5d142d29287e4319e3b0f53594052"
+    },
+    {
+      "path": "dist/data/quran/21.json",
+      "sha": "a23c644661b91b56548cb275ff245873747c4d54"
+    },
+    {
+      "path": "dist/data/quran/22.json",
+      "sha": "14916bbf5af8b9fa1df89764134c06017ccb3557"
+    },
+    {
+      "path": "dist/data/quran/23.json",
+      "sha": "86dd553b9923a9dd2eb89a7e07cd384a964493bb"
+    },
+    {
+      "path": "dist/data/quran/24.json",
+      "sha": "a4153bee365ab3487e7ddc8942d22a5b184c5b87"
+    },
+    {
+      "path": "dist/data/quran/25.json",
+      "sha": "f685e7f9894ad1e6aa39183c81dfcb6d5420e9b8"
+    },
+    {
+      "path": "dist/data/quran/26.json",
+      "sha": "70ace6087d5ece1f6e2df397a93eb86ac6678874"
+    },
+    {
+      "path": "dist/data/quran/27.json",
+      "sha": "93920a30e025efaabca14818210891530cc81c96"
+    },
+    {
+      "path": "dist/data/quran/28.json",
+      "sha": "5cf19afc86096efe14253751ed6f89494d96c6c5"
+    },
+    {
+      "path": "dist/data/quran/29.json",
+      "sha": "ce8c3d7a956edb1e57c669389e0b68a41ed19ee5"
+    },
+    {
+      "path": "dist/data/quran/3.json",
+      "sha": "be281974f79f231eae244b99c196e4bcff5d6c00"
+    },
+    {
+      "path": "dist/data/quran/30.json",
+      "sha": "755828a1077349e67760a627e54acd65dee18987"
+    },
+    {
+      "path": "dist/data/quran/31.json",
+      "sha": "f04abb988a935940408b7d2221b71cf2cef73ed8"
+    },
+    {
+      "path": "dist/data/quran/32.json",
+      "sha": "f51eebabd96733d834ad2365772cecf4a77434e5"
+    },
+    {
+      "path": "dist/data/quran/33.json",
+      "sha": "2f1601a0d952cb955516bde4aec122aecd04cf1c"
+    },
+    {
+      "path": "dist/data/quran/34.json",
+      "sha": "ffe96705e9a4d0269f4b2eda1f56aed37858b30f"
+    },
+    {
+      "path": "dist/data/quran/35.json",
+      "sha": "ea5bf3f0c0599583620c516292114097ebd47a12"
+    },
+    {
+      "path": "dist/data/quran/36.json",
+      "sha": "9dade826641effdcf24d7c9a0282fe99c6cd857e"
+    },
+    {
+      "path": "dist/data/quran/37.json",
+      "sha": "1dba3e547a3d669f73d808f663f67d31934fb7bb"
+    },
+    {
+      "path": "dist/data/quran/38.json",
+      "sha": "330bc346dbc1230d035943621084a608cc09afbc"
+    },
+    {
+      "path": "dist/data/quran/39.json",
+      "sha": "3cd3ff91bc512a3ed12f15946a6663abe3b892f4"
+    },
+    {
+      "path": "dist/data/quran/4.json",
+      "sha": "978c8a1993eb01553a574cba58db18cf2afaf58e"
+    },
+    {
+      "path": "dist/data/quran/40.json",
+      "sha": "e9cfb1cea8a8159dce14558277f6b62b90f5fd42"
+    },
+    {
+      "path": "dist/data/quran/41.json",
+      "sha": "fe9a81f83dbbab9073b05bb7d930b9da903a55a4"
+    },
+    {
+      "path": "dist/data/quran/42.json",
+      "sha": "f11dbacc389d39f9a06313172a5823b8ab53ffca"
+    },
+    {
+      "path": "dist/data/quran/43.json",
+      "sha": "a3e965aed154da518348c0f49570ea5129c855c4"
+    },
+    {
+      "path": "dist/data/quran/44.json",
+      "sha": "d6302444c41fe7f2a79f3f657e46ed5e48fba326"
+    },
+    {
+      "path": "dist/data/quran/45.json",
+      "sha": "df979fade86089f202665c35bf07d35067c86896"
+    },
+    {
+      "path": "dist/data/quran/46.json",
+      "sha": "2a5f2a9d6556160fb9675d4c331bd91509f30498"
+    },
+    {
+      "path": "dist/data/quran/47.json",
+      "sha": "6b566ab96bbcd8f5829fa63a625eca010982d123"
+    },
+    {
+      "path": "dist/data/quran/48.json",
+      "sha": "4c01ea871e955a9b8870fd9f56c3cbd349588ec4"
+    },
+    {
+      "path": "dist/data/quran/49.json",
+      "sha": "f3ad7825e3f898e0d245333d3279c7399f06649a"
+    },
+    {
+      "path": "dist/data/quran/5.json",
+      "sha": "7cfddc48c44570cd1e65a63b48b2c87389422b21"
+    },
+    {
+      "path": "dist/data/quran/50.json",
+      "sha": "877ec2b77a37d2f5f3c70015e7d3b5c4dcbf696b"
+    },
+    {
+      "path": "dist/data/quran/51.json",
+      "sha": "40cf1ddf18d3adc63c6d508b816fa1e47496acd2"
+    },
+    {
+      "path": "dist/data/quran/52.json",
+      "sha": "8b50174c815ecede68b337553c6ae4ea8e3a3eac"
+    },
+    {
+      "path": "dist/data/quran/53.json",
+      "sha": "34c8b54d0f6b5e81b6b8027ef7e78726815c72a1"
+    },
+    {
+      "path": "dist/data/quran/54.json",
+      "sha": "c399de0fe6891effe4295fd6bf16be76fb0a36c4"
+    },
+    {
+      "path": "dist/data/quran/55.json",
+      "sha": "ff1ab9ffca8fcbe5c189481a86ad16002b11cf5b"
+    },
+    {
+      "path": "dist/data/quran/56.json",
+      "sha": "5f4369d123b2b1abb82d18a1a53878672f31ae02"
+    },
+    {
+      "path": "dist/data/quran/57.json",
+      "sha": "8393fbcd124e831b33b8d4c8b96974b0e0261f0c"
+    },
+    {
+      "path": "dist/data/quran/58.json",
+      "sha": "2ed8521573f48581ed140e8f855fc7c5f10b4560"
+    },
+    {
+      "path": "dist/data/quran/59.json",
+      "sha": "5e9890e5a12db74615900582f65dc822b7adecfa"
+    },
+    {
+      "path": "dist/data/quran/6.json",
+      "sha": "74821fed564824b5d49bf7d933d551bf95f37385"
+    },
+    {
+      "path": "dist/data/quran/60.json",
+      "sha": "ad202c38f9ff82f1f4d2b9c89c66455af0053594"
+    },
+    {
+      "path": "dist/data/quran/61.json",
+      "sha": "9024a91ec320afc217908a462bc77a43e491a7d9"
+    },
+    {
+      "path": "dist/data/quran/62.json",
+      "sha": "3f238b1d0b31228acad0af6b5c97a2f3b96ef01d"
+    },
+    {
+      "path": "dist/data/quran/63.json",
+      "sha": "8ce05fd1bf6d998fbfdff803578f23b3bcad2134"
+    },
+    {
+      "path": "dist/data/quran/64.json",
+      "sha": "f4a10721a9a8a811d832b99ab6347c4ff526ccc4"
+    },
+    {
+      "path": "dist/data/quran/65.json",
+      "sha": "b8ce1e287affa992aba8412ac49a2eb385305652"
+    },
+    {
+      "path": "dist/data/quran/66.json",
+      "sha": "71908754ad84dfc320e009eb460afea1e137112b"
+    },
+    {
+      "path": "dist/data/quran/67.json",
+      "sha": "a5707eb1cb0f6afdf32407e9ff936729d082d01e"
+    },
+    {
+      "path": "dist/data/quran/68.json",
+      "sha": "c50646691dd02f66790c1a2d9fb60d1216b55a27"
+    },
+    {
+      "path": "dist/data/quran/69.json",
+      "sha": "31da1a86b4e7a0fd6e5bb5b072286c74e283cc37"
+    },
+    {
+      "path": "dist/data/quran/7.json",
+      "sha": "c5f626d8186afc9a98d7020c1a6a08cf902deae6"
+    },
+    {
+      "path": "dist/data/quran/70.json",
+      "sha": "ca6a6f54902a39dce4e76675000438f22bd79548"
+    },
+    {
+      "path": "dist/data/quran/71.json",
+      "sha": "5f8c8809bad024815be703b5b3ac624ac7e37acc"
+    },
+    {
+      "path": "dist/data/quran/72.json",
+      "sha": "608715254a9cf006be28e5529b674aa420f70df1"
+    },
+    {
+      "path": "dist/data/quran/73.json",
+      "sha": "3cedf3b04b611d35ade40ee68d83867af5e0cda1"
+    },
+    {
+      "path": "dist/data/quran/74.json",
+      "sha": "60c2f667999d4fb5042ee61da1593bef621b0984"
+    },
+    {
+      "path": "dist/data/quran/75.json",
+      "sha": "7917f59ebaa7afe8af384ec8229c5f54c32c1b7f"
+    },
+    {
+      "path": "dist/data/quran/76.json",
+      "sha": "2b998c3a8b9dcce2a1ba1f79c7a8fcf79f62c64f"
+    },
+    {
+      "path": "dist/data/quran/77.json",
+      "sha": "e02d8b2a48bf03ef2d1139372328d6af546e23e5"
+    },
+    {
+      "path": "dist/data/quran/78.json",
+      "sha": "15dbe3f86ba989c1192e5d930fbfad7aa9948d98"
+    },
+    {
+      "path": "dist/data/quran/79.json",
+      "sha": "7cfc0cfdcd4730bb8aaeae9aa43fef35f0d4c026"
+    },
+    {
+      "path": "dist/data/quran/8.json",
+      "sha": "818a87ee3dd5466dc78eb8d801cc44ca19617cf3"
+    },
+    {
+      "path": "dist/data/quran/80.json",
+      "sha": "3daad39fe48dffddd4a93da30b597ec410546b75"
+    },
+    {
+      "path": "dist/data/quran/81.json",
+      "sha": "99bae5109550011888be2f501006b61e6df300c0"
+    },
+    {
+      "path": "dist/data/quran/82.json",
+      "sha": "10bb80552c61e8716ba15cb153c33e7c9284c61c"
+    },
+    {
+      "path": "dist/data/quran/83.json",
+      "sha": "b608228ba5e35287eeca524cf89299ade5a992ae"
+    },
+    {
+      "path": "dist/data/quran/84.json",
+      "sha": "f851d95e4dc03a3088302565aa1ec07a63bb71ca"
+    },
+    {
+      "path": "dist/data/quran/85.json",
+      "sha": "f00f4b540359a1b2095484dad3fab9bfb8bdc99c"
+    },
+    {
+      "path": "dist/data/quran/86.json",
+      "sha": "5c2d9bf48a57fcb5a503e3d11031f54fcd21eb4a"
+    },
+    {
+      "path": "dist/data/quran/87.json",
+      "sha": "aed75074f605781e534b19671dd23e16d9f25a7d"
+    },
+    {
+      "path": "dist/data/quran/88.json",
+      "sha": "ec580e9e8dedbcc55b2e38730260cc393451beb9"
+    },
+    {
+      "path": "dist/data/quran/89.json",
+      "sha": "3855696afb99a5bc219756848a6c66ba20813c75"
+    },
+    {
+      "path": "dist/data/quran/9.json",
+      "sha": "f1e61334df7b1aaae697ce87044856b16e467a0d"
+    },
+    {
+      "path": "dist/data/quran/90.json",
+      "sha": "2f6e872265627fad3ddd0c99934a40d1e841d387"
+    },
+    {
+      "path": "dist/data/quran/91.json",
+      "sha": "951714b030d7053f6081b486be83e13f6d0696ce"
+    },
+    {
+      "path": "dist/data/quran/92.json",
+      "sha": "c7975e9da4a40f088ff00e8d0a99a74f7f8b358f"
+    },
+    {
+      "path": "dist/data/quran/93.json",
+      "sha": "b82c71d8979f7c4c7fecc3e3e13493ff9bd8defb"
+    },
+    {
+      "path": "dist/data/quran/94.json",
+      "sha": "cb26dd4af4a75dc88f26c40f211289f22cdeff86"
+    },
+    {
+      "path": "dist/data/quran/95.json",
+      "sha": "c76e7c5168c8d6c45ba19dec928ad8843737a982"
+    },
+    {
+      "path": "dist/data/quran/96.json",
+      "sha": "3b408190515467d47ed17c7592070c150f99c06a"
+    },
+    {
+      "path": "dist/data/quran/97.json",
+      "sha": "3035e2734861cbdfb92b664d43b8c2ec297ca11a"
+    },
+    {
+      "path": "dist/data/quran/98.json",
+      "sha": "386a8afcfa804f697da0215ef9d607b0a416892d"
+    },
+    {
+      "path": "dist/data/quran/99.json",
+      "sha": "5298dd3a73abd6aa75308de80cd99164a1d8f3b9"
     },
     {
       "path": "dist/data/recognition/catalog-v1.json",
@@ -2649,7 +2609,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "43b439c47dbe6411c0c780dc479900b25d9886b4"
+      "sha": "1d67f1635d257d93efae7731e3e604c211640a76"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2934,6 +2894,54 @@
     {
       "path": "dist/js/homework-work.js",
       "sha": "b642f430364f1a4ebf1fb6107350fa2976d5c93d"
+    },
+    {
+      "path": "dist/js/i18n-catalogues.js",
+      "sha": "021df4b47ef1088418e8b871ede41af5da21715f"
+    },
+    {
+      "path": "dist/js/i18n-core.js",
+      "sha": "f7b06aa311e3ce0a0741de0422d9f7e692a47c92"
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "sha": "4a7d2eb4bf2b414b16e9cf991b9a285aaf465ab8"
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "sha": "f6ce4d8bcc4f9556fbe19d5f92c0d6636d42371e"
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "sha": "33abfef0969434553feb202b96e089958b37e423"
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "sha": "239e68dd0d3c5b1c660b4ab84dd213027c410ffb"
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "sha": "865690b9690fcb315406284af584beee96ef2421"
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "sha": "beb3d902a5f24d5df1b970782124482cc58c6fdc"
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "sha": "fc420d26b889add7db4f119d69b9c370b146b03c"
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "sha": "5b7123a00e225f90ebce20d0c4daafecd0c0c147"
+    },
+    {
+      "path": "dist/js/i18n-source-catalogues.js",
+      "sha": "debfdef137a59a94de01d9a37379ea78c0d67bb8"
+    },
+    {
+      "path": "dist/js/i18n.js",
+      "sha": "b88c81c728bae9b70282e128acaccf33e4daf77f"
     },
     {
       "path": "dist/js/i18n/account/ar.js",
@@ -3872,54 +3880,6 @@
       "sha": "d6a440744ec1a3d9f90be4890e9ba0d4b9496326"
     },
     {
-      "path": "dist/js/i18n-catalogues.js",
-      "sha": "021df4b47ef1088418e8b871ede41af5da21715f"
-    },
-    {
-      "path": "dist/js/i18n-core.js",
-      "sha": "f7b06aa311e3ce0a0741de0422d9f7e692a47c92"
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "4a7d2eb4bf2b414b16e9cf991b9a285aaf465ab8"
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "sha": "f6ce4d8bcc4f9556fbe19d5f92c0d6636d42371e"
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "sha": "33abfef0969434553feb202b96e089958b37e423"
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "sha": "239e68dd0d3c5b1c660b4ab84dd213027c410ffb"
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "865690b9690fcb315406284af584beee96ef2421"
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "beb3d902a5f24d5df1b970782124482cc58c6fdc"
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "fc420d26b889add7db4f119d69b9c370b146b03c"
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "5b7123a00e225f90ebce20d0c4daafecd0c0c147"
-    },
-    {
-      "path": "dist/js/i18n-source-catalogues.js",
-      "sha": "debfdef137a59a94de01d9a37379ea78c0d67bb8"
-    },
-    {
-      "path": "dist/js/i18n.js",
-      "sha": "b88c81c728bae9b70282e128acaccf33e4daf77f"
-    },
-    {
       "path": "dist/js/image-presentation.js",
       "sha": "a45250ef97166be423a6eda8f7056ce8300be5bf"
     },
@@ -4657,7 +4617,7 @@
     },
     {
       "path": "dist/js/staff-cabinet.js",
-      "sha": "6aa8bb41beb911d6ea1824e6dcc9522f9181a44a"
+      "sha": "d538604f5fad6db140bde193845defcb9ff470f7"
     },
     {
       "path": "dist/js/staff-markup.js",
@@ -4709,11 +4669,11 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "c06cb604047054dd924733f3565870cdd0878d56"
+      "sha": "e667cc55d8b012418735b38cd90e6b5361c52dc5"
     },
     {
       "path": "dist/js/support-client.js",
-      "sha": "a3fe788c86408e15d523ec0f523ce2d10f4f9820"
+      "sha": "3d9bc281c6ed34e22de2c5465c85f069ec38b55b"
     },
     {
       "path": "dist/js/support-diagnostics.js",
@@ -5005,7 +4965,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "01c067c28ae83c08cd10be38398f97e00b0b989b"
+      "sha": "17e2e85af6e099ad71eac5493725356447fa0ccf"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5469,7 +5429,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "dcf459fe44df54d49015f30ca3ba6fc0a4126c96"
+      "sha": "6d6ebd1689c1ce9bed3a4a31624927856ad66c71"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5853,7 +5813,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "9d6a979fbf844df1a2ee87a70f3f43b172d99b89"
+      "sha": "ebc2dc8be84d9062ba725f3878e0a5ee58236f4e"
     },
     {
       "path": "docs/release-artwork.md",
@@ -5914,6 +5874,10 @@
     {
       "path": "docs/support-conversations-517.md",
       "sha": "ea71ca2be828b869f6dbfaba8440ec8ac8fc57ae"
+    },
+    {
+      "path": "docs/support-layout-518.md",
+      "sha": "7314073b27b0e99b0c7554b9318e9de6d724beaa"
     },
     {
       "path": "docs/tablet-wallpapers.md",
@@ -6002,6 +5966,22 @@
     {
       "path": "mobile/native/android/MainActivity.java",
       "sha": "4409a2604be5c81e7c53d1f58361be343e14e692"
+    },
+    {
+      "path": "mobile/native/android/salah_notification.xml",
+      "sha": "7e61b90323e4ccfe5eb366c98e7bf0d9d457c695"
+    },
+    {
+      "path": "mobile/native/android/salah_widget_bg.xml",
+      "sha": "05fa0fdac00f05414c8eef7bf6db1a3ce21acd16"
+    },
+    {
+      "path": "mobile/native/android/salah_widget_info.xml",
+      "sha": "750b74dea2f83fbbb494fadba14679bea09cc4a7"
+    },
+    {
+      "path": "mobile/native/android/salah_widget.xml",
+      "sha": "83bce934a8f44a5f3ef61500a6048b3bfe2decc8"
     },
     {
       "path": "mobile/native/android/SalahAdhanPolicy.java",
@@ -6094,22 +6074,6 @@
     {
       "path": "mobile/native/android/SalahWidgetSizingTest.java",
       "sha": "c284464132a99bc183262ec8ffa8777a9eb70cb8"
-    },
-    {
-      "path": "mobile/native/android/salah_notification.xml",
-      "sha": "7e61b90323e4ccfe5eb366c98e7bf0d9d457c695"
-    },
-    {
-      "path": "mobile/native/android/salah_widget.xml",
-      "sha": "83bce934a8f44a5f3ef61500a6048b3bfe2decc8"
-    },
-    {
-      "path": "mobile/native/android/salah_widget_bg.xml",
-      "sha": "05fa0fdac00f05414c8eef7bf6db1a3ce21acd16"
-    },
-    {
-      "path": "mobile/native/android/salah_widget_info.xml",
-      "sha": "750b74dea2f83fbbb494fadba14679bea09cc4a7"
     },
     {
       "path": "mobile/native/android/widget_strings.xml",
@@ -7469,7 +7433,7 @@
     },
     {
       "path": "scripts/check-support-case-lifecycle.mjs",
-      "sha": "ad1f6e927b85e0e6febd4624c8386f8081410492"
+      "sha": "bc59f506a92a58af061a46b49ad26929d840315a"
     },
     {
       "path": "scripts/check-support-chat-client.mjs",
@@ -7497,7 +7461,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "21bd674e589fc07e4d2fe230105b8c9e1b29d367"
+      "sha": "cdd862cb30d6fbf25c38275e94d4880fc368d653"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7508,12 +7472,24 @@
       "sha": "0ac0c659fd805234b4d1a85c1a0cb58a291ef6f9"
     },
     {
+      "path": "scripts/check-support-layout.mjs",
+      "sha": "4c5a064ecf41e4c5c75c6ad8260917ea1f692e5f"
+    },
+    {
       "path": "scripts/check-support-multiple.mjs",
       "sha": "2ba8edf1f39e158b1bae3f41d09c0c31d4da6e29"
     },
     {
       "path": "scripts/check-support-notifications.mjs",
       "sha": "d8c7b65c9e50210b6486c82bc8fcad9d290e3920"
+    },
+    {
+      "path": "scripts/check-support-operator-reopen.mjs",
+      "sha": "f019dde84ef635d2d150080fa75d34a70e76725f"
+    },
+    {
+      "path": "scripts/check-support-operator-ui.mjs",
+      "sha": "ad7fa5147c51996dd12e1759338dfcff98e83bfb"
     },
     {
       "path": "scripts/check-support-photos.mjs",
@@ -7953,7 +7929,7 @@
     },
     {
       "path": "supabase/functions/staff-cabinet/core.mjs",
-      "sha": "9ded865dda68df1f2da6090571e32678ded188a2"
+      "sha": "13ea52884c70c2adb2a05779f11e8622316aa922"
     },
     {
       "path": "supabase/functions/staff-cabinet/index.ts",
@@ -7966,14 +7942,6 @@
     {
       "path": "supabase/functions/staff-cabinet/seeds.json",
       "sha": "b565562cfe894012a5d3d2a8283b40804a0435ec"
-    },
-    {
-      "path": "supabase/functions/support-billing/core.mjs",
-      "sha": "632b9d68a76d628a8f73a1781b5650a7b2331fcf"
-    },
-    {
-      "path": "supabase/functions/support-billing/index.ts",
-      "sha": "823e7f2d55aa1ffb19dc213e4083580f926e2bea"
     },
     {
       "path": "supabase/functions/support-billing-test/engine.mjs",
@@ -7996,6 +7964,14 @@
       "sha": "9a8b7d4fc6b0abcf86e7277ea7593cd9c3e58875"
     },
     {
+      "path": "supabase/functions/support-billing/core.mjs",
+      "sha": "632b9d68a76d628a8f73a1781b5650a7b2331fcf"
+    },
+    {
+      "path": "supabase/functions/support-billing/index.ts",
+      "sha": "823e7f2d55aa1ffb19dc213e4083580f926e2bea"
+    },
+    {
       "path": "supabase/functions/support-messages/index.ts",
       "sha": "92bb61e03dc7b617af148a9ce4253ad2be97ee40"
     },
@@ -8004,20 +7980,20 @@
       "sha": "6357fe00b4d6b62eecc37ebc20d42887c698ba48"
     },
     {
-      "path": "supabase/migrations/2026100201_background_reminders.sql",
-      "sha": "607bab8375ef0ac1e16fdde004379f6f7d5c9fd7"
-    },
-    {
-      "path": "supabase/migrations/2026100202_background_reminders_cron.sql",
-      "sha": "251df95803240d223d714886810edf47c842ad1c"
-    },
-    {
       "path": "supabase/migrations/20261002_adhkar_accounts.sql",
       "sha": "21bb12948a0ba182f8403876488537a9b8183535"
     },
     {
       "path": "supabase/migrations/20261002_owner_presence.sql",
       "sha": "ae3cb3e5a81d194a36bcd48c653557d948304e61"
+    },
+    {
+      "path": "supabase/migrations/2026100201_background_reminders.sql",
+      "sha": "607bab8375ef0ac1e16fdde004379f6f7d5c9fd7"
+    },
+    {
+      "path": "supabase/migrations/2026100202_background_reminders_cron.sql",
+      "sha": "251df95803240d223d714886810edf47c842ad1c"
     },
     {
       "path": "supabase/migrations/20261004_notification_status.sql",
@@ -8120,16 +8096,16 @@
       "sha": "c7a511101a39309e4a2db30fce141c0b76fe55a0"
     },
     {
+      "path": "supabase/migrations/20261102_owner_reading_context.sql",
+      "sha": "fa029f635874f014ffeaa8375ef3d3fd7b20ba21"
+    },
+    {
       "path": "supabase/migrations/20261102133755_owner_return_campaigns.sql",
       "sha": "33645ab52af10d3508c75d3e0bcc2cf21622834b"
     },
     {
       "path": "supabase/migrations/20261102174057_owner_account_geography.sql",
       "sha": "7ed8651925cfcdbdceae99727565bf91dd1ef0b6"
-    },
-    {
-      "path": "supabase/migrations/20261102_owner_reading_context.sql",
-      "sha": "fa029f635874f014ffeaa8375ef3d3fd7b20ba21"
     },
     {
       "path": "supabase/migrations/20261103080537_guest_device_visits.sql",
@@ -8194,6 +8170,10 @@
     {
       "path": "supabase/migrations/20261118144430_support_conversations_517.sql",
       "sha": "73bd2bdac0d2be9ffe8b364ecf6f8c66ff8878f9"
+    },
+    {
+      "path": "supabase/migrations/20261118162151_support_operator_reopen_518.sql",
+      "sha": "ecfd57dd948a6be5c0e0cedc52e54d2577bcefab"
     },
     {
       "path": "supabase/native-support-devices.sql",
@@ -8313,7 +8293,7 @@
     },
     {
       "path": "tests/support/chat-fixture.mjs",
-      "sha": "6052556abe2b67b8de351ea746458e948cea80b6"
+      "sha": "a4e36639325d4a24f967928f3b1ef48878277cfe"
     },
     {
       "path": "tests/support/check-unlink.cjs",
@@ -8323,7 +8303,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Unchanged Pages refresh of official imam records."
+      "reason": "Existing Pages refresh; no public deployment is part of this candidate."
     }
   ]
 }

@@ -280,7 +280,7 @@ function renderUnifiedSky(scene,force=false){
   const ratio=Math.min(1,1024/Math.max(plane.width,plane.height),Math.sqrt(1000000/(plane.width*plane.height))),width=Math.max(1,Math.floor(plane.width*ratio)),height=Math.max(1,Math.floor(plane.height*ratio)),weather=sampleSkyWeather(now);
   const moving=!settings.motion&&settings.weatherAnimation&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&weather.clouds>0;if(moving&&skyMotionAt!==null){const elapsed=(now-skyMotionAt)/1000;if(elapsed>=0&&elapsed<2)skyMotionTime+=elapsed;}skyMotionAt=moving?now:null;
   const astronomy=readSkyAstronomy(skyInstant),point=body=>({x:skyProjected[body+'X']/100*width,y:skyProjected[body+'Y']/100*height,altitude:astronomy?.[body]?.altitude??-30});
-  skyRenderer??=createSkyAtmosphere({canvasFactory:createSkyCanvas,texture:cloudTextureImage});
+  skyRenderer??=createSkyAtmosphere({canvasFactory:createSkyCanvas,texture:cloudTextureImage,cloudDetail:'fine'});
   const result=skyRenderer.render({skyCanvas:base,cloudCanvas:front,width,height,horizonY:Math.max(1,Math.min(height,(foregroundSkyBottom(cache)-plane.top)/plane.height*height)),sun:point('sun'),moon:point('moon'),day:skyFrame.day,clouds:weather.clouds,fog:weather.fog,instant:skyInstant,latitude:settings.city?.latitude,longitude:settings.city?.longitude,motionTime:skyMotionTime});
   if(!result.sourceReady||!renderForeground(scene,cache,weather))return fallback();
   const gate=skyWeatherTarget.clouds>=.94||skyWeatherTarget.fog>=.78?0:result.skyVisibility;scene.style.setProperty('--scene-celestial-visibility',String(gate));scene.dataset.unifiedSky='ready';document.getElementById('weather-layer').dataset.unifiedSky='on';lastSkyDrawAt=now;lastSkyDrawCost=Math.max(0,performance.now()-now);return true;
