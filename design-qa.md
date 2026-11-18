@@ -13,3 +13,11 @@ Before visual approval, check on the owner phone: wrapping of long translations 
 ## Subsequent publication instruction
 
 The owner instructed immediate publication without waiting after the preparation and missing iPhone visual check were disclosed.525 publication is authorized after full checks/builds; no visual pass is claimed, and browser automation remains declined.
+
+## Latest Support header comparison
+
+The owner’s fresh messenger and SALAH screenshots show the chat header lower than requested. Grouped Support top padding now follows max(8px,4px+safe-area top), removing the second40px allowance. For a59px safe area this moves the content from107px to63px, close to the native messenger placement while keeping the sensor inset.44px touch targets and private-profile/other-section clearances remain. Actual full-cascade DOM tests pass in default/themed modes, phone/landscape/desktop, keyboard height and62px safe-inset fixtures. Check the raised name/avatar on the owner phone for blur/overlap; the reference recording was subsequently sampled, while no corrected implementation or phone visual pass is claimed.
+
+## Reference scroll-edge effect
+
+Nine locally extracted frames from the6.49s native-messenger recording show top-edge message entry/exit beneath stationary participant controls. Only the actual reference was sampled; source frames remain outside the application. Grouped Support now uses a static16px alpha mask on scrolled history, never the header or wallpaper. At the beginning of history no mask is applied. Passive scroll/disposal tests retain message nodes, draft and navigation. CSS masks have standard and WebKit declarations; HappyDOM validates the computed standard mask and unchanged geometry, not physical WebKit drawing. Verify upward/downward scrolling and header clarity on the owner phone.

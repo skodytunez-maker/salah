@@ -828,3 +828,7 @@ The owner subsequently instructed «Отправь» after being told524 was pre
 Separate unpublished candidate: consistent decorative icons/headings in Settings and the previously requested blessing/«Аминь» in reward/founder presentations on eight interface languages. No new news edition; preserve523 acknowledgement/expiry and ordinary news confirmation. Existing religious timing, preferences, role/MFA checks, award eligibility and source images are unchanged. Phone/browser rendering remains unverified.
 
 The owner subsequently instructed immediate publication without waiting for a phone review after the pending visual check was disclosed. Release525 with announcement523 and its acknowledgement/expiry unchanged; no external push or visual pass claim.
+
+A late explicitly requested Support header correction joins525 before publication: grouped chat content uses actual safe-area top plus4px (minimum8px) instead of a second40px allowance. Keep profile/other clearances, touch targets and existing navigation. Still no new news edition; phone placement remains to be verified.
+
+The owner also requested the reference-video top-edge message effect. Include a scoped static fade for scrolled Support history, no masking of fixed controls or original photographs and no new motion loop. Keep the same523 announcement and acknowledgement.

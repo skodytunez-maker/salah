@@ -3,7 +3,7 @@
   "version": 525,
   "baseCommit": "7746ec9d07fc5539464a469c07d7b462aaacbb12",
   "baseTree": "7a3429f0f89ff867ff8f19c70b3bf595ec8b4415",
-  "note": "Owner explicitly authorized immediate525 publication after preparation,36 targeted checks and missing phone visual check were disclosed. Scoped Settings presentation and reward greeting; browser declined. Preserve523 news/receipts/expiry, original images, notification scheduling, reward eligibility and server/MFA access.",
+  "note": "Owner explicitly authorized immediate525 publication after preparation,36 targeted checks and missing phone visual check were disclosed. Scoped Settings presentation and reward greeting; browser declined. Preserve523 news/receipts/expiry, original images, notification scheduling, reward eligibility and server/MFA access. The owner’s subsequent screenshot explicitly requests raising the Support chat header; replace only its double status allowance with compact actual-safe-area padding and test keyboard/default/themed views. Also include the explicitly requested static top-edge fade for scrolled Support history, retaining fixed controls and first-message readability.",
   "allowed": [
     {
       "path": "AGENTS.md",
@@ -160,6 +160,22 @@
     {
       "path": "docs/change-scope.json",
       "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
+    },
+    {
+      "path": "dist/css/support.css",
+      "reason": "Explicit latest owner screenshot request: raise only the grouped Support header while retaining sensor inset,44px touch targets, keyboard geometry, wallpaper and back/draft behavior."
+    },
+    {
+      "path": "scripts/check-support-layout.mjs",
+      "reason": "Explicit latest owner screenshot request: raise only the grouped Support header while retaining sensor inset,44px touch targets, keyboard geometry, wallpaper and back/draft behavior."
+    },
+    {
+      "path": "dist/js/support-chat-view.js",
+      "reason": "Explicit reference-video request: passive scoped top-edge mask state, first-message visibility, message retention and cleanup; preserve routing/drafts/access."
+    },
+    {
+      "path": "scripts/check-support-conversation-ui.mjs",
+      "reason": "Explicit reference-video request: passive scoped top-edge mask state, first-message visibility, message retention and cleanup; preserve routing/drafts/access."
     }
   ],
   "generated": [
