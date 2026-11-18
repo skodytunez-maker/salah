@@ -27,3 +27,21 @@
 .support-recipient{overflow-wrap:anywhere}
 
 .support-message-notice{position:fixed;z-index:145;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(360px,calc(100% - 24px));display:flex;align-items:center;gap:8px;background:#121e31;color:#f4f0e5;border:1px solid #64728f;border-radius:16px;padding:8px 12px;box-shadow:0 8px 24px #0005}.support-message-notice a{flex:1;min-height:44px;display:flex;align-items:center;font-size:14px}.support-message-notice button{min-width:44px;min-height:44px;font-size:24px}.support-photo-item{margin-bottom:16px}
+
+/* SALAH support conversations reuse the scoped messenger mechanism. */
+.support-chat-shell.staff-cabinet{padding:0;margin:0;max-width:none}
+.support-chat-shell .support-messages{display:flex;flex-direction:column;gap:8px;max-height:min(62dvh,640px);overflow:auto;overscroll-behavior:contain;padding:8px 2px;scrollbar-gutter:stable}
+.support-chat-shell .support-chat-message{display:flex;justify-content:flex-start;width:100%;max-width:none;padding:0;border:0;background:none}
+.support-chat-shell .support-chat-message.is-mine{justify-content:flex-end}
+.support-chat-shell .staff-bubble{box-sizing:border-box;max-width:min(88%,580px);min-width:100px;padding:10px 12px;border:1px solid #34445b;border-radius:16px 16px 16px 4px;background:#142238;overflow-wrap:anywhere}
+.support-chat-shell .is-mine .staff-bubble{border-radius:16px 16px 4px 16px;background:#23383b;border-color:#4d5d53}
+.support-chat-shell .staff-message-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#d9c58f;font-size:12px}
+.support-chat-shell .staff-bubble>p{display:block;margin:5px 0;white-space:pre-wrap;line-height:1.55}
+.support-chat-shell .staff-bubble>time{display:block;float:none;text-align:end;font-size:10px;color:#b6c1cf;margin-top:6px}
+.support-chat-shell .support-chat-actions{margin-inline-start:auto;min-width:44px;min-height:44px;font-size:25px}
+.support-chat-shell .support-composer-reply{display:flex;align-items:center;gap:8px;border-inline-start:3px solid #d9c58f;border-radius:8px;background:#182437;padding:8px;margin-top:10px}
+.support-chat-shell .support-composer-reply[hidden]{display:none}
+.support-chat-shell .support-composer-reply>div{flex:1;min-width:0}
+.support-chat-shell .support-composer-reply strong,.support-chat-shell .support-composer-reply span{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px}
+.support-chat-shell .support-composer-reply button{background:none;color:inherit;border:0;min-width:44px;min-height:44px;font-size:24px}
+.support-chat-shell [data-support-reply] textarea{min-height:76px;max-height:180px}

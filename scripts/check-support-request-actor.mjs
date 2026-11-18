@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {createSupportRpc} from '../dist/js/support-transport.js';
+let release,calls=0,seen;
+const auth={auth:{getSession:()=>new Promise(resolve=>{release=resolve;})}};
+const request=createSupportRpc(auth,{fetcher:async(_url,options)=>{calls++;seen=options;return Response.json({data:{ok:true}});}});
+const session=id=>({data:{session:{access_token:'nonsecret-fixture-'+id,user:{id}}},error:null});
+const ac=new AbortController();const old=request('support_close',{}).abortSignal(ac.signal,{expectedActor:'A'});release(session('B'));await assert.rejects(old,{name:'AbortError'});assert.equal(calls,0);
+const canceled=new AbortController(),waiting=request('support_read',{}).abortSignal(canceled.signal,{expectedActor:'A'});canceled.abort();release(session('A'));await assert.rejects(waiting,{name:'AbortError'});assert.equal(calls,0);
+const fresh=request('support_read',{}).abortSignal(new AbortController().signal,{expectedActor:'A'});release(session('A'));assert.deepEqual(await fresh,{data:{ok:true},error:null});assert.equal(calls,1);assert.equal(seen.headers.Authorization,'Bearer nonsecret-fixture-A');
+const legacy=request('support_read',{}).abortSignal(new AbortController().signal);release(session('B'));await legacy;assert.equal(calls,2,'Unbound legacy callers retain their contract');
+console.log('PASS: support requests remain bound to the initiating account; delayed account switches and cancellation never reach transport; same-account and legacy calls work.');
