@@ -804,4 +804,4 @@ No billing, staff, owner geography, previous reciter, nature wallpaper or radio 
 
 
 ## Candidate517 — no new announcement
-Grouped Support contacts, navigation/latest-message fixes, messenger presentation and common glass control are prepared as one candidate. Retain the515 edition, artwork, acknowledgement and expiry; do not create Support news or an external update push. Physical-phone review and the owner release decision are not claimed.
+Grouped Support contacts, navigation/latest-message fixes, messenger presentation and common glass control are prepared as one candidate. Retain the515 edition, artwork, acknowledgement and expiry; do not create Support news or an external update push. Physical-phone review is unclaimed. Publication follows the owner standing direction to send common fixes to all users while keeping only new living sky in trial.

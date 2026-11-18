@@ -1,4 +1,4 @@
-# SALAH517 candidate
+# SALAH517 common corrections
 
 The owner requests one contact per person in Support, right-swipe return to the contact list, a compact messenger interface and opening at the latest message. The Telegram video is a behavior/layout reference: fixed header, independent conversation scrolling, reachable input and return-to-latest control. No media-channel features are inferred.
 
@@ -9,3 +9,5 @@ Support and personal/team messenger retain drafts and return to their list on ri
 The later glass request replaces the two controls with one common slider, with preview above it. Maximum100 produces0.18 panel alpha and2px backdrop blur on both approved surfaces. OFF retains the original look. Legacy table preference is used for the new common level, or the player value when it is the only old value; no migration write occurs just by loading settings. System reduced-transparency, increased contrast and forced colors retain opaque alternatives. Reducing motion does not disable static glass. The original photograph files and all other surfaces are unchanged.
 
 The candidate keeps the515 announcement identifier, cards, acknowledgement and expiry, with no new Support announcement or external update push. Living sky remains owner-private. The325 original checks plus new behavior regressions are required, including listening/counters/guest/account-transfer checks. DOM, SQL and CSS-state fixtures do not establish physical iPhone/Safari/GPU appearance.
+
+Publication follows the owner’s existing instruction to send common corrections to all users while keeping only the new living sky private. The exact tested software is unchanged by the final publication-scope documentation. No new physical-phone approval is claimed.

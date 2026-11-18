@@ -15,3 +15,6 @@ Additional requested states: the owner can complete a case; the requesting user 
 
 ## Candidate517
 References: owner videos19:33/19:34 show inner Back reaching Menu and repeated Support headers;19:57 Telegram reference shows fixed header, independently scrolling content and return-to-latest. The20:01 glass screenshot requests one shared slider, preview above controls and a clearer maximum. Local SQL, DOM and CSS-state checks cover behavior and scope. Browser automation remains prohibited; physical iPhone/Safari, keyboard, safe-area and glass legibility comparison remain unclaimed. Public release remains516 while this candidate is prepared.
+
+
+Publication scope: the owner’s standing instruction sends common corrections to all users and keeps only new living sky in trial. Apply it to this requested517 correction package after code-bound checks. The visual/physical-phone comparison remains unclaimed; publication does not open new sky.
