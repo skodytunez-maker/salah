@@ -85,7 +85,7 @@
 
 /* Grouped Support is isolated from shared team messenger and other screens. */
 .support-route-chat [data-support-page-title],.support-route-chat>[data-support-page-back]{display:none}
-#support-root.support-chat-shell[data-support-grouped].panel{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+#support-root.support-chat-shell[data-support-grouped].panel{margin:0;border:0;border-radius:0;box-shadow:none}
 .support-chat-shell[data-support-grouped] .support-panel>.support-heading,.support-chat-shell[data-support-grouped] .support-panel>h3,.support-chat-shell[data-support-grouped] .support-panel>.support-note,.support-chat-shell[data-support-grouped] .support-panel>[data-support-enable-notifications]{display:none}
 .support-chat-shell[data-support-grouped] .support-chat-header{display:flex;flex-wrap:nowrap;gap:6px;align-items:center;margin:0 0 8px;padding-bottom:10px;border-bottom:1px solid rgba(180,190,210,.18)}
 .support-chat-header .text-button{flex:none;min-width:44px;min-height:44px;margin:0;padding:6px;font-size:24px}
@@ -112,13 +112,26 @@
 
 body.support-conversation-open{overflow:hidden}
 body.support-conversation-open #mobile-nav{visibility:hidden;pointer-events:none}
-#support-root.support-chat-shell[data-support-grouped]{position:fixed;z-index:145;inset-inline:0;top:var(--support-chat-top,0px);height:var(--support-chat-height,100dvh);box-sizing:border-box;padding:max(10px,env(safe-area-inset-top,0px)) 14px max(10px,env(safe-area-inset-bottom,0px));background:var(--bg,#09101d);overflow:hidden}
+#support-root.support-chat-shell[data-support-grouped]{position:fixed;z-index:145;inset-inline:0;top:var(--support-chat-top,0px);height:var(--support-chat-height,100dvh);box-sizing:border-box;padding:calc(8px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:var(--bg,#09101d);overflow:hidden}
 .support-chat-shell[data-support-grouped]>.support-panel{display:flex;flex-direction:column;height:100%;min-height:0;max-width:860px;margin:0 auto;position:relative}
 .support-chat-shell[data-support-grouped] .support-panel>.support-chat-header,.support-chat-shell[data-support-grouped] .support-chat-options,.support-chat-shell[data-support-grouped] .support-history-toolbar,.support-chat-shell[data-support-grouped] [data-support-status],.support-chat-shell[data-support-grouped] [data-support-reply],.support-chat-shell[data-support-grouped] .support-case-closed{flex:none}
 .support-chat-shell[data-support-grouped] .support-messages{flex:1 1 0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:8px 1px 16px;margin:0 0 8px}
 .support-chat-shell[data-support-grouped] .support-close{flex:none;margin:4px auto 0;min-height:36px}
-.support-jump-latest{position:absolute;z-index:2;inset-inline-end:4px;bottom:142px;display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;width:44px;height:44px;padding:0;border:1px solid #4b5b70;border-radius:50%;background:#182638;color:#dfc995;font:inherit;font-size:26px;box-shadow:0 4px 14px #0004}
+.support-jump-latest{position:absolute;z-index:2;inset-inline-end:4px;bottom:calc(var(--support-footer-height,128px) + 14px);display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;width:44px;height:44px;padding:0;border:1px solid #4b5b70;border-radius:50%;background:#182638;color:#dfc995;font:inherit;font-size:26px;box-shadow:0 4px 14px #0004}
 .support-jump-latest[hidden]{display:none}
 .support-jump-latest:focus-visible{outline:2px solid var(--gold,#dfc995);outline-offset:3px}
 
 .support-chat-header .support-person-avatar{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 38px;width:38px;height:38px;border:1px solid #4c5869;border-radius:50%;background:#253248;color:#dfca94;font-size:12px}.support-person-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* The conversation is one opaque viewport with its own header, log and footer.
+   Do not let the generic panel reset erase its background or safe padding. */
+.support-chat-shell[data-support-grouped] .support-chat-footer{flex:none;min-width:0;border-top:1px solid rgba(180,190,210,.16);padding-top:10px}
+.support-chat-shell[data-support-grouped] .support-chat-footer>[data-support-status]{font-size:12px;line-height:1.5;margin:0 0 8px;overflow-wrap:anywhere}
+.support-chat-shell[data-support-grouped] .support-chat-footer>[data-support-status]:empty{display:none}
+.support-chat-shell[data-support-grouped] .support-chat-footer [data-support-reply]{border-top:0;padding-top:0}
+.support-chat-shell[data-support-grouped] .support-case-closed{margin:0;text-align:center}
+.support-chat-shell[data-support-grouped] .support-case-closed>p{font-size:13px;line-height:1.5;margin:0 0 10px}
+.support-chat-shell[data-support-grouped] .support-case-closed .support-actions{margin:0;justify-content:center}
+.support-chat-shell[data-support-grouped] .support-case-closed .button{flex:1;max-width:360px;min-height:46px}
+.support-chat-shell[data-support-grouped] .support-history-toolbar[hidden]{display:none}
+body.support-conversation-open .workspace>header,body.support-conversation-open .workspace>footer,body.support-conversation-open>.sidebar{visibility:hidden;pointer-events:none}
