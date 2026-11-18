@@ -218,6 +218,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "Mükafatın təqdimatı · {title}",
   "rankingUi.celebrationAward": "SALAH MÜKAFATI",
   "rankingUi.celebrationThanks": "Təşəkkürlər",
+  "rankingUi.celebrationBlessing": "Uca Allah səylərini qəbul etsin.",
+  "rankingUi.celebrationAmeen": "Amin",
   "rankingUi.celebrationStreakAria": {
     "one": "{count} gün ardıcıl",
     "other": "{count} gün ardıcıl"

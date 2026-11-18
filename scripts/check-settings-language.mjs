@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
+import{settingsSectionLabel}from '../dist/js/settings-section-label.js';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 
 const win=new Window({url:'https://fixture.invalid/#settings?section=appearance'}),doc=win.document;
@@ -14,7 +15,7 @@ updateSettings({uiLanguage:'ru',city:{name:'Настройки',latitude:57.15,l
 const stopLanguage=initializeInterfaceLanguage({doc,win}),app=doc.getElementById('app');
 async function fixture(file,names,deps={}){
  const source=await fs.readFile(new URL('../dist/js/'+file+'.js',import.meta.url),'utf8');
- return vm.runInNewContext(source.replace(/^import.*\r?\n/gm,'').replace(/export /g,'')+';({'+names.join(',')+'});',{document:doc,window:win,navigator:win.navigator,localStorage:win.localStorage,t,translateUi,getLocale,subscribeLanguage,esc,modal,closeModal,toast(){},setTimeout,clearTimeout,Intl,...deps});
+ return vm.runInNewContext(source.replace(/^import.*\r?\n/gm,'').replace(/export /g,'')+';({'+names.join(',')+'});',{document:doc,window:win,navigator:win.navigator,localStorage:win.localStorage,t,translateUi,getLocale,subscribeLanguage,settingsSectionLabel,esc,modal,closeModal,toast(){},setTimeout,clearTimeout,Intl,...deps});
 }
 // A city lookup remains the same request/form. Typed city names and server results
 // are not translation keys, including a city whose name is a Russian UI label.
@@ -39,8 +40,8 @@ app.innerHTML='<div id="ambient-sound-settings"></div>';
 let stateListener,unsubscribed=0;
 const audio={unlock:async()=>{},previewVolume:async()=>{},subscribe(fn){stateListener=fn;fn({enabled:true,sound:'wind',volume:22,supported:true,reason:'tap'});return()=>unsubscribed++;}};
 const ambient=await fixture('ambient-settings',['mountAmbientSettings'],{initAmbientAudio:()=>audio,updateSettings:()=>true});
-ambient.mountAmbientSettings(app);const range=app.querySelector('#ambient-volume'),toggle=app.querySelector('#ambient-enabled');range.value='47';
-setInterfaceLanguage('en');assert.equal(app.querySelector('#ambient-volume'),range);assert.equal(range.value,'47');assert.equal(toggle.checked,true);assert.equal(app.querySelector('.ambient-status').textContent,t('ambientUi.tap'));assert.equal(app.querySelector('#ambient-sound').value,'wind');
+ambient.mountAmbientSettings(app);const headingIcon=app.querySelector('.ambient-settings summary .settings-section-icon');assert(headingIcon,'Atmosphere heading has a decorative icon');assert.equal(headingIcon.getAttribute('aria-hidden'),'true');const range=app.querySelector('#ambient-volume'),toggle=app.querySelector('#ambient-enabled');range.value='47';
+setInterfaceLanguage('en');assert.equal(app.querySelector('.ambient-settings summary .settings-section-icon'),headingIcon,'Translation retains the icon instead of replacing the entire summary');assert.equal(app.querySelector('.ambient-settings summary [data-i18n]').textContent,t('ambientUi.title'));assert.equal(app.querySelector('#ambient-volume'),range);assert.equal(range.value,'47');assert.equal(toggle.checked,true);assert.equal(app.querySelector('.ambient-status').textContent,t('ambientUi.tap'));assert.equal(app.querySelector('#ambient-sound').value,'wind');
 stateListener({enabled:true,sound:'wind',volume:22,supported:true,reason:'foreground'});setInterfaceLanguage('ru');assert.equal(app.querySelector('.ambient-status').textContent,t('ambientUi.foreground'));
 ambient.mountAmbientSettings(app);assert.equal(unsubscribed,1,'Replacing atmosphere settings disposes its old audio subscription');
 

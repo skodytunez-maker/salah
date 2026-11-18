@@ -1,53 +1,165 @@
 {
   "schema": 1,
-  "version": 524,
-  "baseCommit": "0d2f49d1451729d2d184e65c767dfad32dc668cf",
-  "baseTree": "f39c642d98b2b37e72172511c671d98069315a88",
-  "note": "Owner explicitly authorized524 publication after preparation/test status and missing phone visual check were disclosed. Scoped Support screenshot correction; browser declined. Preserve original image bytes and current523 announcement/ack/expiry, private living sky and all unrelated source.",
+  "version": 525,
+  "baseCommit": "7746ec9d07fc5539464a469c07d7b462aaacbb12",
+  "baseTree": "7a3429f0f89ff867ff8f19c70b3bf595ec8b4415",
+  "note": "Owner explicitly authorized immediate525 publication after preparation,36 targeted checks and missing phone visual check were disclosed. Scoped Settings presentation and reward greeting; browser declined. Preserve523 news/receipts/expiry, original images, notification scheduling, reward eligibility and server/MFA access.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
+      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
     },
     {
       "path": "design-qa.md",
-      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
+      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
     },
     {
-      "path": "dist/css/conversation-themes.css",
-      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
+      "path": "dist/css/quran-awards.css",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
     },
     {
-      "path": "dist/js/support-chat-view.js",
-      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
+      "path": "dist/iphone.css",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/ambient-settings.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/app.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/award-celebration.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/founder-welcome.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/glass-settings.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/ar.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/az.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/de.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/en.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/kk.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/ru.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/tg.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/i18n/ranking/uz.js",
+      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
+    },
+    {
+      "path": "dist/js/native-background-reminders.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/push-reminders.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/reminders.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
+    },
+    {
+      "path": "dist/js/settings-section-label.js",
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Scoped Support theme rendering or candidate version; retain announcement523."
+      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
+      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
+      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
+    },
+    {
+      "path": "scripts/check-award-presentations.mjs",
+      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
+    },
+    {
+      "path": "scripts/check-interface-shell.mjs",
+      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
+    },
+    {
+      "path": "scripts/check-settings-language.mjs",
+      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
+    },
+    {
+      "path": "scripts/check-settings-presentation.mjs",
+      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
+    },
+    {
+      "path": "scripts/check-tyumen-sources.mjs",
+      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record owner feedback, limited candidate scope, verification evidence and pending phone review."
-    },
-    {
-      "path": "scripts/check-support-layout.mjs",
-      "reason": "Regression for actual mounted Support theme viewport/cleanup and real stylesheet cascade."
-    },
-    {
-      "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Regression for actual mounted Support theme viewport/cleanup and real stylesheet cascade."
+      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
     }
   ],
   "generated": [
@@ -107,7 +219,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "007fc313d60db9f0d8fd2347fdab6fcfba654958"
+      "sha": "a32217349bc271e65aa8a58f5481dd35f99e694c"
     },
     {
       "path": "ANALYTICS.md",
@@ -115,7 +227,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "77342039c73f2dc11477bedca2f170132304f9ff"
+      "sha": "a5a5b9ce5503987c569c124f62f116c269334248"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1355,7 +1467,7 @@
     },
     {
       "path": "dist/css/conversation-themes.css",
-      "sha": "24a08810b25676d4dcc52688b6dc996ede9ca4f3"
+      "sha": "c65ba565008dc2eae7c56f9eb808398a68734582"
     },
     {
       "path": "dist/css/error-summary.css",
@@ -2627,7 +2739,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "67f5c6c182cc64ac21b07d2f5ad7748217ae0f6a"
+      "sha": "1e4837a50c0ddfee8c7f3943e5139d7cc7825bca"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4739,7 +4851,7 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "649f01139b7bb6e04fd5ade5f11a33c658631fc2"
+      "sha": "45ec8d69e67252f56dbd46ffffe111f6c478c184"
     },
     {
       "path": "dist/js/support-client.js",
@@ -5039,7 +5151,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "95e731e9c148ab217d1f58172a14a9b5561c0de1"
+      "sha": "f4a505f8ac0171cd2197aa537b9e14f80aeac497"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5563,7 +5675,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "1999034b42a445fee4fb8eec99f3aba9508d595d"
+      "sha": "a4dfe5dcee60a5b74bdcf81efee20f146900ff55"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5955,7 +6067,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "b460f863b8305417be454b56debf5e9365ccc7af"
+      "sha": "5e56e7c591f73c51d8f6b1a0ecf58dd194009e33"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6075,7 +6187,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "40f1be88e6673e6ca1cc4714a60cfb627cd815c9"
+      "sha": "c8e677bd40d12e66983347b07e48f56f0a4d4140"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7627,7 +7739,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "e3ea97f560b32cb32195ab2e344ddd741bd959fd"
+      "sha": "f11e0da6518e7241ec63108b4a0516c455dce788"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7639,7 +7751,7 @@
     },
     {
       "path": "scripts/check-support-layout.mjs",
-      "sha": "07035b33b840e4dbbbbfe8630085435d796e98fb"
+      "sha": "fdda5537a515881cbf032336effff73ddb5bab1b"
     },
     {
       "path": "scripts/check-support-multiple.mjs",

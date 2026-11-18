@@ -2785,8 +2785,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "Award card",
  "rankingUi.awardWins": "Wins: {count}",
  "rankingUi.cancel": "Cancel",
+ "rankingUi.celebrationAmeen": "Ameen",
  "rankingUi.celebrationAria": "Award presentation · {title}",
  "rankingUi.celebrationAward": "SALAH AWARD",
+ "rankingUi.celebrationBlessing": "May Allah accept your efforts.",
  "rankingUi.celebrationPreview": "Animation preview",
  "rankingUi.celebrationPreviewNote": "The counter does not change",
  "rankingUi.celebrationStreakAria": {

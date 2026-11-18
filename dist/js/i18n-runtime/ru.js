@@ -2827,8 +2827,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "Карточка награды",
  "rankingUi.awardWins": "Побед: {count}",
  "rankingUi.cancel": "Отмена",
+ "rankingUi.celebrationAmeen": "Аминь",
  "rankingUi.celebrationAria": "Вручение награды · {title}",
  "rankingUi.celebrationAward": "НАГРАДА SALAH",
+ "rankingUi.celebrationBlessing": "Пусть Всевышний примет твоё усердие.",
  "rankingUi.celebrationPreview": "Предпросмотр анимации",
  "rankingUi.celebrationPreviewNote": "Счётчик не меняется",
  "rankingUi.celebrationStreakAria": {

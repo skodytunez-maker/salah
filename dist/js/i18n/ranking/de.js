@@ -217,6 +217,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "Auszeichnungsverleihung · {title}",
   "rankingUi.celebrationAward": "SALAH-AUSZEICHNUNG",
   "rankingUi.celebrationThanks": "Danke",
+  "rankingUi.celebrationBlessing": "Möge Allah deine Bemühungen annehmen.",
+  "rankingUi.celebrationAmeen": "Amin",
   "rankingUi.celebrationStreakAria": {
     "one": "{count} Tag in Folge",
     "other": "{count} Tage in Folge"

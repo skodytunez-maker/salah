@@ -2785,8 +2785,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "Auszeichnungskarte",
  "rankingUi.awardWins": "Siege: {count}",
  "rankingUi.cancel": "Abbrechen",
+ "rankingUi.celebrationAmeen": "Amin",
  "rankingUi.celebrationAria": "Auszeichnungsverleihung · {title}",
  "rankingUi.celebrationAward": "SALAH-AUSZEICHNUNG",
+ "rankingUi.celebrationBlessing": "Möge Allah deine Bemühungen annehmen.",
  "rankingUi.celebrationPreview": "Animationsvorschau",
  "rankingUi.celebrationPreviewNote": "Der Zähler bleibt unverändert",
  "rankingUi.celebrationStreakAria": {

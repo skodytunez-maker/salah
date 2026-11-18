@@ -2785,8 +2785,10 @@ export default Object.freeze({
  "rankingUi.awardWinnerCardTitle": "Корти ҷоиза",
  "rankingUi.awardWins": "Пирӯзиҳо: {count}",
  "rankingUi.cancel": "Бекор кардан",
+ "rankingUi.celebrationAmeen": "Омин",
  "rankingUi.celebrationAria": "Тақдими ҷоиза · {title}",
  "rankingUi.celebrationAward": "ҶОИЗАИ SALAH",
+ "rankingUi.celebrationBlessing": "Бигзор Худованд кӯшишҳои туро қабул кунад.",
  "rankingUi.celebrationPreview": "Пешнамоиши аниматсия",
  "rankingUi.celebrationPreviewNote": "Ҳисобкунак тағйир намеёбад",
  "rankingUi.celebrationStreakAria": {

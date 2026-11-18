@@ -17,7 +17,7 @@ export function hideFounderWelcome(root=layer,{immediate=false}={}){
 export function showFounderWelcome({preview=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches}={}){
  hideFounderWelcome(layer,{immediate:true});
  const root=document.createElement('div');root.className='founder-welcome'+(reduced?' founder-welcome-reduced':'');
- root.innerHTML='<div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+("\" alt=\"\"></div><h2>"+uiLeaf("extraUi.founderThanks")+"</h2><p>"+uiLeaf("rankingUi.awardTitleFounder")+"</p>")+(preview?("<small>"+uiLeaf("extraUi.founderPreview")+"</small>"):'')+("<button type=\"button\" class=\"founder-welcome-close\">"+uiLeaf("rankingUi.celebrationThanks")+"</button></div>");
+ root.innerHTML='<div class="founder-welcome-content" role="status" aria-live="polite"><div class="founder-medal-light" aria-hidden="true"><img src="'+assets[0]+("\" alt=\"\"></div><h2>"+uiLeaf("extraUi.founderThanks")+"</h2><p>"+uiLeaf("rankingUi.awardTitleFounder")+"</p>")+("<p class=\"award-presentation-blessing\">"+uiLeaf("rankingUi.celebrationBlessing")+"</p>")+(preview?("<small>"+uiLeaf("extraUi.founderPreview")+"</small>"):'')+("<button type=\"button\" class=\"founder-welcome-close\">"+uiLeaf("rankingUi.celebrationAmeen")+"</button></div>");
  layer=root;document.body.append(root);bindUiLanguage(root);root.querySelector('.founder-welcome-close').onclick=()=>hideFounderWelcome(root);
  exitTimer=setTimeout(()=>hideFounderWelcome(root),15000);
  return root;

@@ -821,3 +821,10 @@ The owner explicitly requested an animated theme introduction while authorizing 
 Support-only visual correction after the owner’s523 phone screenshot. Wallpaper covers the fixed chat viewport; header/footer become transparent, Stars messages use restrained navy/petrol tones and the continuation button is compact. No asset recompression or new feature card. Preserve announcement523, existing acknowledgement and2026-11-26 expiry. Candidate only: no phone visual check, global publication or external push.
 
 The owner subsequently instructed «Отправь» after being told524 was prepared but not yet published and had no iPhone visual check. Release this correction with no new news edition; physical rendering remains unverified.
+
+
+## 525 — prepared settings hierarchy and reward greeting
+
+Separate unpublished candidate: consistent decorative icons/headings in Settings and the previously requested blessing/«Аминь» in reward/founder presentations on eight interface languages. No new news edition; preserve523 acknowledgement/expiry and ordinary news confirmation. Existing religious timing, preferences, role/MFA checks, award eligibility and source images are unchanged. Phone/browser rendering remains unverified.
+
+The owner subsequently instructed immediate publication without waiting for a phone review after the pending visual check was disclosed. Release525 with announcement523 and its acknowledgement/expiry unchanged; no external push or visual pass claim.

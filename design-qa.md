@@ -1,15 +1,15 @@
-# Support theme polish candidate524
+# Candidate525 — agreed settings hierarchy and award greeting
 
-Visual result: not yet verified.
+Visual result: not verified. Public524 remains published; this candidate is separate.
 
-Source: owner’s fresh public523 iPhone screenshot (attachment9E65F3EA-26E0-416F-86C4-9AF822F04B6F). It shows an inset wallpaper, rectangular opaque chrome, lavender outgoing bubbles and a large gold continuation button. Partly clipped older content at the bottom-scrolled boundary is not treated as a navigation defect.
+The user requested readable decorative icons and consistent headings/spacing for atmosphere switches, glass, ambient sounds, Adhkar/dhikr/Jumuah, background delivery and iPhone sound help. Reuse the existing dark/gold line-icon language with38px decorative icon tiles, native details/summary semantics, consistent15px subsection headings and scoped Settings styling. Remove the requested live-sky explanatory line and its aria-describedby only; the owner-only checkbox and its renewal/revocation behavior remain. Native controls, values, methods, offsets and notification scheduling are unchanged.
 
-Prepared correction is scoped to Support conversations. The fixed viewport owns the saved theme; toolbar/footer float transparently above the same background, with an edge scrim. Stars Support bubbles use navy/petrol; the continuation action retains44px touch height with280px maximum width. The installed status-bar clearance remains8px + safe top + min(40px,safe top). Original theme/Home image bytes, catalogue, profile/internal chat styles, backend and permissions are unchanged.
+The separately agreed award greeting now says «Пусть Всевышний примет твоё усердие» and confirms with «Аминь», with eight translations, for reward/founder presentations. Eligibility, acknowledgement/history, anonymous/private data rules and normal news confirmation remain unchanged. No new artwork or image recompression.
 
-User explicitly answered «Пока без браузера» to the browser-check request. No browser was opened and no screenshot from the corrected implementation or physical phone is available.16 targeted regressions passed (outputs/salah-524-targeted-checks.json outside application source): real mounted Support controller and cleanup, full stylesheet cascade at phone/landscape/desktop insets with both default/themed modes, navigation/drafts/actions, profiles/internal chat, theme loading/persistence, news/motion and mandatory live-listening totals. HappyDOM does not establish physical Safari appearance.
+Checks exercise the actual Settings template across eight languages in owner/public modes, real in-place translation retaining icons and drafts, full shell/owner-access renewal/revocation, reminder delivery, glass controls, prayer-source selection and award presentation/account-change lifecycles. These DOM/CSS/source checks do not establish phone rendering. Browser automation remains declined; no browser was opened.
 
-Before visual approval, compare on the owner’s phone: uninterrupted wallpaper through safe area/gutters/header/footer; sharp image; calm bubbles; readable header; compact continuation; open keyboard; preserved reading position and card→chat→inbox Back. This candidate is not published. Public523 remains the approved version; its release authorization was specific to that package. Announcement523 and its acknowledgement/expiry remain unchanged.
+Before visual approval, check on the owner phone: wrapping of long translations at narrow widths/RTL, touch labels, open disclosures, reminder connect/test actions, glass preview and award greeting at large text/landscape. No deployment of525 or visual pass is claimed.
 
-## Subsequent explicit publication instruction
+## Subsequent publication instruction
 
-The owner replied «Отправь» after the pending phone check and unpublished status were disclosed. Publication of this524 correction is now authorized. Browser/phone visual verification remains unverified; do not relabel the visual result as passed.
+The owner instructed immediate publication without waiting after the preparation and missing iPhone visual check were disclosed.525 publication is authorized after full checks/builds; no visual pass is claimed, and browser automation remains declined.

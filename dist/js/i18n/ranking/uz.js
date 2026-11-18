@@ -218,6 +218,8 @@ export default Object.freeze({
   "rankingUi.celebrationAria": "Mukofot taqdimoti · {title}",
   "rankingUi.celebrationAward": "SALAH MUKOFOTI",
   "rankingUi.celebrationThanks": "Rahmat",
+  "rankingUi.celebrationBlessing": "Alloh sa’y-harakatlaringizni qabul qilsin.",
+  "rankingUi.celebrationAmeen": "Omin",
   "rankingUi.celebrationStreakAria": {
     "one": "{count} kun ketma-ket",
     "other": "{count} kun ketma-ket"

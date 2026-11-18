@@ -1,3 +1,4 @@
+import{settingsSectionLabel}from '../dist/js/settings-section-label.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -23,7 +24,7 @@ const adhkarCard=vm.runInNewContext(adhkarSource.split(/\r?\n/).find(line=>line.
 let owner=false,ownerChecks=0,resolveOwnerCheck,account={signedIn:true,nickname:null},renders=0,previewCalls=0,clock=Date.parse('2026-11-15T08:00:00+05:00');
 const day='2026-11-15',times={Fajr:clock+100000,Sunrise:clock+200000,Dhuhr:clock+300000,Asr:clock+400000,Maghrib:clock+500000,Isha:clock+600000};
 let next={key:'Fajr',name:'Фаджр',time:times.Fajr,day};
-const ctx=vm.createContext({ADVANCED_SKY_AVAILABLE,app,document:doc,window:win,location:win.location,settings,t,translateUi,getLocale,esc,title,languageSettingsMarkup,mountLanguageSettings,
+const ctx=vm.createContext({settingsSectionLabel,ADVANCED_SKY_AVAILABLE,app,document:doc,window:win,location:win.location,settings,t,translateUi,getLocale,esc,title,languageSettingsMarkup,mountLanguageSettings,
  stopSettingsScreens:null,stopLanguageSettings:null,stopGlassSettings:null,mountGlassSettings:node=>mountGlassSettings(node,{doc,win}),mountSettingsScreens:node=>mountSettingsScreens(node,{win}),currentRoute:'settings',counterSyncStatus:()=>account,ownerVerified:()=>owner,verifyOwner:()=>{ownerChecks++;return new Promise(resolve=>{resolveOwnerCheck=resolve;});},
  teamPreviewVerified:()=>false,bindAppSharing(){},appSharingMarkup:()=>'<div class="app-share-row">Пригласить друзей</div>',mountMenuAvatar(){},
  reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){},tick(){}},usesAlHakk:()=>false,tyumenSourceSettings:()=>'',prayers,methods:{3:'Muslim World League',5:'Egyptian General Authority'},
@@ -50,7 +51,7 @@ const form=doc.getElementById('settings-form'),offset=doc.getElementById('offset
 assert.equal(ADVANCED_SKY_AVAILABLE,false,'The actual public availability policy, not a fixture override, governs Settings');
 const assertPublicAppearance=()=>{
  for(const id of ['live-sky']){const row=doc.getElementById(id).closest('label');assert.equal(row.hidden,true);assert.equal(win.getComputedStyle(row).display,'none','An explicit display rule also defeats the existing switch-row layout');}
- for(const id of ['live-sky-hint']){const node=doc.getElementById(id);assert.equal(node.hidden,true);assert.equal(win.getComputedStyle(node).display,'none');}
+ assert.equal(doc.getElementById('live-sky-hint'),null,'The requested explanatory line is removed');assert.equal(doc.querySelector('[aria-describedby="live-sky-hint"]'),null,'No dangling description after removing the hint');
  for(const button of doc.querySelectorAll('[data-background-mode]')){assert.equal(button.hidden,false);assert.notEqual(win.getComputedStyle(button).display,'none','Basic Day/Night/Auto photo choices remain accessible');}
  const visibleControls=[...app.querySelectorAll('input,select,button,a[href]')].filter(node=>!node.closest('[hidden]')&&win.getComputedStyle(node).display!=='none');
  assert.ok(visibleControls.every(node=>!['live-sky'].includes(node.id)),'Closed advanced controls are absent from the visible keyboard control set');
