@@ -4363,6 +4363,16 @@
       "path": "dist/assets/home-clouds-509.webp",
       "gitBlobSha": "745750a0d5dc74305aa42ba3ab5f5ca811be7d3e",
       "bytes": 24372
+    },
+    {
+      "path": "dist/assets/updates/glass-controls-515.svg",
+      "gitBlobSha": "dbf9b34a45f870185bfe839b867556a29276a053",
+      "bytes": 4618
+    },
+    {
+      "path": "dist/assets/updates/message-actions-515.svg",
+      "gitBlobSha": "66984bcf1202731f4fb707082612bd2d4ec0683f",
+      "bytes": 3651
     }
   ],
   "incrementalEvidence": [
@@ -4567,6 +4577,16 @@
       "evidence": "docs/home-clouds-509.md",
       "baseCommit": "7b50154205fc623171ad4200b6ae73222e69769b",
       "note": "Owner-reviewed original generative photographic sky texture for Home509. The final24372-byte WebP and its SHA-256/Git blob are pinned; historical sourceCommit and all earlier evidence records remain unchanged."
+    },
+    {
+      "date": "2026-11-18",
+      "paths": [
+        "dist/assets/updates/glass-controls-515.svg",
+        "dist/assets/updates/message-actions-515.svg"
+      ],
+      "evidence": "docs/release-artwork.md",
+      "baseCommit": "63f3a600f9c3ce1bc776e3f93a081b471e91a58a",
+      "note": "Two original static feature-specific SVG illustrations for candidate515; historical evidence records and all photographic wallpaper fingerprints are unchanged."
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"

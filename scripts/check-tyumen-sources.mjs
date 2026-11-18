@@ -69,19 +69,19 @@ updateSettings({tyumenTimeSource:'al-hakk',city:{name:'Москва',latitude:55
 assert.ok(cacheKey().includes('calculated'),'Other cities keep calculated schedules');
 // Exercise the actual settings renderer and change handler, not a copy of them.
 updateSettings({city,tyumenTimeSource:'auto',school:0});
-const appSource=await readFile(new URL('dist/js/app.js',root),'utf8'),elements=new Map();let refreshes=0,resets=0,cacheMounts=0;
+const appSource=await readFile(new URL('dist/js/app.js',root),'utf8'),elements=new Map();let refreshes=0,resets=0,cacheMounts=0,glassMounts=0;
 const{t,translateUi,getLocale,setInterfaceLanguage}=await import('../dist/js/i18n.js');
 const{languageSettingsMarkup}=await import('../dist/js/language-settings.js');setInterfaceLanguage('ru');
 const element=id=>{if(!elements.has(id))elements.set(id,{value:'',checked:false,validity:{valid:true},querySelector:()=>({remove(){}})});return elements.get(id)};
-const rootElement={innerHTML:'',querySelectorAll:()=>[]};
-const context=vm.createContext({t,translateUi,getLocale,languageSettingsMarkup,stopLanguageSettings:null,mountLanguageSettings:()=>()=>{},stopSettingsScreens:null,mountSettingsScreens:()=>()=>{},personalDataAllowed,mountTravelSettings:()=>{},travelHooks:{},mountPrayerOffline:()=>{},mountCacheSettings:el=>{assert.equal(el,element('cache-storage-settings'));cacheMounts++;},mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:Object.assign(new EventTarget(),{getElementById:element}),window:new EventTarget(),usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
+const rootElement={innerHTML:'',querySelectorAll:()=>[],querySelector:selector=>{assert.equal(selector,'#glass-settings');return element('glass-settings');}};
+const context=vm.createContext({t,translateUi,getLocale,languageSettingsMarkup,stopLanguageSettings:null,mountLanguageSettings:()=>()=>{},stopGlassSettings:null,mountGlassSettings:host=>{assert.equal(host,element('glass-settings'));glassMounts++;return()=>{};},stopSettingsScreens:null,mountSettingsScreens:()=>()=>{},personalDataAllowed,mountTravelSettings:()=>{},travelHooks:{},mountPrayerOffline:()=>{},mountCacheSettings:el=>{assert.equal(el,element('cache-storage-settings'));cacheMounts++;},mountSoftDepthSetting:()=>{},mountDiagnosticSetting:()=>{},errorReporter:{},settings,updateSettings,app:rootElement,document:Object.assign(new EventTarget(),{getElementById:element}),window:new EventTarget(),usesAlHakk:()=>settings.city.name==='Тюмень',prayerOffsetValues:()=>settings.tableOffsets,prayers:[],methods:{3:'MWL'},wallpapers:[],esc:String,title:()=>'',formatTime:()=>'',timingsFor:()=>null,dateKey:()=>day,APP_VERSION,APP_UPDATED_AT:'2026-10-05',APP_UPDATE_DATE:'5 октября 2026',weatherLabel:()=>'',reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){resets++}},cityDialog(){},toast(){},refresh(){refreshes++},tick(){},mountAmbientSettings(){},mountLandmarkSettings:()=>()=>{},weatherDialog(){},installApp(){},showAppRelease(){},exportData(){},importData(){},calendarRequestId:0});
 context.uiLeaf=(await import('../dist/js/ui.js')).uiLeaf;
 context.ADVANCED_SKY_AVAILABLE=ADVANCED_SKY_AVAILABLE;
 vm.runInContext(appSource.slice(appSource.indexOf('const settingsIconPaths='),appSource.indexOf('let historyPeriod=')),context);
 vm.runInContext(appSource.split('\n').filter(line=>/^function (tyumenSourceSettings|tyumenSourceNote|settingsPage)\(/.test(line)).join('\n'),context);
 // Full translated Settings DOM/lifecycle is covered by check-interface-shell.
 context.updateSettingsTranslations=()=>{};
-context.nativeUpdateRuntime=()=>false;context.settingsPage();assert.equal(cacheMounts,1);
+context.nativeUpdateRuntime=()=>false;context.settingsPage();assert.equal(cacheMounts,1);assert.equal(glassMounts,1);
 assert.match(rootElement.innerHTML,/id="tyumen-time-source"/);assert.match(rootElement.innerHTML,/Календарь Тюмени/);assert.match(rootElement.innerHTML,/Сайт «Аль-Хакк»/);
 element('tyumen-time-source').onchange({target:{value:'al-hakk'}});
 assert.equal(settings.tyumenTimeSource,'al-hakk');assert.equal(settings.school,0);assert.equal(refreshes,1);assert.equal(resets,1);

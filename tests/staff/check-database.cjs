@@ -22,6 +22,7 @@ async function main(){
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261011221126_staff_support_privacy.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012160940_staff_message_status.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261012174334_staff_background_notifications.sql'),'utf8'));
+ await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/migrations/20261118084403_staff_message_deletion.sql'),'utf8'));
  await db.exec(fs.readFileSync(require('node:path').resolve(__dirname,app,'supabase/functions/staff-cabinet/chat-room-avatar.sql'),'utf8'));
  const sessions=new Map();
  for(const [user,nickname] of [[owner,'Владелец (тест)'],[admin,'Админ (тест)'],[mod,'Модератор (тест)'],[outsider,'Не сотрудник (тест)']]){
@@ -80,7 +81,7 @@ async function main(){
  await as(owner);await rpc('member.set',{userId:admin,role:'admin',active:false});await as(admin);await denied(()=>rpc('chat.read',{roomId:dm.id}),'42501');
  await as(mod,'aal2',crypto.randomUUID());await denied(()=>rpc('gate'),'42501');
  await as(mod);await db.query(`UPDATE auth.sessions SET not_after=now()-interval '1 second' WHERE id=$1`,[sessions.get(mod)]);await denied(()=>rpc('gate'),'42501');
- const tables=(await db.query(`SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='salah_staff_private' AND relkind='r'`)).rows;yes(tables.length===11&&tables.every(t=>t.relrowsecurity));
+ const tables=(await db.query(`SELECT relname,relrowsecurity FROM pg_class JOIN pg_namespace n ON n.oid=relnamespace WHERE n.nspname='salah_staff_private' AND relkind='r'`)).rows;yes(tables.length===14&&tables.some(t=>t.relname==='chat_room_history')&&tables.some(t=>t.relname==='chat_clear_operations')&&tables.every(t=>t.relrowsecurity));
  yes((await db.query(`SELECT has_schema_privilege('authenticated','salah_staff_private','USAGE') AS allowed`)).rows[0].allowed===false);
  yes((await db.query(`SELECT has_function_privilege('authenticated','salah_staff_private.request(text,jsonb)','EXECUTE') AS allowed`)).rows[0].allowed===false);
 
