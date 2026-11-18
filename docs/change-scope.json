@@ -246,6 +246,10 @@
       "reason": "Keep existing native update size limit and original image quality through catalogue-derived lazy originals; verify local cache, cancellation and packing behavior."
     },
     {
+      "path": "mobile/tests/licenses.mjs",
+      "reason": "Provide the new pure theme catalogue to the isolated license fixture, retain its license assertions, and verify real sync excludes originals while bundling previews."
+    },
+    {
       "path": "scripts/check-conversation-themes.mjs",
       "reason": "Shared scoped conversation/profile themes, persistence, navigation regressions, provenance and queued owner requests."
     },
