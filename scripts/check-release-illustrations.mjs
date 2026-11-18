@@ -98,7 +98,11 @@ try{
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
  showAppRelease();assert.equal(releaseModal.open,true);
- if(APP_ANNOUNCEMENT.version===515){
+ if(APP_ANNOUNCEMENT.version===516){
+  assert.equal(releaseModal.querySelectorAll('.release-feature').length,1);const selected=releaseModal.querySelector('[data-support-release="516"]'),picture=selected.querySelector('img'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();assert.equal(picture.getAttribute('src'),'./assets/updates/support-inbox-516.svg');
+  for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert(releaseModal.querySelector('[data-support-release="516"]')===selected);assert(selected.querySelector('img')===picture);assert.equal(selected.querySelector('h3').textContent,t('supportReleaseUi.title'));assert.equal(selected.querySelector('p').textContent,t('supportReleaseUi.text'));assert(doc.activeElement===confirmation);assert.equal(hasSeenAnnouncement(),false);}
+  setInterfaceLanguage('ru');assert.equal(releaseModal.querySelector('[data-experience-release],.release-motion-preview,audio,video'),null,'The516 edition adds only its own static Support picture');
+ }else if(APP_ANNOUNCEMENT.version===515){
   assert.equal(releaseModal.querySelectorAll('.release-feature').length,2);
   assert.deepEqual([...releaseModal.querySelectorAll('[data-experience-release]')].map(card=>card.dataset.experienceRelease),['glass-controls-515','message-actions-515']);
   assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,0,'Static UI artwork has no independent motion');

@@ -1,6 +1,6 @@
 # Support conversation candidate
 
-Status: local, unreleased follow-up to public515. The staging directory uses516 as its task identifier; app/version/cache/news metadata remain the approved515 baseline until a separately prepared phone candidate is ready. Nothing in this change authorizes a public deployment or a live database mutation.
+Status: public516 explicitly authorized by the owner with «Опубликуй» after implementation and source-bound checks. Prepare the516 metadata/news, reverify the exact release, apply the reviewed Support migration/function and publish through the normal installed application. No external update push; living sky remains owner-private. Physical-phone verification is not claimed.
 
 The owner's request is «В обращениях добавь этот же механизм чатов». The owner and user Support screen now reuses the messenger action component: own messages on the right, incoming messages on the left, time, accessible action button and touch hold, Reply with a quoted preview and cancellation, source jump, Copy, selected-message Self/Everyone removal and conversation-history Self/Everyone removal. Individual Everyone removal remains author-only. Closed cases retain read/copy/delete actions and hide Reply. Case status, subject, recipient resolution and diagnostics remain on the existing Support protocol.
 
@@ -30,7 +30,7 @@ Case completion and reopening are session/actor bound, operation-idempotent and 
 
 ## Deployment boundary
 
-The migration was created by the existing Supabase CLI2.81.3 and tested against an isolated PGlite database containing the actual Support/staff schema. Before a future release, review the exact live legacy function definitions against the predicate anchors, apply `20261118103824_support_chat_actions_516.sql`, deploy only the reviewed `support-messages` function, then prepare version/cache/artwork metadata and an owner phone candidate. The common client fails back to the original Support screen if the server does not advertise the new capability. Do not change the public latest manifest, merge an auto-publishing branch or deploy to other users before the required phone test and explicit approval. New living sky remains owner-private and all photographs remain unchanged.
+The migration was created by the existing Supabase CLI2.81.3 and tested against isolated PostgreSQL containing the actual Support/staff schema. Before publication, the eight live legacy function definitions were compared against the reviewed baseline and matched. Apply20261118103824_support_chat_actions_516.sql and deploy only the reviewed support-messages function, then publish the exact verified516 frontend. The common client retains its original Support view when the server does not advertise the capability. The owner explicitly authorized this publication; no further approval is required for the concrete reviewed change. New living sky remains owner-private, all original photographs stay unchanged and no external update push is sent.
 
 Checks cover actual database functions, HTTP action validation, transport actor binding and the real Support components in HappyDOM. These checks do not establish physical iPhone/Safari behavior. Phone verification must include hold/menu/cancel, quote/source jump, two-account deletion, photos, offline retry, returning to another case and sign-out/account switch.
 
