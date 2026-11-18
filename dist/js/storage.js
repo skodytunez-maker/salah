@@ -41,7 +41,7 @@ export function read(key,fallback){
 export function write(key,value){
  try{localStorage.setItem('salah:'+key,JSON.stringify(value));return true}catch{storageProblem('Не удалось сохранить данные. Проверьте свободное место и доступ к хранилищу.');return false}
 }
-export const defaults={uiLanguage:'auto',tyumenTimeSource:'auto',madhhab:'general',city:null,travelEnabled:false,travelHomeCity:null,travelCity:null,travelActive:'home',method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,liveSky:false,glassEnabled:false,glassTableTransparency:80,glassPlayerTransparency:65,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
+export const defaults={uiLanguage:'auto',tyumenTimeSource:'auto',madhhab:'general',city:null,travelEnabled:false,travelHomeCity:null,travelCity:null,travelActive:'home',method:3,school:1,highLatitude:3,offsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},tableOffsets:{Fajr:0,Dhuhr:0,Asr:0,Maghrib:0,Isha:0},weather:false,weatherAnimation:true,liveSky:false,glassEnabled:false,glassTransparency:80,glassTableTransparency:80,glassPlayerTransparency:65,dynamic:true,backgroundMode:'auto',wallpaper:'mosque',landmarkCity:'auto',ambientEnabled:false,ambientSound:'rain',ambientVolume:18,transitions:true,motion:false,haptic:true,mosque:false,mosqueTimes:{},juma:'',showTahajjud:false,tahajjudTime:'',onboarded:false,hijriOffset:0};
 const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const BOOLEAN_FIELDS=['travelEnabled','weather','weatherAnimation','liveSky','glassEnabled','ambientEnabled','dynamic','transitions','motion','haptic','mosque','showTahajjud','onboarded'];
 const SETTINGS_KEYS=new Set([...Object.keys(defaults),'reminders','colorTheme']);
@@ -74,7 +74,8 @@ export function normalizeSettings(value,{strict=false,warnings=[]}={}){
  }
  if(Object.hasOwn(value,'ambientSound')){if(['rain','wind'].includes(value.ambientSound))result.ambientSound=value.ambientSound;else bad('Некорректный звук атмосферы.')}
  if(Object.hasOwn(value,'ambientVolume')){if(Number.isInteger(value.ambientVolume)&&value.ambientVolume>=0&&value.ambientVolume<=60)result.ambientVolume=value.ambientVolume;else bad('Некорректная громкость атмосферы.')}
- for(const key of ['glassTableTransparency','glassPlayerTransparency'])if(Object.hasOwn(value,key)){if(Number.isInteger(value[key])&&value[key]>=0&&value[key]<=100)result[key]=value[key];else bad('Некорректная настройка «'+key+'».')}
+ for(const key of ['glassTransparency','glassTableTransparency','glassPlayerTransparency'])if(Object.hasOwn(value,key)){if(Number.isInteger(value[key])&&value[key]>=0&&value[key]<=100)result[key]=value[key];else bad('Некорректная настройка «'+key+'».')}
+ if(!Object.hasOwn(value,'glassTransparency')){if(Object.hasOwn(value,'glassTableTransparency'))result.glassTransparency=result.glassTableTransparency;else if(Object.hasOwn(value,'glassPlayerTransparency'))result.glassTransparency=result.glassPlayerTransparency;}
  result.wallpaper=wallpaperChoice(value.wallpaper);
  result.backgroundMode=backgroundMode(value.backgroundMode,result.dynamic);result.dynamic=result.backgroundMode==='auto';
  if(Object.hasOwn(value,'travelActive')){if(['home','away'].includes(value.travelActive))result.travelActive=value.travelActive;else bad('Некорректная местность режима путника.');}

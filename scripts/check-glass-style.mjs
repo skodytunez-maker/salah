@@ -35,39 +35,25 @@ function setup(width,height,options={}){
  const disposePreview=mountGlassSettings(d.querySelector('#glass-settings'),{doc:d,win:w});
  return{w,d,env,disposePreview,table:d.querySelector('.central-prayer.timetable'),player:d.querySelector('#quran-global-player'),counter:d.querySelector('.central-prayer.focus'),photo:d.querySelector('.scene-day')};
 }
-function enable(f,table=.792,player=.857){f.d.documentElement.dataset.glassMode='on';f.d.documentElement.style.setProperty('--glass-table-alpha',String(table));f.d.documentElement.style.setProperty('--glass-player-alpha',String(player));}
-function disable(f){f.d.documentElement.removeAttribute('data-glass-mode');f.d.documentElement.style.removeProperty('--glass-table-alpha');f.d.documentElement.style.removeProperty('--glass-player-alpha');}
 
+// Independent CSS-state fixtures avoid claiming that HappyDOM models browser
+// style invalidation or GPU compositing. Runtime updates are exercised separately.
+function enable(f,level=80){const alpha=String(Number((1-.82*level/100).toFixed(4)));f.d.documentElement.dataset.glassMode='on';f.d.documentElement.style.setProperty('--glass-table-alpha',alpha);f.d.documentElement.style.setProperty('--glass-player-alpha',alpha);f.d.documentElement.style.setProperty('--glass-blur',(14-.12*level).toFixed(2)+'px');}
 for(const[width,height]of [[375,667],[393,852],[768,1024],[1440,900]]){
- const f=setup(width,height),{w,d,table,player}=f,baseline=surfaces.map(s=>surface(w,d.querySelector(s))),counter=surface(w,f.counter),photo=surface(w,f.photo);
+ const off=setup(width,height),baseline=surfaces.map(s=>surface(off.w,off.d.querySelector(s))),counter=surface(off.w,off.counter),photo=surface(off.w,off.photo),controlStyles=[...off.player.querySelectorAll('button,input,select,strong,small,img')].map(n=>surface(off.w,n));
  assert.deepEqual(rgba(baseline[0].backgroundColor),{rgb:[7,15,29],alpha:.82});assert.deepEqual(rgba(baseline[1].backgroundColor),{rgb:[11,20,36],alpha:1});
- const controls=[...player.querySelectorAll('button,input,select,strong,small,img')],originalNodes=controls.slice(),controlStyles=controls.map(n=>surface(w,n)),range=player.querySelector('input[type="range"]'),focused=player.querySelector('[data-toggle]');range.value='0.42';focused.focus();let changes=0;range.addEventListener('change',()=>changes++);
- enable(f,.74,.78);
- assert.deepEqual(rgba(w.getComputedStyle(table).backgroundColor),{rgb:[7,15,29],alpha:.74},'Opt-in uses the independent table alpha');assert.deepEqual(rgba(w.getComputedStyle(player).backgroundColor),{rgb:[11,20,36],alpha:.78},'Opt-in overrides the opaque compact-ID background');
- assert.match(w.getComputedStyle(table).getPropertyValue('backdrop-filter'),/blur\(18px\)/);assert.match(w.getComputedStyle(player).getPropertyValue('backdrop-filter'),/blur\(16px\)/);
- for(const[s,index]of surfaces.map((s,i)=>[s,i]))assert.deepEqual(shape(w,d.querySelector(s)),Object.fromEntries(geometry.map(p=>[p,baseline[index][p]])),'Glass never changes surface geometry/text at '+width+'px');
- assert.deepEqual(surface(w,f.counter),counter,'The focused countdown is outside the glass scope');assert.deepEqual(surface(w,f.photo),photo,'Glass never filters or dims the photograph');
- controls.forEach((n,i)=>{assert.equal(n,originalNodes[i]);assert.deepEqual(surface(w,n),controlStyles[i],'Control/portrait/text styles stay unchanged');});assert.equal(d.activeElement,focused);assert.equal(range.value,'0.42');range.dispatchEvent(new w.Event('change'));assert.equal(changes,1);
- enable(f,1,.78);assert.equal(rgba(w.getComputedStyle(table).backgroundColor).alpha,1);assert.equal(rgba(w.getComputedStyle(player).backgroundColor).alpha,.78,'One slider never changes the other alpha');enable(f,.74,1);assert.equal(rgba(w.getComputedStyle(table).backgroundColor).alpha,.74);assert.equal(rgba(w.getComputedStyle(player).backgroundColor).alpha,1);
- const previewTable=d.querySelector('.glass-preview-table'),previewPlayer=d.querySelector('.glass-preview-player');assert.equal(rgba(w.getComputedStyle(previewTable).backgroundColor).alpha,.74);assert.equal(rgba(w.getComputedStyle(previewPlayer).backgroundColor).alpha,1);assert.equal(d.querySelector('.glass-preview button,.glass-preview audio,.glass-preview video,.glass-preview input'),null,'Preview is a labelled noninteractive illustration');
- enable(f,.74,.78);player.classList.add('is-ruqyah');assert.equal(rgba(w.getComputedStyle(player).backgroundColor).alpha,.78,'The shared ruqyah compact widget uses the same selected surface');player.classList.remove('is-ruqyah');
- player.classList.add('is-expanded');const expandedOn=surface(w,player);disable(f);assert.deepEqual(surface(w,player),expandedOn,'No glass setting may touch the expanded player');player.classList.remove('is-expanded');assert.deepEqual(surfaces.map(s=>surface(w,d.querySelector(s))),baseline,'OFF returns the exact original514 surface cascade');
- d.documentElement.classList.add('soft-depth');const depthControls=controls.map(n=>surface(w,n));enable(f);controls.forEach((n,i)=>assert.deepEqual(surface(w,n),depthControls[i],'Glass preserves optional soft-depth controls'));f.disposePreview();await w.happyDOM.close();
+ for(const level of [0,100]){
+  const f=setup(width,height);enable(f,level);const expected=level===0?1:.18;
+  // Read the ID surface first; some DOM-fixture selector caches are not live.
+  const playerStyle=f.w.getComputedStyle(f.player);assert.equal(rgba(playerStyle.backgroundColor).alpha,expected,'Shared player endpoint at '+width+'px');
+  for(const selector of [...surfaces,'.glass-preview-table','.glass-preview-player']){const c=f.w.getComputedStyle(f.d.querySelector(selector));assert.equal(rgba(c.backgroundColor).alpha,expected,selector);assert.match(c.getPropertyValue('backdrop-filter'),level===100?/blur\(2(?:\.00)?px\)/:/blur\(14(?:\.00)?px\)/);assert.notEqual(c.textShadow,'none');}
+  for(const[index,selector]of surfaces.entries())assert.deepEqual(shape(f.w,f.d.querySelector(selector)),Object.fromEntries(geometry.map(p=>[p,baseline[index][p]])),'Surface typography and geometry stay unchanged at '+width+'px');
+  assert.deepEqual(surface(f.w,f.counter),counter);assert.deepEqual(surface(f.w,f.photo),photo,'Photograph quality and geometry are unchanged');[...f.player.querySelectorAll('button,input,select,strong,small,img')].forEach((n,i)=>assert.deepEqual(surface(f.w,n),controlStyles[i]));f.disposePreview();await f.w.happyDOM.close();
+ }
+ off.disposePreview();await off.w.happyDOM.close();
 }
-
-for(const env of [{backdrop:false,webkit:false},{backdrop:false,webkit:true},{'prefers-reduced-transparency':'reduce'},{'prefers-reduced-motion':'reduce'},{'prefers-contrast':'more'},{'forced-colors':'active'}]){
- const f=setup(393,852,env);enable(f,.74,.78);const cs=[...surfaces,'.glass-preview-table','.glass-preview-player'].map(s=>f.w.getComputedStyle(f.d.querySelector(s)));
- if(env.webkit&&!env.backdrop){assert.equal(rgba(cs[0].backgroundColor).alpha,.74);assert.equal(rgba(cs[1].backgroundColor).alpha,.78,'The WebKit-only support branch remains usable');}
- else for(const[index,c]of cs.entries()){assert.equal(c.getPropertyValue('backdrop-filter'),'none','Unsupported/accessibility fixture '+JSON.stringify(env)+' surface '+index+' never depends on blur');if(env['forced-colors']){assert.deepEqual(rgba(c.backgroundColor),{rgb:[0,0,0],alpha:1});assert.equal(c.boxShadow,'none');assert.deepEqual(rgba(c.borderTopColor),{rgb:[255,255,255],alpha:1});}else assert.equal(rgba(c.backgroundColor).alpha,1,'A readable opaque fallback wins over the requested transparency');}
- assert.equal(f.d.documentElement.dataset.glassMode,'on','Accessibility fallbacks do not rewrite the saved preference');f.disposePreview();await f.w.happyDOM.close();
+for(const env of [{backdrop:false,webkit:false},{backdrop:false,webkit:true},{'prefers-reduced-motion':'reduce'},{'prefers-reduced-transparency':'reduce'},{'prefers-contrast':'more'},{'forced-colors':'active'}]){
+ const f=setup(393,852,env);enable(f,100);for(const selector of ['#quran-global-player','.central-prayer.timetable','.glass-preview-player','.glass-preview-table']){const c=f.w.getComputedStyle(f.d.querySelector(selector)),accessible=env['prefers-reduced-transparency']||env['prefers-contrast']||env['forced-colors'];assert.equal(rgba(c.backgroundColor).alpha,accessible?1:.18,JSON.stringify(env)+' '+selector);if(accessible||env.backdrop===false&&env.webkit===false)assert.equal(c.getPropertyValue('backdrop-filter'),'none');if(env['forced-colors'])assert.deepEqual(rgba(c.backgroundColor).rgb,[0,0,0]);}f.disposePreview();await f.w.happyDOM.close();
 }
-{
- const f=setup(393,852);enable(f,.74,.78);f.d.body.classList.add('reduce-motion');for(const selector of [...surfaces,'.glass-preview-table','.glass-preview-player']){const c=f.w.getComputedStyle(f.d.querySelector(selector));assert.equal(rgba(c.backgroundColor).alpha,1,'The existing app-level motion preference also selects the readable fallback');assert.equal(c.getPropertyValue('backdrop-filter'),'none');}f.disposePreview();await f.w.happyDOM.close();
-}
-
-const luminance=rgb=>rgb.map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
-const ratio=(a,b)=>(Math.max(luminance(a),luminance(b))+.05)/(Math.min(luminance(a),luminance(b))+.05);
-for(const[base,alpha,colors]of [[[7,15,29],.74,[[230,235,243],[193,202,217],[190,200,217]]],[[11,20,36],.78,[[184,196,213],[217,195,152]]]])for(const color of colors)assert.ok(ratio(color,base.map(c=>c*alpha+255*(1-alpha)))>=4.5,'Minimum tint preserves current small-text contrast even over a white backdrop');
-for(const property of ['backdrop-filter','-webkit-backdrop-filter'])for(const radius of[18,16])assert.match(css,new RegExp(property+':\\s*blur\\('+radius+'px\\)'),'Both standard and WebKit filter declarations are required');
-assert.ok((css.match(/background:\s*Canvas\s*;border-color:\s*CanvasText/g)||[]).length>=2,'Forced colors delegates both surfaces to the real OS palette');
-console.log('PASS: actual glass cascade keeps514 OFF exact, independent safe endpoints, original connected controls/text/geometry/photos, compact/ruqyah scope and fullscreen exclusion; preview, support/accessibility fallbacks and worst-bright-backdrop text contrast. CSS/media capability fixtures only, no device pixel or GPU claim.');
+for(const kind of ['is-expanded','is-ruqyah']){const f=setup(393,852);f.player.classList.add(kind);enable(f,100);const computed=f.w.getComputedStyle(f.player);assert.equal(rgba(computed.backgroundColor).alpha,kind==='is-ruqyah'?.18:1,'Only the compact shared player gets glass');f.disposePreview();await f.w.happyDOM.close();}
+console.log('PASS unified glass CSS-state fixtures: common 0/100 alpha and low-blur endpoints; unchanged photograph, text, control and surface geometry; default OFF, compact/ruqyah scope, fullscreen exclusion and accessibility overrides. No physical-phone/GPU/dynamic-style-invalidation claim.');

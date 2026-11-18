@@ -93,3 +93,24 @@ body.staff-message-menu-open{overflow:hidden}
 .staff-messenger .is-team-message[data-author-color="1"] .staff-message-heading>strong{color:#b9d4ee}
 .staff-messenger .is-team-message[data-author-color="2"] .staff-message-heading>strong{color:#dfc2e5}
 .staff-messenger .is-team-message[data-author-color="3"] .staff-message-heading>strong{color:#ebcf9b}
+
+/* Compact inbox rhythm, retaining real counts and activity dates. */
+.staff-messenger .staff-room-item .staff-chat-room{min-height:82px;gap:12px;align-items:center}
+.staff-messenger .staff-room-avatar{flex:0 0 48px;width:48px;height:48px;border-radius:50%}
+.staff-messenger .staff-room-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
+.staff-room-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0}
+.staff-room-top>strong{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;line-height:1.4}
+.staff-room-top>time{flex:none;font-size:10px;line-height:1.4;white-space:nowrap;color:#9caac0}
+.staff-messenger .staff-room-copy>small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:1.45;color:#a8b6ca}
+.staff-room-item.is-unread .staff-room-top>time{color:#e0ca94}
+.staff-room-item.is-unread .staff-room-top>strong{color:#f3f0e7}
+.staff-messenger .staff-room-unread{flex:none;min-width:22px;min-height:22px;padding:3px 6px;box-sizing:border-box;border-radius:12px;font-size:11px;text-align:center}
+.staff-messenger .staff-chat-heading{gap:10px;padding:10px 12px;border-bottom:1px solid rgba(180,190,210,.16)}
+.staff-messenger .staff-chat-heading [data-chat-title]{font-size:16px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.staff-messenger .staff-chat-heading [data-chat-subtitle]{font-size:11px;line-height:1.4;color:#a8b6ca}
+.staff-messenger .staff-chat-messages{padding:14px 12px;scroll-padding-bottom:16px}
+.staff-messenger .staff-conversation{touch-action:pan-y}
+.staff-messenger .staff-bubble{border:1px solid rgba(180,190,210,.16);background:#142238;box-shadow:none}
+.staff-messenger .is-mine .staff-bubble{background:#23383b;border-color:rgba(134,166,142,.25)}
+.staff-messenger .staff-composer textarea{border-radius:18px;line-height:1.45}
+@media(max-width:380px){.staff-room-top{gap:6px}.staff-room-top>time{font-size:9px}.staff-messenger .staff-room-item .staff-chat-room{gap:9px}.staff-messenger .staff-room-avatar{flex-basis:42px;width:42px;height:42px}}

@@ -27,7 +27,7 @@ globalThis.location={hash:'#support'};
 globalThis.__supportFixture={t,uiLeaf,uiMessage,validOwnerUserId,prepareSupportPhoto(){},createSupportRpc(){return()=>{}},mountSupportPanel(_root,args){mounts.push(args);return()=>{}},createSupportDiagnostics(){},accountAuthClient:()=>({auth:{}}),ownerVerified:()=>verified,verifyOwner:async()=>{if(verifyPending)return new Promise(done=>verifyPending(done));verified=answer;return answer},ownerNeedsMfa:()=>mfa,ownerUserAvatar:async()=>null,APP_VERSION:209,title:text=>'<h1>'+text+'</h1>'};
 const source="const {t,uiLeaf,uiMessage,prepareSupportPhoto,createSupportRpc,mountSupportPanel,createSupportDiagnostics,accountAuthClient,ownerVerified,verifyOwner,ownerNeedsMfa,ownerUserAvatar,APP_VERSION,title,validOwnerUserId}=globalThis.__supportFixture;\n"+bind.split('\n').filter(line=>!line.startsWith('import')).join('\n');
 const {showSupport,stopSupport}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
-const app={dataset:{},isConnected:true,innerHTML:'',querySelector:()=>({})};
+const routeWindow=new Window({url:'https://fixture.invalid/#support'}),app=routeWindow.document.createElement('main');routeWindow.document.body.append(app);
 await showSupport(app);assert.equal(mounts.at(-1).owner,false);assert.equal(mounts.at(-1).loadSupportAvatar,undefined);assert.ok(app.innerHTML.includes(t('supportUi.support')));
 answer=true;await showSupport(app);assert.equal(mounts.at(-1).owner,true);assert.equal(mounts.at(-1).loadSupportAvatar,globalThis.__supportFixture.ownerUserAvatar);assert.ok(app.innerHTML.includes(t('supportUi.requests')),'A verified owner opens the compact Support inbox without a special URL flag');
 location.hash='#support?owner=1&user=55555555-5555-4555-8555-555555555555';
@@ -51,4 +51,5 @@ for(const owner of [true,false]){
  assert.equal(caption.textContent,label);assert.equal(caption.nextElementSibling,dot,'Each account sees its dot directly beside the Menu support label');assert.equal(dot.hasAttribute(attribute),true);assert.equal(dot.hasAttribute(owner?'data-user-support-status':'data-owner-support-status'),false,'Owner and ordinary-account status roles stay separate');
  await dom.happyDOM.close();
 }
+await routeWindow.happyDOM.close();
 console.log('PASS: owner-only red/green menu status, no false green/offline leaks, owner reply mode, MFA and cancelled page transitions.');
