@@ -62,7 +62,12 @@
       "reason": "Support account-ID card lookup, native/short-swipe Back, regression and release evidence."
     }
   ],
-  "generated": [],
+  "generated": [
+    {
+      "path": "dist/data/haramain-schedule.json",
+      "reason": "Unchanged Pages refresh of official imam records."
+    }
+  ],
   "baseline": [
     {
       "path": ".gitattributes",
