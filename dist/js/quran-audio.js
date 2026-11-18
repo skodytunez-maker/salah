@@ -127,7 +127,11 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   }catch{if(!disposed&&id===token){timingStatus='unavailable';status='error';emit();}return false;}
  }
  function fail(id){if(disposed||id!==token)return;playWanted=false;audioSession.setIntent(false);token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
- function pause(){if(disposed)return;playWanted=false;const retain=!!audio&&(status!=='loading'||!!resumeTask);resumeRevision++;resumeTask=null;audioSession.setIntent(false,{retainPlayback:retain});clearWatchdog();clearNext();if(status==='loading'&&!retain){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{sync(token);audio?.pause()}status='paused';emit()}
+ function pause(){if(disposed)return;playWanted=false;const retain=!!audio&&(status!=='loading'||!!resumeTask);resumeRevision++;resumeTask=null;audioSession.setIntent(false,{retainPlayback:retain});clearWatchdog();clearNext();if(status==='loading'&&!retain){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{
+  // Stop the native source before verse/UI notifications: a failing observer
+  // must never prevent the listener's Pause from physically reaching audio.
+  status='paused';audio?.pause();sync(token);
+ }status='paused';emit()}
  function resume({remote=false}={}){
   if(disposed)return;
   if(audio&&['playing','loading'].includes(status)&&!audio.paused)return resumeTask;

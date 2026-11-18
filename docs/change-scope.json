@@ -1,295 +1,131 @@
 {
   "schema": 1,
-  "version": 513,
-  "baseCommit": "193fd2c366218195a6c6122661f3fade2e8b84fe",
-  "baseTree": "16b603677481746b43dbad3922e0a70cbd3383ba",
-  "note": "Owner-authorized combined basic-photo, interface, pause, Adhkar, navigation and startup fixes. The advanced living sky is unavailable publicly and remains in the isolated owner pilot; preserve all unrelated published510 sources.",
+  "version": 514,
+  "baseCommit": "5914bd5cc86109de4e7c7bb9859f732a272cebc2",
+  "baseTree": "594c2ad1b91e0e824e3d3bd2aaf8fa76f9a2d880",
+  "note": "Public514 stability release explicitly authorized by the owner. Every changed file is reviewed; new living sky remains closed to ordinary users, with verified-owner controls preserved. No external push or backend change.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record the owner-authorized combined basic/fix release and keep the novel animated sky restricted to the separate owner-phone pilot."
+      "reason": "Preserve the owner correction, phone-first rollout and physical pause invariants."
     },
     {
-      "path": "dist/css/adhkar-hub.css",
-      "reason": "Correct only the existing Adhkar label presentation while preserving approved card geometry, religious text and counter behavior."
+      "path": "dist/css/app-bootstrap.css",
+      "reason": "One opaque loading surface; hide unfinished shell only during startup."
     },
     {
-      "path": "dist/js/adhkar.js",
-      "reason": "Correct the existing Adhkar UI label binding without changing sourced religious content, counts or reading logic."
+      "path": "dist/index.html",
+      "reason": "Mark the existing app entry as loading until first real render."
+    },
+    {
+      "path": "dist/js/app-bootstrap.js",
+      "reason": "Remove the startup-only marker when the app takes over; preserve explicit recovery."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Advance the combined minor release to513 while preserving announcement505 acknowledgement, expiry and honest basic-photo wording."
-    },
-    {
-      "path": "dist/js/app-start.js",
-      "reason": "Recover the reviewed startup/navigation state reliably without leaving a stale player overlay or losing the actual selected route."
+      "reason": "Identify candidate514 without resetting the current announcement."
     },
     {
       "path": "dist/js/app.js",
-      "reason": "Keep closed advanced sky/weather/demo controls hidden and their handlers fail closed; ordinary settings and languages remain intact."
+      "reason": "Restore legacy atmosphere controls and real verified-owner sky access in place."
     },
     {
-      "path": "dist/js/edge-back.js",
-      "reason": "Respect the reviewed player overlay/back handling before page navigation without changing unrelated routes or gesture geometry."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Regenerate the existing complete language bundle with only the two authorized Settings messages added."
-    },
-    {
-      "path": "dist/js/i18n/settings/ar.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/az.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/de.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/en.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/kk.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/ru.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/tg.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/settings/uz.js",
-      "reason": "Add only the live-sky label and basic/advanced mode explanation in this existing settings language namespace."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/ar.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/az.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/de.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/en.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/kk.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/ru.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/tg.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
-    },
-    {
-      "path": "dist/js/i18n/skyRelease/uz.js",
-      "reason": "Replace only the existing three sky-release captions with honest basic-photo wording in this language."
+      "path": "dist/js/media-session.js",
+      "reason": "Stable current-owner command handlers across position updates; failed registration retry."
     },
     {
       "path": "dist/js/quran-audio.js",
-      "reason": "Keep explicit Pause authoritative across every pending per-Audio app Play attempt and preserve spontaneous native Play after attempts settle, without changing unrelated audio ownership or real media progress."
+      "reason": "Physically pause before verse/UI observer notifications."
     },
     {
-      "path": "dist/js/quran-player-navigation.js",
-      "reason": "Centralize the reviewed player back/navigation contract so a swipe or close respects actual route history and leaves underlying playback ownership intact."
+      "path": "dist/js/quran-nature-audio.js",
+      "reason": "Timer-independent native suspension, pending resume and obsolete failure guards."
     },
     {
       "path": "dist/js/quran-player-window.js",
-      "reason": "Use the shared reviewed player-navigation contract for window close/swipe handling while preserving the current player layout and media state."
+      "reason": "Pointer-origin focus styling only; preserve keyboard/AT and return focus."
     },
     {
       "path": "dist/js/quran-session.js",
-      "reason": "Preserve the authoritative paused state across session recovery and pending transitions without restarting Quran playback after a user pause."
-    },
-    {
-      "path": "dist/js/release-gallery.js",
-      "reason": "Keep the existing public release gallery honest for the basic-photo rollout, omitting unavailable advanced-sky motion while preserving announcement505 receipt, expiry and unrelated cards."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "Map the basic-photo announcement wording to the existing feature-specific home-sky illustration family."
-    },
-    {
-      "path": "dist/js/sky-atmosphere.js",
-      "reason": "Restore restrained night-cloud ambient detail without changing daylight/sunset/clear-night output or real dense-weather visibility."
-    },
-    {
-      "path": "dist/js/sky-feature-policy.js",
-      "reason": "New explicit false public-availability policy; advanced sky remains private until post-phone-test approval."
-    },
-    {
-      "path": "dist/js/sky-matte-data.js",
-      "reason": "Repair only visually confirmed source-specific roof/mountain-alpha defects across the existing catalogue; preserve all photographs and every unaffected atlas entry."
-    },
-    {
-      "path": "dist/js/sky-release-news.js",
-      "reason": "Demonstrate only existing original day/night photos, without promoting closed celestial/weather animation."
-    },
-    {
-      "path": "dist/js/sky-ui-layout.js",
-      "reason": "Keep visible celestial discs clear of measured Home text/player rectangles in the schematic photo projection; preserve astronomy, visibility and actual horizon."
-    },
-    {
-      "path": "dist/js/storage.js",
-      "reason": "Default liveSky strictly false for fresh/missing/invalid preferences and preserve only explicit valid opt-in through settings/backup normalization."
+      "reason": "Isolate observer failures and stop retained handoff audio before paused notifications."
     },
     {
       "path": "dist/js/weather.js",
-      "reason": "Restore original photo-only baseline and hard-gate all advanced work, saved opt-in and transient previews behind unavailable public policy."
+      "reason": "Separate legacy weather from owner-only sky; recheck current capability and cancel stale work."
+    },
+    {
+      "path": "dist/owner.html",
+      "reason": "Apply the same independent loading lifecycle to the existing owner entry."
+    },
+    {
+      "path": "dist/quran-player.css",
+      "reason": "Suppress only pointer-origin outlines on three expand/collapse controls."
+    },
+    {
+      "path": "dist/share.html",
+      "reason": "Apply the same independent loading lifecycle to the existing shared app entry."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Advance cache/release metadata to513 and precache the reviewed player-navigation module exactly once; preserve downloaded stores and update safety."
+      "reason": "Candidate514 shell cache identifier; preserve existing caching policy."
     },
     {
       "path": "dist/weather.css",
-      "reason": "Keep basic mode as sharp source day/night photos with no advanced layers or extra exposure reduction; preserve advanced appearance."
+      "reason": "Legacy weather remains visible independently of the new living-sky gate."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record the exact authorized combined513 basic/language, pause, Adhkar, navigation and startup changes against published510; preserve every unrelated baseline file."
-    },
-    {
-      "path": "docs/home-basic-512.md",
-      "reason": "Document public basic-mode authorization, closed advanced-sky policy, source scope and physical-device limits."
+      "reason": "Pin exact reviewed paths against the complete public513 source baseline."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record honest basic-only public512 availability with existing505 identity/receipt/expiry and no external push."
+      "reason": "Document candidate status while preserving505 artwork, acknowledgement and expiry."
     },
     {
-      "path": "scripts/check-account-experience.mjs",
-      "reason": "Bind the real release-photo helper into the existing account/release VM fixture after the public basic-photo news renderer gained that dependency; preserve every account, dialog and announcement assertion."
+      "path": "docs/stability-514.md",
+      "reason": "Evidence, limits and physical-phone verification for this candidate."
     },
     {
-      "path": "scripts/check-app-start.mjs",
-      "reason": "Verify the reviewed startup recovery and navigation behavior while preserving existing bootstrap and safety assertions."
-    },
-    {
-      "path": "scripts/check-bootstrap-storage.mjs",
-      "reason": "Verify missing/invalid/denied storage starts basic and preserves only explicit valid opt-in."
-    },
-    {
-      "path": "scripts/check-image-presentation.mjs",
-      "reason": "Bind the real new Home UI-layout helper into the existing image-presentation VM fixture without changing unrelated image assertions."
+      "path": "scripts/check-app-bootstrap.mjs",
+      "reason": "Actual HTML/CSS startup visibility, recovery and cleanup regressions."
     },
     {
       "path": "scripts/check-interface-shell.mjs",
-      "reason": "Verify the actual public Settings shell remains usable across all8 interface languages with the advanced controls absent; preserve form drafts, audio and existing navigation assertions."
+      "reason": "Actual owner Settings capability, in-place drafts and bounded renewal regressions."
     },
     {
       "path": "scripts/check-live-sky-opt-in.mjs",
-      "reason": "New actual-controller lifecycle regression for basic no-work, retained-photo opt-in, cancellation/stale results, hidden/reduced/demo exit."
+      "reason": "Legacy weather stays separate from owner sky opt-in."
     },
     {
-      "path": "scripts/check-player-language.mjs",
-      "reason": "Bind the real player-window history helper into the existing player-language VM fixture after navigation gained that dependency; preserve every language, focus, RTL, plural, audio-passivity and cleanup assertion."
-    },
-    {
-      "path": "scripts/check-practice-content-i18n.mjs",
-      "reason": "Protect the corrected Adhkar label and language binding with the existing practice-content assertions intact."
+      "path": "scripts/check-owner-sky-access.mjs",
+      "reason": "Actual server/MFA owner grants, expiry, revocation and late async cancellation."
     },
     {
       "path": "scripts/check-public-sky-policy.mjs",
-      "reason": "Verify actual false public policy cannot activate heavy sky from stored preferences, direct previews or visible controls."
+      "reason": "Ordinary legacy previews work with no advanced allocations."
     },
     {
-      "path": "scripts/check-quran-audio-session.mjs",
-      "reason": "Verify real session pause/recovery behavior after the authoritative pause fix, preserving existing playback and persistence assertions."
+      "path": "scripts/check-quran-nature-audio.mjs",
+      "reason": "Immediate pause/native suspension while preserving recording and mix regressions."
     },
     {
-      "path": "scripts/check-quran-lockscreen.mjs",
-      "reason": "Preserve the original direct native interruption/resume assertion and extend pending-play regressions so native Play works without a MediaSession callback while late app-initiated Play remains unable to override Pause."
+      "path": "scripts/check-quran-player-window.mjs",
+      "reason": "Actual pointer/keyboard/AT focus behavior without navigation or audio mutations."
     },
     {
-      "path": "scripts/check-quran-pause-authority.mjs",
-      "reason": "Exercise delayed play completions and explicit user pause authority without synthetic listening credit or unrelated audio changes."
-    },
-    {
-      "path": "scripts/check-quran-player-navigation.mjs",
-      "reason": "Cover the real shared player history, swipe and back behavior with delayed/stale completion and actual route-state regressions."
-    },
-    {
-      "path": "scripts/check-release-illustrations.mjs",
-      "reason": "Recognize the basic photo feature mapping without weakening the existing release gallery checks."
-    },
-    {
-      "path": "scripts/check-scene-load.mjs",
-      "reason": "Protect foreground backing resolution/high-quality interpolation and unchanged resource/crop/lifecycle bounds."
-    },
-    {
-      "path": "scripts/check-settings.mjs",
-      "reason": "Verify live-sky boolean normalization and actual backup import/export without inferring consent from older flags."
-    },
-    {
-      "path": "scripts/check-sky-atmosphere.mjs",
-      "reason": "Verify readable low-light clouds while preserving daytime, clear-night, determinism and dense-weather/horizon gates."
-    },
-    {
-      "path": "scripts/check-sky-matte.mjs",
-      "reason": "Protect visually verified source-bound roof, dome and mountain ridge details/sky gaps with regressions."
-    },
-    {
-      "path": "scripts/check-sky-release-news.mjs",
-      "reason": "Test honest basic photo news, its shared motion/hidden/reduced lifecycle and preserved historical illustration geometry."
-    },
-    {
-      "path": "scripts/check-sky-ui-layout.mjs",
-      "reason": "Exercise Home text/player collisions, visible-sky/crop bounds, deterministic placement and unchanged absent/hidden/subhorizon cases."
+      "path": "scripts/check-quran-system-pause.mjs",
+      "reason": "Physical pause despite observer failures, stable ownership and background audio races."
     },
     {
       "path": "scripts/check-tyumen-sources.mjs",
-      "reason": "Inject the real advanced-sky availability policy into the existing Settings VM dependency context; preserve all prayer, reminder, widget and timetable-source assertions."
+      "reason": "Add event-listener methods to the existing minimal Settings fixture; preserve prayer assertions."
     }
   ],
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "The unchanged Pages workflow refreshes the official imam schedule before verification."
+      "reason": "The unchanged Pages workflow refreshes the official imam schedule."
     }
   ],
   "baseline": [
@@ -343,7 +179,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "580655a8eec8b9a4b03c97dd27b208847d14a1f6"
+      "sha": "5766159dda655d59fefe502e5867016baa075a8f"
     },
     {
       "path": "ANALYTICS.md",
@@ -1567,7 +1403,7 @@
     },
     {
       "path": "dist/css/adhkar-hub.css",
-      "sha": "a9633a28812379a111eb36d8262c626ea86aad19"
+      "sha": "9bad93d36dd4b70be897f45eede1d077429457f1"
     },
     {
       "path": "dist/css/allah-names.css",
@@ -2823,7 +2659,7 @@
     },
     {
       "path": "dist/js/adhkar.js",
-      "sha": "0985c9b214b05b0d3a8b0e6009f3670026667995"
+      "sha": "b7dbe1b3b3dd4a61f914c768bac3e24e9d618a12"
     },
     {
       "path": "dist/js/admin.js",
@@ -2859,7 +2695,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "d53085e46cb7cc49dff733d28c411e1d67578019"
+      "sha": "7219985da8866cba2786d3af56705f4f27f06a75"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2867,7 +2703,7 @@
     },
     {
       "path": "dist/js/app-start.js",
-      "sha": "1f139ed95bd8acecfb29b513cd443314cd241c12"
+      "sha": "60f913eb91ca102448ab7acf01285ae8416837bf"
     },
     {
       "path": "dist/js/app-state-core.js",
@@ -2879,7 +2715,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "7ed6b9f6f99567b0c5570462274f1e4fb5229fe8"
+      "sha": "b3f59709d8901fad67de7cc0207bd5d4e8824ffb"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -3047,7 +2883,7 @@
     },
     {
       "path": "dist/js/edge-back.js",
-      "sha": "2543d77d01066fc028649245227b0f401caf466b"
+      "sha": "635db09869e8ed503b07c6b8571a24358353e2e6"
     },
     {
       "path": "dist/js/error-reporting.js",
@@ -3147,35 +2983,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "a2b2494c0ad81ffe688b786e2caee31e0e3b451f"
+      "sha": "5ce3edf59084dd5468be816b7b912b52986aab54"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "a27c5e6734464eb3d542fb2c058e84d3f69814cb"
+      "sha": "0aa4116a634ae1cd23235c2b0e86edf316ccdac5"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "badfe9a16f977b9d69964282daf7feeef9d7bcb8"
+      "sha": "8bbd47fdc38fae9e9719b27a92fc54ad29fd14f8"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "de95ad3c7631b0ca5c6b2221aa1ea3588248601b"
+      "sha": "39438ceb6c0f6b06121b0d36bf1027a44f4ce364"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "e145403b90755a6bfdd186eb105f8420032b7455"
+      "sha": "dc2d5c9a05219cc839baef9727f8bcdda89f2148"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "cb9abea31d473f770a7da01712a022c928ffcfd6"
+      "sha": "81aabe2a967315fccc83fdefc9578adf39192c92"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "08f351d56291acf2f863f477cc75b8900d367c9e"
+      "sha": "fe399cc782055fc5e93fc471549bcbdcd34e64df"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "3ba976cb719645df49ba06e66d81a7962f32379c"
+      "sha": "a0ec02bb4bdf4641ff4cf9e291e6ad153fb2419a"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3823,19 +3659,19 @@
     },
     {
       "path": "dist/js/i18n/settings/ar.js",
-      "sha": "90a07212b662092105825cdd81118c7fe4d61651"
+      "sha": "52a954057dc225a550354b385d672f3b80e45872"
     },
     {
       "path": "dist/js/i18n/settings/az.js",
-      "sha": "10494965c8ea48c8418b7f4734a4407bb0df641d"
+      "sha": "3fab8d9436aa4be857ba8bff53750cb8add3c183"
     },
     {
       "path": "dist/js/i18n/settings/de.js",
-      "sha": "b2630ed3b811c6df2e4c60a845a6cbbc9260106b"
+      "sha": "304b3bf17f628c37644626df8a557091e804fc86"
     },
     {
       "path": "dist/js/i18n/settings/en.js",
-      "sha": "c93db980655f92b49036965d54d84c79cc6ceaeb"
+      "sha": "188c0a6daeb06eea614702af4eb52fdb4b2ee030"
     },
     {
       "path": "dist/js/i18n/settings/index.js",
@@ -3843,35 +3679,35 @@
     },
     {
       "path": "dist/js/i18n/settings/kk.js",
-      "sha": "d57c803e8e887254bbb1c3f2ad1b5ead6939fa4b"
+      "sha": "dadc34e884f3dd6695aaa2f6d861325194f94f16"
     },
     {
       "path": "dist/js/i18n/settings/ru.js",
-      "sha": "469a75588fb86d18eee82b50d96d71004074a2f5"
+      "sha": "93c992edb2c144282fb23585e9c51c21895a8b5e"
     },
     {
       "path": "dist/js/i18n/settings/tg.js",
-      "sha": "bdbe4f57c2fdc38bebb7cc6d9732e2b38c60272b"
+      "sha": "53132b7ddb8e8f8551fbac03c8d075a04659db83"
     },
     {
       "path": "dist/js/i18n/settings/uz.js",
-      "sha": "b59ac91fc73987ef40d385be9410bcf03f4e2f59"
+      "sha": "ac3f3dcaafcf8d6577dcf543589d3ef78666e4f8"
     },
     {
       "path": "dist/js/i18n/skyRelease/ar.js",
-      "sha": "f181ef774c95ba4a4c06de0b894945ba0bfe672e"
+      "sha": "eaa8f93cab5a11e61060e06674d5a82d0e25f7e9"
     },
     {
       "path": "dist/js/i18n/skyRelease/az.js",
-      "sha": "1ba7fbf14bb11d94fb9a9c5313c86e5b4b6a3488"
+      "sha": "ef765c1151380db08533f8df3f9264b14c793cb0"
     },
     {
       "path": "dist/js/i18n/skyRelease/de.js",
-      "sha": "4a0a4f34c8dce8f4d4861da0ab700b7593330ee2"
+      "sha": "397f5a9eb1b37e865339f680a5fbcd61cb88c415"
     },
     {
       "path": "dist/js/i18n/skyRelease/en.js",
-      "sha": "423b135e203b674230e0ea78924c1979c6b6da13"
+      "sha": "dc3986f27fdd4ce7bc4c3f79b789ff5c84e195d6"
     },
     {
       "path": "dist/js/i18n/skyRelease/index.js",
@@ -3879,19 +3715,19 @@
     },
     {
       "path": "dist/js/i18n/skyRelease/kk.js",
-      "sha": "c837c4243d50839e6d10d7c87a07091cf930fcdf"
+      "sha": "68768670c976f2224ed9afccd9e49dc386bf52e5"
     },
     {
       "path": "dist/js/i18n/skyRelease/ru.js",
-      "sha": "c36cc9e6c5880c58a7cdece31a533d87fd402a28"
+      "sha": "d35406a2d1a1d332a4e86ff55badb47ecf00d530"
     },
     {
       "path": "dist/js/i18n/skyRelease/tg.js",
-      "sha": "7d30de3eebebc5d84af83836668c2a5de4d5f2ed"
+      "sha": "ce4e446ce074059bbdf1e289136bc088acaed329"
     },
     {
       "path": "dist/js/i18n/skyRelease/uz.js",
-      "sha": "9da260a2a254e3c58ace843ae6dd3de61b77ae5c"
+      "sha": "20e0efba1ee457e7071cc9b6322b3fd758eef5c9"
     },
     {
       "path": "dist/js/i18n/staff/ar.js",
@@ -4419,7 +4255,7 @@
     },
     {
       "path": "dist/js/quran-audio.js",
-      "sha": "ebe5721a43e50a552cad2393dd6bd6fcde73b213"
+      "sha": "5ae317d629749918b6220e8b31be35740474a4f9"
     },
     {
       "path": "dist/js/quran-award-history.js",
@@ -4542,8 +4378,12 @@
       "sha": "b0eeaee7e8f3c2974a5be8f07d0e2ea52f5dfca2"
     },
     {
+      "path": "dist/js/quran-player-navigation.js",
+      "sha": "4cf7dede6593cd8fd71d153eb0ff2c190482a20d"
+    },
+    {
       "path": "dist/js/quran-player-window.js",
-      "sha": "c35389fa738210961aec6a5e503fea980fef60d9"
+      "sha": "f79f0b0c7522c663c26b08a46b2874e81ad66036"
     },
     {
       "path": "dist/js/quran-playlist.js",
@@ -4611,7 +4451,7 @@
     },
     {
       "path": "dist/js/quran-session.js",
-      "sha": "6e47869909aeb0550a2d3eb118317a0f35612c3b"
+      "sha": "50775bb9bb0e637189948017a214c2794b9917a9"
     },
     {
       "path": "dist/js/quran-sleep-timer.js",
@@ -4695,7 +4535,7 @@
     },
     {
       "path": "dist/js/release-gallery.js",
-      "sha": "4694cdaf12a965092dfbc6039af13c7497cb3df0"
+      "sha": "6004cc59cbba035da7a6a1f1d6352555a1df24dc"
     },
     {
       "path": "dist/js/release-highlight.js",
@@ -4703,7 +4543,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "da1860df82c8e9f3d3a98af38556104f89dc1214"
+      "sha": "c759ab513401142698f25fc54bc79003f3d04e35"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -4743,11 +4583,15 @@
     },
     {
       "path": "dist/js/sky-atmosphere.js",
-      "sha": "e9130a145d8b17582d427a359156f7fa2d15627d"
+      "sha": "b5756285af275a5b5e7de5fbfedd0b8308eecbfb"
+    },
+    {
+      "path": "dist/js/sky-feature-policy.js",
+      "sha": "4ddf4fbcf87c0437f2ce11f2921b66d2456b4c4f"
     },
     {
       "path": "dist/js/sky-matte-data.js",
-      "sha": "504b6fb1dbafc8aaa996344651fccfdf968d8a7f"
+      "sha": "f98594adcee46dbf9354b904f559ddce929264d4"
     },
     {
       "path": "dist/js/sky-matte.js",
@@ -4755,7 +4599,11 @@
     },
     {
       "path": "dist/js/sky-release-news.js",
-      "sha": "ad4913128349209406812e8869485c645eb6d5f0"
+      "sha": "40d9613187388835601c6b461db84011a732591f"
+    },
+    {
+      "path": "dist/js/sky-ui-layout.js",
+      "sha": "c2f50b6dc25f066087d856b5571010beb094ffdd"
     },
     {
       "path": "dist/js/soft-depth.js",
@@ -4803,7 +4651,7 @@
     },
     {
       "path": "dist/js/storage.js",
-      "sha": "8723ebe076c4750044e278051943aa612f389dfa"
+      "sha": "6a5087f5601ae0f508eda37f67ad20ce635d8d40"
     },
     {
       "path": "dist/js/support-billing-test.js",
@@ -5035,7 +4883,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "bf8968ec093616deaeae46f78e6a459684224f9d"
+      "sha": "34ae97bdf2ec14661e9087ee4681a4b2192ab6d1"
     },
     {
       "path": "dist/knowledge.css",
@@ -5107,7 +4955,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "c83a446a220232aa429bee60d3d9e59a020418a4"
+      "sha": "1d36aa0a6a3f07d2763ee06d925514ca96940293"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5499,7 +5347,7 @@
     },
     {
       "path": "dist/weather.css",
-      "sha": "a6e4385dc18484f446af650394d087e1d6b6d565"
+      "sha": "9749b6f6ef4af83bce36a0cb970cf067c88e6326"
     },
     {
       "path": "docs/about-layout-evidence.md",
@@ -5571,7 +5419,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "290ea70b6e360b8a88655f0d4b8f7726ff013ec1"
+      "sha": "e9f2010d450f91c3f0f1577b187abc39e4fb5eb4"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5648,6 +5496,10 @@
     {
       "path": "docs/holy-wallpapers-phone-20261011.json",
       "sha": "14d3972791f4ad378fc26e9c6db434ab7141776b"
+    },
+    {
+      "path": "docs/home-basic-512.md",
+      "sha": "b75b52ec7ca45a47640b159b484ca13363f7165f"
     },
     {
       "path": "docs/home-clouds-509.md",
@@ -5943,7 +5795,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "40dc8165568e3875dad536f9200ff4847ce5b31e"
+      "sha": "700f5ccbed89fee87c3b366d7421a5b3a12fe6d5"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6395,7 +6247,7 @@
     },
     {
       "path": "scripts/check-account-experience.mjs",
-      "sha": "e71c9a14f6d3518a7d9531197e507bf78e3a7c66"
+      "sha": "5869d95c2726ae413aa28b7e3ce15cf15d9ac42f"
     },
     {
       "path": "scripts/check-account-language.mjs",
@@ -6491,7 +6343,7 @@
     },
     {
       "path": "scripts/check-app-start.mjs",
-      "sha": "35ecc2954af875ad692aaea5e1ea56cc3177952f"
+      "sha": "a9a5c3d1604d5b4d1aa72d9c3b7dfa8f9ffaa85f"
     },
     {
       "path": "scripts/check-app-state-sql.mjs",
@@ -6543,7 +6395,7 @@
     },
     {
       "path": "scripts/check-bootstrap-storage.mjs",
-      "sha": "0a8d52479c452ea280c7020c64d5985c1b52d5f5"
+      "sha": "484b75beae34a6599f124053bfc7cbe01c79d1d7"
     },
     {
       "path": "scripts/check-broadcast-audio.mjs",
@@ -6747,7 +6599,7 @@
     },
     {
       "path": "scripts/check-image-presentation.mjs",
-      "sha": "50a2ae43f43bcc7833a0b892f26ee913d2bc1c8e"
+      "sha": "5fda32487f097555b7661e30a4b9475e802e201f"
     },
     {
       "path": "scripts/check-image-response.mjs",
@@ -6771,7 +6623,7 @@
     },
     {
       "path": "scripts/check-interface-shell.mjs",
-      "sha": "024e216b4b79b5484f0350253ac683f79bed2e62"
+      "sha": "7a5a869d950c79536cbdc941b65a3a2cd7d14572"
     },
     {
       "path": "scripts/check-ios-widget.mjs",
@@ -6852,6 +6704,10 @@
     {
       "path": "scripts/check-live-listening-total.mjs",
       "sha": "4d2d94042da364f1c12fcc9bfacda9a557860b1b"
+    },
+    {
+      "path": "scripts/check-live-sky-opt-in.mjs",
+      "sha": "8e3c9e733c48bf327339201bd7369ec94227bac1"
     },
     {
       "path": "scripts/check-live-update.mjs",
@@ -7063,11 +6919,11 @@
     },
     {
       "path": "scripts/check-player-language.mjs",
-      "sha": "e18f382776905bb32fe7d16876b38347971870a3"
+      "sha": "e21099c69dc856871616cf91c00ffaffeb00f26f"
     },
     {
       "path": "scripts/check-practice-content-i18n.mjs",
-      "sha": "28cd8e04a1d58cf9dfc5a687db98b7ce0cf3fa0a"
+      "sha": "d384f3beaad2b37c0aef808dcfaa75db73abcb08"
     },
     {
       "path": "scripts/check-practice-i18n.mjs",
@@ -7100,6 +6956,10 @@
     {
       "path": "scripts/check-public-language.mjs",
       "sha": "1222ad83d0c006d8f72a160f04d507b2de044f4f"
+    },
+    {
+      "path": "scripts/check-public-sky-policy.mjs",
+      "sha": "b65405cb5505f81453898ac631289d5be973c1d6"
     },
     {
       "path": "scripts/check-push-bundle.mjs",
@@ -7139,7 +6999,7 @@
     },
     {
       "path": "scripts/check-quran-audio-session.mjs",
-      "sha": "8cacc99ec5d44e658c06785686abb4a31a1b4d75"
+      "sha": "16f0a731aac212033e39cc3d94e3b093e86dfbd9"
     },
     {
       "path": "scripts/check-quran-award-history.mjs",
@@ -7195,7 +7055,7 @@
     },
     {
       "path": "scripts/check-quran-lockscreen.mjs",
-      "sha": "68fec8f851414270a55ff1d18318362a6c618bed"
+      "sha": "773d738ef697867e038eca15ac69f3a79bbb8814"
     },
     {
       "path": "scripts/check-quran-mini-dismiss.mjs",
@@ -7226,6 +7086,10 @@
       "sha": "35173479b4109599e79091e2d081458531d1be50"
     },
     {
+      "path": "scripts/check-quran-pause-authority.mjs",
+      "sha": "b51d0c233db54edf6c3d5d17958b644083aadfad"
+    },
+    {
       "path": "scripts/check-quran-player-cascade.mjs",
       "sha": "ff37cd9573b9b274977cd0b46f09e3cd8f2fdff0"
     },
@@ -7236,6 +7100,10 @@
     {
       "path": "scripts/check-quran-player-extras.mjs",
       "sha": "46d1cacac2a0abb7ec72bb44dfb4932d283c21cb"
+    },
+    {
+      "path": "scripts/check-quran-player-navigation.mjs",
+      "sha": "e43f9a6b3a7aaaf8abfd02b64a36291f291de5ff"
     },
     {
       "path": "scripts/check-quran-player-window.mjs",
@@ -7367,7 +7235,7 @@
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
-      "sha": "b2fe81acd7ddac2a2f492a8bc584203b2ba2b34f"
+      "sha": "ff6db9ef4306c700dd9f9d460d4d508914c30084"
     },
     {
       "path": "scripts/check-rights-register.mjs",
@@ -7379,7 +7247,7 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "b5ac03d0a2ec19f70243835b4f2a8138b57527a7"
+      "sha": "7279254acfea2e974ca7f9b3257e48ceed0d90af"
     },
     {
       "path": "scripts/check-security.mjs",
@@ -7399,7 +7267,7 @@
     },
     {
       "path": "scripts/check-settings.mjs",
-      "sha": "828965c79f9735a98e32deb39799d19baf39ed5d"
+      "sha": "0f06b2fa0fdcbdf64b53fb2533c347d1aca13a10"
     },
     {
       "path": "scripts/check-setup-invite.mjs",
@@ -7419,15 +7287,19 @@
     },
     {
       "path": "scripts/check-sky-atmosphere.mjs",
-      "sha": "2924a0a51cd801e32abf4b27bdf11a83ba4e4e1d"
+      "sha": "fcdc397a377d41a47e9faa018851e54c4855aff5"
     },
     {
       "path": "scripts/check-sky-matte.mjs",
-      "sha": "8dcddb8e1972ac9882d051e4224fd28ae01c46c0"
+      "sha": "b6f13b06deeab82ed02785e11daa34c8c25a67e1"
     },
     {
       "path": "scripts/check-sky-release-news.mjs",
-      "sha": "977f9a594532c0e8e69ffc640784948ac1dd5518"
+      "sha": "ff2570dc2650d22164cb5bb220e60e91a1b024d8"
+    },
+    {
+      "path": "scripts/check-sky-ui-layout.mjs",
+      "sha": "61ffc413da0d36e74464674f66abc8c0fc712aa3"
     },
     {
       "path": "scripts/check-staff-cabinet.mjs",
@@ -7571,7 +7443,7 @@
     },
     {
       "path": "scripts/check-tyumen-sources.mjs",
-      "sha": "9a4d79d28360f117279f67bdc819336c45625a71"
+      "sha": "f8ada8e0cba586820fc5685451d8ec60d64ed26e"
     },
     {
       "path": "scripts/check-umrah.mjs",

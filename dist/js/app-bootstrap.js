@@ -2,9 +2,9 @@
 // the application empty. This guard never repairs, updates or reloads itself.
 (() => {
  const host=document.getElementById('app'),panel=document.getElementById('app-bootstrap');
- if(!host||!panel||panel.parentNode!==host)return;
+ if(!host||!panel||panel.parentNode!==host){document.body?.removeAttribute('data-app-starting');return;}
  const entry=document.querySelector('script[type="module"][src="./js/app.js"],script[type="module"][src="./js/native-entry.js"]'),status=panel.querySelector('[data-bootstrap-status]'),actions=panel.querySelector('[data-bootstrap-actions]'),retry=panel.querySelector('[data-bootstrap-retry]'),recover=panel.querySelector('[data-bootstrap-recover]');
- if(!status||!actions||!retry||!recover)return;
+ if(!status||!actions||!retry||!recover){document.body?.removeAttribute('data-app-starting');return;}
  const languages={
   ru:{script:'Cyrl',loading:'Загружаем SALAH…',delayed:'Загрузка занимает больше времени. Проверьте соединение и повторите попытку.',failed:'Не удалось открыть SALAH. Проверьте соединение и повторите попытку.',retry:'Повторить',recover:'Восстановить запуск'},
   en:{script:'Latn',loading:'Loading SALAH…',delayed:'Loading is taking longer. Check your connection and try again.',failed:'SALAH could not open. Check your connection and try again.',retry:'Try again',recover:'Restore startup'},
@@ -27,7 +27,7 @@
  const copy=languages[language];panel.lang=language;panel.dir=language==='ar'?'rtl':'ltr';status.textContent=copy.loading;retry.textContent=copy.retry;recover.textContent=copy.recover;
  let disposed=false,timer=null;
  const owns=()=>panel.isConnected&&panel.parentNode===host&&host.isConnected;
- const dispose=()=>{if(disposed)return;disposed=true;clearTimeout(timer);observer.disconnect();entry?.removeEventListener('error',failed);window.removeEventListener('error',failed,true);retry.removeEventListener('click',repeat);};
+ const dispose=()=>{if(disposed)return;disposed=true;document.body?.removeAttribute('data-app-starting');clearTimeout(timer);observer.disconnect();entry?.removeEventListener('error',failed);window.removeEventListener('error',failed,true);retry.removeEventListener('click',repeat);};
  const reveal=reason=>{if(disposed)return;if(!owns()){dispose();return;}clearTimeout(timer);timer=null;status.textContent=copy[reason];panel.setAttribute('aria-busy','false');actions.hidden=false;};
  const failed=event=>{
   // Resource errors belong to the entry element. Evaluation errors are emitted

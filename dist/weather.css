@@ -56,5 +56,6 @@ body.no-transitions *,body.no-transitions *::before,body.no-transitions *::after
 
 /* An explicit opt-in owns the entire advanced Home atmosphere. Photo-only
    mode retains the decoded source pair and its ordinary opacity transition. */
-#home-scene:not([data-live-sky=on])>.scene-sky,#home-scene:not([data-live-sky=on])>.scene-foreground,#home-scene:not([data-live-sky=on])>.scene-dawn,#home-scene:not([data-live-sky=on])>.scene-dusk,#weather-layer:not([data-live-sky=on]){display:none!important}
+#home-scene:not([data-live-sky=on])>.scene-sky,#home-scene:not([data-live-sky=on])>.scene-foreground,#home-scene:not([data-live-sky=on])>.scene-dawn,#home-scene:not([data-live-sky=on])>.scene-dusk{display:none!important}
+#weather-layer:not([data-weather-enabled=on]){display:none!important}
 #home-scene:not([data-live-sky=on])>.scene-day,#home-scene:not([data-live-sky=on])>.scene-night{filter:none!important}

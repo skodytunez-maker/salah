@@ -11,6 +11,7 @@ import{weatherFrame}from './weather-data.js';
 import{createSkyAtmosphere}from './sky-atmosphere.js';
 import{loadSkyMattes}from './sky-matte.js';
 import{ADVANCED_SKY_AVAILABLE}from './sky-feature-policy.js';
+import{ownerVerified}from './owner-auth.js';
 import{layoutSkyObjects}from './sky-ui-layout.js';
 import{getPosition,getMoonPosition}from './vendor/suncalc.js';
 export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REFRESH_INTERVAL}from './weather-data.js';
@@ -18,7 +19,9 @@ export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REF
 let skyAnimation=null,lastSkySample=null,lastSkyStamp=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null,previewRequested=false,previewRequestedAt=null,previewAnchor=null,previewCityKey=null,previewOrigin='';
 const previewActive=()=>previewRequested||previewStarted!==null;
-const liveSkyActive=()=>ADVANCED_SKY_AVAILABLE===true&&(settings.liveSky===true||previewActive()||weatherPreview!==null);
+const advancedSkyAvailable=()=>ADVANCED_SKY_AVAILABLE===true||(typeof ownerVerified==='function'&&ownerVerified());
+let previousSkyAccess=advancedSkyAvailable();
+const liveSkyActive=()=>advancedSkyAvailable()&&(settings.liveSky===true||previewActive()||weatherPreview!==null);
 const cityKey=()=>JSON.stringify([settings.city||null,settings.wallpaper,settings.landmarkCity]);
 const previewCityValid=()=>Number.isFinite(settings.city?.latitude)&&Math.abs(settings.city.latitude)<=90&&Number.isFinite(settings.city?.longitude)&&Math.abs(settings.city.longitude)<=180;
 let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkState='idle',landmarkEntry=null,landmarkGeometry=null,landmarkImages=[];
@@ -206,7 +209,7 @@ function prepareLandmark(scene,home){
 }
 window.addEventListener('online',()=>{if(landmarkState==='offline')landmarkState='idle';if(builtinState==='error')builtinState='idle';if(cloudTextureState==='error')cloudTextureState='idle';inactiveContext=null});
 function queueScenePreview(){pauseSkyAnimation();previewStarted=null;previewRequested=true;previewRequestedAt=performance.now();previewAnchor=null;previewCityKey=cityKey();previewOrigin=String(window.location?.hash||'');previewOverride=null;weatherTail={rain:0,snow:0};previousWet='none';}
-export function startScenePreview(){if(ADVANCED_SKY_AVAILABLE!==true)return false;stopWeatherPreview();queueScenePreview();return true;}
+export function startScenePreview(){stopWeatherPreview();queueScenePreview();return true;}
 function stopScenePreview(){const active=previewActive();pauseSkyAnimation();previewStarted=null;previewRequested=false;previewRequestedAt=null;previewAnchor=null;previewCityKey=null;previewOverride=null;if(active){weatherTail={rain:0,snow:0};previousWet='none';moonPaintKey=null;}document.getElementById('scene-preview-controls')?.remove();document.body.classList.remove('scene-preview');syncLiveSkyMode(document.getElementById('home-scene'));}
 function sceneLayer(){
  let scene=document.getElementById('home-scene');
@@ -215,7 +218,7 @@ function sceneLayer(){
 }
 
 const weatherPreviews={clear:{kind:'clear',clouds:0,precipitation:0,fresh:true},clouds:{kind:'overcast',clouds:1,precipitation:0,fresh:true},rain:{kind:'rain',clouds:.9,precipitation:.7,fresh:true},snow:{kind:'snow',clouds:.85,precipitation:.65,fresh:true}};
-export function startWeatherPreview(){if(ADVANCED_SKY_AVAILABLE!==true)return false;stopScenePreview();weatherPreview='rain';return true;}
+export function startWeatherPreview(){stopScenePreview();weatherPreview='rain';return true;}
 function stopWeatherPreview(){weatherPreview=null;document.getElementById('weather-preview-controls')?.remove();syncLiveSkyMode(document.getElementById('home-scene'));}
 function weatherLayer(effect){
  if(effect.dataset.ready)return;
@@ -285,12 +288,9 @@ function renderUnifiedSky(scene,force=false){
 }
 function paintWeather(effect,now,weather,frame,home,scene){
  if(!home&&weatherPreview!==null)stopWeatherPreview();
- if(!liveSkyActive()){
-  scene.dataset.weatherMotion='off';effect.dataset.motion='off';effect.dataset.kind='none';effect.dataset.source='none';effect.dataset.rain='off';effect.dataset.snow='off';effect.dataset.clouds='off';effect.dataset.unifiedSky='off';weatherTail={rain:0,snow:0};previousWet='none';return;
- }
  weatherLayer(effect);
  const scenePreview=previewActive(),view=scenePreview?weatherPreviews.clear:weatherPreview!==null?weatherPreviews[weatherPreview]:weatherFrame(settings.weather?weather:null,now);
- const active=home&&view.fresh;
+ const active=home&&view.fresh;effect.dataset.weatherEnabled=active?'on':'off';
  const reduced=settings.motion||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const moving=active&&settings.weatherAnimation&&!reduced&&!document.hidden;
  scene.dataset.weatherMotion=moving?'on':'off';
@@ -401,6 +401,7 @@ export function atmosphere(now,times,weather){
  document.body.classList.toggle('no-transitions',!settings.transitions);
   if(previewActive()&&(cityKey()!==previewCityKey||skyPageHidden||document.hidden||!home&&(previewStarted!==null||String(window.location?.hash||'')!==previewOrigin&&!/^#?home(?:$|\?)/.test(String(window.location?.hash||'')))))stopScenePreview();
   if(weatherPreview!==null&&(skyPageHidden||document.hidden||!home))stopWeatherPreview();
+  const access=advancedSkyAvailable();if(previousSkyAccess&&!access){stopScenePreview();stopWeatherPreview();}previousSkyAccess=access;
   const existingScene=document.getElementById('home-scene');syncLiveSkyMode(existingScene);
   if(skyPageHidden||document.hidden){pauseSkyAnimation();if(skyRequest)cancelSkyPreparation();if(cloudTextureState==='loading'){cloudTextureRequest?.abort();cloudTextureRequest=null;cloudTextureState='idle';}effect.dataset.motion='off';if(existingScene)existingScene.dataset.weatherMotion='off';return;}
  const staticContext=[home,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.liveSky,settings.motion,settings.transitions,settings.city?.latitude,settings.city?.longitude,Math.floor(now/60000)].join(':');

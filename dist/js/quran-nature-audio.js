@@ -4,13 +4,12 @@ export const NATURE_MAX_VOLUME=100;
 export const NATURE_DEFAULT_VOLUME=25;
 // Keep headroom in the nature mix without changing the user's 0–100 scale.
 const NATURE_MIX_CEILING=.9;
-export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,schedule=setTimeout,cancel=clearTimeout,load=loadNatureRecording,AbortController=globalThis.AbortController,volume=NATURE_DEFAULT_VOLUME}={}){
- let context=null,gain=null,active=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,stopJob=null,selfSuspended=false,error=false,loading=false,job=null;
+export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,load=loadNatureRecording,AbortController=globalThis.AbortController,volume=NATURE_DEFAULT_VOLUME}={}){
+ let context=null,gain=null,active=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,suspension=null,selfSuspended=false,error=false,loading=false,job=null;
  volume=Number.isInteger(volume)?Math.max(0,Math.min(100,volume)):25;
  const listeners=new Set(),cache=new Map(),retiring=new Set();
  const state=()=>({kind,volume,supported:typeof AudioContext==='function',loading,playing:!!(kind&&wanted&&armed&&volume>0&&active?.kind===kind&&context?.state==='running'),error,systemPaused:!!(kind&&wanted&&armed&&context&&context.state!=='running'&&!selfSuspended)});
  const emit=()=>{const s=state();for(const fn of listeners)try{fn(s);}catch{}};
- function clearStop(){if(stopJob!==null)cancel(stopJob);stopJob=null;}
  function ramp(param,value,seconds){const t=context.currentTime;if(param.cancelAndHoldAtTime)param.cancelAndHoldAtTime(t);else{param.cancelScheduledValues(t);param.setValueAtTime(param.value,t);}param.linearRampToValueAtTime(value,t+seconds);}
  function level(value,seconds=.15){if(gain&&context)ramp(gain.gain,value,seconds);}
  function disconnect(entry){try{entry.node.disconnect();entry.envelope.disconnect();}catch{}retiring.delete(entry);}
@@ -38,16 +37,24 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
   envelope.gain.value=0;envelope.connect(gain);node.buffer=buffer;node.loop=true;node.loopStart=entry.loopStart;node.loopEnd=Math.min(entry.loopEnd,buffer.duration);node.connect(envelope);
   active={kind:chosen,node,envelope};node.start(0,entry.loopStart);ramp(envelope.gain,1,.12);
  }
- function quiet(ticket){
-  level(0,.1);emit();if(!context)return;
-  stopJob=schedule(()=>{stopJob=null;if(disposed||ticket!==revision)return;selfSuspended=true;void context.suspend().catch(()=>{});},140);
+ function suspendGraph(){
+  if(!context||context.state==='closed'||selfSuspended)return;
+  selfSuspended=true;
+  try{const task=Promise.resolve(context.suspend()).catch(()=>{if(suspension===task)selfSuspended=false;});suspension=task;void task.finally(()=>{if(suspension===task)suspension=null;});}catch{selfSuspended=false;}
+ }
+ function quiet(){
+  // A background page may stop receiving JS timers immediately after Pause.
+  // Silence and suspend in the command itself, retaining the selected buffer.
+  level(0,0);suspendGraph();emit();
  }
  async function sync(value=wanted){
-  if(disposed)return;wanted=!!value;const ticket=++revision;clearStop();
-  if(!kind||!wanted||!volume){if(context&&armed)quiet(ticket);else emit();return;}
+  if(disposed)return;wanted=!!value;const ticket=++revision;
+  if(!kind||!wanted||!volume){if(context&&armed)quiet();else emit();return;}
   if(error){emit();return;}
   if(!armed){if(!error&&typeof AudioContext==='function')await unlock();else emit();return;}
   try{
+   if(suspension)await suspension;
+   if(disposed||ticket!==revision)return;
    if(context.state==='suspended'&&selfSuspended){selfSuspended=false;await context.resume();}
    if(disposed||ticket!==revision)return;
    if(context.state!=='running'){emit();return;}
@@ -59,24 +66,24 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
  }
  async function unlock(){
   if(disposed||!kind||typeof AudioContext!=='function'){emit();return;}
-  const chosen=kind;
-  try{graph();const resumed=context.resume();await resumed;if(disposed||kind!==chosen)return;armed=true;selfSuspended=false;error=false;await sync();}
-  catch{if(!disposed&&kind===chosen){error=true;emit();}}
+  const chosen=kind,ticket=revision;
+  try{graph();if(suspension)await suspension;if(disposed||kind!==chosen||ticket!==revision)return;const resumed=context.resume();await resumed;if(disposed||kind!==chosen||ticket!==revision)return;armed=true;selfSuspended=false;error=false;await sync();}
+  catch{if(!disposed&&kind===chosen&&ticket===revision){error=true;emit();}}
  }
  async function select(value){
   if(value!==null&&!natureRecording(value))return false;
-  kind=value;revision++;clearStop();abortLoad();stopSource();error=false;
-  if(!kind){const ticket=revision;quiet(ticket);armed=false;return true;}
+  kind=value;revision++;abortLoad();stopSource();error=false;
+  if(!kind){quiet();armed=false;return true;}
   emit();if(wanted&&volume>0)await unlock();return true;
  }
  function halt(){
-  if(disposed)return;wanted=false;armed=false;revision++;clearStop();abortLoad();stopSource(true);
+  if(disposed)return;wanted=false;armed=false;revision++;abortLoad();stopSource(true);
   for(const entry of [...retiring]){try{entry.node.stop();}catch{}disconnect(entry)}
   level(0,0);error=false;
-  if(context&&context.state!=='closed'){selfSuspended=true;try{void context.suspend().catch(()=>{})}catch{}}
+  suspendGraph();
   emit();
  }
  return{select,unlock,sync,halt,get state(){return state();},setVolume(value){if(!Number.isInteger(value)||value<0||value>100)return;volume=value;return sync();},subscribe(fn){listeners.add(fn);fn(state());return()=>listeners.delete(fn);},destroy(){
-  disposed=true;revision++;clearStop();abortLoad();stopSource(true);for(const entry of [...retiring]){try{entry.node.stop();}catch{}disconnect(entry);}cache.clear();listeners.clear();if(context){context.onstatechange=null;void context.close().catch(()=>{});}context=null;
+  disposed=true;revision++;abortLoad();stopSource(true);for(const entry of [...retiring]){try{entry.node.stop();}catch{}disconnect(entry);}cache.clear();listeners.clear();if(context){context.onstatechange=null;void context.close().catch(()=>{});}context=null;
  }};
 }
