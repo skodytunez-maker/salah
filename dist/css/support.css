@@ -179,4 +179,14 @@ dialog.support-user-profile{outline:none}
 .support-chat-send>svg{width:22px;height:22px}
 .support-chat-send>.support-send-label{position:absolute;inline-size:1px;block-size:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .support-chat-shell[data-support-grouped] [data-support-reply]>.support-chat-send:disabled{opacity:.5;cursor:default}
-.support-chat-shell[data-support-grouped] [data-support-reply]>.support-chat-send:focus-visible,.support-chat-shell[data-support-grouped] [data-support-reply] textarea:focus-visible{outline:2px solid var(--gold,#d9c58f);outline-offset:-3px}
+.support-chat-shell[data-support-grouped] [data-support-reply]>.support-chat-send:focus-visible{outline:2px solid var(--gold,#d9c58f);outline-offset:-3px}
+.support-chat-shell[data-support-grouped] [data-support-reply] textarea:focus,.support-chat-shell[data-support-grouped] [data-support-reply] textarea:focus-visible{outline:none;box-shadow:none}
+.support-chat-shell[data-support-grouped] [data-support-reply] .salah-message-input-row:focus-within{border-color:#c9b47f80;box-shadow:0 0 0 1px #c9b47f20}
+
+/* Only the Support return link: translated label spans are not arrow glyphs. */
+.workspace [data-support-page-back]{margin-block-start:min(16px,env(safe-area-inset-top,0px));font-size:14px;line-height:1.5}
+.workspace [data-support-page-back]>span:not([aria-hidden=true]){font-size:14px;line-height:1.5}
+
+/* During software-keyboard entry, the visible viewport already excludes the home area. */
+#support-root.support-chat-shell[data-support-grouped][data-support-keyboard]{padding-bottom:8px}
+.support-chat-shell[data-support-grouped][data-support-keyboard] .support-close{display:none}

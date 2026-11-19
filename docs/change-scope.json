@@ -1,89 +1,61 @@
 {
   "schema": 1,
-  "version": 526,
-  "baseCommit": "6433e15985018f99f3796f1eba4a3bfe01753102",
-  "baseTree": "edf1fddd40e7e7bafd595be3c821cf008c3b3233",
-  "note": "Owner-authorized immediate checked maintenance publication. Current Activity reception/layout, safe foreground update discovery and the new Support-only participant-name blur report. Actual-city collection cancelled. No phone/browser visual pass; preserve523 news,private sky,images,original composer and access.",
+  "version": 527,
+  "baseCommit": "52c35ba1b6c77ee4a7b4723c1aa4cee6f8c7ba56",
+  "baseTree": "121170c3be65522eb9ca96902fd2e9ec5e19c715",
+  "note": "Standing owner-authorized immediate checked maintenance release. Only Support return label,rounded input focus,confirmed Codex-like input/keyboard behavior and themed profile chrome. No confirmed phone/browser pass or system-blur disable; original images,backend,other sections,523 news and private sky preserved.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
     },
     {
       "path": "design-qa.md",
-      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
     },
     {
-      "path": "dist/css/owner-current-activity.css",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+      "path": "dist/css/conversation-themes.css",
+      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
     },
     {
       "path": "dist/css/support.css",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
-    },
-    {
-      "path": "dist/js/app-state-core.js",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
-    },
-    {
-      "path": "dist/js/owner-current-activity.js",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
-    },
-    {
-      "path": "dist/js/pwa-updates.js",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
-    },
-    {
-      "path": "scripts/check-app-state-sql.mjs",
-      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
-    },
-    {
-      "path": "scripts/check-app-state.mjs",
-      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
-    },
-    {
-      "path": "scripts/check-owner-current-activity.mjs",
-      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+      "reason": "Actual module and full stylesheet regression for the current phone reports,retaining prior access/data/navigation assertions."
     },
     {
       "path": "scripts/check-support-layout.mjs",
-      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+      "reason": "Actual module and full stylesheet regression for the current phone reports,retaining prior access/data/navigation assertions."
     },
     {
-      "path": "scripts/check-update-activation-race.mjs",
-      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
-    },
-    {
-      "path": "supabase/functions/listening-now/app-state.mjs",
-      "reason": "Retain deployed v5 stale-tab-lease fix with unchanged actor/session/rate/score boundaries."
+      "path": "scripts/check-support-profile-layout.mjs",
+      "reason": "Actual module and full stylesheet regression for the current phone reports,retaining prior access/data/navigation assertions."
     }
   ],
   "generated": [
@@ -143,7 +115,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "96d3f1819342b27c45ec2a830475607b712d1ed6"
+      "sha": "57d81764679edf60900dff6e3bc7225afec762f4"
     },
     {
       "path": "ANALYTICS.md",
@@ -151,7 +123,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "49bf8955487e6ad15ad2fb70ba30ebda050b249f"
+      "sha": "5a3e5270bf501c66301b05ae219d054ed88e8154"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1435,7 +1407,7 @@
     },
     {
       "path": "dist/css/owner-current-activity.css",
-      "sha": "589a124541b10d9b3a1bf2d036feca90463e4b0b"
+      "sha": "83702c9dc23301fe33d16ca7a30aad9bee7d8d2b"
     },
     {
       "path": "dist/css/owner-workspace.css",
@@ -1467,7 +1439,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "e78a85117a40d76fdc21801af0c0fa8cd8fa3928"
+      "sha": "ad6cce0c6448f85ff0c3aa2c4546694619e3b328"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -2663,7 +2635,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "6d5f04a29260216ded549762b83fb73340f2e241"
+      "sha": "62cea476020d90ab2160d08e50cf079a87c5aad1"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2675,7 +2647,7 @@
     },
     {
       "path": "dist/js/app-state-core.js",
-      "sha": "e793b61f355bed481c94c475d89f3557d787a19b"
+      "sha": "f5a50e42a8b1442e68120bf67e41dcccea389474"
     },
     {
       "path": "dist/js/app-state.js",
@@ -4199,7 +4171,7 @@
     },
     {
       "path": "dist/js/owner-current-activity.js",
-      "sha": "454214d1c7b96225440c69b4cd2cd075d0f06328"
+      "sha": "aa7fb11e47ef318b74add103b5cfbcebebb5bcb4"
     },
     {
       "path": "dist/js/owner-entry.js",
@@ -4315,7 +4287,7 @@
     },
     {
       "path": "dist/js/pwa-updates.js",
-      "sha": "202d57924a63e68adbdfc13e9659ca3d196ca231"
+      "sha": "ce68565a49e08708c7f77610a6e873cb4d8f37bf"
     },
     {
       "path": "dist/js/qibla-access.js",
@@ -4779,7 +4751,7 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "e597780de4d5c0d688a98ac1b123af099dc5566b"
+      "sha": "5e94ebe7bb6979cdb8b650008d07a80494b8f0f8"
     },
     {
       "path": "dist/js/support-client.js",
@@ -5079,7 +5051,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "2eb9bf1617ac1c142da3b28cf39be22de3a43d4d"
+      "sha": "5f45bd7233d9287e28dff7f2d96a35315a938114"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5603,7 +5575,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "2099d8f2ce98b8268ce2fae8e00a034234adae07"
+      "sha": "e247c734b431a6c82573a32e310a5e4b9374fd13"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5995,7 +5967,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "e4b28caad53fc901c9f17018d6c4c6e7ae0f2832"
+      "sha": "c398c61ea6e987cb05ae81a0fda5c014fbfde82d"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6115,7 +6087,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "e8001f519e09ba002118c022def165361fe5ca8c"
+      "sha": "b1ddfceff70b5530f3a2c84e1de1bbf3ffc4ec64"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6583,11 +6555,11 @@
     },
     {
       "path": "scripts/check-app-state-sql.mjs",
-      "sha": "ba5c312487232c2475a1ea8e5ec5932130fb0885"
+      "sha": "13def5b7baeb4c21d352164abea46f6e19e4d950"
     },
     {
       "path": "scripts/check-app-state.mjs",
-      "sha": "8bbbcb14124d950e93c9199ac3e8aa479d730367"
+      "sha": "266203a22923ba9b64ed8962d654f1cdc8236d37"
     },
     {
       "path": "scripts/check-app.mjs",
@@ -7103,7 +7075,7 @@
     },
     {
       "path": "scripts/check-owner-current-activity.mjs",
-      "sha": "3d7b1908c282448b2c0af9d91a1d2a7cf8ef0cdc"
+      "sha": "a8ba4545185e56172b00d2ff5b52ccdd678ae0c2"
     },
     {
       "path": "scripts/check-owner-frame-viewport.mjs",
@@ -7671,7 +7643,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "bc6dc7208fa4636a37cee326e3fd2d90b13e9f2d"
+      "sha": "c9932a5c367d6904bff677a0c9a1fe5dcd7344b8"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7683,7 +7655,7 @@
     },
     {
       "path": "scripts/check-support-layout.mjs",
-      "sha": "a2afee79a47b8df366678d6437f385fa88ac0480"
+      "sha": "02980602a355e951937cfac23bfe350c4f9f42d9"
     },
     {
       "path": "scripts/check-support-multiple.mjs",
@@ -7819,7 +7791,7 @@
     },
     {
       "path": "scripts/check-update-activation-race.mjs",
-      "sha": "8a6762583ef1981bbc642f54e68ecd6dbb62852a"
+      "sha": "0a18d2214584a4905e873bd5e608bbeb2363bcdf"
     },
     {
       "path": "scripts/check-updates.mjs",
@@ -8051,7 +8023,7 @@
     },
     {
       "path": "supabase/functions/listening-now/app-state.mjs",
-      "sha": "46d51a4f6a685eed1b3fa2c1b4b603cde430d7a3"
+      "sha": "88e9f2ef12292902a8edfed41d92a3c11a97f735"
     },
     {
       "path": "supabase/functions/listening-now/core.mjs",
