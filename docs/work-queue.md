@@ -227,3 +227,42 @@ The one-time morning report automation salah-2 was created successfully for09:00
 Morning checklist source prepared outside application source: outputs/salah-morning-phone-checklist-2026-11-19.json. Reconcile its pending525 field with actual release evidence before reporting; do not call open items implemented.
 
 525 exact-head full CI found339/340 passing: check-account-experience still expected the old founder Спасибо label. Updated that actual presentation contract to localized celebrationAmeen and verified blessing, preserving all eligibility/Auth/acknowledgement/replay/device/news assertions. Local account-experience checks pass. Rerun full exact-head QA after the contract-only follow-up; do not merge a failed340 suite.
+
+
+### Latest owner activity and catalogue requests
+
+After525 began its final CI the owner requested the next priority: on-entry update delivery for old clients; truthful complete current activity fields (section/player/credit/action) and location; remove the top explanations/duplicate heading, make Refresh a real styled button, remove accidental header whitespace in activity cards. Preserve real data and do not backfill invented historical state. Both selected prayer city and consented actual entry city are requested, but when they match show a single city rather than duplicate rows; show the entry city separately only on a real difference, owner-only with active session/MFA. Actual location must depend on the visitor’s granted permission; do not infer it from prayer-city choice. New screenshot/profile request for a following task: research reciter Abdullah Shaaban using the supplied textual handle abdullahshaabn_reciter and other viable new catalogue candidates, with reliable complete audio, source availability and rights. No face identification, unauthorized audio extraction or catalogue addition is claimed.
+
+
+### 525 publication completed
+
+PR394, final headd33a64f51c07711d46c4b60519df9727ac1e2f6e, treeedf1fddd40e7e7bafd595be3c821cf008c3b3233, merge6433e15985018f99f3796f1eba4a3bfe01753102.340/340 exact-head app checks plus actual database/DOM/founder tests and Android/Play/iOS/checkmarks/rights/tablet checks passed. Actual Pages run44416691318/job135198756010 succeeded on the merge source; native manifest525 is102339820 bytes, SHA256ee4894183a0b6595c621b102cd640c23e524de723531db4b7f36f40d9668f025. Ordinary installed application channel published, no external push or phone install/appearance claim. Settings icons, eight-language reward blessing/Ameen and compact Support header with static scrolled top fade included. Current public version525. Next active priority: activity signal-cap fix, owner activity presentation, on-entry update delivery and consented entry city alongside prayer city (deduplicate equal cities). Reciter research remains a following task. Evidence: outputs/salah-525-public-release-complete.json.
+
+
+### Activity server hotfix verified
+
+Production read-only diagnosis: four actors had exactly32 retained tab leases; all135 recent listening-now POSTs in the inspected20:00–22:54UTC window were429 (plus3unauthenticated401); global daily guest budget was only322 and per-actor current rate attempts below90. SQL source rejected every new tab at capacity for24h. Local actual Postgres/handler regression reproduced capacity and now recycles exactly one expired45s lease under the existing actor advisory transaction lock.32fresh leases still reject a new one, existing live updates work, invalid sessions cannot evict, other actors/cities/Top totals/RLS remain untouched. listening-now version5 deployed from the exact version4 baseline, changing only app-state.mjs; all five files read back exactly and custom Auth checks/verify_jwt=false preserved. No schema or auth grants changed. Keep this hotfix in candidate526; do not redeploy version4 from an older source snapshot. Source/tests: outputs/salah-526-activity-updates/app. Server readback: outputs/salah-526-listening-now-server-readback.json. Live row verification is tracked separately; no fabricated historical fields.
+
+
+### Уточнение владельца — одинаковые города не дублировать (526, подготовлено)
+- Показывать город для намаза один раз, если фактический город входа совпадает. Раздельное поле «Город входа» только при различии (включая одноимённые города разных известных стран). Регистр, пробелы и ё/е не создают повтор. При отсутствии города для намаза разрешённый фактический город может отображаться отдельно.
+- Подготовлено в owner-current-activity.js: строгая проверка DTO без координат; город входа старше24ч не показывать; подпись на8языках. Целевые проверки совпадений/различий/отсутствующих и просроченных данных прошли.
+- Полная доставка фактического города с явным согласием пользователя и backend526 ещё не реализована; этот пункт не считать опубликованным или проверенным на iPhone. Серверный lease-hotfix v5 сохранён.
+
+
+### Последнее решение владельца — фактический город не нужен (526)
+- «Хотя фактически город нам не нужен»: отменены сбор/показ фактического города и дополнительное согласие. Только выбранный город для намаза; геолокация и её существующее назначение не меняются. Это решение заменяет предыдущие просьбы о двух полях/устранении повторов.
+- Подготовленный entryCity DTO/строка/8 подписей удалены. Схема базы, геолокационные разрешения и фактическое отслеживание не добавлялись. Регрессия проверяет, что переданное постороннее entryCity не попадает в модель или интерфейс.
+- Продолжать526: корректная приёмка app-state (32 устаревших tab-lease), компактная «Активность сейчас», заметная кнопка обновления и безопасное обновление клиентов при входе.
+
+
+### Кандидат526 — готовится к общей проверке
+- Отчёт: устранён отказ при32 старых вкладках; server listening-now v5 проверен, новые реальные сигналы524 принимаются. Заголовки карточек/кнопка/пояснения исправлены; маршруты расписания относятся к Главной.
+- Вход/возврат: проверка обновления после30с, периодический интервал5мин; pageshow,повторные события и все защиты воспроизведения/форм/сохранения проверены.
+- Скриншот05:50 B1A8F684: владелец уточнил «Только шапку». Дополнительный верхний запас до16px при ненулевом safe inset; поле ответа не менять. Проверка на реальном iPhone остаётся.
+- Фактический город отменён. Следом: исследование чтеца Abdullah Shaaban по явному текстовому профилю и прочие незавершённые задачи; не считать их готовыми.
+
+
+### Дополнение526 — поля ввода по видео05:53
+- Из обеих7.5с записей извлечены кадры0/3/6с: компактная одна строка,клавиатура под полем,кнопки по краям. В групповом чате обращений подготовлены поле44px,скругление,реальный submit со стрелкой,расширение до144px/четверти видимого окна.
+- Эмодзи,черновик,ответ на выбранное,ошибки сети,Enter/перенос строк,3000знаков и сохранение позиции истории проверяются; другие формы/командный мессенджер не менять. Это более позднее уточнение дополняет просьбу «Только шапку». Внешний вид на iPhone ещё не подтверждён.

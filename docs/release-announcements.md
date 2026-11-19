@@ -832,3 +832,8 @@ The owner subsequently instructed immediate publication without waiting for a ph
 A late explicitly requested Support header correction joins525 before publication: grouped chat content uses actual safe-area top plus4px (minimum8px) instead of a second40px allowance. Keep profile/other clearances, touch targets and existing navigation. Still no new news edition; phone placement remains to be verified.
 
 The owner also requested the reference-video top-edge message effect. Include a scoped static fade for scrolled Support history, no masking of fixed controls or original photographs and no new motion loop. Keep the same523 announcement and acknowledgement.
+
+
+## Maintenance526
+
+Keep the523 themes announcement,acknowledgement and expiry unchanged. Owner Current Activity corrections,foreground update checking and the reported Support header blur clearance are maintenance; no new public feature card or external push. Actual-city collection was explicitly cancelled; only selected prayer city remains. New living sky stays owner-private. Physical iPhone visual verification is pending.

@@ -12,9 +12,9 @@ const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
 // Run the real updater in an old supported shell, with the real transition DOM
 // branch and a deterministic clock. No worker activation or network is faked by
 // calling private functions: only the browser worker transport is a fixture.
-async function setup({interactAtRegistration=false,initialAutoSafe=true}={}){
+async function setup({interactAtRegistration=false,initialAutoSafe=true,waitingOnEntry=true}={}){
  const win=new Window({url:'https://example.test/salah/#home'}),doc=win.document;
- let now=100000,visibility='visible',autoSafe=initialAutoSafe,applySafe=true,applyMessages=0,reloads=0,checkpoint=0,prompts=0;
+ let now=100000,visibility='visible',autoSafe=initialAutoSafe,applySafe=true,applyMessages=0,reloads=0,checkpoint=0,prompts=0,networkChecks=0;
  Object.defineProperty(doc,'visibilityState',{configurable:true,get:()=>visibility});
  Object.defineProperty(doc,'hidden',{configurable:true,get:()=>visibility!=='visible'});
  const values=new Map([['salah:update-announcement-seen-v2','502'],['salah:settings','{"city":"Тюмень","school":0}'],['salah:adhkar-progress-v2','{"totals":{"tasbih":17}}'],['salah:player-session-v1','{"reciter":"yasser","surah":5,"time":2429}']]);
@@ -25,7 +25,7 @@ async function setup({interactAtRegistration=false,initialAutoSafe=true}={}){
  const workerEvents=new Map(),registrationEvents=new Map(),timeline=[];
  const upcoming={version:502,date:'2026-11-15',changes:['Улучшена работа без интернета']};
  const waiting={state:'installed',postMessage(message,ports){if(message.type==='SALAH_APPLY_UPDATE'){applyMessages++;timeline.push('activate');}else if(message.type==='SALAH_RELEASE_INFO')ports[0].postMessage(upcoming);},addEventListener(){}};
- const registration={waiting,installing:null,update:async()=>{},addEventListener:(name,fn)=>registrationEvents.set(name,fn)};
+ const registration={waiting:waitingOnEntry?waiting:null,installing:null,update:async()=>{networkChecks++;},addEventListener:(name,fn)=>registrationEvents.set(name,fn)};
  const serviceWorker={controller:{},addEventListener:(name,fn)=>workerEvents.set(name,fn),register:async()=>{if(interactAtRegistration)doc.dispatchEvent(new win.Event('pointerdown'));return registration;}};
  win.addEventListener('salah:before-update-reload',()=>{checkpoint++;timeline.push('checkpoint');});
  class ClockDate extends Date{static now(){return now;}}
@@ -39,7 +39,7 @@ async function setup({interactAtRegistration=false,initialAutoSafe=true}={}){
  async function advance(ms){now+=ms;for(const [id,timer] of [...timeouts])if(timer.at<=now){timeouts.delete(id);timer.fn();}await settle();}
  async function tick(){for(const timer of [...intervals.values()])timer.fn();await settle();}
  return{win,doc,values,baseline,sessionValues,timeline,upcoming,registration,
-  get applyMessages(){return applyMessages;},get reloads(){return reloads;},get checkpoint(){return checkpoint;},get prompts(){return prompts;},
+  get applyMessages(){return applyMessages;},get reloads(){return reloads;},get checkpoint(){return checkpoint;},get prompts(){return prompts;},get networkChecks(){return networkChecks;},
   setAutoSafe:value=>{autoSafe=value;},setApplySafe:value=>{applySafe=value;},
   setVisibility:value=>{visibility=value;doc.dispatchEvent(new win.Event('visibilitychange'));},
   interact:()=>doc.dispatchEvent(new win.Event('pointerdown')),
@@ -74,6 +74,18 @@ for(const [name,block] of blockers){
  const g=await setup();await g.activate();assert.equal(g.doc.documentElement.classList.contains('salah-update-leaving'),true);const unblock=block(g);await g.advance(360);
  assert.equal(g.reloads,0,name+' starting during the fade must cancel reload');assert.equal(g.checkpoint,0);assert.equal(g.sessionValues.has('salah:update-reload-transition-v1'),false,'A canceled transition is not persisted');assert.equal(g.doc.documentElement.classList.contains('salah-update-leaving'),false);assert.equal(g.doc.documentElement.classList.contains('salah-update-leaving-active'),false);
  await unblock();await g.tick();await g.advance(360);assert.equal(g.reloads,1);assert.equal(g.checkpoint,1);assert.deepEqual([...g.values],g.baseline);await g.close();
+}
+
+// Each genuine foreground entry can discover a new build sooner than the normal
+// five-minute poll. Duplicate visibility/pageshow events remain bounded and silent.
+{
+ const f=await setup({waitingOnEntry:false});assert.equal(f.networkChecks,1);
+ f.setVisibility('hidden');await f.advance(31000);f.setVisibility('visible');await settle();assert.equal(f.networkChecks,2,'Returning after30s checks the server without waiting5min');
+ f.win.dispatchEvent(new f.win.Event('pageshow'));f.setVisibility('visible');await settle();assert.equal(f.networkChecks,2,'Duplicate entry events do not issue repeated requests');
+ await f.tick();assert.equal(f.networkChecks,2,'Periodic polls retain their five-minute network interval');
+ await f.advance(30000);f.win.dispatchEvent(new f.win.Event('pageshow'));await settle();assert.equal(f.networkChecks,3,'Restoring a visible cached page also checks for a release');
+ f.setVisibility('hidden');await f.advance(30000);f.win.dispatchEvent(new f.win.Event('pageshow'));await settle();assert.equal(f.networkChecks,3,'A hidden pageshow does not poll');
+ assert.equal(f.prompts,0,'Automatic entry checks never turn into manual update announcements');assert.deepEqual([...f.values],f.baseline);await f.close();
 }
 
 // Deliberate manual checking still exposes the waiting release immediately.

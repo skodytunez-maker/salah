@@ -5,6 +5,7 @@ export function appSection(location){
  const [path,query='']=String(location?.hash||'').replace(/^#/,'').split('?'),route=path||'home';
  if(route==='quran')return new URLSearchParams(query).get('view')==='reciters'?'reciters':'quran';
  if(APP_SECTIONS.includes(route))return route;
+ if(['prayer','day'].includes(route))return 'home';
  if(['umrah','alphabet'].includes(route))return 'knowledge';
  if(['learning','teacher'].includes(route))return 'lesson';
  if(['calendar','history','about','sources','support-salah'].includes(route))return 'more';
