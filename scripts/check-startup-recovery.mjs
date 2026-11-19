@@ -47,7 +47,8 @@ const {APP_VERSION}=await import('../dist/js/app-release.js');
 const workerSource=await fs.readFile(new URL('../dist/sw.js',import.meta.url),'utf8');
 async function upgrade(previousVersion,failInstall=false){
  const handlers={},cached=new Map(),deleted=[],navigated=[];let skipped=0,claimed=0,bundled=false;
- const cache={async addAll(requests){assert.ok(requests.length>400);if(failInstall)throw Error('network');bundled=true;},async put(key,response){cached.set(key,response);},async match(key){return cached.get(key)?.clone();},async delete(key){return cached.delete(key);}};
+ let stored=0,assetCount=0;
+ const cache={async put(key,response){if(key instanceof Request){stored++;if(stored===assetCount)bundled=true;}else cached.set(key,response);},async match(key){return cached.get(key)?.clone();},async delete(key){return cached.delete(key);}};
  const previous=previousVersion==null?null:{postMessage(message,ports){assert.equal(message.type,'SALAH_RELEASE_INFO');ports[0].postMessage({version:previousVersion});}};
  const windowFor=url=>({url,async navigate(target){
   const original=new URL(url),next=new URL(target);
@@ -67,7 +68,9 @@ async function upgrade(previousVersion,failInstall=false){
  const context=vm.createContext({self,URL,Request,Response,Headers,Map,Set,Promise,AbortController,setTimeout,clearTimeout,
   MessageChannel:class{constructor(){this.port1={onmessage:null,close(){}};this.port2={postMessage:data=>queueMicrotask(()=>this.port1.onmessage?.({data}))};}}});
  vm.runInContext(workerSource,context);
- const cacheName=vm.runInContext('CACHE',context);
+ const cacheName=vm.runInContext('CACHE',context),sizes=vm.runInContext('UPDATE_RESOURCE_BYTES',context);assetCount=Object.keys(sizes).length;assert.ok(assetCount>400);
+ // Transport placeholder here; the separate progress check exercises real streamed responses.
+ context.fetch=async request=>{assert.equal(request.cache,'no-cache');if(failInstall)throw Error('network');const relative='./'+new URL(request.url).pathname.slice('/salah/'.length),size=sizes[relative];assert.ok(size>0);return {ok:true,status:200,type:'basic',headers:new Headers(),clone:()=>({arrayBuffer:async()=>({byteLength:size})})};};
  context.caches={open:async name=>{assert.equal(name,cacheName);return cache;},keys:async()=>[cacheName,'salah-shell-v418','salah-quran-audio-v1'],delete:async name=>{deleted.push(name);return true;}};
  let installing;handlers.install({waitUntil:promise=>installing=promise});
  if(failInstall){await assert.rejects(installing,/network/);assert.equal(skipped,0);assert.equal(claimed,0);return;}

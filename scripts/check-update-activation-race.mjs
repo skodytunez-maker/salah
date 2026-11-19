@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import {t,getLocale,subscribeLanguage} from '../dist/js/i18n.js';
 import {isPublicReleaseChange} from '../dist/js/release-illustrations.js';
+import {createUpdateDownloadProgress} from '../dist/js/update-download-progress.js';
 
 const source=await readFile(new URL('../dist/js/pwa-updates.js',import.meta.url),'utf8');
 const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\bexport /g,'')+'\nglobalThis.fixture={registerAppWorker,checkAppUpdate};';
@@ -32,7 +33,7 @@ async function setup({interactAtRegistration=false,initialAutoSafe=true,waitingO
  const context=vm.createContext({window:win,document:doc,navigator:{onLine:true,serviceWorker},location:{reload(){reloads++;timeline.push('reload');}},Date:ClockDate,Intl,Event:win.Event,localStorage:storage,sessionStorage:session,
   setTimeout:schedule,clearTimeout:id=>timeouts.delete(id),setInterval:(fn,ms)=>{const id=++timerId;intervals.set(id,{fn,ms});return id;},clearInterval:id=>intervals.delete(id),requestAnimationFrame:fn=>{fn();return 1;},
   MessageChannel:class{constructor(){this.port1={onmessage:null,close(){}};this.port2={postMessage:value=>queueMicrotask(()=>this.port1.onmessage?.({data:value}))};}},
-  APP_VERSION:359,APP_UPDATED_AT:'2026-10-14',APP_CHANGES:['Старая версия'],APP_ANNOUNCEMENT:{version:359,date:'2026-10-14',changes:['Старая версия']},t,getLocale,subscribeLanguage,isPublicReleaseChange,
+  APP_VERSION:359,APP_UPDATED_AT:'2026-10-14',APP_CHANGES:['Старая версия'],APP_ANNOUNCEMENT:{version:359,date:'2026-10-14',changes:['Старая версия']},t,getLocale,subscribeLanguage,isPublicReleaseChange,createUpdateDownloadProgress,
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),modal:()=>{prompts++;},illustratedReleaseMarkup:()=>'',bindIllustratedRelease:()=>{}});
  vm.runInContext(code,context);
  await context.fixture.registerAppWorker({canAutoUpdate:()=>autoSafe,canApplyUpdate:()=>applySafe,showRelease:()=>{prompts++;}});await settle();
@@ -44,6 +45,7 @@ async function setup({interactAtRegistration=false,initialAutoSafe=true,waitingO
   setVisibility:value=>{visibility=value;doc.dispatchEvent(new win.Event('visibilitychange'));},
   interact:()=>doc.dispatchEvent(new win.Event('pointerdown')),
   activate:async()=>{registration.waiting=null;workerEvents.get('controllerchange')();await settle();},
+  workerMessage:(data,source)=>workerEvents.get('message')?.({data,source}),
   check:()=>context.fixture.checkAppUpdate(),advance,tick,close:()=>win.happyDOM.close()};
 }
 
@@ -97,3 +99,18 @@ for(const [name,block] of blockers){
  f.setApplySafe(false);await f.activate();await f.advance(360);assert.equal(f.reloads,0,'Manual activation still cannot interrupt audio');f.setApplySafe(true);await f.tick();await f.advance(360);assert.equal(f.reloads,1);assert.equal(f.checkpoint,1);assert.deepEqual([...f.values],f.baseline);await f.close();
 }
 console.log('PASS: supported old shell updates to latest at safe idle; form/reader/audio/download/visibility/interaction guards are rechecked at controllerchange and after the 360ms fade; manual notices, checkpoint ordering and personal storage stay intact.');
+
+// Exercise the real manual check -> installing worker -> scoped progress UI path.
+{
+ const f=await setup({waitingOnEntry:false,initialAutoSafe:false});let changed;
+ const worker={state:'installing',addEventListener:(type,fn)=>changed=fn,postMessage(message,ports){if(message.type==='SALAH_UPDATE_PROGRESS_REQUEST')ports[0].postMessage(null);else if(message.type==='SALAH_RELEASE_INFO')ports[0].postMessage({version:534,date:'2026-11-19',changes:['Улучшена работа приложения']});}};
+ f.registration.installing=worker;assert.equal(f.doc.querySelector('.app-download-progress'),null);
+ assert.equal(await f.check(),'loading');assert.ok(f.doc.querySelector('.app-download-progress'));
+ const data={type:'SALAH_UPDATE_PROGRESS',schema:1,version:534,sequence:1,stage:'loading',loaded:370,total:1000,completedFiles:2,totalFiles:8};
+ f.workerMessage(data,{});assert.equal(f.doc.querySelector('progress').hasAttribute('value'),false);
+ f.workerMessage(data,worker);assert.equal(f.doc.querySelector('progress').value,37);assert.equal(f.applyMessages,0);
+ f.registration.installing=null;f.registration.waiting=worker;worker.state='installed';changed();await Promise.resolve();
+ assert.equal(f.doc.querySelector('.app-download-progress'),null);assert.equal(f.applyMessages,0,'A progress notice cannot bypass the safe activation gate');
+ assert.deepEqual([...f.values],f.baseline);await f.close();
+}
+console.log('PASS: real manual updater binds progress only to its installing worker and removes it at installation without bypassing activation or changing data.');

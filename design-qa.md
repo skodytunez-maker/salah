@@ -35,3 +35,6 @@ Complete the owner’s07:19 screenshot request and later instruction to continue
 Standing common-correction checked-publication direction applies;no physical-phone/browser visual pass is claimed. Preserve the531 activity/countdown fix,530 exact-session grant behavior,529 names,original image bytes,523 news/receipts/expiry and private living sky. Other near-term work remains queued with evidence-based statuses.
 
 Actual Settings markup,real shell and existing city/source/travel paths pass in the language fixtures. Nine targeted checks verify selected source/method/school,Tyumen offline/Asr/offsets,travel-home/away timezones,live draft/focus preservation and Diagnostics privacy. Four related checks cover glass,shared listening total,release artwork and531 live-badge controller/style. VM fixtures import the real shared label helper. No fonts,photos or calculation code changed;physical iPhone appearance remains unverified.
+
+
+Release533: verify manual update notice on installed iPhone after533,then a later download: dark compact status,real byte percentage/approximate changing ETA,close keeps download alive. Unsupported old/native mechanisms must not invent numbers. Verify failures keep current app;audio/read/forms remain protected. Source/DOM fixtures are not physical-phone rendering evidence. All raster hashes must match532.
