@@ -51,17 +51,19 @@ export function stopQuran(){readerMeaningController?.abort();readerMeaningContro
 export async function showQuran(container){
  const destination=new URLSearchParams(location.hash.split('?')[1]||'');
  if(container===host&&destination.get('view')==='mushaf'&&!destination.has('listen')&&unmountMushaf?.navigateTo?.(destination.get('page')))return;
- stopQuran();host=container;unmountUi=bindQuranUi(host,paintQuranLabels);const token=generation;
+ stopQuran();host=container;unmountUi=bindQuranUi(host,paintQuranLabels);const token=generation,requestedHash=location.hash;
  host.innerHTML="<section class=\"panel section\"><h2>"+(uiLeaf('nav.quran'))+"</h2><p class=\"muted\">"+(uiLeaf('quranUi.libraryOpening'))+"</p></section>";
  try{
-  const results=await Promise.all([loadIndex(),['mushaf','recognize'].includes(destination.get('view'))?Promise.resolve():applyApprovedReciters(RECITERS,{updateExisting:!['playing','loading'].includes(quranPlayback.state.status)})]);index=results[0];if(token!==generation)return;
-  const params=new URLSearchParams(location.hash.split('?')[1]||''),surah=Number(params.get('surah')),ayah=params.has('ayah')?Number(params.get('ayah')):readReadingPosition(index,surah)?.ayah||1;
+  // The text index does not depend on remote reader metadata.
+  const needsReciters=!['mushaf','recognize'].includes(destination.get('view'))&&(destination.has('surah')||destination.has('listen')||destination.get('view')==='reciters');
+  const results=await Promise.all([loadIndex(),needsReciters?applyApprovedReciters(RECITERS,{updateExisting:!['playing','loading'].includes(quranPlayback.state.status)}):Promise.resolve()]);if(token!==generation||location.hash!==requestedHash)return;index=results[0];
+  const params=new URLSearchParams(requestedHash.split('?')[1]||''),surah=Number(params.get('surah')),ayah=params.has('ayah')?Number(params.get('ayah')):readReadingPosition(index,surah)?.ayah||1;
   if(params.has('listen')){unmountListeningShare=mountListeningShare(host,index,location.hash);return;}
   if(params.get('view')==='recognize'){unmountRecognition=mountRecognition(host,index);return;}
   if(params.get('view')==='mushaf'){unmountMushaf=mountMushaf(host,index,params.get('page'));return;}
   if(params.has('surah')){
    if(!validPosition(index,{surah,ayah})){host.innerHTML="<section class=\"panel section\"><h2>"+(uiLeaf('quranUi.invalidAyah'))+"</h2><a class=\"button\" href=\"#quran\">"+(uiLeaf('quranUi.backSurahs'))+"</a></section>";return}
-   const data=await loadSurah(surah);if(token!==generation)return;const chosen=params.get('reciter');if(RECITERS.some(r=>r.id===chosen)&&reciterHasSurah(chosen,surah))write('quran-preferences',{...preferences(),reciter:chosen});const edition=preferences().translationEdition;
+   const data=await loadSurah(surah);if(token!==generation||location.hash!==requestedHash)return;const chosen=params.get('reciter');if(RECITERS.some(r=>r.id===chosen)&&reciterHasSurah(chosen,surah))write('quran-preferences',{...preferences(),reciter:chosen});const edition=preferences().translationEdition;
    if(edition===BUNDLED_TRANSLATION_ID)reader(data,ayah,token,params.get('offline')==='1');
    else{
     const controller=new AbortController();readerMeaningController=controller;
@@ -72,7 +74,7 @@ export async function showQuran(container){
     }).catch(()=>{if(!controller.signal.aborted&&token===generation&&preferences().translationEdition===edition)opened.setMeaning({unavailable:true,edition,verses:[]});});
    }
   }else if(params.get('view')==='reciters'){unmountReciters=mountReciterLibrary(host,index,params.get('reciter'),params.get('filter'));}else library()
- }catch{if(token!==generation)return;host.innerHTML="<section class=\"panel section\"><h2>"+(uiLeaf('quranUi.textUnavailable'))+"</h2><p class=\"muted\">"+(uiLeaf('quranUi.offlineTextHint'))+"</p><button class=\"button\" id=\"quran-retry\">"+(uiLeaf('common.retry'))+"</button><a class=\"text-button\" href=\"#quran\">"+(uiLeaf('quranUi.backSurahs'))+"</a></section>";host.querySelector('#quran-retry').onclick=()=>showQuran(host)}
+ }catch{if(token!==generation||location.hash!==requestedHash)return;host.innerHTML="<section class=\"panel section\"><h2>"+(uiLeaf('quranUi.textUnavailable'))+"</h2><p class=\"muted\">"+(uiLeaf('quranUi.offlineTextHint'))+"</p><button class=\"button\" id=\"quran-retry\">"+(uiLeaf('common.retry'))+"</button><a class=\"text-button\" href=\"#quran\">"+(uiLeaf('quranUi.backSurahs'))+"</a></section>";host.querySelector('#quran-retry').onclick=()=>showQuran(host)}
 }
 function surahCard(s){const position=readReadingPosition(index,s.number);return '<a class="quran-surah-row" href="'+positionUrl(s.number,position?.ayah||1)+'"><span class="quran-surah-number">'+s.number+'</span><span class="quran-surah-copy"><strong>'+uiLeaf('quranUi.surahName'+s.number)+'</strong><small>'+uiLeaf('quranUi.ayahsCount',{count:s.ayahs})+' · '+(position?.ayah>1?uiLeaf('quranUi.fromAyah',{number:position.ayah}):uiLeaf(s.revelation==='Meccan'?'quranUi.meccan':'quranUi.medinan'))+'</small></span><span class="quran-surah-arabic" dir="rtl" lang="ar">'+esc(s.arabicName)+'</span></a>'}
 function readingResume(position){return position?'<a class="quran-reading-resume" href="'+positionUrl(position.surah,position.ayah)+'">'+actionIcon('book')+'<span><strong>'+uiLeaf('quranUi.resumeReading')+'</strong><small>'+uiLeaf('quranUi.positionDetail',{name:t('quranUi.surahName'+position.surah),number:position.ayah})+'</small></span>'+actionIcon('next')+'</a>':''}

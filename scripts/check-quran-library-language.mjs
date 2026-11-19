@@ -101,6 +101,53 @@ await beginQuery('');const beforeEmptyEdition=pendingSearches.length;await selec
 const closePending=beginQuery('close');await turns();host.querySelector('#quran-search-close').click();assert.equal(pendingSearches[4].signal.aborted,true);const closedResults=host.querySelector('#quran-results').innerHTML;pendingSearches[4].resolve([{surah:1,ayah:1,text:'close stale result'}]);await closePending;assert.equal(host.querySelector('#quran-results').innerHTML,closedResults);
 const tabPending=beginQuery('tab');await turns();host.querySelector('[data-quran-tab=juz]').click();assert.equal(pendingSearches[5].signal.aborted,true);const tabResults=host.querySelector('#quran-results').firstElementChild;pendingSearches[5].resolve([{surah:1,ayah:1,text:'tab stale result'}]);await tabPending;assert.equal(host.querySelector('#quran-results').firstElementChild,tabResults);
 const routePending=beginQuery('route');await turns();const routeResults=host.querySelector('#quran-results').innerHTML;ctx.stopQuran();assert.equal(pendingSearches[6].signal.aborted,true);pendingSearches[6].resolve([{surah:1,ayah:1,text:'route stale result'}]);await routePending;assert.equal(host.querySelector('#quran-results').innerHTML,routeResults);assert.equal(JSON.stringify(surah),canonicalQuran);assert.equal(actions.audio,searchAudio);assert.equal(listeners.size,0);
+
+// Text-only Quran navigation must not wait for an unrelated reader catalogue.
+host.querySelector('#quran-search-close')?.click();host.querySelector('[data-quran-tab=surahs]')?.click();ctx.stopQuran();
+const readinessBefore539={audio:actions.audio,seek:actions.seek,writes:actions.writes,scripture:JSON.stringify(surah)},pendingCatalogue539=[];
+const originalApproved539=ctx.applyApprovedReciters,originalIndex539=ctx.loadIndex,originalReciters539=ctx.mountReciterLibrary,originalShare539=ctx.mountListeningShare,originalMushaf539=ctx.mountMushaf,originalRecognition539=ctx.mountRecognition;
+ctx.applyApprovedReciters=(_rows,options)=>new Promise(resolve=>pendingCatalogue539.push({options,resolve}));
+const readyTurns539=async()=>{for(let n=0;n<5;n++)await new Promise(resolve=>setImmediate(resolve));};
+w.location.hash='#quran';let libraryDone539=false;const openLibrary539=ctx.showQuran(host).then(()=>libraryDone539=true);await readyTurns539();
+assert.ok(host.querySelector('.quran-library'),'An available surah index must render while the unrelated reader-catalogue request is unresolved');
+assert.equal(libraryDone539,true);assert.equal(host.querySelectorAll('.quran-surah-row').length,114);assert.equal(pendingCatalogue539.length,0,'Text-only list navigation does not initiate a reader-catalogue request');await openLibrary539;
+host.querySelector('[data-quran-tab=juz]').click();assert.equal(host.querySelectorAll('.quran-juz-card').length,30);host.querySelector('[data-quran-tab=bookmarks]').click();assert.ok(host.querySelector('#quran-results'));host.querySelector('[data-quran-tab=surahs]').click();assert.equal(host.querySelectorAll('.quran-surah-row').length,114);
+for(const code of ['en','ar','ru']){language.setInterfaceLanguage(code);assert.equal(host.querySelector('.quran-surah-copy>strong').textContent,language.t('quranUi.surahName1'));}assert.equal(pendingCatalogue539.length,0);
+for(const hash of ['#quran?view=unknown','#quran?reciter=ar.alafasy']){w.location.hash=hash;await ctx.showQuran(host);assert.equal(host.querySelectorAll('.quran-surah-row').length,114);assert.equal(pendingCatalogue539.length,0);}
+let mounts539={reciters:0,share:0,mushaf:0,recognition:0};ctx.mountReciterLibrary=()=>{mounts539.reciters++;return()=>{};};ctx.mountListeningShare=()=>{mounts539.share++;return()=>{};};ctx.mountMushaf=()=>{mounts539.mushaf++;return()=>{};};ctx.mountRecognition=()=>{mounts539.recognition++;return()=>{};};
+for(const[hash,key]of [['#quran?view=reciters','reciters'],['#quran?listen=fixture','share']]){
+ w.location.hash=hash;const waiting=ctx.showQuran(host);await readyTurns539();assert.equal(mounts539[key],0,'Reader-dependent screens keep their catalogue prerequisite');assert.equal(pendingCatalogue539.length,1);assert.equal(pendingCatalogue539[0].options.updateExisting,false,'An active playback source keeps its protected reader');
+ pendingCatalogue539.shift().resolve([]);await waiting;assert.equal(mounts539[key],1);
+}
+for(const[hash,key]of [['#quran?view=mushaf&page=2','mushaf'],['#quran?view=recognize','recognition']]){w.location.hash=hash;await ctx.showQuran(host);assert.equal(mounts539[key],1);assert.equal(pendingCatalogue539.length,0,'Existing independent Mushaf/recognition routes remain independent');}
+// A reader route still waits for approved audio metadata,but leaving it opens
+// the text list immediately and an old result cannot replace that newer view.
+storage.set('quran-preferences',{...storage.get('quran-preferences'),translationEdition:'ru.kuliev'});
+w.location.hash='#quran?surah=1&ayah=2';const staleReader539=ctx.showQuran(host);await readyTurns539();assert.equal(pendingCatalogue539.length,1);assert.equal(host.querySelector('.quran-reader'),null);
+w.location.hash='#quran';await ctx.showQuran(host);const stableList539=host.querySelector('.quran-library'),stableSearch539=host.querySelector('#quran-search');assert.ok(stableList539);stableSearch539.hidden=false;stableSearch539.value='kept draft';stableSearch539.focus();
+pendingCatalogue539.shift().resolve([]);await staleReader539;assert.equal(host.querySelector('.quran-library'),stableList539);assert.equal(host.querySelector('#quran-search'),stableSearch539);assert.equal(stableSearch539.value,'kept draft');assert.equal(doc.activeElement,stableSearch539);
+host.querySelector('#quran-search-close').click();
+w.location.hash='#quran?surah=1&ayah=2';const actualReader539=ctx.showQuran(host);await readyTurns539();assert.equal(pendingCatalogue539.length,1);pendingCatalogue539.shift().resolve([]);await actualReader539;assert.ok(host.querySelector('.quran-reader'));assert.equal(host.querySelector('#quran-ayah-2 .quran-arabic').textContent,surah.verses[1].arabic);
+w.location.hash='#quran?view=reciters';const detached539=ctx.showQuran(host);await readyTurns539();ctx.stopQuran();w.location.hash='#more';host.innerHTML='<div data-other-route>Menu</div>';const otherRoute539=host.firstElementChild;pendingCatalogue539.shift().resolve([]);await detached539;assert.equal(host.firstElementChild,otherRoute539,'A late catalogue reply cannot paint after navigation away');
+// The actual surah index remains necessary; no fabricated index/list is shown.
+let releaseIndex539;ctx.loadIndex=()=>new Promise(resolve=>releaseIndex539=resolve);w.location.hash='#quran';const indexWait539=ctx.showQuran(host);await readyTurns539();assert.equal(host.querySelector('.quran-library'),null);assert.equal(pendingCatalogue539.length,0);releaseIndex539(sourceIndex);await indexWait539;assert.equal(host.querySelectorAll('.quran-surah-row').length,114);
+
+// A hash change can precede the app's queued route-disposal event. Resolve and
+// error callbacks must still belong to the destination that started them.
+for(const outcome539 of ['resolve','reject']){
+ let settleIndex539;ctx.loadIndex=()=>new Promise((resolve,reject)=>settleIndex539=outcome539==='resolve'?()=>resolve(sourceIndex):()=>reject(Error('offline')));
+ w.location.hash='#quran';const abandonedIndex539=ctx.showQuran(host);await readyTurns539();w.location.hash='#more';host.innerHTML='<div data-new-destination>Menu</div>';const keptDestination539=host.firstElementChild;
+ settleIndex539();await abandonedIndex539;assert.equal(host.firstElementChild,keptDestination539,'A delayed index '+outcome539+' cannot paint into a newer hash before disposal');
+}
+ctx.loadIndex=originalIndex539;
+w.location.hash='#quran?view=reciters';const beforeDisposal539=ctx.showQuran(host);await readyTurns539();const mountsBeforeDisposal539=mounts539.reciters;w.location.hash='#more';host.innerHTML='<div data-new-destination>Menu</div>';const keptBeforeDisposal539=host.firstElementChild;pendingCatalogue539.shift().resolve([]);await beforeDisposal539;assert.equal(host.firstElementChild,keptBeforeDisposal539);assert.equal(mounts539.reciters,mountsBeforeDisposal539);
+const originalSurah539=ctx.loadSurah;let releaseSurah539;ctx.loadSurah=()=>new Promise(resolve=>releaseSurah539=resolve);
+w.location.hash='#quran?surah=1&ayah=2';const lateSurah539=ctx.showQuran(host);await readyTurns539();pendingCatalogue539.shift().resolve([]);await readyTurns539();w.location.hash='#more';host.innerHTML='<div data-new-destination>Menu</div>';const keptAfterSurah539=host.firstElementChild;releaseSurah539(surah);await lateSurah539;assert.equal(host.firstElementChild,keptAfterSurah539);ctx.loadSurah=originalSurah539;
+
+assert.equal(actions.audio,readinessBefore539.audio);assert.equal(actions.seek,readinessBefore539.seek);assert.equal(JSON.stringify(surah),readinessBefore539.scripture);assert.equal(actions.writes,readinessBefore539.writes,'Opening destinations does not change saved preferences or reading data');
+ctx.stopQuran();ctx.applyApprovedReciters=originalApproved539;ctx.loadIndex=originalIndex539;ctx.mountReciterLibrary=originalReciters539;ctx.mountListeningShare=originalShare539;ctx.mountMushaf=originalMushaf539;ctx.mountRecognition=originalRecognition539;
+console.log('PASS: real114-surah list/juz/bookmarks open independently of optional reader refresh;dependent audio routes,late-navigation fences,index readiness,language,search draft,scripture and active playback retained. Controlled DOM,not phone latency.');
+
 language.setInterfaceLanguage('ru');await w.happyDOM.close();
 
 // A language change during microphone permission / recording must keep the same

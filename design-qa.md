@@ -56,3 +56,7 @@ The final CSS fixture reproduces a-20px decorative lift with390x844/safeTop47 in
 
 ###538 — bounded catalogue waits
 Before:the actual public function never returns after a valid response while CacheStorage.put is held. After:returns validated data without waiting;only one storage writer and newest pending document are retained. The fault-injection fixture also covers outstanding opens,full fetch/body timeout,open/match/cached-body fallback timeout,late results,invalid/oversized documents,offline cache,storage denial/failure,one-minute coalescing and active-reader object identity. This proves bounded lifecycle behavior in a controlled scheduler,not a measured cold/warm iPhone improvement. All existing catalogue validators and downstream code remain protected.
+
+
+###539 — text library opens independently
+Before:hold applyApprovedReciters while resolving the real index;the actual Quran module leaves the text list on its loader. After:114surahs,30juz and bookmark tab are available without initiating that unrelated metadata request. Audio-dependent destinations still wait and protect an active reader. Retain drafts/locale,real index readiness,scripture/audio/preference invariants and hash-bound late success/error handling across navigation. No browser/device timings or general app speedup claim. The physical checklist should cover ordinary/slow-network list entry plus quick back/forward,reading and listening.

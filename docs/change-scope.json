@@ -1,45 +1,45 @@
 {
   "schema": 1,
-  "version": 538,
-  "baseCommit": "7b231477b31c6364df386476ffd2c63d67a18804",
-  "baseTree": "c591616e5a94fe306c84ca48bdca29d82895ae28",
-  "note": "Bound shared catalogue optional-cache/network waits;preserve validated content,network-first cadence,serialized storage,active reader,all settings/images/UI/auth and late-result safety.",
+  "version": 539,
+  "baseCommit": "6ce7c03d5f7df10ae8b7933e80902e94fe7667a4",
+  "baseTree": "62fabb4d711aa1062534db9b8cdd86d030a7a30f",
+  "note": "Remove unrelated reader-catalogue wait from text-only Quran library;preserve reader-dependent ordering,actual index,active audio,scripture/settings/UI and current-route ownership.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
-      "path": "dist/js/approved-catalog.js",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "path": "dist/js/quran.js",
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     },
     {
-      "path": "scripts/check-approved-catalog-lifecycle.mjs",
-      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
+      "path": "scripts/check-quran-library-language.mjs",
+      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
     }
   ],
   "baseline": [
@@ -93,7 +93,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "e395fd46c0b205f7629c043415bf0af7a0cc2a1e"
+      "sha": "b1733831af7ae6eb5cc423f73207dd5c478e751f"
     },
     {
       "path": "ANALYTICS.md",
@@ -101,7 +101,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "05f5f37d592cce4e2c6dab2cd3744b7571c2356c"
+      "sha": "cf0ff8ed61f54d694c25329af4eddcbcb3c2e5e3"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2613,7 +2613,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "18eb0ec61d36b0b8d5953561d493fbc121384f81"
+      "sha": "7adca2492d545e8bd163056aa870af815c3f9613"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2637,7 +2637,7 @@
     },
     {
       "path": "dist/js/approved-catalog.js",
-      "sha": "86be03965b0ae2a0aa4d42b9277e85787f93baba"
+      "sha": "76d6a52f82581c56e8d4d56b11b6c17386c9e0d9"
     },
     {
       "path": "dist/js/arabic-alphabet-core.js",
@@ -5033,7 +5033,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "edd1a849279b1fe2e4dec02f4cc05690462a8c1b"
+      "sha": "7ae10eb942b447a93254dc8aaf33a5f5e36ab2d2"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5561,7 +5561,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "4822616c881a5c0b18ccfe0847928b22c4f9c339"
+      "sha": "a750dd0a73e8c63dde4125c04fe8a720088dc860"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5957,7 +5957,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "282c557f95ca030b8ede6fd0808ca5cd373de3f4"
+      "sha": "9f20ec3bb4592ddf69333664dab964c93b4188c1"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6081,7 +6081,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "2e0334f807fa557797614a86e443185abcd5820c"
+      "sha": "669d179bae327dc56c4c0bc6bea368c2aefa7a3e"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6562,6 +6562,10 @@
     {
       "path": "scripts/check-app.mjs",
       "sha": "a4697b362badc9cfdd7cb44f7c4574927805f264"
+    },
+    {
+      "path": "scripts/check-approved-catalog-lifecycle.mjs",
+      "sha": "69996cffca424deb463175ad6d9ef00fd21d9bf9"
     },
     {
       "path": "scripts/check-arabic-alphabet.mjs",
@@ -8519,7 +8523,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Existing official imam schedule refreshed at publication."
+      "reason": "Existing official imam schedule refreshed during publication."
     }
   ]
 }
