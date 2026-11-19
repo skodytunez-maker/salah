@@ -1,45 +1,65 @@
 {
   "schema": 1,
-  "version": 534,
-  "baseCommit": "15382acaadae362b44683ac145baa8101503024c",
-  "baseTree": "061e07558e583e2316f8e34695487dfb27ecbdc1",
-  "note": "Manual consented personal city lookup exact-coordinate memory reuse and shared request/body deadline;no GPS policy,automatic city switch or visitor geography collection.",
+  "version": 535,
+  "baseCommit": "8d0ec6488b7a0d69443d587bdb921697ea8c4c38",
+  "baseTree": "4cc3aecd3b2239e091c5461d3c00012826c3850b",
+  "note": "Minimal reversible pinned-SDK guard on obsolete implicit refresh;public-API before/after evidence;preserve explicit credentials,current revocation,MFA/roles and all existing source/images.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
-      "path": "dist/js/city-data.js",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "path": "dist/js/vendor/supabase-source.json",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+    },
+    {
+      "path": "dist/js/vendor/supabase.js",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+    },
+    {
+      "path": "docs/auth-stale-refresh-535.md",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+    },
+    {
+      "path": "docs/content-rights-register.json",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
-      "path": "scripts/check-city-lookup-lifecycle.mjs",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "path": "scripts/check-auth-refresh-stale.mjs",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+    },
+    {
+      "path": "scripts/check-security.mjs",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+    },
+    {
+      "path": "scripts/lib/supabase-refresh-patch.mjs",
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
+      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
     }
   ],
   "baseline": [
@@ -93,7 +113,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "af23e7556076c603a465f5d5d02cce8fd1fd32cf"
+      "sha": "5ab4c4cfe8e14c7c7df1a39eaa92bc386baed325"
     },
     {
       "path": "ANALYTICS.md",
@@ -101,7 +121,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "5a7275e1f12ff07bb915d7b78f03dd33b0f2dd19"
+      "sha": "4970f7b27aa828ce12450f3bf352bb7e0908b3b0"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2613,7 +2633,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "8e785f9c3a59756e071f878c3115d0c756f4d109"
+      "sha": "e006d6aeed441554b5eab7cb5dad79e602f50a55"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2713,7 +2733,7 @@
     },
     {
       "path": "dist/js/city-data.js",
-      "sha": "0d6e1cd47274add43411bd2146ee5cb9aa5662b5"
+      "sha": "a8c752c0fbb49a6a73a6fae3875af578f4ad3ce4"
     },
     {
       "path": "dist/js/city-dialog.js",
@@ -5033,7 +5053,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "e9a7b2fa2a826b76d6506ad9eb5c985a78aba8eb"
+      "sha": "c4b45f342f6d630ae3cd4588f5c1dd05076ce021"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5557,7 +5577,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "f66bab9dd2f45bb81229a6b343e4cf42fdd5927f"
+      "sha": "6265d2b89195fbc24011b709a51cf7d3abdf7d76"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5953,7 +5973,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "d4a13600043619ae45ba4bb38f851fed35167db1"
+      "sha": "51e626d70c6795654a6ebea3931c1d83fdb67f4e"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6077,7 +6097,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "3743b689becf343b01fd72c8868c0079223c3329"
+      "sha": "6e8b9de2903b43b8b7a7f948280fcd6a78ee0b54"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6618,6 +6638,10 @@
     {
       "path": "scripts/check-change-scope.mjs",
       "sha": "935a24f474f8564c898f185f091ae4adefeaf54e"
+    },
+    {
+      "path": "scripts/check-city-lookup-lifecycle.mjs",
+      "sha": "247a36ef8e1f5aa8591764f1061422a618a61c4b"
     },
     {
       "path": "scripts/check-city.mjs",
@@ -8503,7 +8527,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Unchanged official imam schedule generated at publication."
+      "reason": "Unchanged existing official imam schedule generated at publication."
     }
   ]
 }
