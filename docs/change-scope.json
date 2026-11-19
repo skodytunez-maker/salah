@@ -1,45 +1,65 @@
 {
   "schema": 1,
-  "version": 531,
-  "baseCommit": "71a3fd6834c965c0a535c1109b08915ed580fe59",
-  "baseTree": "6802fd1bafc235ffd09b5f921a78c657d1f3c1e7",
-  "note": "Confirmed Home timer vertical shift with dhikr badge. Out-of-flow status plus removal of badge-dependent ancestor geometry only. Standing common-fix publication direction;city styling remains queued.",
+  "version": 532,
+  "baseCommit": "2a9ba759ab098b3f43ed6c18d72dda427646812e",
+  "baseTree": "a9425dc674e26c0594d0e5bff1934d650d54b1f9",
+  "note": "Owner-requested city/prayer Settings presentation using existing Appearance style;shared Diagnostics decoration was disclosed. Preserve native controls/calculations/data and531 Home timer fix.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
       "path": "design-qa.md",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
-      "path": "dist/home-selected.css",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "path": "dist/iphone.css",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+    },
+    {
+      "path": "dist/js/app.js",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+    },
+    {
+      "path": "dist/js/error-reporting.js",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+    },
+    {
+      "path": "dist/js/settings-section-label.js",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+    },
+    {
+      "path": "dist/js/travel-mode.js",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
-      "path": "scripts/check-home-listening-now.mjs",
-      "reason": "Scoped Home live-badge layout correction,actual controller/CSS contract,531 metadata and evidence."
+      "path": "scripts/check-extra-language.mjs",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+    },
+    {
+      "path": "scripts/check-travel-mode.mjs",
+      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Explicit531 file scope against published530."
+      "reason": "Explicit532 source scope against verified531."
     }
   ],
   "baseline": [
@@ -93,7 +113,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "048b27a92c7082e9d0d99c9d60b52f594f55cfa0"
+      "sha": "e0cf5cb3bf9ea17e30281dae1a94da2ab0ac086d"
     },
     {
       "path": "ANALYTICS.md",
@@ -101,7 +121,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "6cd2addd5c913203898004fb92f18fdab28cef2f"
+      "sha": "c1fc9fbe819c3956a033493a88de00260cfd5e8b"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2469,7 +2489,7 @@
     },
     {
       "path": "dist/home-selected.css",
-      "sha": "a94efba11debbead0c1559649ed6975452f474c5"
+      "sha": "2a65d61b09bb2910f61afef4608be4b2d4226c67"
     },
     {
       "path": "dist/icon-180.png",
@@ -2613,7 +2633,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "58168d6e8d967da3bba5fb80a980332d78566edc"
+      "sha": "ffcbe997bce0e6ba9b6b79223666bb6ef8cc5127"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -5029,7 +5049,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "be09fdceafdc837729c1e5dabc3ed4d248f8dfa5"
+      "sha": "08610f6947a76bdd7769d43215765e9e0aef7130"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5553,7 +5573,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "7802580e9aa85fcf4969df8c0991c18f2a1de50d"
+      "sha": "2715f6a0c3cd862f569f0dc50db6f60b0af359bd"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5949,7 +5969,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "33254c07aa0059023c2204ac80ce63147a3c4cf5"
+      "sha": "48f49f3dc7c246cdbb621cb837b61fd8d574363a"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6073,7 +6093,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "f171ddffeb96a6f1e1c4bb482a7983ee394d0034"
+      "sha": "26432357928fe3621fce0563fda45bb43e8e17e1"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6793,7 +6813,7 @@
     },
     {
       "path": "scripts/check-home-listening-now.mjs",
-      "sha": "4a991f3b3f0bac0ee4827f229e0091b3a931cb6c"
+      "sha": "4838f488ac6380e5b8c4a5990fc2ac44adc8dd58"
     },
     {
       "path": "scripts/check-home-reading.mjs",

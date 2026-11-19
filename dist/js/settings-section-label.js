@@ -1,5 +1,12 @@
 // Decorative settings icons: text and native controls retain their own semantics.
 const icons=Object.freeze({
+ city:'<path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+ travel:'<rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V4h6v3M8 11v5m8-5v5M7 20v1m10-1v1"/>',
+ source:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m9 3v3l2 1"/>',
+ asr:'<circle cx="12" cy="12" r="5"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M12 9v3l2 1"/>',
+ calculation:'<path d="M3 6h4m4 0h10M3 12h10m4 0h4M3 18h4m4 0h10M7 3v6m6 0v6m-6 0v6"/>',
+ moon:'<path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/>',
+ diagnostics:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm0 5v5m0 3v.1"/>',
  sky:'<path d="M4 16a4 4 0 1 1 1-8 6 6 0 0 1 11 1 3.5 3.5 0 0 1 1 7H4Z"/><path d="M17 3v2m4 2-2 1"/>',
  transitions:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z"/>',
  weather:'<path d="M4 15a4 4 0 1 1 1-8 6 6 0 0 1 11 1 3.5 3.5 0 0 1 1 7H4Zm3 3-1 3m6-3-1 3m6-3-1 3"/>',

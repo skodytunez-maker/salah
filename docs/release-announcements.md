@@ -859,3 +859,7 @@ Prevent duplicate same-session sign-in from resetting an already granted owner H
 
 ## Maintenance531
 Stabilise Home timer position while the existing activity badges load or hide. Keep523 themes announcement,receipts and expiry;no new news card or external push.
+
+
+## Maintenance532
+Use the existing Appearance visual hierarchy for city/prayer Settings and the shared Diagnostics disclosure. Retain523 announcement,receipt and expiry;no new public card or external push.

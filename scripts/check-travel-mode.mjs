@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
+import{settingsSectionLabel}from '../dist/js/settings-section-label.js';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{t,translateUi,setInterfaceLanguage}from '../dist/js/i18n.js';
 setInterfaceLanguage('ru');
@@ -8,7 +9,7 @@ const saved=new Map();globalThis.localStorage={getItem:k=>saved.get(k)??null,set
 const store=await import('../dist/js/storage.js');const {settings,updateSettings,normalizeSettings}=store;
 const home={name:'Тюмень',country:'Россия',latitude:57.15,longitude:65.53,timezone:'Asia/Yekaterinburg'},away={name:'Медина',country:'Саудовская Аравия',latitude:24.47,longitude:39.61,timezone:'Asia/Riyadh'};
 const w=new Window(),doc=w.document,host=doc.createElement('main');doc.body.append(host);let chosen,changes=[],before=0;
-const ctx=vm.createContext({settings,updateSettings,t,translateUi,esc:s=>String(s),toast:()=>{},closeModal:()=>{},openCityDialog:(city,onSelect)=>{chosen=onSelect;},window:w});
+const ctx=vm.createContext({settingsSectionLabel,settings,updateSettings,t,translateUi,esc:s=>String(s),toast:()=>{},closeModal:()=>{},openCityDialog:(city,onSelect)=>{chosen=onSelect;},window:w});
 const source=await fs.readFile(new URL('../dist/js/travel-mode.js',import.meta.url),'utf8');
 const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({travelCitySelection,travelActivation,isTravelSwipe,mountTravelSettings,travelHomeMarkup,bindTravelHome});',ctx);
 const hooks={onBeforeChange(){before++;},onChange(change){changes.push(change);}};
