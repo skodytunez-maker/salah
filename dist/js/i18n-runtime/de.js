@@ -3123,6 +3123,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Verfeinerte Hintergrundkonturen",
  "releaseUi.readerWidthText": "Surenseiten sind auf dem Handy breiter: Die äußeren Seitenabstände entfallen, der innere Textrand bleibt erhalten.",
  "releaseUi.readerWidthTitle": "Mehr Platz zum Lesen",
+ "releaseUi.singleNewsText": "Bei einer einzelnen Karte entfallen die Pfeile und der Zähler. Die Beschreibung bleibt unverändert.",
+ "releaseUi.singleNewsTitle": "Eine einzelne Neuigkeit",
  "releaseUi.translationsText": "Wähle die Übersetzung unabhängig von der App-Sprache. Jede hat einen Autor, eine Version und eine Quelle; heruntergeladene Suren sind offline verfügbar.",
  "releaseUi.translationsTitle": "Bedeutungsübersetzungen mit Quellen",
  "releaseUi.translationsWhere": "Koran → Sure öffnen → Übersetzung.",

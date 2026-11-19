@@ -3123,6 +3123,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Refined wallpaper contours",
  "releaseUi.readerWidthText": "Surah pages are wider on phones: the outer side margins are removed while the inner text gutter is retained.",
  "releaseUi.readerWidthTitle": "More room for reading",
+ "releaseUi.singleNewsText": "A single card no longer has paging arrows or a counter. Its description is unchanged.",
+ "releaseUi.singleNewsTitle": "One news card",
  "releaseUi.translationsText": "Choose a translation separately from the app language. Each has an author, version and source; downloaded surahs are available offline.",
  "releaseUi.translationsTitle": "Translations of meanings with sources",
  "releaseUi.translationsWhere": "Quran → open a surah → Translation.",

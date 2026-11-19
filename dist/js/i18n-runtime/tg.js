@@ -3123,6 +3123,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Ҳудуди заминаҳо дақиқтар шуд",
  "releaseUi.readerWidthText": "Саҳифаи сура дар телефон васеътар аст: фосилаҳои берунии паҳлуӣ бардошта шуда, ҳошияи дохилии матн нигоҳ дошта шудааст.",
  "releaseUi.readerWidthTitle": "Ҷойи бештар барои хондан",
+ "releaseUi.singleNewsText": "Тирҳои гузариш ва ҳисобкунак аз корти ягона гирифта шуданд. Матни шарҳ тағйир наёфт.",
+ "releaseUi.singleNewsTitle": "Як корти хабар",
  "releaseUi.translationsText": "Тарҷумаро ҷудо аз забони барнома интихоб кунед. Ҳар кадом муаллиф, нусха ва манбаъ дорад; сураҳои боргирифта бе интернет дастрасанд.",
  "releaseUi.translationsTitle": "Тарҷумаи маъноҳо бо манбаъҳо",
  "releaseUi.translationsWhere": "Қуръон → сураро кушоед → Тарҷума.",

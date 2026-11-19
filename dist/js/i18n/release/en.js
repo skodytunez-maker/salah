@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.singleNewsTitle":"One news card",
+"releaseUi.singleNewsText":"A single card no longer has paging arrows or a counter. Its description is unchanged.",
 "releaseUi.autoOfflineTitle":"Texts are saved automatically",
 "releaseUi.autoOfflineText":"While open and connected, SALAH prepares the Quran, selected meaning translation, offline Mushaf and available prayer dates for your chosen city. Adhkar is already included. Audio is not downloaded. Turn automatic saving off in Settings → Data.",
   "releaseUi.languagesTitle": "SALAH in your language",

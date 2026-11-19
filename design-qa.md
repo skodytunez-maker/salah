@@ -83,3 +83,5 @@ All63source candidates screened in122native crop comparisons/31sheets,then sourc
 
 
 545: controlled offline/policy/source-byte regressions; no browser/phone visual pass. Check automatic-saving control, selected meaning and Unicode Mushaf in airplane mode, and published-only selected-city coverage. Home geometry and all raster originals are protected.
+
+546: single-card news has no paging arrows/counter and no nested scrolling viewport.545explanation/image retained;multi-card/team navigation and historical523receipts remain. Actual markup/CSS/language fixture,not rendered-phone QA. Makkah clock source is unchanged and queued next.

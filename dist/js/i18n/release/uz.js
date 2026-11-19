@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.singleNewsTitle":"Bitta yangilik kartasi",
+"releaseUi.singleNewsText":"Bitta kartadan o‘tish strelkalari va hisoblagich olib tashlandi. Izoh matni o‘zgarmadi.",
 "releaseUi.autoOfflineTitle":"Matnlar avtomatik saqlanadi",
 "releaseUi.autoOfflineText":"SALAH ochiq va internetga ulanganida Qur’on, tanlangan ma’no tarjimasi, oflayn mushaf va tanlangan shahar uchun mavjud namoz sanalari tayyorlanadi. Azkorlar ilovaga kiritilgan. Audio yuklanmaydi. O‘chirish: Sozlamalar → Ma’lumotlar.",
   "releaseUi.languagesTitle": "SALAH sizning tilingizda",

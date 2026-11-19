@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.singleNewsTitle":"بطاقة خبر واحدة",
+"releaseUi.singleNewsText":"أُزيلت أسهم التنقل والعداد عند وجود بطاقة واحدة. بقي نص التوضيح كما هو.",
 "releaseUi.autoOfflineTitle":"تُحفظ النصوص تلقائيًا",
 "releaseUi.autoOfflineText":"عندما يكون SALAH مفتوحًا ومتصلًا بالإنترنت، يُجهّز القرآن وترجمة المعاني المختارة والمصحف دون إنترنت ومواعيد الصلاة المتاحة لمدينتك المختارة. الأذكار مضمّنة بالفعل. لا يتم تنزيل الصوت. يمكنك إيقاف الحفظ التلقائي من الإعدادات ← البيانات.",
   "releaseUi.languagesTitle": "SALAH بلغتك",

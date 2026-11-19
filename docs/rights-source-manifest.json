@@ -4453,6 +4453,11 @@
       "path": "dist/assets/updates/sky-matte-544.svg",
       "gitBlobSha": "4db71545b8a1a8a0b8647603cd4f78f6688d6e42",
       "bytes": 312666
+    },
+    {
+      "path": "dist/assets/updates/single-news-546.svg",
+      "gitBlobSha": "184faa40e846efad9d2267e063afba79946a2dcd",
+      "bytes": 1692
     }
   ],
   "incrementalEvidence": [
@@ -4699,6 +4704,15 @@
       "evidence": "docs/sky-matte-repair-544.json",
       "baseCommit": "6e097de9ffb3c4f145e9dc78371f8dee4fa45234",
       "note": "Exact existing230310-byte photograph embedded without alteration in a repository-authored comparison SVG. Before/after clips are generated from the actual frozen/reviewed native alpha. Historical records and the underlying source needs-review status remain unchanged."
+    },
+    {
+      "date": "2026-11-19",
+      "paths": [
+        "dist/assets/updates/single-news-546.svg"
+      ],
+      "evidence": "docs/release-artwork.md",
+      "baseCommit": "d052746fd4f7c64348d5f6b4bd969aa8b4ded498",
+      "note": "New repository-authored single-news UI diagram. All historical records and source fingerprints retained."
     }
   ],
   "cityWallpaperEvidence20261016": "docs/city-wallpapers-20261016.json"
