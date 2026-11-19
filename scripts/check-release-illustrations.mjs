@@ -30,6 +30,24 @@ assert.equal(cards.filter(x=>!x.inert).length,1);
 root.querySelector('[data-release-next]').click();assert.equal(root.querySelector('[data-release-page]').textContent,'2/6');assert.equal(cards[0].inert,true);assert.equal(cards[1].inert,false);
 strip.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(root.querySelector('[data-release-page]').textContent,'1/6');assert.equal(root.querySelector('[data-release-prev]').disabled,true);
 const novemberNews=illustratedReleaseMarkup(342);root.innerHTML=novemberNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Ноябрь в календаре Тюмени'));assert.ok(root.textContent.includes('таблицы 2025 года'));assert.equal(root.querySelectorAll('svg').length,1);
+
+// Owner's545 report: a one-card dialog has no paging actions or extra focus
+// stop; retain the real description, artwork, accessibility and motion binding.
+setInterfaceLanguage('ru');
+root.innerHTML=illustratedReleaseMarkup(545,['Без интернета: автоматическое сохранение текстов Корана, выбранного перевода, мусхафа и доступного расписания города.']);
+const onlyNews=root.querySelector('.release-feature'),onlyArt=onlyNews.querySelector('img'),onlyDescription=onlyNews.querySelector('p').textContent;
+assert.equal(root.querySelectorAll('.release-feature').length,1);
+assert.equal(root.querySelector('.release-gallery-controls,[data-release-prev],[data-release-next],[data-release-page]'),null,'One real news card has no paging rail,including1/1');
+assert.equal(root.querySelector('.release-gallery-strip').getAttribute('tabindex'),null,'There is no empty carousel keyboard stop');
+bindIllustratedRelease(root);assert.equal(onlyNews.inert,false);assert.equal(onlyNews.getAttribute('aria-hidden'),'false');
+assert.equal(onlyArt.getAttribute('src'),'./assets/updates/quran-offline-502.svg');
+assert.equal(onlyDescription,'В открытом приложении при наличии связи SALAH готовит Коран, выбранный перевод, офлайн-мусхаф и доступное расписание выбранного города. Азкары уже входят в приложение. Аудио не скачивается. Автосохранение можно выключить: Настройки → Данные.','The owner explicitly retained this explanation');
+const singleStyle=doc.createElement('style');singleStyle.textContent=await fs.readFile(new URL('../dist/css/quran-awards.css',import.meta.url),'utf8');doc.head.append(singleStyle);
+assert.equal(w.getComputedStyle(onlyNews).maxHeight,'none','The one-card body is not clipped into another scrolling viewport');
+assert.equal(w.getComputedStyle(root.querySelector('.release-gallery-strip')).display,'block');singleStyle.remove();
+for(const language of['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(root.querySelector('.release-feature'),onlyNews);assert.equal(onlyNews.querySelector('img'),onlyArt);assert.equal(onlyNews.querySelector('p').textContent,t('releaseUi.autoOfflineText'));assert.equal(root.querySelector('[data-release-page]'),null);}
+setInterfaceLanguage('ru');
+
 const geoNews=illustratedReleaseMarkup(343);root.innerHTML=geoNews;assert.equal(root.querySelectorAll('.release-feature').length,2);assert.ok(root.textContent.includes('Первое место — выше'));assert.ok(root.textContent.includes('обновления приложения через Google Play'));
 root.innerHTML=illustratedReleaseMarkup(346);assert.equal(root.querySelectorAll('.release-feature').length,1);assert.ok(root.textContent.includes('резервный источник'));assert.equal(root.querySelectorAll('svg').length,1);
 root.innerHTML=illustratedReleaseMarkup(347);assert.equal(root.querySelectorAll('.release-feature').length,1);assert.equal(root.querySelector('h3').textContent,'Новые чтецы');assert.equal(root.querySelectorAll('.release-new-readers img').length,5);assert.ok(root.textContent.includes('109 сур'));for(const img of root.querySelectorAll('.release-new-readers img'))await fs.access(new URL('../dist/'+img.getAttribute('src').replace(/^\.\//,''),import.meta.url));

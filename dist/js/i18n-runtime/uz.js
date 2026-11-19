@@ -3123,6 +3123,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Fon konturlari aniqlashtirildi",
  "releaseUi.readerWidthText": "Telefonda sura sahifasi kengroq: tashqi yon bo‘shliqlar olib tashlandi, matnning ichki hoshiyasi saqlandi.",
  "releaseUi.readerWidthTitle": "O‘qish uchun ko‘proq joy",
+ "releaseUi.singleNewsText": "Bitta kartadan o‘tish strelkalari va hisoblagich olib tashlandi. Izoh matni o‘zgarmadi.",
+ "releaseUi.singleNewsTitle": "Bitta yangilik kartasi",
  "releaseUi.translationsText": "Tarjimani ilova tilidan alohida tanlang. Har birida muallif, versiya va manba ko‘rsatiladi; yuklab olingan suralar internetsiz ochiladi.",
  "releaseUi.translationsTitle": "Manbalari ko‘rsatilgan maʼnolar tarjimasi",
  "releaseUi.translationsWhere": "Qurʼon → surani oching → Tarjima.",

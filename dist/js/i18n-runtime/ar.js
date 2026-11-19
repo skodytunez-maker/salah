@@ -3219,6 +3219,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "تحسين حدود الخلفيات",
  "releaseUi.readerWidthText": "أصبحت صفحة السورة أوسع على الهاتف: أزيلت الهوامش الجانبية الخارجية مع الحفاظ على هامش النص الداخلي.",
  "releaseUi.readerWidthTitle": "مساحة أكبر للقراءة",
+ "releaseUi.singleNewsText": "أُزيلت أسهم التنقل والعداد عند وجود بطاقة واحدة. بقي نص التوضيح كما هو.",
+ "releaseUi.singleNewsTitle": "بطاقة خبر واحدة",
  "releaseUi.translationsText": "اختر الترجمة بشكل مستقل عن لغة التطبيق. لكل ترجمة مؤلف وإصدار ومصدر؛ وتتوفر السور التي نُزّلت دون اتصال بالإنترنت.",
  "releaseUi.translationsTitle": "ترجمات المعاني مع مصادرها",
  "releaseUi.translationsWhere": "القرآن ← افتح سورة ← الترجمة.",

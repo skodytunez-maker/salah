@@ -3854,6 +3854,15 @@
       "rightsReviewStatus": "needs-review",
       "rightsEvidence": "Repository-authored SVG uses the exact existing Badakhshan day photograph and actual before/after mask contours; docs/sky-matte-repair-544.json. Underlying photograph review status is retained.",
       "note": "No new external media or source recompression. Embedded original SHA2563575ddcfd3e69ab452cbce54f77a7c755737c37725c64ea1b3f0bbce06fa0523;this derivative does not upgrade the source photograph’s needs-review status."
+    },
+    {
+      "path": "dist/assets/updates/single-news-546.svg",
+      "gitBlobSha": "184faa40e846efad9d2267e063afba79946a2dcd",
+      "bytes": 1692,
+      "kind": "illustration",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/release-artwork.md",
+      "note": "Original repository-authored vector UI illustration of one SALAH news card without a paging rail. No external photographs,embedded fonts,religious quotations,user content or scripts. Project-origin evidence does not claim exclusive copyright."
     }
   ],
   "wallpaperSets": [

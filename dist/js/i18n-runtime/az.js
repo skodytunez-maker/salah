@@ -3123,6 +3123,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Fonların konturları dəqiqləşdirildi",
  "releaseUi.readerWidthText": "Telefonda surə səhifəsi daha genişdir: xarici yan boşluqlar çıxarılıb, mətnin daxili boşluğu saxlanılıb.",
  "releaseUi.readerWidthTitle": "Oxumaq üçün daha çox yer",
+ "releaseUi.singleNewsText": "Tək kartdan keçid oxları və sayğac çıxarılıb. İzah mətni dəyişməyib.",
+ "releaseUi.singleNewsTitle": "Tək xəbər kartı",
  "releaseUi.translationsText": "Tərcüməni tətbiqin dilindən ayrıca seçin. Hər birinin müəllifi, versiyası və mənbəyi var; endirilmiş surələr internetsiz əlçatandır.",
  "releaseUi.translationsTitle": "Mənbələri göstərilən məna tərcümələri",
  "releaseUi.translationsWhere": "Quran → surəni açın → Tərcümə.",

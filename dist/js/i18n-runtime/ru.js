@@ -3171,6 +3171,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Уточнены контуры фонов",
  "releaseUi.readerWidthText": "На телефоне страница суры шире: убраны внешние боковые отступы, сохранено внутреннее поле для текста.",
  "releaseUi.readerWidthTitle": "Больше места для чтения",
+ "releaseUi.singleNewsText": "У единственной карточки убраны стрелки и счётчик. Текст пояснения сохранён.",
+ "releaseUi.singleNewsTitle": "Одиночная новость",
  "releaseUi.translationsText": "Выбирайте перевод отдельно от языка приложения. У каждого — автор, версия и источник; загруженные суры доступны без интернета.",
  "releaseUi.translationsTitle": "Переводы смыслов с источниками",
  "releaseUi.translationsWhere": "Коран → откройте суру → Перевод.",

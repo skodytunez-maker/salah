@@ -3123,6 +3123,8 @@ export default Object.freeze({
  "releaseUi.matteContoursTitle": "Фондардың жиектері нақтыланды",
  "releaseUi.readerWidthText": "Телефондағы сүре беті кеңейді: сыртқы бүйір бос орындар алынып, мәтіннің ішкі жиегі сақталды.",
  "releaseUi.readerWidthTitle": "Оқуға көбірек орын",
+ "releaseUi.singleNewsText": "Бір картадан ауысу көрсеткілері мен есептегіш алынды. Түсіндірме мәтіні өзгеріссіз қалды.",
+ "releaseUi.singleNewsTitle": "Бір жаңалық картасы",
  "releaseUi.translationsText": "Аударманы қолданба тілінен бөлек таңдаңыз. Әрқайсысының авторы, нұсқасы және дереккөзі бар; жүктелген сүрелер интернетсіз қолжетімді.",
  "releaseUi.translationsTitle": "Дереккөздері көрсетілген мағына аудармалары",
  "releaseUi.translationsWhere": "Құран → сүрені ашыңыз → Аударма.",

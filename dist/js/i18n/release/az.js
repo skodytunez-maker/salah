@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.singleNewsTitle":"Tək xəbər kartı",
+"releaseUi.singleNewsText":"Tək kartdan keçid oxları və sayğac çıxarılıb. İzah mətni dəyişməyib.",
 "releaseUi.autoOfflineTitle":"Mətnlər avtomatik saxlanılır",
 "releaseUi.autoOfflineText":"SALAH açıq və internetə bağlı olduqda Quran, seçilmiş məna tərcüməsi, oflayn müshəf və seçdiyiniz şəhərin mövcud namaz tarixləri hazırlanır. Zikrlər tətbiqə daxildir. Səs yazıları endirilmir. Avtomatik saxlamanı Parametrlər → Məlumatlar bölməsində söndürə bilərsiniz.",
   "releaseUi.languagesTitle": "SALAH sizin dilinizdə",
