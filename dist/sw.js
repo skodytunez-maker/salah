@@ -254,7 +254,7 @@ self.addEventListener('notificationclick',event=>{
  }));
 });
 
-const RELEASE={"version":535,"date":"2026-11-19","changes":["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."],"announcement":{"version":523,"date":"2026-11-19","changes":["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."]}};
+const RELEASE={"version":536,"date":"2026-11-19","changes":["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."],"announcement":{"version":523,"date":"2026-11-19","changes":["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."]}};
 self.addEventListener('message',event=>{if(event.data?.type==='SALAH_LESSON_ACCOUNT'){event.waitUntil(lessonAccountMessage(event));return;}if(event.data?.type==='SALAH_STAFF_ACCOUNT'){event.waitUntil(staffAccountMessage(event));return;}if(event.data?.type==='SALAH_UPDATE_PROGRESS_REQUEST'){if(updateClient(event.source))event.ports?.[0]?.postMessage(updateProgress);return;}if(event.data?.type==='SALAH_RELEASE_INFO')event.ports?.[0]?.postMessage(RELEASE);else if(event.data?.type==='SALAH_APPLY_UPDATE')event.waitUntil(self.skipWaiting())});
 
 
