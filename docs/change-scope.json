@@ -188,6 +188,14 @@
     {
       "path": "scripts/check-automatic-offline.mjs",
       "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "scripts/check-interface-shell.mjs",
+      "reason": "Wire the new automatic-offline setting into the existing extracted Settings harness. Interface-shell executes the real UI;the fake Tyumen document asserts the intended mount target. All prior assertions retained."
+    },
+    {
+      "path": "scripts/check-tyumen-sources.mjs",
+      "reason": "Wire the new automatic-offline setting into the existing extracted Settings harness. Interface-shell executes the real UI;the fake Tyumen document asserts the intended mount target. All prior assertions retained."
     }
   ],
   "baseline": [

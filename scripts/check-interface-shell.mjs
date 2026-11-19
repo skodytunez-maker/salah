@@ -24,7 +24,8 @@ const adhkarCard=vm.runInNewContext(adhkarSource.split(/\r?\n/).find(line=>line.
 let owner=false,ownerChecks=0,resolveOwnerCheck,account={signedIn:true,nickname:null},renders=0,previewCalls=0,clock=Date.parse('2026-11-15T08:00:00+05:00');
 const day='2026-11-15',times={Fajr:clock+100000,Sunrise:clock+200000,Dhuhr:clock+300000,Asr:clock+400000,Maghrib:clock+500000,Isha:clock+600000};
 let next={key:'Fajr',name:'Фаджр',time:times.Fajr,day};
-const ctx=vm.createContext({settingsSectionLabel,ADVANCED_SKY_AVAILABLE,app,document:doc,window:win,location:win.location,settings,t,translateUi,getLocale,esc,title,languageSettingsMarkup,mountLanguageSettings,
+const{mountOfflineAutoSetting}=await import('../dist/js/offline-auto-ui.js');
+const ctx=vm.createContext({mountOfflineAutoSetting,settingsSectionLabel,ADVANCED_SKY_AVAILABLE,app,document:doc,window:win,location:win.location,settings,t,translateUi,getLocale,esc,title,languageSettingsMarkup,mountLanguageSettings,
  stopSettingsScreens:null,stopLanguageSettings:null,stopGlassSettings:null,mountGlassSettings:node=>mountGlassSettings(node,{doc,win}),mountSettingsScreens:node=>mountSettingsScreens(node,{win}),currentRoute:'settings',counterSyncStatus:()=>account,ownerVerified:()=>owner,verifyOwner:()=>{ownerChecks++;return new Promise(resolve=>{resolveOwnerCheck=resolve;});},
  teamPreviewVerified:()=>false,bindAppSharing(){},appSharingMarkup:()=>'<div class="app-share-row">Пригласить друзей</div>',mountMenuAvatar(){},
  reminders:{mountSettings(){},mountTahajjud(){},mountJumuah(){},reset(){},tick(){}},usesAlHakk:()=>false,tyumenSourceSettings:()=>'',prayers,methods:{3:'Muslim World League',5:'Egyptian General Authority'},
