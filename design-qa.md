@@ -76,3 +76,7 @@ Activity row shares Radio’s existing safe-area CSS height and44px box across t
 
 ##543 — portrait celestial path lift
 Compare actual source CSS cascade across both Home modes,glass/player/activity states and phone dimensions. Both displayed discs get the same bounded7svh shift,while real paintSky continues to publish unchanged astronomical coordinates/visibility. Short landscape/tablet/basic mode retain their original transform. No UI geometry reads,stacking changes or source image edits. Owner phone check remains pending.
+
+
+##544 — reviewed foreground alpha corrections
+All63source candidates screened in122native crop comparisons/31sheets,then source-specific full-ridge/face/window/finial close-ups.60masks changed;3unconfident/rejected cases retained. Raster originals remain exact. Tests pin source-inspected missing snow,glass/sky/antenna/finial points,complete thin-support/removal bounds,continuous mountain bodies and native-source feature art. These are software/native-pixel checks,not corrected iPhone rendering. Source architecture/genuine4K and remaining low-contrast haze are separate work.

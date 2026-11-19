@@ -3111,6 +3111,8 @@ export default Object.freeze({
  "releaseUi.languagesText": "Menyular, pleyer, təqvim və kabinetlər səkkiz dildə mövcuddur. Ərəb interfeysi sağdan sola göstərilir.",
  "releaseUi.languagesTitle": "SALAH sizin dilinizdə",
  "releaseUi.languagesWhere": "Menyu → Parametrlər → Tətbiqin dili.",
+ "releaseUi.matteContoursText": "Qapalı rejimdə yoxlanılmış kənarlar düzəldilib: qarlı zirvələr və şüşə fasadın bir hissəsi bərpa olunub, köhnə səmanın qalıqları silinib. Orijinal şəkillər saxlanılıb.",
+ "releaseUi.matteContoursTitle": "Fonların konturları dəqiqləşdirildi",
  "releaseUi.readerWidthText": "Telefonda surə səhifəsi daha genişdir: xarici yan boşluqlar çıxarılıb, mətnin daxili boşluğu saxlanılıb.",
  "releaseUi.readerWidthTitle": "Oxumaq üçün daha çox yer",
  "releaseUi.translationsText": "Tərcüməni tətbiqin dilindən ayrıca seçin. Hər birinin müəllifi, versiyası və mənbəyi var; endirilmiş surələr internetsiz əlçatandır.",

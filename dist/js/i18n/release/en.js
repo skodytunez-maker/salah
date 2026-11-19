@@ -14,5 +14,7 @@ export default Object.freeze({
   "releaseUi.readerWidthTitle": "More room for reading",
   "releaseUi.readerWidthText": "Surah pages are wider on phones: the outer side margins are removed while the inner text gutter is retained.",
   "releaseUi.homeCompositionTitle": "A focused Home correction",
-  "releaseUi.homeCompositionText": "Decorative elements have been raised in the closed test mode. Other sections are unchanged."
+  "releaseUi.homeCompositionText": "Decorative elements have been raised in the closed test mode. Other sections are unchanged.",
+  "releaseUi.matteContoursTitle": "Refined wallpaper contours",
+  "releaseUi.matteContoursText": "In the closed mode, reviewed outline corrections restore snowy peaks and part of a glass facade and remove remnants of the old sky. Original photographs are unchanged."
 });

@@ -3111,6 +3111,8 @@ export default Object.freeze({
  "releaseUi.languagesText": "Menyu, pleyer, taqvim va kabinetlar sakkiz tilda mavjud. Arabcha interfeys o‘ngdan chapga ko‘rsatiladi.",
  "releaseUi.languagesTitle": "SALAH sizning tilingizda",
  "releaseUi.languagesWhere": "Menyu → Sozlamalar → Ilova tili.",
+ "releaseUi.matteContoursText": "Yopiq rejimda tekshirilgan chetlar tuzatildi: qorli cho‘qqilar va shisha fasadning bir qismi tiklandi, eski osmon qoldiqlari olib tashlandi. Asl suratlar saqlandi.",
+ "releaseUi.matteContoursTitle": "Fon konturlari aniqlashtirildi",
  "releaseUi.readerWidthText": "Telefonda sura sahifasi kengroq: tashqi yon bo‘shliqlar olib tashlandi, matnning ichki hoshiyasi saqlandi.",
  "releaseUi.readerWidthTitle": "O‘qish uchun ko‘proq joy",
  "releaseUi.translationsText": "Tarjimani ilova tilidan alohida tanlang. Har birida muallif, versiya va manba ko‘rsatiladi; yuklab olingan suralar internetsiz ochiladi.",
