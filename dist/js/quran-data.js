@@ -1,3 +1,4 @@
+import{t}from './i18n.js';
 import{loadAyahTimings}from './quran-timing.js';
 import{offlineAudioStore}from './quran-offline-store.js';
 import{downloadAudioFiles}from './quran-offline-core.js';
@@ -8,7 +9,7 @@ export const AUDIO_CACHE='salah-quran-audio-v1';
 let indexPromise=null,searchPromise=null;
 const surahPromises=new Map();
 export function validPosition(index,value){return !!value&&Number.isInteger(value.surah)&&Number.isInteger(value.ayah)&&value.surah>=1&&value.surah<=114&&value.ayah>=1&&value.ayah<=index.surahs[value.surah-1].ayahs}
-export function normalizeQuery(text){return String(text).toLocaleLowerCase('ru').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ё/g,'е').replace(/[‘’'«»]/g,'').trim()}
+export function normalizeQuery(text){return String(text).toLocaleLowerCase('ru').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ё/g,'е').replace(/[‘’ʻʼ'«»]/g,'').trim()}
 export async function loadIndex(){
  if(!indexPromise)indexPromise=(async()=>{const r=await fetch('./data/quran-index.json');if(!r.ok)throw Error('Библиотека недоступна');const j=await r.json();if(j.surahs?.length!==114||j.juz?.length!==30||j.surahs.some((s,i)=>s.number!==i+1||!Number.isInteger(s.ayahs)||s.ayahs<1))throw Error('Неполная библиотека');audioPositions={};let global=1;for(const s of j.surahs)for(let a=1;a<=s.ayahs;a++)audioPositions[global++]={surah:s.number,ayah:a};return j})().catch(e=>{indexPromise=null;throw e});return indexPromise
 }
@@ -54,7 +55,7 @@ export async function loadSurah(number){
 export async function loadSearch(){
  const index=await loadIndex();if(!searchPromise)searchPromise=verifiedFile('./data/quran-search.json',index.searchSha256,{validate:rows=>verifySearch(rows,index)}).catch(e=>{searchPromise=null;throw e});return searchPromise
 }
-export function searchSurahs(index,query){const q=normalizeQuery(query);return index.surahs.filter(s=>[s.name,s.arabicName,s.englishName,s.meaning,String(s.number)].some(x=>normalizeQuery(x).includes(q)))}
+export function searchSurahs(index,query){const q=normalizeQuery(query);return index.surahs.filter(s=>[t('quranUi.surahName'+s.number),s.name,s.arabicName,s.englishName,s.meaning,String(s.number)].some(x=>normalizeQuery(x).includes(q)))}
 export function searchTranslation(rows,query,limit=50){const q=normalizeQuery(query);return rows.filter(v=>normalizeQuery(v.text).includes(q)).slice(0,limit)}
 export async function offlineTextCount(index){
  return(await offlineTextStatus(index,{includeSearch:false})).count;

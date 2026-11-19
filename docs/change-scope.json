@@ -1,55 +1,117 @@
 {
   "schema": 1,
-  "version": 528,
-  "baseCommit": "29ba026350bc1687ba06e701f21bdc6d1bc07f37",
-  "baseTree": "b6096930371df5f5334b58c32cc896990b0dfd88",
-  "note": "Owner-requested scoped refinement after confirming527 is better: raise only private Support card16px on modern iPhone and reveal the selected continuous cosmic image through its light Stars statistics. Preserve original photo/video bytes,other themes,all input/navigation/access/backend/global status metadata,523 news and private sky. Standing checked-publication authorization; physical Safari verification pending.",
+  "version": 529,
+  "baseCommit": "ff637426ae6a1f1158553817c53a90c6fd2253b5",
+  "baseTree": "e75f5acfa7be873e11d1bcd19d0c0343ba6dc664",
+  "note": "Agreed Quran display-name correction after528; preserve canonical Quran/image/backend/Support/sky/news state. City/prayer-settings styling is queued only.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
     },
     {
       "path": "design-qa.md",
-      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
-    },
-    {
-      "path": "dist/css/conversation-themes.css",
-      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
-    },
-    {
-      "path": "dist/css/support.css",
-      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/ar.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/az.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/de.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/en.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/kk.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/ru.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/tg.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/i18n/quran/uz.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/quran-data.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "dist/js/quran.js",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
-    },
-    {
-      "path": "docs/change-scope.json",
-      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
+    {
+      "path": "docs/surah-name-sources.md",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
     },
     {
-      "path": "scripts/check-support-profile-layout.mjs",
-      "reason": "Extend the existing real profile/CSS regression for actual safe insets and isolated Stars/default/Bronze presentation,retaining data/navigation checks."
-    }
-  ],
-  "generated": [
+      "path": "scripts/check-quran-library-language.mjs",
+      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+    },
     {
-      "path": "dist/data/haramain-schedule.json",
-      "reason": "Unchanged existing official imam schedule generated at publication."
+      "path": "docs/change-scope.json",
+      "reason": "Explicit529 source scope against published528."
     }
   ],
   "baseline": [
@@ -103,7 +165,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "b8aceb603e43a33e76a672c4593e461160e9c36f"
+      "sha": "74c764ee8382bd0f445f10a91f6ad18dac644b49"
     },
     {
       "path": "ANALYTICS.md",
@@ -111,7 +173,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "e11b3cd38b6e974feac9d1e9f5ccc68f1e8203ce"
+      "sha": "4098cc625aee39069cdba595947f3ba20780764e"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1351,7 +1413,7 @@
     },
     {
       "path": "dist/css/conversation-themes.css",
-      "sha": "6685f4c5d7231c43436b5dd23d90ddf2b85983bf"
+      "sha": "b17c480a6dcfd83ebfa81aa47e4a88ece4da4af4"
     },
     {
       "path": "dist/css/error-summary.css",
@@ -1427,7 +1489,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "e1e65718d3d4b2422c13140f41731a0146f4fe89"
+      "sha": "cb342fe2455494f8074efae3fc3bf9ab875eab01"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -2623,7 +2685,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "8f051517621e4f92ba7769520d9cbf842c88e891"
+      "sha": "e92119a289b9446de7eeac70abb6100f0c9f1ed4"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -5039,7 +5101,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "b78fdcf4ae2613435e5638e9cf390efe5d076638"
+      "sha": "840d3066a0ac8af191d86a9198ba69cbfeee3821"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5563,7 +5625,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "f5573c0d8a71e331457ca4e063e6d26950bb98e0"
+      "sha": "99139c19b994e82a0828e4780a5e7b0b428942f5"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5955,7 +6017,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "5d2685a3d3738b7147af98d5ff77f37694bd6331"
+      "sha": "eac6ba980e61a30a21a2c14fc751391159d3bc79"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6075,7 +6137,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "171317b777ec66cfa143f835d616ebe9bf3ff692"
+      "sha": "50ca24a7fad1648231d2164cd80ea2dec807c8d1"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7667,7 +7729,7 @@
     },
     {
       "path": "scripts/check-support-profile-layout.mjs",
-      "sha": "2394e8760383012e5c780edbaade251cee59b54e"
+      "sha": "dfe26ea694026a7c787d0931fc15a799eb893d65"
     },
     {
       "path": "scripts/check-support-profile-transport.mjs",
@@ -8488,6 +8550,12 @@
     {
       "path": "tests/support/check-unlink.cjs",
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
+    }
+  ],
+  "generated": [
+    {
+      "path": "dist/data/haramain-schedule.json",
+      "reason": "Unchanged existing official imam schedule generated at publication."
     }
   ]
 }

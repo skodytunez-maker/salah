@@ -847,3 +847,7 @@ Support-only fixes for the owner’s current screenshots: return-label clearance
 ## Maintenance528
 
 Only a16px modern-iPhone private Support card lift and light Stars statistical surfaces over the existing continuous wallpaper. Keep523 themes news,receipts,expiry,artwork and every source image byte unchanged. No new public announcement,external push or claim of system-blur removal/physical Safari verification.
+
+
+## Maintenance529
+Correct Quran surah names for the existing eight interface languages. Keep the523 themes announcement,its acknowledgement and2026-11-26 expiry unchanged; no new public card or external push.
