@@ -1,4 +1,10 @@
 export default Object.freeze({
+"offlineAutoUi.title":"Offline reading",
+"offlineAutoUi.enable":"Save texts automatically",
+"offlineAutoUi.note":"While SALAH is open and connected, it saves the Quran, selected meaning translation, Mushaf and available prayer dates for your selected city. Adhkar is included in the app. Audio is not downloaded.",
+"offlineAutoUi.on":"Automatic saving is on. Check progress in the Mushaf and prayer schedule below.",
+"offlineAutoUi.off":"Automatic saving is off. Saved data stays available; you can download manually.",
+"offlineAutoUi.saveFailed":"Your choice could not be saved on this device.",
  'offlineUi.mushafTitle':'The whole Quran offline',
  'offlineUi.mushafNote':'Save all 604 pages on this device. Files already verified will be kept when you resume downloading.',
  'offlineUi.mushafAppearance':'Offline reading uses the Arabic text and a built-in font. Lettering and line breaks differ from the printed Mushaf; the verses remain unchanged.',

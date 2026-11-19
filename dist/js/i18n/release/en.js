@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.autoOfflineTitle":"Texts are saved automatically",
+"releaseUi.autoOfflineText":"While open and connected, SALAH prepares the Quran, selected meaning translation, offline Mushaf and available prayer dates for your chosen city. Adhkar is already included. Audio is not downloaded. Turn automatic saving off in Settings → Data.",
   "releaseUi.languagesTitle": "SALAH in your language",
   "releaseUi.languagesText": "Menus, the player, calendar and workspaces are available in eight languages. The Arabic interface reads from right to left.",
   "releaseUi.languagesWhere": "Menu → Settings → App language.",

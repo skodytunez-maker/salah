@@ -38,7 +38,7 @@ export function showAppRelease(release=currentRelease,{available=false,acknowled
 }
 export async function checkAppUpdate(){return manualCheck?manualCheck(true):'unavailable';}
 export const nativeUpdateRuntime=()=>globalThis.Capacitor?.isNativePlatform?.()===true||Number.isSafeInteger(globalThis.__SALAH_NATIVE_BOOT__?.versionCode);
-export function downloadUpdateBlocked(doc=globalThis.document){const dataset=doc?.documentElement?.dataset;return['quranDownload','quranTextDownload','mushafDownload'].some(key=>dataset?.[key]==='active')||!!doc?.querySelector?.('[data-prayer-offline-busy]');}
+export function downloadUpdateBlocked(doc=globalThis.document){const dataset=doc?.documentElement?.dataset;return['quranDownload','quranTextDownload','mushafDownload','offlineAutoDownload','translationTextDownload'].some(key=>dataset?.[key]==='active')||!!doc?.querySelector?.('[data-prayer-offline-busy]');}
 export function updateStatusMessage(status){return ({current:t('pwaUi.current'),loading:t('pwaUi.loading'),offline:t('pwaUi.offline'),unavailable:t('pwaUi.unavailable'), 'native-unavailable':t('pwaUi.nativeUnavailable'), 'native-required':t('pwaUi.nativeRequired'), 'rolled-back':t('pwaUi.rolledBack')})[status]||'';}
 export async function checkNativeUpdate(updater,{force=false,timeoutMs=20000}={}){
  if(navigator.onLine===false)return 'offline';

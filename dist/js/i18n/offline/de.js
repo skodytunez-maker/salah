@@ -1,4 +1,10 @@
 export default Object.freeze({
+"offlineAutoUi.title":"Offline lesen",
+"offlineAutoUi.enable":"Texte automatisch speichern",
+"offlineAutoUi.note":"Wenn SALAH geöffnet und online ist, werden Koran, ausgewählte Bedeutungsübersetzung, Mushaf und verfügbare Gebetsdaten Ihrer gewählten Stadt gespeichert. Adhkar ist in der App enthalten. Audio wird nicht heruntergeladen.",
+"offlineAutoUi.on":"Automatisches Speichern ist aktiv. Den Fortschritt finden Sie im Mushaf und im Gebetsplan unten.",
+"offlineAutoUi.off":"Automatisches Speichern ist aus. Gespeicherte Daten bleiben verfügbar; Sie können manuell herunterladen.",
+"offlineAutoUi.saveFailed":"Ihre Auswahl konnte auf diesem Gerät nicht gespeichert werden.",
  'offlineUi.mushafTitle':'Den ganzen Koran offline lesen',
  'offlineUi.mushafNote':'Alle 604 Seiten auf diesem Gerät speichern. Bereits geprüfte Dateien bleiben erhalten, wenn Sie den Download fortsetzen.',
  'offlineUi.mushafAppearance':'Die Offlineansicht nutzt den arabischen Text und eine integrierte Schrift. Schriftbild und Zeilenumbrüche unterscheiden sich vom gedruckten Mushaf; die Verse bleiben unverändert.',

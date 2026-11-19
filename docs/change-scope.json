@@ -1,129 +1,193 @@
 {
   "schema": 1,
-  "version": 544,
-  "baseCommit": "6e097de9ffb3c4f145e9dc78371f8dee4fa45234",
-  "baseTree": "e1895d9d8a64bf91f0a9c45f3f5a6bc7b272824c",
-  "note": "Reviewed source-specific static native-alpha repair across63wallpaper sources,with60corrections and3retained cases. Preserve every raster original,architecture,Home geometry/solar path,private sky gates,scripture/auth and523news receipts. Exact-source comparative art and current localized maintenance notes only.",
+  "version": 545,
+  "baseCommit": "2c6948d1781b82a940166160cae36212e3239467",
+  "baseTree": "7235e51489a5d8e28a1660af7a9fc117e59645d6",
+  "note": "Automatic offline core texts using existing verified corpus,selected meaning and selected-city published/calculated months. Device-local pause/delete wins;single prayer writer and updater guards. No audio/privacy/account/photo/geometry change.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "design-qa.md",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
-    },
-    {
-      "path": "dist/assets/updates/sky-matte-544.svg",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/app.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/ar.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/az.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/de.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/en.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/kk.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/ru.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/tg.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/i18n/offline/uz.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/ar.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/az.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/de.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/en.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/kk.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/ru.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/tg.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/i18n/release/uz.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/offline-auto-core.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/offline-auto-policy.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/offline-auto-ui.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/offline-auto.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/prayer-offline-ui.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/prayer-offline.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/pwa-updates.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/quran-data.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/quran-mushaf-offline.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "dist/js/quran-translations.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
-      "path": "dist/js/sky-matte-data.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "path": "dist/js/storage-cache.js",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "dist/sw.js",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
-      "path": "docs/media-rights-register.json",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
-    },
-    {
-      "path": "docs/rights-source-manifest.json",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
-    },
-    {
-      "path": "docs/sky-matte-repair-544.json",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
-    },
-    {
-      "path": "docs/work-queue.md",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
-    },
-    {
-      "path": "scripts/check-sky-matte-repair.mjs",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "path": "docs/automatic-offline-545.md",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "docs/release-artwork.md",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "docs/work-queue.md",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
+    },
+    {
+      "path": "scripts/check-automatic-offline.mjs",
+      "reason": "545 automatic offline coordination,shared verified text/meaning/prayer pipelines,device-local control/cancellation and related exact-source regressions,8-language notes and release bookkeeping. Original scripture,rasters,auth,geometry and private sky gates stay unchanged."
     }
   ],
   "baseline": [
@@ -177,7 +241,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "a57b286f89ded7f864a7b7f32f316e5b52aa13fd"
+      "sha": "dcdb27bce25b80465a81265ad19f93aa10e3001b"
     },
     {
       "path": "ANALYTICS.md",
@@ -185,7 +249,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "903158e2de8354fd852e30e4e1c7adddb0559fea"
+      "sha": "2610c6e7bcbcfe86f740070fa515e4ca1f58e914"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1302,6 +1366,10 @@
     {
       "path": "dist/assets/updates/short-dhikr-418.svg",
       "sha": "8d5bda58decff7310efd5296939722dd1c477e00"
+    },
+    {
+      "path": "dist/assets/updates/sky-matte-544.svg",
+      "sha": "4db71545b8a1a8a0b8647603cd4f78f6688d6e42"
     },
     {
       "path": "dist/assets/updates/support-372.png",
@@ -2697,7 +2765,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "21ef62c6150c03639ae438e730362276f0db3f32"
+      "sha": "720f107af87a3ee17eff85d001f68509ba9fbbac"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3013,35 +3081,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "e3e8142d12473c3070b314e229b9803df7dc8f70"
+      "sha": "dd8745ab2fbf6414475fff13c8e9fcd66b0c6d7e"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "5eb1f1eba0ecba50288214ea6e94eef0489d3c80"
+      "sha": "4ac3eb6f745fa61c7ca3bdd3afc645f0daea883f"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "63ef842f6628894da661fcba127eb12f9a3bc704"
+      "sha": "b8631ca0d6c43323423bd63bc8f309afcc305241"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "fd5da135684fd5e6ad7c9a246dede0b22db19989"
+      "sha": "ceb2c576bf34737b11ac2049f6a0a60c53990af9"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "d6388ef07254c0f183afe0d55efa93fcfdf51fe5"
+      "sha": "86f4c498fd81f02521ab5bbe856527af50800eee"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "9d236ab2a8d8cff43c88f04ab25389ee113511c1"
+      "sha": "17d3872c48782bd921e5c9e60cfc0e784e6393c7"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "64a10aa3003ee31ccc6ff11f934d2198d528f3d4"
+      "sha": "a4119fe36123f2e21c84df7995b90943c6156574"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "550d86a09ad92ce40c8ba9911fb16a3e433ee379"
+      "sha": "6cbf5e3e9623efb3b704636faacadb17ecb0e168"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3757,19 +3825,19 @@
     },
     {
       "path": "dist/js/i18n/release/ar.js",
-      "sha": "543888eb402ff624268ddaf1046d6f1936bb0190"
+      "sha": "9fc7403ce22bd3938144dd48a0d983ea14b8118e"
     },
     {
       "path": "dist/js/i18n/release/az.js",
-      "sha": "ed1b3801a74faac7fb7d81fd2da15572fc547ccb"
+      "sha": "f0c008ed76c492f79fa4c86682a2683f192aa7d1"
     },
     {
       "path": "dist/js/i18n/release/de.js",
-      "sha": "bebf4daf3c8d120c1fad0e47fa47fd10d8a0fd07"
+      "sha": "1daaa2ae48084135a9bf39a96568738825457a48"
     },
     {
       "path": "dist/js/i18n/release/en.js",
-      "sha": "bfc6e96389686fd5131a5bff3f83254401b02e6c"
+      "sha": "a96e4cffc7b4ea51003dc8791fe69558f3f57279"
     },
     {
       "path": "dist/js/i18n/release/index.js",
@@ -3777,19 +3845,19 @@
     },
     {
       "path": "dist/js/i18n/release/kk.js",
-      "sha": "4cde073a6ce6440e585f835fe76a77515f73e4ba"
+      "sha": "55ef13b6f6cb38f0ecb91f1f895c1f65e887895c"
     },
     {
       "path": "dist/js/i18n/release/ru.js",
-      "sha": "bb48312e6ddcb4ddc5a209cdf553931d87ed35d0"
+      "sha": "69a1ecd1812f87d2da0bc08533eba8fa6e56b2ee"
     },
     {
       "path": "dist/js/i18n/release/tg.js",
-      "sha": "58d7568e2f4b392f80a3c1c3abb208e93b73d34f"
+      "sha": "f243fdceba34187263a1158212c15352f8cdf7e3"
     },
     {
       "path": "dist/js/i18n/release/uz.js",
-      "sha": "7fa085d3b07c322bec789a5cb610d0951bc3227c"
+      "sha": "93af168386c9185557606f293d4d358e3b388456"
     },
     {
       "path": "dist/js/i18n/ru.js",
@@ -4689,7 +4757,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "9104ca8489249770de6e1d7009f754066c0067b1"
+      "sha": "7d8bb5327dd1c3b2bc88cee732fbbbba73b21aa7"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -4741,7 +4809,7 @@
     },
     {
       "path": "dist/js/sky-matte-data.js",
-      "sha": "f98594adcee46dbf9354b904f559ddce929264d4"
+      "sha": "fea7c54c598f9793c579bc6dd38f925bc1db3f1e"
     },
     {
       "path": "dist/js/sky-matte.js",
@@ -5121,7 +5189,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "563e458f1c025f0038930650ff439fd66f932002"
+      "sha": "59340f8efebfd5bed62089187ee10dda195fa810"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5649,7 +5717,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "b9a0618c2a3c5ec842e246c3153c4f420a78bbd1"
+      "sha": "f96f8402e21ba588c43659092cea3487b1930fa6"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5817,7 +5885,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "7f20b9b4bcbdb480356da59c6ca38952081ef25a"
+      "sha": "c68faed1bd52f98a892737cf4304a11c7bdf9f81"
     },
     {
       "path": "docs/message-actions-515.md",
@@ -6045,7 +6113,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "6107704dac0a0ed1859c6418c85100578a4766d8"
+      "sha": "f491e4086321c5cbc1ef6198026f82121931b997"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6061,7 +6129,7 @@
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "sha": "8643ec0386cd4b5681d60f0984e2cbfa91eb42d8"
+      "sha": "933fe19748082395d39bb7c552e352aef6f047a8"
     },
     {
       "path": "docs/ruqyah-listening-336.md",
@@ -6078,6 +6146,10 @@
     {
       "path": "docs/short-dhikr-418.md",
       "sha": "73c11741c2757e13a419588b9e8c164aa1bdafc8"
+    },
+    {
+      "path": "docs/sky-matte-repair-544.json",
+      "sha": "340d24d845db8c658758db595a88c7c2cc7a6813"
     },
     {
       "path": "docs/sky-motion-460.json",
@@ -6169,7 +6241,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "8d05811d531fff44fa1070883a0e74cca956fb46"
+      "sha": "9bc8fb25d96c6ef085a0cb7f9ae8273e7df7754b"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7640,6 +7712,10 @@
       "sha": "fcdc397a377d41a47e9faa018851e54c4855aff5"
     },
     {
+      "path": "scripts/check-sky-matte-repair.mjs",
+      "sha": "b48fb808000329c8886df18a1493f5974c8841de"
+    },
+    {
       "path": "scripts/check-sky-matte.mjs",
       "sha": "b6f13b06deeab82ed02785e11daa34c8c25a67e1"
     },
@@ -8622,5 +8698,5 @@
       "reason": "Existing official imam schedule refreshed during publication."
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=543;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Главная: корректировка высоты декоративных элементов в закрытом режиме.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=544;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Фоны в закрытом режиме: уточнены контуры и восстановлены ошибочно вырезанные детали.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }
