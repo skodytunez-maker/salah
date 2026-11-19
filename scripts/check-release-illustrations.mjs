@@ -94,10 +94,10 @@ const releaseModal=doc.createElement('dialog');releaseModal.id='modal';releaseMo
 try{
  Date.now=()=>deadline-1000;bindReleaseHighlight(root);
  assert.equal(root.querySelector('[data-release-highlight]'),null,'No large update banner on Home');
- showAppRelease();assert.equal(releaseModal.open,true,'Current news remains available through the explicit update action');
+ showAppRelease(APP_ANNOUNCEMENT);assert.equal(releaseModal.open,true,'The explicit historical announcement remains available');
  assert.equal(hasSeenAnnouncement(),false,'Showing news does not acknowledge it');
  releaseModal.close();assert.equal(hasSeenAnnouncement(),false,'Closing without the confirmation leaves the news unacknowledged');
- showAppRelease();assert.equal(releaseModal.open,true);
+ showAppRelease(APP_ANNOUNCEMENT);assert.equal(releaseModal.open,true);
  if(APP_ANNOUNCEMENT.version===523){
   assert.equal(releaseModal.querySelectorAll('.release-feature').length,1);assert.equal(releaseModal.querySelectorAll('[data-theme-news]').length,1);assert.equal(releaseModal.querySelectorAll('.release-theme-scene').length,8);assert.equal(releaseModal.querySelectorAll('.release-motion-preview').length,1);
   const selected=releaseModal.querySelector('[data-theme-news]'),picture=selected.querySelector('img'),track=selected.querySelector('[data-release-motion-part]'),confirmation=releaseModal.querySelector('[data-close]');confirmation.focus();

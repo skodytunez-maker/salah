@@ -222,3 +222,10 @@ body.reduce-motion .home-listening-now,body.no-transitions .home-listening-now{t
 }
 
 .home-listening-now>.home-activity-count:first-child{margin-inline-start:auto}
+
+/* Use spare lower room for timetable/Adhkar,leaving brand/city and fixed player in place.
+   Independent of activity visibility;short screens,focus mode and landscape keep their layout. */
+@media(max-width:599px) and (min-height:800px) and (orientation:portrait){
+ .home-page .home-prayer-center:has(.central-prayer.timetable) > .prayer-stage,
+ .home-page .home-prayer-center:has(.central-prayer.timetable) > .prayer-stage ~ *{position:relative;top:16px}
+}

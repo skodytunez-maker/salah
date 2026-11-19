@@ -64,3 +64,7 @@ Before:hold applyApprovedReciters while resolving the real index;the actual Qura
 
 ## 540 — adaptive activity ink
 Shared activity backing removed;scene-driven ink/light foreground,hysteresis and one bounded floating row below city. Real aggregate numbers and owner-only actions unchanged. Controlled DOM fixtures cover day/night/cloudy,scene replacement,city-size/resize,hidden/dispose,large counts and unchanged parent flow. Full phone visual checks remain required;no browser/phone pass claimed. All raster bytes and private sky gate retained.
+
+
+##541 — notes and spare Home gap
+Manual installed notes and explicit523theme news are separately exercised through the real modal handler,eight live locales and receipt/available-update cases. Current card artwork reuses existing licensed SVGs. CSS cascade fixtures cover16px table/Adhkar displacement on390×844,393×852,375×812and no shift on short/landscape/tablet/focus screens;brand/player and badge visibility do not affect displacement. No physical-phone or browser pass is claimed;check actual table/player clearance and three metrics on the owner phone.232rasters unchanged.

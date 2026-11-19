@@ -7,8 +7,8 @@ const{illustratedReleaseMarkup,bindIllustratedRelease}=await import('../dist/js/
 const{APP_VERSION,APP_CHANGES,APP_ANNOUNCEMENT}=await import('../dist/js/app-release.js');
 const{setInterfaceLanguage,t}=await import('../dist/js/i18n.js');
 const{CONVERSATION_THEMES}=await import('../dist/js/conversation-themes.js');
-assert.equal(APP_ANNOUNCEMENT.version,523);assert.equal(APP_CHANGES.length,1);
-const dialog=doc.createElement('dialog');dialog.id='modal';dialog.innerHTML=illustratedReleaseMarkup(APP_VERSION,APP_CHANGES);doc.body.append(dialog);dialog.showModal();
+assert.equal(APP_ANNOUNCEMENT.version,523);assert.equal(APP_ANNOUNCEMENT.changes.length,1);
+const dialog=doc.createElement('dialog');dialog.id='modal';dialog.innerHTML=illustratedReleaseMarkup(APP_ANNOUNCEMENT.version,APP_ANNOUNCEMENT.changes);doc.body.append(dialog);dialog.showModal();
 const before=w.localStorage.length;bindIllustratedRelease(dialog);
 const card=dialog.querySelector('[data-theme-news]'),track=card.querySelector('[data-release-motion-part]'),scenes=[...track.children];
 assert.equal(scenes.length,8);assert.deepEqual(scenes.map(s=>s.querySelector('img').getAttribute('src')),CONVERSATION_THEMES.filter(t=>t.wallpaper).map(t=>t.thumbnail));

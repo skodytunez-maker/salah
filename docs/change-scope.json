@@ -1,53 +1,125 @@
 {
   "schema": 1,
-  "version": 540,
-  "baseCommit": "b80c7349242f8cfcc9da771fe4d5099415ea29e4",
-  "baseTree": "33d91be1097bb29a17adab02eba1001f250039c2",
-  "note": "Scene-adaptive Home activity glyphs with no common backing;bounded floating row below city,without moving prayer/countdown or changing scene/photos/count/privacy/roles.",
+  "version": 541,
+  "baseCommit": "e49f5972c08228c24401579fda1393d5bbd207bc",
+  "baseTree": "c47284dbe9abfa22c96ebe205909aa335617b069",
+  "note": "Current-version release descriptions,distinct historical announcement receipts,and16px lower timetable/Adhkar on tall portrait phones per clarified owner screenshot;no source image or scripture change.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
-    },
-    {
-      "path": "dist/js/home-activity-appearance.js",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
-    },
-    {
-      "path": "dist/js/home-listening-now.js",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "dist/home-selected.css",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
-    },
-    {
-      "path": "scripts/check-home-listening-now.mjs",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/pwa-updates.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/release-illustrations.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "scripts/check-theme-news.mjs",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "scripts/check-release-version-notes.mjs",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/ru.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/en.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/az.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/tg.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/uz.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/kk.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/de.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n/release/ar.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Reviewed541 accurate version notes and distinct announcement receipts,localized cards,requested tall-phone table spacing,tests and release documentation."
+    },
+    {
+      "path": "scripts/check-release-illustrations.mjs",
+      "reason": "Exercise the explicit historical announcement separately from the new installed-version default;retain all523artwork/receipt tests."
     }
   ],
   "baseline": [
@@ -101,7 +173,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "d166f176c0b1b6dfa2b8a6784ab463be7caa8186"
+      "sha": "387a36b27479c5965f0db496050552ffb9a1f1de"
     },
     {
       "path": "ANALYTICS.md",
@@ -109,7 +181,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "53ce6e1fd4153c33e913344f9961743754675e94"
+      "sha": "dfe315a9910510d51cc32305f64f67c67e5252d2"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2477,7 +2549,7 @@
     },
     {
       "path": "dist/home-selected.css",
-      "sha": "ac69f38efd02815d09caf31a987d25b2831fb584"
+      "sha": "b08e80f5ffe1796d3e40e31d4bd6e5b8eca33d7f"
     },
     {
       "path": "dist/icon-180.png",
@@ -2621,7 +2693,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "1d97b3371690545c9ad8cf04ea851b5d8d81e9b5"
+      "sha": "76f9c23dea9b2f95b1e5806b1f5aa682028d1171"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2892,6 +2964,10 @@
       "sha": "7340d9e7da645c75bbe6342c36d630bd30128e8a"
     },
     {
+      "path": "dist/js/home-activity-appearance.js",
+      "sha": "7460fcfb2c907a2171b1cecdc4159a3cf0984fea"
+    },
+    {
       "path": "dist/js/home-activity-icons.js",
       "sha": "7db0f0b7cff17cceeafeb107618ee15345dc6aac"
     },
@@ -2905,7 +2981,7 @@
     },
     {
       "path": "dist/js/home-listening-now.js",
-      "sha": "6a84ce78a7489cc65469baaed84ca25f5ccecf33"
+      "sha": "bad4cf6f2a1b0c86b73ae09378597800a2bc7e5e"
     },
     {
       "path": "dist/js/home-reading-core.js",
@@ -5041,7 +5117,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "4cc5cd39a2e637263d7f8446d2da65dca11ef494"
+      "sha": "2c1ee1fea9652ec7c7b3c56ba6664502d00169ff"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5569,7 +5645,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "f9ff07f6c6efa4210e2c4c00325b12f086b301ba"
+      "sha": "3da25a51703b5ebecf1b44c21763d2819a323f02"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5965,7 +6041,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "52114ca3326b0f3f7c1a0e22456c7625b2c5a2dd"
+      "sha": "2ca98ab94d488215dbf9419bdf738c33321d6f0c"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6089,7 +6165,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "de0037035913e76159cc1f48203e2c434c07513a"
+      "sha": "214778c3921293ca65e92a6043474d689a15cb16"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6825,7 +6901,7 @@
     },
     {
       "path": "scripts/check-home-listening-now.mjs",
-      "sha": "9bf277d73d00d94ce0fe18c86d4424c5535c74e5"
+      "sha": "408f1b9aa6fec945e01f27542bd0c93b8c17dfeb"
     },
     {
       "path": "scripts/check-home-reading.mjs",
@@ -8533,5 +8609,6 @@
       "path": "dist/data/haramain-schedule.json",
       "reason": "Existing official imam schedule refreshed during publication."
     }
-  ]
+  ],
+  "previousReleaseSource": "export const APP_VERSION=540;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }
