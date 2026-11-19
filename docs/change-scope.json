@@ -1,49 +1,45 @@
 {
   "schema": 1,
-  "version": 536,
-  "baseCommit": "ef75dabadf9a9defb0e4caac34740f5f0d7b9470",
-  "baseTree": "089b5330769024060efcfadf33b9a99715c2e1f6",
-  "note": "Bright Home aggregate and compact-glass action contrast only;preserve source images,chosen transparency,531 flow/auth/privacy/count behavior and535 session fix.",
+  "version": 537,
+  "baseCommit": "cc792ba87df07134beaddd980a59d3b7c14a951e",
+  "baseTree": "c81983943c6ccc1f7ab204269737c845cdb4c870",
+  "note": "Portrait-phone Home title safe clearance,net flow unchanged;preserve536contrast,535auth,photos,glass/player/count/sky/news and all other sections.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
       "path": "dist/home-selected.css",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
-    },
-    {
-      "path": "dist/quran-player.css",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     },
     {
-      "path": "scripts/check-glass-style.mjs",
-      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+      "path": "docs/release-announcements.md",
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+    },
+    {
+      "path": "scripts/check-home-listening-now.mjs",
+      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
     }
   ],
   "baseline": [
@@ -97,7 +93,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "fdfc308ab4a6a87d71566bb83693285d605aee9a"
+      "sha": "7fc4071e540982884efca672587a5902aec418c0"
     },
     {
       "path": "ANALYTICS.md",
@@ -105,7 +101,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "6401c3d71b6b8feef8081868df115a6aade6d9c3"
+      "sha": "c6faf1207c44a7a9f60ec607317e249f3c962b8d"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2473,7 +2469,7 @@
     },
     {
       "path": "dist/home-selected.css",
-      "sha": "2a65d61b09bb2910f61afef4608be4b2d4226c67"
+      "sha": "ffcb3190e32359fa8a44f8880ff45058428dc332"
     },
     {
       "path": "dist/icon-180.png",
@@ -2617,7 +2613,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "d959b34ef69d5d6622d1882f69d37abecd7aa6f7"
+      "sha": "9f0fe751d40b7ded371cad23d21f6df903b958b2"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -5005,7 +5001,7 @@
     },
     {
       "path": "dist/quran-player.css",
-      "sha": "fb747bde87c94549967ee616dfba41675a35bc7a"
+      "sha": "fc8ad5a36e28d35e0558aaef33f9389d3125d4bb"
     },
     {
       "path": "dist/quran.css",
@@ -5037,7 +5033,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "5224cafbd2bc7fc3b40e3693b5b10c7c3ac92bc1"
+      "sha": "f3882b908e9ab9583896e1fc398c375b0b61a49f"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5565,7 +5561,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "f389ff3c8a9ee7f50d2c25fee3c62468e35a651a"
+      "sha": "939e710e53c221d3e67c62078746d97646e70ce3"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5961,7 +5957,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "b3d9ee61cba8abd378984d94c3767d1a42c0f3a9"
+      "sha": "cd8f9aef324d4951555aea4f6913ea5ca92c84c3"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6085,7 +6081,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "030bbf3df07938ffbe0c85609b307bf0bb234800"
+      "sha": "ae0fc45dbed4ab97c24af379953284c3e2bf3ba5"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6777,7 +6773,7 @@
     },
     {
       "path": "scripts/check-glass-style.mjs",
-      "sha": "4cef347b04be8d37492c6bd3bb9aacded7c7dbe4"
+      "sha": "05a1134b64ae6da10d828284322b3e6004958140"
     },
     {
       "path": "scripts/check-google-play.mjs",
@@ -8523,7 +8519,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Unchanged official imam schedule refreshed during publication."
+      "reason": "Existing official imam schedule refreshed at publication."
     }
   ]
 }

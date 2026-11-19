@@ -204,3 +204,15 @@ html[data-glass-mode="on"] .glass-preview .glass-preview-table{
 /* Keep activity readable against bright photographs without changing flow. */
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.home-page .home-listening-now{background:#080f1a}}
 @media(forced-colors:active){.home-page .home-listening-now{background:Canvas;color:CanvasText;box-shadow:none;text-shadow:none;outline:1px solid CanvasText}}
+
+/* A decorative six-row title lift must not enter the iPhone sensor/status fade.
+   Equal opposite margins retain the timetable's flow position. */
+@media(max-width:599px) and (orientation:portrait){
+ .home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:calc(-20px + min(20px,var(--salah-safe-top,0px)));margin-bottom:calc(20px - min(20px,var(--salah-safe-top,0px)))}
+}
+@media(max-width:599px) and (max-height:700px) and (orientation:portrait){
+ .home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:calc(-12px + min(12px,var(--salah-safe-top,0px)));margin-bottom:calc(12px - min(12px,var(--salah-safe-top,0px)))}
+}
+@media(max-width:599px) and (max-height:600px) and (orientation:portrait){
+ .home-page .app-home-shell:has(.central-prayer.timetable) .app-home-top{margin-top:0;margin-bottom:0}
+}

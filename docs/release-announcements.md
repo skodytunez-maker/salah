@@ -876,3 +876,7 @@ Use the existing Appearance visual hierarchy for city/prayer Settings and the sh
 
 ###536 maintenance
 Bright Home foreground controls only;retain523 announcement,acknowledgement and expiry. No new public card,external push,private-sky rollout or score-change claim.
+
+
+###537 maintenance
+Notched portrait Home brand clearance only. Retain523announcement,acknowledgement and expiry;no new card or external push.
