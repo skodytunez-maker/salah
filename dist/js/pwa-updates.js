@@ -1,4 +1,5 @@
 import{t,getLocale,subscribeLanguage}from './i18n.js';
+import{createUpdateDownloadProgress}from './update-download-progress.js';
 import{illustratedReleaseMarkup,bindIllustratedRelease}from './release-gallery.js';
 import{isPublicReleaseChange}from './release-illustrations.js';
 import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from './app-release.js';
@@ -50,6 +51,7 @@ export async function checkNativeUpdate(updater,{force=false,timeoutMs=20000}={}
  }catch{return 'native-unavailable';}finally{clearTimeout(timer);}
 }
 export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,canAutoUpdate=()=>true,canApplyUpdate=canAutoUpdate,showRelease=showAppRelease}={}) {
+ const downloadProgress=createUpdateDownloadProgress({t,subscribeLanguage,serviceWorker:navigator.serviceWorker,currentVersion:APP_VERSION,doc:document,now:()=>Date.now(),Channel:MessageChannel});
  const nativeUpdater=globalThis.Capacitor?.Plugins?.SalahLiveUpdate;
  if(nativeUpdater||nativeUpdateRuntime()){
   manualCheck=async(force=false)=>{
@@ -89,7 +91,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
  try {
   registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
   function makeBanner({release=currentRelease,available=false}={}){
-   clearBanner();banner=document.createElement('aside');banner.className='app-update';banner.setAttribute('role','status');banner.setAttribute('data-i18n-aria-label',available?'pwaUi.updateLabel':'pwaUi.updated');banner.setAttribute('aria-label',t(available?'pwaUi.updateLabel':'pwaUi.updated'));
+   downloadProgress.finish();clearBanner();banner=document.createElement('aside');banner.className='app-update';banner.setAttribute('role','status');banner.setAttribute('data-i18n-aria-label',available?'pwaUi.updateLabel':'pwaUi.updated');banner.setAttribute('aria-label',t(available?'pwaUi.updateLabel':'pwaUi.updated'));
    const copy=document.createElement('div');copy.className='app-update-copy';
    const title=document.createElement('strong');title.setAttribute('data-i18n',available?'pwaUi.newVersion':'pwaUi.updated');title.textContent=t(available?'pwaUi.newVersion':'pwaUi.updated');
    const detail=document.createElement('button');detail.type='button';detail.className='app-update-details';const paintDetail=()=>{const date=releaseDate(release.date),key=date?'pwaUi.releaseDetails':'pwaUi.viewChanges',params=date?{date}:{};detail.setAttribute('data-i18n',key);detail.setAttribute('data-i18n-params',JSON.stringify(params));detail.textContent=t(key,params);};paintDetail();stopBannerLanguage=subscribeLanguage(paintDetail);
@@ -117,7 +119,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    if(requested||!registration.waiting||!navigator.serviceWorker.controller||!automaticReloadSafe())return false;
    try{requested=true;automaticRequested=true;registration.waiting.postMessage({type:'SALAH_APPLY_UPDATE'});return true;}catch{requested=false;automaticRequested=false;return false;}
   }
-  function watch(worker){if(!worker||watched.has(worker))return;watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&!applyAutomatically())void offer();});if(worker.state==='installed'&&!applyAutomatically())void offer();}
+  function watch(worker){if(!worker||watched.has(worker))return;downloadProgress.track(worker);watched.add(worker);worker.addEventListener('statechange',()=>{if(worker.state==='installed'){downloadProgress.finish();if(!applyAutomatically())void offer();}else if(worker.state==='redundant')downloadProgress.finish();});if(worker.state==='installed'){downloadProgress.finish();if(!applyAutomatically())void offer();}}
   // A downloaded update can activate later too, once the app is at a safe resting screen.
   applyAutomatically();
   const quietStartup=startupUntouched&&document.visibilityState==='visible'&&Date.now()-startedAt<1000&&!document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]');
@@ -138,7 +140,7 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    checking=(async()=>{await registration.update();watch(registration.installing);void offer(force);return registration.waiting&&navigator.serviceWorker.controller?'available':registration.installing?'loading':'current';})();
    try{return await checking;}finally{checking=null;}
   }
-  manualCheck=check;
+  manualCheck=async(force=false)=>{try{const status=await check(force);if(force&&status==='loading')downloadProgress.start(registration.installing);else if(force)downloadProgress.finish();return status;}catch(error){downloadProgress.finish();throw error;}};
   const resume=()=>{if(checkTimer!==null)clearInterval(checkTimer);checkTimer=null;if(document.visibilityState!=='visible')return;void check(false,{entry:true}).catch(()=>{});checkTimer=setInterval(()=>{if(reloadPending){void finishReload();return;}if(applyQueued){requestApply();return;}if(!applyAutomatically())void check().catch(()=>{});},5000);};
   document.addEventListener('visibilitychange',resume);window.addEventListener('online',resume);window.addEventListener('pageshow',resume);resume();return registration;
  }catch{toast(t('pwaUi.offlineUnavailable'));}finally{finishStartup()}

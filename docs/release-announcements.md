@@ -863,3 +863,6 @@ Stabilise Home timer position while the existing activity badges load or hide. K
 
 ## Maintenance532
 Use the existing Appearance visual hierarchy for city/prayer Settings and the shared Diagnostics disclosure. Retain523 announcement,receipt and expiry;no new public card or external push.
+
+
+533 maintenance: preserve523 themes announcement,acknowledgement and2026-11-26T23:59:59Z expiry. Manual download progress/status introduces no new public news or external push. Native/legacy byte progress remains unsupported.

@@ -1,65 +1,137 @@
 {
   "schema": 1,
-  "version": 532,
-  "baseCommit": "2a9ba759ab098b3f43ed6c18d72dda427646812e",
-  "baseTree": "a9425dc674e26c0594d0e5bff1934d650d54b1f9",
-  "note": "Owner-requested city/prayer Settings presentation using existing Appearance style;shared Diagnostics decoration was disclosed. Preserve native controls/calculations/data and531 Home timer fix.",
+  "version": 533,
+  "baseCommit": "18276782f0b4d525ff58c1f9b40addaea728aca1",
+  "baseTree": "7a9579391f1abd32de5de5fe43b1a71a5fac6704",
+  "note": "Manual real-byte PWA update progress and approximate ETA,conditional HTTP-cache revalidation,compact update-only dark status;no native bridge/raster/activation-policy changes.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "design-qa.md",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "dist/iphone.css",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "dist/js/app.js",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
-      "path": "dist/js/error-reporting.js",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
-      "path": "dist/js/settings-section-label.js",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
-      "path": "dist/js/travel-mode.js",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/ar.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/az.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/de.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/en.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/kk.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/ru.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/tg.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/i18n/settings/uz.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/pwa-updates.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/ui.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "dist/js/update-download-progress.js",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
-      "path": "scripts/check-extra-language.mjs",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "path": "scripts/build-update-resource-sizes.mjs",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
-      "path": "scripts/check-travel-mode.mjs",
-      "reason": "Existing shared icon/card presentation for city/prayer and Diagnostics,preserved native controls and real fixture imports,532 metadata/evidence."
+      "path": "scripts/check-startup-recovery.mjs",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "scripts/check-update-activation-race.mjs",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+    },
+    {
+      "path": "scripts/check-update-download-progress.mjs",
+      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Explicit532 source scope against verified531."
+      "reason": "Exact532 baseline and explicitly reviewed533 file scope."
     }
   ],
   "baseline": [
@@ -113,7 +185,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "e0cf5cb3bf9ea17e30281dae1a94da2ab0ac086d"
+      "sha": "4a2c806547b99630f0c8de6125d8cdc4d96ad75f"
     },
     {
       "path": "ANALYTICS.md",
@@ -121,7 +193,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "c1fc9fbe819c3956a033493a88de00260cfd5e8b"
+      "sha": "ddd54066428b21e17058cfce28ca2d5e67a96a83"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2513,7 +2585,7 @@
     },
     {
       "path": "dist/iphone.css",
-      "sha": "09a454fd4782b3ed83e83dec6f279e74248c4f91"
+      "sha": "03d22ef0c4ee8c780ac3a67725ad331a07ade879"
     },
     {
       "path": "dist/js/account-avatar-core.js",
@@ -2633,7 +2705,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "ffcbe997bce0e6ba9b6b79223666bb6ef8cc5127"
+      "sha": "62dfce09a680de83bed067d64b9d568d4c99a077"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2653,7 +2725,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "872664aaa8b2cfc0e16efea56f3c6abbdc765ec0"
+      "sha": "29fb3007ea5141a4abffc68df40036b404d4c685"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -2841,7 +2913,7 @@
     },
     {
       "path": "dist/js/error-reporting.js",
-      "sha": "9ce693acc0b46fe457958923ddb31e04f5ee091f"
+      "sha": "83d83fc19cced20f6e1aaad436b3877e4775e07c"
     },
     {
       "path": "dist/js/experience-release-news.js",
@@ -4657,7 +4729,7 @@
     },
     {
       "path": "dist/js/settings-section-label.js",
-      "sha": "7e91cc4270ed05fc7b38b3df502e5bbf14ae4444"
+      "sha": "1a567cb9a9c9a7f87368da53fb94160c2384fb08"
     },
     {
       "path": "dist/js/short-dhikr.js",
@@ -4821,7 +4893,7 @@
     },
     {
       "path": "dist/js/travel-mode.js",
-      "sha": "bb56c86d723ab6289213cee4017f80ddbf7a031a"
+      "sha": "584b72eebb05b177abf9dbb4f1e56d18cc04ab1e"
     },
     {
       "path": "dist/js/tv-output.js",
@@ -5049,7 +5121,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "08610f6947a76bdd7769d43215765e9e0aef7130"
+      "sha": "ca3be9cb702a34b781ba256cddd0ee0335ebebba"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5573,7 +5645,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "2715f6a0c3cd862f569f0dc50db6f60b0af359bd"
+      "sha": "016ba31b7f26038db1535043424dc3e1c87246fd"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5969,7 +6041,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "48f49f3dc7c246cdbb621cb837b61fd8d574363a"
+      "sha": "d9e9a08d796ef6795a286bcafe759e540ac7f499"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6093,7 +6165,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "26432357928fe3621fce0563fda45bb43e8e17e1"
+      "sha": "007f726e0d3190d1ae53bab53b9883bf75c42a08"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6741,7 +6813,7 @@
     },
     {
       "path": "scripts/check-extra-language.mjs",
-      "sha": "23747452ba70e6a82e851a8f52fbf572457521b6"
+      "sha": "220976e4ee1ac6500e82602e62f59a8fe94b5b86"
     },
     {
       "path": "scripts/check-financial-support.mjs",
@@ -7769,7 +7841,7 @@
     },
     {
       "path": "scripts/check-travel-mode.mjs",
-      "sha": "f790f0edc44dc698251921ae107e26186b7a753d"
+      "sha": "158efb931ba456464df1e28cf5ae4de44090ab54"
     },
     {
       "path": "scripts/check-tyumen-december.mjs",

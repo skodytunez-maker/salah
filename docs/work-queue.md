@@ -341,3 +341,10 @@ Production read-only diagnosis: four actors had exactly32 retained tab leases; a
 - Девять целевых и четыре связанные проверки прошли:значения/методы/школа/часовые пояса/offsets/согласие диагностики/черновики/переводы сохранены. Восьмиязыковая разметка проверена существующими fixtures;визуальныйphone-pass отсутствует.
 -531 merge2a9ba759ab098b3f43ed6c18d72dda427646812e прошёл340/340 и6requiredPRworkflows;Pages публикация проверяется отдельно. Самтаймер/счётчики/фотографии не меняются в532.
 - Дальше:измеренные задержки переходов,личная геолокация/предложение обновить город,честные проценты/оценка загрузки;фактический город посетителей владельцу по-прежнему не собирается.
+
+
+### Published531/532 and candidate533
+-531 published:PR400,merge2a9ba759ab098b3f43ed6c18d72dda427646812e,Pages44449731886:Reported success;340/340.
+-532 published:PR401,merge18276782f0b4d525ff58c1f9b40addaea728aca1,Pages44450747459:Reported success;340/340. Physical phone checks remain open.
+-533 prepares actual decoded-byte progress for browser shell updates,conditional HTTP cache validation,compact dark manual status and a sample-based approximate ETA. Exact-source/full CI/publication still pending. New progress UI first becomes available for a subsequent download after533 installation;old/native bridges do not expose byte progress. No raster or native binary changed.
+- Personal location delay is analysis only:two GPS attempts plus two parallel reverse-city/timezone requests can reach~37.5s before scheduling/permission time. Actual visitor location collection remains cancelled. Next queued work includes measured navigation latency,consented personal city update offer,external voice interruption resume and separate owner-only sky rebase.
