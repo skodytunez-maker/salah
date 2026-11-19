@@ -8,5 +8,9 @@ export default Object.freeze({
   "releaseUi.homeSpacingTitle": "Mehr Platz über dem Gebetsplan",
   "releaseUi.homeSpacingText": "Gebetsplan und Adhkar-Schaltfläche liegen etwas tiefer. Unter dem Stadtnamen bleibt mehr Platz für die Aktivitätssymbole.",
   "releaseUi.versionNotesTitle": "Änderungen der installierten Version",
-  "releaseUi.versionNotesText": "Was ist neu zeigt die Änderungen der aktuellen Version statt alter Designhinweise. Künftige Versionen erhalten eigene Beschreibungen."
+  "releaseUi.versionNotesText": "Was ist neu zeigt die Änderungen der aktuellen Version statt alter Designhinweise. Künftige Versionen erhalten eigene Beschreibungen.",
+  "releaseUi.homeGapTitle": "Aktivitätssymbole bleiben an ihrem Platz",
+  "releaseUi.homeGapText": "Die Symbole für Hören, Lesen und Dhikr bleiben beim Wechsel der Gebetsansicht auf gleicher Höhe. Über dem Gebetsplan ist mehr Platz.",
+  "releaseUi.readerWidthTitle": "Mehr Platz zum Lesen",
+  "releaseUi.readerWidthText": "Surenseiten sind auf dem Handy breiter: Die äußeren Seitenabstände entfallen, der innere Textrand bleibt erhalten."
 });

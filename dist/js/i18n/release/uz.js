@@ -8,5 +8,9 @@ export default Object.freeze({
   "releaseUi.homeSpacingTitle": "Jadval ustida ko‘proq joy",
   "releaseUi.homeSpacingText": "Namoz jadvali va azkorlar tugmasi biroz pastroqda joylashdi. Shahar nomi bilan jadval orasida faollik belgilari uchun ko‘proq joy bor.",
   "releaseUi.versionNotesTitle": "O‘rnatilgan versiyadagi o‘zgarishlar",
-  "releaseUi.versionNotesText": "Yangiliklar bo‘limi eski mavzular tavsifi o‘rniga joriy versiyadagi o‘zgarishlarni ko‘rsatadi. Keyingi versiyalarning o‘z tavsifi bo‘ladi."
+  "releaseUi.versionNotesText": "Yangiliklar bo‘limi eski mavzular tavsifi o‘rniga joriy versiyadagi o‘zgarishlarni ko‘rsatadi. Keyingi versiyalarning o‘z tavsifi bo‘ladi.",
+  "releaseUi.homeGapTitle": "Faollik belgilari o‘z joyida qoladi",
+  "releaseUi.homeGapText": "Tinglash, o‘qish va zikr belgilari jadval ko‘rinishi o‘zgarganda bir xil balandlikda qoladi. Jadval ustida ko‘proq joy bor.",
+  "releaseUi.readerWidthTitle": "O‘qish uchun ko‘proq joy",
+  "releaseUi.readerWidthText": "Telefonda sura sahifasi kengroq: tashqi yon bo‘shliqlar olib tashlandi, matnning ichki hoshiyasi saqlandi."
 });

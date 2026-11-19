@@ -1,4 +1,4 @@
-import {activityTone,activityPlacement,mountHomeActivityAppearance} from '../dist/js/home-activity-appearance.js';
+import {activityTone,activityRailWidth,mountHomeActivityAppearance} from '../dist/js/home-activity-appearance.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -116,24 +116,26 @@ console.log('PASS: six-row notched portrait heading clears decorative lift;total
 // Current scene light drives glyph/count ink only; no new sky work or polling.
 assert.equal(activityTone(1,0),'ink');assert.equal(activityTone(1,1),'ink');
 assert.equal(activityTone(0,0,'ink'),'light');assert.equal(activityTone(.44,0,'ink'),'ink');assert.equal(activityTone(.44,0,'light'),'light','Dusk hysteresis prevents flicker');assert.equal(activityTone(NaN,0),'light');
-for(const [width,left,headerBottom,cardTop]of [[282,54,142,162],[282,46,120,136],[350,247,80,100],[600,84,200,220]]){
- const header={bottom:headerBottom},card={left,top:cardTop,width};const p=activityPlacement(header,card,{left:10,top:20},{scrollLeft:2,scrollTop:3,clientLeft:1,clientTop:1});
- assert.equal(p.left,left-9);assert.equal(p.width,width);assert.equal(p.top+20-3+1+16,(headerBottom+cardTop)/2,'Glyph row stays centred between city and prayer without moving either');
-}
-assert.equal(activityPlacement({bottom:200},{left:0,top:0,width:0},{left:0,top:0}),null,'Hidden/unlaid-out routes do not overwrite placement');
+
+assert.equal(activityRailWidth(350,114),110);assert.equal(activityRailWidth(280,110),77);assert.equal(activityRailWidth(350,NaN),null);assert.equal(activityRailWidth(0,114),null);
 const aw=new Window({width:390,height:844}),ad=aw.document;
-ad.body.innerHTML='<div id="home-scene" data-phase="night" style="--scene-day:0"></div><main id="app"><div class="app-home-shell"><span class="home-listening-now"></span><div class="home-prayer-center"><div class="app-home-top">SALAH · City</div><section class="central-prayer timetable"></section></div></div></main>';
-const ah=ad.querySelector('.home-listening-now'),ap=ad.querySelector('#app'),heading=ad.querySelector('.app-home-top'),prayer=ad.querySelector('.central-prayer');let headerBottom=142,cardTop=162;
-Object.defineProperty(ah,'offsetParent',{get:()=>ap});ap.getBoundingClientRect=()=>({left:20,top:10});heading.getBoundingClientRect=()=>({bottom:headerBottom});prayer.getBoundingClientRect=()=>({left:54,top:cardTop,width:282});
-let resizeCallback,resizeDisconnected=0;
-aw.ResizeObserver=class{constructor(fn){resizeCallback=fn;}observe(){}disconnect(){resizeDisconnected++;}};
+ad.body.innerHTML='<div id="home-scene" data-phase="night" style="--scene-day:0"></div><main id="app"><div class="app-home-shell"><span class="home-radio-entry"><a class="home-radio-beacon">Radio</a></span><span class="home-listening-now"></span><div class="home-prayer-center"><div class="app-home-top"><div class="app-home-brand">SALAH</div><span>City</span></div><section class="central-prayer timetable"></section></div></div></main>';
+const ah=ad.querySelector('.home-listening-now'),shell=ad.querySelector('.app-home-shell'),brand=ad.querySelector('.app-home-brand'),heading=ad.querySelector('.app-home-top'),prayer=ad.querySelector('.central-prayer');let headerBottom=142,cardTop=182;
+shell.getBoundingClientRect=()=>({left:20,top:0,width:350});brand.getBoundingClientRect=()=>({left:138,top:headerBottom-60,width:114});heading.getBoundingClientRect=()=>({bottom:headerBottom});prayer.getBoundingClientRect=()=>({left:54,top:cardTop,width:282});
+let resizeCallback,resizeDisconnected=0;aw.ResizeObserver=class{constructor(fn){resizeCallback=fn;}observe(){}disconnect(){resizeDisconnected++;}};
 const view=mountHomeActivityAppearance(ah,{doc:ad}),flush=()=>new Promise(r=>setTimeout(r,0));
-assert.equal(ah.dataset.activityTone,'light');assert.equal(ah.style.left,'34px');assert.equal(ah.style.width,'282px');assert.equal(ah.style.top,'126px');
-const scene=ad.getElementById('home-scene');scene.style.setProperty('--scene-day','1');scene.dataset.phase='day';await flush();assert.equal(ah.dataset.activityTone,'ink','The actual scene phase updates both counts and icons');
-scene.style.setProperty('--scene-day','.44');scene.dataset.phase='dusk';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','0');scene.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'light');
-const replacement=scene.cloneNode();replacement.style.setProperty('--scene-day','1');scene.replaceWith(replacement);await flush();assert.equal(ah.dataset.activityTone,'ink','Recreated scene rebinds without a new timer');
-headerBottom=180;cardTop=200;resizeCallback();assert.equal(ah.style.top,'164px','City wrapping/optional cards can move the floating row without changing flow');assert.equal(heading.style.cssText,'');assert.equal(prayer.style.cssText,'');
-Object.defineProperty(ad,'hidden',{value:true,configurable:true});replacement.style.setProperty('--scene-day','0');replacement.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'ink','Hidden route does no appearance work');Object.defineProperty(ad,'hidden',{value:false,configurable:true});ad.dispatchEvent(new aw.Event('visibilitychange'));assert.equal(ah.dataset.activityTone,'light');
-view.dispose();assert.equal(resizeDisconnected,1);assert.equal(ah.dataset.activityTone,undefined);assert.equal(ah.style.top,'');replacement.style.setProperty('--scene-day','1');replacement.dataset.phase='day';aw.dispatchEvent(new aw.Event('resize'));await flush();assert.equal(ah.dataset.activityTone,undefined,'No observer/listener can repaint a disposed route');await aw.happyDOM.close();
-const activityRule=css.match(/\.home-page \.home-listening-now\{([^}]+)\}/)[1];assert.match(activityRule,/background:none/);assert.match(activityRule,/box-shadow:none/);assert.match(activityRule,/flex-wrap:nowrap/);assert.match(activityRule,/overflow-x:auto/);assert.doesNotMatch(css,/home-listening-now\{background:(?:#080f1a|Canvas)/,'Accessibility modes do not restore a shared backing');
-console.log('PASS: scene-adaptive glyphs without common backing;real unrounded counts,one bounded row,unchanged prayer geometry,scene replacement,resize,hidden and disposal lifecycle. Rectangles are controlled DOM fixtures,not phone rendering.');
+assert.equal(ah.dataset.activityTone,'light');assert.equal(ah.style.maxWidth,'110px');assert.equal(ah.style.top,'','Vertical placement belongs to the same fixed CSS as Radio');assert.equal(ah.style.left,'');
+const scene=ad.getElementById('home-scene');scene.style.setProperty('--scene-day','1');scene.dataset.phase='day';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','.44');scene.dataset.phase='dusk';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','0');scene.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'light');
+const replacement=scene.cloneNode();replacement.style.setProperty('--scene-day','1');scene.replaceWith(replacement);await flush();assert.equal(ah.dataset.activityTone,'ink');
+const fixedStyle=ah.style.cssText;headerBottom=360;cardTop=430;prayer.className='central-prayer focus';resizeCallback();assert.equal(ah.style.cssText,fixedStyle,'Changing table mode or city vertical position cannot move the activity rail');assert.equal(heading.style.cssText,'');assert.equal(prayer.style.cssText,'');
+Object.defineProperty(ad,'hidden',{value:true,configurable:true});replacement.style.setProperty('--scene-day','0');replacement.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'ink');Object.defineProperty(ad,'hidden',{value:false,configurable:true});ad.dispatchEvent(new aw.Event('visibilitychange'));assert.equal(ah.dataset.activityTone,'light');
+view.dispose();assert.equal(resizeDisconnected,1);assert.equal(ah.dataset.activityTone,undefined);assert.equal(ah.style.maxWidth,'');replacement.style.setProperty('--scene-day','1');replacement.dataset.phase='day';aw.dispatchEvent(new aw.Event('resize'));await flush();assert.equal(ah.dataset.activityTone,undefined);await aw.happyDOM.close();
+const radioCSS=await fs.readFile(new URL('../dist/css/radio-preview.css',import.meta.url),'utf8');
+for(const[width,height,safeTop]of [[390,844,47],[393,852,59],[375,667,20],[844,390,0],[768,1024,20]])for(const mode of ['timetable','focus']){
+ const rw=new Window({width,height}),rd=rw.document;rd.body.className='home-page';rd.documentElement.style.setProperty('--salah-safe-top',safeTop+'px');rd.body.innerHTML='<div class="app-home-shell"><span class="home-radio-entry"><a class="home-radio-beacon">Radio</a></span><span class="home-listening-now">123</span><div class="home-prayer-center"><div class="app-home-top">SALAH</div><div class="prayer-stage"><button class="central-prayer '+mode+'"></button></div></div></div>';
+ const rs=rd.createElement('style');rs.textContent=(css+'\n'+radioCSS).replaceAll('@media(','@media (');rd.head.append(rs);rs.textContent=headingCSS(rw,rs.sheet.cssRules);
+ const radio=rw.getComputedStyle(rd.querySelector('.home-radio-entry')),badge=rw.getComputedStyle(rd.querySelector('.home-listening-now')),beacon=rw.getComputedStyle(rd.querySelector('.home-radio-beacon'));
+ assert.equal(headingPixels(badge.top,safeTop),headingPixels(radio.top,safeTop),'Radio and activity share their original sensor-safe height in both modes');assert.equal(badge.height,'44px');assert.equal(beacon.minHeight,'44px');assert.equal(badge.position,'absolute');await rw.happyDOM.close();
+}
+const activityRule=css.match(/\.home-page \.home-listening-now\{([^}]+)\}/)[1];assert.match(activityRule,/background:none/);assert.match(activityRule,/box-shadow:none/);assert.match(activityRule,/flex-wrap:nowrap/);assert.match(activityRule,/overflow-x:auto/);assert.doesNotMatch(css,/home-listening-now\{background:(?:#080f1a|Canvas)/);assert.match(css,/data-activity-metrics="3"/);
+console.log('PASS: fixed Radio-height activity rail across table modes;bounded brand-side width,all exact counts/three-metric compact spacing,no common backing,adaptive ink,scene replacement/hidden/disposal and no prayer geometry writes. Controlled CSS/DOM,not phone rendering.');

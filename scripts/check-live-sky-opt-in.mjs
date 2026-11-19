@@ -53,7 +53,7 @@ saved.liveSky=true;tick();saved.liveSky=false;tick();assert.ok(photos.every(task
 for(const task of photos)task.resolve({complete:true,naturalWidth:1536,naturalHeight:1024});await turns();
 const photo=doc.getElementById('home-scene'),dayNode=photo.querySelector('.scene-day'),nightNode=photo.querySelector('.scene-night'),daySource=dayNode.style.backgroundImage,nightSource=nightNode.style.backgroundImage;
 assert.equal(photo.dataset.imagePending,undefined);assert.ok(daySource&&nightSource);assertBasic();assert.equal(mattes.length,0);assert.equal(clouds.length,0);assert.equal(contexts,0);
-for(let i=0;i<4;i++)tick();assert.equal(photos.length,2);assert.equal(skyCalls,1,'Only the explicit short opt-in before photo readiness sampled astronomy');assert.equal(uiReads,2,'Only that explicit opt-in measured Home UI');
+for(let i=0;i<4;i++)tick();assert.equal(photos.length,2);assert.equal(skyCalls,1,'Only the explicit short opt-in before photo readiness sampled astronomy');assert.equal(uiReads,0,'Even explicit opt-in keeps astronomical positions independent of Home UI');
 
 saved.liveSky=true;tick();assert.equal(mattes.length,1,'Enabling after photos are ready prepares their retained exact source pair');assert.equal(photos.length,2);assert.equal(mattes[0].args.dayImage,state('skyPhotoPair.dayImage'));assert.ok(photo.querySelector('[data-moon-disc]').getAttribute('src').endsWith('home-moon-disc.jpg'));
 saved.liveSky=false;tick();assert.equal(mattes[0].args.signal.aborted,true);assertBasic();const stale=finishMatte(mattes[0]);await turns();assert.equal(stale.disposed,1);assert.equal(state('skySurface'),null);assert.equal(clouds.length,0);
