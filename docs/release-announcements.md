@@ -842,3 +842,8 @@ Keep the523 themes announcement,acknowledgement and expiry unchanged. Owner Curr
 ## Maintenance527
 
 Support-only fixes for the owner’s current screenshots: return-label clearance/type,rounded input focus,Codex-like entry expansion and keyboard geometry,transparent chrome/identity on themed private cards. Keep523 announcement/receipts/expiry and all artwork bytes unchanged; no new public news or external push. No global status-bar setting or claimed physical Safari pass.
+
+
+## Maintenance528
+
+Only a16px modern-iPhone private Support card lift and light Stars statistical surfaces over the existing continuous wallpaper. Keep523 themes news,receipts,expiry,artwork and every source image byte unchanged. No new public announcement,external push or claim of system-blur removal/physical Safari verification.

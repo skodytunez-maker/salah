@@ -75,3 +75,6 @@ body.reduce-motion .release-theme-track,body.no-transitions .release-theme-track
 /* Support private profiles keep the selected wallpaper continuous behind their chrome. */
 dialog.support-user-profile[data-conversation-theme] .support-profile-header,dialog.support-user-profile[data-conversation-theme] .owner-profile-identity{background:transparent!important;box-shadow:none}
 dialog.support-user-profile[data-conversation-theme] .support-profile-header{border-bottom-color:transparent}
+
+/* Stars continues through the private Support statistics instead of dense blue slabs. */
+dialog.support-user-profile[data-conversation-theme=stars] .owner-profile-panel{background:rgba(5,12,24,.22)!important;border-color:rgba(187,211,238,.12)!important;box-shadow:none;text-shadow:0 1px 4px rgba(0,0,0,.65)}

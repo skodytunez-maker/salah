@@ -1,61 +1,49 @@
 {
   "schema": 1,
-  "version": 527,
-  "baseCommit": "52c35ba1b6c77ee4a7b4723c1aa4cee6f8c7ba56",
-  "baseTree": "121170c3be65522eb9ca96902fd2e9ec5e19c715",
-  "note": "Standing owner-authorized immediate checked maintenance release. Only Support return label,rounded input focus,confirmed Codex-like input/keyboard behavior and themed profile chrome. No confirmed phone/browser pass or system-blur disable; original images,backend,other sections,523 news and private sky preserved.",
+  "version": 528,
+  "baseCommit": "29ba026350bc1687ba06e701f21bdc6d1bc07f37",
+  "baseTree": "b6096930371df5f5334b58c32cc896990b0dfd88",
+  "note": "Owner-requested scoped refinement after confirming527 is better: raise only private Support card16px on modern iPhone and reveal the selected continuous cosmic image through its light Stars statistics. Preserve original photo/video bytes,other themes,all input/navigation/access/backend/global status metadata,523 news and private sky. Standing checked-publication authorization; physical Safari verification pending.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
+      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
     },
     {
       "path": "design-qa.md",
-      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
+      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
     },
     {
       "path": "dist/css/conversation-themes.css",
-      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
+      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
     },
     {
       "path": "dist/css/support.css",
-      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
+      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
-    },
-    {
-      "path": "dist/js/support-chat-view.js",
-      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
+      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Scoped reported Support presentation,input keyboard behavior and527 metadata; no global status-bar,other-screen,photo or backend change."
+      "reason": "Only the requested Support private-card top allowance,Stars statistical tint and528 version metadata; all other screens and original image/video bytes preserved."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
+      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
+      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Record latest user decisions,reviewed source boundary and honest verification/publication limits."
-    },
-    {
-      "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Actual module and full stylesheet regression for the current phone reports,retaining prior access/data/navigation assertions."
-    },
-    {
-      "path": "scripts/check-support-layout.mjs",
-      "reason": "Actual module and full stylesheet regression for the current phone reports,retaining prior access/data/navigation assertions."
+      "reason": "Record the latest approved refinements,scope and honest source/test/publication evidence."
     },
     {
       "path": "scripts/check-support-profile-layout.mjs",
-      "reason": "Actual module and full stylesheet regression for the current phone reports,retaining prior access/data/navigation assertions."
+      "reason": "Extend the existing real profile/CSS regression for actual safe insets and isolated Stars/default/Bronze presentation,retaining data/navigation checks."
     }
   ],
   "generated": [
@@ -115,7 +103,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "57d81764679edf60900dff6e3bc7225afec762f4"
+      "sha": "b8aceb603e43a33e76a672c4593e461160e9c36f"
     },
     {
       "path": "ANALYTICS.md",
@@ -123,7 +111,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "5a3e5270bf501c66301b05ae219d054ed88e8154"
+      "sha": "e11b3cd38b6e974feac9d1e9f5ccc68f1e8203ce"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1363,7 +1351,7 @@
     },
     {
       "path": "dist/css/conversation-themes.css",
-      "sha": "c65ba565008dc2eae7c56f9eb808398a68734582"
+      "sha": "6685f4c5d7231c43436b5dd23d90ddf2b85983bf"
     },
     {
       "path": "dist/css/error-summary.css",
@@ -1439,7 +1427,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "ad6cce0c6448f85ff0c3aa2c4546694619e3b328"
+      "sha": "e1e65718d3d4b2422c13140f41731a0146f4fe89"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -2635,7 +2623,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "62cea476020d90ab2160d08e50cf079a87c5aad1"
+      "sha": "8f051517621e4f92ba7769520d9cbf842c88e891"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4751,7 +4739,7 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "5e94ebe7bb6979cdb8b650008d07a80494b8f0f8"
+      "sha": "278256a3310e69df781828b1419fc462639f3834"
     },
     {
       "path": "dist/js/support-client.js",
@@ -5051,7 +5039,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "5f45bd7233d9287e28dff7f2d96a35315a938114"
+      "sha": "b78fdcf4ae2613435e5638e9cf390efe5d076638"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5575,7 +5563,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "e247c734b431a6c82573a32e310a5e4b9374fd13"
+      "sha": "f5573c0d8a71e331457ca4e063e6d26950bb98e0"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5967,7 +5955,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "c398c61ea6e987cb05ae81a0fda5c014fbfde82d"
+      "sha": "5d2685a3d3738b7147af98d5ff77f37694bd6331"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6087,7 +6075,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "b1ddfceff70b5530f3a2c84e1de1bbf3ffc4ec64"
+      "sha": "171317b777ec66cfa143f835d616ebe9bf3ff692"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7643,7 +7631,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "c9932a5c367d6904bff677a0c9a1fe5dcd7344b8"
+      "sha": "e9d6f315dfbcb282631c9707d812d6bf4e0e6be1"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7655,7 +7643,7 @@
     },
     {
       "path": "scripts/check-support-layout.mjs",
-      "sha": "02980602a355e951937cfac23bfe350c4f9f42d9"
+      "sha": "d30f6f3bd5bfc57c28c3f36f172a9f0331a3d012"
     },
     {
       "path": "scripts/check-support-multiple.mjs",
@@ -7679,7 +7667,7 @@
     },
     {
       "path": "scripts/check-support-profile-layout.mjs",
-      "sha": "e60f778bacbb2f4df298c63b22dcaa59532c8f94"
+      "sha": "2394e8760383012e5c780edbaade251cee59b54e"
     },
     {
       "path": "scripts/check-support-profile-transport.mjs",
