@@ -837,3 +837,8 @@ The owner also requested the reference-video top-edge message effect. Include a 
 ## Maintenance526
 
 Keep the523 themes announcement,acknowledgement and expiry unchanged. Owner Current Activity corrections,foreground update checking and the reported Support header blur clearance are maintenance; no new public feature card or external push. Actual-city collection was explicitly cancelled; only selected prayer city remains. New living sky stays owner-private. Physical iPhone visual verification is pending.
+
+
+## Maintenance527
+
+Support-only fixes for the owner’s current screenshots: return-label clearance/type,rounded input focus,Codex-like entry expansion and keyboard geometry,transparent chrome/identity on themed private cards. Keep523 announcement/receipts/expiry and all artwork bytes unchanged; no new public news or external push. No global status-bar setting or claimed physical Safari pass.

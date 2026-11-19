@@ -71,3 +71,7 @@ body.reduce-motion .release-theme-track,body.no-transitions .release-theme-track
 #support-root.support-chat-shell[data-conversation-theme] [data-support-reopen]{flex:0 1 280px;max-width:280px;min-height:44px;border:1px solid #dfcfae45;border-radius:16px;background:#102033b8;color:#e2d3b1;box-shadow:none;font-size:13px;font-weight:600;padding:10px 16px}
 #support-root.support-chat-shell[data-conversation-theme] [data-support-reopen]:active{background:#1a3045e6}
 #support-root.support-chat-shell[data-conversation-theme] [data-support-reopen]:focus-visible{outline:2px solid #dfcfae;outline-offset:3px}
+
+/* Support private profiles keep the selected wallpaper continuous behind their chrome. */
+dialog.support-user-profile[data-conversation-theme] .support-profile-header,dialog.support-user-profile[data-conversation-theme] .owner-profile-identity{background:transparent!important;box-shadow:none}
+dialog.support-user-profile[data-conversation-theme] .support-profile-header{border-bottom-color:transparent}

@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import {themePreferenceKey} from '../dist/js/conversation-themes.js';
 const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');
 const paths=[...html.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="\.\/([^\"]+)"[^>]*>/g)].map(m=>m[1]);
 const css=(await Promise.all(paths.map(p=>readFile(new URL('../dist/'+p,import.meta.url),'utf8')))).join('\n').replaceAll('@media(','@media (');
 const A='11111111-1111-4111-8111-111111111111',U='22222222-2222-4222-8222-222222222222';
 for(const [width,height,dir] of [[320,667,'ltr'],[393,852,'ltr'],[852,393,'ltr'],[1440,900,'ltr'],[393,852,'rtl']]){
+ for(const themed of [false,true]){
  const w=new Window({width,height,url:'https://fixture.invalid/#support?owner=1'}),doc=w.document;
  Object.assign(globalThis,{window:w,document:doc,localStorage:w.localStorage,Event:w.Event});doc.documentElement.dir=dir;
+ if(themed){w.Image=function(){const img=doc.createElement('img');Object.defineProperties(img,{complete:{get:()=>true},naturalWidth:{get:()=>1024},naturalHeight:{get:()=>1536}});img.decode=async()=>{};return img;};w.localStorage.setItem(themePreferenceKey(A,'support:'+U),JSON.stringify({theme:'stars'}));}
  const style=doc.createElement('style');style.textContent=css;doc.head.append(style);
  const host=doc.createElement('main');host.innerHTML='<button data-avatar>Profile</button><div class="support-messages">Retained chat</div><textarea>Unsent reply</textarea>';doc.body.append(host);
  const {createSupportUserProfile}=await import('../dist/js/support-user-profile.js');
@@ -27,8 +30,10 @@ for(const [width,height,dir] of [[320,667,'ltr'],[393,852,'ltr'],[852,393,'ltr']
  assert.equal(computed('[data-support-profile-back]').borderRadius,'14px');assert.equal(computed('[data-support-profile-back]').minHeight,'44px');
  assert.equal(computed('[data-support-profile-refresh]').minHeight,'44px');assert.equal(parseFloat(computed('.support-profile-body').minHeight),0);
  assert.equal(parseFloat(computed('[data-support-profile-card]').minHeight),0,'No nested viewport-height spacer pushes content apart');
+ if(themed){assert.equal(dialog.dataset.conversationTheme,'stars');for(const surface of ['.support-profile-header','.owner-profile-identity']){assert.match(computed(surface).backgroundColor,/^(?:transparent|rgba\(0, 0, 0, 0\))$/,'The selected wallpaper is continuous behind profile toolbar and identity; no rectangular panels');assert.equal(computed(surface).boxShadow,'none');}assert.notEqual(computed('.owner-profile-panel').backgroundColor,'transparent','Rounded statistics remain readable');assert.equal(computed('.owner-profile-panel').borderRadius,'20px');}
  assert.equal(doc.activeElement,dialog,'Opening a modal focuses its labelled container rather than highlighting the Back button');
  assert.equal(host.querySelector('textarea').value,'Unsent reply');assert.equal(host.querySelector('.support-messages').textContent,'Retained chat');
  const firstHeading=dialog.querySelector('.owner-profile-panel h2');profile.dispose();assert(!host.contains(firstHeading));await w.happyDOM.close();
+ }
 }
 console.log('PASS Support profile uses the real stylesheet cascade across narrow phone, iPhone, landscape, desktop and RTL: compact section typography, cards, metric grid, reciters, awards, readable account rows, focus-safe toolbar and retained conversation. Not physical Safari rendering.');
