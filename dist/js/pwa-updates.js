@@ -5,6 +5,7 @@ import {APP_VERSION,APP_UPDATED_AT,APP_CHANGES,APP_ANNOUNCEMENT} from './app-rel
 import {esc,modal} from './ui.js';
 let manualCheck=null;
 const CHECK_INTERVAL=5*60*1000;
+const ENTRY_CHECK_INTERVAL=30*1000;
 const LEGACY_SEEN_KEY='salah:update-last-seen-v1';
 const SEEN_KEY='salah:update-announcement-seen-v2';
 const SOFT_RELOAD_KEY='salah:update-reload-transition-v1';
@@ -126,19 +127,19 @@ export async function registerAppWorker({toast=()=>{},canShowRelease=()=>true,ca
    if(quietStartup&&canShowRelease()&&!document.getElementById?.('modal')?.open){showRelease(APP_ANNOUNCEMENT);}else if(canShowRelease())makeBanner({release:APP_ANNOUNCEMENT});
   }}
   registration.addEventListener('updatefound',()=>watch(registration.installing));
-  async function check(force=false){
+  async function check(force=false,{entry=false}={}){
    if(!force&&applyAutomatically())return 'loading';
    void offer(force);
    if(registration.waiting&&navigator.serviceWorker.controller)return 'available';
    if(registration.installing){watch(registration.installing);return 'loading';}
    if(checking)return checking;
    if(navigator.onLine===false)return 'offline';
-   const gap=Date.now()-lastCheck;if(!force&&gap>=0&&gap<CHECK_INTERVAL)return 'current';lastCheck=Date.now();
+   const gap=Date.now()-lastCheck;if(!force&&gap>=0&&gap<(entry?ENTRY_CHECK_INTERVAL:CHECK_INTERVAL))return 'current';lastCheck=Date.now();
    checking=(async()=>{await registration.update();watch(registration.installing);void offer(force);return registration.waiting&&navigator.serviceWorker.controller?'available':registration.installing?'loading':'current';})();
    try{return await checking;}finally{checking=null;}
   }
   manualCheck=check;
-  const resume=()=>{if(checkTimer!==null)clearInterval(checkTimer);checkTimer=null;if(document.visibilityState!=='visible')return;void check().catch(()=>{});checkTimer=setInterval(()=>{if(reloadPending){void finishReload();return;}if(applyQueued){requestApply();return;}if(!applyAutomatically())void check().catch(()=>{});},5000);};
-  document.addEventListener('visibilitychange',resume);window.addEventListener('online',resume);resume();return registration;
+  const resume=()=>{if(checkTimer!==null)clearInterval(checkTimer);checkTimer=null;if(document.visibilityState!=='visible')return;void check(false,{entry:true}).catch(()=>{});checkTimer=setInterval(()=>{if(reloadPending){void finishReload();return;}if(applyQueued){requestApply();return;}if(!applyAutomatically())void check().catch(()=>{});},5000);};
+  document.addEventListener('visibilitychange',resume);window.addEventListener('online',resume);window.addEventListener('pageshow',resume);resume();return registration;
  }catch{toast(t('pwaUi.offlineUnavailable'));}finally{finishStartup()}
 }

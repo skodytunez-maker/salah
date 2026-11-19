@@ -1,185 +1,89 @@
 {
   "schema": 1,
-  "version": 525,
-  "baseCommit": "7746ec9d07fc5539464a469c07d7b462aaacbb12",
-  "baseTree": "7a3429f0f89ff867ff8f19c70b3bf595ec8b4415",
-  "note": "Owner explicitly authorized immediate525 publication after preparation,36 targeted checks and missing phone visual check were disclosed. Scoped Settings presentation and reward greeting; browser declined. Preserve523 news/receipts/expiry, original images, notification scheduling, reward eligibility and server/MFA access. The owner’s subsequent screenshot explicitly requests raising the Support chat header; replace only its double status allowance with compact actual-safe-area padding and test keyboard/default/themed views. Also include the explicitly requested static top-edge fade for scrolled Support history, retaining fixed controls and first-message readability.",
+  "version": 526,
+  "baseCommit": "6433e15985018f99f3796f1eba4a3bfe01753102",
+  "baseTree": "edf1fddd40e7e7bafd595be3c821cf008c3b3233",
+  "note": "Owner-authorized immediate checked maintenance publication. Current Activity reception/layout, safe foreground update discovery and the new Support-only participant-name blur report. Actual-city collection cancelled. No phone/browser visual pass; preserve523 news,private sky,images,original composer and access.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
+      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
     },
     {
       "path": "design-qa.md",
-      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
+      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
     },
     {
-      "path": "dist/css/quran-awards.css",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/iphone.css",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/ambient-settings.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/app-release.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/app.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/award-celebration.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/founder-welcome.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/glass-settings.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/ar.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/az.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/de.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/en.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/kk.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/ru.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/tg.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/i18n/ranking/uz.js",
-      "reason": "Eight approved blessing/Ameen translations and regenerated current interface catalogues; existing theme keys retained."
-    },
-    {
-      "path": "dist/js/native-background-reminders.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/push-reminders.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/reminders.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/js/settings-section-label.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "dist/sw.js",
-      "reason": "Scoped Settings presentation/award greeting or candidate version; no scheduling, private access, award eligibility or image-byte change."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
-    },
-    {
-      "path": "docs/work-queue.md",
-      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
-    },
-    {
-      "path": "scripts/check-award-presentations.mjs",
-      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
-    },
-    {
-      "path": "scripts/check-interface-shell.mjs",
-      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
-    },
-    {
-      "path": "scripts/check-settings-language.mjs",
-      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
-    },
-    {
-      "path": "scripts/check-settings-presentation.mjs",
-      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
-    },
-    {
-      "path": "scripts/check-tyumen-sources.mjs",
-      "reason": "Actual-module/template regression coverage for presentation dependencies, in-place translations and preserved access/preferences."
-    },
-    {
-      "path": "docs/change-scope.json",
-      "reason": "Record scoped unpublished candidate, evidence, queue and phone review status."
+      "path": "dist/css/owner-current-activity.css",
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
     },
     {
       "path": "dist/css/support.css",
-      "reason": "Explicit latest owner screenshot request: raise only the grouped Support header while retaining sensor inset,44px touch targets, keyboard geometry, wallpaper and back/draft behavior."
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
     },
     {
-      "path": "scripts/check-support-layout.mjs",
-      "reason": "Explicit latest owner screenshot request: raise only the grouped Support header while retaining sensor inset,44px touch targets, keyboard geometry, wallpaper and back/draft behavior."
+      "path": "dist/js/app-release.js",
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+    },
+    {
+      "path": "dist/js/app-state-core.js",
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+    },
+    {
+      "path": "dist/js/owner-current-activity.js",
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+    },
+    {
+      "path": "dist/js/pwa-updates.js",
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "reason": "Explicit reference-video request: passive scoped top-edge mask state, first-message visibility, message retention and cleanup; preserve routing/drafts/access."
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+    },
+    {
+      "path": "dist/sw.js",
+      "reason": "Scoped Current Activity,foreground update discovery,Support header and latest keyboard/input references; original photos,other sections and access preserved."
+    },
+    {
+      "path": "docs/change-scope.json",
+      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+    },
+    {
+      "path": "docs/release-announcements.md",
+      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+    },
+    {
+      "path": "docs/work-queue.md",
+      "reason": "Record exact526 scope,latest decisions and honest visual/release evidence."
+    },
+    {
+      "path": "scripts/check-app-state-sql.mjs",
+      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+    },
+    {
+      "path": "scripts/check-app-state.mjs",
+      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+    },
+    {
+      "path": "scripts/check-owner-current-activity.mjs",
+      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Explicit reference-video request: passive scoped top-edge mask state, first-message visibility, message retention and cleanup; preserve routing/drafts/access."
+      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
     },
     {
-      "path": "scripts/check-account-experience.mjs",
-      "reason": "Keep the real founder/account eligibility, presentation acknowledgement, replay, account-change and device/news checks; update only the obsolete Thanks-label expectation to the explicitly requested localized Ameen and blessing."
+      "path": "scripts/check-support-layout.mjs",
+      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+    },
+    {
+      "path": "scripts/check-update-activation-race.mjs",
+      "reason": "Actual-source regression for reported app-state,layout,composer and safe update behavior; retain existing auth/navigation/data guards."
+    },
+    {
+      "path": "supabase/functions/listening-now/app-state.mjs",
+      "reason": "Retain deployed v5 stale-tab-lease fix with unchanged actor/session/rate/score boundaries."
     }
   ],
   "generated": [
@@ -239,7 +143,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "a32217349bc271e65aa8a58f5481dd35f99e694c"
+      "sha": "96d3f1819342b27c45ec2a830475607b712d1ed6"
     },
     {
       "path": "ANALYTICS.md",
@@ -247,7 +151,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "a5a5b9ce5503987c569c124f62f116c269334248"
+      "sha": "49bf8955487e6ad15ad2fb70ba30ebda050b249f"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1543,7 +1447,7 @@
     },
     {
       "path": "dist/css/quran-awards.css",
-      "sha": "cf4b8b6b28bc7e279d3ca92557d9181a45bb3bcc"
+      "sha": "68b70b13d8ef0315d7fb0ca3e12ad7b104d00447"
     },
     {
       "path": "dist/css/radio-preview.css",
@@ -1563,7 +1467,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "d85b59dfef327017fcff9ca69f71674f049e298a"
+      "sha": "e78a85117a40d76fdc21801af0c0fa8cd8fa3928"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -2639,7 +2543,7 @@
     },
     {
       "path": "dist/iphone.css",
-      "sha": "1eb79edf7bc570ec3cfb0c5070e0e69df3934f33"
+      "sha": "09a454fd4782b3ed83e83dec6f279e74248c4f91"
     },
     {
       "path": "dist/js/account-avatar-core.js",
@@ -2743,7 +2647,7 @@
     },
     {
       "path": "dist/js/ambient-settings.js",
-      "sha": "398691fc91dd4a4ae8d30834e2508b024596778e"
+      "sha": "3ec1e2256726bc9fe75c6f4005ba626bdc05c87b"
     },
     {
       "path": "dist/js/analytics.js",
@@ -2759,7 +2663,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "1e4837a50c0ddfee8c7f3943e5139d7cc7825bca"
+      "sha": "6d5f04a29260216ded549762b83fb73340f2e241"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2779,7 +2683,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "e7ce0aa95ea1ab73ae5ad2c0217eeaa342fea05b"
+      "sha": "872664aaa8b2cfc0e16efea56f3c6abbdc765ec0"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -2835,7 +2739,7 @@
     },
     {
       "path": "dist/js/award-celebration.js",
-      "sha": "6989c58635e4620959e4a0efe2a951e58bc2980e"
+      "sha": "e3129a6034746bc7f53b3c239dd11b8ba718a218"
     },
     {
       "path": "dist/js/backup.js",
@@ -2983,7 +2887,7 @@
     },
     {
       "path": "dist/js/founder-welcome.js",
-      "sha": "e91795dd18a2251c3211ad1cf01029dedb5bfbc8"
+      "sha": "cf6c5dd71f52053581818f529673c7d614ac2dd2"
     },
     {
       "path": "dist/js/free-counter.js",
@@ -2995,7 +2899,7 @@
     },
     {
       "path": "dist/js/glass-settings.js",
-      "sha": "d266bfea849c1535ccebaa1a285c5d3a4f4c851c"
+      "sha": "e7639fadde16fb9adfc7dc1bee6b2b3077c791d1"
     },
     {
       "path": "dist/js/guest-competition-core.js",
@@ -3071,35 +2975,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "1039db23d67f3cbec11359a7a805ec3fada95923"
+      "sha": "0e66ddee6543ec85e488737662f3c200cc318584"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "aef276d1a759aabe2ea05f9f5a392f6b80949c17"
+      "sha": "a3c5b8072a21f94d434276e7d4e14a8f14ef4dca"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "ab9491e88727b735c6615711661748e3284fc571"
+      "sha": "471c32de02daa2d9938318df054b1478d94f7d32"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "edd6f6e8b2f379dffbc31d6f19348e0bf3b31b83"
+      "sha": "6afccd8c0b7f5b514cd062c9fa912ba9d4961f2a"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "213d9c0f3686f46e276dee5acf1b4ae09329b9d8"
+      "sha": "53a2fcabe5b13a9c56278aaf0c559f875b6071ea"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "fcf44a13cf5816d69dee81254cf02be1ec8e2580"
+      "sha": "f24cc1bbffba0c5399490d917fb00add1761d895"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "f076345136acad076f37a444c7f0bc6e910e2da9"
+      "sha": "0de6c15b7bf35ab5f3afa14d676b43071a2fc874"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "003d918b422d4f6e19fb7b9dbeb2bb87da09a82e"
+      "sha": "7f4331baa3f765fd90c69e2cb602894f24359cbf"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3779,19 +3683,19 @@
     },
     {
       "path": "dist/js/i18n/ranking/ar.js",
-      "sha": "960d3875b696727081d375a081b9bdab89aa8891"
+      "sha": "1c55fcf170daac29daf5ce52f2dc2410acbcf61d"
     },
     {
       "path": "dist/js/i18n/ranking/az.js",
-      "sha": "18dd16a1521fa063456ba6e63c468a5f0ce5200a"
+      "sha": "58284bdb95ee5833a453162e9461a6589cf8526f"
     },
     {
       "path": "dist/js/i18n/ranking/de.js",
-      "sha": "c71a777156908de70fc497747197d1af4b29d4c4"
+      "sha": "dd00ec1372a6bcacaff682d461ff7984b3d1b2f9"
     },
     {
       "path": "dist/js/i18n/ranking/en.js",
-      "sha": "d764f257333b64b8e3676663667eae3db7efe856"
+      "sha": "009ac0d3c3dae4ef2c5566c39a51814229943dc6"
     },
     {
       "path": "dist/js/i18n/ranking/index.js",
@@ -3799,19 +3703,19 @@
     },
     {
       "path": "dist/js/i18n/ranking/kk.js",
-      "sha": "6d69eb513a4940402a4e7101735899f8fcbaeedc"
+      "sha": "de4a057fa0666d7511fb8ca389904dd51acc3fa3"
     },
     {
       "path": "dist/js/i18n/ranking/ru.js",
-      "sha": "38d93b32cde99cc565a31134db8601ff57f2edbd"
+      "sha": "e90926659aa1ac1b36d47657a99c988be98cb0a2"
     },
     {
       "path": "dist/js/i18n/ranking/tg.js",
-      "sha": "90636715a9d12b6c9360b691636131e1cb027ee4"
+      "sha": "feb3dcd525a6d85acb5b4dd64e57724bfa03af7d"
     },
     {
       "path": "dist/js/i18n/ranking/uz.js",
-      "sha": "20c403046ed8f05f199c2c60761e4aded75d3243"
+      "sha": "a462781079f4f323739ff336081917c1eaad9094"
     },
     {
       "path": "dist/js/i18n/release/ar.js",
@@ -4223,7 +4127,7 @@
     },
     {
       "path": "dist/js/native-background-reminders.js",
-      "sha": "4cec744e44de8eb38db27e666059188775ef76ae"
+      "sha": "a04c48e27edcac9e122c1f2adf881cf4d8e71a4a"
     },
     {
       "path": "dist/js/native-reminder-navigation.js",
@@ -4407,7 +4311,7 @@
     },
     {
       "path": "dist/js/push-reminders.js",
-      "sha": "fbdc93d7096129427eaaa217e2fc080e3c85c6b7"
+      "sha": "3cc30e8ecfe98135f363e594afd1d8541a918fa5"
     },
     {
       "path": "dist/js/pwa-updates.js",
@@ -4759,7 +4663,7 @@
     },
     {
       "path": "dist/js/reminders.js",
-      "sha": "52caff0b0cbb1e5faa2f72ca43dd9ef7683d9f5a"
+      "sha": "27592b40d75f82c9f14c13409f2cf19c4140baaa"
     },
     {
       "path": "dist/js/ruqyah-catalog.js",
@@ -4780,6 +4684,10 @@
     {
       "path": "dist/js/settings-screens.js",
       "sha": "8f0f7f3b0749b185d990b956097799a5e1bc86bc"
+    },
+    {
+      "path": "dist/js/settings-section-label.js",
+      "sha": "7e91cc4270ed05fc7b38b3df502e5bbf14ae4444"
     },
     {
       "path": "dist/js/short-dhikr.js",
@@ -4871,7 +4779,7 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "45ec8d69e67252f56dbd46ffffe111f6c478c184"
+      "sha": "e597780de4d5c0d688a98ac1b123af099dc5566b"
     },
     {
       "path": "dist/js/support-client.js",
@@ -5171,7 +5079,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "f4a505f8ac0171cd2197aa537b9e14f80aeac497"
+      "sha": "2eb9bf1617ac1c142da3b28cf39be22de3a43d4d"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5695,7 +5603,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "a4dfe5dcee60a5b74bdcf81efee20f146900ff55"
+      "sha": "2099d8f2ce98b8268ce2fae8e00a034234adae07"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6087,7 +5995,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "5e56e7c591f73c51d8f6b1a0ecf58dd194009e33"
+      "sha": "e4b28caad53fc901c9f17018d6c4c6e7ae0f2832"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6207,7 +6115,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "c8e677bd40d12e66983347b07e48f56f0a4d4140"
+      "sha": "e8001f519e09ba002118c022def165361fe5ca8c"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6575,7 +6483,7 @@
     },
     {
       "path": "scripts/check-account-experience.mjs",
-      "sha": "5869d95c2726ae413aa28b7e3ce15cf15d9ac42f"
+      "sha": "702b49f24e571c976a2f49218627e4e82eaf060e"
     },
     {
       "path": "scripts/check-account-language.mjs",
@@ -6703,7 +6611,7 @@
     },
     {
       "path": "scripts/check-award-presentations.mjs",
-      "sha": "a17e2383f427dfacc44ad2f914ee253423606867"
+      "sha": "de4bc309579bc63d8f4af8f94230a7055447cd29"
     },
     {
       "path": "scripts/check-awards-language.mjs",
@@ -6971,7 +6879,7 @@
     },
     {
       "path": "scripts/check-interface-shell.mjs",
-      "sha": "2c4e008ceb79626a911729f5b59c90ccfc83e87a"
+      "sha": "f2fc70a56f96585062296a1e1c7817aca5745937"
     },
     {
       "path": "scripts/check-ios-widget.mjs",
@@ -7619,7 +7527,11 @@
     },
     {
       "path": "scripts/check-settings-language.mjs",
-      "sha": "95c719139b7ba9753e4da2f17f90dc370cc9d7d8"
+      "sha": "e22619b73b3af485ca95c1b64cfdfe189e63090d"
+    },
+    {
+      "path": "scripts/check-settings-presentation.mjs",
+      "sha": "3654636830d41151364ab08d09e3bc1adc01e01e"
     },
     {
       "path": "scripts/check-settings-resume.mjs",
@@ -7759,7 +7671,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "f11e0da6518e7241ec63108b4a0516c455dce788"
+      "sha": "bc6dc7208fa4636a37cee326e3fd2d90b13e9f2d"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7771,7 +7683,7 @@
     },
     {
       "path": "scripts/check-support-layout.mjs",
-      "sha": "fdda5537a515881cbf032336effff73ddb5bab1b"
+      "sha": "a2afee79a47b8df366678d6437f385fa88ac0480"
     },
     {
       "path": "scripts/check-support-multiple.mjs",
@@ -7895,7 +7807,7 @@
     },
     {
       "path": "scripts/check-tyumen-sources.mjs",
-      "sha": "a310104b932f828606c242e758e368b32cd9f68d"
+      "sha": "39b381ac363ee5db5e3d9276fd0c88496fff22cf"
     },
     {
       "path": "scripts/check-umrah.mjs",
