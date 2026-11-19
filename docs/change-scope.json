@@ -1,149 +1,113 @@
 {
   "schema": 1,
-  "version": 542,
-  "baseCommit": "fb4981289ea1e14c6b23f9a6bb5bc4f69cd50ea8",
-  "baseTree": "6940d6fc759be212089c4d730d8e422075a2adc7",
-  "note": "Latest owner feedback:fixed Radio-level activity rail,20px lower tall-phone timetable,ordinary phone reader outer-gutter removal,and no UI-derived Sun/Moon displacement behind unchanged owner sky gate.",
+  "version": 543,
+  "baseCommit": "bef134e887a9c2178388b37ff842c9fc725cbd4b",
+  "baseTree": "eedf4b77a5da70ef70098d3908a4ea4391693c12",
+  "note": "Owner clarified a higher visible Sun/Moon trajectory between city and Next prayer in focus view,retaining one viewport-relative height across views.Only portrait-phone body transforms change;astronomy,UI geometry,stacking,private gates and original rasters retained.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
     },
     {
-      "path": "dist/home-selected.css",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/quran.css",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/home-activity-appearance.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/home-listening-now.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/sky-ui-layout.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/weather.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
+      "path": "dist/day-night.css",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/sw.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "docs/change-scope.json",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "docs/work-queue.md",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "scripts/check-home-listening-now.mjs",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "scripts/check-sky-ui-layout.mjs",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "scripts/check-release-version-notes.mjs",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "scripts/check-quran-reader-width.mjs",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/ru.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/en.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/az.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/tg.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/uz.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/kk.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/de.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
-    },
-    {
-      "path": "dist/js/i18n/release/ar.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Reviewed542fixed Home rail/spacing,phone reader gutters,private natural Sun/Moonprojection,current localized notes and exact regressions/documentation;no source image/scripture/auth change."
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
     },
     {
-      "path": "scripts/check-live-sky-opt-in.mjs",
-      "reason": "The requested natural Sun/Moonposition correction removes allHome obstacle reads even during explicit owner opt-in;retain all other resource/privacy/cancellation assertions."
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/ar.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/az.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/de.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/en.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/kk.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/ru.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/tg.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/i18n/release/uz.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/js/release-illustrations.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "dist/sw.js",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "docs/release-announcements.md",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "docs/work-queue.md",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "scripts/check-sky-ui-layout.mjs",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+    },
+    {
+      "path": "docs/change-scope.json",
+      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
     }
   ],
   "baseline": [
@@ -197,7 +161,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "a5b92be048c0ff486c46b011b8539e516df08142"
+      "sha": "180b51150911814b56d7d219b23016d0c514c3a5"
     },
     {
       "path": "ANALYTICS.md",
@@ -205,7 +169,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "1a026278cf848eba2f557547bb90a6659c8ca6da"
+      "sha": "28b40ad9c586eaa648812e80466ccb319ed2ee7d"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2573,7 +2537,7 @@
     },
     {
       "path": "dist/home-selected.css",
-      "sha": "4aa781662adca6d46ba5c832cb9520a501f6fd67"
+      "sha": "7a592ae8a804ce2aa893208d80b3776e38f610c5"
     },
     {
       "path": "dist/icon-180.png",
@@ -2717,7 +2681,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "ae2f98d73a873f36be2166281acc79887208eb5f"
+      "sha": "7a24bdc828141ba1c5af5436722c0b1e9c4ccba0"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2989,7 +2953,7 @@
     },
     {
       "path": "dist/js/home-activity-appearance.js",
-      "sha": "7460fcfb2c907a2171b1cecdc4159a3cf0984fea"
+      "sha": "a7c04b6c6aa56d5f41cddd0a71720bff034cb7d5"
     },
     {
       "path": "dist/js/home-activity-icons.js",
@@ -3005,7 +2969,7 @@
     },
     {
       "path": "dist/js/home-listening-now.js",
-      "sha": "bad4cf6f2a1b0c86b73ae09378597800a2bc7e5e"
+      "sha": "4653cdcaa55ee1837ae3bc8e311451fc543d8e03"
     },
     {
       "path": "dist/js/home-reading-core.js",
@@ -3033,35 +2997,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "2b28ae220fe9efde2ba92c78efa20374b57bd9ec"
+      "sha": "47984e9eda9737c9431e4b88d0a1c63ef29f9aa0"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "310f5fdde8ad2bf5ea32a8dacb0654a5f6848f6a"
+      "sha": "7a1f2cccbd11848bdf0df11e790e1a13f2a709f4"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "a06b2b009f8f7ec6d82a88032738bae30b1a946d"
+      "sha": "6382c636d475a03f25fc8d4f1656d6485140c94b"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "f2188b5b37977a2a11713f5694990c339886b476"
+      "sha": "9cde4727e87ede4c4d638f711bdf1147d8864cb3"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "9cf9ac3deb91f2a6effaa8960886786ec4dedecb"
+      "sha": "3e16c21e705d8e271b8d973ec25e685ced4d7252"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "bb803afd8bb43e9b2ae0f230920b00f2c326860d"
+      "sha": "4adb0b5320e67683d1352ba9a8236f75b351bd13"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "991effbe89582284363ed8438f998a9c85342d04"
+      "sha": "042910304cea10f11600ce776de946d1ca5aa082"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "2d896dbd9e26a958f29df23c30c748c8f371ba02"
+      "sha": "80f01c021914d538b8190f5f594ec53e0e7845f5"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3777,19 +3741,19 @@
     },
     {
       "path": "dist/js/i18n/release/ar.js",
-      "sha": "89072b4cc3a2ccbcca48eb34935532624e13328a"
+      "sha": "83f154d2402d60e66690721850d718f709818fdc"
     },
     {
       "path": "dist/js/i18n/release/az.js",
-      "sha": "43026daba25f83aee9d39dfd439240355a7c9ed0"
+      "sha": "8788830be95733e1dd01406f83fee075bc084174"
     },
     {
       "path": "dist/js/i18n/release/de.js",
-      "sha": "d681d2ddadb1924f6f41c38715d1459034017855"
+      "sha": "bf5d4fa99b38758c7ee6745bdbe117d07a5172d2"
     },
     {
       "path": "dist/js/i18n/release/en.js",
-      "sha": "54b804b2e06bb004fbe0770cd7ba434b7964dff8"
+      "sha": "21e743e6bcd9f1833f5a05a045c77e8224d4ee2e"
     },
     {
       "path": "dist/js/i18n/release/index.js",
@@ -3797,19 +3761,19 @@
     },
     {
       "path": "dist/js/i18n/release/kk.js",
-      "sha": "22b4427e283f5429c6cc98b252bb22e9484106c9"
+      "sha": "8bc904eaf895701c38b2ae928da97a1ad23cbfe0"
     },
     {
       "path": "dist/js/i18n/release/ru.js",
-      "sha": "92bbfca4f6e084bebc855996238d78ae241b3e4b"
+      "sha": "2d09576e5493ea3029d840c778caed6957b7e83e"
     },
     {
       "path": "dist/js/i18n/release/tg.js",
-      "sha": "c4270a9ce125f71a80977b40a0d10fc299a64dcd"
+      "sha": "1ceeb74a43abf4cd9b0a66caec20f2f9c9f2decf"
     },
     {
       "path": "dist/js/i18n/release/uz.js",
-      "sha": "8c32663788cda565f77cff3f9ff81c1144c1fce8"
+      "sha": "fa1eb8e8921db3543e614f57364a3ea0cb10826d"
     },
     {
       "path": "dist/js/i18n/ru.js",
@@ -4709,7 +4673,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "031c75ea1eb85e4a17d175dc3146148f7dc4abd9"
+      "sha": "60e1ab452e3c56800eeb9bfb89d8c2f047898f01"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -4773,7 +4737,7 @@
     },
     {
       "path": "dist/js/sky-ui-layout.js",
-      "sha": "c2f50b6dc25f066087d856b5571010beb094ffdd"
+      "sha": "f481ac0d6e0ee2c307a7647d967d03e0e3a2e726"
     },
     {
       "path": "dist/js/soft-depth.js",
@@ -5069,7 +5033,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "12bf652f459220961558e5caebf818d25e1fd477"
+      "sha": "215fa7df1052aa83c4db4d31fe731077bbe07361"
     },
     {
       "path": "dist/knowledge.css",
@@ -5113,7 +5077,7 @@
     },
     {
       "path": "dist/quran.css",
-      "sha": "7d3b3f46ab9fd143b66fd4f3eaf80edc94bb41b3"
+      "sha": "8468b4a0148ffaf7c30cfbf6cbe808a32ff35e3b"
     },
     {
       "path": "dist/reciter-portrait-credits.html",
@@ -5141,7 +5105,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "794f3cb6240d08040688ee1d19124eceb8b0eb19"
+      "sha": "37f7cae0cd947745c55749c613d0214568c4d943"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5669,7 +5633,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "462aff5050c722a1e17f1052ff29a6fa1642d63f"
+      "sha": "baab603cb1c04345ca248eda1b238d2d7d7c2698"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6065,7 +6029,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "5d7bfe203ae6168a4fbdb214abef87ac2402c320"
+      "sha": "eccf8ec8c3e801d8a1b521ff6d04f8d3b2a3e4ea"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6189,7 +6153,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "9ff710fa326a0b3cec3208f0e74453582ce1e325"
+      "sha": "0da941aab4cd8cdb5462e888b21f7aa3e883de9c"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6925,7 +6889,7 @@
     },
     {
       "path": "scripts/check-home-listening-now.mjs",
-      "sha": "408f1b9aa6fec945e01f27542bd0c93b8c17dfeb"
+      "sha": "17fda5cfea94d247bfb3902959aa1133afbc22d4"
     },
     {
       "path": "scripts/check-home-reading.mjs",
@@ -7053,7 +7017,7 @@
     },
     {
       "path": "scripts/check-live-sky-opt-in.mjs",
-      "sha": "fa7ac92609554dfb82194e8df69bb4b65f70a35d"
+      "sha": "5cbcd0496be83217feb34fa48d098dadf3331363"
     },
     {
       "path": "scripts/check-live-update.mjs",
@@ -7488,6 +7452,10 @@
       "sha": "572ab29d0ffc2da3732eb96f32f7f7789126b6ce"
     },
     {
+      "path": "scripts/check-quran-reader-width.mjs",
+      "sha": "967fd6d6251ef090a9a642dd0d86d37dce458126"
+    },
+    {
       "path": "scripts/check-quran-reading-progress.mjs",
       "sha": "f8f6b1b6cad8f5ebefe21dd73504c0c8c5e5a8a0"
     },
@@ -7597,7 +7565,7 @@
     },
     {
       "path": "scripts/check-release-version-notes.mjs",
-      "sha": "42906c2d6141a99c7cce53306f60fdaec3c4b954"
+      "sha": "a6a9e9997e32e9748629b86aa85305912d695d73"
     },
     {
       "path": "scripts/check-rights-register.mjs",
@@ -7665,7 +7633,7 @@
     },
     {
       "path": "scripts/check-sky-ui-layout.mjs",
-      "sha": "61ffc413da0d36e74464674f66abc8c0fc712aa3"
+      "sha": "33d3fe1549e825b8b2a8b02d94791b03233851a6"
     },
     {
       "path": "scripts/check-staff-cabinet.mjs",
@@ -8638,5 +8606,5 @@
       "reason": "Existing official imam schedule refreshed during publication."
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=541;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Главная: больше места для значков активности над таблицей намаза.\",\"Описание обновлений: актуальные изменения установленной версии вместо повторяющегося текста о темах.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=542;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Главная: более устойчивое положение значков активности и дополнительный зазор над таблицей намаза.\",\"Чтение Корана: страница шире за счёт уменьшения внешних боковых отступов.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

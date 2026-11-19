@@ -12,5 +12,7 @@ export default Object.freeze({
   "releaseUi.homeGapTitle": "رموز النشاط تبقى في موضعها",
   "releaseUi.homeGapText": "تحافظ رموز الاستماع والقراءة والذكر على ارتفاعها عند تغيير عرض الجدول. وأصبحت المساحة فوق الجدول أوسع.",
   "releaseUi.readerWidthTitle": "مساحة أكبر للقراءة",
-  "releaseUi.readerWidthText": "أصبحت صفحة السورة أوسع على الهاتف: أزيلت الهوامش الجانبية الخارجية مع الحفاظ على هامش النص الداخلي."
+  "releaseUi.readerWidthText": "أصبحت صفحة السورة أوسع على الهاتف: أزيلت الهوامش الجانبية الخارجية مع الحفاظ على هامش النص الداخلي.",
+  "releaseUi.homeCompositionTitle": "تعديل محدد في الصفحة الرئيسية",
+  "releaseUi.homeCompositionText": "رُفعت العناصر الزخرفية في وضع الاختبار المغلق. لم تتغير الأقسام الأخرى."
 });

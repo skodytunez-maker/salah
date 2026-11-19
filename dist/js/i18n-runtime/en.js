@@ -3102,6 +3102,8 @@ export default Object.freeze({
  "reciterUi.topLabel": "Reciter rankings",
  "reciterUi.waitDownload": "Wait for the current download to finish",
  "reciterUi.week": "Week",
+ "releaseUi.homeCompositionText": "Decorative elements have been raised in the closed test mode. Other sections are unchanged.",
+ "releaseUi.homeCompositionTitle": "A focused Home correction",
  "releaseUi.homeGapText": "Listening, reading and dhikr icons keep the same height when the timetable view changes. There is more room above the timetable.",
  "releaseUi.homeGapTitle": "Activity icons stay in place",
  "releaseUi.homeSpacingText": "The prayer timetable and Adhkar button sit slightly lower, leaving more room for activity icons below the city.",

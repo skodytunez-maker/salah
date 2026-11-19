@@ -72,3 +72,7 @@ Manual installed notes and explicit523theme news are separately exercised throug
 
 ##542 — latest Home and reader instructions
 Activity row shares Radio’s existing safe-area CSS height and44px box across timetable/focus;only horizontal brand-side width is measured,three real metrics remain bounded. Timetable/Adhkar total lower offset20px on tall portrait phones. Reader uses full outer phone workspace with physical safe insets and12px inner text gutter;other routes retain margins. Celestial regression executes real paintSky with real astronomical samples/projected source frames and DOM obstacles whose geometry access throws:Sun/Mooncoordinates/phase/visibility remain unchanged across glass/table/focus/player UI. No browser/phone rendering pass;all232rasters unchanged.
+
+
+##543 — portrait celestial path lift
+Compare actual source CSS cascade across both Home modes,glass/player/activity states and phone dimensions. Both displayed discs get the same bounded7svh shift,while real paintSky continues to publish unchanged astronomical coordinates/visibility. Short landscape/tablet/basic mode retain their original transform. No UI geometry reads,stacking changes or source image edits. Owner phone check remains pending.

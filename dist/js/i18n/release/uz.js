@@ -12,5 +12,7 @@ export default Object.freeze({
   "releaseUi.homeGapTitle": "Faollik belgilari o‘z joyida qoladi",
   "releaseUi.homeGapText": "Tinglash, o‘qish va zikr belgilari jadval ko‘rinishi o‘zgarganda bir xil balandlikda qoladi. Jadval ustida ko‘proq joy bor.",
   "releaseUi.readerWidthTitle": "O‘qish uchun ko‘proq joy",
-  "releaseUi.readerWidthText": "Telefonda sura sahifasi kengroq: tashqi yon bo‘shliqlar olib tashlandi, matnning ichki hoshiyasi saqlandi."
+  "releaseUi.readerWidthText": "Telefonda sura sahifasi kengroq: tashqi yon bo‘shliqlar olib tashlandi, matnning ichki hoshiyasi saqlandi.",
+  "releaseUi.homeCompositionTitle": "Bosh sahifada kichik tuzatish",
+  "releaseUi.homeCompositionText": "Yopiq sinov rejimida bezak elementlari yuqoriroqqa ko‘tarildi. Boshqa bo‘limlar o‘zgarmadi."
 });

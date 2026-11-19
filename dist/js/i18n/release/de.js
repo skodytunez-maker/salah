@@ -12,5 +12,7 @@ export default Object.freeze({
   "releaseUi.homeGapTitle": "Aktivitätssymbole bleiben an ihrem Platz",
   "releaseUi.homeGapText": "Die Symbole für Hören, Lesen und Dhikr bleiben beim Wechsel der Gebetsansicht auf gleicher Höhe. Über dem Gebetsplan ist mehr Platz.",
   "releaseUi.readerWidthTitle": "Mehr Platz zum Lesen",
-  "releaseUi.readerWidthText": "Surenseiten sind auf dem Handy breiter: Die äußeren Seitenabstände entfallen, der innere Textrand bleibt erhalten."
+  "releaseUi.readerWidthText": "Surenseiten sind auf dem Handy breiter: Die äußeren Seitenabstände entfallen, der innere Textrand bleibt erhalten.",
+  "releaseUi.homeCompositionTitle": "Gezielte Korrektur der Startseite",
+  "releaseUi.homeCompositionText": "Dekorative Elemente liegen im geschlossenen Testmodus etwas höher. Andere Bereiche bleiben unverändert."
 });

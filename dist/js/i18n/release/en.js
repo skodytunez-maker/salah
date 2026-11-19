@@ -12,5 +12,7 @@ export default Object.freeze({
   "releaseUi.homeGapTitle": "Activity icons stay in place",
   "releaseUi.homeGapText": "Listening, reading and dhikr icons keep the same height when the timetable view changes. There is more room above the timetable.",
   "releaseUi.readerWidthTitle": "More room for reading",
-  "releaseUi.readerWidthText": "Surah pages are wider on phones: the outer side margins are removed while the inner text gutter is retained."
+  "releaseUi.readerWidthText": "Surah pages are wider on phones: the outer side margins are removed while the inner text gutter is retained.",
+  "releaseUi.homeCompositionTitle": "A focused Home correction",
+  "releaseUi.homeCompositionText": "Decorative elements have been raised in the closed test mode. Other sections are unchanged."
 });

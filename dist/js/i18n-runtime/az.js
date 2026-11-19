@@ -3102,6 +3102,8 @@ export default Object.freeze({
  "reciterUi.topLabel": "Qari reytinqləri",
  "reciterUi.waitDownload": "Hazırkı endirmənin bitməsini gözləyin",
  "reciterUi.week": "Həftə",
+ "releaseUi.homeCompositionText": "Qapalı sınaq rejimində dekorativ elementlər yuxarı qaldırılıb. Digər bölmələr dəyişməyib.",
+ "releaseUi.homeCompositionTitle": "Əsas ekranda kiçik düzəliş",
  "releaseUi.homeGapText": "Dinləmə, oxuma və zikr nişanları cədvəl görünüşü dəyişəndə eyni hündürlükdə qalır. Cədvəlin üstündə daha çox yer var.",
  "releaseUi.homeGapTitle": "Fəaliyyət nişanları yerində qalır",
  "releaseUi.homeSpacingText": "Namaz cədvəli və zikrlər düyməsi bir qədər aşağıdadır. Şəhər adı ilə cədvəl arasında fəaliyyət nişanları üçün daha çox yer var.",
