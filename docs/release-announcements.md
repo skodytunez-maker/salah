@@ -892,3 +892,7 @@ Quran text-list readiness and related stale-navigation protection only. Retain52
 
 ## Maintenance540
 Activity glyphs/counts adapt to existing scene light without a shared backing;one bounded floating row remains separate from Home layout. This is maintenance only:retain announcement523 and all receipts/expiry. No new public news card or external push. No new sky,architecture or4K claim.
+
+
+## Maintenance541 — accurate installed-version descriptions
+APP_CHANGES now names only the actual541 news-description and tall-phone Home spacing fixes. Manual What’s new opens that installed release and displays its version. Automatic feature announcement523,its receipts and expiry remain unchanged. Do not represent the523theme feature as newly added in every maintenance release. Every future release must record the exact base release source in change-scope and supply actual distinct notes;the new regression rejects copied descriptions. No external push or new feature-announcement edition.
