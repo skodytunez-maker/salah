@@ -851,3 +851,7 @@ Only a16px modern-iPhone private Support card lift and light Stars statistical s
 
 ## Maintenance529
 Correct Quran surah names for the existing eight interface languages. Keep the523 themes announcement,its acknowledgement and2026-11-26 expiry unchanged; no new public card or external push.
+
+
+## Maintenance530
+Prevent duplicate same-session sign-in from resetting an already granted owner Home scene. No new public sky or public announcement; retain523 receipts and expiry.

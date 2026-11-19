@@ -8,10 +8,10 @@ import{createSessionGuard}from './auth-session.js';
 export const OWNER_PROJECT_URL='https://kbltwszfvphgbxdbczsb.supabase.co';
 export const OWNER_PUBLIC_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const SESSION_KEY='salah-owner-session-v1'; // Excluded from personal backups.
-let client=null,verified=false,verifiedAt=0,verifiedUserId=null,pending=null,revision=0,mfaRequired=false;
+let client=null,verified=false,verifiedAt=0,verifiedUserId=null,verifiedAccessToken=null,pending=null,revision=0,mfaRequired=false;
 const listeners=new Set();
 function publish(){for(const fn of listeners)fn();}
-function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;if(changed)publish();}
+function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;verifiedAccessToken=null;if(changed)publish();}
 const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support','#radio'].includes(location.hash.split('?')[0])||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash));
 function authClient(){
  if(!personalDataAllowed())throw uiError('ownerAuthUi.restricted');
@@ -20,11 +20,13 @@ function authClient(){
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000,lock:createAuthLock({TimeoutError:window.supabase.NavigatorLockAcquireTimeoutError,fallbackLock:window.supabase.processLock})}});
   client.auth.onAuthStateChange((event,session)=>{
    syncLessonNotificationAccount(session?.user?.email_confirmed_at&&!session.user.is_anonymous?session.user.id:null);
-   const sameOwner=event==='TOKEN_REFRESHED'&&session?.user?.id&&session.user.id===verifiedUserId&&verified;
+   const sameOwner=verified&&session?.user?.id===verifiedUserId&&((event==='TOKEN_REFRESHED')||(event==='SIGNED_IN'&&ownerVerified()&&session.access_token===verifiedAccessToken));
+   if(sameOwner)verifiedAccessToken=session.access_token;
    if(['TOKEN_REFRESHED','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))checkAccountSession.acceptRefresh(session);
    else if(event==='SIGNED_OUT')checkAccountSession.invalidate();
    revision++;if(!sameOwner)revoke();
-   // A routine renewal must not collapse the already verified cabinet. Its
+   // A routine renewal or repeat sign-in for the same token must not collapse
+   // the already verified cabinet/sky. A different login still requires the gate. Its
    // existing 60-second grant still expires; every data request checks the server.
    if(ownerScreenActive())setTimeout(()=>verifyOwner().catch(()=>{}),0);
   });
@@ -60,7 +62,7 @@ export async function verifyOwner({verifySession=false}={}){
    if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
    // A grant can expire while the underlying session remains valid. Notify Home
    // controls when a fresh server check restores it, including after backgrounding.
-   const changed=!ownerVerified()||verifiedUserId!==checked.session.user?.id;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;if(changed)publish();return true;
+   const changed=!ownerVerified()||verifiedUserId!==checked.session.user?.id;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;verifiedAccessToken=checked.session.access_token;if(changed)publish();return true;
   }
   revoke();return false;
  })();
