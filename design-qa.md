@@ -48,3 +48,7 @@ Release533: verify manual update notice on installed iPhone after533,then a late
 
 ###536 — Home foreground readability
 Existing activity/count controls receive a stable rgba(8,15,26,.84) backing and #eadbb3 foreground;the selected photograph and glass opacity remain unchanged. Compact Home glass expand/dismiss actions use the same backing without changing targets or dock geometry. Verify contrast on a pure-white worst-case backdrop plus the supplied bright-sky screenshot;run real stylesheet/control and531 activity geometry fixtures,full-player/glass/accessibility and shared listening tests. Browser/physical iPhone visual review is absent.
+
+
+###537 — iPhone13Pro Home title
+The final CSS fixture reproduces a-20px decorative lift with390x844/safeTop47 in536 and removes it in537. Equal/opposite heading margins preserve total flow. Cover393x852/59,375x667/20,zero-inset,tablet,landscape,seven-row,owner-card and countdown variants. HappyDOM media syntax and descendant:has limitations are expanded explicitly while preserving selector specificity;this does not establish Safari pixel/status-fade appearance. Original photographs and all unrelated files remain protected by scope hashes. Physical phone check required for visual acceptance,not claimed as done.

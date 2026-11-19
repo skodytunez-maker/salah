@@ -364,3 +364,7 @@ Production read-only diagnosis: four actors had exactly32 retained tab leases; a
 
 ###536 — bright-sky foreground contrast
 Prepared the previously deferred screenshot request after535:contrast backing for the activity aggregate and compact Home glass expand/dismiss icons. No source photo,selected glass level,flow geometry,click/authorization/count or playback change. Exact source and release checks pending;not published. Zero-credit account investigation remains open;no inferred score or consent write.
+
+
+###537 — Home title below status fade
+The owner supplied iPhone13Pro photograph: SALAH touches the upper blur. Prepared portrait-only cancellation of the decorative six-row title lift against the real safe inset;equal/opposite margins retain table flow. Final before/after CSS fixture fails536at-20px and passes537;no physical-phone/browser pass. Exact source/release verification pending,not yet published. General navigation latency remains next;no reminder/score/auth/settings changes.

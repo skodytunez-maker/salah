@@ -81,3 +81,32 @@ console.log('PASS: read-only private aggregate, distinct/anonymous/hidden/paused
 assert.doesNotMatch(css,/:has\(\.home-listening-now:not\(\[hidden\]\)\)/,'Activity visibility must not change ancestor geometry');
 assert.match(css,/position:absolute;right:0;top:calc\(24px \+ var\(--salah-safe-top,0px\)/);
 for(const safeTop of [0,20,44,59,62])assert.ok(safeTop+16+Math.min(24,safeTop)>=safeTop+Math.min(40,safeTop));
+
+// Reported iPhone13Pro: six-row title enters the status fade when its
+// decorative lift survives the real sensor inset. Inspect the actual cascade;
+// this is a CSS contract,not a physical Safari/GPU rendering claim.
+function headingPixels(value,safeTop){
+ const expression=value.replace(/var\(--salah-safe-top\s*(?:,\s*0px)?\)/g,String(safeTop)).replaceAll('px','').replaceAll('calc(','(').replace(/\b(min|max)\(/g,'Math.$1(');
+ assert.match(expression.replace(/Math\.(?:min|max)/g,''),/^[\d\s+\-*/().,]+$/);
+ return Function('"use strict";return ('+expression+')')();
+}
+function headingCSS(w,rules){return Array.from(rules).map(rule=>rule.type===4?(rule.conditionText.split(',').some(q=>w.matchMedia(q.trim()).matches)?headingCSS(w,rule.cssRules):''):rule.type===12?'':rule.cssText).join('\n');}
+for(const [width,height,safeTop]of [[390,844,47],[393,852,59],[375,667,20],[390,844,0],[844,390,0],[768,1024,20]]){
+ for(const mode of ['six','seven','owner','focus']){
+  const hw=new Window({width,height}),hd=hw.document;
+  hd.body.className='home-page';hd.documentElement.style.setProperty('--salah-safe-top',safeTop+'px');
+  hd.body.innerHTML='<div class="app-home-shell"><div class="home-prayer-center"><div class="app-home-top"><div class="app-home-brand">SALAH</div></div><section class="central-prayer '+(mode==='focus'?'focus':'timetable')+'">'+(mode==='seven'?'<div class="tahajjud-row"></div>':'')+'</section>'+(mode==='owner'?'<div id="home-owner-update"></div>':'')+'</div></div>';
+  // HappyDOM misreads descendant :has as its first compound; preserve the
+  // seven-row condition and original three-class specificity in this fixture.
+  const hs=hd.createElement('style');hs.textContent=css.replaceAll('@media(', '@media (').replaceAll(':has(.central-prayer.timetable .tahajjud-row)',':has(.tahajjud-row):not(.fixture-never-a):not(.fixture-never-b)');hd.head.append(hs);hs.textContent=headingCSS(hw,hs.sheet.cssRules);
+  const hc=hw.getComputedStyle(hd.querySelector('.app-home-top')),top=headingPixels(hc.marginTop,safeTop),bottom=headingPixels(hc.marginBottom,safeTop);
+  assert.equal(top+bottom,0,'Heading-only correction must retain total flow height and timetable position');
+  const protectedInset=width<600&&height>600&&height>width&&safeTop>=20;
+  if(mode==='six'&&protectedInset)assert.ok(top>=0,'Notched portrait heading must not be pulled into the status fade: '+JSON.stringify({width,height,safeTop,top}));
+  else if(mode==='six')assert.equal(top,height<=600?0:height<=700?-12:-20,'Keep zero-inset,tablet and landscape heading placement');
+  else assert.equal(top,0,'Seven rows,owner card and countdown keep approved placement');
+  assert.equal(hc.transform,'none','Live title text stays off a transformed layer');
+  await hw.happyDOM.close();
+ }
+}
+console.log('PASS: six-row notched portrait heading clears decorative lift;total flow,seven-row/owner/focus,zero-inset,tablet,landscape and531activity layout retained. No phone-rendering claim.');
