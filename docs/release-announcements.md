@@ -880,3 +880,7 @@ Bright Home foreground controls only;retain523 announcement,acknowledgement and 
 
 ###537 maintenance
 Notched portrait Home brand clearance only. Retain523announcement,acknowledgement and expiry;no new card or external push.
+
+
+###538 maintenance
+Catalogue wait lifecycle only;retain523announcement/acknowledgement/expiry. No public performance claim,new card or external push.

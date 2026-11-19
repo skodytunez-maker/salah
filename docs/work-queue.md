@@ -368,3 +368,7 @@ Prepared the previously deferred screenshot request after535:contrast backing fo
 
 ###537 — Home title below status fade
 The owner supplied iPhone13Pro photograph: SALAH touches the upper blur. Prepared portrait-only cancellation of the decorative six-row title lift against the real safe inset;equal/opposite margins retain table flow. Final before/after CSS fixture fails536at-20px and passes537;no physical-phone/browser pass. Exact source/release verification pending,not yet published. General navigation latency remains next;no reminder/score/auth/settings changes.
+
+
+###538 — startup/transition waiting catalogue
+Prepared a bounded optional-cache lifecycle in the existing shared catalogue only. The real public-API fixture fails537onstalledput and passes538;network/body retain2.5s,optional offline read is bounded1000ms,late outcomes cannot overwrite newer data and writes serialize/coalesce. Last complete approved data/origin validation and active-reader policy retained. No physical-phone/browser speed claim. Broader navigation latency,external voice interruption,city-change offer and private519pilot remain open. Exact-source/fullCI/publication pending.

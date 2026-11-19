@@ -52,3 +52,7 @@ Existing activity/count controls receive a stable rgba(8,15,26,.84) backing and 
 
 ###537 — iPhone13Pro Home title
 The final CSS fixture reproduces a-20px decorative lift with390x844/safeTop47 in536 and removes it in537. Equal/opposite heading margins preserve total flow. Cover393x852/59,375x667/20,zero-inset,tablet,landscape,seven-row,owner-card and countdown variants. HappyDOM media syntax and descendant:has limitations are expanded explicitly while preserving selector specificity;this does not establish Safari pixel/status-fade appearance. Original photographs and all unrelated files remain protected by scope hashes. Physical phone check required for visual acceptance,not claimed as done.
+
+
+###538 — bounded catalogue waits
+Before:the actual public function never returns after a valid response while CacheStorage.put is held. After:returns validated data without waiting;only one storage writer and newest pending document are retained. The fault-injection fixture also covers outstanding opens,full fetch/body timeout,open/match/cached-body fallback timeout,late results,invalid/oversized documents,offline cache,storage denial/failure,one-minute coalescing and active-reader object identity. This proves bounded lifecycle behavior in a controlled scheduler,not a measured cold/warm iPhone improvement. All existing catalogue validators and downstream code remain protected.

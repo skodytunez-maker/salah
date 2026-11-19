@@ -1,45 +1,45 @@
 {
   "schema": 1,
-  "version": 537,
-  "baseCommit": "cc792ba87df07134beaddd980a59d3b7c14a951e",
-  "baseTree": "c81983943c6ccc1f7ab204269737c845cdb4c870",
-  "note": "Portrait-phone Home title safe clearance,net flow unchanged;preserve536contrast,535auth,photos,glass/player/count/sky/news and all other sections.",
+  "version": 538,
+  "baseCommit": "7b231477b31c6364df386476ffd2c63d67a18804",
+  "baseTree": "c591616e5a94fe306c84ca48bdca29d82895ae28",
+  "note": "Bound shared catalogue optional-cache/network waits;preserve validated content,network-first cadence,serialized storage,active reader,all settings/images/UI/auth and late-result safety.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
-      "path": "dist/home-selected.css",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "path": "dist/js/approved-catalog.js",
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     },
     {
-      "path": "scripts/check-home-listening-now.mjs",
-      "reason": "Reviewed537 Home heading clearance,existing CSS/geometry regression and release/scope documentation."
+      "path": "scripts/check-approved-catalog-lifecycle.mjs",
+      "reason": "Reviewed538 catalogue I/O lifecycle/public-API regression and release/scope documentation."
     }
   ],
   "baseline": [
@@ -93,7 +93,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "7fc4071e540982884efca672587a5902aec418c0"
+      "sha": "e395fd46c0b205f7629c043415bf0af7a0cc2a1e"
     },
     {
       "path": "ANALYTICS.md",
@@ -101,7 +101,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "c6faf1207c44a7a9f60ec607317e249f3c962b8d"
+      "sha": "05f5f37d592cce4e2c6dab2cd3744b7571c2356c"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2469,7 +2469,7 @@
     },
     {
       "path": "dist/home-selected.css",
-      "sha": "ffcb3190e32359fa8a44f8880ff45058428dc332"
+      "sha": "ac69f38efd02815d09caf31a987d25b2831fb584"
     },
     {
       "path": "dist/icon-180.png",
@@ -2613,7 +2613,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "9f0fe751d40b7ded371cad23d21f6df903b958b2"
+      "sha": "18eb0ec61d36b0b8d5953561d493fbc121384f81"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -5033,7 +5033,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "f3882b908e9ab9583896e1fc398c375b0b61a49f"
+      "sha": "edd1a849279b1fe2e4dec02f4cc05690462a8c1b"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5561,7 +5561,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "939e710e53c221d3e67c62078746d97646e70ce3"
+      "sha": "4822616c881a5c0b18ccfe0847928b22c4f9c339"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5957,7 +5957,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "cd8f9aef324d4951555aea4f6913ea5ca92c84c3"
+      "sha": "282c557f95ca030b8ede6fd0808ca5cd373de3f4"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6081,7 +6081,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "ae0fc45dbed4ab97c24af379953284c3e2bf3ba5"
+      "sha": "2e0334f807fa557797614a86e443185abcd5820c"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6813,7 +6813,7 @@
     },
     {
       "path": "scripts/check-home-listening-now.mjs",
-      "sha": "4838f488ac6380e5b8c4a5990fc2ac44adc8dd58"
+      "sha": "9bf277d73d00d94ce0fe18c86d4424c5535c74e5"
     },
     {
       "path": "scripts/check-home-reading.mjs",
