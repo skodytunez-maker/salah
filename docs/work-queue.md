@@ -348,3 +348,9 @@ Production read-only diagnosis: four actors had exactly32 retained tab leases; a
 -532 published:PR401,merge18276782f0b4d525ff58c1f9b40addaea728aca1,Pages44450747459:Reported success;340/340. Physical phone checks remain open.
 -533 prepares actual decoded-byte progress for browser shell updates,conditional HTTP cache validation,compact dark manual status and a sample-based approximate ETA. Exact-source/full CI/publication still pending. New progress UI first becomes available for a subsequent download after533 installation;old/native bridges do not expose byte progress. No raster or native binary changed.
 - Personal location delay is analysis only:two GPS attempts plus two parallel reverse-city/timezone requests can reach~37.5s before scheduling/permission time. Actual visitor location collection remains cancelled. Next queued work includes measured navigation latency,consented personal city update offer,external voice interruption resume and separate owner-only sky rebase.
+
+
+### Candidate534 — personal city lookup lifecycle
+-533 exact head f84ce6609a0c79d225e9093ba958e6142e20bbc6 passed341/341,DB123/DOM66 and6PRworkflows;merge15382acaadae362b44683ac145baa8101503024c. Pages publication is checked separately.
+-534 prepares exact-coordinate2-minute/eight-entry memory reuse after an explicit consented location request and a real12s bound over provider fetch/body decoding. Cancellation/late results/consent/timezone/settlement remain guarded;no GPS timeout reduction,automatic tracking or owner actual-city collection. Shared text search uses the same bounded network helper.
+- Automatic travel-city offer,measured screen-navigation latency,external microphone interruption resume and separate owner-only new-sky rebase remain open. No phone benchmark or visual pass is claimed.
