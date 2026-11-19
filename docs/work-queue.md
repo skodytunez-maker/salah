@@ -327,3 +327,10 @@ Production read-only diagnosis: four actors had exactly32 retained tab leases; a
 -529 published: PR398,merge ceec8b9a354fd0521309fd13938caf46078f501f,Pages44445497915:Reported success;340/340. Names require the phone language check.
 - New07:21:31 video inspected locally. Duplicate same-token SIGNED_IN reproduces the owner sky reset in the real auth/weather fixture.530 preserves only the already valid server grant for that exact session;token rotation,expiry,new login,actor changes and revocation remain tested. Nine related checks pass;publication still pending.
 - City/prayer-settings button styling remains queued;no calculation changes.
+
+
+###531 — приоритетное исправление таймера
+- Новая запись07:55:30 и уточнение владельца:время ходит вверх-вниз,когда маленький раздел зикра появляется;после его закрытия таймер стоит ровно. Небо и перескакивание секунд не являются текущей жалобой.
+- Подготовлено:индикатор activity вынесен из потока молитвенного блока,убраны только изменения высоты/отступов предков по его hidden-состоянию. Подсчёты,приватность,ошибки/zero-hide,время,фото и530сессия неизменны. Полная проверка и публикация впереди;физическийiPhone ещё не проверен.
+-530 опубликована после явного «Давай отправляй»:PR399,merge71a3fd6834c965c0a535c1109b08915ed580fe59,Pages44447134698:Reported success. Это не доказательство установленной версии в07:55видео.
+- Оформление города/намаза и общего диагностического блока остаётся в очереди,код этих элементов не менялся.
