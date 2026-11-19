@@ -888,3 +888,7 @@ Catalogue wait lifecycle only;retain523announcement/acknowledgement/expiry. No p
 
 ###539 maintenance
 Quran text-list readiness and related stale-navigation protection only. Retain523announcement/acknowledgement/expiry;no new card or external push.
+
+
+## Maintenance540
+Activity glyphs/counts adapt to existing scene light without a shared backing;one bounded floating row remains separate from Home layout. This is maintenance only:retain announcement523 and all receipts/expiry. No new public news card or external push. No new sky,architecture or4K claim.

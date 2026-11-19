@@ -1,3 +1,4 @@
+import {activityTone,activityPlacement,mountHomeActivityAppearance} from '../dist/js/home-activity-appearance.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -48,7 +49,7 @@ let restingLayout=null;
 Object.defineProperty(doc,'hidden',{value:false,writable:true,configurable:true});
 let pending=[],eligible=true,scheduled=null,cancelled=0,clock=0,isOwner=false,ownerHook=()=>{},opened=[];
 const source=await fs.readFile(new URL('../dist/js/home-listening-now.js',import.meta.url),'utf8');
-const ctx=vm.createContext({OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-key',personalDataAllowed:()=>true,ownerVerified:()=>isOwner,ownerNeedsMfa:()=>false,onOwnerChange:fn=>{ownerHook=fn;return()=>{};},showHomeActivity:key=>opened.push(key),homeActivityIcon,listeningCountMarkup,updateListeningSummary,AbortController,setTimeout,clearTimeout});
+const ctx=vm.createContext({mountHomeActivityAppearance,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-key',personalDataAllowed:()=>true,ownerVerified:()=>isOwner,ownerNeedsMfa:()=>false,onOwnerChange:fn=>{ownerHook=fn;return()=>{};},showHomeActivity:key=>opened.push(key),homeActivityIcon,listeningCountMarkup,updateListeningSummary,AbortController,setTimeout,clearTimeout});
 const factory=vm.runInContext(source.replace(/^import.*$/gm,'').replaceAll('export ','')+';createHomeListeningNow;',ctx);
 const controller=factory({doc,now:()=>clock,allowed:()=>eligible,interval:fn=>{scheduled=fn;return 1;},cancelInterval:()=>cancelled++,fetcher:(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/listening-now');assert.equal(options.credentials,'omit');assert.ok(!options.headers.Authorization);return new Promise(resolve=>pending.push({resolve,signal:options.signal}));}});
 const finish=async data=>{pending.shift().resolve({ok:true,json:async()=>data});await new Promise(r=>setImmediate(r));if(restingLayout)assert.deepEqual(layoutSnapshot(),restingLayout,'Async activity counters must never move or recenter the countdown');};
@@ -67,6 +68,7 @@ eligible=false;controller.mount(host);assert.equal(pending.length,0);assert.equa
 eligible=true;void controller.refresh();await finish({count:3});
 doc.hidden=true;doc.dispatchEvent(new w.Event('visibilitychange'));assert.equal(host.hidden,true);scheduled();assert.equal(pending.length,0);
 doc.hidden=false;doc.dispatchEvent(new w.Event('visibilitychange'));await finish({count:4});assert.equal(host.textContent,'4');
+void controller.refresh();await finish({count:Number.MAX_SAFE_INTEGER,readers:123456,dhikr:78});assert.match(host.getAttribute('aria-label'),/9007199254740991/,'Real large counts are not rounded or lost');void controller.refresh();await finish({count:4});
 isOwner=true;ownerHook();assert.equal(host.firstElementChild.tagName,'BUTTON');host.firstElementChild.click();assert.deepEqual(opened,['count']);isOwner=false;ownerHook();assert.equal(host.firstElementChild.tagName,'SPAN','Other accounts have no interactive people list');
 controller.dispose();assert.ok(cancelled>0);assert.equal(host.hidden,true);
 const news=releaseIllustrations(APP_ANNOUNCEMENT.version,['Главная: сейчас слушают Коран, читают и делают зикр.']);
@@ -110,3 +112,28 @@ for(const [width,height,safeTop]of [[390,844,47],[393,852,59],[375,667,20],[390,
  }
 }
 console.log('PASS: six-row notched portrait heading clears decorative lift;total flow,seven-row/owner/focus,zero-inset,tablet,landscape and531activity layout retained. No phone-rendering claim.');
+
+// Current scene light drives glyph/count ink only; no new sky work or polling.
+assert.equal(activityTone(1,0),'ink');assert.equal(activityTone(1,1),'ink');
+assert.equal(activityTone(0,0,'ink'),'light');assert.equal(activityTone(.44,0,'ink'),'ink');assert.equal(activityTone(.44,0,'light'),'light','Dusk hysteresis prevents flicker');assert.equal(activityTone(NaN,0),'light');
+for(const [width,left,headerBottom,cardTop]of [[282,54,142,162],[282,46,120,136],[350,247,80,100],[600,84,200,220]]){
+ const header={bottom:headerBottom},card={left,top:cardTop,width};const p=activityPlacement(header,card,{left:10,top:20},{scrollLeft:2,scrollTop:3,clientLeft:1,clientTop:1});
+ assert.equal(p.left,left-9);assert.equal(p.width,width);assert.equal(p.top+20-3+1+16,(headerBottom+cardTop)/2,'Glyph row stays centred between city and prayer without moving either');
+}
+assert.equal(activityPlacement({bottom:200},{left:0,top:0,width:0},{left:0,top:0}),null,'Hidden/unlaid-out routes do not overwrite placement');
+const aw=new Window({width:390,height:844}),ad=aw.document;
+ad.body.innerHTML='<div id="home-scene" data-phase="night" style="--scene-day:0"></div><main id="app"><div class="app-home-shell"><span class="home-listening-now"></span><div class="home-prayer-center"><div class="app-home-top">SALAH · City</div><section class="central-prayer timetable"></section></div></div></main>';
+const ah=ad.querySelector('.home-listening-now'),ap=ad.querySelector('#app'),heading=ad.querySelector('.app-home-top'),prayer=ad.querySelector('.central-prayer');let headerBottom=142,cardTop=162;
+Object.defineProperty(ah,'offsetParent',{get:()=>ap});ap.getBoundingClientRect=()=>({left:20,top:10});heading.getBoundingClientRect=()=>({bottom:headerBottom});prayer.getBoundingClientRect=()=>({left:54,top:cardTop,width:282});
+let resizeCallback,resizeDisconnected=0;
+aw.ResizeObserver=class{constructor(fn){resizeCallback=fn;}observe(){}disconnect(){resizeDisconnected++;}};
+const view=mountHomeActivityAppearance(ah,{doc:ad}),flush=()=>new Promise(r=>setTimeout(r,0));
+assert.equal(ah.dataset.activityTone,'light');assert.equal(ah.style.left,'34px');assert.equal(ah.style.width,'282px');assert.equal(ah.style.top,'126px');
+const scene=ad.getElementById('home-scene');scene.style.setProperty('--scene-day','1');scene.dataset.phase='day';await flush();assert.equal(ah.dataset.activityTone,'ink','The actual scene phase updates both counts and icons');
+scene.style.setProperty('--scene-day','.44');scene.dataset.phase='dusk';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','0');scene.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'light');
+const replacement=scene.cloneNode();replacement.style.setProperty('--scene-day','1');scene.replaceWith(replacement);await flush();assert.equal(ah.dataset.activityTone,'ink','Recreated scene rebinds without a new timer');
+headerBottom=180;cardTop=200;resizeCallback();assert.equal(ah.style.top,'164px','City wrapping/optional cards can move the floating row without changing flow');assert.equal(heading.style.cssText,'');assert.equal(prayer.style.cssText,'');
+Object.defineProperty(ad,'hidden',{value:true,configurable:true});replacement.style.setProperty('--scene-day','0');replacement.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'ink','Hidden route does no appearance work');Object.defineProperty(ad,'hidden',{value:false,configurable:true});ad.dispatchEvent(new aw.Event('visibilitychange'));assert.equal(ah.dataset.activityTone,'light');
+view.dispose();assert.equal(resizeDisconnected,1);assert.equal(ah.dataset.activityTone,undefined);assert.equal(ah.style.top,'');replacement.style.setProperty('--scene-day','1');replacement.dataset.phase='day';aw.dispatchEvent(new aw.Event('resize'));await flush();assert.equal(ah.dataset.activityTone,undefined,'No observer/listener can repaint a disposed route');await aw.happyDOM.close();
+const activityRule=css.match(/\.home-page \.home-listening-now\{([^}]+)\}/)[1];assert.match(activityRule,/background:none/);assert.match(activityRule,/box-shadow:none/);assert.match(activityRule,/flex-wrap:nowrap/);assert.match(activityRule,/overflow-x:auto/);assert.doesNotMatch(css,/home-listening-now\{background:(?:#080f1a|Canvas)/,'Accessibility modes do not restore a shared backing');
+console.log('PASS: scene-adaptive glyphs without common backing;real unrounded counts,one bounded row,unchanged prayer geometry,scene replacement,resize,hidden and disposal lifecycle. Rectangles are controlled DOM fixtures,not phone rendering.');

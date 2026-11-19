@@ -1,45 +1,53 @@
 {
   "schema": 1,
-  "version": 539,
-  "baseCommit": "6ce7c03d5f7df10ae8b7933e80902e94fe7667a4",
-  "baseTree": "62fabb4d711aa1062534db9b8cdd86d030a7a30f",
-  "note": "Remove unrelated reader-catalogue wait from text-only Quran library;preserve reader-dependent ordering,actual index,active audio,scripture/settings/UI and current-route ownership.",
+  "version": 540,
+  "baseCommit": "b80c7349242f8cfcc9da771fe4d5099415ea29e4",
+  "baseTree": "33d91be1097bb29a17adab02eba1001f250039c2",
+  "note": "Scene-adaptive Home activity glyphs with no common backing;bounded floating row below city,without moving prayer/countdown or changing scene/photos/count/privacy/roles.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
-      "path": "dist/js/quran.js",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "path": "dist/js/home-activity-appearance.js",
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+    },
+    {
+      "path": "dist/js/home-listening-now.js",
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+    },
+    {
+      "path": "dist/home-selected.css",
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
+    },
+    {
+      "path": "scripts/check-home-listening-now.mjs",
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
-    },
-    {
-      "path": "scripts/check-quran-library-language.mjs",
-      "reason": "Reviewed539 Quran text-list readiness/current-route regression and release/scope documentation."
+      "reason": "Reviewed540 scene-adaptive activity appearance,regression and exact release documentation;no image or sky renderer change."
     }
   ],
   "baseline": [
@@ -93,7 +101,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "b1733831af7ae6eb5cc423f73207dd5c478e751f"
+      "sha": "d166f176c0b1b6dfa2b8a6784ab463be7caa8186"
     },
     {
       "path": "ANALYTICS.md",
@@ -101,7 +109,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "cf0ff8ed61f54d694c25329af4eddcbcb3c2e5e3"
+      "sha": "53ce6e1fd4153c33e913344f9961743754675e94"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2613,7 +2621,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "7adca2492d545e8bd163056aa870af815c3f9613"
+      "sha": "1d97b3371690545c9ad8cf04ea851b5d8d81e9b5"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4541,7 +4549,7 @@
     },
     {
       "path": "dist/js/quran.js",
-      "sha": "e422635aab41f25075eaea15c9249484ebc14ee0"
+      "sha": "32dbcbe84acb1180a051d7df9aad6aacdb760a76"
     },
     {
       "path": "dist/js/radio-candidates.js",
@@ -5033,7 +5041,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "7ae10eb942b447a93254dc8aaf33a5f5e36ab2d2"
+      "sha": "4cc5cd39a2e637263d7f8446d2da65dca11ef494"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5561,7 +5569,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "a750dd0a73e8c63dde4125c04fe8a720088dc860"
+      "sha": "f9ff07f6c6efa4210e2c4c00325b12f086b301ba"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5957,7 +5965,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "9f20ec3bb4592ddf69333664dab964c93b4188c1"
+      "sha": "52114ca3326b0f3f7c1a0e22456c7625b2c5a2dd"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6081,7 +6089,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "669d179bae327dc56c4c0bc6bea368c2aefa7a3e"
+      "sha": "de0037035913e76159cc1f48203e2c434c07513a"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7289,7 +7297,7 @@
     },
     {
       "path": "scripts/check-quran-library-language.mjs",
-      "sha": "2f80e7bf93b5b629747ced1b0cb46882e3c38c4b"
+      "sha": "c680b749f542f456bf26bf8b6e3488a99f5a1d3a"
     },
     {
       "path": "scripts/check-quran-listen-share.mjs",
