@@ -44,3 +44,7 @@ Release533: verify manual update notice on installed iPhone after533,then a late
 
 
 535 authentication:verify retained sign-in after installed update,foreground return and expiry;explicit local logout,new login and MFA still work. The real-SDK suspended-read regression is evidence of the reproduced path,not a physical-phone root-cause guarantee. No UI/photo/contrast changes.
+
+
+###536 — Home foreground readability
+Existing activity/count controls receive a stable rgba(8,15,26,.84) backing and #eadbb3 foreground;the selected photograph and glass opacity remain unchanged. Compact Home glass expand/dismiss actions use the same backing without changing targets or dock geometry. Verify contrast on a pure-white worst-case backdrop plus the supplied bright-sky screenshot;run real stylesheet/control and531 activity geometry fixtures,full-player/glass/accessibility and shared listening tests. Browser/physical iPhone visual review is absent.

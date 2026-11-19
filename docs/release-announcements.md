@@ -872,3 +872,7 @@ Use the existing Appearance visual hierarchy for city/prayer Settings and the sh
 
 
 535 common authentication maintenance:keep523 themes announcement,acknowledgement and expiry. No new public announcement or external push;no public living sky.
+
+
+###536 maintenance
+Bright Home foreground controls only;retain523 announcement,acknowledgement and expiry. No new public card,external push,private-sky rollout or score-change claim.

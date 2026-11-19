@@ -333,3 +333,8 @@ html[data-glass-mode="on"] .glass-preview .glass-preview-player{
  html[data-glass-mode="on"] .glass-preview .glass-preview-player,
  .glass-preview .glass-preview-player{background:Canvas;border-color:CanvasText;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 }
+
+/* Bright Home photographs must not erase compact glass-player actions. */
+html[data-glass-mode="on"] body.home-page #quran-global-player:not(.is-expanded) .quran-global-controls :is([data-expand],[data-dismiss-player]){background:rgba(8,15,26,.84);color:#eadbb3;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){html[data-glass-mode="on"] body.home-page #quran-global-player:not(.is-expanded) .quran-global-controls :is([data-expand],[data-dismiss-player]){background:#080f1a}}
+@media(forced-colors:active){html[data-glass-mode="on"] body.home-page #quran-global-player:not(.is-expanded) .quran-global-controls :is([data-expand],[data-dismiss-player]){background:Canvas;color:CanvasText;box-shadow:none}}
