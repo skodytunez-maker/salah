@@ -866,3 +866,6 @@ Use the existing Appearance visual hierarchy for city/prayer Settings and the sh
 
 
 533 maintenance: preserve523 themes announcement,acknowledgement and2026-11-26T23:59:59Z expiry. Manual download progress/status introduces no new public news or external push. Native/legacy byte progress remains unsupported.
+
+
+534 maintenance:personal manual city lookup/cache/deadline only;preserve523 themes news/receipts/expiry. No new public news or external push.

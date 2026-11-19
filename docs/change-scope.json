@@ -1,137 +1,45 @@
 {
   "schema": 1,
-  "version": 533,
-  "baseCommit": "18276782f0b4d525ff58c1f9b40addaea728aca1",
-  "baseTree": "7a9579391f1abd32de5de5fe43b1a71a5fac6704",
-  "note": "Manual real-byte PWA update progress and approximate ETA,conditional HTTP-cache revalidation,compact update-only dark status;no native bridge/raster/activation-policy changes.",
+  "version": 534,
+  "baseCommit": "15382acaadae362b44683ac145baa8101503024c",
+  "baseTree": "061e07558e583e2316f8e34695487dfb27ecbdc1",
+  "note": "Manual consented personal city lookup exact-coordinate memory reuse and shared request/body deadline;no GPS policy,automatic city switch or visitor geography collection.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/iphone.css",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
-      "path": "dist/js/app.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/ar.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/az.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/de.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/en.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/kk.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/ru.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/tg.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/i18n/settings/uz.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/pwa-updates.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/ui.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "dist/js/update-download-progress.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "path": "dist/js/city-data.js",
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
-      "path": "scripts/build-update-resource-sizes.mjs",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "scripts/check-startup-recovery.mjs",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "scripts/check-update-activation-race.mjs",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
-    },
-    {
-      "path": "scripts/check-update-download-progress.mjs",
-      "reason": "Reviewed update download progress/status implementation,8-language source/runtime strings,resource-size derivation,real stream/UI/activation fixtures and533 metadata."
+      "path": "scripts/check-city-lookup-lifecycle.mjs",
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Exact532 baseline and explicitly reviewed533 file scope."
+      "reason": "Reviewed personal city lookup/cache/deadline logic and real lifecycle regression,534 version/scope/queue evidence."
     }
   ],
   "baseline": [
@@ -185,7 +93,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "4a2c806547b99630f0c8de6125d8cdc4d96ad75f"
+      "sha": "af23e7556076c603a465f5d5d02cce8fd1fd32cf"
     },
     {
       "path": "ANALYTICS.md",
@@ -193,7 +101,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "ddd54066428b21e17058cfce28ca2d5e67a96a83"
+      "sha": "5a7275e1f12ff07bb915d7b78f03dd33b0f2dd19"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2585,7 +2493,7 @@
     },
     {
       "path": "dist/iphone.css",
-      "sha": "03d22ef0c4ee8c780ac3a67725ad331a07ade879"
+      "sha": "2f12b2e0644144d6e993d35268ab7c371fa0ec60"
     },
     {
       "path": "dist/js/account-avatar-core.js",
@@ -2705,7 +2613,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "62dfce09a680de83bed067d64b9d568d4c99a077"
+      "sha": "8e785f9c3a59756e071f878c3115d0c756f4d109"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2725,7 +2633,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "29fb3007ea5141a4abffc68df40036b404d4c685"
+      "sha": "f208fda93141c98da395559fe393c0fab3c47edf"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -3017,35 +2925,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "24a536b87a48efe3949b2459657ae9d88e0e0555"
+      "sha": "16287638346c48d0ab52228b9cf09c7580459f66"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "b89ec5b8a999e407fe3dd8d01ae05c082376bf0f"
+      "sha": "c0c1268ba4a7306c39ad8dbad2d2fd2269032c1e"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "243b5e949125e3258e7b7c4da781acf118bd0c13"
+      "sha": "8216778151844d1c81ad7ed4396376c4ddae9ba0"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "1644bbf1070b78de27bb8ea49aec386043cdd23a"
+      "sha": "4cf12b45d970fef6ebc567d90f0b6eb9feb992c9"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "7b03b37b95fb7c99c50af10cc3c945a88f745740"
+      "sha": "17ebbd9d287e2d8a61fd9ecbbe3e7990a2e092d7"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "20b3aefb5b3bdba10803582de5f7a6f4c44d9721"
+      "sha": "1f60820bc71a99d086415209f9fae554673dca7d"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "cc6d2f17df60fa536a656b9e781b0fa1b9eb9fd0"
+      "sha": "bedcdc785d53a804fb1bc40aa0496c04f3675580"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "81b70bb064aa508affc37f3bd038d38806d1427d"
+      "sha": "e79f84b7eca1d58048c4f9056564c907ff71219b"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3801,19 +3709,19 @@
     },
     {
       "path": "dist/js/i18n/settings/ar.js",
-      "sha": "dc855349e5edb94b458d48a608cbd524d1947bd0"
+      "sha": "1163ebce58e8055268e0ea00ad8fd94c5ee9e538"
     },
     {
       "path": "dist/js/i18n/settings/az.js",
-      "sha": "55515185169261c0a9d6132fe85eb0eeab878b64"
+      "sha": "c0c27fb7515ca574aec38c27a6b82310ae2b03de"
     },
     {
       "path": "dist/js/i18n/settings/de.js",
-      "sha": "860d3c06b1c434b1d1bc9395eaf72275d188814a"
+      "sha": "fe402fe53e61f76271250dfb77f0d9e229c55bf8"
     },
     {
       "path": "dist/js/i18n/settings/en.js",
-      "sha": "e8255c01b7420e571cab015e2be6aea089661fd7"
+      "sha": "189700485dbfc245bf0e88bc3e69bb12f461a3dc"
     },
     {
       "path": "dist/js/i18n/settings/index.js",
@@ -3821,19 +3729,19 @@
     },
     {
       "path": "dist/js/i18n/settings/kk.js",
-      "sha": "c0f0370f7a8b5fd8f4bcbe3d131569bbfaebb178"
+      "sha": "26f82f37539eb283bafc3cf4eadc3a4ba6b22040"
     },
     {
       "path": "dist/js/i18n/settings/ru.js",
-      "sha": "6ce8014ac676256020b930ebf476f6547fce156e"
+      "sha": "af4a1b4c900baa61691ef4be2dfdcc974541445e"
     },
     {
       "path": "dist/js/i18n/settings/tg.js",
-      "sha": "a7b14bd8da92994804c4edd9fde2d18af23ac12f"
+      "sha": "1f9699472b489e36607f16c1e8176906679eab4c"
     },
     {
       "path": "dist/js/i18n/settings/uz.js",
-      "sha": "05f668c632eb9d61379a2d5b1712c5a3fd4eee61"
+      "sha": "8a3f7adc49b28f91b5aa32a36cf56a2f54bc3410"
     },
     {
       "path": "dist/js/i18n/skyRelease/ar.js",
@@ -4357,7 +4265,7 @@
     },
     {
       "path": "dist/js/pwa-updates.js",
-      "sha": "ce68565a49e08708c7f77610a6e873cb4d8f37bf"
+      "sha": "818d29f75e991bde657f784f02d6ba9dce8e465a"
     },
     {
       "path": "dist/js/qibla-access.js",
@@ -4905,7 +4813,7 @@
     },
     {
       "path": "dist/js/ui.js",
-      "sha": "9f059ba69c2cfb6999579ea988342a95d87e31d7"
+      "sha": "9f5f288b697355291ee7aa0f7d5add2c82f00c16"
     },
     {
       "path": "dist/js/umrah-content.js",
@@ -4918,6 +4826,10 @@
     {
       "path": "dist/js/umrah.js",
       "sha": "44d6d595069d57d06ea67122b39ef908c6d2e3eb"
+    },
+    {
+      "path": "dist/js/update-download-progress.js",
+      "sha": "c14f11214996b0f4a31e11fa7966e2f387ac12c3"
     },
     {
       "path": "dist/js/user-support-status.js",
@@ -5121,7 +5033,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "ca3be9cb702a34b781ba256cddd0ee0335ebebba"
+      "sha": "e9a7b2fa2a826b76d6506ad9eb5c985a78aba8eb"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5645,7 +5557,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "016ba31b7f26038db1535043424dc3e1c87246fd"
+      "sha": "f66bab9dd2f45bb81229a6b343e4cf42fdd5927f"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6041,7 +5953,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "d9e9a08d796ef6795a286bcafe759e540ac7f499"
+      "sha": "d4a13600043619ae45ba4bb38f851fed35167db1"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6165,7 +6077,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "007f726e0d3190d1ae53bab53b9883bf75c42a08"
+      "sha": "3743b689becf343b01fd72c8868c0079223c3329"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6518,6 +6430,10 @@
     {
       "path": "scripts/build-quran-recognition.mjs",
       "sha": "6b3b9b11c24da7a1bb0b66cbe954571f2987d198"
+    },
+    {
+      "path": "scripts/build-update-resource-sizes.mjs",
+      "sha": "6257fe52077f1d2a7cbc47570ef7595fcff38996"
     },
     {
       "path": "scripts/check-account-avatar.mjs",
@@ -7669,7 +7585,7 @@
     },
     {
       "path": "scripts/check-startup-recovery.mjs",
-      "sha": "17dee16c7cad85c2ae447508b01ad70fe40a6b02"
+      "sha": "562c733b0851192c9a8009239fa52ceb74d3a1fc"
     },
     {
       "path": "scripts/check-storage-cache.mjs",
@@ -7869,7 +7785,11 @@
     },
     {
       "path": "scripts/check-update-activation-race.mjs",
-      "sha": "0a18d2214584a4905e873bd5e608bbeb2363bcdf"
+      "sha": "5adca85b8d3416bc56e9bee2f4bbbeb5d91018e4"
+    },
+    {
+      "path": "scripts/check-update-download-progress.mjs",
+      "sha": "11e1592fd9ca87881060769644ebf536208e0ea1"
     },
     {
       "path": "scripts/check-updates.mjs",
@@ -8583,7 +8503,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Unchanged existing official imam schedule generated at publication."
+      "reason": "Unchanged official imam schedule generated at publication."
     }
   ]
 }

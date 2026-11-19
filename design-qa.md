@@ -38,3 +38,6 @@ Actual Settings markup,real shell and existing city/source/travel paths pass in 
 
 
 Release533: verify manual update notice on installed iPhone after533,then a later download: dark compact status,real byte percentage/approximate changing ETA,close keeps download alive. Unsupported old/native mechanisms must not invent numbers. Verify failures keep current app;audio/read/forms remain protected. Source/DOM fixtures are not physical-phone rendering evidence. All raster hashes must match532.
+
+
+534: manually tap My location with permission,repeat at unchanged coordinates and close during lookup;confirm correct actual settlement/timezone and no late dialog action. With slow/offline provider,the button must recover. No automatic GPS at startup;manual typing/choice remains available. Exact-coordinate cache cannot establish physical GPS speed or whole-navigation latency.
