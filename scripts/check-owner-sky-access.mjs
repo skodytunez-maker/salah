@@ -59,9 +59,28 @@ saved.liveSky=true;tick();assert.equal(mattes.length,1);assert.ok(skyCalls>0);as
 // Expiry emits no role event; each real renderer tick must recheck the getter.
 wall+=60001;assert.equal(ownerVerified(),false);tick();noAdvanced();assert.equal(expiredTask.args.signal.aborted,true);const expiredSurface=finishMatte(expiredTask);await turns();assert.equal(expiredSurface.disposed,1);assert.equal(contexts,0);assert.equal(saved.liveSky,true,'Revocation blocks access without rewriting the owner preference');
 assert.equal(await verifyOwner({verifySession:true}),true);tick();const ready=finishMatte(mattes[1]);await turns();clouds.at(-1).resolve({complete:true,naturalWidth:720,naturalHeight:540});await turns();tick();assert.equal(doc.getElementById('home-scene').dataset.unifiedSky,'ready');assert.ok(contexts>0);assert.equal(raf.size,1);
+
+// Resume can re-emit SIGNED_IN for the same already verified account.
+const warmScene=doc.getElementById('home-scene'),warmRenderer=state('skyRenderer'),warmSurface=state('skySurface'),warmMatteCount=mattes.length,warmPaintDisposals=painterDisposals;
+const authStart530=wall;authChanged('SIGNED_IN',fixtureSession);tick();
+assert.equal(ownerVerified(),true,'Repeated same-account SIGNED_IN must retain the existing unexpired server grant');
+assert.equal(doc.getElementById('home-scene'),warmScene);assert.equal(warmScene.dataset.unifiedSky,'ready');assert.equal(state('skyRenderer'),warmRenderer);assert.equal(state('skySurface'),warmSurface);assert.equal(mattes.length,warmMatteCount);assert.equal(painterDisposals,warmPaintDisposals);
+
+
+// Duplicate events do not renew authority. Token rotation retains only the
+// original bounded grant; a new login or actor always requires the server.
+let duplicateChanges530=0;const stopDuplicate530=onOwnerChange(()=>duplicateChanges530++);
+fixtureSession={...fixtureSession,access_token:'fixture-rotated-token'};authChanged('TOKEN_REFRESHED',fixtureSession);authChanged('SIGNED_IN',fixtureSession);tick();assert.equal(ownerVerified(),true);assert.equal(duplicateChanges530,0);assert.equal(state('skyRenderer'),warmRenderer);
+wall+=59000;authChanged('SIGNED_IN',fixtureSession);tick();assert.equal(ownerVerified(),false,'Client events cannot extend the60-second server grant');noAdvanced();assert.equal(ready.disposed,1);stopDuplicate530();
+assert.equal(await verifyOwner({verifySession:true}),true);tick();let nextReady530=finishMatte(mattes.at(-1));await turns();clouds.at(-1).resolve({complete:true,naturalWidth:720,naturalHeight:540});await turns();tick();
+fixtureSession={...fixtureSession,access_token:'fixture-new-login-token'};authChanged('SIGNED_IN',fixtureSession);tick();assert.equal(ownerVerified(),false,'Same user with a different login token requires a fresh server gate');noAdvanced();assert.equal(nextReady530.disposed,1);
+assert.equal(await verifyOwner({verifySession:true}),true);tick();nextReady530=finishMatte(mattes.at(-1));await turns();clouds.at(-1).resolve({complete:true,naturalWidth:720,naturalHeight:540});await turns();tick();
+const returningSession530=fixtureSession;fixtureSession={access_token:'fixture-other-account-token',user:{id:'fixture-other-account'}};authChanged('SIGNED_IN',fixtureSession);tick();assert.equal(ownerVerified(),false);noAdvanced();assert.equal(nextReady530.disposed,1);
+fixtureSession=returningSession530;assert.equal(await verifyOwner({verifySession:true}),true);tick();const finalReady530=finishMatte(mattes.at(-1));await turns();clouds.at(-1).resolve({complete:true,naturalWidth:720,naturalHeight:540});await turns();tick();
+
 // The actual app observer repaints on revocation; no route/form reconstruction.
-const off=onOwnerChange(()=>context.atmosphere(wall,null,observed));await signOutOwner();assert.equal(ownerVerified(),false);noAdvanced();assert.equal(ready.disposed,1);assert.equal(painterDisposals,1);assert.equal(saved.liveSky,true);off();
+const off=onOwnerChange(()=>context.atmosphere(wall,null,observed));await signOutOwner();assert.equal(ownerVerified(),false);noAdvanced();assert.equal(finalReady530.disposed,1);assert.equal(painterDisposals,4);assert.equal(saved.liveSky,true);off();
 // The independently isolated signed-out pilot retains its explicit feature flag.
 context.ADVANCED_SKY_AVAILABLE=true;saved.liveSky=false;tick();noAdvanced();const before=mattes.length;assert.equal(context.startScenePreview(),true);tick();assert.equal(mattes.length,before+1);assert.equal(doc.getElementById('home-scene').dataset.liveSky,'on');context.stopScenePreview();tick();noAdvanced();assert.equal(saved.liveSky,false);
-assert.equal(gateCalls,4,'Only denial, MFA, one pending grant and one renewal request reach the protected fixture');assert.equal(photos.length,2,'Role changes and demos retain the original decoded photographs');assert.equal(doc.getElementById('countdown').textContent,'00:21:41');mock.restoreAll();await w.happyDOM.close();
+assert.equal(gateCalls,7,'Only explicit protected checks grant access; duplicate events do not mint a grant');assert.equal(photos.length,2,'Role changes and demos retain the original decoded photographs');assert.equal(doc.getElementById('countdown').textContent,'00:21:41');mock.restoreAll();await w.happyDOM.close();
 console.log('PASS: real server/MFA owner capability gates advanced resources dynamically; ordinary/forged/MFA-pending access stays basic, default off, expiry and logout cancel/dispose, late responses cannot reopen, private signed-out opt-in remains available.');

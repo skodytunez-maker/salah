@@ -1,117 +1,49 @@
 {
   "schema": 1,
-  "version": 529,
-  "baseCommit": "ff637426ae6a1f1158553817c53a90c6fd2253b5",
-  "baseTree": "e75f5acfa7be873e11d1bcd19d0c0343ba6dc664",
-  "note": "Agreed Quran display-name correction after528; preserve canonical Quran/image/backend/Support/sky/news state. City/prayer-settings styling is queued only.",
+  "version": 530,
+  "baseCommit": "ceec8b9a354fd0521309fd13938caf46078f501f",
+  "baseTree": "5cd07c163877644b5cb6bb2e13f082f43f136abd",
+  "note": "Owner video07:21:31: duplicate same-session SIGNED_IN resets ready Home sky. Preserve only the existing unexpired exact-token grant;no new authority,art,server or public feature.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
       "path": "design-qa.md",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/ar.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/az.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/de.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/en.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/kk.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/ru.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/tg.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/i18n/quran/uz.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/quran-data.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "dist/js/quran.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "path": "dist/js/owner-auth.js",
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
+    },
+    {
+      "path": "docs/home-resume-session.md",
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
-    },
-    {
-      "path": "docs/surah-name-sources.md",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
-      "path": "scripts/check-quran-library-language.mjs",
-      "reason": "Complete offline surah display-name localisation,local-name search,actual UI continuity regressions,529 metadata and evidence; no scripture/player/backend changes."
+      "path": "scripts/check-owner-sky-access.mjs",
+      "reason": "Scoped duplicate-session continuity,actual auth/weather regression,530 release metadata and evidence."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Explicit529 source scope against published528."
+      "reason": "Explicit530 source scope against published529."
     }
   ],
   "baseline": [
@@ -165,7 +97,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "74c764ee8382bd0f445f10a91f6ad18dac644b49"
+      "sha": "17d9bd0a78be9a118e79077dc84c778dd5652eb6"
     },
     {
       "path": "ANALYTICS.md",
@@ -173,7 +105,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "4098cc625aee39069cdba595947f3ba20780764e"
+      "sha": "46739dfbd8144a56a96fb71cab8d2d2a11dd750a"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2685,7 +2617,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "e92119a289b9446de7eeac70abb6100f0c9f1ed4"
+      "sha": "5faf72b60bbc90c9c3165012df2594f3bcec7ea2"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2997,35 +2929,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "0e66ddee6543ec85e488737662f3c200cc318584"
+      "sha": "24a536b87a48efe3949b2459657ae9d88e0e0555"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "a3c5b8072a21f94d434276e7d4e14a8f14ef4dca"
+      "sha": "b89ec5b8a999e407fe3dd8d01ae05c082376bf0f"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "471c32de02daa2d9938318df054b1478d94f7d32"
+      "sha": "243b5e949125e3258e7b7c4da781acf118bd0c13"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "6afccd8c0b7f5b514cd062c9fa912ba9d4961f2a"
+      "sha": "1644bbf1070b78de27bb8ea49aec386043cdd23a"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "53a2fcabe5b13a9c56278aaf0c559f875b6071ea"
+      "sha": "7b03b37b95fb7c99c50af10cc3c945a88f745740"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "f24cc1bbffba0c5399490d917fb00add1761d895"
+      "sha": "20b3aefb5b3bdba10803582de5f7a6f4c44d9721"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "0de6c15b7bf35ab5f3afa14d676b43071a2fc874"
+      "sha": "cc6d2f17df60fa536a656b9e781b0fa1b9eb9fd0"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "7f4331baa3f765fd90c69e2cb602894f24359cbf"
+      "sha": "81b70bb064aa508affc37f3bd038d38806d1427d"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3669,19 +3601,19 @@
     },
     {
       "path": "dist/js/i18n/quran/ar.js",
-      "sha": "846940499334eaeb9a14eea163d420f0d0e478ab"
+      "sha": "872d556086500aa84ec64887580757dca51677c4"
     },
     {
       "path": "dist/js/i18n/quran/az.js",
-      "sha": "2adf10d342ecc976c5711291d9702bf52ab3049a"
+      "sha": "61bced08c4d4441c613696e921fbaa24ef882a5b"
     },
     {
       "path": "dist/js/i18n/quran/de.js",
-      "sha": "13819b7a18bb73a2002a94ca7733346df9d98a71"
+      "sha": "5902e536d3ed90c820728a3eac66279d85604f4c"
     },
     {
       "path": "dist/js/i18n/quran/en.js",
-      "sha": "b200bd61daa466eaa5b81006f749ba1f90eee054"
+      "sha": "11b28d7b927435bde7c2e09f338742d2b355f2f4"
     },
     {
       "path": "dist/js/i18n/quran/index.js",
@@ -3689,19 +3621,19 @@
     },
     {
       "path": "dist/js/i18n/quran/kk.js",
-      "sha": "7f862e4a411fb6705c6773b9eda3ce734caeb6a1"
+      "sha": "978229a532698f13c4bfa2a92c22139c6f9277bb"
     },
     {
       "path": "dist/js/i18n/quran/ru.js",
-      "sha": "63b69c1a9274f1c30876a0b90eded70c8943aed6"
+      "sha": "ac69d1673abf289378e5979e487c1b451a7340fa"
     },
     {
       "path": "dist/js/i18n/quran/tg.js",
-      "sha": "fb7fb75f5a46fd6a33aa829cbd28cbdf4471aea5"
+      "sha": "adfb783a940b4cf23eb5acdfd15d98e3c5413634"
     },
     {
       "path": "dist/js/i18n/quran/uz.js",
-      "sha": "1ace3540c30521a4d1905f5852fb70a5ed2f8bdb"
+      "sha": "c230a95a08462b3bc658a2b40099066d9b2245b7"
     },
     {
       "path": "dist/js/i18n/ranking/ar.js",
@@ -4409,7 +4341,7 @@
     },
     {
       "path": "dist/js/quran-data.js",
-      "sha": "2f10d6b23acfdcfb9a6017419445579003851bac"
+      "sha": "1c62521aab1f8176c79fb9e130b44af6a1d5fc28"
     },
     {
       "path": "dist/js/quran-downloads.js",
@@ -4613,7 +4545,7 @@
     },
     {
       "path": "dist/js/quran.js",
-      "sha": "aee18bd5225daafb7c91722baa340a835dd295df"
+      "sha": "e422635aab41f25075eaea15c9249484ebc14ee0"
     },
     {
       "path": "dist/js/radio-candidates.js",
@@ -5101,7 +5033,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "840d3066a0ac8af191d86a9198ba69cbfeee3821"
+      "sha": "4ceeb31573c1ba4065ab68f636a55d11c8793840"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5625,7 +5557,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "99139c19b994e82a0828e4780a5e7b0b428942f5"
+      "sha": "748ebb787bda55e04fa97ba5ce465676ea0e31a1"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6017,7 +5949,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "eac6ba980e61a30a21a2c14fc751391159d3bc79"
+      "sha": "b41a5db8e244dfba76dbdd190181452c745160a8"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6096,6 +6028,10 @@
       "sha": "05802b4a7f4ac23b67a4e12628b46725a0f29eb7"
     },
     {
+      "path": "docs/surah-name-sources.md",
+      "sha": "96cddd7bad3dfa385af186c5560b7e710916e2c0"
+    },
+    {
       "path": "docs/tablet-wallpapers.md",
       "sha": "8aff82c4f356d50bf5a634fbad5380470b31340a"
     },
@@ -6137,7 +6073,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "50ca24a7fad1648231d2164cd80ea2dec807c8d1"
+      "sha": "5d516de5ac9c79448f4f59780064b88c03a02ae1"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7329,7 +7265,7 @@
     },
     {
       "path": "scripts/check-quran-library-language.mjs",
-      "sha": "4cdb3cb8f56603bc53673c78786225d22e692040"
+      "sha": "2f80e7bf93b5b629747ced1b0cb46882e3c38c4b"
     },
     {
       "path": "scripts/check-quran-listen-share.mjs",

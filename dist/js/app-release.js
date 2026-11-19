@@ -1,4 +1,4 @@
-export const APP_VERSION=529;
+export const APP_VERSION=530;
 export const APP_UPDATED_AT='2026-11-19';
 export const APP_UPDATE_DATE='19 ноября 2026';
 export const APP_CHANGES=["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."];

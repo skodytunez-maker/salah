@@ -321,3 +321,9 @@ Production read-only diagnosis: four actors had exactly32 retained tab leases; a
 - Подготовлены полные114 названий для всех8языков,поиск на выбранном языке и сохранение названий при переключении без пересоздания списка. Дополнены связанные заголовки и подписи в том же модуле Корана; данные аятов/переводов,позиция и плеер сохранены.
 - Все целевые проверки прошли,общая exact-head проверка и публикация ещё впереди. Новая задача07:19 по кнопкам города записана отдельно и не выполнена.
 - Текущая общая версия528 опубликована: PR397,merge ff637426ae6a1f1158553817c53a90c6fd2253b5,Pages44441183330:Reported success. Телефон владельца не проверен.
+
+
+### Published529 and candidate530
+-529 published: PR398,merge ceec8b9a354fd0521309fd13938caf46078f501f,Pages44445497915:Reported success;340/340. Names require the phone language check.
+- New07:21:31 video inspected locally. Duplicate same-token SIGNED_IN reproduces the owner sky reset in the real auth/weather fixture.530 preserves only the already valid server grant for that exact session;token rotation,expiry,new login,actor changes and revocation remain tested. Nine related checks pass;publication still pending.
+- City/prayer-settings button styling remains queued;no calculation changes.
