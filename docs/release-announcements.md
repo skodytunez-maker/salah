@@ -855,3 +855,7 @@ Correct Quran surah names for the existing eight interface languages. Keep the52
 
 ## Maintenance530
 Prevent duplicate same-session sign-in from resetting an already granted owner Home scene. No new public sky or public announcement; retain523 receipts and expiry.
+
+
+## Maintenance531
+Stabilise Home timer position while the existing activity badges load or hide. Keep523 themes announcement,receipts and expiry;no new news card or external push.

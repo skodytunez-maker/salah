@@ -8,6 +8,7 @@ import {homeActivityIcon} from '../dist/js/home-activity-icons.js';
 import {listeningCountMarkup,updateListeningSummary} from '../dist/js/listening-summary.js';
 import {releaseIllustrations} from '../dist/js/release-illustrations.js';
 import {APP_ANNOUNCEMENT} from '../dist/js/app-release.js';
+import {PrayerDisplay} from '../dist/js/prayer-display.js';
 const pg=new PGlite();
 await pg.exec(`create schema auth;create schema salah_competition_private;create schema salah_visits_private;
 create table auth.users(id int,email_confirmed_at timestamptz,is_anonymous bool,banned_until timestamptz);
@@ -38,15 +39,20 @@ assert.deepEqual(await readListeningNow(sql),{count:0,readers:0,dhikr:1},'Revoke
 response=await createListeningNowHandler(async()=>{throw Error('private SQL details');})(new Request('https://fixture.invalid'));
 assert.equal(response.status,503);assert.deepEqual(await response.json(),{error:'unavailable'});
 await pg.close();
-const w=new Window(),doc=w.document,host=doc.createElement('span');doc.body.append(host);
+const w=new Window({width:393,height:852}),doc=w.document,host=doc.createElement('span');
+doc.body.className='home-page';doc.head.innerHTML='<style>'+(await fs.readFile(new URL('../dist/style.css',import.meta.url),'utf8'))+(await fs.readFile(new URL('../dist/home-selected.css',import.meta.url),'utf8'))+'</style>';
+doc.body.innerHTML='<main id="app"><div class="app-home-shell"><div class="home-prayer-center"><div class="app-home-top">SALAH</div>'+PrayerDisplay({mode:'focus',next:{key:'Sunrise',time:Date.now()+300000},times:null,hasCity:true})+'</div></div></main>';
+host.className='home-listening-now';doc.querySelector('.app-home-shell').prepend(host);
+const layoutSnapshot=()=>{const style=node=>w.getComputedStyle(doc.querySelector(node)),shell=style('.app-home-shell'),center=style('.home-prayer-center'),heading=style('.app-home-top');return{height:shell.height,minHeight:shell.minHeight,centerPosition:center.position,centerTop:center.top,headingMargin:heading.marginTop};};
+let restingLayout=null;
 Object.defineProperty(doc,'hidden',{value:false,writable:true,configurable:true});
 let pending=[],eligible=true,scheduled=null,cancelled=0,clock=0,isOwner=false,ownerHook=()=>{},opened=[];
 const source=await fs.readFile(new URL('../dist/js/home-listening-now.js',import.meta.url),'utf8');
 const ctx=vm.createContext({OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-key',personalDataAllowed:()=>true,ownerVerified:()=>isOwner,ownerNeedsMfa:()=>false,onOwnerChange:fn=>{ownerHook=fn;return()=>{};},showHomeActivity:key=>opened.push(key),homeActivityIcon,listeningCountMarkup,updateListeningSummary,AbortController,setTimeout,clearTimeout});
 const factory=vm.runInContext(source.replace(/^import.*$/gm,'').replaceAll('export ','')+';createHomeListeningNow;',ctx);
 const controller=factory({doc,now:()=>clock,allowed:()=>eligible,interval:fn=>{scheduled=fn;return 1;},cancelInterval:()=>cancelled++,fetcher:(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/listening-now');assert.equal(options.credentials,'omit');assert.ok(!options.headers.Authorization);return new Promise(resolve=>pending.push({resolve,signal:options.signal}));}});
-const finish=async data=>{pending.shift().resolve({ok:true,json:async()=>data});await new Promise(r=>setImmediate(r));};
-controller.mount(host);assert.equal(host.hidden,true);await finish({count:2});
+const finish=async data=>{pending.shift().resolve({ok:true,json:async()=>data});await new Promise(r=>setImmediate(r));if(restingLayout)assert.deepEqual(layoutSnapshot(),restingLayout,'Async activity counters must never move or recenter the countdown');};
+controller.mount(host);assert.equal(host.hidden,true);restingLayout=layoutSnapshot();await finish({count:2});
 assert.equal(host.hidden,false);assert.equal(host.textContent,'2');const value=host.querySelector('[data-listening-total]');assert.match(host.getAttribute('aria-label'),/Коран: 2/);
 void controller.refresh();await finish({count:3});assert.equal(host.textContent,'3');assert.equal(host.querySelector('[data-listening-total]'),value);assert.ok(host.querySelector('.listening-step-a'));
 void controller.refresh();await finish({count:2});assert.equal(host.textContent,'2');assert.ok(host.querySelector('.listening-step-b'),'Decreasing counts use the same digit transition');
@@ -67,8 +73,11 @@ const news=releaseIllustrations(APP_ANNOUNCEMENT.version,['Главная: се�
 assert.match(news,/home-listening-478.svg/);assert.match(news,/data-release-motion-part="element"/);assert.match(news,/release-home-listening-track/);
 const app=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');assert.match(app,/homeListeningNow.mount\(null\)/);assert.match(app,/homeListeningNow.mount\(document.getElementById\('home-listening-now'\)\)/);
 const css=await fs.readFile(new URL('../dist/home-selected.css',import.meta.url),'utf8');assert.match(css,/home-listening-now\[hidden\]\{display:none!important/);
+for(const mode of ['focus','timetable']){doc.querySelector('.central-prayer').className='central-prayer '+mode;host.hidden=true;const before=layoutSnapshot();host.hidden=false;assert.deepEqual(layoutSnapshot(),before,'The activity badge cannot shift '+mode+' geometry');assert.equal(w.getComputedStyle(host).position,'absolute','The async status is outside the prayer layout');}
 await w.happyDOM.close();
 console.log('PASS: read-only private aggregate, distinct/anonymous/hidden/paused/stale/revoked sessions; zero and failure hiding; Top digit animation both ways; route cleanup, stale requests, hidden documents, restricted mode and looping feature news.');
 
-// The system fade ends at safeTop + min(40px,safeTop); even the short layout's 16px padding must clear it.
-assert.match(css,/margin-top:min\(24px,var\(--salah-safe-top,0px\)\)/);for(const safeTop of [0,20,44,59,62])assert.ok(safeTop+16+Math.min(24,safeTop)>=safeTop+Math.min(40,safeTop));
+// The same safe-edge bounds as the Radio control; no activity-driven ancestors.
+assert.doesNotMatch(css,/:has\(\.home-listening-now:not\(\[hidden\]\)\)/,'Activity visibility must not change ancestor geometry');
+assert.match(css,/position:absolute;right:0;top:calc\(24px \+ var\(--salah-safe-top,0px\)/);
+for(const safeTop of [0,20,44,59,62])assert.ok(safeTop+16+Math.min(24,safeTop)>=safeTop+Math.min(40,safeTop));
