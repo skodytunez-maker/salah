@@ -1,65 +1,49 @@
 {
   "schema": 1,
-  "version": 535,
-  "baseCommit": "8d0ec6488b7a0d69443d587bdb921697ea8c4c38",
-  "baseTree": "4cc3aecd3b2239e091c5461d3c00012826c3850b",
-  "note": "Minimal reversible pinned-SDK guard on obsolete implicit refresh;public-API before/after evidence;preserve explicit credentials,current revocation,MFA/roles and all existing source/images.",
+  "version": 536,
+  "baseCommit": "ef75dabadf9a9defb0e4caac34740f5f0d7b9470",
+  "baseTree": "089b5330769024060efcfadf33b9a99715c2e1f6",
+  "note": "Bright Home aggregate and compact-glass action contrast only;preserve source images,chosen transparency,531 flow/auth/privacy/count behavior and535 session fix.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
     },
     {
       "path": "design-qa.md",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+    },
+    {
+      "path": "dist/home-selected.css",
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+    },
+    {
+      "path": "dist/quran-player.css",
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "dist/js/vendor/supabase-source.json",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "dist/js/vendor/supabase.js",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "docs/auth-stale-refresh-535.md",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "docs/content-rights-register.json",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "docs/release-announcements.md",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "docs/work-queue.md",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "scripts/check-auth-refresh-stale.mjs",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "scripts/check-security.mjs",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
-    },
-    {
-      "path": "scripts/lib/supabase-refresh-patch.mjs",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Reviewed authentication implicit-refresh patch/provenance,real SDK/security regressions and535 release/scope/queue documentation."
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+    },
+    {
+      "path": "docs/release-announcements.md",
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+    },
+    {
+      "path": "docs/work-queue.md",
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
+    },
+    {
+      "path": "scripts/check-glass-style.mjs",
+      "reason": "Reviewed536 contrast-only Home surfaces,existing intentional-style verification and release/scope documentation."
     }
   ],
   "baseline": [
@@ -113,7 +97,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "5ab4c4cfe8e14c7c7df1a39eaa92bc386baed325"
+      "sha": "fdfc308ab4a6a87d71566bb83693285d605aee9a"
     },
     {
       "path": "ANALYTICS.md",
@@ -121,7 +105,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "4970f7b27aa828ce12450f3bf352bb7e0908b3b0"
+      "sha": "6401c3d71b6b8feef8081868df115a6aade6d9c3"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2633,7 +2617,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "e006d6aeed441554b5eab7cb5dad79e602f50a55"
+      "sha": "d959b34ef69d5d6622d1882f69d37abecd7aa6f7"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4961,11 +4945,11 @@
     },
     {
       "path": "dist/js/vendor/supabase-source.json",
-      "sha": "402854a4eec727775bf79408175833ded44b5d90"
+      "sha": "bd7ae79f98f72752ffa6cc75b56c348e4bdaebcf"
     },
     {
       "path": "dist/js/vendor/supabase.js",
-      "sha": "b51e7b9e308e2162d873b84d412a9d37c398d3e0"
+      "sha": "82c22417f7b906852d8cce3da92f29cf0ac99558"
     },
     {
       "path": "dist/js/wallpaper-layout.js",
@@ -5053,7 +5037,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "c4b45f342f6d630ae3cd4588f5c1dd05076ce021"
+      "sha": "5224cafbd2bc7fc3b40e3693b5b10c7c3ac92bc1"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5560,6 +5544,10 @@
       "sha": "75f6e5879a913cc820ddc18688640274658198a5"
     },
     {
+      "path": "docs/auth-stale-refresh-535.md",
+      "sha": "92f805eceabcf1f18cbcafc755905e73b57104a8"
+    },
+    {
       "path": "docs/author-signature-evidence.md",
       "sha": "76843736f186dec148e4c9daea7646e7e0556388"
     },
@@ -5577,7 +5565,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "6265d2b89195fbc24011b709a51cf7d3abdf7d76"
+      "sha": "f389ff3c8a9ee7f50d2c25fee3c62468e35a651a"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5597,7 +5585,7 @@
     },
     {
       "path": "docs/content-rights-register.json",
-      "sha": "2d6504a6ff27c71669241781a52a982e85dd6c91"
+      "sha": "48cf44ef433c43b78380548971805edd50c9f639"
     },
     {
       "path": "docs/control-center-resume-425.md",
@@ -5973,7 +5961,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "51e626d70c6795654a6ebea3931c1d83fdb67f4e"
+      "sha": "b3d9ee61cba8abd378984d94c3767d1a42c0f3a9"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6097,7 +6085,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "6e8b9de2903b43b8b7a7f948280fcd6a78ee0b54"
+      "sha": "030bbf3df07938ffbe0c85609b307bf0bb234800"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6590,6 +6578,10 @@
     {
       "path": "scripts/check-auth-load.mjs",
       "sha": "241e8cbfb84c0b272383cce606e99ed01ad7ca20"
+    },
+    {
+      "path": "scripts/check-auth-refresh-stale.mjs",
+      "sha": "6e1609b13ea2080149c4990654e9f058bc8ac9dd"
     },
     {
       "path": "scripts/check-auth-session.mjs",
@@ -7509,7 +7501,7 @@
     },
     {
       "path": "scripts/check-security.mjs",
-      "sha": "87622f4e65176d067d1fcec07c88c60032df7027"
+      "sha": "6d9cc4758177cd93d5789ded19fc684b32a288fe"
     },
     {
       "path": "scripts/check-series-celebration.mjs",
@@ -7846,6 +7838,10 @@
     {
       "path": "scripts/lib/ranking-language-fixture.mjs",
       "sha": "b53b7c79dc13fa74ecd09690d73f0413406978de"
+    },
+    {
+      "path": "scripts/lib/supabase-refresh-patch.mjs",
+      "sha": "095da08945938189622c35e1c536de360551c688"
     },
     {
       "path": "scripts/prepare-quran-reading.py",
@@ -8527,7 +8523,7 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Unchanged existing official imam schedule generated at publication."
+      "reason": "Unchanged official imam schedule refreshed during publication."
     }
   ]
 }

@@ -140,7 +140,7 @@ body.reduce-motion .dhikr-passage{animation:none!important}
 /* Re-entering Home is navigation, not a new prayer-card reveal. */
 body.home-page .central-prayer{animation:none}
 
-.home-page .home-listening-now{position:absolute;right:0;top:calc(24px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)));max-width:calc(100% - 84px);flex-wrap:wrap;justify-content:flex-end;margin:0;z-index:20;display:inline-flex;align-items:center;gap:12px;padding:5px 7px;color:var(--gold,#cbbf9b);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
+.home-page .home-listening-now{position:absolute;right:0;top:calc(24px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)));max-width:calc(100% - 84px);flex-wrap:wrap;justify-content:flex-end;margin:0;z-index:20;display:inline-flex;align-items:center;gap:12px;padding:5px 7px;background:rgba(8,15,26,.84);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 2px 8px rgba(0,0,0,.18);color:#eadbb3;text-shadow:0 1px 2px rgba(0,0,0,.45);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
 .home-page .home-listening-now[hidden]{display:none!important}
 .home-listening-now svg{width:19px;height:19px;flex:none}
 .home-listening-now strong{font:inherit}
@@ -200,3 +200,7 @@ html[data-glass-mode="on"] .glass-preview .glass-preview-table{
 /* Activity can appear/disappear without moving the prayer surface. */
 @media(max-height:700px){.home-page .home-listening-now{top:calc(16px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)))}}
 @media(orientation:landscape) and (max-height:600px){.home-page .home-listening-now{top:calc(8px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)))}}
+
+/* Keep activity readable against bright photographs without changing flow. */
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.home-page .home-listening-now{background:#080f1a}}
+@media(forced-colors:active){.home-page .home-listening-now{background:Canvas;color:CanvasText;box-shadow:none;text-shadow:none;outline:1px solid CanvasText}}

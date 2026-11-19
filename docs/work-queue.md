@@ -360,3 +360,7 @@ Production read-only diagnosis: four actors had exactly32 retained tab leases; a
 -534 published:PR403,merge8d0ec6488b7a0d69443d587bdb921697ea8c4c38,Pages44454440853:Reported success;342/342,DB123/DOM66.
 - Owner reports actual sign-out. Server metadata confirms revocation and a later successful new sign-in;private details stay outside the publication tree.535 prepares a minimal reversible pinned-SDK patch preventing an obsolete implicit refresh from reaching Auth after storage changed. Public-API baseline fails;patched read/startup/tick/manual-renewal,explicit credentials,new actor/logout and real revocation checks pass. Full CI/publication pending;physical causal callback unknown.
 - New screenshot:Home controls,especially listening icon,lose contrast on bright sky. Owner explicitly deferred this task. Record only;no appearance change in535. Automatic city-change offer,navigation timing,external-recording resume and owner519rebase remain open.
+
+
+###536 — bright-sky foreground contrast
+Prepared the previously deferred screenshot request after535:contrast backing for the activity aggregate and compact Home glass expand/dismiss icons. No source photo,selected glass level,flow geometry,click/authorization/count or playback change. Exact source and release checks pending;not published. Zero-credit account investigation remains open;no inferred score or consent write.
