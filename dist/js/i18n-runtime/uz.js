@@ -3102,6 +3102,8 @@ export default Object.freeze({
  "reciterUi.topLabel": "Qorilar toplari",
  "reciterUi.waitDownload": "Joriy yuklash tugashini kuting",
  "reciterUi.week": "Hafta",
+ "releaseUi.homeCompositionText": "Yopiq sinov rejimida bezak elementlari yuqoriroqqa ko‘tarildi. Boshqa bo‘limlar o‘zgarmadi.",
+ "releaseUi.homeCompositionTitle": "Bosh sahifada kichik tuzatish",
  "releaseUi.homeGapText": "Tinglash, o‘qish va zikr belgilari jadval ko‘rinishi o‘zgarganda bir xil balandlikda qoladi. Jadval ustida ko‘proq joy bor.",
  "releaseUi.homeGapTitle": "Faollik belgilari o‘z joyida qoladi",
  "releaseUi.homeSpacingText": "Namoz jadvali va azkorlar tugmasi biroz pastroqda joylashdi. Shahar nomi bilan jadval orasida faollik belgilari uchun ko‘proq joy bor.",

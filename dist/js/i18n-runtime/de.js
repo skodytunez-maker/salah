@@ -3102,6 +3102,8 @@ export default Object.freeze({
  "reciterUi.topLabel": "Rezitatoren-Ranglisten",
  "reciterUi.waitDownload": "Warte, bis der aktuelle Download abgeschlossen ist",
  "reciterUi.week": "Woche",
+ "releaseUi.homeCompositionText": "Dekorative Elemente liegen im geschlossenen Testmodus etwas höher. Andere Bereiche bleiben unverändert.",
+ "releaseUi.homeCompositionTitle": "Gezielte Korrektur der Startseite",
  "releaseUi.homeGapText": "Die Symbole für Hören, Lesen und Dhikr bleiben beim Wechsel der Gebetsansicht auf gleicher Höhe. Über dem Gebetsplan ist mehr Platz.",
  "releaseUi.homeGapTitle": "Aktivitätssymbole bleiben an ihrem Platz",
  "releaseUi.homeSpacingText": "Gebetsplan und Adhkar-Schaltfläche liegen etwas tiefer. Unter dem Stadtnamen bleibt mehr Platz für die Aktivitätssymbole.",

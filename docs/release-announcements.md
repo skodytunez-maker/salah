@@ -900,3 +900,7 @@ APP_CHANGES now names only the actual541 news-description and tall-phone Home sp
 
 ## Maintenance542
 Public installed-version notes describe only the fixed-height activity rail/small table spacing and wider ordinary phone Quran reader. Radio and the advanced Sun/Moon correction remain verified-owner features and are not public feature announcements. Preserve523news/receipts/expiry and541’scurrent-version notes policy;no external push.
+
+
+## Maintenance543
+One truthful current-version card describes a closed-mode Home composition correction. No new feature-announcement edition,public living-sky availability or external push. Preserve523acknowledgement/expiry and all historical feature cards.

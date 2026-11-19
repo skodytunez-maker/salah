@@ -3198,6 +3198,8 @@ export default Object.freeze({
  "reciterUi.topLabel": "ترتيب القرّاء",
  "reciterUi.waitDownload": "انتظر حتى يكتمل التنزيل الحالي",
  "reciterUi.week": "أسبوع",
+ "releaseUi.homeCompositionText": "رُفعت العناصر الزخرفية في وضع الاختبار المغلق. لم تتغير الأقسام الأخرى.",
+ "releaseUi.homeCompositionTitle": "تعديل محدد في الصفحة الرئيسية",
  "releaseUi.homeGapText": "تحافظ رموز الاستماع والقراءة والذكر على ارتفاعها عند تغيير عرض الجدول. وأصبحت المساحة فوق الجدول أوسع.",
  "releaseUi.homeGapTitle": "رموز النشاط تبقى في موضعها",
  "releaseUi.homeSpacingText": "أصبح جدول الصلاة وزر الأذكار في موضع أخفض قليلاً، لتوفير مساحة أكبر لرموز النشاط بين اسم المدينة والجدول.",

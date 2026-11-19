@@ -3150,6 +3150,8 @@ export default Object.freeze({
  "reciterUi.topLabel": "Топы чтецов",
  "reciterUi.waitDownload": "Дождитесь завершения текущего скачивания",
  "reciterUi.week": "Неделя",
+ "releaseUi.homeCompositionText": "Изменена высота декоративных элементов в закрытом режиме. Остальные разделы не менялись.",
+ "releaseUi.homeCompositionTitle": "Точечная правка главной",
  "releaseUi.homeGapText": "Значки слушания, чтения и зикра сохраняют высоту при смене вида таблицы. Над таблицей больше свободного места.",
  "releaseUi.homeGapTitle": "Значки сохраняют положение",
  "releaseUi.homeSpacingText": "Таблица намаза и кнопка азкаров расположены немного ниже. Между городом и таблицей больше места для значков активности.",

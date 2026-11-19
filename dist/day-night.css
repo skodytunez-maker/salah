@@ -183,3 +183,10 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 .scene-moon-phase img{border-radius:50%;filter:brightness(.94) saturate(.25);transform:rotate(calc(var(--sky-moon-texture-rotation,0deg) - var(--sky-moon-rotation,0deg)))}
 #home-scene .scene-dawn{background:radial-gradient(ellipse at calc(var(--sky-sunX,12)*1%) calc(var(--sky-horizonY,56)*1%),rgba(245,183,132,.18),rgba(139,151,190,.07) 42%,transparent 70%)}
 #home-scene .scene-dusk{background:radial-gradient(ellipse at calc(var(--sky-sunX,88)*1%) calc(var(--sky-horizonY,56)*1%),rgba(241,151,111,.19),rgba(100,91,145,.08) 44%,transparent 70%)}
+
+/* Owner-requested portrait composition: lift only the displayed celestial path.
+   One viewport offset for both Home views; never follow table/text geometry.
+   Ephemeris, phase, weather visibility, masks and the photo plane stay unchanged. */
+@media(max-width:599px) and (orientation:portrait){
+ #home-scene[data-live-sky=on] .scene-sun,#home-scene[data-live-sky=on] .scene-moon{transform:translate(-50%,-50%) translateY(clamp(-72px,-7svh,-24px))}
+}

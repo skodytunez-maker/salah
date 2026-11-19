@@ -12,5 +12,7 @@ export default Object.freeze({
   "releaseUi.homeGapTitle": "Fəaliyyət nişanları yerində qalır",
   "releaseUi.homeGapText": "Dinləmə, oxuma və zikr nişanları cədvəl görünüşü dəyişəndə eyni hündürlükdə qalır. Cədvəlin üstündə daha çox yer var.",
   "releaseUi.readerWidthTitle": "Oxumaq üçün daha çox yer",
-  "releaseUi.readerWidthText": "Telefonda surə səhifəsi daha genişdir: xarici yan boşluqlar çıxarılıb, mətnin daxili boşluğu saxlanılıb."
+  "releaseUi.readerWidthText": "Telefonda surə səhifəsi daha genişdir: xarici yan boşluqlar çıxarılıb, mətnin daxili boşluğu saxlanılıb.",
+  "releaseUi.homeCompositionTitle": "Əsas ekranda kiçik düzəliş",
+  "releaseUi.homeCompositionText": "Qapalı sınaq rejimində dekorativ elementlər yuxarı qaldırılıb. Digər bölmələr dəyişməyib."
 });
