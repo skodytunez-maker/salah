@@ -1,4 +1,10 @@
 export default Object.freeze({
+"offlineAutoUi.title":"İnternetsiz oxu",
+"offlineAutoUi.enable":"Mətnləri avtomatik saxla",
+"offlineAutoUi.note":"SALAH açıq və internetə bağlı olduqda Quran, seçilmiş məna tərcüməsi, müshəf və seçdiyiniz şəhərin mövcud namaz tarixləri saxlanılır. Zikrlər tətbiqə daxildir. Səs yazıları endirilmir.",
+"offlineAutoUi.on":"Avtomatik saxlama aktivdir. Gedişatı müshəfdə və aşağıdakı namaz cədvəlində yoxlayın.",
+"offlineAutoUi.off":"Avtomatik saxlama söndürülüb. Saxlanmış məlumatlar qalır; əl ilə endirə bilərsiniz.",
+"offlineAutoUi.saveFailed":"Seçiminizi bu cihazda saxlamaq mümkün olmadı.",
  'offlineUi.mushafTitle':'Bütün Quran internetsiz',
  'offlineUi.mushafNote':'604 səhifənin hamısını bu cihazda saxlayın. Yükləməni davam etdirəndə artıq yoxlanmış fayllar saxlanılır.',
  'offlineUi.mushafAppearance':'Oflayn görünüş ərəb mətnindən və daxili şriftdən istifadə edir. Hərflərin görünüşü və sətirlər çap müshəfindən fərqlənir; ayələrin mətni dəyişmir.',

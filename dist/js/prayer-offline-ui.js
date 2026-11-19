@@ -1,9 +1,10 @@
-import{createPrayerOffline}from './prayer-offline.js';
+import{prayerOfflineDownload}from './prayer-offline.js';
+import{offlineAutoPolicy}from './offline-auto-policy.js';
 import{t,getLocale,subscribeLanguage,translateUi}from './i18n.js';
 import{esc,uiLeaf,uiMessage,setUiMessage}from './ui.js';
 let detachPrayerOffline=null;
 const prayerOfflineDate=day=>new Intl.DateTimeFormat(getLocale(),{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(day+'T12:00:00Z'));
-export function mountPrayerOffline(root,{onChange=()=>{},create=createPrayerOffline}={}){
+export function mountPrayerOffline(root,{onChange=()=>{},create=()=>prayerOfflineDownload}={}){
  detachPrayerOffline?.();detachPrayerOffline=null;if(!root)return()=>{};
  const doc=root.ownerDocument,win=doc.defaultView||window;
  root.className='cache-storage-settings';
@@ -24,9 +25,9 @@ export function mountPrayerOffline(root,{onChange=()=>{},create=createPrayerOffl
   progress.setAttribute('aria-label',t('prayerOfflineUi.saving',{done:numbers.format(state.done),total:numbers.format(data.total)}));
   root.toggleAttribute('data-prayer-offline-busy',running);translateUi(root);
  }
- save.onclick=()=>void control.save();cancel.onclick=()=>control.cancel();remove.onclick=()=>control.clear();
- const unsubscribe=control.subscribe(paint),offLanguage=subscribeLanguage(()=>paint()),settingsChanged=()=>control.refresh(),route=()=>{if(!root.isConnected)cleanup()},storageChanged=event=>{if(event.key===null||event.key==='salah:settings'||event.key?.startsWith('salah:prayer-cache:'))control.refresh()};
- function cleanup(){if(disposed)return;disposed=true;observer?.disconnect();unsubscribe();offLanguage();control.stop();win.removeEventListener('salah:settings-changed',settingsChanged);win.removeEventListener('online',settingsChanged);win.removeEventListener('offline',settingsChanged);win.removeEventListener('storage',storageChanged);win.removeEventListener('hashchange',route);if(detachPrayerOffline===cleanup)detachPrayerOffline=null}
+ save.onclick=()=>void control.save();cancel.onclick=()=>{offlineAutoPolicy.set(false);control.cancel();};remove.onclick=()=>{offlineAutoPolicy.set(false);control.clear();};
+ let wasRunning=control.getState().running;const unsubscribe=control.subscribe(state=>{paint(state);if(control===prayerOfflineDownload&&wasRunning&&!state.running)onChange();wasRunning=state.running;}),offLanguage=subscribeLanguage(()=>paint()),settingsChanged=()=>control.refresh(),route=()=>{if(!root.isConnected)cleanup()},storageChanged=event=>{if(event.key===null||event.key==='salah:settings'||event.key?.startsWith('salah:prayer-cache:'))control.refresh()};
+ function cleanup(){if(disposed)return;disposed=true;observer?.disconnect();unsubscribe();offLanguage();if(control===prayerOfflineDownload)control.cancel();else control.stop();win.removeEventListener('salah:settings-changed',settingsChanged);win.removeEventListener('online',settingsChanged);win.removeEventListener('offline',settingsChanged);win.removeEventListener('storage',storageChanged);win.removeEventListener('hashchange',route);if(detachPrayerOffline===cleanup)detachPrayerOffline=null}
  win.addEventListener('salah:settings-changed',settingsChanged);win.addEventListener('online',settingsChanged);win.addEventListener('offline',settingsChanged);win.addEventListener('storage',storageChanged);win.addEventListener('hashchange',route);
  const Observer=win.MutationObserver||globalThis.MutationObserver;if(Observer&&doc.body){observer=new Observer(route);observer.observe(doc.body,{childList:true,subtree:true})}
  detachPrayerOffline=cleanup;paint();return cleanup;

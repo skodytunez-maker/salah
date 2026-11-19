@@ -75,11 +75,11 @@ const reflectTextDownloads=()=>{const dataset=globalThis.document?.documentEleme
 export async function pauseTextDownloads(){const active=[...activeTextDownloads];for(const entry of active)entry.controller.abort();await Promise.allSettled(active.map(entry=>entry.task));}
 export function saveAllTexts(index,onProgress,options={}){
  const controller=new AbortController(),abort=()=>controller.abort();if(options.signal?.aborted)controller.abort();else options.signal?.addEventListener('abort',abort,{once:true});
- const entry={controller,task:null};entry.task=storeAllTexts(index,onProgress,{signal:controller.signal}).finally(()=>{options.signal?.removeEventListener('abort',abort);activeTextDownloads.delete(entry);reflectTextDownloads();});activeTextDownloads.add(entry);reflectTextDownloads();return entry.task;
+ const entry={controller,task:null};entry.task=storeAllTexts(index,onProgress,{signal:controller.signal,concurrency:options.concurrency,yieldWork:options.yieldWork}).finally(()=>{options.signal?.removeEventListener('abort',abort);activeTextDownloads.delete(entry);reflectTextDownloads();});activeTextDownloads.add(entry);reflectTextDownloads();return entry.task;
 }
-async function storeAllTexts(index,onProgress,{signal}={}){
+async function storeAllTexts(index,onProgress,{signal,concurrency=3,yieldWork=()=>Promise.resolve()}={}){
  checkTextDownload(signal);if(!('caches'in window))throw Error('Офлайн-хранилище недоступно');let next=1,done=0;
- const results=await Promise.allSettled(Array.from({length:3},async()=>{while(next<=114){checkTextDownload(signal);const number=next++,meta=index.surahs[number-1];const source=await verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta),cachedFirst:true,requireStored:true,timeoutMs:20000,signal});await loadReading(source,meta,{requireStored:true,signal});checkTextDownload(signal);onProgress?.(++done)}}));
+ const results=await Promise.allSettled(Array.from({length:Math.max(1,Math.min(3,Math.floor(Number(concurrency)||3)))},async()=>{while(next<=114){const number=next++;await yieldWork();checkTextDownload(signal);const meta=index.surahs[number-1];const source=await verifiedFile('./data/quran/'+number+'.json',meta.sha256,{validate:data=>verifySurah(data,meta),cachedFirst:true,requireStored:true,timeoutMs:20000,signal});await loadReading(source,meta,{requireStored:true,signal});checkTextDownload(signal);onProgress?.(++done)}}));
  const failed=results.find(result=>result.status==='rejected');if(failed)throw failed.reason;
  // The translation search is part of offline reading, so save it with the texts.
  checkTextDownload(signal);await verifiedFile('./data/quran-search.json',index.searchSha256,{validate:rows=>verifySearch(rows,index),cachedFirst:true,requireStored:true,timeoutMs:20000,signal});

@@ -1,4 +1,10 @@
 export default Object.freeze({
+"offlineAutoUi.title":"Internetsiz o‘qish",
+"offlineAutoUi.enable":"Matnlarni avtomatik saqlash",
+"offlineAutoUi.note":"SALAH ochiq va internetga ulanganida Qur’on, tanlangan ma’no tarjimasi, mushaf va tanlangan shahar uchun mavjud namoz sanalari saqlanadi. Azkorlar ilovaga kiritilgan. Audio yuklanmaydi.",
+"offlineAutoUi.on":"Avtomatik saqlash yoqilgan. Jarayonni mushaf va quyidagi namoz jadvalida tekshiring.",
+"offlineAutoUi.off":"Avtomatik saqlash o‘chirilgan. Saqlangan ma’lumotlar qoladi; qo‘lda yuklash mumkin.",
+"offlineAutoUi.saveFailed":"Tanlovingizni bu qurilmada saqlab bo‘lmadi.",
  'offlineUi.mushafTitle':'Butun Qur’on internetsiz',
  'offlineUi.mushafNote':'Barcha 604 sahifani shu qurilmada saqlang. Yuklashni davom ettirganda tekshirilgan fayllar saqlanib qoladi.',
  'offlineUi.mushafAppearance':'Oflayn ko‘rinish arabcha matn va ichki shriftdan foydalanadi. Harflar va satrlar bosma mushafdan farq qiladi; oyatlar matni o‘zgarmaydi.',

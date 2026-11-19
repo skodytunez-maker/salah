@@ -73,3 +73,6 @@ export function createPrayerOffline({
  }
  return{save,cancel,clear,refresh,getState:()=>state,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener)},stop(){if(disposed)return;disposed=true;abort?.abort();abort=null;revision++;listeners.clear()}};
 }
+
+// One shared writer keeps manual controls and quiet preparation mutually exclusive.
+export const prayerOfflineDownload=createPrayerOffline();

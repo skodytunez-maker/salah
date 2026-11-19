@@ -32,3 +32,5 @@ Version 369 replaces the planned tafsir card with a real reader screenshot and s
 ## Conversation themes523
 
 Feature art is the real theme catalogue: eight existing256px thumbnails with their corresponding incoming/outgoing colour tokens, composed as a responsive fictional conversation in dist/js/conversation-theme-news.js and dist/css/conversation-themes.css. No new generic icon, user screenshot or personal message is used. The filmstrip is marked data-release-motion-part and shares active/hidden/closed/reduced-motion controls, with a24s alternating tour. Provenance of every raster remains docs/conversation-theme-assets-523.json. No additional raster or third-party artwork was introduced.
+
+545 uses existing quran-offline-502.svg with new localized automatic-preparation text; no new raster, asset license or claim of automatic audio/printed-font availability.

@@ -5,6 +5,10 @@ export const BUNDLED_TRANSLATION_ID='ru.kuliev';
 export const QURAN_TRANSLATION_IDS=Object.freeze([BUNDLED_TRANSLATION_ID,'quranenc.azeri_musayev','quranenc.german_bubenheim','quranenc.kazakh_altai','quranenc.uzbek_sadiq','quranenc.uzbek_mansour','quranenc.tajik_arifi','quranenc.english_saheeh']);
 export const TRANSLATION_MANIFEST_SHA256='05394d9dc4a7c068aa6b85ac40316eb3aa8345cf132d723a0fd81f05b0470a6c';
 const TRANSLATION_LIMIT=2_000_000;
+const activeTranslationDownloads=new Set();
+const reflectTranslationDownloads=()=>{const data=globalThis.document?.documentElement?.dataset;if(data){if(activeTranslationDownloads.size)data.translationTextDownload='active';else delete data.translationTextDownload;}};
+export async function pauseTranslationDownloads(){const active=[...activeTranslationDownloads];for(const entry of active)entry.controller.abort();await Promise.allSettled(active.map(entry=>entry.task));}
+
 const translationFailure=code=>{const error=Error(code);error.code=code;return error;};
 const translationRecord=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const translationHex=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
@@ -74,11 +78,15 @@ export function createQuranTranslationLibrary({fetcher=(...args)=>fetch(...args)
   if(cache)try{await cache.put(cacheKey(row,surah),new Response(file.bytes,{headers:{'Content-Type':'application/json; charset=utf-8'}}));if(requireStored&&!await cachedSurah(cache,row,data,surah))throw Error();}catch{if(requireStored)throw translationFailure('translation_store_failed');}
   return result;
  }
- async function saveAll(id,{onProgress=()=>{},signal}={}){
-  await edition(id);await openCache(true);let next=1,done=0;
-  const results=await Promise.allSettled(Array.from({length:3},async()=>{while(next<=114){const surah=next++;await loadSurah(id,surah,{requireStored:true,signal});onProgress(++done,114);}}));
-  const failed=results.find(row=>row.status==='rejected');if(failed)throw failed.reason;return done;
+ function saveAll(id,{onProgress=()=>{},signal:outerSignal,concurrency=3,yieldWork=()=>Promise.resolve()}={}){
+  const controller=new AbortController(),signal=controller.signal,abort=()=>controller.abort();if(outerSignal?.aborted)abort();else outerSignal?.addEventListener('abort',abort,{once:true});
+  const entry={controller,task:null};entry.task=(async()=>{
+   if(signal.aborted)throw new DOMException('Paused','AbortError');await edition(id);await openCache(true);let next=1,done=0;
+   const results=await Promise.allSettled(Array.from({length:Math.max(1,Math.min(3,Math.floor(Number(concurrency)||3)))},async()=>{while(next<=114){const surah=next++;await yieldWork();if(signal.aborted)throw new DOMException('Paused','AbortError');await loadSurah(id,surah,{requireStored:true,signal});onProgress(++done,114);}}));
+   const failed=results.find(row=>row.status==='rejected');if(failed)throw failed.reason;return done;
+  })().finally(()=>{outerSignal?.removeEventListener('abort',abort);activeTranslationDownloads.delete(entry);reflectTranslationDownloads();});activeTranslationDownloads.add(entry);reflectTranslationDownloads();return entry.task;
  }
+
  async function searchRows(id,{signal,onProgress=()=>{}}={}){
   const rows=[];for(let number=1;number<=114;number++){
    const surah=await loadSurah(id,number,{signal});for(const verse of surah.verses)rows.push({surah:number,ayah:verse.ayah,text:verse.translation});onProgress(number,114);

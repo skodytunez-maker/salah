@@ -80,3 +80,6 @@ Compare actual source CSS cascade across both Home modes,glass/player/activity s
 
 ##544 — reviewed foreground alpha corrections
 All63source candidates screened in122native crop comparisons/31sheets,then source-specific full-ridge/face/window/finial close-ups.60masks changed;3unconfident/rejected cases retained. Raster originals remain exact. Tests pin source-inspected missing snow,glass/sky/antenna/finial points,complete thin-support/removal bounds,continuous mountain bodies and native-source feature art. These are software/native-pixel checks,not corrected iPhone rendering. Source architecture/genuine4K and remaining low-contrast haze are separate work.
+
+
+545: controlled offline/policy/source-byte regressions; no browser/phone visual pass. Check automatic-saving control, selected meaning and Unicode Mushaf in airplane mode, and published-only selected-city coverage. Home geometry and all raster originals are protected.

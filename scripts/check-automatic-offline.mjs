@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import{webcrypto}from 'node:crypto';
+import{createOfflineAutoPolicy,OFFLINE_AUTO_KEY}from '../dist/js/offline-auto-policy.js';
+import{createAutomaticOffline}from '../dist/js/offline-auto-core.js';
+import{createMushafOfflineDownload}from '../dist/js/quran-mushaf-offline.js';
+import{arabicReadingKey}from '../dist/js/quran-transcription.js';
+import{reciterInfo,reciterHasSurah}from '../dist/js/quran-reciters.js';
+const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
+const deferred=()=>{let resolve;const promise=new Promise(r=>resolve=r);return{promise,resolve};};
+const rows=new Map(),storage={getItem:key=>rows.get(key)??null,setItem:(key,value)=>rows.set(key,value)},events=new EventTarget(),policy=createOfflineAutoPolicy({getStorage:()=>storage,events});
+assert.equal(policy.enabled(),true);assert.equal(createOfflineAutoPolicy({getStorage:()=>{throw Error('denied');}}).enabled(),false);
+const malformed=createOfflineAutoPolicy({getStorage:()=>({getItem:()=>'{bad'})});assert.equal(malformed.enabled(),false);malformed.dispose();
+let cancelled=0,releaseStop=deferred();const offStop=policy.subscribe(value=>{if(!value){cancelled++;return releaseStop.promise;}});let disabledDone=false;const disabling=policy.disable().then(()=>disabledDone=true);assert.equal(cancelled,1);assert.equal(policy.enabled(),false);await settle();assert.equal(disabledDone,false);releaseStop.resolve();await disabling;offStop();
+const restored=createOfflineAutoPolicy({getStorage:()=>storage});assert.equal(restored.enabled(),false);restored.dispose();
+policy.set(true);rows.set(OFFLINE_AUTO_KEY,'off');const changed=new Event('storage');changed.key=OFFLINE_AUTO_KEY;events.dispatchEvent(changed);assert.equal(policy.enabled(),false);policy.set(true);
+let ms=100,timerId=0;const timers=new Map(),setTimer=(fn,wait)=>{timers.set(++timerId,{fn,at:ms+wait});return timerId;},clearTimer=id=>timers.delete(id),advance=async amount=>{ms+=amount;for(let loops=0;loops<100;loops++){const entry=[...timers].find(([,value])=>value.at<=ms);if(!entry)break;timers.delete(entry[0]);entry[1].fn();await settle();}};
+let key='city-a',eligible=true,calls=0,signals=[],gate=null,fail=false;const reflected=[];
+const automatic=createAutomaticOffline({policy,identity:()=>key,eligible:()=>eligible,clock:()=>ms,setTimer,clearTimer,reflect:value=>reflected.push(value),delay:50,retry:500,recheck:1000,run:async signal=>{calls++;signals.push(signal);if(gate)await gate.promise;if(fail)throw Error('retry');}});
+assert.equal(calls,0,'Boot cannot wait on automatic preparation');await advance(49);assert.equal(calls,0);await advance(1);assert.equal(calls,1);assert.equal(automatic.active,false);automatic.wake();await advance(50);assert.equal(calls,1,'A navigation must not redownload a verified unchanged corpus');await advance(950);assert.equal(calls,2);
+key='city-b';gate=deferred();automatic.wake();await advance(50);assert.equal(calls,3);assert.equal(automatic.active,true);key='city-c';automatic.wake();assert.equal(signals.at(-1).aborted,true);await advance(50);assert.equal(calls,3,'No overlap while an aborted write is settling');gate.resolve();gate=null;await settle();await advance(50);assert.equal(calls,4);
+eligible=false;key='city-d';automatic.wake();await advance(50);assert.equal(calls,4);eligible=true;automatic.wake();fail=true;await advance(50);assert.equal(calls,5);automatic.wake();await advance(50);assert.equal(calls,5,'Network failure is backed off');fail=false;await advance(450);assert.equal(calls,6);
+key='city-e';gate=deferred();automatic.wake();await advance(50);let offDone=false;const offTask=policy.disable().then(()=>offDone=true);assert.equal(signals.at(-1).aborted,true);await settle();assert.equal(offDone,false,'Deleting must await pending automatic writes');gate.resolve();gate=null;await offTask;assert.equal(offDone,true);await advance(5000);assert.equal(calls,7);policy.set(true);await advance(50);assert.equal(calls,8);await automatic.stop();assert.equal(timers.size,0);assert.equal(reflected.at(-1),false);policy.dispose();
+const failStore=createOfflineAutoPolicy({getStorage:()=>({getItem:()=>null,setItem(){throw Error('quota');}})});assert.equal(failStore.set(false),false);assert.equal(failStore.enabled(),false,'Failed persistence must still stop current-session work');failStore.dispose();
+// Use the real Quran byte-validation/store code, original installed files and
+// real Mushaf controller. No generated scripture or shortcut ready flag.
+const base='https://fixture.invalid/salah/index.html',location={href:base},files=new Map(),index=JSON.parse(await fs.readFile(new URL('../dist/data/quran-index.json',import.meta.url),'utf8'));
+for(const path of ['data/quran-index.json','data/quran-search.json','assets/amiri-quran.ttf',...index.surahs.flatMap(s=>['data/quran/'+s.number+'.json','data/quran-reading/'+s.number+'.json'])])files.set(new URL(path,base).href,await fs.readFile(new URL('../dist/'+path,import.meta.url)));
+class MemoryCaches{stores=new Map();async open(name){if(!this.stores.has(name))this.stores.set(name,new Map());const store=this.stores.get(name);return{match:async url=>store.get(String(url))?.clone(),put:async(url,response)=>store.set(String(url),response.clone()),delete:async url=>store.delete(String(url)),keys:async()=>[...store.keys()].map(url=>new Request(url))};}}
+const caches=new MemoryCaches();let online=true,fetches=0,inflight=0,maximum=0,yields=0;
+const fetcher=async(value,{signal}={})=>{if(signal?.aborted)throw new DOMException('Paused','AbortError');if(!online)throw Error('Offline');const url=new URL(value,base).href;assert.equal(new URL(url).origin,'https://fixture.invalid');fetches++;inflight++;maximum=Math.max(maximum,inflight);await Promise.resolve();inflight--;const file=files.get(url);return file?new Response(file):new Response('',{status:404});};
+const dataSource=await fs.readFile(new URL('../dist/js/quran-data.js',import.meta.url),'utf8'),document={documentElement:{dataset:{}}};
+const context=vm.createContext({window:{caches},document,caches,fetch:fetcher,crypto:webcrypto,URL,location,TextDecoder,Response,AbortController,DOMException,setTimeout,clearTimeout,arabicReadingKey,reciterInfo,reciterHasSurah,offlineAudioStore:{},downloadAudioFiles(){},loadAyahTimings(){}});
+const data=vm.runInContext(dataSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({loadIndex,loadSurah,saveAllTexts,pauseTextDownloads,offlineTextStatus});',context);
+Object.defineProperty(globalThis,'crypto',{value:webcrypto,configurable:true});globalThis.location=location;globalThis.document=document;
+let persists=0;const queue=createMushafOfflineDownload({save:data.saveAllTexts,inspect:data.offlineTextStatus,fetcher,cacheStorage:caches,storage:{persist:async()=>persists++,estimate:async()=>({quota:100000000,usage:0})}});
+await queue.start(index,{automatic:true,concurrency:1,yieldWork:async()=>{yields++;await Promise.resolve();}});assert.equal(queue.state.complete,true);assert.equal(queue.state.bytes,9489074);assert.equal(persists,0,'Automatic saving must not prompt for persistent storage');assert.equal(maximum,1);assert.equal(yields,114);assert.equal((await data.offlineTextStatus(index)).complete,true);
+for(const [name,store]of caches.stores)for(const [url,response]of store){const source=files.get(url);assert.ok(source);assert.deepEqual(Buffer.from(await response.clone().arrayBuffer()),source,'Saved scripture and font bytes must remain exact');}
+const cache=await caches.open('salah-quran-text-v1');await cache.put(new URL('data/quran/55.json',base).href,new Response('{}'));let before=fetches;await queue.start(index,{automatic:true,concurrency:1});assert.equal(queue.state.complete,true);assert.equal(fetches-before,1,'Only a damaged file is fetched again');
+online=false;const cold=vm.runInNewContext(dataSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({loadSurah});',{window:{caches},document,caches,fetch:fetcher,crypto:webcrypto,URL,location,TextDecoder,Response,AbortController,DOMException,setTimeout,clearTimeout,arabicReadingKey,reciterInfo,reciterHasSurah,offlineAudioStore:{},downloadAudioFiles(){},loadAyahTimings(){}});
+// The index belongs to the installed app shell, model its exact offline response.
+const shellFetch=async url=>String(url).includes('quran-index.json')?new Response(files.get(new URL('data/quran-index.json',base).href)):fetcher(url);
+const coldContext=vm.createContext({window:{caches},document,caches,fetch:shellFetch,crypto:webcrypto,URL,location,TextDecoder,Response,AbortController,DOMException,setTimeout,clearTimeout,arabicReadingKey,reciterInfo,reciterHasSurah,offlineAudioStore:{},downloadAudioFiles(){},loadAyahTimings(){}});
+const coldApi=vm.runInContext(dataSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({loadSurah});',coldContext);for(let n=1;n<=114;n++){const surah=await coldApi.loadSurah(n);assert.equal(surah.verses.length,index.surahs[n-1].ayahs);assert.equal(surah.number,n);}assert.equal(fetches,before+1,'Cold offline reading makes no provider requests');
+// Exercise the actual integration function with held/aborted adapters.
+const adapterSource=await fs.readFile(new URL('../dist/js/offline-auto.js',import.meta.url),'utf8');
+const adapter=vm.runInNewContext(adapterSource.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({prepareAutomaticOffline,automaticOfflineIndex});',{AbortController,DOMException,TextDecoder,URL,Promise,Uint8Array,Error,setTimeout,clearTimeout,BUNDLED_TRANSLATION_ID:'ru.kuliev'});
+let passedQuiet=false,prayerCalls=0,translationCalls=0;const controller=new AbortController(),prayer={getState:()=>({running:false}),save:async()=>{prayerCalls++;return{reason:'published'};},cancel(){}};
+await adapter.prepareAutomaticOffline(controller.signal,{index:async()=>index,texts:{state:{status:'idle'},start:async(_index,options)=>{passedQuiet=options.automatic&&options.concurrency===1&&options.signal===controller.signal;return{complete:true};}},prayer,meaning:()=> 'quranenc.english_saheeh',translations:{saveAll:async(id,options)=>{assert.equal(id,'quranenc.english_saheeh');assert.equal(options.concurrency,1);assert.equal(options.signal,controller.signal);translationCalls++;}}});assert.equal(passedQuiet,true);assert.equal(translationCalls,1);assert.equal(prayerCalls,1,'Published-only Tyumen coverage is a valid bounded result');
+await adapter.prepareAutomaticOffline(controller.signal,{index:async()=>index,texts:{state:{status:'idle'},start:async()=>({complete:true})},prayer,meaning:()=> 'ru.kuliev',translations:{saveAll(){throw Error('Bundled meaning must not contact a provider');}}});
+const goodIndex=await adapter.automaticOfflineIndex({signal:controller.signal,fetcher:async()=>new Response(files.get(new URL('data/quran-index.json',base).href)),cryptography:webcrypto});assert.equal(goodIndex.surahs.length,114);
+await assert.rejects(adapter.automaticOfflineIndex({signal:controller.signal,fetcher:async()=>new Response('{}'),cryptography:webcrypto}),/verification/);
+await assert.rejects(adapter.automaticOfflineIndex({signal:controller.signal,fetcher:async()=>new Promise(()=>{}),cryptography:webcrypto,timeoutMs:5}),/Paused/);
+controller.abort();await assert.rejects(adapter.prepareAutomaticOffline(controller.signal,{texts:{},prayer:{},translations:{},meaning:()=>'ru.kuliev'}),/Paused/);
+const worker=await fs.readFile(new URL('../dist/sw.js',import.meta.url),'utf8');for(const path of ['./data/adhkar.json','./data/quran-index.json'])assert.ok(worker.includes(JSON.stringify(path)),path+' stays in the installed shell');
+const updates=await fs.readFile(new URL('../dist/js/pwa-updates.js',import.meta.url),'utf8');assert.ok(updates.includes("'offlineAutoDownload'"));assert.ok(updates.includes("'translationTextDownload'"));
+const{Window}=await import('../tests/staff/node_modules/happy-dom/lib/index.js');
+const{setInterfaceLanguage,t}=await import('../dist/js/i18n.js');
+const{mountOfflineAutoSetting}=await import('../dist/js/offline-auto-ui.js');
+const{initAutomaticOffline}=await import('../dist/js/offline-auto.js');
+const w=new Window({url:base}),uiDoc=w.document;Object.assign(globalThis,{window:w,document:uiDoc,localStorage:w.localStorage});
+uiDoc.body.innerHTML='<section id="automatic-control"></section>';const host=uiDoc.getElementById('automatic-control'),uiPolicy=createOfflineAutoPolicy({getStorage:()=>w.localStorage,events:w});
+const detach=mountOfflineAutoSetting(host,{policy:uiPolicy}),input=host.querySelector('input');assert.equal(input.checked,true);input.checked=false;input.onchange();assert.equal(uiPolicy.enabled(),false);assert.equal(w.localStorage.getItem(OFFLINE_AUTO_KEY),'off');
+for(const language of ['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLanguage(language);assert.equal(host.querySelector('input'),input,'Language changes retain the same control');for(const leaf of host.querySelectorAll('[data-i18n]'))assert.equal(leaf.textContent,t(leaf.dataset.i18n));}
+input.checked=true;input.onchange();assert.equal(uiPolicy.enabled(),true);
+let attempts=0;const mounted=initAutomaticOffline({doc:uiDoc,win:w,nav:w.navigator,policy:uiPolicy,canStart:()=>false,run:async()=>attempts++});
+const pagehide=new w.Event('pagehide');pagehide.persisted=true;w.dispatchEvent(pagehide);w.dispatchEvent(new w.Event('pageshow'));assert.equal(initAutomaticOffline(),mounted,'A bfcache return retains one coordinator');await mounted.stop();assert.equal(attempts,0);detach();uiPolicy.dispose();await w.happyDOM.close();
+console.log('PASS: quiet cancellable offline coordinator, persisted pause/delete priority, one shared prayer writer, bounded isolated index, original 114-surah byte cache and cold offline restart, no persistence/audio prompts, selected translation and published-only prayer adapters, corruption repair and retained update guards.');

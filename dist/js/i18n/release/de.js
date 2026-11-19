@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.autoOfflineTitle":"Texte werden automatisch gespeichert",
+"releaseUi.autoOfflineText":"Wenn SALAH geöffnet und online ist, werden Koran, ausgewählte Bedeutungsübersetzung, Offline-Mushaf und verfügbare Gebetsdaten Ihrer gewählten Stadt vorbereitet. Adhkar ist bereits enthalten. Audio wird nicht heruntergeladen. Abschalten unter Einstellungen → Daten.",
   "releaseUi.languagesTitle": "SALAH in deiner Sprache",
   "releaseUi.languagesText": "Menüs, Player, Kalender und Arbeitsbereiche sind in acht Sprachen verfügbar. Die arabische Oberfläche wird von rechts nach links angezeigt.",
   "releaseUi.languagesWhere": "Menü → Einstellungen → App-Sprache.",

@@ -1,4 +1,5 @@
 import{saveAllTexts,offlineTextStatus}from './quran-data.js';
+import{offlineAutoPolicy}from './offline-auto-policy.js';
 import{t,getLocale,subscribeLanguage}from './i18n.js';
 import{uiLeaf,setUiLabel}from './quran-ui.js';
 export const MUSHAF_OFFLINE_CACHE='salah-quran-mushaf-v1';
@@ -44,21 +45,21 @@ export function createMushafOfflineDownload({save=saveAllTexts,inspect=offlineTe
   try{const value=await inspectAll(index);if(ticket===generation)emit({...value,status:value.complete?'ready':'idle'});}catch(error){if(ticket===generation)emit({status:'error',error:errorKind(error),complete:false});}
   return{...state};
  };
- const start=index=>{
-  if(task)return task;const ticket=++generation;controller=new AbortController();const signal=controller.signal;activeMushafDownloads.add(signal);reflectMushafDownloads();emit({status:'downloading',error:null,complete:false});
+ const start=(index,{automatic=false,signal:outerSignal,concurrency=3,yieldWork}={})=>{
+  if(task)return task;const ticket=++generation;controller=new AbortController();const signal=controller.signal,abort=()=>controller.abort();if(outerSignal?.aborted)abort();else outerSignal?.addEventListener('abort',abort,{once:true});activeMushafDownloads.add(signal);reflectMushafDownloads();emit({status:'downloading',error:null,complete:false});
   task=(async()=>{
    try{
     // Request persistence only after the user chooses to download. Browsers may decline it.
-    try{await storage?.persist?.();}catch{}aborted(signal);
+    if(!automatic)try{await storage?.persist?.();}catch{}aborted(signal);
     const before=await inspectAll(index);aborted(signal);if(ticket!==generation)return;emit({...before,status:'downloading',complete:false});
     if(!before.complete&&storage?.estimate)try{const estimate=await storage.estimate(),missing=Math.max(0,before.totalBytes-before.bytes);if(Number.isFinite(estimate.quota)&&Number.isFinite(estimate.usage)&&estimate.quota-estimate.usage<missing){const error=new Error('Not enough space');error.name='QuotaExceededError';throw error;}}catch(error){if(error?.name==='QuotaExceededError')throw error;}
     aborted(signal);await saveOfflineMushafFont({cacheStorage,fetcher,signal});
-    await save(index,done=>{if(ticket===generation&&!signal.aborted)emit({done:Math.max(before.done,done)});},{signal});aborted(signal);
+    await save(index,done=>{if(ticket===generation&&!signal.aborted)emit({done:Math.max(before.done,done)});},{signal,concurrency,yieldWork});aborted(signal);
     const after=await inspectAll(index);aborted(signal);if(!after.complete)throw Error('Download verification failed');
     if(ticket===generation)emit({...after,status:'ready',error:null});
    }catch(error){
     if(ticket===generation){let value={};try{value=await inspectAll(index);}catch{}emit({...value,status:signal.aborted?'paused':'error',error:signal.aborted?null:errorKind(error),complete:false});}
-   }finally{activeMushafDownloads.delete(signal);reflectMushafDownloads();if(ticket===generation){controller=null;task=null;}}
+   }finally{outerSignal?.removeEventListener('abort',abort);activeMushafDownloads.delete(signal);reflectMushafDownloads();if(ticket===generation){controller=null;task=null;}}
    return{...state};
   })();return task;
  };
@@ -78,7 +79,7 @@ export function mountMushafOffline(host,index,{getOffline=()=>false,onModeChange
   progress.hidden=!busy;progress.value=snapshot.done;save.disabled=busy||checking||snapshot.complete;pause.hidden=!busy;setUiLabel(save,checking?'offlineUi.checking':snapshot.complete?'offlineUi.downloaded':snapshot.done?'offlineUi.resume':'offlineUi.download');mode.disabled=!getOffline()&&!snapshot.complete;setUiLabel(mode,getOffline()?'offlineUi.printed':'offlineUi.read');
  };
  const off=queue.subscribe(state=>{snapshot=state;paint();}),offLanguage=subscribeLanguage(paint);
- save.onclick=()=>void queue.start(index);pause.onclick=()=>void queue.pause();mode.onclick=()=>{onModeChange(!getOffline());paint();};
+ save.onclick=()=>void queue.start(index);pause.onclick=()=>{offlineAutoPolicy.set(false);void queue.pause();};mode.onclick=()=>{onModeChange(!getOffline());paint();};
  if(snapshot.status!=='downloading')void queue.check(index);
  return{refresh:paint,dispose(){closed=true;off();offLanguage();save.onclick=pause.onclick=mode.onclick=null;}};
 }

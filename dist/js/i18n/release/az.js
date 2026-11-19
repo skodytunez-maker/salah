@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.autoOfflineTitle":"Mətnlər avtomatik saxlanılır",
+"releaseUi.autoOfflineText":"SALAH açıq və internetə bağlı olduqda Quran, seçilmiş məna tərcüməsi, oflayn müshəf və seçdiyiniz şəhərin mövcud namaz tarixləri hazırlanır. Zikrlər tətbiqə daxildir. Səs yazıları endirilmir. Avtomatik saxlamanı Parametrlər → Məlumatlar bölməsində söndürə bilərsiniz.",
   "releaseUi.languagesTitle": "SALAH sizin dilinizdə",
   "releaseUi.languagesText": "Menyular, pleyer, təqvim və kabinetlər səkkiz dildə mövcuddur. Ərəb interfeysi sağdan sola göstərilir.",
   "releaseUi.languagesWhere": "Menyu → Parametrlər → Tətbiqin dili.",

@@ -1,4 +1,6 @@
 export default Object.freeze({
+"releaseUi.autoOfflineTitle":"Matnlar avtomatik saqlanadi",
+"releaseUi.autoOfflineText":"SALAH ochiq va internetga ulanganida Qur’on, tanlangan ma’no tarjimasi, oflayn mushaf va tanlangan shahar uchun mavjud namoz sanalari tayyorlanadi. Azkorlar ilovaga kiritilgan. Audio yuklanmaydi. O‘chirish: Sozlamalar → Ma’lumotlar.",
   "releaseUi.languagesTitle": "SALAH sizning tilingizda",
   "releaseUi.languagesText": "Menyu, pleyer, taqvim va kabinetlar sakkiz tilda mavjud. Arabcha interfeys o‘ngdan chapga ko‘rsatiladi.",
   "releaseUi.languagesWhere": "Menyu → Sozlamalar → Ilova tili.",
