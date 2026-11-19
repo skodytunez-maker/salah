@@ -140,7 +140,7 @@ body.reduce-motion .dhikr-passage{animation:none!important}
 /* Re-entering Home is navigation, not a new prayer-card reveal. */
 body.home-page .central-prayer{animation:none}
 
-.home-page .home-listening-now{position:absolute;right:0;top:calc(24px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)));max-width:calc(100% - 84px);flex-wrap:nowrap;justify-content:flex-start;margin:0;z-index:20;display:inline-flex;align-items:center;gap:10px;height:32px;padding:0;background:none;border:0;box-shadow:none;overflow-x:auto;scrollbar-width:none;color:#eadbb3;text-shadow:0 1px 2px rgba(0,0,0,.45);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:auto;transition:color .18s ease}
+.home-page .home-listening-now{position:absolute;right:0;top:calc(24px + var(--salah-safe-top,0px) + min(24px,var(--salah-safe-top,0px)));max-width:calc((100% - 120px)/2 - 8px);flex-wrap:nowrap;justify-content:flex-start;margin:0;z-index:20;display:inline-flex;align-items:center;gap:6px;height:44px;padding:0;background:none;border:0;box-shadow:none;overflow-x:auto;scrollbar-width:none;color:#eadbb3;text-shadow:0 1px 2px rgba(0,0,0,.45);font:500 13px/1.25 'Manrope','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;pointer-events:auto;transition:color .18s ease}
 .home-page .home-listening-now[hidden]{display:none!important}
 .home-listening-now svg{width:19px;height:19px;flex:none}
 .home-listening-now strong{font:inherit}
@@ -227,5 +227,10 @@ body.reduce-motion .home-listening-now,body.no-transitions .home-listening-now{t
    Independent of activity visibility;short screens,focus mode and landscape keep their layout. */
 @media(max-width:599px) and (min-height:800px) and (orientation:portrait){
  .home-page .home-prayer-center:has(.central-prayer.timetable) > .prayer-stage,
- .home-page .home-prayer-center:has(.central-prayer.timetable) > .prayer-stage ~ *{position:relative;top:16px}
+ .home-page .home-prayer-center:has(.central-prayer.timetable) > .prayer-stage ~ *{position:relative;top:20px}
 }
+
+/* Three real metrics fit the bounded side rail;large exact counts remain scrollable. */
+.home-listening-now[data-activity-metrics="3"]{gap:4px;font-size:12px}
+.home-listening-now[data-activity-metrics="3"] .home-activity-count{gap:4px}
+.home-listening-now[data-activity-metrics="3"] svg{width:17px;height:17px}

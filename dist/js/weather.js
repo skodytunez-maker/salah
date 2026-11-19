@@ -12,7 +12,6 @@ import{createSkyAtmosphere}from './sky-atmosphere.js';
 import{loadSkyMattes}from './sky-matte.js';
 import{ADVANCED_SKY_AVAILABLE}from './sky-feature-policy.js';
 import{ownerVerified}from './owner-auth.js';
-import{layoutSkyObjects}from './sky-ui-layout.js';
 import{getPosition,getMoonPosition}from './vendor/suncalc.js';
 export{loadWeather,cachedWeather,weatherName,weatherFrame,weatherKey,WEATHER_REFRESH_INTERVAL}from './weather-data.js';
 
@@ -356,15 +355,6 @@ function paintSky(scene,sky,now,render=true){
  lastSkySample=sky;lastSkyStamp=now;
  sky=projectSkyObjects(sky,skyProjectionContext||{wallpaper:settings.wallpaper});
  const projectedSky=sky;
- if(document.body.classList.contains('home-page')&&skyProjectionPlane){
-  const viewport={width:skyProjectionContext?.width,height:skyProjectionContext?.height},obstacles=[];
-  for(const node of document.querySelectorAll('.app-home-top,.central-next-label,#countdown,.central-note,.central-prayer.timetable,.quran-global-player')){
-   if(node.hidden||node.closest?.('[hidden]'))continue;
-   const style=window.getComputedStyle?.(node);if(style&&(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse'||style.opacity==='0'))continue;
-   const r=node.getBoundingClientRect?.();if(r&&r.width>0&&r.height>0&&r.right>0&&r.bottom>0&&r.left<viewport.width&&r.top<viewport.height)obstacles.push({left:r.left,top:r.top,right:r.right,bottom:r.bottom});
-  }
-  sky=layoutSkyObjects(sky,{frame:skyProjectionPlane,viewport,obstacles});
- }
  if(scene.dataset.wallpaper==='landmark'&&!landmarkEntry)sky={...sky,sun:0,moon:0};
  skyProjected=sky;
  const context=[skyProjectionKey,settings.wallpaper,settings.landmarkCity,settings.backgroundMode,settings.city?.latitude,settings.city?.longitude,previewOverride,previewStarted].join(':');

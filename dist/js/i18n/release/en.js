@@ -8,5 +8,9 @@ export default Object.freeze({
   "releaseUi.homeSpacingTitle": "More room above the timetable",
   "releaseUi.homeSpacingText": "The prayer timetable and Adhkar button sit slightly lower, leaving more room for activity icons below the city.",
   "releaseUi.versionNotesTitle": "Notes for the installed version",
-  "releaseUi.versionNotesText": "What’s new shows changes in the current version instead of old theme notes. Future releases will have their own notes."
+  "releaseUi.versionNotesText": "What’s new shows changes in the current version instead of old theme notes. Future releases will have their own notes.",
+  "releaseUi.homeGapTitle": "Activity icons stay in place",
+  "releaseUi.homeGapText": "Listening, reading and dhikr icons keep the same height when the timetable view changes. There is more room above the timetable.",
+  "releaseUi.readerWidthTitle": "More room for reading",
+  "releaseUi.readerWidthText": "Surah pages are wider on phones: the outer side margins are removed while the inner text gutter is retained."
 });

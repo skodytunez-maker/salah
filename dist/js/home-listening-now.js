@@ -6,7 +6,7 @@ import{personalDataAllowed}from './audience.js';
 import{listeningCountMarkup,updateListeningSummary}from './listening-summary.js';
 export function createHomeListeningNow({doc=globalThis.document,fetcher=globalThis.fetch,allowed=personalDataAllowed,now=Date.now,interval=setInterval,cancelInterval=clearInterval,canOpen=()=>ownerVerified()||ownerNeedsMfa(),open=showHomeActivity,subscribeOwner=onOwnerChange}={}){
  let host=null,timer=null,request=null,generation=0,last=null,unsubscribeOwner=null,appearance=null;
- const hide=()=>{if(host){host.hidden=true;host.innerHTML='';}};
+ const hide=()=>{if(host){host.hidden=true;host.innerHTML='';delete host.dataset.activityMetrics;}};
  const metrics=[['count','Сейчас слушают Коран'],['readers','Сейчас читают Коран'],['dhikr','Сейчас делают зикр']];
  const paint=values=>{if(!host?.isConnected)return;
   const before=new Map([...host.children].map(node=>[node.dataset.homeActivity,node.getBoundingClientRect().left]));
@@ -19,6 +19,7 @@ export function createHomeListeningNow({doc=globalThis.document,fetcher=globalTh
    else updateListeningSummary(node,value,{count:true});
    node.setAttribute('aria-label',label+': '+value);if(interactive)node.onclick=()=>open(key);host.append(node);
   }
+  host.dataset.activityMetrics=String(host.children.length);
   appearance?.refresh();
   const reduced=doc.body?.classList.contains('reduce-motion')||doc.body?.classList.contains('no-transitions')||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   if(!reduced)for(const node of host.children){const old=before.get(node.dataset.homeActivity),delta=old===undefined?0:old-node.getBoundingClientRect().left;

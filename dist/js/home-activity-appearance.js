@@ -4,10 +4,10 @@ export function activityTone(day,clouds=0,previous='light'){
  const brightness=Math.max(0,Math.min(1,day))*(.65-.18*Math.max(0,Math.min(1,Number.isFinite(clouds)?clouds:0)))+.04;
  return brightness>.38?'ink':brightness<.26?'light':previous;
 }
-export function activityPlacement(header,card,parent,{scrollLeft=0,scrollTop=0,clientLeft=0,clientTop=0}={}){
- if(!header||!card||!parent||card.width<=0||card.top<header.bottom)return null;
- // Centre the 19px glyphs in the existing gap,not a new in-flow row.
- return {left:card.left-parent.left+scrollLeft-clientLeft,top:(header.bottom+card.top-32)/2-parent.top+scrollTop-clientTop,width:card.width};
+// Keep a bounded right-hand rail outside the centred brand,independent of table mode.
+export function activityRailWidth(shellWidth,brandWidth){
+ if(!Number.isFinite(shellWidth)||!Number.isFinite(brandWidth)||shellWidth<=0||brandWidth<=0)return null;
+ return Math.max(24,Math.min(shellWidth,(shellWidth-brandWidth)/2-8));
 }
 export function mountHomeActivityAppearance(host,{doc=host?.ownerDocument}={}){
  const win=doc?.defaultView;if(!host||!win)return{refresh(){},dispose(){}};
@@ -19,20 +19,15 @@ export function mountHomeActivityAppearance(host,{doc=host?.ownerDocument}={}){
   if(scene){const day=scene.style.getPropertyValue('--scene-day').trim(),clouds=scene.style.getPropertyValue('--scene-clouds').trim();tone=activityTone(day===''?NaN:Number(day),clouds===''?0:Number(clouds),tone);}
   if(host.dataset.activityTone!==tone)host.dataset.activityTone=tone;
  };
- const place=()=>{if(disposed||doc.hidden||host.hidden||!host.isConnected)return;
-  const shell=host.closest('.app-home-shell'),header=shell?.querySelector('.app-home-top'),card=shell?.querySelector('.central-prayer');
-  const parent=host.offsetParent,initial=!parent||(parent===doc.body&&win.getComputedStyle(parent).position==='static');
-  const origin=initial?{left:0,top:0}:parent.getBoundingClientRect();
-  const scroll=initial?{scrollLeft:win.scrollX,scrollTop:win.scrollY}:{scrollLeft:parent.scrollLeft,scrollTop:parent.scrollTop,clientLeft:parent.clientLeft,clientTop:parent.clientTop};
-  const bounds=activityPlacement(header?.getBoundingClientRect(),card?.getBoundingClientRect(),origin,scroll);
-  if(!bounds)return;
-  for(const key of ['left','top','width']){const value=Math.round(bounds[key]*100)/100+'px';if(host.style[key]!==value)host.style[key]=value;}
-  host.style.right='auto';host.style.maxWidth='none';
+ const place=()=>{if(disposed||doc.hidden||!host.isConnected)return;
+  const shell=host.closest('.app-home-shell'),brand=shell?.querySelector('.app-home-brand');
+  const width=activityRailWidth(shell?.getBoundingClientRect().width,brand?.getBoundingClientRect().width);
+  if(width===null)return;const value=Math.round(width*100)/100+'px';if(host.style.maxWidth!==value)host.style.maxWidth=value;
  };
  const refresh=()=>{paintTone();place();};
  const resize=Resize?new Resize(place):null;
  const shell=host.closest('.app-home-shell');
- for(const node of new Set([shell,...(shell?.querySelectorAll('.home-prayer-center,.app-home-top,.central-prayer,.home-prayer-center > *')||[])]))if(node)resize?.observe(node);
+ for(const node of new Set([shell,...(shell?.querySelectorAll('.app-home-brand')||[])]))if(node)resize?.observe(node);
  const children=Observer?new Observer(()=>{for(const node of shell?.querySelectorAll('.home-prayer-center > *')||[])resize?.observe(node);place();}):null;
  const center=shell?.querySelector('.home-prayer-center');if(center)children?.observe(center,{childList:true});
  const body=Observer?new Observer(()=>paintTone()):null;if(doc.body)body?.observe(doc.body,{childList:true});

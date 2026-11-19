@@ -896,3 +896,7 @@ Activity glyphs/counts adapt to existing scene light without a shared backing;on
 
 ## Maintenance541 — accurate installed-version descriptions
 APP_CHANGES now names only the actual541 news-description and tall-phone Home spacing fixes. Manual What’s new opens that installed release and displays its version. Automatic feature announcement523,its receipts and expiry remain unchanged. Do not represent the523theme feature as newly added in every maintenance release. Every future release must record the exact base release source in change-scope and supply actual distinct notes;the new regression rejects copied descriptions. No external push or new feature-announcement edition.
+
+
+## Maintenance542
+Public installed-version notes describe only the fixed-height activity rail/small table spacing and wider ordinary phone Quran reader. Radio and the advanced Sun/Moon correction remain verified-owner features and are not public feature announcements. Preserve523news/receipts/expiry and541’scurrent-version notes policy;no external push.

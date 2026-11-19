@@ -495,3 +495,8 @@ body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mush
 .quran-translation-notes summary{color:var(--gold,#dbc08e)}
 .quran-translation-notes[hidden]{display:none!important}
 .quran-translation-credit{font-size:.85rem;text-align:start;overflow-wrap:anywhere}
+
+/* Ordinary phone reader uses the outer workspace width;retain its inner text gutter. */
+@media(max-width:600px){
+ body.quran-focus:has(.quran-reader) .workspace{padding-left:var(--salah-safe-left,0px);padding-right:var(--salah-safe-right,0px)}
+}
