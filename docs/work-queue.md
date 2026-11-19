@@ -372,3 +372,7 @@ The owner supplied iPhone13Pro photograph: SALAH touches the upper blur. Prepare
 
 ###538 — startup/transition waiting catalogue
 Prepared a bounded optional-cache lifecycle in the existing shared catalogue only. The real public-API fixture fails537onstalledput and passes538;network/body retain2.5s,optional offline read is bounded1000ms,late outcomes cannot overwrite newer data and writes serialize/coalesce. Last complete approved data/origin validation and active-reader policy retained. No physical-phone/browser speed claim. Broader navigation latency,external voice interruption,city-change offer and private519pilot remain open. Exact-source/fullCI/publication pending.
+
+
+###539 — independent Quran text-list opening
+Prepared one more measured fault case:actualQuran text list unnecessarily awaits reader-catalogue refresh. The real-DOM before fixture fails538with available index/held metadata;539renders114surahs/juz/bookmarks without the request. Reader/reciter/share prerequisites,active-player metadata policy,index readiness,8languages/search drafts and late-route fences retained. Other Knowledge/Support auth gates and UI unchanged. Exact-source/fullCI/publication pending;no phone latency benchmark.
