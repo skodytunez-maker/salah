@@ -60,3 +60,7 @@ Before:the actual public function never returns after a valid response while Cac
 
 ###539 — text library opens independently
 Before:hold applyApprovedReciters while resolving the real index;the actual Quran module leaves the text list on its loader. After:114surahs,30juz and bookmark tab are available without initiating that unrelated metadata request. Audio-dependent destinations still wait and protect an active reader. Retain drafts/locale,real index readiness,scripture/audio/preference invariants and hash-bound late success/error handling across navigation. No browser/device timings or general app speedup claim. The physical checklist should cover ordinary/slow-network list entry plus quick back/forward,reading and listening.
+
+
+## 540 — adaptive activity ink
+Shared activity backing removed;scene-driven ink/light foreground,hysteresis and one bounded floating row below city. Real aggregate numbers and owner-only actions unchanged. Controlled DOM fixtures cover day/night/cloudy,scene replacement,city-size/resize,hidden/dispose,large counts and unchanged parent flow. Full phone visual checks remain required;no browser/phone pass claimed. All raster bytes and private sky gate retained.
