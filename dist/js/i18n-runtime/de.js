@@ -3111,6 +3111,8 @@ export default Object.freeze({
  "releaseUi.languagesText": "Menüs, Player, Kalender und Arbeitsbereiche sind in acht Sprachen verfügbar. Die arabische Oberfläche wird von rechts nach links angezeigt.",
  "releaseUi.languagesTitle": "SALAH in deiner Sprache",
  "releaseUi.languagesWhere": "Menü → Einstellungen → App-Sprache.",
+ "releaseUi.matteContoursText": "Im geschlossenen Modus wurden geprüfte Konturen korrigiert: Schneegipfel und ein Teil einer Glasfassade sind wieder sichtbar, Reste des alten Himmels wurden entfernt. Die Originalfotos bleiben unverändert.",
+ "releaseUi.matteContoursTitle": "Verfeinerte Hintergrundkonturen",
  "releaseUi.readerWidthText": "Surenseiten sind auf dem Handy breiter: Die äußeren Seitenabstände entfallen, der innere Textrand bleibt erhalten.",
  "releaseUi.readerWidthTitle": "Mehr Platz zum Lesen",
  "releaseUi.translationsText": "Wähle die Übersetzung unabhängig von der App-Sprache. Jede hat einen Autor, eine Version und eine Quelle; heruntergeladene Suren sind offline verfügbar.",

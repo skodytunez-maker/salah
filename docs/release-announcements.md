@@ -904,3 +904,7 @@ Public installed-version notes describe only the fixed-height activity rail/smal
 
 ## Maintenance543
 One truthful current-version card describes a closed-mode Home composition correction. No new feature-announcement edition,public living-sky availability or external push. Preserve523acknowledgement/expiry and all historical feature cards.
+
+
+## Maintenance544 — reviewed foreground contours
+The current-version card accurately describes closed-mode mask corrections,not new public sky availability. Its before/after SVG uses exact unchanged Badakhshan day photo bytes and actual frozen/reviewed alpha clips. Eight localizations and523announcement/receipts/expiry retained;no external push. Full normal rights inventory is updated without upgrading the photo’s needs-review status. Native archive ceiling remains100MiB.

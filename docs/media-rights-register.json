@@ -3845,6 +3845,15 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/conversation-theme-assets-523.json",
       "note": "Original generative theme wallpaper produced with built-in OpenAI ImageGen from the owner-approved SALAH mockup, or its small preview derivative. Provenance is documented, without a claim of exclusive copyright or blanket third-party clearance."
+    },
+    {
+      "path": "dist/assets/updates/sky-matte-544.svg",
+      "gitBlobSha": "4db71545b8a1a8a0b8647603cd4f78f6688d6e42",
+      "bytes": 312666,
+      "kind": "illustration",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "Repository-authored SVG uses the exact existing Badakhshan day photograph and actual before/after mask contours; docs/sky-matte-repair-544.json. Underlying photograph review status is retained.",
+      "note": "No new external media or source recompression. Embedded original SHA2563575ddcfd3e69ab452cbce54f77a7c755737c37725c64ea1b3f0bbce06fa0523;this derivative does not upgrade the source photograph’s needs-review status."
     }
   ],
   "wallpaperSets": [

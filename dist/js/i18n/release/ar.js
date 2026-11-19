@@ -14,5 +14,7 @@ export default Object.freeze({
   "releaseUi.readerWidthTitle": "مساحة أكبر للقراءة",
   "releaseUi.readerWidthText": "أصبحت صفحة السورة أوسع على الهاتف: أزيلت الهوامش الجانبية الخارجية مع الحفاظ على هامش النص الداخلي.",
   "releaseUi.homeCompositionTitle": "تعديل محدد في الصفحة الرئيسية",
-  "releaseUi.homeCompositionText": "رُفعت العناصر الزخرفية في وضع الاختبار المغلق. لم تتغير الأقسام الأخرى."
+  "releaseUi.homeCompositionText": "رُفعت العناصر الزخرفية في وضع الاختبار المغلق. لم تتغير الأقسام الأخرى.",
+  "releaseUi.matteContoursTitle": "تحسين حدود الخلفيات",
+  "releaseUi.matteContoursText": "في الوضع المغلق صُححت الحواف التي تم فحصها: أُعيد إظهار القمم الثلجية وجزء من واجهة زجاجية وأُزيلت بقايا السماء القديمة. بقيت الصور الأصلية دون تغيير."
 });

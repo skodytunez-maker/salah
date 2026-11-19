@@ -14,5 +14,7 @@ export default Object.freeze({
   "releaseUi.readerWidthTitle": "Mehr Platz zum Lesen",
   "releaseUi.readerWidthText": "Surenseiten sind auf dem Handy breiter: Die äußeren Seitenabstände entfallen, der innere Textrand bleibt erhalten.",
   "releaseUi.homeCompositionTitle": "Gezielte Korrektur der Startseite",
-  "releaseUi.homeCompositionText": "Dekorative Elemente liegen im geschlossenen Testmodus etwas höher. Andere Bereiche bleiben unverändert."
+  "releaseUi.homeCompositionText": "Dekorative Elemente liegen im geschlossenen Testmodus etwas höher. Andere Bereiche bleiben unverändert.",
+  "releaseUi.matteContoursTitle": "Verfeinerte Hintergrundkonturen",
+  "releaseUi.matteContoursText": "Im geschlossenen Modus wurden geprüfte Konturen korrigiert: Schneegipfel und ein Teil einer Glasfassade sind wieder sichtbar, Reste des alten Himmels wurden entfernt. Die Originalfotos bleiben unverändert."
 });

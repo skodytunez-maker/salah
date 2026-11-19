@@ -1,113 +1,129 @@
 {
   "schema": 1,
-  "version": 543,
-  "baseCommit": "bef134e887a9c2178388b37ff842c9fc725cbd4b",
-  "baseTree": "eedf4b77a5da70ef70098d3908a4ea4391693c12",
-  "note": "Owner clarified a higher visible Sun/Moon trajectory between city and Next prayer in focus view,retaining one viewport-relative height across views.Only portrait-phone body transforms change;astronomy,UI geometry,stacking,private gates and original rasters retained.",
+  "version": 544,
+  "baseCommit": "6e097de9ffb3c4f145e9dc78371f8dee4fa45234",
+  "baseTree": "e1895d9d8a64bf91f0a9c45f3f5a6bc7b272824c",
+  "note": "Reviewed source-specific static native-alpha repair across63wallpaper sources,with60corrections and3retained cases. Preserve every raster original,architecture,Home geometry/solar path,private sky gates,scripture/auth and523news receipts. Exact-source comparative art and current localized maintenance notes only.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "design-qa.md",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
-      "path": "dist/day-night.css",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "path": "dist/assets/updates/sky-matte-544.svg",
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/ar.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/az.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/de.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/en.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/kk.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/ru.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/tg.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/i18n/release/uz.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+    },
+    {
+      "path": "dist/js/sky-matte-data.js",
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "dist/sw.js",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+    },
+    {
+      "path": "docs/media-rights-register.json",
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "docs/release-announcements.md",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+    },
+    {
+      "path": "docs/rights-source-manifest.json",
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
+    },
+    {
+      "path": "docs/sky-matte-repair-544.json",
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
-      "path": "scripts/check-sky-ui-layout.mjs",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "path": "scripts/check-sky-matte-repair.mjs",
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "543 reviewed portrait Sun/Moonvisual path lift,regression,current localized closed-mode maintenance notes and required release bookkeeping;no public sky,source image,scripture,UIgeometry or auth change."
+      "reason": "544 reviewed foreground alpha data,independent source-pixel/safety regressions and before/after illustration;required eight-language maintenance/release bookkeeping and unchanged-status incremental rights registration. No source raster,geometry/auth/backend or public sky rollout."
     }
   ],
   "baseline": [
@@ -161,7 +177,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "180b51150911814b56d7d219b23016d0c514c3a5"
+      "sha": "a57b286f89ded7f864a7b7f32f316e5b52aa13fd"
     },
     {
       "path": "ANALYTICS.md",
@@ -169,7 +185,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "28b40ad9c586eaa648812e80466ccb319ed2ee7d"
+      "sha": "903158e2de8354fd852e30e4e1c7adddb0559fea"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -2525,7 +2541,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "0b526708f7a3996855d8698be09a59ffdca8b749"
+      "sha": "6770884a256dd21e029583139fddaf5572198148"
     },
     {
       "path": "dist/delete-account.html",
@@ -2681,7 +2697,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "7a24bdc828141ba1c5af5436722c0b1e9c4ccba0"
+      "sha": "21ef62c6150c03639ae438e730362276f0db3f32"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2997,35 +3013,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "47984e9eda9737c9431e4b88d0a1c63ef29f9aa0"
+      "sha": "e3e8142d12473c3070b314e229b9803df7dc8f70"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "7a1f2cccbd11848bdf0df11e790e1a13f2a709f4"
+      "sha": "5eb1f1eba0ecba50288214ea6e94eef0489d3c80"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "6382c636d475a03f25fc8d4f1656d6485140c94b"
+      "sha": "63ef842f6628894da661fcba127eb12f9a3bc704"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "9cde4727e87ede4c4d638f711bdf1147d8864cb3"
+      "sha": "fd5da135684fd5e6ad7c9a246dede0b22db19989"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "3e16c21e705d8e271b8d973ec25e685ced4d7252"
+      "sha": "d6388ef07254c0f183afe0d55efa93fcfdf51fe5"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "4adb0b5320e67683d1352ba9a8236f75b351bd13"
+      "sha": "9d236ab2a8d8cff43c88f04ab25389ee113511c1"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "042910304cea10f11600ce776de946d1ca5aa082"
+      "sha": "64a10aa3003ee31ccc6ff11f934d2198d528f3d4"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "80f01c021914d538b8190f5f594ec53e0e7845f5"
+      "sha": "550d86a09ad92ce40c8ba9911fb16a3e433ee379"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3741,19 +3757,19 @@
     },
     {
       "path": "dist/js/i18n/release/ar.js",
-      "sha": "83f154d2402d60e66690721850d718f709818fdc"
+      "sha": "543888eb402ff624268ddaf1046d6f1936bb0190"
     },
     {
       "path": "dist/js/i18n/release/az.js",
-      "sha": "8788830be95733e1dd01406f83fee075bc084174"
+      "sha": "ed1b3801a74faac7fb7d81fd2da15572fc547ccb"
     },
     {
       "path": "dist/js/i18n/release/de.js",
-      "sha": "bf5d4fa99b38758c7ee6745bdbe117d07a5172d2"
+      "sha": "bebf4daf3c8d120c1fad0e47fa47fd10d8a0fd07"
     },
     {
       "path": "dist/js/i18n/release/en.js",
-      "sha": "21e743e6bcd9f1833f5a05a045c77e8224d4ee2e"
+      "sha": "bfc6e96389686fd5131a5bff3f83254401b02e6c"
     },
     {
       "path": "dist/js/i18n/release/index.js",
@@ -3761,19 +3777,19 @@
     },
     {
       "path": "dist/js/i18n/release/kk.js",
-      "sha": "8bc904eaf895701c38b2ae928da97a1ad23cbfe0"
+      "sha": "4cde073a6ce6440e585f835fe76a77515f73e4ba"
     },
     {
       "path": "dist/js/i18n/release/ru.js",
-      "sha": "2d09576e5493ea3029d840c778caed6957b7e83e"
+      "sha": "bb48312e6ddcb4ddc5a209cdf553931d87ed35d0"
     },
     {
       "path": "dist/js/i18n/release/tg.js",
-      "sha": "1ceeb74a43abf4cd9b0a66caec20f2f9c9f2decf"
+      "sha": "58d7568e2f4b392f80a3c1c3abb208e93b73d34f"
     },
     {
       "path": "dist/js/i18n/release/uz.js",
-      "sha": "fa1eb8e8921db3543e614f57364a3ea0cb10826d"
+      "sha": "7fa085d3b07c322bec789a5cb610d0951bc3227c"
     },
     {
       "path": "dist/js/i18n/ru.js",
@@ -4673,7 +4689,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "60e1ab452e3c56800eeb9bfb89d8c2f047898f01"
+      "sha": "9104ca8489249770de6e1d7009f754066c0067b1"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -5105,7 +5121,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "37f7cae0cd947745c55749c613d0214568c4d943"
+      "sha": "563e458f1c025f0038930650ff439fd66f932002"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5633,7 +5649,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "baab603cb1c04345ca248eda1b238d2d7d7c2698"
+      "sha": "b9a0618c2a3c5ec842e246c3153c4f420a78bbd1"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6029,7 +6045,7 @@
     },
     {
       "path": "docs/release-announcements.md",
-      "sha": "eccf8ec8c3e801d8a1b521ff6d04f8d3b2a3e4ea"
+      "sha": "6107704dac0a0ed1859c6418c85100578a4766d8"
     },
     {
       "path": "docs/release-artwork.md",
@@ -6153,7 +6169,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "0da941aab4cd8cdb5462e888b21f7aa3e883de9c"
+      "sha": "8d05811d531fff44fa1070883a0e74cca956fb46"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7633,7 +7649,7 @@
     },
     {
       "path": "scripts/check-sky-ui-layout.mjs",
-      "sha": "33d3fe1549e825b8b2a8b02d94791b03233851a6"
+      "sha": "f97b65291f3fc014d7a8e93df250e4a0248023a2"
     },
     {
       "path": "scripts/check-staff-cabinet.mjs",
@@ -8606,5 +8622,5 @@
       "reason": "Existing official imam schedule refreshed during publication."
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=542;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Главная: более устойчивое положение значков активности и дополнительный зазор над таблицей намаза.\",\"Чтение Корана: страница шире за счёт уменьшения внешних боковых отступов.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=543;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Главная: корректировка высоты декоративных элементов в закрытом режиме.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

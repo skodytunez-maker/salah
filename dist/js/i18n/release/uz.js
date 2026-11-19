@@ -14,5 +14,7 @@ export default Object.freeze({
   "releaseUi.readerWidthTitle": "O‘qish uchun ko‘proq joy",
   "releaseUi.readerWidthText": "Telefonda sura sahifasi kengroq: tashqi yon bo‘shliqlar olib tashlandi, matnning ichki hoshiyasi saqlandi.",
   "releaseUi.homeCompositionTitle": "Bosh sahifada kichik tuzatish",
-  "releaseUi.homeCompositionText": "Yopiq sinov rejimida bezak elementlari yuqoriroqqa ko‘tarildi. Boshqa bo‘limlar o‘zgarmadi."
+  "releaseUi.homeCompositionText": "Yopiq sinov rejimida bezak elementlari yuqoriroqqa ko‘tarildi. Boshqa bo‘limlar o‘zgarmadi.",
+  "releaseUi.matteContoursTitle": "Fon konturlari aniqlashtirildi",
+  "releaseUi.matteContoursText": "Yopiq rejimda tekshirilgan chetlar tuzatildi: qorli cho‘qqilar va shisha fasadning bir qismi tiklandi, eski osmon qoldiqlari olib tashlandi. Asl suratlar saqlandi."
 });

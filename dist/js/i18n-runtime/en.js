@@ -3111,6 +3111,8 @@ export default Object.freeze({
  "releaseUi.languagesText": "Menus, the player, calendar and workspaces are available in eight languages. The Arabic interface reads from right to left.",
  "releaseUi.languagesTitle": "SALAH in your language",
  "releaseUi.languagesWhere": "Menu → Settings → App language.",
+ "releaseUi.matteContoursText": "In the closed mode, reviewed outline corrections restore snowy peaks and part of a glass facade and remove remnants of the old sky. Original photographs are unchanged.",
+ "releaseUi.matteContoursTitle": "Refined wallpaper contours",
  "releaseUi.readerWidthText": "Surah pages are wider on phones: the outer side margins are removed while the inner text gutter is retained.",
  "releaseUi.readerWidthTitle": "More room for reading",
  "releaseUi.translationsText": "Choose a translation separately from the app language. Each has an author, version and source; downloaded surahs are available offline.",

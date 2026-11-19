@@ -14,5 +14,7 @@ export default Object.freeze({
   "releaseUi.readerWidthTitle": "Oxumaq üçün daha çox yer",
   "releaseUi.readerWidthText": "Telefonda surə səhifəsi daha genişdir: xarici yan boşluqlar çıxarılıb, mətnin daxili boşluğu saxlanılıb.",
   "releaseUi.homeCompositionTitle": "Əsas ekranda kiçik düzəliş",
-  "releaseUi.homeCompositionText": "Qapalı sınaq rejimində dekorativ elementlər yuxarı qaldırılıb. Digər bölmələr dəyişməyib."
+  "releaseUi.homeCompositionText": "Qapalı sınaq rejimində dekorativ elementlər yuxarı qaldırılıb. Digər bölmələr dəyişməyib.",
+  "releaseUi.matteContoursTitle": "Fonların konturları dəqiqləşdirildi",
+  "releaseUi.matteContoursText": "Qapalı rejimdə yoxlanılmış kənarlar düzəldilib: qarlı zirvələr və şüşə fasadın bir hissəsi bərpa olunub, köhnə səmanın qalıqları silinib. Orijinal şəkillər saxlanılıb."
 });
