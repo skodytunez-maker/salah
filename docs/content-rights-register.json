@@ -106,7 +106,7 @@
     },
     {
       "id": "supabase-js",
-      "name": "Supabase JS 2.117.2",
+      "name": "Supabase JS 2.117.2 with SALAH stale implicit renewal patch",
       "license": "MIT",
       "licenseFile": "dist/js/vendor/supabase-LICENSE.txt",
       "licenseGitBlobSha": "ddeba6a00ae5ec536d5429e040bc73ef2c6a07d6",
@@ -115,7 +115,7 @@
         "dist/js/vendor/supabase-source.json"
       ],
       "status": "license-recorded",
-      "conditions": "Retain MIT notice; other service contracts are a separate issue."
+      "conditions": "Retain MIT notice. The local reversible authentication patch is documented in supabase-source.json and docs/auth-stale-refresh-535.md;upstream package integrity and original bundle fingerprint are preserved."
     },
     {
       "id": "quran-transcript-notices",

@@ -41,3 +41,6 @@ Release533: verify manual update notice on installed iPhone after533,then a late
 
 
 534: manually tap My location with permission,repeat at unchanged coordinates and close during lookup;confirm correct actual settlement/timezone and no late dialog action. With slow/offline provider,the button must recover. No automatic GPS at startup;manual typing/choice remains available. Exact-coordinate cache cannot establish physical GPS speed or whole-navigation latency.
+
+
+535 authentication:verify retained sign-in after installed update,foreground return and expiry;explicit local logout,new login and MFA still work. The real-SDK suspended-read regression is evidence of the reproduced path,not a physical-phone root-cause guarantee. No UI/photo/contrast changes.

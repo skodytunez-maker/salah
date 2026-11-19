@@ -41,7 +41,7 @@ for (const [id, directory] of [
 }
 const frameSources=policy.split(';').find(x=>x.trim().startsWith('frame-src ')).trim().split(/\s+/).slice(1);assert.deepEqual(frameSources.sort(),['https://desktop-jecm5lt.taila4556d.ts.net','https://salah-saadi.goatcounter.com','https://www.youtube-nocookie.com'].sort());
 const sdk=await readFile(new URL('dist/js/vendor/supabase.js',root));
-assert.equal(createHash('sha256').update(sdk).digest('hex'),'59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd');
+assert.equal(createHash('sha256').update(sdk).digest('hex'),'b7be027d101b990604c6e4168566c18aa38f52abcef0b2617857f1c1d2497b44');
 const events={};
 const context=vm.createContext({URL,Request,Response,Headers,Map,Set,setTimeout,clearTimeout,AbortController,self:{registration:{scope:'https://skodytunez-maker.github.io/salah/'},location:{origin:'https://skodytunez-maker.github.io'},addEventListener:(type,fn)=>events[type]=fn}});
 vm.runInContext(await readFile(new URL('dist/sw.js',root),'utf8'),context);

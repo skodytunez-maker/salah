@@ -3,6 +3,14 @@
   "version": "2.117.2",
   "registry": "https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.117.2.tgz",
   "packageIntegrity": "sha512-eSG2VKnHR+Clp1PmidZ1/weJ8PJwoybjva3L2GgKqFG4YDS1Iqmc61psKGZP5xw6OMT2O7ZorPR42PY6q1BOXg==",
-  "browserBundleSHA256": "59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd",
-  "license": "MIT"
+  "browserBundleSHA256": "b7be027d101b990604c6e4168566c18aa38f52abcef0b2617857f1c1d2497b44",
+  "license": "MIT",
+  "upstreamBrowserBundleSHA256": "59d39487c3589843b410322d8a3d562ce022aba1e5ccb16898ef3fb2a0da2ecd",
+  "localPatches": [
+    {
+      "id": "salah-stale-implicit-refresh-v1",
+      "script": "scripts/lib/supabase-refresh-patch.mjs",
+      "reason": "Discard obsolete implicit renewal before sending it to Auth;preserve explicit setSession/refreshSession semantics."
+    }
+  ]
 }

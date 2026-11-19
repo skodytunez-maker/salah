@@ -869,3 +869,6 @@ Use the existing Appearance visual hierarchy for city/prayer Settings and the sh
 
 
 534 maintenance:personal manual city lookup/cache/deadline only;preserve523 themes news/receipts/expiry. No new public news or external push.
+
+
+535 common authentication maintenance:keep523 themes announcement,acknowledgement and expiry. No new public announcement or external push;no public living sky.
