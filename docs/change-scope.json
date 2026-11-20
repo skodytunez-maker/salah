@@ -116,6 +116,10 @@
     {
       "path": "docs/change-scope.json",
       "reason": "Exact reviewed547scope against frozen546."
+    },
+    {
+      "path": "mobile/tests/licenses.mjs",
+      "reason": "Isolated packager fixture now copies its real imported clock asset module and proves both lazy owner-trial images remain outside native bundles;all license validation assertions preserved."
     }
   ],
   "baseline": [

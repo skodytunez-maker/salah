@@ -50,6 +50,9 @@ for(const name of ['Apache-2.0.txt','Cordova-NOTICE.txt'])await put('licenses/'+
 await put('www/previous-bundle.txt','Keep the previous generated bundle if validation fails.');
 await fs.mkdir(path.join(fixture,'dist/js'),{recursive:true});
 await fs.writeFile(path.join(fixture,'dist/js/conversation-themes.js'),await fs.readFile(new URL('../../dist/js/conversation-themes.js',import.meta.url),'utf8'));
+await fs.writeFile(path.join(fixture,'dist/js/makkah-clock-assets.js'),await fs.readFile(new URL('../../dist/js/makkah-clock-assets.js',import.meta.url),'utf8'));
+await fs.mkdir(path.join(fixture,'dist/wallpapers/makkah'),{recursive:true});
+for(const phase of ['day','night'])await fs.writeFile(path.join(fixture,'dist/wallpapers/makkah/'+phase+'-phone-clock-v2.webp'),'Lazy owner-trial fixture');
 await fs.mkdir(path.join(fixture,'dist/themes'),{recursive:true});
 await fs.writeFile(path.join(fixture,'dist/themes/ornament.webp'),'Lazy full-resolution theme fixture');
 await fs.writeFile(path.join(fixture,'dist/themes/ornament-thumb.webp'),'Bundled preview fixture');
@@ -63,6 +66,7 @@ const success=sync();assert.equal(success.status,0,success.stderr);
 assert.match(await fs.readFile(path.join(root,'www/index.html'),'utf8'),/js\/native-entry.js/);
 await assert.rejects(fs.access(path.join(root,'www/themes/ornament.webp')),error=>error.code==='ENOENT');
 assert.equal(await fs.readFile(path.join(root,'www/themes/ornament-thumb.webp'),'utf8'),'Bundled preview fixture');
+for(const phase of ['day','night'])await assert.rejects(fs.access(path.join(root,'www/wallpapers/makkah/'+phase+'-phone-clock-v2.webp')),error=>error.code==='ENOENT','Full owner-trial art stays outside the native archive');
 assert.equal(await fs.readFile(path.join(root,'www/js/native-startup-recovery.js'),'utf8'),recovery);
 assert.ok((await fs.readFile(path.join(root,'www/third-party/Capacitor-NOTICES.txt'),'utf8')).includes('@capacitor/ios@8.5.2'));
 assert.equal(await fs.readFile(path.join(root,'www/js/vendor/capacitor-LICENSE.txt'),'utf8'),fixtureMIT);
