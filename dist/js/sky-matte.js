@@ -1,4 +1,5 @@
 import{SKY_MATTE_ATLAS}from './sky-matte-data.js';
+import{SKY_CLOCK_MATTE_ATLAS}from './sky-clock-matte-data.js';
 
 const assetRoot=new URL('../',import.meta.url),MAX_PIXELS=2097152,MAX_DIMENSION=2048;
 const invalid=reason=>({valid:false,reason,dayFG:null,nightFG:null,dayMetrics:null,nightMetrics:null,dispose(){}});
@@ -12,7 +13,7 @@ export function skyMatteEntry(source){
   const url=new URL(source,assetRoot);
   if(url.protocol!==assetRoot.protocol||url.host!==assetRoot.host||!url.pathname.startsWith(assetRoot.pathname))return null;
   const key=url.pathname.slice(assetRoot.pathname.length);
-  return Object.hasOwn(SKY_MATTE_ATLAS,key)?{key,entry:SKY_MATTE_ATLAS[key]}:null;
+  return Object.hasOwn(SKY_MATTE_ATLAS,key)?{key,entry:SKY_MATTE_ATLAS[key]}:Object.hasOwn(SKY_CLOCK_MATTE_ATLAS,key)?{key,entry:SKY_CLOCK_MATTE_ATLAS[key]}:null;
  }catch{return null;}
 }
 

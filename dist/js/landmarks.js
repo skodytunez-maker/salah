@@ -1,5 +1,6 @@
 // The catalogue and chosen city's pair are fetched only when this mode is used.
 import{curatedAsset,applyApprovedWallpapers}from './approved-catalog.js';
+import{clockWallpaperInfo,fetchClockWallpaper,verifyClockWallpaper,legacyClockAssets,clockPreviewAssets}from './makkah-clock-assets.js';
 export const LANDMARK_CACHE='salah-landmarks-v1';
 const base=new URL('../',import.meta.url),catalogUrl=new URL('wallpapers/catalog.json',base).href;
 const validPoint=c=>Number.isFinite(c?.latitude)&&Math.abs(c.latitude)<=90&&Number.isFinite(c?.longitude)&&Math.abs(c.longitude)<=180;
@@ -36,11 +37,12 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   abort(signal);const store=await cache();let response=await store?.match(url).catch(()=>null);
   const complete=value=>value?.status===200&&value.type!=='opaque'&&!value.headers.has('Content-Range');
   if(response&&!complete(response)){await store?.delete(url).catch(()=>{});response=null;}
-  if(!response)response=await fetcher(url,{signal,credentials:'omit',referrerPolicy:'no-referrer'});
+  if(!response)response=clockWallpaperInfo(url)?await fetchClockWallpaper(url,{signal,fetcher}):await fetcher(url,{signal,credentials:'omit',referrerPolicy:'no-referrer'});
   if(!complete(response))throw Error('Landmark download failed');
   const contentType=response.headers.get('Content-Type')||'';
   if(!type.test(contentType))throw Error('Unexpected landmark format');
   const bytes=await response.clone().arrayBuffer();abort(signal);if(bytes.byteLength>limit)throw Error('Landmark too large');
+  if(!await verifyClockWallpaper(url,bytes)){await store?.delete(url).catch(()=>{});throw Error('Landmark integrity failed');}abort(signal);
   const length=response.headers.get('Content-Length');if(length&&!response.headers.has('Content-Encoding')&&Number(length)!==bytes.byteLength)throw Error('Incomplete landmark');
   if(store)await store.put(url,response.clone()).catch(()=>{});
   return response;
@@ -54,19 +56,21 @@ export function createLandmarkLoader({fetcher=globalThis.fetch,cacheStorage=glob
   finally{clearTimeout(timer)}
  }
  const entries=()=>catalogTask??=catalogue().then(async entries=>{if(!entries.length)catalogTask=null;return overlay?await overlay(entries,validateLandmarkCatalog):entries});
- const load=async function load(city,{signal,chosen='auto',tablet=false}={}){
+ const load=async function load(city,{signal,chosen='auto',tablet=false,previewAccess=null}={}){
   abort(signal);const entry=matchLandmark(city,await entries(),chosen);abort(signal);
   if(!entry)return {status:(await entries()).length?'unavailable':'offline',entry:null};
-  let selected=landmarkAssetSet(entry,tablet);
+  let selected=clockPreviewAssets(landmarkAssetSet(entry,tablet),tablet,previewAccess);
   const files=asset=>Promise.all(['day','night','mask'].map(key=>publicFile(new URL(asset[key],base).href,signal,{type:key==='mask'?/image\/svg\+xml/:/image\/(?:webp|jpeg)/,limit:key==='mask'?32768:3145728})));
   let responses;
-  try{responses=await files(selected)}catch(error){abort(signal);if(selected.day===entry.day&&selected.night===entry.night)throw error;selected=landmarkAssetSet({...entry,tablet:undefined},tablet);responses=await files(selected)}
+  try{responses=await files(selected)}catch(error){abort(signal);const legacy=legacyClockAssets(selected);if(legacy){selected=legacy;responses=await files(selected);}else{if(selected.day===entry.day&&selected.night===entry.night)throw error;selected=landmarkAssetSet({...entry,tablet:undefined},tablet);try{responses=await files(selected);}catch(fallbackError){abort(signal);const previous=legacyClockAssets(selected);if(!previous)throw fallbackError;selected=previous;responses=await files(selected);}}}
   abort(signal);
+  if(selected.clockPreview===true&&clockPreviewAssets(entry,tablet,previewAccess)===entry)return load(city,{signal,chosen,tablet});
   const blobs=await Promise.all(responses.map(r=>r.blob()));abort(signal);
   // Keep just the selected pair and mask. User counters/settings use other stores.
   // Retain both sizes of the chosen city so rotation also works offline.
-  const store=await cache(),keep=new Set([catalogUrl,...[entry,landmarkAssetSet(entry,true)].flatMap(asset=>['day','night','mask'].map(k=>new URL(asset[k],base).href))]);
+  const store=await cache(),keep=new Set([catalogUrl,...[entry,landmarkAssetSet(entry,true),selected].flatMap(asset=>[asset,legacyClockAssets(asset)].filter(Boolean)).flatMap(asset=>['day','night','mask'].map(k=>new URL(asset[k],base).href))]);
   if(store)for(const request of await store.keys())if(!keep.has(request.url))await store.delete(request).catch(()=>{});
+  abort(signal);if(selected.clockPreview===true&&clockPreviewAssets(entry,tablet,previewAccess)===entry)return load(city,{signal,chosen,tablet});
   return {status:'ready',entry:selected,blobs};
  };
  load.catalogue=entries;

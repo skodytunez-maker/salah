@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-20",
+  "state": "local owner phone-trial candidate;not published",
+  "baselineVersion": 546,
+  "scope": "two853x1844portrait generated illustrations;original public catalogue and landscape remain unchanged",
+  "generation": {
+    "tool": "built-in image_gen",
+    "day": {
+      "id": "exec-305f6081-c145-442d-833d-cef963996c98",
+      "prompt": "Use case: precise-object-edit\nAsset type: SALAH portrait Makkah wallpaper, matching the exact 853 x 1844 pixel framing of image 1.\nInput images: Image 1 is the EDIT TARGET. Image 2 is an authentic architectural reference ONLY for the Kaaba door curtain (sitara), not for the camera, composition, lighting, crowd or tower.\nPrimary request: Correct ONLY the narrow erroneous all-gold door/curtain area on the right-hand visible wall of the Kaaba near the central corner (approximately x435–470, y1140–1235 in image 1). Replace that crude solid gold strip with a proportionately correct black fabric sitara with delicate gold embroidered rectangular borders and layered medallion panels, as seen in image 2. Show a small restrained glimpse of the raised gold door through the lower central opening; the gold door must not become a giant full-height gold stripe extending to the ground. Match the perspective and distant scale of the existing Kaaba. Keep this embroidery fine and natural at this small viewing distance, not invented oversized Arabic letters.\nConstraints: Retain the exact 853 x 1844 canvas and framing of image 1. Preserve the Kaaba silhouette, dimensions, roof, corner, horizontal gold belt, neighboring minarets, all pilgrims and their positions/scale, facades and their current brightness, existing clock tower with BLANK plaque above its clock, crescent, floor and all sky/cloud patterns. Do not change the crowd density. Do not add faces, portraits, new objects, text, watermark or UI. Make only this tiny local door-curtain correction; everything else should visually remain as image 1. It is DAYTIME; do not copy the night lighting of reference image 2."
+    },
+    "night": {
+      "id": "exec-0d419d83-ed0d-4f97-8f45-be89f53d73b0",
+      "prompt": "Use case: precise-object-edit\nImage 1 is the night wallpaper EDIT TARGET,853x1844. Image 2 is its corrected DAY companion, architectural door detail reference only. Image 3 is the authentic close photo of the black-and-gold Kaaba door curtain for construction reference only.\nCorrect ONLY the tall mistaken all-gold door stripe on the Kaaba right wall (around x435–480,y1140–1235). Match the corrected black fabric sitara in image2: delicate gold embroidery, rectangular borders and small medallions, narrow lower central opening revealing a restrained raised gold door. The curtain is predominantly black, not a solid gold stripe to ground. Scale/perspective stay consistent with the distant Kaaba and surrounding people. Fine distant texture, no oversized invented Arabic text.\nKeep the EXACT 853x1844 framing, night sky and cloud pattern, Kaaba silhouette/gold belt/roof, all pilgrims/positions/scale/density, floor reflections, illuminated minarets, facades and their exposure, clock with blank plaque and crescent of image1 unchanged. Do not relight day, move objects, recompose/crop, add people, recognizable faces, UI,text or watermark. Only this tiny local curtain correction."
+    }
+  },
+  "references": [
+    {
+      "url": "https://www.pexels.com/photo/kaaba-at-night-with-clock-tower-in-mecca-35531111/",
+      "author": "Sena Kys",
+      "license": "https://www.pexels.com/license/",
+      "role": "door curtain architectural reference;not shipped as a photograph"
+    },
+    {
+      "url": "https://unsplash.com/photos/kaaba-in-mecca-with-crowd-66Tu10CxYY0",
+      "author": "Ishan @seefromthesky",
+      "license": "https://unsplash.com/license",
+      "role": "earlier crowd/clock architectural reference"
+    },
+    {
+      "url": "https://commons.wikimedia.org/wiki/File:ZamZam_tower_(Mecca_clock_tower)_2026-05-28.jpg",
+      "license": "CC BY-SA4.0",
+      "role": "earlier clock reference;attribution/share-alike review required before any public distribution",
+      "author": "FaysaLBinDaruL",
+      "attribution": "FaysaLBinDaruL",
+      "compliance": "Attribution/source/change notice and CC BY-SA4.0for resulting two illustrations recorded in sibling clock-v2-CREDITS.txt;original photos not shipped."
+    }
+  ],
+  "encoding": [
+    {
+      "phase": "day",
+      "path": "wallpapers/makkah/day-phone-clock-v2.webp",
+      "bytes": 1938628,
+      "sha256": "c02d65fce22096d4e63df336eb74919cfe40b1615d9d4c96d518517fad056360",
+      "size": [
+        853,
+        1844
+      ],
+      "lossless": true,
+      "skyMeanAbsoluteDifference": 3.0314748287200928,
+      "skyCorrelation": 0.9954725788164688
+    },
+    {
+      "phase": "night",
+      "path": "wallpapers/makkah/night-phone-clock-v2.webp",
+      "bytes": 1567480,
+      "sha256": "1fd9e427ba258d63e7841974709f406a9035f302166e4d271f22a9086978360c",
+      "size": [
+        853,
+        1844
+      ],
+      "lossless": true,
+      "skyMeanAbsoluteDifference": 1.8005001544952393,
+      "skyCorrelation": 0.9987975440261606
+    }
+  ],
+  "limits": [
+    "Generated illustration,not genuine documentary photography or4K.",
+    "Edits preserve general composition;non-target pixels are not identical.",
+    "Authenticity of fine embroidery is illustrative at this distance.",
+    "Physical iPhone rendering,full package tests and delivery pending."
+  ],
+  "rollback": "If owner rejects phone trial,keep currently published composition and correct only tower;all original232rasters retained.",
+  "distributionLicense": "CC BY-SA4.0for these two new illustrations where copyright applies",
+  "releaseAuthorization": {
+    "date": "2026-11-20",
+    "user": "Да, тихое обновление547",
+    "scope": "ordinary updated shell;new portrait art only for verified owner;no new general news or external push"
+  }
+}

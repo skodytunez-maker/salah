@@ -28,7 +28,7 @@ export function validatedRelease(value){
 }
 function acknowledge(release=APP_ANNOUNCEMENT){try{localStorage.setItem(SEEN_KEY,String(Math.max(Number(localStorage.getItem(SEEN_KEY))||0,release.version)));}catch{}}
 export function hasSeenAnnouncement(release=APP_ANNOUNCEMENT){try{return Math.max(Number(localStorage.getItem(SEEN_KEY))||0,Number(localStorage.getItem(LEGACY_SEEN_KEY))||0)>=release.version;}catch{return true;}}
-export function showAppRelease(release=currentRelease,{available=false,acknowledgeAnnouncement=release?.version===APP_ANNOUNCEMENT.version,onClose=null}={}){
+export function showAppRelease(release=currentRelease.changes.length?currentRelease:APP_ANNOUNCEMENT,{available=false,acknowledgeAnnouncement=release?.version===APP_ANNOUNCEMENT.version,onClose=null}={}){
  const safe=validatedRelease(release)||(available?{version:0,date:'',changes:[t('pwaUi.fallback')]}:currentRelease);
  modal('<div class="release-dialog"><span class="eyebrow">SALAH'+(safe.version?' · '+esc(String(safe.version)):'')+' · <time data-release-date datetime="'+esc(safe.date)+'">'+esc(releaseDate(safe.date))+'</time></span><h2 tabindex="-1" autofocus data-i18n="'+(available?'pwaUi.willChange':'pwaUi.whatsNew')+'">'+esc(t(available?'pwaUi.willChange':'pwaUi.whatsNew'))+'</h2>'+(illustratedReleaseMarkup(safe.version,safe.changes)||'<ul>'+safe.changes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>')+'<button class="button secondary" type="button" data-close data-i18n="pwaUi.understood">'+esc(t('pwaUi.understood'))+'</button></div>');
  bindIllustratedRelease(document.querySelector('.release-dialog'));

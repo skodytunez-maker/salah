@@ -124,3 +124,15 @@ try{
  assert.equal(requests,0,'Offline mattes use bundled data and no network/model');
 }finally{globalThis.fetch=fetchBefore;}
 console.log(`PASS: ${expected.size} immutable source mattes (${sourceBytes} source bytes), native contour regressions, independent pair alpha/geometry, offline/abort/failure disposal.`);
+
+// Additive owner portrait sources never replace or relabel the original63.
+const {SKY_CLOCK_MATTE_ATLAS}=await import('../dist/js/sky-clock-matte-data.js');
+assert.equal(Object.keys(SKY_CLOCK_MATTE_ATLAS).length,2);
+for(const[key,entry]of Object.entries(SKY_CLOCK_MATTE_ATLAS)){
+ assert.ok(!Object.hasOwn(SKY_MATTE_ATLAS,key));assert.match(key,/^wallpapers\/makkah\/(?:day|night)-phone-clock-v2[.]webp$/);
+ const source=await readFile(new URL(key,dist));assert.equal(hash(source),entry.sourceSha256);assert.deepEqual(webpSize(source),[853,1844]);
+ const alpha=decodeForegroundAlpha(entry);assert.equal(alpha.length,853*1844);assert.equal(hash(alpha.map(v=>v/255)),entry.maskSha256);assert.equal(skyMatteEntry('./'+key).key,key);
+ for(const[x,y]of[[300,100],[600,500],[60,845]])assert.equal(alpha[y*853+x],0,'open sky remains open');
+ for(const[x,y]of[[430,1100],[450,1180],[400,1500],[300,1800],[30,950]])assert.equal(alpha[y*853+x],255,'Kaaba,curtain,floor and clock remain foreground');
+}
+console.log('PASS:two additive phone source fingerprints,full native bounds,door/clock/floor and sky samples;all original63mattes retained.');

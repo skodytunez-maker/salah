@@ -19,6 +19,7 @@ let skyAnimation=null,lastSkySample=null,lastSkyStamp=null;
 let previewStarted=null,previewOverride=null,lastContext=null,weatherPreview=null,previewRequested=false,previewRequestedAt=null,previewAnchor=null,previewCityKey=null,previewOrigin='';
 const previewActive=()=>previewRequested||previewStarted!==null;
 const advancedSkyAvailable=()=>ADVANCED_SKY_AVAILABLE===true||(typeof ownerVerified==='function'&&ownerVerified());
+const clockPreviewAccess=()=>typeof ownerVerified==='function'&&ownerVerified();
 let previousSkyAccess=advancedSkyAvailable();
 const liveSkyActive=()=>advancedSkyAvailable()&&(settings.liveSky===true||previewActive()||weatherPreview!==null);
 const cityKey=()=>JSON.stringify([settings.city||null,settings.wallpaper,settings.landmarkCity]);
@@ -176,10 +177,12 @@ function prepareLandmark(scene,home){
  const selected=settings.wallpaper==='landmark';
  const viewportWidth=document.documentElement?.clientWidth||window.innerWidth||0,viewportHeight=window.innerHeight||0;
  const tablet=Math.min(viewportWidth,viewportHeight)>=600 || viewportWidth>viewportHeight;
- const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude,tablet?'tablet':'phone'].join(':'):null;
+ const clockTrial=!tablet&&clockPreviewAccess();
+ const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude,tablet?'tablet':'phone',clockTrial?'owner-trial':'standard'].join(':'):null;
  if(key!==landmarkKey){
   cancelSkyPreparation();
   stopLandmarkRequest();landmarkKey=key;landmarkState='idle';
+  if(landmarkEntry?.clockPreview===true&&!clockTrial)clearLandmark(scene);
   // While another landmark is loading, keep the currently decoded city visible.
   // Do not flash the bundled mosque wallpaper between two explicit city choices.
   if(!selected)clearLandmark(scene);
@@ -189,13 +192,15 @@ function prepareLandmark(scene,home){
  else prepareBuiltin(scene,home,Math.min(viewportWidth,viewportHeight)>=600);
  landmarkNote();if(key===null||!home||landmarkState!=='idle')return;
  const controller=new AbortController();landmarkRequest=controller;landmarkState='loading';landmarkNote();
- loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity,tablet}).then(async result=>{
+ loadLandmark(settings.city,{signal:controller.signal,chosen:settings.landmarkCity,tablet,previewAccess:clockPreviewAccess}).then(async result=>{
   if(controller.signal.aborted)return;
+  if(result.entry?.clockPreview===true&&!clockPreviewAccess()){landmarkRequest=null;landmarkKey=null;landmarkState='idle';return;}
   if(result.status!=='ready'){landmarkRequest=null;landmarkState=result.status;keepLandmarkSurface(scene);landmarkNote();return}
   const urls=result.blobs.map(blob=>URL.createObjectURL(blob));
   try{
    const images=await Promise.all(urls.map((url,i)=>loadDecodedImage(url,{signal:controller.signal}).catch(error=>{error.assetKey=['day','night','mask'][i];throw error;})));
    if(controller.signal.aborted){releaseLandmarkUrls(urls);return}
+   if(result.entry.clockPreview===true&&!clockPreviewAccess()){releaseLandmarkUrls(urls);landmarkRequest=null;landmarkKey=null;landmarkState='idle';return;}
    const previous=landmarkUrls;
    // Swap only after both photographs are decoded, then release the old city.
    for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');

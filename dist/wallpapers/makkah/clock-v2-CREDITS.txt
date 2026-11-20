@@ -1,0 +1,7 @@
+SALAH Makkah portrait trial artwork (2026-11-20)
+Files: day-phone-clock-v2.webp; night-phone-clock-v2.webp
+Generated and edited with the built-in image_gen tool from existing SALAH generated artwork. This is an illustration, not a documentary photograph. Changes:clock architecture and blank clock plaque,crowd perspective/density,door curtain,local facade lighting;original composition retained approximately.
+Clock reference: FaysaLBinDaruL, ZamZam tower (Mecca clock tower) 2026-05-28.jpg, https://commons.wikimedia.org/wiki/File:ZamZam_tower_(Mecca_clock_tower)_2026-05-28.jpg , CC BY-SA4.0 https://creativecommons.org/licenses/by-sa/4.0/ . These two resulting illustration files are made available under CC BY-SA4.0 where copyright applies. No endorsement implied.
+Door-curtain reference: Sena Kys, https://www.pexels.com/photo/kaaba-at-night-with-clock-tower-in-mecca-35531111/ ;Pexels License https://www.pexels.com/license/ .
+Earlier crowd/architecture reference: Ishan (@seefromthesky), https://unsplash.com/photos/kaaba-in-mecca-with-crowd-66Tu10CxYY0 ;Unsplash License https://unsplash.com/license . Original reference photographs are not included in the app.
+This license statement applies to these two new illustrations only;other project assets and code retain their existing terms.

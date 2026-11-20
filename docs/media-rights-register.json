@@ -3863,6 +3863,39 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/release-artwork.md",
       "note": "Original repository-authored vector UI illustration of one SALAH news card without a paging rail. No external photographs,embedded fonts,religious quotations,user content or scripts. Project-origin evidence does not claim exclusive copyright."
+    },
+    {
+      "path": "dist/wallpapers/makkah/day-phone-clock-v2.webp",
+      "gitBlobSha": "15a7ea0da1b318ec359778725cc28240bee9b7ac",
+      "bytes": 1938628,
+      "kind": "raster",
+      "wallpaperSet": "makkah",
+      "role": "owner-preview-day",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "docs/makkah-phone-trial-provenance.json",
+      "note": "Built-in generated illustration edit,not genuine photography or4K. Reference attribution/change notice and CC BY-SA4.0in sibling clock-v2-CREDITS.txt;all original assets retain existing rights status."
+    },
+    {
+      "path": "dist/wallpapers/makkah/night-phone-clock-v2.webp",
+      "gitBlobSha": "60ea36b4b778490fa237f97de95f8352dea768b9",
+      "bytes": 1567480,
+      "kind": "raster",
+      "wallpaperSet": "makkah",
+      "role": "owner-preview-night",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "docs/makkah-phone-trial-provenance.json",
+      "note": "Built-in generated illustration edit,not genuine photography or4K. Reference attribution/change notice and CC BY-SA4.0in sibling clock-v2-CREDITS.txt;all original assets retain existing rights status."
+    },
+    {
+      "path": "dist/wallpapers/makkah/sky-phone-clock-v2.svg",
+      "gitBlobSha": "027f079d170ac215d78b346cda6db944b043ec86",
+      "bytes": 7512,
+      "kind": "mask",
+      "wallpaperSet": "makkah",
+      "role": "owner-preview-mask",
+      "rightsReviewStatus": "origin-supported",
+      "rightsEvidence": "docs/makkah-phone-trial-provenance.json",
+      "note": "Code-authored source-specific silhouette for new private portrait illustration. Original63mattes unchanged."
     }
   ],
   "wallpaperSets": [
