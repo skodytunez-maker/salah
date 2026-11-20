@@ -11,7 +11,7 @@ export function createOwnerReleaseCard({getState,verify,release,showRelease,stor
  const active=()=>host?.isConnected&&getState().active;
  function draw(){
   if(!host?.isConnected)return;
-  const state=getState(),visible=state.active&&state.signedIn&&state.userId===userId&&state.ownerId===userId&&!!userId&&!seen(userId);
+  const state=getState(),visible=Array.isArray(release.changes)&&release.changes.length>0&&state.active&&state.signedIn&&state.userId===userId&&state.ownerId===userId&&!!userId&&!seen(userId);
   host.hidden=!visible;
   const next=visible?userId+':'+release.version:'';if(next===signature)return;signature=next;
   ownerPaint(host,visible?"<aside class=\"owner-home-update\" aria-label=\"Обновление SALAH\" data-i18n-aria-label=\"ownerUi.salahUpdate\"><div><strong data-i18n=\"ownerUi.salahUpdated\">SALAH обновлён</strong><span>"+esc(release.label)+' · '+esc(release.version)+"</span><button type=\"button\" data-release-open data-i18n=\"ownerUi.whatsNew\">Что нового</button></div><button type=\"button\" class=\"owner-home-update-close\" data-release-close aria-label=\"Закрыть уведомление об обновлении\" data-i18n-aria-label=\"ownerUi.closeUpdateNotice\">×</button></aside>":'');

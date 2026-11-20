@@ -84,3 +84,37 @@ assert.equal((await dualOffline(null,{chosen:'khujand'})).entry.day,original.day
 const fallback=createLandmarkLoader({fetcher:async url=>url.includes('-tablet-')?new Response('',{status:404}):dualFetch(url),cacheStorage:{open:async()=>null}});
 assert.equal((await fallback(null,{chosen:'khujand',tablet:true})).entry.day,original.day,'Unavailable tablet set falls back to same city');
 console.log('PASS: original phone art, validated tablet paths, immutable city identity, offline rotation, bounded paired cache and same-city fallback.');
+
+// Owner portrait trial uses the real lossless bytes;default and tablet stay v1.
+const {MAKKAH_CLOCK_IMAGES,clockWallpaperInfo,clockWallpaperFetchURL,verifyClockWallpaper,fetchClockWallpaper,clockPreviewAssets}=await import('../dist/js/makkah-clock-assets.js');
+const makkah=entries.find(x=>x.id==='makkah'),trial=clockPreviewAssets(makkah,false,()=>true);
+assert.equal(clockPreviewAssets(makkah,false,null),makkah);assert.equal(clockPreviewAssets(makkah,false,()=>false),makkah);assert.equal(clockPreviewAssets(makkah,false,()=>{throw Error('unavailable')}),makkah);
+assert.equal(clockPreviewAssets(makkah,true,()=>true),makkah);assert.equal(clockPreviewAssets(entries[0],false,()=>true),entries[0]);
+assert.equal(clockPreviewAssets({...makkah,day:'wallpapers/makkah/curated.webp'},false,()=>true).day,'wallpapers/makkah/curated.webp');
+assert.equal(trial.clockPreview,true);assert.equal(Object.keys(MAKKAH_CLOCK_IMAGES).length,2);
+for(const [key,info] of Object.entries(MAKKAH_CLOCK_IMAGES)){
+ const bytes=await readFile(new URL(key,root)),url=new URL(key,root).href;
+ assert.equal(bytes.length,info.bytes);assert.equal(await verifyClockWallpaper(url,bytes),true);
+ assert.equal(await verifyClockWallpaper(url,bytes.subarray(1)),false);
+ const corrupt=Buffer.from(bytes);corrupt[100]^=1;assert.equal(await verifyClockWallpaper(url,corrupt),false);
+ assert.equal(clockWallpaperFetchURL(url,{native:false}),url);assert.equal(clockWallpaperFetchURL(url,{native:true}),'https://skodytunez-maker.github.io/salah/'+key);
+ let request;const fetcher=async(u,options)=>{request={u,options};return new Response(bytes,{headers:{'Content-Type':'image/webp'}});};
+ assert.equal((await fetchClockWallpaper(url,{fetcher,native:true})).headers.get('Content-Length'),String(bytes.length));
+ assert.equal(request.options.credentials,'omit');assert.equal(request.options.redirect,'error');assert.equal(request.options.signal.aborted,true,'completed bounded request detaches and aborts');
+ await assert.rejects(fetchClockWallpaper(url,{fetcher:async()=>new Response(corrupt,{headers:{'Content-Type':'image/webp'}})}),/integrity/);
+ await assert.rejects(fetchClockWallpaper(url,{fetcher:async()=>new Response(bytes,{status:206,headers:{'Content-Type':'image/webp'}})}),/response/);
+ await assert.rejects(fetchClockWallpaper(url,{fetcher:()=>new Promise(()=>{}),timeout:10}),/timeout/);
+ await assert.rejects(fetchClockWallpaper(url,{fetcher:async()=>({status:200,type:'basic',headers:new Headers({'Content-Type':'image/webp'}),arrayBuffer:()=>new Promise(()=>{})}),timeout:10}),/timeout/);
+ const cancellation=new AbortController();const pending=fetchClockWallpaper(url,{fetcher:()=>new Promise(()=>{}),signal:cancellation.signal});cancellation.abort();await assert.rejects(pending,e=>e.name==='AbortError');
+}
+for(const u of ['https://evil.test/wallpapers/makkah/day-phone-clock-v2.webp','https://skodytunez-maker.github.io/not-salah/wallpapers/makkah/day-phone-clock-v2.webp',new URL('wallpapers/makkah/day-phone-v1.webp',root).href])assert.equal(clockWallpaperInfo(u),null);
+const trialRequests=[];let granted=true,denyInFlight=false,downloadFails=false;
+const trialFetch=async(url,options)=>{trialRequests.push(url);if(url.endsWith('catalog.json'))return new Response(JSON.stringify(catalog),{headers:{'Content-Type':'application/json'}});if(url.includes('clock-v2')){if(downloadFails)throw Error('offline');if(denyInFlight)granted=false;return new Response(await readFile(new URL(url)),{headers:{'Content-Type':url.endsWith('.svg')?'image/svg+xml':'image/webp'}});}return new Response('original public wallpaper',{headers:{'Content-Type':url.endsWith('.svg')?'image/svg+xml':'image/webp'}});};
+const noCache={open:async()=>null};const trialLoad=createLandmarkLoader({fetcher:trialFetch,cacheStorage:noCache});
+assert.equal((await trialLoad(null,{chosen:'makkah'})).entry.day,makkah.day);assert.ok(!trialRequests.some(x=>x.includes('clock-v2')),'default clients never request the trial');
+assert.equal((await trialLoad(null,{chosen:'makkah',previewAccess:()=>granted})).entry.day,trial.day);
+assert.equal((await trialLoad(null,{chosen:'makkah',tablet:true,previewAccess:()=>true})).entry.day,makkah.tablet.day);
+denyInFlight=true;assert.equal((await trialLoad(null,{chosen:'makkah',previewAccess:()=>granted})).entry.day,makkah.day,'revoked authority never commits a late trial response');
+denyInFlight=false;granted=true;downloadFails=true;assert.equal((await trialLoad(null,{chosen:'makkah',previewAccess:()=>granted})).entry.day,makkah.day,'unavailable trial falls back to original same-city pair');
+assert.match(weatherSource,/previewAccess:clockPreviewAccess/);assert.match(weatherSource,/clockPreview===true&&!clockPreviewAccess()/,'decode completion rechecks live authority');
+console.log('PASS:owner-only portrait trial,default/tablet/curated invariants,real SHA/size verification,native immutable origins,timeout/body/cancellation,late revoke and original fallback.');

@@ -8,7 +8,7 @@ assert.equal(typeof scope.previousReleaseSource,'string','Record the exact previ
 const previousBytes=Buffer.from(scope.previousReleaseSource),previousSha=createHash('sha1').update(Buffer.from('blob '+previousBytes.length+'\0')).update(previousBytes).digest('hex');
 assert.equal(previousSha,scope.baseline.find(x=>x.path==='dist/js/app-release.js').sha,'Notes must be compared with the actual frozen base');
 const previousVersion=Number(scope.previousReleaseSource.match(/APP_VERSION=(\d+)/)[1]);
-const previousChanges=JSON.parse(scope.previousReleaseSource.match(/APP_CHANGES=(\[[^\n]+\]);/)[1]);
+const previousChanges=JSON.parse(scope.previousReleaseSource.match(/APP_CHANGES=(\[[^\n]*\]);/)[1]);
 assert.ok(APP_VERSION>previousVersion);assert.notDeepEqual(APP_CHANGES,previousChanges,'A new version cannot recycle the preceding version’s notes');
 if(APP_VERSION>APP_ANNOUNCEMENT.version)assert.notDeepEqual(APP_CHANGES,APP_ANNOUNCEMENT.changes,'A maintenance release cannot relabel the old feature announcement');
 const w=new Window({url:'https://fixture.invalid/salah/',width:390,height:844}),doc=w.document;
@@ -17,8 +17,11 @@ doc.body.innerHTML='<dialog id="modal"><div id="modal-content"></div></dialog>';
 const{showAppRelease,hasSeenAnnouncement}=await import('../dist/js/pwa-updates.js');
 const{setInterfaceLanguage,t}=await import('../dist/js/i18n.js');
 localStorage.setItem('salah:update-announcement-seen-v2',String(APP_ANNOUNCEMENT.version));localStorage.setItem('salah:update-last-seen-v1','515');localStorage.setItem('salah:settings','{"school":0}');const before=[...Array(localStorage.length)].map((_,i)=>[localStorage.key(i),localStorage.getItem(localStorage.key(i))]).sort();
+if(APP_CHANGES.length){
 showAppRelease();assert.equal(dialog.querySelectorAll('.release-feature').length,APP_CHANGES.length);assert.equal(dialog.querySelector('[data-theme-news]'),null,'Manual What’s new must show current notes,not the523tour');assert.match(dialog.querySelector('.eyebrow').textContent,new RegExp(String(APP_VERSION)));assert.equal(hasSeenAnnouncement(),true);
 const first=dialog.querySelector('.release-feature'),picture=first.querySelector('img');for(const code of ['en','az','tg','uz','kk','de','ar','ru']){setInterfaceLanguage(code);assert.equal(first.querySelector('img'),picture);for(const leaf of dialog.querySelectorAll('[data-i18n]'))assert.equal(leaf.textContent,t(leaf.getAttribute('data-i18n')),'Current release leaves translate without pinning future notes to a past feature');}
+
+}else{showAppRelease();assert.equal(dialog.querySelectorAll('[data-theme-news]').length,1,'Quiet release manual news retains the last substantive announcement');assert.match(dialog.querySelector('.eyebrow').textContent,new RegExp(String(APP_ANNOUNCEMENT.version)));assert.equal(hasSeenAnnouncement(),true);}
 dialog.querySelector('[data-close]').click();assert.equal(localStorage.getItem('salah:update-announcement-seen-v2'),String(APP_ANNOUNCEMENT.version),'Closing current notes preserves the old receipt instead of advancing it to a maintenance version');assert.equal(localStorage.getItem('salah:update-last-seen-v1'),'515');assert.equal(localStorage.getItem('salah:settings'),'{"school":0}');
 showAppRelease(APP_ANNOUNCEMENT);assert.equal(dialog.querySelectorAll('[data-theme-news]').length,1,'The explicit historical feature announcement still has its own artwork and receipt');assert.match(dialog.querySelector('.eyebrow').textContent,new RegExp(String(APP_ANNOUNCEMENT.version)));dialog.querySelector('[data-close]').click();
 localStorage.removeItem('salah:update-announcement-seen-v2');localStorage.removeItem('salah:update-last-seen-v1');showAppRelease(APP_ANNOUNCEMENT,{available:true});dialog.querySelector('[data-close]').click();assert.equal(hasSeenAnnouncement(),false,'An available,not installed,release cannot be acknowledged');showAppRelease(APP_ANNOUNCEMENT);dialog.querySelector('[data-close]').click();assert.equal(hasSeenAnnouncement(),true);

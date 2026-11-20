@@ -1,125 +1,121 @@
 {
   "schema": 1,
-  "version": 546,
-  "baseCommit": "d052746fd4f7c64348d5f6b4bd969aa8b4ded498",
-  "baseTree": "5da876be7b6b2e41a0003719acb1800a92fa422d",
-  "note": "Owner narrowed the545news screenshot correction to redundant controls for one card and explicitly retained the description. Scope single-card markup/CSS and regression;preserve multi-card/team paging,theme animation,receipts,all232rasters and545offline core. Makkah photograph replacement remains next,not claimed in546.",
+  "version": 547,
+  "baseCommit": "98346aefee59749bcc08d8f7353cb42e056d89e9",
+  "baseTree": "b8d4e934693e73f6103c75c8f472907c8991e1c0",
+  "note": "Explicit user approval for quiet547;no public private-trial news. New art only for live verified owner. No backend/binary release or original-raster replacement.",
   "allowed": [
     {
       "path": "AGENTS.md",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
       "path": "design-qa.md",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/assets/updates/single-news-546.svg",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/css/quran-awards.css",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/app.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/landmarks.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/makkah-clock-assets.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/owner-release-card.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/pwa-updates.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/sky-clock-matte-data.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/sky-matte.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/ar.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/az.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/de.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/en.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/kk.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/ru.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/tg.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/i18n/release/uz.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "dist/js/release-illustrations.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/js/weather.js",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
       "path": "dist/sw.js",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "docs/change-scope.json",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "dist/wallpapers/makkah/clock-v2-CREDITS.txt",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "dist/wallpapers/makkah/day-phone-clock-v2.webp",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "dist/wallpapers/makkah/night-phone-clock-v2.webp",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "dist/wallpapers/makkah/sky-phone-clock-v2.svg",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "docs/makkah-clock-mattes-547.json",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "docs/makkah-phone-trial-547.md",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "docs/makkah-phone-trial-provenance.json",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
       "path": "docs/media-rights-register.json",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
-    },
-    {
-      "path": "docs/release-artwork.md",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
     },
     {
-      "path": "scripts/check-release-illustrations.mjs",
-      "reason": "546 single-card news correction and related exact-source regression/first-party UI diagram/eight-language current notes/release and rights bookkeeping. Existing545description,all photo bytes,private sky,offline logic and multi-card paging remain unchanged."
+      "path": "mobile/scripts/build-web-update.mjs",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "scripts/check-landmarks.mjs",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "scripts/check-owner-release-card.mjs",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "scripts/check-release-version-notes.mjs",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "scripts/check-sky-matte.mjs",
+      "reason": "547 quiet explicitly approved owner-only portrait trial,lossless images/source masks,verified lazy download/fallback,empty public change list without trial news,regressions,provenance and exact release bookkeeping. Original public catalogue/landscape,232rasters,63mattes,auth backend and523announcement retained."
+    },
+    {
+      "path": "docs/change-scope.json",
+      "reason": "Exact reviewed547scope against frozen546."
     }
   ],
   "baseline": [
@@ -173,7 +169,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha": "0365658d75be60e3e79e30286c1d2a4dfedeea93"
+      "sha": "1497d76397c5aa65ee1360d354db1b1d62989aa6"
     },
     {
       "path": "ANALYTICS.md",
@@ -181,7 +177,7 @@
     },
     {
       "path": "design-qa.md",
-      "sha": "6dce867f79da3120c6221b167f2fd89b8e9125fe"
+      "sha": "c920bf4aeb0c5814b58a9aa4b046a81f7b750f3b"
     },
     {
       "path": "design/window-wallpaper-assets.json",
@@ -1300,6 +1296,10 @@
       "sha": "8d5bda58decff7310efd5296939722dd1c477e00"
     },
     {
+      "path": "dist/assets/updates/single-news-546.svg",
+      "sha": "184faa40e846efad9d2267e063afba79946a2dcd"
+    },
+    {
       "path": "dist/assets/updates/sky-matte-544.svg",
       "sha": "4db71545b8a1a8a0b8647603cd4f78f6688d6e42"
     },
@@ -1481,7 +1481,7 @@
     },
     {
       "path": "dist/css/quran-awards.css",
-      "sha": "68b70b13d8ef0315d7fb0ca3e12ad7b104d00447"
+      "sha": "0de0dc31f1f1e26c81cf1136b293e49359757cc7"
     },
     {
       "path": "dist/css/radio-preview.css",
@@ -2697,7 +2697,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "357c7029d92ba6589e9c8125231779332169a33d"
+      "sha": "bfec1f1da7df3cbb413457e3789d7812dc8e984d"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3013,35 +3013,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "3d0145afa944ff858c145c25018d3d5fc115de6d"
+      "sha": "d89207aa542039f2c44daef7f34649bd79cec313"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "fa4de688dbe9bfef7df9aaef006614d47dda3a00"
+      "sha": "5960f122eb9208de2fd42093e6e515217c5f3b46"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "9861bce3cabaff813cbdadad0dd2f6f50b85fe82"
+      "sha": "e6a13d1bb370260c5ab19ddaec07b4e3742334a6"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "ae06ff3bb26238f702df7cb76640e5400f515777"
+      "sha": "8871e877428f9d4b6037815a10f4d8baad11d6a5"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "13b495bc2784dccb1b4b0fe3fce15b0843df8276"
+      "sha": "e0ddc179e1970c7f84171588356ac743a3c0ed7f"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "53c1e4004c37745d12f678b443cf4c22ef0a2af9"
+      "sha": "901ad89572b0c6d285b40f073ea2a81f582a4623"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "e4af90dc66526e6ac94f95745934cb6f9834d95c"
+      "sha": "87ae5e6c047ad409b883a5d7000080f15b505a31"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "0f4a1054f7ce211390ed5177a525099d8d363772"
+      "sha": "525f543cbb9b8cf3b536ded8f2d9bc506e103901"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3757,19 +3757,19 @@
     },
     {
       "path": "dist/js/i18n/release/ar.js",
-      "sha": "653f213206d170e1ca31a1efbc50bfeb9abaed83"
+      "sha": "352801b43c3f5a169301be258e6047e470322de1"
     },
     {
       "path": "dist/js/i18n/release/az.js",
-      "sha": "1a906ef1f50087b47469bd0c9cb65dcceea08002"
+      "sha": "c3ef7f36d8ef9f3c0400d24bfa99f98ec5a9e988"
     },
     {
       "path": "dist/js/i18n/release/de.js",
-      "sha": "e4772f34e2101ba4f140f663d5dc68fcc6e5226b"
+      "sha": "11f3f2f580766319c1c7129a74566639dae3dec5"
     },
     {
       "path": "dist/js/i18n/release/en.js",
-      "sha": "3b9166df9bb52ee047add03ae5fefc3ff1f95274"
+      "sha": "baed4df034e33c734411112e3a543a90ed037055"
     },
     {
       "path": "dist/js/i18n/release/index.js",
@@ -3777,19 +3777,19 @@
     },
     {
       "path": "dist/js/i18n/release/kk.js",
-      "sha": "836951215e115ba33064bc77588105115f72c691"
+      "sha": "2f5d8b8e026819bd99e3b660a958fe187f11b162"
     },
     {
       "path": "dist/js/i18n/release/ru.js",
-      "sha": "5102f50f18d6833064ec42443b05efdec6d9ddaf"
+      "sha": "5cb068f6161f6fd30d5ce6189d5d2e1071376f84"
     },
     {
       "path": "dist/js/i18n/release/tg.js",
-      "sha": "e4665433815cddef2edbddbfb307239ad5024dd8"
+      "sha": "c19b1e0b4cb272ddfed67da939602388018cc3a2"
     },
     {
       "path": "dist/js/i18n/release/uz.js",
-      "sha": "d68e69e5dcc35cb25b58fba73760f07dbf74894d"
+      "sha": "d5aa3e6a307d2010fd9053a580b115a263da9d8b"
     },
     {
       "path": "dist/js/i18n/ru.js",
@@ -4705,7 +4705,7 @@
     },
     {
       "path": "dist/js/release-illustrations.js",
-      "sha": "ad824cab7df54445ecede405d228ca1cc18c2c1a"
+      "sha": "f0fc1212966895d54c04e6ed48d67d76157cd243"
     },
     {
       "path": "dist/js/reminder-before.js",
@@ -5137,7 +5137,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "4f501c3c81c8221bb0a51897b98ab2da20c94cce"
+      "sha": "c3adafa1995224016b056a52edfebf90bc20ea45"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5669,7 +5669,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "96dbd550ecae7b609b0b2700b3836b957cbccb8a"
+      "sha": "7b31c108821052b3d57863f0c69a03298ea8ad4f"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5837,7 +5837,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "c68faed1bd52f98a892737cf4304a11c7bdf9f81"
+      "sha": "7f3679bff5a05ad31af489f428e7e5d1d0a18605"
     },
     {
       "path": "docs/message-actions-515.md",
@@ -6069,7 +6069,7 @@
     },
     {
       "path": "docs/release-artwork.md",
-      "sha": "093d7f9919ecd7a1bf4b211f19fbb4168b886174"
+      "sha": "00690499f98d966a6621a478d5c7b0690dfad51a"
     },
     {
       "path": "docs/rights-audit.md",
@@ -6081,7 +6081,7 @@
     },
     {
       "path": "docs/rights-source-manifest.json",
-      "sha": "933fe19748082395d39bb7c552e352aef6f047a8"
+      "sha": "e671d5cf11518a95d40745955d6b441f359e3cfd"
     },
     {
       "path": "docs/ruqyah-listening-336.md",
@@ -6193,7 +6193,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "3e5a820d93eca0e167bc83792c3bb342134bdd2a"
+      "sha": "0bf24264cfa27fb9cc6189ff064b626c466f2e30"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7605,7 +7605,7 @@
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
-      "sha": "e0d117fb6f69852f38beb9c114e4c29a9bf4fbfa"
+      "sha": "ec2d5048ed6b91da6c84c2725f6b8e9dc787181d"
     },
     {
       "path": "scripts/check-release-version-notes.mjs",
@@ -8651,8 +8651,8 @@
   "generated": [
     {
       "path": "dist/data/haramain-schedule.json",
-      "reason": "Existing official imam schedule refreshed during publication."
+      "reason": "Existing official schedule refresh at publication."
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=545;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Без интернета: автоматическое сохранение текстов Корана, выбранного перевода, мусхафа и доступного расписания города.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=546;\nexport const APP_UPDATED_AT='2026-11-19';\nexport const APP_UPDATE_DATE='19 ноября 2026';\nexport const APP_CHANGES=[\"Окно новостей: у одиночной карточки убраны стрелки и счётчик.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

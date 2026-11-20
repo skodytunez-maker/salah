@@ -1,0 +1,40 @@
+{
+  "version": 547,
+  "purpose": "new illustration silhouettes only;not a real-photo or4Kcertification",
+  "reviews": [
+    {
+      "source": "wallpapers/makkah/day-phone-clock-v2.webp",
+      "previousSource": "wallpapers/makkah/day-phone-v1.webp",
+      "sourceSha256": "c02d65fce22096d4e63df336eb74919cfe40b1615d9d4c96d518517fad056360",
+      "previousMaskSha256": "1aade6058696ad61fef62a8220549d22b40c1bb01d0ccfb7b144b8d6e35daab8",
+      "maskSha256": "a1d11308bc44ddd853a55cdd353b6037b30e9e7bb919d3ae962b33550a3df583",
+      "reviewRegion": [
+        0,
+        840,
+        75,
+        985
+      ],
+      "changedPixels": 1002,
+      "addedPixels": 756,
+      "removedPixels": 246,
+      "outsideRegionUnchanged": true
+    },
+    {
+      "source": "wallpapers/makkah/night-phone-clock-v2.webp",
+      "previousSource": "wallpapers/makkah/night-phone-v1.webp",
+      "sourceSha256": "1fd9e427ba258d63e7841974709f406a9035f302166e4d271f22a9086978360c",
+      "previousMaskSha256": "d893f13c323178e31a4f692f4f409c3ad2167174cfbb37ae5f2ac5df0192fca5",
+      "maskSha256": "9828f7010c378f30e957172b8d4afab5c90adb98b3592ff915b0081472d3afd3",
+      "reviewRegion": [
+        0,
+        840,
+        75,
+        985
+      ],
+      "changedPixels": 757,
+      "addedPixels": 349,
+      "removedPixels": 408,
+      "outsideRegionUnchanged": true
+    }
+  ]
+}

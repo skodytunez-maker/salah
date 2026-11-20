@@ -85,3 +85,6 @@ All63source candidates screened in122native crop comparisons/31sheets,then sourc
 545: controlled offline/policy/source-byte regressions; no browser/phone visual pass. Check automatic-saving control, selected meaning and Unicode Mushaf in airplane mode, and published-only selected-city coverage. Home geometry and all raster originals are protected.
 
 546: single-card news has no paging arrows/counter and no nested scrolling viewport.545explanation/image retained;multi-card/team navigation and historical523receipts remain. Actual markup/CSS/language fixture,not rendered-phone QA. Makkah clock source is unchanged and queued next.
+
+
+547:two portrait Makkah illustrations with corrected blank-plaque clock,denser proportionate pilgrims without distinguishable faces,and reference-informed black/gold door curtain. Owner-only live verified grant;public/landscape/catalogue unchanged. No new general news/card/public description. Local targeted checks passed;full CI and physical phone/rendering pending. Original232rasters and63mattes unchanged.
