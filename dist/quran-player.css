@@ -181,6 +181,7 @@ body.quran-focus.has-quran-audio .quran-verses{padding-bottom:100px}
 #quran-global-player.is-expanded .quran-player-collapse{grid-area:auto;justify-self:start;width:44px;height:44px;padding:11px;border:1px solid #d9c39826;background:#ffffff05}
 #quran-global-player.is-expanded .quran-now-playing{gap:0;cursor:default;touch-action:pan-y pinch-zoom;margin:0}
 #quran-global-player.is-expanded .quran-playing-portrait{display:block;width:clamp(128px,23dvh,190px);height:clamp(146px,26dvh,218px);object-fit:cover;object-position:center 23%;border-radius:28px;padding:5px;border:1px solid #d9c39888;background:#111e30;box-shadow:0 18px 48px #0005,0 0 0 8px #d9c39806;margin:4px 0 24px}
+#quran-global-player.is-expanded:not(.is-ruqyah) .quran-now-playing strong{cursor:pointer;text-decoration:underline;text-decoration-color:#d9c39875;text-decoration-thickness:1px;text-underline-offset:5px}
 #quran-global-player.is-expanded .quran-now-playing strong{font:500 clamp(23px,5vw,29px)/1.4 Georgia,'Times New Roman',serif;white-space:normal;overflow-wrap:anywhere;color:#edf1f7}
 #quran-global-player.is-expanded .quran-playing-reader{display:block;font-size:14px;line-height:1.5;color:#d9c398;margin-top:7px;overflow-wrap:anywhere}
 #quran-global-player.is-expanded .quran-now-playing small{margin-top:9px;font-size:11px;line-height:1.6;white-space:normal;color:#aab8cc}

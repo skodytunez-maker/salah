@@ -3,6 +3,9 @@
 .home-radio-entry[hidden]{display:none!important}
 .home-radio-beacon{display:flex;align-items:center;gap:5px;min-height:44px;padding:3px 6px;color:#ff5454;text-decoration:none;font-size:12px;line-height:1.2}
 .home-radio-beacon svg{width:24px;height:24px;animation:radio-beacon-pulse 2.6s ease-in-out infinite}
+.home-page .app-home-shell:has(.home-listening-now[data-activity-tone="overcast"]) .home-radio-beacon{color:#ffd7d1;text-shadow:0 1px 2px #081220,0 0 4px #081220}
+.home-page .app-home-shell:has(.home-listening-now[data-activity-tone="overcast"]) .home-radio-beacon svg{filter:drop-shadow(0 1px 1px #081220)}
+@media(forced-colors:active){.home-page .app-home-shell:has(.home-listening-now[data-activity-tone="overcast"]) .home-radio-beacon{color:LinkText;text-shadow:none}.home-page .app-home-shell:has(.home-listening-now[data-activity-tone="overcast"]) .home-radio-beacon svg{filter:none}}
 .radio-preview{max-width:650px;margin:auto;padding:0 0 24px}
 .radio-preview h1{font-family:Georgia,serif;font-weight:400;letter-spacing:.04em;margin:8px 0;font-size:34px}
 .radio-preview h2{font-family:Georgia,serif;font-weight:400;font-size:25px;margin:14px 0}

@@ -1,5 +1,5 @@
 import{RADIO_VOICES,radioCandidateBatch,measureRadioTrack}from './radio-candidates.js';
-import{teamPreviewVerified as ownerVerified,verifyTeamPreviewAccess as verifyOwner,onTeamPreviewChange as onOwnerChange}from './team-preview-access.js';
+import{teamPreviewVerified as ownerVerified,teamPreviewRadioHint,verifyTeamPreviewAccess as verifyOwner,onTeamPreviewChange as onOwnerChange}from './team-preview-access.js';
 import{loadIndex,audioUrl}from './quran-data.js';
 import{reciterInfo,reciterHasSurah}from './quran-reciters.js';
 import{reciterRecording}from './quran-reciter-recording.js';
@@ -15,7 +15,15 @@ const TABS=[['air',teamLeaf('air')],['program',teamLeaf('program')],['quiz',team
 export const radioBeacon=()=>'<svg viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="14" cy="14" r="2.5" fill="currentColor" stroke="none"/><path d="M8.5 8.5a7.8 7.8 0 0 0 0 11m11-11a7.8 7.8 0 0 1 0 11M5 5a12.7 12.7 0 0 0 0 18M23 5a12.7 12.7 0 0 1 0 18"/></svg>';
 export function mountHomeRadioEntry(host){
  if(!host)return()=>{};
- const draw=()=>{const visible=ownerVerified();host.hidden=!visible;if(visible&&!host.firstElementChild)host.innerHTML='<a href="#radio" class="home-radio-beacon" '+teamAttr('radioTitle',{},'aria-label')+'>'+radioBeacon()+'<span>'+teamLeaf('radio')+'</span></a>';else if(!visible)host.innerHTML='';};
+ const draw=()=>{
+  const verified=ownerVerified(),visible=verified||teamPreviewRadioHint();
+  host.hidden=!visible;
+  if(!visible){host.replaceChildren();return;}
+  if(!host.firstElementChild)host.innerHTML='<a class="home-radio-beacon" '+teamAttr('radioTitle',{},'aria-label')+'>'+radioBeacon()+'<span>'+teamLeaf('radio')+'</span></a>';
+  const entry=host.firstElementChild;
+  if(verified){entry.href='#radio';entry.removeAttribute('aria-disabled');}
+  else{entry.removeAttribute('href');entry.setAttribute('aria-disabled','true');}
+ };
  draw();translateUi(host);const off=onOwnerChange(draw),stopLocale=subscribeLanguage(()=>translateUi(host)),timer=setInterval(draw,15000);
  return()=>{stopLocale();off();clearInterval(timer);host.innerHTML='';host.hidden=true;};
 }

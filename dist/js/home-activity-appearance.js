@@ -1,8 +1,10 @@
 // Read existing scene light; never sample/repaint photographs or change Home flow.
 export function activityTone(day,clouds=0,previous='light'){
  if(!Number.isFinite(day))return previous;
- const brightness=Math.max(0,Math.min(1,day))*(.65-.18*Math.max(0,Math.min(1,Number.isFinite(clouds)?clouds:0)))+.04;
- return brightness>.38?'ink':brightness<.26?'light':previous;
+ const light=Math.max(0,Math.min(1,day)),cover=Math.max(0,Math.min(1,Number.isFinite(clouds)?clouds:0));
+ if(light>=.28&&cover>=(previous==='overcast'?.52:.64))return 'overcast';
+ const brightness=light*(.65-.18*cover)+.04;
+ return brightness>.38?'ink':brightness<.26||previous==='overcast'?'light':previous;
 }
 // Keep a bounded right-hand rail outside the centred brand,independent of table mode.
 export function activityRailWidth(shellWidth,brandWidth){
@@ -15,7 +17,7 @@ export function mountHomeActivityAppearance(host,{doc=host?.ownerDocument}={}){
  const Observer=win.MutationObserver,Resize=win.ResizeObserver;
  const toneObserver=Observer?new Observer(()=>paintTone()):null;
  const paintTone=()=>{if(disposed||doc.hidden)return;
-  const next=doc.getElementById('home-scene');if(next!==scene){toneObserver?.disconnect();scene=next;if(scene)toneObserver?.observe(scene,{attributes:true,attributeFilter:['data-phase']});}
+  const next=doc.getElementById('home-scene');if(next!==scene){toneObserver?.disconnect();scene=next;if(scene)toneObserver?.observe(scene,{attributes:true,attributeFilter:['data-phase','style']});}
   if(scene){const day=scene.style.getPropertyValue('--scene-day').trim(),clouds=scene.style.getPropertyValue('--scene-clouds').trim();tone=activityTone(day===''?NaN:Number(day),clouds===''?0:Number(clouds),tone);}
   if(host.dataset.activityTone!==tone)host.dataset.activityTone=tone;
  };

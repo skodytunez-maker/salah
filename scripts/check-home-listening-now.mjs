@@ -114,7 +114,9 @@ for(const [width,height,safeTop]of [[390,844,47],[393,852,59],[375,667,20],[390,
 console.log('PASS: six-row notched portrait heading clears decorative lift;total flow,seven-row/owner/focus,zero-inset,tablet,landscape and531activity layout retained. No phone-rendering claim.');
 
 // Current scene light drives glyph/count ink only; no new sky work or polling.
-assert.equal(activityTone(1,0),'ink');assert.equal(activityTone(1,1),'ink');
+assert.equal(activityTone(1,0),'ink');assert.equal(activityTone(1,1),'overcast');
+assert.equal(activityTone(1,.56,'overcast'),'overcast');assert.equal(activityTone(1,.5,'overcast'),'ink');
+assert.equal(activityTone(0,1,'overcast'),'light');
 assert.equal(activityTone(0,0,'ink'),'light');assert.equal(activityTone(.44,0,'ink'),'ink');assert.equal(activityTone(.44,0,'light'),'light','Dusk hysteresis prevents flicker');assert.equal(activityTone(NaN,0),'light');
 
 assert.equal(activityRailWidth(350,114),110);assert.equal(activityRailWidth(280,110),77);assert.equal(activityRailWidth(350,NaN),null);assert.equal(activityRailWidth(0,114),null);
@@ -125,12 +127,14 @@ shell.getBoundingClientRect=()=>({left:20,top:0,width:350});brand.getBoundingCli
 let resizeCallback,resizeDisconnected=0;aw.ResizeObserver=class{constructor(fn){resizeCallback=fn;}observe(){}disconnect(){resizeDisconnected++;}};
 const view=mountHomeActivityAppearance(ah,{doc:ad}),flush=()=>new Promise(r=>setTimeout(r,0));
 assert.equal(ah.dataset.activityTone,'light');assert.equal(ah.style.maxWidth,'110px');assert.equal(ah.style.top,'','Vertical placement belongs to the same fixed CSS as Radio');assert.equal(ah.style.left,'');
-const scene=ad.getElementById('home-scene');scene.style.setProperty('--scene-day','1');scene.dataset.phase='day';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','.44');scene.dataset.phase='dusk';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','0');scene.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'light');
+const scene=ad.getElementById('home-scene');scene.style.setProperty('--scene-day','1');scene.dataset.phase='day';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-clouds','.85');await flush();assert.equal(ah.dataset.activityTone,'overcast','A cloud update without a phase change switches both header controls');scene.style.setProperty('--scene-clouds','0');await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','.44');scene.dataset.phase='dusk';await flush();assert.equal(ah.dataset.activityTone,'ink');scene.style.setProperty('--scene-day','0');scene.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'light');
 const replacement=scene.cloneNode();replacement.style.setProperty('--scene-day','1');scene.replaceWith(replacement);await flush();assert.equal(ah.dataset.activityTone,'ink');
 const fixedStyle=ah.style.cssText;headerBottom=360;cardTop=430;prayer.className='central-prayer focus';resizeCallback();assert.equal(ah.style.cssText,fixedStyle,'Changing table mode or city vertical position cannot move the activity rail');assert.equal(heading.style.cssText,'');assert.equal(prayer.style.cssText,'');
 Object.defineProperty(ad,'hidden',{value:true,configurable:true});replacement.style.setProperty('--scene-day','0');replacement.dataset.phase='night';await flush();assert.equal(ah.dataset.activityTone,'ink');Object.defineProperty(ad,'hidden',{value:false,configurable:true});ad.dispatchEvent(new aw.Event('visibilitychange'));assert.equal(ah.dataset.activityTone,'light');
 view.dispose();assert.equal(resizeDisconnected,1);assert.equal(ah.dataset.activityTone,undefined);assert.equal(ah.style.maxWidth,'');replacement.style.setProperty('--scene-day','1');replacement.dataset.phase='day';aw.dispatchEvent(new aw.Event('resize'));await flush();assert.equal(ah.dataset.activityTone,undefined);await aw.happyDOM.close();
 const radioCSS=await fs.readFile(new URL('../dist/css/radio-preview.css',import.meta.url),'utf8');
+const overcastRadio=radioCSS.split('data-activity-tone="overcast"]')[1].split('}')[0];assert.match(overcastRadio,/home-radio-beacon\{color:#ffd7d1;text-shadow/);assert.doesNotMatch(overcastRadio,/background|padding|top:/);
+const overcastActivity=css.split('data-activity-tone="overcast"]')[1].split('}')[0];assert.match(overcastActivity,/color:#fff2d2;text-shadow/);assert.doesNotMatch(overcastActivity,/background|padding|top:/);
 for(const[width,height,safeTop]of [[390,844,47],[393,852,59],[375,667,20],[844,390,0],[768,1024,20]])for(const mode of ['timetable','focus']){
  const rw=new Window({width,height}),rd=rw.document;rd.body.className='home-page';rd.documentElement.style.setProperty('--salah-safe-top',safeTop+'px');rd.body.innerHTML='<div class="app-home-shell"><span class="home-radio-entry"><a class="home-radio-beacon">Radio</a></span><span class="home-listening-now">123</span><div class="home-prayer-center"><div class="app-home-top">SALAH</div><div class="prayer-stage"><button class="central-prayer '+mode+'"></button></div></div></div>';
  const rs=rd.createElement('style');rs.textContent=(css+'\n'+radioCSS).replaceAll('@media(','@media (');rd.head.append(rs);rs.textContent=headingCSS(rw,rs.sheet.cssRules);
