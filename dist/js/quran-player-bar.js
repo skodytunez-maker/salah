@@ -20,15 +20,19 @@ const icon=path=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke
 const previous=icon('<path d="M6 5v14M18 5l-9 7 9 7z"/>'),next=icon('<path d="M18 5v14M6 5l9 7-9 7z"/>');
 const play=icon('<path d="M6.5 5l11 7-11 7z"/>'),pause=icon('<path d="M8 5v14M16 5v14"/>');
 export function playerDockOffset(viewportHeight,{top=0,height=0,visible=false,bottom=NaN}={}){return visible&&height>0?Math.max(12,(Number.isFinite(bottom)?bottom+height:viewportHeight-top)+8):12;}
-export function mountQuranPlayer(){
+export function mountQuranPlayer({onListReturnFailure}={}){
  const panel=document.createElement('section');panel.id='quran-global-player';panel.className='quran-global-player';panel.hidden=true;panel.setAttribute('aria-label',t('player.quranLabel'));
  panel.innerHTML='<div class="quran-player-heading"><button type="button" class="quran-player-collapse" data-collapse data-i18n-aria-label="player.collapse" aria-label="Свернуть плеер">'+icon('<path d="m6 9 6 6 6-6"/>')+'</button><span>КОРАН · SALAH</span><i data-nature-label hidden aria-hidden="true"></i></div><button type="button" class="quran-now-playing" aria-label="Открыть полный плеер"><img class="quran-playing-portrait" alt=""><strong></strong></button><label class="quran-player-reciter"><span class="quran-playing-reader"></span><select data-i18n-aria-label="player.changeReciter" aria-label="Сменить чтеца"></select></label><small class="quran-playing-status"></small><div class="quran-output-actions"><button type="button" class="quran-handoff-button" data-quran-shuffle data-i18n-aria-label="player.shuffleSurahs" data-i18n-title="player.shuffle" aria-label="Перемешать суры" title="Перемешать">'+actionIcon('shuffle')+'</button><button type="button" class="quran-handoff-button" data-tv data-i18n-aria-label="player.connectOutput" data-i18n-title="player.connectDevice" aria-label="Подключить телевизор или колонку" title="Подключить устройство">'+actionIcon('tv')+'</button><button type="button" class="quran-handoff-button" data-share data-i18n-aria-label="player.sharePosition" data-i18n-title="player.share" aria-label="Передать место прослушивания" title="Передать">'+icon('<path d="M12 16V3m-4 4 4-4 4 4M7 11H4v10h16V11h-3"/>')+'</button></div><div class="quran-global-controls" dir="ltr"><button type="button" data-previous aria-label="Предыдущая сура">'+previous+'</button><button type="button" data-toggle aria-label="Воспроизвести Коран">'+play+'</button><button type="button" data-next aria-label="Следующая сура">'+next+'</button><button type="button" data-expand data-i18n-aria-label="player.open" aria-label="Открыть плеер" aria-haspopup="dialog">'+icon('<path d="m6 15 6-6 6 6"/>')+'</button><button type="button" data-dismiss-player data-i18n-aria-label="player.close" aria-label="Закрыть плеер">'+icon('<path d="m6 6 12 12M18 6 6 18"/>')+'</button></div><div class="quran-mini-progress" aria-hidden="true"><i></i></div><label class="quran-player-progress" dir="ltr"><span data-time></span><input type="range" min="0" max="1" step="1" value="0" dir="ltr" data-i18n-aria-label="player.seek" aria-label="Место в записи"><span data-duration></span></label><details class="quran-playlist-queue" hidden><summary>Плейлист</summary><ol class="quran-playlist-tracks"></ol></details>';
  const dock=document.getElementById('app-bottom-dock')||document.body;dock.append(panel);
- const playerWindow=mountPlayerWindow(panel,dock,{onPlace:placeDock,onSurahTitle:showSurahList}),expand=()=>playerWindow.open();
+ const playerWindow=mountPlayerWindow(panel,dock,{
+  onPlace:placeDock,onSurahTitle:showSurahList,onListReturnFailure,
+  canReturnFromList:()=>!!quranPlayback.state.surah&&!ruqyahPlayback.state.record
+ }),expand=()=>playerWindow.open();
  function showSurahList(){
   const state=quranPlayback.state;
   if(!state.surah||!state.reciter||ruqyahPlayback.state.record)return;
   const list='#quran?view=reciters&reciter='+encodeURIComponent(state.reciter);
+  if(playerWindow.openReciterList(list))return;
   if(location.hash===list)playerWindow.close();
   else location.hash=list;
  }

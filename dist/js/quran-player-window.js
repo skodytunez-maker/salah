@@ -1,7 +1,7 @@
 // Reuse the connected player controls. Opening this window never touches audio.
 import{t,subscribeLanguage}from './i18n.js';
 import{createPlayerWindowHistory}from './quran-player-navigation.js';
-export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{},onSurahTitle}={}){
+export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{},onSurahTitle,canReturnFromList=()=>true,onListReturnFailure}={}){
  const sheet=doc.createElement('dialog');sheet.className='quran-player-dialog';sheet.id='quran-player-window';sheet.setAttribute('aria-label',t('player.fullQuranLabel'));doc.body.append(sheet);
  const opener=panel.querySelector('.quran-now-playing'),expandButton=panel.querySelector('[data-expand]'),closeButton=panel.querySelector('[data-collapse]');
  const focusControls=new Set([opener,expandButton,closeButton]);let pointerFocus=false;
@@ -15,7 +15,15 @@ export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{},onSura
  let disposed=false,expanded=false,returnFocus=null,overflow='',rootWasLocked=false,bodyHadWindow=false,gesture=null,scrollTouch=null,suppressClickUntil=0;
  const win=doc.defaultView;
  const changed=()=>{if(win?.Event)win.dispatchEvent(new win.Event('salah:player-window'));};
- const navigation=createPlayerWindowHistory({win,dismiss:()=>close(),onChange:changed});
+ const navigation=createPlayerWindowHistory({
+  win,dismiss:()=>close(),
+  restore:()=>{
+   if(panel.hidden||!canReturnFromList())return null;
+   open();
+   return expanded;
+  },
+  onRestoreFailure:onListReturnFailure,onChange:changed
+ });
  const stopLanguage=subscribeLanguage(()=>{if(!disposed)sheet.setAttribute('aria-label',t('player.fullQuranLabel'));});
  const focus=node=>{if(node?.isConnected&&!panel.hidden){if(focusControls.has(node))node.toggleAttribute('data-player-pointer-focus',pointerFocus);node.focus({preventScroll:true});}};
  const resetGesture=()=>{if(gesture?.transport==='pointer'){try{sheet.releasePointerCapture?.(gesture.id);}catch{}}gesture=null;sheet.classList.remove('is-dragging');};
@@ -55,5 +63,6 @@ export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{},onSura
  const touchEnd=event=>{scrollTouch=null;if(gesture?.transport!=='touch')return;const t=tracked(event.changedTouches);if(t)end(t.clientX,t.clientY,event);else resetGesture();};
  const touchCancel=()=>{scrollTouch=null;if(gesture?.transport==='touch')resetGesture();};
  sheet.addEventListener('close',onClose);sheet.addEventListener('cancel',onCancel);sheet.addEventListener('click',onBackdrop);sheet.addEventListener('pointerdown',down);sheet.addEventListener('pointermove',move,{passive:false});sheet.addEventListener('pointerup',up);sheet.addEventListener('pointercancel',pointerCancel);sheet.addEventListener('touchstart',touchStart,{passive:true});sheet.addEventListener('touchmove',touchMove,{passive:false});sheet.addEventListener('touchend',touchEnd,{passive:false});sheet.addEventListener('touchcancel',touchCancel);
- return{open,close,get isOpen(){return expanded;},destroy(){disposed=true;stopLanguage();navigation.destroy();close();doc.removeEventListener('pointerdown',pointerIntent,true);doc.removeEventListener('touchstart',pointerIntent,true);doc.removeEventListener('keydown',keyboardIntent,true);clearPointerFocus();for(const node of [opener,expandButton])node.removeEventListener('click',open);closeButton.removeEventListener('click',close);sheet.removeEventListener('close',onClose);sheet.removeEventListener('cancel',onCancel);sheet.removeEventListener('click',onBackdrop);sheet.removeEventListener('pointerdown',down);sheet.removeEventListener('pointermove',move);sheet.removeEventListener('pointerup',up);sheet.removeEventListener('pointercancel',pointerCancel);sheet.removeEventListener('touchstart',touchStart);sheet.removeEventListener('touchmove',touchMove);sheet.removeEventListener('touchend',touchEnd);sheet.removeEventListener('touchcancel',touchCancel);sheet.remove();}};
+ const openReciterList=hash=>expanded&&navigation.openReciterList(hash);
+ return{open,close,openReciterList,get isOpen(){return expanded;},destroy(){disposed=true;stopLanguage();navigation.destroy();close();doc.removeEventListener('pointerdown',pointerIntent,true);doc.removeEventListener('touchstart',pointerIntent,true);doc.removeEventListener('keydown',keyboardIntent,true);clearPointerFocus();for(const node of [opener,expandButton])node.removeEventListener('click',open);closeButton.removeEventListener('click',close);sheet.removeEventListener('close',onClose);sheet.removeEventListener('cancel',onCancel);sheet.removeEventListener('click',onBackdrop);sheet.removeEventListener('pointerdown',down);sheet.removeEventListener('pointermove',move);sheet.removeEventListener('pointerup',up);sheet.removeEventListener('pointercancel',pointerCancel);sheet.removeEventListener('touchstart',touchStart);sheet.removeEventListener('touchmove',touchMove);sheet.removeEventListener('touchend',touchEnd);sheet.removeEventListener('touchcancel',touchCancel);sheet.remove();}};
 }

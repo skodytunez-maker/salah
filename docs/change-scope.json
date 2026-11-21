@@ -1,73 +1,173 @@
 {
   "schema": 1,
-  "version": 548,
-  "baseCommit": "ef88fdbc5cbd0e517ed18dea4abd633a0df0a188",
-  "baseTree": "96f4cb587c5c7e73425051c9005e6903d586bb74",
-  "note": "Explicit approval for public delivery of the player and Home corrections. No diagnostic client, backend deployment, new popup or external push.",
+  "version": 549,
+  "baseCommit": "831a7b15580e9b35878c89d9b4c1829d3704dee6",
+  "baseTree": "a7f04621bc0b4b4e7bc484f4010f23b6eab9b443",
+  "note": "Owner-authorized quiet release of player Back and reliable consented diagnostics. Keep account linkage, travel-city proposal and new public announcement outside this release.",
   "allowed": [
     {
-      "path": "dist/css/radio-preview.css",
-      "reason": "Overcast Radio contrast"
+      "path": "AGENTS.md",
+      "reason": "Diagnostic rollout and nested-screen Back requirements"
     },
     {
-      "path": "dist/home-selected.css",
-      "reason": "Overcast activity contrast without layout changes"
+      "path": "dist/js/admin.js",
+      "reason": "Wire the consented diagnostic queue and owner summary"
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Version 548 and manual release notes"
+      "reason": "Quiet 549 metadata and checked offline resource sizes"
     },
     {
-      "path": "dist/js/home-activity-appearance.js",
-      "reason": "Cloud-aware tone using the existing scene"
+      "path": "dist/js/app.js",
+      "reason": "Wire the consented diagnostic queue and owner summary"
+    },
+    {
+      "path": "dist/js/error-reporting.js",
+      "reason": "Wire the consented diagnostic queue and owner summary"
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/ar.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/az.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/de.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/en.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/kk.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/ru.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/tg.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/i18n/extra/uz.js",
+      "reason": "Localized status and specific failure label"
+    },
+    {
+      "path": "dist/js/owner-error-summary.js",
+      "reason": "Wire the consented diagnostic queue and owner summary"
     },
     {
       "path": "dist/js/quran-player-bar.js",
-      "reason": "Open the active reciter list and simplify playback labels"
+      "reason": "Restore the expanded player and report a confirmed restoration failure"
+    },
+    {
+      "path": "dist/js/quran-player-navigation.js",
+      "reason": "Restore the expanded player and report a confirmed restoration failure"
     },
     {
       "path": "dist/js/quran-player-window.js",
-      "reason": "Make the expanded title invoke the reciter list"
-    },
-    {
-      "path": "dist/js/radio-preview.js",
-      "reason": "Keep a disabled Radio label briefly during revalidation"
-    },
-    {
-      "path": "dist/js/team-preview-access.js",
-      "reason": "Preserve only a bounded display hint immediately after temporary verification failure"
-    },
-    {
-      "path": "dist/quran-player.css",
-      "reason": "Expanded title affordance"
+      "reason": "Restore the expanded player and report a confirmed restoration failure"
     },
     {
       "path": "dist/sw.js",
-      "reason": "Activation version and exact resource sizes"
+      "reason": "Quiet 549 metadata and checked offline resource sizes"
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Verified 547 base and approved 548 scope"
+      "reason": "Exact published 548 base and authorized scope for 549"
+    },
+    {
+      "path": "docs/diagnostics-delivery.md",
+      "reason": "Diagnostic rollout and nested-screen Back requirements"
     },
     {
       "path": "docs/work-queue.md",
-      "reason": "Publication authorization and change boundaries"
+      "reason": "Diagnostic rollout and nested-screen Back requirements"
     },
     {
-      "path": "scripts/check-home-listening-now.mjs",
-      "reason": "Weather and layout regression"
+      "path": "scripts/check-error-summary.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
+    },
+    {
+      "path": "scripts/check-extra-language.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
+    },
+    {
+      "path": "scripts/check-interface-shell.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
+    },
+    {
+      "path": "scripts/check-menu-screens.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
+    },
+    {
+      "path": "scripts/check-owner-i18n.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
+    },
+    {
+      "path": "scripts/check-quran-player-navigation.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
     },
     {
       "path": "scripts/check-quran-player-window.mjs",
-      "reason": "Title and playback regression"
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
     },
     {
-      "path": "scripts/check-radio-preview.mjs",
-      "reason": "Radio display regression"
+      "path": "scripts/probe-error-summary.mjs",
+      "reason": "Regression for navigation, diagnostic privacy, delivery or localized rendering"
     },
     {
-      "path": "scripts/check-team-preview-access.mjs",
-      "reason": "Verify denied, expired, unavailable and signed-out behavior"
+      "path": "supabase/error-summary-schema.sql",
+      "reason": "Private diagnostic schema, backward-compatible receiver and validation"
+    },
+    {
+      "path": "supabase/error-summary-test-schema.sql",
+      "reason": "Private diagnostic schema, backward-compatible receiver and validation"
+    },
+    {
+      "path": "supabase/functions/error-summary/index.ts",
+      "reason": "Private diagnostic schema, backward-compatible receiver and validation"
+    },
+    {
+      "path": "supabase/migrations/20261121120208_quran_navigation_diagnostics.sql",
+      "reason": "Private diagnostic schema, backward-compatible receiver and validation"
     }
   ],
   "baseline": [
@@ -1445,7 +1545,7 @@
     },
     {
       "path": "dist/css/radio-preview.css",
-      "sha": "36512fffcc8cc4c66276e11e9034acad9741f2bb"
+      "sha": "78aeac775f3944bd1d9c66a224dcc92d5a78e17c"
     },
     {
       "path": "dist/css/reading-check.css",
@@ -2513,7 +2613,7 @@
     },
     {
       "path": "dist/home-selected.css",
-      "sha": "7a592ae8a804ce2aa893208d80b3776e38f610c5"
+      "sha": "61ff2ecd37cd2ab0068a44d1249f4ed6b6116283"
     },
     {
       "path": "dist/icon-180.png",
@@ -2657,7 +2757,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "81257d8cc3f0aaa5478df71702b8016881eb97d5"
+      "sha": "ca04cc648c496b9ec188361f5e83a7d3334385fd"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2929,7 +3029,7 @@
     },
     {
       "path": "dist/js/home-activity-appearance.js",
-      "sha": "a7c04b6c6aa56d5f41cddd0a71720bff034cb7d5"
+      "sha": "f8539ff1357f9765cdb238c643db91a5e94c4560"
     },
     {
       "path": "dist/js/home-activity-icons.js",
@@ -4497,7 +4597,7 @@
     },
     {
       "path": "dist/js/quran-player-bar.js",
-      "sha": "5e75bb340af3f50e786f300bc25c93ae57c0a4a3"
+      "sha": "176a0be7448a2748abf06306f0c60a1db8e49cf8"
     },
     {
       "path": "dist/js/quran-player-extras.js",
@@ -4509,7 +4609,7 @@
     },
     {
       "path": "dist/js/quran-player-window.js",
-      "sha": "b4b0f4bf64016576e36b172ad146d3e3a35098ed"
+      "sha": "0b722640e1f0472a90c08f8eaa320b8d5bee75a5"
     },
     {
       "path": "dist/js/quran-playlist.js",
@@ -4617,7 +4717,7 @@
     },
     {
       "path": "dist/js/radio-preview.js",
-      "sha": "cae0094da00aa57e728867c98c5e869b81fbb3c9"
+      "sha": "63e032cb180d4466e0303f4d73e8868208f8840a"
     },
     {
       "path": "dist/js/radio-program-core.js",
@@ -4861,7 +4961,7 @@
     },
     {
       "path": "dist/js/team-preview-access.js",
-      "sha": "f33c014c3ab3b7a4ca84fbf17c906e62c33a5970"
+      "sha": "ee311294df8f429e2caea52b26f1c7eea9741590"
     },
     {
       "path": "dist/js/team-preview-news.js",
@@ -5073,7 +5173,7 @@
     },
     {
       "path": "dist/quran-player.css",
-      "sha": "fc8ad5a36e28d35e0558aaef33f9389d3125d4bb"
+      "sha": "60a9864fb4b3c1071deb928d1162749feb053587"
     },
     {
       "path": "dist/quran.css",
@@ -5105,7 +5205,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "6d1682a7770483bedcf4c9e6211c551d8f17a1ed"
+      "sha": "4c6e4af9905539c9677dedbb9603a8b76e1fc2b3"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5653,7 +5753,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "576a90080069b4a5e0860d526e0df2635d5a4a04"
+      "sha": "1e653c42e4cf90e79cbb24b6483873fd32751b96"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6189,7 +6289,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "11d339b0b39b467be7c8f4d4b02b6aa712af423c"
+      "sha": "dcfa7c12565366fcfe0a31f4924764bf1fb0216c"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -6925,7 +7025,7 @@
     },
     {
       "path": "scripts/check-home-listening-now.mjs",
-      "sha": "17fda5cfea94d247bfb3902959aa1133afbc22d4"
+      "sha": "87efe9681da569315edbde685438dbcf6217c4bf"
     },
     {
       "path": "scripts/check-home-reading.mjs",
@@ -7461,7 +7561,7 @@
     },
     {
       "path": "scripts/check-quran-player-window.mjs",
-      "sha": "3b29887fd149b58965d76d82a8342a5b9c724f0f"
+      "sha": "88679943a5f945545d1d2ccc0c9f7249a2d3cacb"
     },
     {
       "path": "scripts/check-quran-playlist-ui.mjs",
@@ -7549,7 +7649,7 @@
     },
     {
       "path": "scripts/check-radio-preview.mjs",
-      "sha": "ff0f3f07e403859869b374169970ae12d93bc060"
+      "sha": "ef767e225fa6091536bf668706f2aae56f4050ca"
     },
     {
       "path": "scripts/check-ranking-language.mjs",
@@ -7869,7 +7969,7 @@
     },
     {
       "path": "scripts/check-team-preview-access.mjs",
-      "sha": "94880ea4c800c999bdac9a52fcfeb7ece8bacb33"
+      "sha": "04d4c9872af6fe3e631b9dd3b17eee8c40be79c0"
     },
     {
       "path": "scripts/check-team-preview-motion.mjs",
@@ -8642,5 +8742,5 @@
       "reason": "Existing official schedule refresh at publication."
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=547;\nexport const APP_UPDATED_AT='2026-11-20';\nexport const APP_UPDATE_DATE='20 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=548;\nexport const APP_UPDATED_AT='2026-11-21';\nexport const APP_UPDATE_DATE='21 ноября 2026';\nexport const APP_CHANGES=[\"Полный плеер: название открывает список сур текущего чтеца. Значки на главной лучше видны на плотных облаках.\"];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

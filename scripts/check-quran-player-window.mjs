@@ -59,11 +59,11 @@ doc.documentElement.classList.remove('quran-player-scroll-locked');doc.body.clas
 const failed=mountPlayerWindow(panel,dock,{doc}),failedSheet=doc.querySelector('dialog');failedSheet.showModal=()=>{throw Error('unavailable');};failed.open();assertLocked(false);assert.equal(doc.body.style.overflow,'auto');failed.destroy();assertLocked(false);
 
 // Exercise the actual dock wiring against playback stubs. No audio object is created.
-let audioActions=0,listener,ruqyahListener;const state={surah:{number:4},meta:{name:'Ан-Ниса'},ayah:60,reciter:'reader',status:'playing',positionSeconds:42,durationSeconds:600,canNext:true,canPrevious:true};
+let audioActions=0,navigationFailures=0,listener,ruqyahListener;const state={surah:{number:4},meta:{name:'Ан-Ниса'},ayah:60,reciter:'reader',status:'playing',positionSeconds:42,durationSeconds:600,canNext:true,canPrevious:true};
 const playback={state,subscribe(fn){listener=fn;fn(state);return()=>{};},stop(){audioActions++;state.surah=null;listener(state);},toggle(){audioActions++;},seek(){audioActions++;}};
 const source=await fs.readFile(new URL('../dist/js/quran-player-bar.js',import.meta.url),'utf8');
 const context=vm.createContext({createImagePresenter,watchDecodedImages,t,translateUi,subscribeLanguage,initQuranSessionRecovery:()=>({destroy(){}}),bindMiniPlayerDismiss:()=>()=>{},document:doc,window:w,location:w.location,innerHeight:844,getComputedStyle:w.getComputedStyle.bind(w),mountPlayerWindow:(panel,dock,options)=>mountPlayerWindow(panel,dock,{...options,doc}),mountQuranPlayerExtras:()=>()=>{},quranPlayback:playback,ruqyahPlayback:{state:{record:null},subscribe(fn){ruqyahListener=fn;return()=>{};}},reciterInfo:id=>id==='reader-continuous'?{name:'Ясир ад-Даусари · сура целиком',variantOf:'reader',portrait:'portrait.jpg'}:{name:'Ясир ад-Даусари',portrait:'portrait.jpg'},reciterImageUrl:p=>p,groupedReciters:()=>[],read:(_k,f)=>f,write:()=>true,RECITER_FAVORITES_KEY:'favorites',ruqyahDuration:n=>String(n),actionIcon:()=>'',showListeningShare(){},RECITERS:[{id:'reader',name:'Ясир ад-Даусари'}],URLSearchParams,encodeURIComponent,console});
-vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context);const dispose=context.mountQuranPlayer();const real=doc.querySelector('#quran-global-player'),realPortrait=real.querySelector('img');realPortrait.click();assert.equal(doc.querySelector('dialog').open,true);assert.equal(w.location.hash,'#home');assert.equal(audioActions,0);assert.equal(real.querySelector('.quran-player-heading').tagName,'DIV','Quran focus hides all header elements; the player heading must remain independent');assert.equal(real.querySelector('.quran-playing-reader').textContent,'Ясир ад-Даусари');assert.equal(real.querySelector('[data-open-surah]'),null,'The requested bottom navigation link is removed');
+vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context);const dispose=context.mountQuranPlayer({onListReturnFailure:()=>navigationFailures++});const real=doc.querySelector('#quran-global-player'),realPortrait=real.querySelector('img');realPortrait.click();assert.equal(doc.querySelector('dialog').open,true);assert.equal(w.location.hash,'#home');assert.equal(audioActions,0);assert.equal(real.querySelector('.quran-player-heading').tagName,'DIV','Quran focus hides all header elements; the player heading must remain independent');assert.equal(real.querySelector('.quran-playing-reader').textContent,'Ясир ад-Даусари');assert.equal(real.querySelector('[data-open-surah]'),null,'The requested bottom navigation link is removed');
 state.reciter='reader-continuous';state.ayah=null;state.timingStatus='unavailable';listener(state);
 assert.equal(real.querySelector('.quran-playing-reader').textContent,'Ясир ад-Даусари');
 assert.doesNotMatch(real.querySelector('.quran-playing-status').textContent,/сура целиком/i);
@@ -73,7 +73,26 @@ realPortrait.dispatchEvent(new w.MouseEvent('click',{bubbles:true,detail:1}));as
 real.querySelector('.quran-now-playing strong').dispatchEvent(new w.MouseEvent('click',{bubbles:true,detail:1}));
 assert.equal(w.location.hash,'#quran?view=reciters&reciter=reader-continuous');assert.equal(audioActions,0);
 w.dispatchEvent(new w.Event('hashchange'));assert.equal(doc.querySelector('dialog').open,false);
-w.location.hash='#home';w.dispatchEvent(new w.Event('hashchange'));state.reciter='reader';state.ayah=60;listener(state);
+w.history.back();
+await w.happyDOM.waitUntilComplete();
+assert.equal(w.location.hash,'#home');
+assert.equal(doc.querySelector('dialog').open,true,'Back restores the real expanded player from the surah list');
+assert.equal(real.querySelector('.quran-now-playing strong').textContent,'Ан-Ниса');
+assert.equal(state.positionSeconds,42);
+assert.equal(audioActions,0,'Opening the list and returning cannot touch playback');
+assert.equal(navigationFailures,0,'A successful Back does not count as a failure');
+real.querySelector('.quran-now-playing strong').click();
+const activeDialog=doc.querySelector('dialog'),savedShow=activeDialog.showModal;
+activeDialog.showModal=()=>{throw Error('Player return failed in this local fixture');};
+w.history.back();
+await w.happyDOM.waitUntilComplete();
+assert.equal(activeDialog.open,false);
+assert.equal(navigationFailures,1);
+assert.equal(state.positionSeconds,42);
+assert.equal(audioActions,0,'A failed window return does not change playback');
+activeDialog.showModal=savedShow;
+real.querySelector('[data-expand]').click();
+state.reciter='reader';state.ayah=60;listener(state);
 real.querySelector('[data-collapse]').click();assert.equal(audioActions,0);real.querySelector('[data-expand]').click();real.querySelector('[data-toggle]').click();assert.equal(audioActions,1);assert.equal(real.querySelector('[data-close]'),null,'Only one play/pause button, without a separate stop control');real.querySelector('[data-collapse]').click();real.querySelector('[data-dismiss-player]').click();assert.equal(audioActions,2,'Only the compact explicit cross closes playback');assert.equal(doc.querySelector('dialog').open,false);assert.equal(real.hidden,true);state.surah={number:4};listener(state);context.ruqyahPlayback.state={record:{reciter:'reader',title:'Рукъя'},status:'paused',positionSeconds:3,durationSeconds:300};context.ruqyahPlayback.stop=()=>{audioActions++;context.ruqyahPlayback.state={record:null};ruqyahListener();};ruqyahListener();real.querySelector('[data-dismiss-player]').click();assert.equal(audioActions,4,'Closing ruqyah also clears the dormant Quran session');assert.equal(real.hidden,true,'Closing must not reveal an old paused Quran card');dispose();assert.equal(doc.querySelector('dialog'),null);
 // Happy DOM reports programmatically focused buttons as :focus-visible, which
 // reproduces the WebKit outline seen after these pointer-triggered focus moves.

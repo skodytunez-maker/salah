@@ -40,4 +40,42 @@ const catalogueKeys=Object.keys(ownerCatalogues.ru).sort(),parameters=text=>[...
 for(const[language,catalogue]of Object.entries(ownerCatalogues)){assert.deepEqual(Object.keys(catalogue).sort(),catalogueKeys,language+' owner UI coverage');for(const[key,value]of Object.entries(catalogue)){const source=ownerCatalogues.ru[key],expected=typeof source==='string'?parameters(source):[...new Set(Object.values(source).flatMap(parameters))].sort();for(const text of typeof value==='string'?[value]:Object.values(value)){assert.ok(text.trim()&&!text.includes('\uFFFD'),language+':'+key);assert.deepEqual(parameters(text),expected,language+':'+key);}}setInterfaceLanguage(language);assert.equal(app.querySelector('#owner-password'),password);assert.equal(password.value,'LOCAL_DRAFT');}
 assert.equal(calls.length,requestsBeforeLocales,'All eight locale changes preserve the same owner request budget');
 setInterfaceLanguage('ar');const localLate=new Date(2026,10,15,23,7,0).toISOString(),arabicClock=ownerUi.ownerDate(localLate,'time').replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-0x0660)).replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-0x06f0)).replace(/[\u200e\u200f\u061c\s]/g,'');assert.equal(arabicClock,'23:07','Owner timestamps keep the existing 24-hour cycle and device time zone in Arabic');
+
+setInterfaceLanguage('en');
+app.replaceChildren();
+const fixtureTest={id:'11111111-1111-4111-8111-111111111111',version:547,at:'2026-11-15T12:00:00Z'};
+let diagnosticsState={state:'idle',testPending:false,lastTest:null},diagnosticWatch,diagnosticReads=0,diagnosticStarts=0;
+let summaryFixture={days:7,total:0,rows:[],more:false,lastReportAt:null,lastTest:null};
+let summaryUnavailable=false;
+const reporter={
+ status:()=>diagnosticsState,
+ subscribe:listener=>{diagnosticWatch=listener;return()=>{diagnosticWatch=null;};},
+ queueTest:()=>{
+  diagnosticStarts++;
+  diagnosticsState={state:'offline',testPending:true,lastTest:null};diagnosticWatch(diagnosticsState);
+  return fixtureTest.id;
+ }
+};
+const errors=mountOwnerErrorSummary(app,{reporter,request:async()=>{diagnosticReads++;if(summaryUnavailable)throw Error();return summaryFixture;}});
+errors.open=true;errors.ontoggle();await settle();
+assert.equal(errors.querySelector('[role=status]').textContent,t('extraUi.diagnosticNoData'));
+errors.querySelector('[data-error-test]').click();
+assert.equal(diagnosticStarts,1);
+assert.equal(errors.querySelector('[data-error-test]').disabled,true);
+assert.equal(errors.querySelector('[data-error-test-status]').textContent,t('extraUi.diagnosticOffline'));
+summaryFixture={...summaryFixture,lastTest:fixtureTest};
+diagnosticsState={state:'sent',testPending:false,lastTest:{id:fixtureTest.id,state:'sent'}};
+diagnosticWatch(diagnosticsState);await settle();
+assert.equal(errors.querySelector('[data-error-test-status]').textContent,t('extraUi.diagnosticSent'));
+assert.equal(errors.querySelector('[role=status]').textContent,t('extraUi.diagnosticNoFaults'));
+assert.ok(errors.querySelector('[data-error-test-date]').textContent.includes(t('extraUi.diagnosticLastTest')));
+const readsBeforeErrorsLocale=diagnosticReads;
+setInterfaceLanguage('ru');
+assert.ok(errors.querySelector('[data-error-test-date]').textContent.includes(t('extraUi.diagnosticLastTest')));
+assert.equal(diagnosticReads,readsBeforeErrorsLocale);
+summaryUnavailable=true;
+errors.querySelector('[data-errors-refresh]').click();await settle();
+assert.equal(errors.querySelector('[role=status]').textContent,t('extraUi.diagnosticUnavailable'));
+assert.equal(errors.querySelector('[data-error-test-date]').textContent,'');
+
 await w.happyDOM.close();console.log('PASS: all eight owner UI catalogues, preserved 24-hour timestamps and in-place forms/MFA/profiles/notifications/dialogs/chart; raw identities/geography are unchanged and locale switches issue no queries or role actions.');

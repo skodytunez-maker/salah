@@ -426,3 +426,7 @@ Keep exact-source public current546notes with a first-party UI illustration;do n
 ### 21 ноября — SALAH 548
 
 The owner explicitly asked for delivery to all phones following the private test preparation. Scope includes the player surah-list action and removal of the redundant full-surah label from the playing display, the cloud contrast fix, and retention of a noninteractive Radio label during brief access revalidation for a previously verified account. A denial, account change or sign-out clears the label. The public update keeps the existing feature announcement and sends no push. The diagnostic client and owner-only Makkah trial remain separate.
+
+### SALAH 549
+
+After the owner saw a Back swipe from the reciter's surah list reveal Home, the inline player return was corrected and the owner explicitly asked to release it with functional diagnostics. A failed restoration of an eligible player adds one consented report. The owner summary identifies the failed transition, version and device category. The existing summary remains compatible and the owner authorization requirement stays in effect. Existing reports retain their prior meaning. The migration only extends the private aggregate validation. No automatic account linkage or new feature announcement. Use the new nested history rule in AGENTS.md for future screens. The personal travel-city proposal remains a separate candidate.

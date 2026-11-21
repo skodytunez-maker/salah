@@ -16,8 +16,9 @@ updateSettings({uiLanguage:'ru',city:{name:'Настройки',latitude:57.1522
 const stopGlassInterface=initGlassInterface({doc,win});
 const stopLanguage=initializeInterfaceLanguage({doc,win}),app=doc.getElementById('app'),privateText=doc.getElementById('private-text').textContent;
 const source=await fs.readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
-assert.ok(source.indexOf('initializeInterfaceLanguage();')<source.indexOf('mountQuranPlayer();'),'Interface language is initialized before the first app/player render');
-assert.ok(source.indexOf('initGlassInterface();')<source.indexOf('mountQuranPlayer();'),'Saved glass styles initialize before the first player/render');
+const playerMount=source.indexOf('mountQuranPlayer({');
+assert.ok(playerMount>=0&&source.indexOf('initializeInterfaceLanguage();')<playerMount,'Interface language is initialized before the first app/player render');
+assert.ok(playerMount>=0&&source.indexOf('initGlassInterface();')<playerMount,'Saved glass styles initialize before the first player/render');
 assert.ok(source.includes("new Intl.DateTimeFormat('en-US'"),'The machine Friday predicate remains in its fixed locale');
 const names={morning:'Утренние азкары',evening:'Вечерние азкары'},adhkarSource=await fs.readFile(new URL('../dist/js/adhkar.js',import.meta.url),'utf8');
 const adhkarCard=vm.runInNewContext(adhkarSource.split(/\r?\n/).find(line=>line.startsWith('export function adhkarHomeCard')).replace('export ','' )+';adhkarHomeCard;',{names,icon:()=>'<svg aria-hidden="true"></svg>',esc,t});

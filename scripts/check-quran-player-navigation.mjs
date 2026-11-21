@@ -1,14 +1,69 @@
 import assert from 'node:assert/strict';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{createPlayerWindowHistory}from '../dist/js/quran-player-navigation.js';
-import{initEdgeBack}from '../dist/js/edge-back.js';
+import{createRouteBackStack,initEdgeBack,resolveBackAction}from '../dist/js/edge-back.js';
 
-function historyHarness(route='#home'){
- const entries=[{url:'https://example.invalid/#more',state:{route:'menu'}},{url:'https://example.invalid/'+route,state:{route:'origin'}}],listeners=new Map();let at=1,queued=0,dismissed=0,changes=0;
- const win={location:{get href(){return entries[at].url;}},addEventListener(name,fn){if(!listeners.has(name))listeners.set(name,new Set());listeners.get(name).add(fn);},removeEventListener(name,fn){listeners.get(name)?.delete(fn);}};
+function historyHarness(route='#home',{restoreResult=true}={}){
+ const entries=[{url:'https://example.invalid/#more',state:{route:'menu'}},{url:'https://example.invalid/'+route,state:{route:'origin'}}],listeners=new Map();let at=1,queued=0,dismissed=0,changes=0,restored=0,failures=0;
+ const dispatch=name=>{for(const fn of [...listeners.get(name)||[]])fn();};
+ const win={location:{get href(){return entries[at].url;},get hash(){return new URL(entries[at].url).hash;},set hash(hash){win.history.pushState({},'',new URL(hash,entries[at].url).href);dispatch('hashchange');}},addEventListener(name,fn){if(!listeners.has(name))listeners.set(name,new Set());listeners.get(name).add(fn);},removeEventListener(name,fn){listeners.get(name)?.delete(fn);}};
  win.history={get state(){return entries[at].state;},pushState(state,_title,url){entries.splice(at+1);entries.push({url:url||entries[at].url,state});at++;},replaceState(state,_title,url){entries[at]={state,url:url||entries[at].url};},back(){queued++;}};
- const controller=createPlayerWindowHistory({win,dismiss:()=>dismissed++,onChange:()=>changes++});
- return{controller,win,entries,get index(){return at;},get pending(){return queued;},get dismissed(){return dismissed;},get changes(){return changes;},get listeners(){return [...listeners.values()].reduce((n,s)=>n+s.size,0);},flush(){assert(queued>0);queued--;at=Math.max(0,at-1);for(const fn of [...listeners.get('popstate')||[]])fn();},forward(){at=Math.min(entries.length-1,at+1);for(const fn of [...listeners.get('popstate')||[]])fn();},navigate(hash){win.history.pushState({},'','https://example.invalid/'+hash);for(const fn of [...listeners.get('hashchange')||[]])fn();}};
+ const controller=createPlayerWindowHistory({win,dismiss:()=>dismissed++,restore:()=>{if(restoreResult===true)restored++;return restoreResult;},onRestoreFailure:()=>failures++,onChange:()=>{changes++;dispatch('salah:player-window');}});
+ return{controller,win,entries,get index(){return at;},get pending(){return queued;},get dismissed(){return dismissed;},get restored(){return restored;},get failures(){return failures;},get changes(){return changes;},get listeners(){return [...listeners.values()].reduce((n,s)=>n+s.size,0);},flush(){assert(queued>0);queued--;at=Math.max(0,at-1);dispatch('popstate');},forward(){at=Math.min(entries.length-1,at+1);dispatch('popstate');},navigate(hash){win.location.hash=hash;}};
+}
+
+const reciterList='#quran?view=reciters&reciter=yasseraldossari';
+for(const origin of ['#home','#quran?surah=7',reciterList]){
+ const h=historyHarness(origin);
+ const stack=createRouteBackStack(h.win);
+ h.controller.open();
+ const playerEntry=h.win.history.state.salahPlayerWindow;
+ assert.equal(h.controller.openReciterList(reciterList),true);
+ assert.equal(h.win.location.hash,reciterList);
+ assert.equal(h.dismissed,1);
+ assert.equal(h.win.history.state.salahPlayerWindow,undefined);
+ assert.equal(h.pending,0,'Showing the child list must not consume the player entry');
+ const swipeBack=resolveBackAction({querySelector:()=>null},stack);
+ assert.equal(typeof swipeBack,'function');
+ swipeBack();
+ h.flush();
+ assert.equal(h.win.location.hash,origin);
+ assert.equal(h.win.history.state.salahPlayerWindow,playerEntry);
+ assert.equal(h.restored,1,'Back from the reciter list restores its expanded player');
+ assert.equal(h.failures,0);
+ assert.equal(h.index,2,'Restoring the player must not push an extra entry');
+ h.controller.close();
+ h.flush();
+ assert.equal(h.index,1);
+ assert.equal(h.win.location.hash,origin);
+ assert.equal(h.restored,1);
+ stack.dispose();
+ h.controller.destroy();
+}
+{
+ const h=historyHarness('#home',{restoreResult:null});
+ h.controller.open();
+ h.controller.openReciterList(reciterList);
+ h.win.history.back();
+ h.flush();
+ assert.equal(h.restored,0);
+ assert.equal(h.failures,0,'Ending or changing the playback session is not a failed return');
+ assert.equal(h.win.history.state.salahPlayerWindow,undefined,'Discard the return marker if the media session was closed');
+ h.controller.destroy();
+}
+{
+ const h=historyHarness('#home',{restoreResult:false});
+ h.controller.open();
+ h.controller.openReciterList(reciterList);
+ assert.equal(h.failures,0,'An open list or cancelled gesture is not an error');
+ h.win.history.back();
+ h.flush();
+ assert.equal(h.failures,1);
+ h.forward();
+ h.win.history.back();
+ h.flush();
+ assert.equal(h.failures,1,'A failed return is counted once even if Back is repeated');
+ h.controller.destroy();
 }
 for(const route of ['#home','#quran?surah=7']){
  const h=historyHarness(route);h.controller.open();assert.equal(h.index,2);assert.equal(h.win.location.href,'https://example.invalid/'+route);assert(h.win.history.state.salahPlayerWindow);assert.equal(h.win.history.state.route,'origin');

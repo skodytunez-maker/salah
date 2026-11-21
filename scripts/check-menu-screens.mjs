@@ -28,8 +28,8 @@ const mainSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'ut
 // Exercise the actual admin route branch; it must open on the first tap.
 const adminBranch=mainSource.slice(mainSource.indexOf("else if(currentRoute==='admin'){")+5,mainSource.indexOf("else {location.hash='home'"));
 assert.ok(adminBranch.startsWith("if(currentRoute==='admin')"));
-const accountEntry=d.createElement('main');let mounts=0;
-const enterOwner=verified=>runInNewContext(adminBranch,{currentRoute:'admin',app:accountEntry,ownerVerified:()=>verified,showAdmin:()=>mounts++});
+const accountEntry=d.createElement('main'),errorReporter={};let mounts=0;
+const enterOwner=verified=>runInNewContext(adminBranch,{currentRoute:'admin',app:accountEntry,ownerVerified:()=>verified,errorReporter,showAdmin:(host,options)=>{assert.equal(host,accountEntry);assert.equal(options.errorReporter,errorReporter);mounts++;}});
 accountEntry.innerHTML='<section class="panel section owner-login"><h1>Мой аккаунт</h1><a href="#admin">Кабинет владельца</a></section>';
 enterOwner(true);assert.equal(mounts,1,'First tap must replace a personal account with the actual cabinet');
 accountEntry.innerHTML='<section class="admin-intro"><div id="owner-panel-users"></div></section>';
