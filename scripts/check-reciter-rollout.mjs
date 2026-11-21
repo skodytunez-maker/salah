@@ -68,11 +68,13 @@ assert.equal(playerCreated,false);
 assert.equal(playback.state.surah,null);
 verified=true;
 assert.equal(reciterHasSurah(sampleId,1),true);
+assert.deepEqual(recentReciters(RECITERS,now).filter(reciter=>scheduled.includes(reciter.id)).map(reciter=>reciter.id).sort(),[...scheduled].sort());
 assert.ok(radioCandidateBatch(index,[sampleId]).length>0);
 await playback.start(reciterRecording(index,1),sampleId);
 assert.equal(playerCreated,true);
 playback.stop();
 verified=false;
 assert.throws(()=>audioUrl(1,sampleId,1));
+assert.deepEqual(recentReciters(RECITERS,now).filter(reciter=>scheduled.includes(reciter.id)).map(reciter=>reciter.id).sort(),[...grouped[0]].sort());
 
 console.log('PASS: five exact week boundaries, verified-owner access, revocation, discovery, favorites, direct playback and radio.');

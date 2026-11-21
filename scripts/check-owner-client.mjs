@@ -24,7 +24,11 @@ globalThis.window={supabase:{createClient:(_url,key,options)=>{
  }};
 }}};
 globalThis.fetch=async(url,options)=>{requests++;assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');assert.ok(url.startsWith('https://kbltwszfvphgbxdbczsb.supabase.co/functions/v1/owner-access'));if(needsMfa)return Response.json({owner:false,mfaRequired:true});if(allowed&&url.includes('mode=stats'))return Response.json({error:'statistics_not_connected'},{status:503});return allowed?Response.json({owner:true}):Response.json({error:'owner_only'},{status:403});};
-const {verifyOwner,ownerVerified,onOwnerChange,signOutOwner,ownerStatistics,ownerNeedsMfa,ownerMfaFactors,verifyOwnerMfa}=await import('../dist/js/owner-auth.js');
+const {verifyOwner,ownerVerified,verifiedOwnerId,ownerCanPreviewReciters,onOwnerChange,onReciterPreviewChange,signOutOwner,ownerStatistics,ownerNeedsMfa,ownerMfaFactors,verifyOwnerMfa}=await import('../dist/js/owner-auth.js');
+const {RECITER_RELEASE_WEEKS,configureReciterRollout,reciterIsAvailable}=await import('../dist/js/quran-reciters.js');
+const firstPublicAt=Date.parse('2026-11-21T16:25:00Z');
+configureReciterRollout({firstPublicAt,isOwner:ownerCanPreviewReciters,now:()=>firstPublicAt});
+const scheduled=RECITER_RELEASE_WEEKS.flat(),visibleScheduled=()=>scheduled.filter(reciterIsAvailable);
 onOwnerChange(()=>changed++);
 assert.equal(await verifyOwner(),false);assert.equal(requests,0);assert.equal(ownerVerified(),false);
 session={access_token:'forged-token',user:{id:'fixture-user'}};
@@ -49,13 +53,20 @@ console.log('PASS: saved session alone does not authorize; server deny removes o
 
 await verifyOwner();
 session={access_token:'verified-user-session',user:{id:'fixture-user'}};allowed=true;needsMfa=true;
+assert.deepEqual(visibleScheduled(),RECITER_RELEASE_WEEKS[0]);
+let previewChanged=0;onReciterPreviewChange(()=>previewChanged++);const ownerChanges=changed;
 assert.equal(await verifyOwner(),false);assert.equal(ownerVerified(),false);assert.equal(ownerNeedsMfa(),true);
+assert.equal(verifiedOwnerId(),null);assert.equal(changed,ownerChanges);
+assert.equal(previewChanged,1);assert.deepEqual(visibleScheduled(),scheduled);
+assert.equal(await verifyOwner(),false);assert.equal(previewChanged,1);
 assert.equal((await ownerMfaFactors())[0].id,'fixture-factor');
 await assert.rejects(verifyOwnerMfa('fixture-factor','123'),/шесть цифр/);
 await assert.rejects(verifyOwnerMfa('fixture-factor','000000'),/не подошёл/);assert.equal(ownerVerified(),false);
 await verifyOwnerMfa('fixture-factor','123456');assert.equal(ownerVerified(),true);
-await signOutOwner();assert.equal(ownerNeedsMfa(),false);
+await signOutOwner();assert.equal(ownerNeedsMfa(),false);assert.equal(ownerCanPreviewReciters(),false);
+assert.deepEqual(visibleScheduled(),RECITER_RELEASE_WEEKS[0]);
 console.log('PASS: MFA setup/challenge keeps cabinet hidden until a valid second factor and server confirmation.');
+console.log('PASS: the authenticated owner account previews all 18 recordings without unlocking private owner tools.');
 
 // Exercise the dashboard itself with fixture responses, including a total that
 // exceeds the displayed page. No owner session or live account data is used.

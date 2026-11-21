@@ -1,6 +1,6 @@
 // Dates are the actual first public deliveries; later app updates do not reset them.
 import{uiLeaf,uiAttribute}from './quran-ui.js';
-import{reciterPublicAt,visibleReciters}from './quran-reciters.js';
+import{reciterIsOwnerPreview,reciterPublicAt,visibleReciters}from './quran-reciters.js';
 export const RECITER_ADDED_AT={
   "ar.islamsobhi": "2026-10-17T10:52:50.953Z",
   "ar.abdulrahmanalawsi": "2026-10-17T10:52:50.953Z",
@@ -37,7 +37,7 @@ function addedAt(reciter){
  if(typeof value!=='string')return null;
  const time=Date.parse(value);return Number.isFinite(time)&&new Date(time).toISOString()===value?time:null;
 }
-function within(reciter,now,window){const time=addedAt(reciter);return !reciter?.variantOf&&Number.isFinite(now)&&time!==null&&time<=now&&now-time<window;}
+function within(reciter,now,window){const time=addedAt(reciter);return !reciter?.variantOf&&Number.isFinite(now)&&time!==null&&(time<=now?now-time<window:reciterIsOwnerPreview(reciter.id,now));}
 export const reciterIsPromoted=(reciter,now=Date.now())=>within(reciter,now,RECITER_PROMOTION_MS);
 export function recentReciters(reciters,now=Date.now()){return visibleReciters(reciters).filter(r=>within(r,now,RECITER_RECENT_MS)).sort((a,b)=>addedAt(b)-addedAt(a));}
 export function orderReciterCatalog(reciters,favorites=[],now=Date.now()){
