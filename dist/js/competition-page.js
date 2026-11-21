@@ -9,7 +9,7 @@ import{read,write}from './storage.js';
 import{toast}from './ui.js';
 import{counterSyncStatus}from './counter-account.js';
 import{ownerVerified,ownerNeedsMfa,verifyOwner}from './owner-auth.js';
-import{RECITERS}from './quran-reciters.js';
+import{RECITERS,reciterIsAvailable,visibleReciters}from './quran-reciters.js';
 import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-favorites.js';
 import{RANK_INTENTION_PHRASES}from './reciter-ranking-core.js';
 import{listenerPrivacyMarkup,bindPopularConsent}from './reciter-popularity.js';
@@ -27,7 +27,10 @@ export function mountCompetition(host,heading){
  // a page-local delta to the cloud result. Saved pending time survives remounts;
  // time from other devices appears when the confirmed board refreshes.
  function previewState(){const registered=competitionOwn(),own=registered||guestCompetitionOwn(period),{signedIn}=counterSyncStatus();return{own,totals:registered?localCompetitionTotals(period):own?.totals||{},eligible:!!(own?.enabled===true&&['initial','profile'].includes(own.mode)&&(signedIn&&registered||!signedIn&&own.guest)),key:(own?.id||'none')+':'+period+':'+new Date().toDateString()};}
- function displayRows(state=previewState()){return liveRows.sample(rows,state.own,state.totals,state);}
+ function displayRows(state=previewState()){
+  return liveRows.sample(rows,state.own,state.totals,state).filter(row=>reciterIsAvailable(row.reciter))
+   .map(row=>row.reciters?{...row,reciters:row.reciters.filter(item=>reciterIsAvailable(item.reciter))}:row);
+ }
  function checkRankOwner(){
   const {signedIn,userId}=counterSyncStatus();
   if(!signedIn||!userId){ownerCheck=null;return;}
@@ -50,7 +53,7 @@ export function mountCompetition(host,heading){
    draw();if(update.needsRefresh)requestFull();
   }});if(midnight)requestFull();return midnight;
  }
- function draw(){if(closed)return;syncLive();const preview=previewState(),shown=displayRows(preview),own=competitionOwn(),{signedIn:signed,userId}=counterSyncStatus(),count=RECITERS.filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
+ function draw(){if(closed)return;syncLive();const preview=previewState(),shown=displayRows(preview),own=competitionOwn(),{signedIn:signed,userId}=counterSyncStatus(),count=visibleReciters().filter(r=>!r.variantOf).length,favorites=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).length;
  const confirmedTotal=competitionListeningTotal(period),confirmedOwn=rows.find(row=>row.id===preview.own?.id),shownOwn=shown.find(row=>row.id===preview.own?.id);
  let target=liveTotal.sample(confirmedTotal,preview.totals,preview);
  // A detailed board and its aggregate come from the same response. Apply the

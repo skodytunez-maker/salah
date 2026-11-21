@@ -7,7 +7,7 @@ import{safeListener}from './reciter-ranking-core.js';
 import{read,write}from './storage.js';
 import{esc,closeModal}from './ui.js';
 import{OWNER_PROJECT_URL,OWNER_PUBLIC_KEY}from './owner-auth.js';
-import{RECITERS,reciterInfo}from './quran-reciters.js';
+import{RECITERS,reciterInfo,reciterIsAvailable}from './quran-reciters.js';
 import{createListeningMeter,listeningDayKey,listeningPeriodTotals,addListeningDay}from './reciter-popularity-core.js';
 import{createCreditMinuteMeter}from './listening-credit-core.js';
 import{createListeningCredit}from './listening-credit.js';
@@ -27,7 +27,7 @@ export async function loadPopularReciters(){
  const task=(async()=>{
   const response=await fetch(endpoint+'?period='+period,{headers:{apikey:OWNER_PUBLIC_KEY},credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(10000)});
   if(!response.ok)throw Error('unavailable');const data=await response.json();if(!Array.isArray(data.items)||![1,7,30].includes(data.windowDays))throw Error('invalid');
-  const ids=[...new Set(data.items.filter(id=>allowed.has(id)))].slice(0,100);
+  const ids=[...new Set(data.items.filter(id=>allowed.has(id)&&reciterIsAvailable(id)))].slice(0,100);
   if(selectedGlobalPeriod!==period||visibilityRevision!==revision)return ids;
   rankingData.clear();for(const row of data.ranking||[])if(allowed.has(row.reciter)&&Number.isSafeInteger(row.minutes)&&row.minutes>0)rankingData.set(row.reciter,{minutes:row.minutes,seconds:Number.isSafeInteger(row.seconds)&&row.seconds>0?row.seconds:row.minutes*60,listeners:Array.isArray(row.listeners)?row.listeners.map(safeListener).filter(Boolean).slice(0,4):[]});
   cache=ids;loaded=Date.now();return ids;
@@ -39,7 +39,7 @@ const PERSONAL='reciter-personal-listening-v1:',localScope=()=>PERSONAL+(account
 function cleanTotals(data){const totals={};if(data&&typeof data==='object')for(const [id,n]of Object.entries(data))if(allowed.has(id)&&Number.isFinite(n)&&n>0&&n<315360000)totals[id]=n;return totals;}
 function sanitizedPersonal(data){const days={},cutoff=new Date();cutoff.setDate(cutoff.getDate()-92);const first=listeningDayKey(cutoff),last=listeningDayKey(Date.now());if(data?.days&&typeof data.days==='object')for(const [day,rows]of Object.entries(data.days))if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&day>=first&&day<=last&&listeningDayKey(new Date(day+'T12:00:00'))===day)days[day]=cleanTotals(rows);return {since:typeof data?.since==='string'?data.since:new Date().toISOString(),dailySince:typeof data?.dailySince==='string'&&Number.isFinite(Date.parse(data.dailySince))?data.dailySince:new Date().toISOString(),totals:cleanTotals(data?.totals),days};}
 export function personalListening(period='all'){const data=workingKey===localScope()&&working?working:sanitizedPersonal(read(localScope(),null));return period==='all'?data:{...data,totals:listeningPeriodTotals(data,period)};}
-export function personalTop(period='all'){return Object.entries(personalListening(period).totals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);}
+export function personalTop(period='all'){return Object.entries(personalListening(period).totals).filter(([id])=>reciterIsAvailable(id)).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);}
 export const formatListeningTime=listeningTime;
 export {listeningDayKey};
 export function initReciterPopularity({playback,ruqyah=null,getAccount,getClient,now=Date.now}){if(initialized)return;initialized=true;account=getAccount;client=getClient;let dirty=false,creditDirty=false,queueDirty=false,eligible=null,eligibleKey=null,lastFlush=0,currentUser=null,sending=false,pending=[],retryAt=0,finalSample=false;

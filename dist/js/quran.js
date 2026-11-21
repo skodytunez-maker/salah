@@ -18,7 +18,7 @@ import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-fav
 import{broadcastButton,bindQuranBroadcast,minimizeQuranBroadcast}from './quran-broadcast.js';
 import{hasOwnTranscription,readingTranscription,ownTranscriptionNote}from './quran-transcription.js';
 import{arabicWithHints,TAJWEED_RULES}from './tajweed.js';
-import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from './quran-reciters.js';
+import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions,reciterIsAvailable}from './quran-reciters.js';
 import{read,write}from './storage.js';
 import{esc,toast,modal}from './ui.js';
 import{loadIndex,loadSurah,loadSearch,validPosition,searchSurahs,searchTranslation,estimatedAudioBytes}from './quran-data.js';
@@ -38,7 +38,7 @@ function preferences(){
  if([28,34,40,48].includes(saved?.arabicSize))p.arabicSize=saved.arabicSize;
  if([18,20,24,28].includes(saved?.textSize))p.textSize=saved.textSize;
  if(['light','dark','system'].includes(saved?.theme))p.theme=saved.theme;
- if(RECITERS.some(r=>r.id===saved?.reciter))p.reciter=saved.reciter;
+ if(RECITERS.some(r=>r.id===saved?.reciter)&&reciterIsAvailable(saved.reciter))p.reciter=saved.reciter;
  if(QURAN_TRANSLATION_IDS.includes(saved?.translationEdition))p.translationEdition=saved.translationEdition;if(saved?.arabicEdition==='quran-uthmani')p.arabicEdition=saved.arabicEdition;
  if(['source','salah-preview'].includes(saved?.transcriptionEdition))p.transcriptionEdition=saved.transcriptionEdition;
  return p

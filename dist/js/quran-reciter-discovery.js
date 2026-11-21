@@ -1,5 +1,6 @@
 // Dates are the actual first public deliveries; later app updates do not reset them.
 import{uiLeaf,uiAttribute}from './quran-ui.js';
+import{reciterPublicAt,visibleReciters}from './quran-reciters.js';
 export const RECITER_ADDED_AT={
   "ar.islamsobhi": "2026-10-17T10:52:50.953Z",
   "ar.abdulrahmanalawsi": "2026-10-17T10:52:50.953Z",
@@ -31,19 +32,20 @@ export const RECITER_ADDED_AT={
 export const RECITER_PROMOTION_MS=7*86400000;
 export const RECITER_RECENT_MS=7*86400000;
 function addedAt(reciter){
+ const publicAt=reciterPublicAt(reciter?.id);if(publicAt!==null)return publicAt;
  const value=RECITER_ADDED_AT[reciter?.id]??reciter?.addedAt;
  if(typeof value!=='string')return null;
  const time=Date.parse(value);return Number.isFinite(time)&&new Date(time).toISOString()===value?time:null;
 }
 function within(reciter,now,window){const time=addedAt(reciter);return !reciter?.variantOf&&Number.isFinite(now)&&time!==null&&time<=now&&now-time<window;}
 export const reciterIsPromoted=(reciter,now=Date.now())=>within(reciter,now,RECITER_PROMOTION_MS);
-export function recentReciters(reciters,now=Date.now()){return reciters.filter(r=>within(r,now,RECITER_RECENT_MS)).sort((a,b)=>addedAt(b)-addedAt(a));}
+export function recentReciters(reciters,now=Date.now()){return visibleReciters(reciters).filter(r=>within(r,now,RECITER_RECENT_MS)).sort((a,b)=>addedAt(b)-addedAt(a));}
 export function orderReciterCatalog(reciters,favorites=[],now=Date.now()){
- const listed=reciters.filter(r=>!r.variantOf),byId=new Map(listed.map(r=>[r.id,r])),saved=[...new Set(favorites)].filter(id=>byId.has(id)),selected=new Set(saved),others=listed.filter(r=>!selected.has(r.id));
+ const listed=visibleReciters(reciters).filter(r=>!r.variantOf),byId=new Map(listed.map(r=>[r.id,r])),saved=[...new Set(favorites)].filter(id=>byId.has(id)),selected=new Set(saved),others=listed.filter(r=>!selected.has(r.id));
  return [...saved.map(id=>byId.get(id)),...others.filter(r=>reciterIsPromoted(r,now)).sort((a,b)=>addedAt(b)-addedAt(a)),...others.filter(r=>!reciterIsPromoted(r,now))];
 }
 export function reciterFilterTabs(active,favoriteCount,reciters,now=Date.now()){
- const all=reciters.filter(r=>!r.variantOf).length,saved=Number.isSafeInteger(favoriteCount)&&favoriteCount>=0?Math.min(favoriteCount,all):0;
+ const all=visibleReciters(reciters).filter(r=>!r.variantOf).length,saved=Number.isSafeInteger(favoriteCount)&&favoriteCount>=0?Math.min(favoriteCount,all):0;
  const fresh=recentReciters(reciters,now).length,current=active==='new'&&!fresh?'all':active;
  const links=[['all','#quran?view=reciters',uiLeaf('reciterUi.allCount',{count:all})],...(fresh?[['new','#quran?view=reciters&filter=new',uiLeaf('reciterUi.newCount',{count:fresh})]]:[]),['favorites','#quran?view=reciters&filter=favorites',uiLeaf('reciterUi.favoritesCount',{count:saved})],['ruqyah','#quran?view=reciters&filter=ruqyah',uiLeaf('reciterUi.ruqyah')]];
  return '<nav class="reciter-filter-tabs reciter-catalog-filter-tabs" data-has-new="'+Boolean(fresh)+'" '+uiAttribute('reciterUi.catalog')+'>'+links.map(([key,href,label])=>'<a href="'+href+'" aria-current="'+(current===key?'page':'false')+'">'+label+'</a>').join('')+'</nav>';

@@ -1,7 +1,7 @@
 import{RADIO_VOICES,radioCandidateBatch,measureRadioTrack}from './radio-candidates.js';
 import{teamPreviewVerified as ownerVerified,teamPreviewRadioHint,verifyTeamPreviewAccess as verifyOwner,onTeamPreviewChange as onOwnerChange}from './team-preview-access.js';
 import{loadIndex,audioUrl}from './quran-data.js';
-import{reciterInfo,reciterHasSurah}from './quran-reciters.js';
+import{reciterInfo,reciterHasSurah,reciterIsAvailable}from './quran-reciters.js';
 import{reciterRecording}from './quran-reciter-recording.js';
 import{quranPlayback}from './quran-session.js';
 import{reciterImageUrl}from './approved-catalog.js';
@@ -10,7 +10,6 @@ import{subscribeLanguage,translateUi}from './i18n.js';
 import{teamLeaf,teamAttr,teamMessage,teamMarkup}from './team-ui.js';
 import{shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration}from './radio-program-core.js';
 import{radioQuizQuestions,initialRadioQuiz,stepRadioQuiz}from './radio-quiz-core.js';
-const VOICES=RADIO_VOICES;
 const TABS=[['air',teamLeaf('air')],['program',teamLeaf('program')],['quiz',teamLeaf('quiz')]];
 export const radioBeacon=()=>'<svg viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="14" cy="14" r="2.5" fill="currentColor" stroke="none"/><path d="M8.5 8.5a7.8 7.8 0 0 0 0 11m11-11a7.8 7.8 0 0 1 0 11M5 5a12.7 12.7 0 0 0 0 18M23 5a12.7 12.7 0 0 1 0 18"/></svg>';
 export function mountHomeRadioEntry(host){
@@ -33,7 +32,7 @@ export async function showRadioPreview(host,{verify=()=>verifyOwner({verifySessi
  stopRadioPreview();
  let alive=true,guard=null,controller=null,tab='air',catalog=null,questions=[],quiz=initialRadioQuiz(),program=null,busy=false,measured=0,total=0,notice='',root=null,voiceQuery='';
  let off=null;
- const selected=new Set(VOICES),durations=new Map(),dirty=new Set(['air','program','quiz']);
+ const selected=new Set(),durations=new Map(),dirty=new Set(['air','program','quiz']);
  const current=()=>alive&&host.isConnected;
  const stopLocale=subscribeLanguage(()=>{if(current())translateUi(host);});
  const dispose=()=>{stopLocale();alive=false;clearInterval(guard);controller?.abort();off?.();root?.removeEventListener('click',onClick);root?.removeEventListener('change',onChange);root?.removeEventListener('keydown',onKey);root?.removeEventListener('input',onVoiceSearch);};
@@ -43,12 +42,14 @@ export async function showRadioPreview(host,{verify=()=>verifyOwner({verifySessi
  try{
   if(!await verify()||!isOwner()){if(current())denied(teamMessage('access'));return dispose;}
   if(!current())return dispose;
+  RADIO_VOICES.filter(reciterIsAvailable).forEach(id=>selected.add(id));
   off=subscribe(()=>{if(current()&&!isOwner()){dispose();denied(teamMessage('verifyAgain'));}});
   catalog=await load();if(!current()||!isOwner())return dispose;
   questions=radioQuizQuestions(catalog);
   guard=setInterval(()=>{if(current()&&!isOwner()){dispose();denied(teamMessage('verifyAgain'));}},5000);
  }catch{if(current())denied(teamMessage('openFailed'));return dispose;}
  const time=seconds=>{const s=Math.floor(seconds);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+ const VOICES=RADIO_VOICES.filter(reciterIsAvailable);
  const voiceName=id=>reciterInfo(id).name.replace(' · сура целиком','');
  const trackMarkup=(track,i)=>'<li><span class="radio-track-number">'+(i+1)+'</span><div><strong>'+esc(catalog.surahs[track.surah-1].name)+'</strong><small>'+esc(voiceName(track.reciter))+'</small></div><span dir="ltr">'+time(track.duration)+'</span><button type="button" class="radio-track-play" data-audition="'+i+'" '+teamAttr('listenSurah',{name:catalog.surahs[track.surah-1].name})+'>▷</button></li>';
  function airMarkup(){

@@ -1,3 +1,4 @@
+import{reciterIsAvailable,visibleReciters}from '../dist/js/quran-reciters.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
@@ -25,7 +26,7 @@ const foreignId='quranenc.english_saheeh',clipboard=[],sharedCards=[];let choose
 const foreignMeaning={id:foreignId,number:1,language:'en',author:'Test source author',publisher:'Test publisher',version:'test-version',source:'https://example.invalid/meaning-source',verses:surah.verses.map(verse=>({ayah:verse.ayah,translation:'Meaning fixture '+verse.ayah,footnotes:'Source note '+verse.ayah}))};
 let state={surah:{number:1},meta:sourceIndex.surahs[0],ayah:2,status:'playing',reciter:'ar.alafasy',positionSeconds:20,durationSeconds:300};
 const playback={get state(){return state;},subscribe(fn){listeners.add(fn);fn(state);return()=>listeners.delete(fn);},start(){actions.audio++;},stop(){actions.audio++;},toggle(){actions.audio++;},pause(){actions.audio++;},seek(){actions.seek++;}};
-const ctx=vm.createContext({...language,...labels,document:doc,window:w,location:w.location,history:w.history,URLSearchParams,Intl,AbortController,read:(key,fallback)=>storage.has(key)?storage.get(key):fallback,write:(key,value)=>{actions.writes++;storage.set(key,value);return true;},
+const ctx=vm.createContext({reciterIsAvailable,visibleReciters,...language,...labels,document:doc,window:w,location:w.location,history:w.history,URLSearchParams,Intl,AbortController,read:(key,fallback)=>storage.has(key)?storage.get(key):fallback,write:(key,value)=>{actions.writes++;storage.set(key,value);return true;},
  RECITERS,reciterInfo,reciterHasSurah,reciterOptions,normalizeReciterFavorites:()=>[],RECITER_FAVORITES_KEY:'favorites',esc,toast(){},actionIcon:()=>'<svg aria-hidden="true"></svg>',actionLabel:(_name,text)=>'<svg aria-hidden="true"></svg><span>'+esc(text)+'</span>',
  loadIndex:async()=>{actions.loads++;return sourceIndex;},loadSurah:async()=>{actions.loads++;return surah;},validPosition,applyApprovedReciters:async()=>{},quranPlayback:playback,readReadingPosition:()=>null,saveReadingPosition:()=>true,readListeningPosition:()=>null,readResumeAfterDismiss:()=>null,
  QURAN_TRANSLATION_IDS:['ru.kuliev',foreignId],BUNDLED_TRANSLATION_ID:'ru.kuliev',quranTranslations:{list:async()=>[foreignMeaning],loadSurah(id,number,{signal}={}){assert.equal(id,foreignId);assert.equal(number,1);assert.equal(signal?.aborted||false,false);actions.loads++;return Promise.resolve(foreignMeaning);}},mountQuranTranslationPicker(_button,{onSelect}){actions.pickerMounts++;chooseMeaning=onSelect;return()=>{};},
@@ -156,7 +157,7 @@ const rw=new Window({url:'https://salah.invalid/#quran?view=recognize'}),rdoc=rw
 const recordActions={permission:0,pause:0,start:0,stop:0,trackStop:0,fetch:0,focus:0},timers=new Map();let timerId=0,grant,recorder;
 const stream={getTracks:()=>[{stop(){recordActions.trackStop++;}}]};
 class Recorder{static isTypeSupported(){return true;}constructor(input){assert.equal(input,stream);this.state='inactive';recorder=this;}start(){this.state='recording';recordActions.start++;}stop(){this.state='inactive';recordActions.stop++;}}
-const recordCtx=vm.createContext({...language,...labels,document:rdoc,window:rw,location:rw.location,esc,reciterInfo,reciterImageUrl:path=>path,RECITERS,
+const recordCtx=vm.createContext({reciterIsAvailable,visibleReciters,...language,...labels,document:rdoc,window:rw,location:rw.location,esc,reciterInfo,reciterImageUrl:path=>path,RECITERS,
  quranPlayback:{pause(){recordActions.pause++;}},validRecognitionCatalog:()=>true,resampleRecognition:()=>null,setForegroundAudio(){recordActions.focus++;},
  navigator:{mediaDevices:{getUserMedia:()=>{recordActions.permission++;return new Promise(resolve=>{grant=resolve;});}}},MediaRecorder:Recorder,AbortController,URL,Blob,fetch:()=>{recordActions.fetch++;return new Promise(()=>{});},loadRecognitionData:()=>new Promise(()=>{}),
  setTimeout:fn=>{timers.set(++timerId,fn);return timerId;},clearTimeout:id=>timers.delete(id),setInterval:fn=>{timers.set(++timerId,fn);return timerId;},clearInterval:id=>timers.delete(id),console});
