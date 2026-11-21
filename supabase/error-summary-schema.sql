@@ -9,9 +9,13 @@ create table salah_errors_private.counts(
  day date not null,version integer not null check(version between 1 and 1000000),
  route text not null check(route in('home','knowledge','quran','adhkar','more','account','settings','calendar','qibla','umrah','support','learning','other')),
  kind text not null check(kind in('script','promise','resource','slow')),
- module text not null check(module in('app','quran','adhkar','qibla','support','settings','qr-login','account-devices','weather','other')),
+ module text not null,
  screen text not null check(screen in('phone','tablet','desktop')),
- count bigint not null check(count>0),primary key(day,version,route,kind,module,screen)
+ count bigint not null check(count>0),primary key(day,version,route,kind,module,screen),
+ constraint counts_module_check check(
+  module in('app','quran','quran-navigation','adhkar','qibla','support','settings','qr-login','account-devices','weather','other')
+  and (module<>'quran-navigation' or (route='quran' and kind='promise'))
+ )
 );
 alter table salah_errors_private.batches enable row level security;
 alter table salah_errors_private.counts enable row level security;
