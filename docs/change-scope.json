@@ -1,205 +1,73 @@
 {
   "schema": 1,
-  "version": 550,
-  "baseCommit": "2e8d7dfce5726e3fa4ee171652863838df445f58",
-  "baseTree": "481567adb834ec22406a69dca382d97f9d74026c",
-  "note": "Release the 18 previously prepared streaming reciters with immediate access for the verified owner and five weekly waves for other listeners. Keep the prior public news. This release includes compatible playback, competition, listening accounting and recognition catalogues.",
+  "version": 551,
+  "baseCommit": "face5e7530acd0c11329b693da21a750804a81dc",
+  "baseTree": "83e287881118dea0a6e9d3e259245188352fc73b",
+  "note": "Correct the confirmed owner account reciter preview and add documentary portraits for the four currently public recordings. Existing private owner tools retain their MFA grant. The public schedule and historical announcement are preserved.",
   "allowed": [
     {
-      "path": "dist/data/recognition/catalog-v2.json",
-      "reason": "Identify 18 exact Al-Fatiha source recordings in coverage"
+      "path": "dist/assets/reciters/abdullahalmatroud.jpg",
+      "reason": "Documentary photograph from the named publication"
     },
     {
-      "path": "dist/data/recognition/fingerprints-v2.bin.gz",
-      "reason": "Add verified fingerprints without distributing the source MP3 files"
+      "path": "dist/assets/reciters/abdullahbasfar.jpg",
+      "reason": "Documentary photograph from the named publication"
+    },
+    {
+      "path": "dist/assets/reciters/ibrahimalakhdar.jpg",
+      "reason": "Documentary photograph from the named publication"
+    },
+    {
+      "path": "dist/assets/reciters/khalidalqahtani.jpg",
+      "reason": "Documentary photograph from the named publication"
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Release 550 without a new public announcement"
+      "reason": "Quiet 551 revision"
     },
     {
       "path": "dist/js/app.js",
-      "reason": "Attach the catalogue to the verified owner grant and refresh visible waves"
-    },
-    {
-      "path": "dist/js/competition-page.js",
-      "reason": "Hide future-wave voices in visible listener competition rows"
+      "reason": "Bind early reciter access to the separately verified account entitlement"
     },
     {
       "path": "dist/js/owner-auth.js",
-      "reason": "Verify and renew owner access while browsing the Quran"
-    },
-    {
-      "path": "dist/js/quran-mushaf-listening.js",
-      "reason": "Use an available reader when the selected one belongs to a future batch"
+      "reason": "Recognize the server-confirmed account only for public recordings ahead of schedule"
     },
     {
       "path": "dist/js/quran-reciter-discovery.js",
-      "reason": "Show weekly batches as new from their public date"
-    },
-    {
-      "path": "dist/js/quran-reciter-library.js",
-      "reason": "Restrict catalogue, favorites display and direct profiles to visible reciters"
+      "reason": "Show authorized upcoming recordings in the New view"
     },
     {
       "path": "dist/js/quran-reciters.js",
-      "reason": "Add 18 full direct MP3Quran streams. Define the five public waves and verified owner override"
+      "reason": "Identify authorized preview recordings without changing public dates"
     },
     {
-      "path": "dist/js/quran-recognition-data.js",
-      "reason": "Use a new recognition cache for the expanded index"
-    },
-    {
-      "path": "dist/js/quran-recognition.js",
-      "reason": "Limit display and playback links to visible reciters"
-    },
-    {
-      "path": "dist/js/quran.js",
-      "reason": "Add an accessible repeat action to each online verse. Ignore an unavailable saved reader in the active selector"
-    },
-    {
-      "path": "dist/js/radio-candidates.js",
-      "reason": "Do not build a radio program from an unavailable reader"
-    },
-    {
-      "path": "dist/js/radio-preview.js",
-      "reason": "Show only voices the current radio visitor can use"
-    },
-    {
-      "path": "dist/js/reciter-popularity.js",
-      "reason": "Filter personal and global reciter listings while preserving stored listening history"
-    },
-    {
-      "path": "dist/js/reciter-ranking-page.js",
-      "reason": "Filter catalogue counts and rankings on the current access policy"
-    },
-    {
-      "path": "dist/js/reciter-ranking-view.js",
-      "reason": "Prevent stale ranking rows from showing a future voice"
-    },
-    {
-      "path": "dist/js/storage-cache.js",
-      "reason": "Clear both prior and current recognition caches on explicit request"
+      "path": "dist/reciter-portrait-credits.html",
+      "reason": "Credit verified original first-wave portrait sources"
     },
     {
       "path": "dist/sw.js",
-      "reason": "Revision 550 cache keys and resource size manifest"
+      "reason": "Release 551 cache, new first-wave portraits and generated sizes"
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Exact changes authorized for 550 relative to the current public source"
+      "reason": "Record the exact correction scope relative to published 550"
     },
     {
-      "path": "scripts/check-change-scope.mjs",
-      "reason": "Recognize Git worktree metadata in isolated candidate workspaces"
+      "path": "docs/media-rights-register.json",
+      "reason": "Record first-wave images and documented provenance"
     },
     {
-      "path": "scripts/check-competition-live.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-competition-responsive.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-live-listening-total.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-quran-continuity.mjs",
-      "reason": "Check the expanded catalog without duplicate reader cards"
-    },
-    {
-      "path": "scripts/check-quran-io-language.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-quran-library-language.mjs",
-      "reason": "Check the actual verse repeat button and its observable playback state"
-    },
-    {
-      "path": "scripts/check-quran-recognition.mjs",
-      "reason": "Check expanded recording and voice counts with exact fingerprint hashes"
-    },
-    {
-      "path": "scripts/check-quran-streaming-reciters.mjs",
-      "reason": "Verify 2052 URLs and deduplicated listening for all 18 IDs"
-    },
-    {
-      "path": "scripts/check-radio-all-reciters.mjs",
-      "reason": "Check bounded radio selection with 18 more voices"
-    },
-    {
-      "path": "scripts/check-radio-preview.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-ranking-language.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-reading-reciters-460.mjs",
-      "reason": "Retain checks for previous reciters with the expanded catalog"
-    },
-    {
-      "path": "scripts/check-reciter-competition.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-reciter-discovery.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-reciter-expansion-418.mjs",
-      "reason": "Retain checks for previous reciters with the expanded catalog"
+      "path": "scripts/check-owner-client.mjs",
+      "reason": "Exercise early preview entitlement without MFA cabinet access"
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "reason": "Check the count and uniqueness of the expanded catalog"
-    },
-    {
-      "path": "scripts/check-reciter-popularity.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-reciter-ranking.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
+      "reason": "Verify the first-wave photo bindings and unchanged remaining fallback"
     },
     {
       "path": "scripts/check-reciter-rollout.mjs",
-      "reason": "Cover release boundaries, owner revocation and direct playback"
-    },
-    {
-      "path": "scripts/check-recognition-ui.mjs",
-      "reason": "Provide the real reciter availability policy to the existing isolated integration fixture"
-    },
-    {
-      "path": "scripts/check-release-version-notes.mjs",
-      "reason": "Permit consecutive quiet releases without a new announcement"
-    },
-    {
-      "path": "scripts/check-team-language.mjs",
-      "reason": "Use the real availability rule in the existing radio language integration fixture"
-    },
-    {
-      "path": "supabase/functions/guest-competition/competition-core.mjs",
-      "reason": "Allow the 18 catalog IDs for guest progress"
-    },
-    {
-      "path": "supabase/functions/reciter-competition/core.mjs",
-      "reason": "Allow the 18 catalog IDs for account progress"
-    },
-    {
-      "path": "supabase/functions/reciter-popularity/index.ts",
-      "reason": "Allow the 18 catalog IDs for listening reports"
-    },
-    {
-      "path": "supabase/migrations/20261121140524_quran_streaming_reciters.sql",
-      "reason": "Preserve both listening overloads and their authorization while extending the reciter list"
-    },
-    {
-      "path": "tests/recognition/expanded-query-fixtures.json",
-      "reason": "Verify two decoded samples per newly added recording"
+      "reason": "Check New view through preview grant and public revocation"
     }
   ],
   "generated": [
@@ -2615,7 +2483,7 @@
     },
     {
       "path": "dist/data/recognition/catalog-v2.json",
-      "sha": "e7492114bd8db10a4cc95c54a3a70da1bc64f517"
+      "sha": "eb2c82e2edce259ce628c29f9ea818936e446a24"
     },
     {
       "path": "dist/data/recognition/fingerprints-v1.bin.gz",
@@ -2623,7 +2491,7 @@
     },
     {
       "path": "dist/data/recognition/fingerprints-v2.bin.gz",
-      "sha": "131b88aac0a9b234868046210b435640c1ff2d39"
+      "sha": "c44fe115f9b224c745eab2b800e540b1889d2926"
     },
     {
       "path": "dist/data/tyumen-first-asr.json",
@@ -2795,7 +2663,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "23e345b753f9dac1ab69d090379bde5259df98b1"
+      "sha": "7f78c876a2945736c2d105db60c30bdf882c4d2c"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2815,7 +2683,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "7c0d46fbb20b0e5afc54dc61f1aa85615497fedd"
+      "sha": "113be9c65bc2cbcb4029351208c91a6a791aeaea"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -2923,7 +2791,7 @@
     },
     {
       "path": "dist/js/competition-page.js",
-      "sha": "c7d0543290fdc77ebfe8002f31014cebcb2d4fbd"
+      "sha": "65d98161bf3cffc53d9911d4f83b0172771358f9"
     },
     {
       "path": "dist/js/competition-view.js",
@@ -4339,7 +4207,7 @@
     },
     {
       "path": "dist/js/owner-auth.js",
-      "sha": "0b231060d0e5b07801f65b89c78e5275757c4f96"
+      "sha": "664852f29f300b74d44c43b676d8e22d4f975d36"
     },
     {
       "path": "dist/js/owner-card-navigation.js",
@@ -4583,7 +4451,7 @@
     },
     {
       "path": "dist/js/quran-mushaf-listening.js",
-      "sha": "7dbe82a5fab09d4aa73344138888be2848400e49"
+      "sha": "2bbab91428463333b723cc355c91211c8385f2ea"
     },
     {
       "path": "dist/js/quran-mushaf-offline.js",
@@ -4671,7 +4539,7 @@
     },
     {
       "path": "dist/js/quran-reciter-discovery.js",
-      "sha": "68dc8b8da5c0aa998b3d6c9624887ff49ce48dda"
+      "sha": "5b4af5885eaae4ada0aa1ba323cba9b228b6a77b"
     },
     {
       "path": "dist/js/quran-reciter-favorites.js",
@@ -4679,7 +4547,7 @@
     },
     {
       "path": "dist/js/quran-reciter-library.js",
-      "sha": "e4c4a48823f0f5674d2b09759da3c74a3eba53c9"
+      "sha": "c248f24479c8c605dfb22fd1f65f075c26f69017"
     },
     {
       "path": "dist/js/quran-reciter-recording.js",
@@ -4687,7 +4555,7 @@
     },
     {
       "path": "dist/js/quran-reciters.js",
-      "sha": "968b1aac0a96b772be62911cbdfb9b8e89b59125"
+      "sha": "06eba4c716a40b79cb64cab882129e5813316f67"
     },
     {
       "path": "dist/js/quran-recognition-core.js",
@@ -4695,7 +4563,7 @@
     },
     {
       "path": "dist/js/quran-recognition-data.js",
-      "sha": "57741e171cb7a9c94e55e7db01fdfb206cdd09e2"
+      "sha": "9d1141b7e94267524444000e77fe2fc38d494936"
     },
     {
       "path": "dist/js/quran-recognition-worker.js",
@@ -4703,7 +4571,7 @@
     },
     {
       "path": "dist/js/quran-recognition.js",
-      "sha": "e85fdf70932acfe4b0243a41157f6711ccdfb62f"
+      "sha": "b6fd792333ad87e63c953648ebd13016db752a26"
     },
     {
       "path": "dist/js/quran-ruqyah.js",
@@ -4747,15 +4615,15 @@
     },
     {
       "path": "dist/js/quran.js",
-      "sha": "32dbcbe84acb1180a051d7df9aad6aacdb760a76"
+      "sha": "44eab0a53d323e87392e68747608a99d1c93ecc5"
     },
     {
       "path": "dist/js/radio-candidates.js",
-      "sha": "3f292a7c442a67f787e0b1b7eaf9a1b10e16091b"
+      "sha": "286b6ab8b1c52f9e7893a156922c6eb15a68141b"
     },
     {
       "path": "dist/js/radio-preview.js",
-      "sha": "63e032cb180d4466e0303f4d73e8868208f8840a"
+      "sha": "c997626b9b566265aff0a5577741658ca31395f3"
     },
     {
       "path": "dist/js/radio-program-core.js",
@@ -4783,7 +4651,7 @@
     },
     {
       "path": "dist/js/reciter-popularity.js",
-      "sha": "e3c1c7c877f3177067c151bf86f326ba6cb964b1"
+      "sha": "2bb32754ef3fb15370791af1f2b19a12e8e22e9a"
     },
     {
       "path": "dist/js/reciter-ranking-core.js",
@@ -4791,11 +4659,11 @@
     },
     {
       "path": "dist/js/reciter-ranking-page.js",
-      "sha": "6e399525ea4dfcc25af59047b66a216896478506"
+      "sha": "9a51065341aa4b7ec378986df5ea7d22f05aa8c9"
     },
     {
       "path": "dist/js/reciter-ranking-view.js",
-      "sha": "b8beac2a23b70921f64f2db5511f933e03803da6"
+      "sha": "15d268adcdb177007630e681b77d3d5f2fb18487"
     },
     {
       "path": "dist/js/release-gallery.js",
@@ -4923,7 +4791,7 @@
     },
     {
       "path": "dist/js/storage-cache.js",
-      "sha": "ecdcb3be6b1fc00b03799f6c063eb9e35059edf7"
+      "sha": "a94e98e496a7bdb44c56a99970cbad9142e262ad"
     },
     {
       "path": "dist/js/storage.js",
@@ -5243,7 +5111,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "9ec77581aff8dd08635a4defe588b565d678d878"
+      "sha": "c747509a787c0d57d94fae324eae7e8ef8f78646"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5791,7 +5659,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "5c7d7a81b9225c149c916824fef1f5a41bbc316e"
+      "sha": "5b7f77bc60536e702cebbf572313b124dbb34fac"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6879,7 +6747,7 @@
     },
     {
       "path": "scripts/check-change-scope.mjs",
-      "sha": "935a24f474f8564c898f185f091ae4adefeaf54e"
+      "sha": "5440b4a81b659deecdce0597eb49145c4ae1d449"
     },
     {
       "path": "scripts/check-city-lookup-lifecycle.mjs",
@@ -6927,7 +6795,7 @@
     },
     {
       "path": "scripts/check-competition-live.mjs",
-      "sha": "c61a4431247dec137eefdcb79c12c32d86d6b278"
+      "sha": "55a9ade3404917af7b957b7fa0b76df9785e113a"
     },
     {
       "path": "scripts/check-competition-period-consistency.mjs",
@@ -6935,7 +6803,7 @@
     },
     {
       "path": "scripts/check-competition-responsive.mjs",
-      "sha": "ae26fc86bb0ec9ea9a22e9add035e45e44efcc65"
+      "sha": "1ca0fc2c79c9fb0cb153a15d0c726258a8211b13"
     },
     {
       "path": "scripts/check-competition-sql.mjs",
@@ -7191,7 +7059,7 @@
     },
     {
       "path": "scripts/check-live-listening-total.mjs",
-      "sha": "4d2d94042da364f1c12fcc9bfacda9a557860b1b"
+      "sha": "42815df7c7ed98bd269edef7c6dd1d184cb8111d"
     },
     {
       "path": "scripts/check-live-sky-opt-in.mjs",
@@ -7519,7 +7387,7 @@
     },
     {
       "path": "scripts/check-quran-continuity.mjs",
-      "sha": "35d3730f3a6b1b69c4494657ffa33af942f14825"
+      "sha": "42efc03684fc8a36def0440a90461637cd2d9a88"
     },
     {
       "path": "scripts/check-quran-dismiss-resume.mjs",
@@ -7535,11 +7403,11 @@
     },
     {
       "path": "scripts/check-quran-io-language.mjs",
-      "sha": "4928ecef6c74473d1cfefd2c95aedfc7a2efa207"
+      "sha": "1851aa642c5932f052ebe4e70dea68d6477ce86c"
     },
     {
       "path": "scripts/check-quran-library-language.mjs",
-      "sha": "c680b749f542f456bf26bf8b6e3488a99f5a1d3a"
+      "sha": "4af25e69871ef65cb3b12fc7ebfdb6be34386611"
     },
     {
       "path": "scripts/check-quran-listen-share.mjs",
@@ -7639,7 +7507,7 @@
     },
     {
       "path": "scripts/check-quran-recognition.mjs",
-      "sha": "83b2377fa65f5c3a957e2f173aabd554188b7b0a"
+      "sha": "2ec831c2456c2da28dad171f68e8edfd2a0f1dc0"
     },
     {
       "path": "scripts/check-quran-ruqyah.mjs",
@@ -7660,6 +7528,10 @@
     {
       "path": "scripts/check-quran-sleep-timer.mjs",
       "sha": "83a270a2ecfdae61421d803b18a765c3f7cbcca3"
+    },
+    {
+      "path": "scripts/check-quran-streaming-reciters.mjs",
+      "sha": "1ce37eb217f538a1785fe76ff55ac54284e8dd3e"
     },
     {
       "path": "scripts/check-quran-system-pause.mjs",
@@ -7687,35 +7559,35 @@
     },
     {
       "path": "scripts/check-radio-all-reciters.mjs",
-      "sha": "539c56e667d54faa3834e02a439627819dc63185"
+      "sha": "1def01bbcc41853b07d398661bf221fab789e3d4"
     },
     {
       "path": "scripts/check-radio-preview.mjs",
-      "sha": "ef767e225fa6091536bf668706f2aae56f4050ca"
+      "sha": "927fdbd8158c88d8f47808674a0937ea9c1d9b14"
     },
     {
       "path": "scripts/check-ranking-language.mjs",
-      "sha": "82dfd3993e79b7cc8064a7b4e520cf4996921d08"
+      "sha": "c65778c10c65206b3f95c000e4e9fc146b9998a6"
     },
     {
       "path": "scripts/check-reading-reciters-460.mjs",
-      "sha": "62f593fe34c023c2d21150048dab252cebcd4ec8"
+      "sha": "6ca87d048d47163b432ea815d7d41cd79a9ec701"
     },
     {
       "path": "scripts/check-reciter-competition.mjs",
-      "sha": "988600c91755a98c3602b3ed51ef34321a20a0b7"
+      "sha": "379d66335e29aa5e827d527f42dc32fc453fe731"
     },
     {
       "path": "scripts/check-reciter-discovery.mjs",
-      "sha": "4d108dbcc43145ce1111d1af3f23bf6fe7bce7e5"
+      "sha": "6c7348afa3fe82c531e549ce46a525b9523b5214"
     },
     {
       "path": "scripts/check-reciter-expansion-418.mjs",
-      "sha": "57439f98c22bf728ada6878b8e12f744804a4092"
+      "sha": "819619203e276bfd6bb67da87bde99827a916c27"
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "sha": "6e67c200ae04dfd18fa5406e6078458e3566e10a"
+      "sha": "0a0e38ec7cb95a99273302c901aef4e50befd223"
     },
     {
       "path": "scripts/check-reciter-minute-queue.mjs",
@@ -7723,11 +7595,15 @@
     },
     {
       "path": "scripts/check-reciter-popularity.mjs",
-      "sha": "ab194ed81b68ad2b92ca2446c747f32447cf33b8"
+      "sha": "7769b7cbfdfc00034027a61a6aa98c8260c0ca39"
     },
     {
       "path": "scripts/check-reciter-ranking.mjs",
-      "sha": "84ecb150c24477aab911026502cfd8201352ca45"
+      "sha": "0c2c472e2dd92173de36bc66b3ed190fa4f3e503"
+    },
+    {
+      "path": "scripts/check-reciter-rollout.mjs",
+      "sha": "b409d5fd21728aece53922a50164922d8ccf6bc4"
     },
     {
       "path": "scripts/check-recognition-expanded.mjs",
@@ -7735,7 +7611,7 @@
     },
     {
       "path": "scripts/check-recognition-ui.mjs",
-      "sha": "0405ef412827692724638cad7f65e82d80d843a4"
+      "sha": "b204f5897c1bb2e95da4002d3b353d12bc7eb6f5"
     },
     {
       "path": "scripts/check-release-illustrations.mjs",
@@ -7743,7 +7619,7 @@
     },
     {
       "path": "scripts/check-release-version-notes.mjs",
-      "sha": "7440c1d56429caa9812739a92445772d814a2d2d"
+      "sha": "35a21fa541495b304e4902c0abf8673acf107450"
     },
     {
       "path": "scripts/check-rights-register.mjs",
@@ -8003,7 +7879,7 @@
     },
     {
       "path": "scripts/check-team-language.mjs",
-      "sha": "8eddfe1550d6af7c7efb13a104ee697b28cd5df1"
+      "sha": "ff668c467f5d95f6d866e993236e8f54d8b3c3e2"
     },
     {
       "path": "scripts/check-team-news-placement.mjs",
@@ -8279,7 +8155,7 @@
     },
     {
       "path": "supabase/functions/guest-competition/competition-core.mjs",
-      "sha": "9d0ba5e672bf273631c2f7fe73cf89b53d358b14"
+      "sha": "c8a7da443617d2709dba9302976cf40d5a533837"
     },
     {
       "path": "supabase/functions/guest-competition/core.mjs",
@@ -8355,7 +8231,7 @@
     },
     {
       "path": "supabase/functions/reciter-competition/core.mjs",
-      "sha": "9d0ba5e672bf273631c2f7fe73cf89b53d358b14"
+      "sha": "c8a7da443617d2709dba9302976cf40d5a533837"
     },
     {
       "path": "supabase/functions/reciter-competition/guest-board.mjs",
@@ -8399,7 +8275,7 @@
     },
     {
       "path": "supabase/functions/reciter-popularity/index.ts",
-      "sha": "69ad0f47cc56b1779e1b814cf21ffaf2192a03fa"
+      "sha": "73e83558b0e8697b19e37757ec39e6b26d4c2256"
     },
     {
       "path": "supabase/functions/reciter-popularity/listener-labels.mjs",
@@ -8666,6 +8542,10 @@
       "sha": "28252d8e5e454276cf7e0d2b15b6b019f4b6da19"
     },
     {
+      "path": "supabase/migrations/20261121140524_quran_streaming_reciters.sql",
+      "sha": "549bca8de8320d87d63e62be5a7a94fe0fff1d57"
+    },
+    {
       "path": "supabase/native-support-devices.sql",
       "sha": "ba5aff3b83767ebcf89d776acd1034dbb78d7da9"
     },
@@ -8755,7 +8635,7 @@
     },
     {
       "path": "tests/recognition/expanded-query-fixtures.json",
-      "sha": "852ce9b13779ba44044132633822b92d0504ab84"
+      "sha": "da98244f8e81d0d879f9b5dfe139773b9c504990"
     },
     {
       "path": "tests/recognition/query-fixtures.json",
@@ -8790,5 +8670,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=549;\nexport const APP_UPDATED_AT='2026-11-21';\nexport const APP_UPDATE_DATE='21 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=550;\nexport const APP_UPDATED_AT='2026-11-21';\nexport const APP_UPDATE_DATE='21 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

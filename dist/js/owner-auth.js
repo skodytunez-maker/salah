@@ -10,9 +10,12 @@ export const OWNER_PUBLIC_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const SESSION_KEY='salah-owner-session-v1'; // Excluded from personal backups.
 let client=null,verified=false,verifiedAt=0,verifiedUserId=null,verifiedAccessToken=null,pending=null,revision=0,mfaRequired=false;
 const listeners=new Set();
+const reciterPreviewListeners=new Set();
+let keepReciterPreviewActive=()=>false;
 function publish(){for(const fn of listeners)fn();}
-function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;verifiedAccessToken=null;if(changed)publish();}
-const ownerScreenActive=(entering=false)=>typeof location==='undefined'||['#account','#admin','#more','#support','#radio'].includes(location.hash.split('?')[0])||((verified||entering)&&location.hash.split('?')[0]==='#quran')||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash));
+function publishReciterPreview(){for(const fn of reciterPreviewListeners)fn();}
+function revoke(){const changed=verified,hadPreview=verifiedUserId!==null;mfaRequired=false;verified=false;verifiedAt=0;verifiedUserId=null;verifiedAccessToken=null;if(changed)publish();if(hadPreview)publishReciterPreview();}
+const ownerScreenActive=(entering=false)=>typeof location==='undefined'||['#account','#admin','#more','#support','#radio'].includes(location.hash.split('?')[0])||((verifiedUserId!==null||entering)&&location.hash.split('?')[0]==='#quran')||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash))||(verifiedUserId!==null&&keepReciterPreviewActive());
 function authClient(){
  if(!personalDataAllowed())throw uiError('ownerAuthUi.restricted');
  if(!client){
@@ -20,7 +23,7 @@ function authClient(){
   client=window.supabase.createClient(OWNER_PROJECT_URL,OWNER_PUBLIC_KEY,{global:{fetch:createAuthTransport()},auth:{storageKey:SESSION_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lockAcquireTimeout:10000,lock:createAuthLock({TimeoutError:window.supabase.NavigatorLockAcquireTimeoutError,fallbackLock:window.supabase.processLock})}});
   client.auth.onAuthStateChange((event,session)=>{
    syncLessonNotificationAccount(session?.user?.email_confirmed_at&&!session.user.is_anonymous?session.user.id:null);
-   const sameOwner=verified&&session?.user?.id===verifiedUserId&&((event==='TOKEN_REFRESHED')||(event==='SIGNED_IN'&&ownerVerified()&&session.access_token===verifiedAccessToken));
+   const sameOwner=verifiedUserId!==null&&session?.user?.id===verifiedUserId&&((event==='TOKEN_REFRESHED')||(event==='SIGNED_IN'&&ownerCanPreviewReciters()&&session.access_token===verifiedAccessToken));
    if(sameOwner)verifiedAccessToken=session.access_token;
    if(['TOKEN_REFRESHED','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))checkAccountSession.acceptRefresh(session);
    else if(event==='SIGNED_OUT')checkAccountSession.invalidate();
@@ -33,10 +36,12 @@ function authClient(){
  }
  return client;
 }
-export function ownerVerified(){return verified&&Date.now()-verifiedAt<60000;}
+export function ownerCanPreviewReciters(){return verifiedUserId!==null&&Date.now()-verifiedAt<60000;}
+export function ownerVerified(){return verified&&ownerCanPreviewReciters();}
 export function verifiedOwnerId(){return ownerVerified()?verifiedUserId:null;}
 export function ownerNeedsMfa(){return mfaRequired;}
 export function onOwnerChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}
+export function onReciterPreviewChange(fn){reciterPreviewListeners.add(fn);return()=>reciterPreviewListeners.delete(fn);}
 async function callOwner(session,query='',{binary=false,signal=null}={}){
  if(!session?.access_token)throw uiError('ownerAuthUi.signIn');
  let response;
@@ -59,10 +64,18 @@ export async function verifyOwner({verifySession=false}={}){
    if(checked.state!=='valid'||!checked.session){revoke();return false;}
    let result;try{result=await callOwner(checked.session)}catch(error){if(error.status===403){revoke();return false}throw error}
    if(started!==revision)continue;
-   if(result.owner!==true){revoke();mfaRequired=result.mfaRequired===true;return false;}
-   // A grant can expire while the underlying session remains valid. Notify Home
-   // controls when a fresh server check restores it, including after backgrounding.
-   const changed=!ownerVerified()||verifiedUserId!==checked.session.user?.id;verified=true;verifiedAt=Date.now();verifiedUserId=checked.session.user?.id||null;verifiedAccessToken=checked.session.access_token;if(changed)publish();return true;
+   // The gate returns mfaRequired only after validating the confirmed owner and
+   // active session. Public recordings can be previewed with that account;
+   // all protected owner tools still require the gate's successful MFA result.
+   const nextVerified=result.owner===true,needsMfa=!nextVerified&&result.mfaRequired===true;
+   if(!nextVerified&&!needsMfa){revoke();return false;}
+   const userId=checked.session.user?.id||null;
+   const previewChanged=!ownerCanPreviewReciters()||verifiedUserId!==userId;
+   const ownerChanged=verified!==nextVerified||(nextVerified&&previewChanged);
+   verified=nextVerified;verifiedAt=Date.now();verifiedUserId=userId;verifiedAccessToken=checked.session.access_token;mfaRequired=needsMfa;
+   if(ownerChanged)publish();
+   if(previewChanged)publishReciterPreview();
+   return nextVerified;
   }
   revoke();return false;
  })();
@@ -111,8 +124,9 @@ export async function ownerGeography(days=7){
  const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');
  return callOwner(data.session,'?mode=geography&days='+days);
 }
-export function initOwnerAccess(onChanged){
+export function initOwnerAccess(onChanged,{keepPreviewActive=()=>false}={}){
  onOwnerChange(onChanged);
+ keepReciterPreviewActive=keepPreviewActive;
  const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive(true))verifyOwner({verifySession:true}).catch(()=>{});};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
  window.addEventListener('online',resume);

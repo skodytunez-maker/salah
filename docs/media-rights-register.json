@@ -1480,6 +1480,42 @@
       "note": "Named reciter portrait retained as reviewed in the local catalogue; provenance recorded, no face resynthesis performed in this release. Final usage permission needs review. Release 243: background replaced with a sample from Luhaidan; no face synthesis; Bandar slightly cropped. Original files retained in local release backup."
     },
     {
+      "path": "dist/assets/reciters/abdullahbasfar.jpg",
+      "gitBlobSha": "7626558bdef6981e54997c02d932c96a4d759e87",
+      "bytes": 23101,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "dist/reciter-portrait-credits.html",
+      "note": "Unmodified named photo published by TVQuran. Image source: https://tvquran.com/uploads/authors/images/%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D9%84%D9%87%20%D8%A8%D8%B5%D9%81%D8%B1.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/ibrahimalakhdar.jpg",
+      "gitBlobSha": "9c116eabc2c325d160d2f3f3727dd3780c840775",
+      "bytes": 121185,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "dist/reciter-portrait-credits.html",
+      "note": "Unmodified named photo published by Al Bayan. Image source: https://www.albayan.ae/assets/archives/images/2022/04/03/4407486.jpeg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/khalidalqahtani.jpg",
+      "gitBlobSha": "631529b0c829e738ab6314546efb9b1bf1b8c655",
+      "bytes": 52847,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "dist/reciter-portrait-credits.html",
+      "note": "Unmodified named photo published by Almutadaber. Image source: https://www.almutadaber.com/assest/images/%D8%AE%D8%A7%D9%84%D8%AF%20%D8%A7%D9%84%D9%82%D8%AD%D8%B7%D8%A7%D9%86%D9%8A.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/abdullahalmatroud.jpg",
+      "gitBlobSha": "fd88ce70aa516c4ae1216ee876e90cbfd3a37bab",
+      "bytes": 33334,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "dist/reciter-portrait-credits.html",
+      "note": "Unmodified named photo published by TVQuran. Image source: https://tvquran.com/uploads/authors/images/%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D9%84%D9%87%20%D8%A7%D9%84%D9%85%D8%B7%D8%B1%D9%88%D8%AF.jpg. Reuse permission not documented."
+    },
+    {
       "path": "dist/assets/reciters/abdulbarialthubaity.jpg",
       "gitBlobSha": "22e3ffd56af535df71115e9e407b4789e595abef",
       "bytes": 14883,
