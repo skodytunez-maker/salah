@@ -8,13 +8,25 @@ const saved=toggleReciterFavorite(damaged,'ar.siratulloraupov',RECITERS);assert.
 const groups=groupedReciters(saved),ordered=groups.flatMap(g=>g.reciters.map(r=>r.id));assert.deepEqual(ordered.slice(0,2),saved);assert.equal(new Set(ordered).size,RECITERS.length);
 const html=reciterOptions('ar.ahmedkaseb',saved);assert.equal((html.match(/value="ar.ahmedkaseb"/g)||[]).length,1);assert.equal((html.match(/selected/g)||[]).length,1);assert.ok(!reciterOptions('ar.alafasy',saved,{offline:true}).includes('value="ar.siratulloraupov"'));
 assert.equal(reciterHasSurah('ar.abdulrahmanmossad',1),false);assert.equal(reciterHasSurah('ar.abdulrahmanmossad',10),true);assert.equal(adjacentReciterSurah('ar.abdulrahmanmossad',10,1),19);assert.equal(reciterHasSurah('ar.abdelazizsheim',2),false);
-const withoutPortrait = ["ar.tawfeeqalsayegh","ar.khalifaaltunaiji","ar.ahmadamer","ar.abdulhadikanakeri","ar.abdullahkhayyat","ar.abdulwadoodhaneef","ar.zainmuhammadahmad","ar.muhammadalmuhaisni","ar.nabilalrifai","ar.yahyahawwa","ar.muhammadrashidalsharif","ar.abdullahalkhalaf","ar.hasansaleh","ar.abdurrahmanalshahhat"];
-assert.deepEqual(RECITERS.filter(r=>!r.portrait).map(r=>r.id),withoutPortrait);
-for(const id of RECITER_RELEASE_WEEKS[0])assert.equal(RECITERS.find(r=>r.id===id)?.portrait,'assets/reciters/'+id.slice(3)+'.jpg');
 const {reciterImageUrl}=await import('../dist/js/approved-catalog.js');
 assert.equal(reciterImageUrl(undefined),'./assets/person.svg');
 assert.ok((await readFile(new URL('../dist/assets/person.svg',import.meta.url))).length>0);
-for(const r of RECITERS){if(r.portrait){assert.match(r.portrait,/^assets\/reciters\/[a-z0-9-]+\.(jpg|png|webp)$/);assert.ok((await readFile(new URL('../dist/'+r.portrait,import.meta.url))).length>1000);}if(r.availableSurahs)assert.ok(r.availableSurahs.every(n=>Number.isInteger(n)&&n>=1&&n<=114));}
+const waveIds=new Set(RECITER_RELEASE_WEEKS.flat()),wavePortraits=new Set();
+const {assets}=JSON.parse(await readFile(new URL('../docs/media-rights-register.json',import.meta.url),'utf8'));
+const mediaByPath=new Map(assets.map(asset=>[asset.path,asset]));
+for(const r of RECITERS){
+ assert.match(r.portrait||'',/^assets\/reciters\/[a-z0-9-]+\.(jpg|png|webp)$/,r.id+' requires its own photo in the catalogue');
+ const file=await readFile(new URL('../dist/'+r.portrait,import.meta.url));
+ assert.ok(file.length>1000,r.id+' needs a real image file');
+ assert.equal(reciterImageUrl(r.portrait),'./'+r.portrait);
+ assert.ok(mediaByPath.has('dist/'+r.portrait),r.id+' needs a source record');
+ if(waveIds.has(r.id)){
+  assert.ok(!wavePortraits.has(r.portrait),r.id+' must have a distinct photo');
+  wavePortraits.add(r.portrait);
+ }
+ if(r.availableSurahs)assert.ok(r.availableSurahs.every(n=>Number.isInteger(n)&&n>=1&&n<=114));
+}
+assert.equal(wavePortraits.size,waveIds.size);
 const library=await readFile(new URL('../dist/js/quran-reciter-library.js',import.meta.url),'utf8');assert.ok(library.includes('closed||token!==request'));assert.ok(library.includes('unsubscribe()'));assert.ok(library.includes('if(e.detail===0)'));
 console.log('PASS: favorites tolerate damaged data, retain order without duplicates, remove safely, preserve caller data, partial recitations and offline availability are honest, verified portraits and fallback exist.');
 
