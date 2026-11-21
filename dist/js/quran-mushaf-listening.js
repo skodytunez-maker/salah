@@ -1,6 +1,6 @@
 import{mushafThemeButton}from './quran-mushaf-controls.js';
 import{quranPlayback}from './quran-session.js';
-import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from './quran-reciters.js';
+import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions,reciterIsAvailable}from './quran-reciters.js';
 import{timingUrl}from './quran-timing.js';
 import{printedVerseKeys,printedPageForPosition}from './quran-mushaf-print.js';
 import{createMushafFollower,mushafAudioPosition}from './quran-mushaf-follow.js';
@@ -11,7 +11,7 @@ import{toast,esc}from './ui.js';
 import{t,translateUi,subscribeLanguage}from './i18n.js';
 import{uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups}from './quran-ui.js';
 let arrival=null;
-const chosen=()=>{const current=quranPlayback.state;const id=current.surah?current.reciter:read('quran-preferences',{}).reciter;return RECITERS.some(r=>r.id===id)?id:'ar.alafasy';};
+const chosen=()=>{const current=quranPlayback.state;const id=current.surah?current.reciter:read('quran-preferences',{}).reciter;return RECITERS.some(r=>r.id===id)&&reciterIsAvailable(id)?id:'ar.alafasy';};
 export function mushafListeningOptions(){
  return '<h2>'+uiLeaf('quranUi.mushafListening')+'</h2><label>'+uiLeaf('quranUi.mushafReciter')+'<select id="mushaf-reciter">'+reciterOptions(chosen(),read('quran-reciter-favorites',[]))+'</select></label><label class="mushaf-follow-setting"><input type="checkbox" id="mushaf-auto-follow"> '+uiLeaf('quranUi.mushafAutoFollow')+'</label><p class="mushaf-listening-help">'+uiLeaf('quranUi.mushafListeningHelp')+'</p>';
 }

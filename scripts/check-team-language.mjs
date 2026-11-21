@@ -9,7 +9,7 @@ import catalogues from '../dist/js/i18n/team/index.js';
 import{RADIO_VOICES,radioCandidateBatch,measureRadioTrack}from '../dist/js/radio-candidates.js';
 import{shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration}from '../dist/js/radio-program-core.js';
 import{radioQuizQuestions,initialRadioQuiz,stepRadioQuiz}from '../dist/js/radio-quiz-core.js';
-import{reciterInfo,reciterHasSurah}from '../dist/js/quran-reciters.js';
+import{reciterInfo,reciterHasSurah,reciterIsAvailable}from '../dist/js/quran-reciters.js';
 import{reciterRecording}from '../dist/js/quran-reciter-recording.js';
 import{loadIndex}from '../dist/js/quran-data.js';
 import{bindIllustratedRelease}from '../dist/js/release-gallery.js';
@@ -25,7 +25,7 @@ const turns=async()=>{for(let i=0;i<5;i++)await new Promise(resolve=>setImmediat
 let verified=true,checks=0,loads=0,probes=0,plays=0,subscriptions=0;const timers=new Set(),access=new Set();
 const subscribeLanguage=fn=>{subscriptions++;const off=language.subscribeLanguage(fn);return()=>{subscriptions--;off();};};
 const common={...language,...ui,...teamUi,subscribeLanguage,document:doc,window:w,location:w.location,console,URLSearchParams,AbortController,Set,Map,Math,Number,String,Array,Promise,setInterval:fn=>{timers.add(fn);return fn;},clearInterval:fn=>timers.delete(fn)};
-const radio=vm.createContext({...common,ownerVerified:()=>verified,verifyOwner:async()=>{checks++;return verified;},onOwnerChange:fn=>{access.add(fn);return()=>access.delete(fn);},loadIndex:async()=>{loads++;return index;},audioUrl:()=>'',reciterInfo,reciterHasSurah,reciterRecording,quranPlayback:{start:async()=>{plays++;}},reciterImageUrl:p=>'./'+p,RADIO_VOICES,radioCandidateBatch,measureRadioTrack,shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration,radioQuizQuestions,initialRadioQuiz,stepRadioQuiz});
+const radio=vm.createContext({...common,reciterIsAvailable,ownerVerified:()=>verified,verifyOwner:async()=>{checks++;return verified;},onOwnerChange:fn=>{access.add(fn);return()=>access.delete(fn);},loadIndex:async()=>{loads++;return index;},audioUrl:()=>'',reciterInfo,reciterHasSurah,reciterRecording,quranPlayback:{start:async()=>{plays++;}},reciterImageUrl:p=>'./'+p,RADIO_VOICES,radioCandidateBatch,measureRadioTrack,shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration,radioQuizQuestions,initialRadioQuiz,stepRadioQuiz});
 vm.runInContext(await code('radio-preview.js'),radio);
 language.setInterfaceLanguage('ru');await radio.showRadioPreview(host,{probe:async(_url,signal)=>{probes++;return new Promise(resolve=>signal.addEventListener('abort',()=>resolve(null),{once:true}));}});
 host.querySelector('[data-radio-tab="program"]').click();const search=host.querySelector('[data-voice-search]'),choice=host.querySelector('[name="radio-voice"]');choice.click();search.value='Джанхонгир';search.dispatchEvent(new w.Event('input',{bubbles:true}));search.focus();host.scrollTop=53;

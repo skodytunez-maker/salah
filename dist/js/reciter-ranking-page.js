@@ -6,7 +6,7 @@ import{mountCompetition}from './competition-page.js';
 import{sharedPersonalTotals,refreshCompetitionOwn}from './competition-client.js';
 import{RANK_INTENTION_PHRASES,rankListening}from './reciter-ranking-core.js';
 
-import{RECITERS}from './quran-reciters.js';
+import{RECITERS,reciterIsAvailable,visibleReciters}from './quran-reciters.js';
 import{read,write}from './storage.js';
 import{RECITER_FAVORITES_KEY,normalizeReciterFavorites}from './quran-reciter-favorites.js';
 import{showListeningScanner}from './quran-listen-share.js';
@@ -19,10 +19,10 @@ export function mountReciterRanking(host,filter,heading){
  if(!['day','week','month','all'].includes(period))period='day';
  const draw=()=>{
   if(closed)return;renderedDay=new Date().toDateString();
-  const commonTotals=sharedPersonalTotals(personalListening(period).totals,period),personalIds=Object.entries(commonTotals).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);
+  const commonTotals=sharedPersonalTotals(personalListening(period).totals,period),personalIds=Object.entries(commonTotals).filter(([id,n])=>n>0&&reciterIsAvailable(id)).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);
   const currentKey=JSON.stringify({period,query,newCount:recentReciters(RECITERS).length,saved:read(RECITER_FAVORITES_KEY,[]),ranks:rankListening(personalIds.map(id=>({id,seconds:commonTotals[id]}))).map(({id,rank})=>({id,rank})),day:renderedDay});
   if(!global&&currentKey===personalRenderKey){updatePersonalRankingTimes(host,personalIds,id=>commonTotals[id]||0);updateListeningSummary(host,Math.floor(Object.values(commonTotals).reduce((a,b)=>a+b,0)));return;}personalRenderKey=currentKey;
-  const saved=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS),count=RECITERS.filter(r=>!r.variantOf).length;
+  const saved=normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS),count=visibleReciters().filter(r=>!r.variantOf).length;
   let html='<section class="quran-library quran-reciters-library rank-page">'+heading();
   html+="<label class=\"field\"><input type=\"search\" id=\"reciter-search\" "+uiAttribute("rankingUi.findReciter",{},"aria-label")+" "+uiAttribute("rankingUi.findReciter",{},"placeholder")+" autocomplete=\"off\"></label>";
   html+=''+reciterFilterTabs(null,saved.length,RECITERS)+'';
@@ -32,7 +32,7 @@ export function mountReciterRanking(host,filter,heading){
   if(global)html+='<div class="reciter-popular-heading"><p class="rank-intention" id="rank-intention" lang="ru" dir="ltr" translate="no" aria-live="off">'+RANK_INTENTION_PHRASES[Math.floor(Date.now()/15000)%RANK_INTENTION_PHRASES.length]+'</p></div>';
   html+='<div class="reciter-period-tabs '+(global?'rank-global-periods':'')+'" role="group" '+uiAttribute('rankingUi.listeningPeriod')+'>'+options.map(([value,label])=>'<button type="button" data-rank-period="'+value+'" aria-pressed="'+(value===active)+'">'+uiLeaf(label)+'</button>').join('')+'</div>';
   if(!global){const data={...personalListening(period),totals:commonTotals};html+=listeningSummaryMarkup(Math.floor(Object.values(data.totals).reduce((a,b)=>a+b,0)),{personal:true});}
-  const ranked=global?ids:Object.entries(commonTotals).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([id])=>id);
+  const ranked=global?ids.filter(reciterIsAvailable):personalIds;
   if(global&&loading)html+="<p class=\"reciter-empty\">"+uiLeaf("rankingUi.loadingRanking")+"</p>";
   else if(global&&error&&!ranked.length)html+="<p class=\"reciter-empty\">"+uiLeaf("rankingUi.rankingLoadFailed")+"</p>";
   else if(!ranked.length)html+='<p class="reciter-empty">'+uiLeaf(global?'rankingUi.noMinutes':'rankingUi.startListening')+'</p>';

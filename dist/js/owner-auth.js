@@ -12,7 +12,7 @@ let client=null,verified=false,verifiedAt=0,verifiedUserId=null,verifiedAccessTo
 const listeners=new Set();
 function publish(){for(const fn of listeners)fn();}
 function revoke(){mfaRequired=false;const changed=verified;verified=false;verifiedAt=0;verifiedUserId=null;verifiedAccessToken=null;if(changed)publish();}
-const ownerScreenActive=()=>typeof location==='undefined'||['#account','#admin','#more','#support','#radio'].includes(location.hash.split('?')[0])||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash));
+const ownerScreenActive=(entering=false)=>typeof location==='undefined'||['#account','#admin','#more','#support','#radio'].includes(location.hash.split('?')[0])||((verified||entering)&&location.hash.split('?')[0]==='#quran')||(location.hash.split('?')[0]==='#knowledge'&&!/view=(?:alphabet|names)(?:&|$)/.test(location.hash));
 function authClient(){
  if(!personalDataAllowed())throw uiError('ownerAuthUi.restricted');
  if(!client){
@@ -113,7 +113,7 @@ export async function ownerGeography(days=7){
 }
 export function initOwnerAccess(onChanged){
  onOwnerChange(onChanged);
- const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive())verifyOwner({verifySession:true}).catch(()=>{});};
+ const resume=()=>{let stored=false;try{stored=Boolean(localStorage.getItem(SESSION_KEY));}catch{}if(stored&&ownerScreenActive(true))verifyOwner({verifySession:true}).catch(()=>{});};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
  window.addEventListener('online',resume);
  window.addEventListener('hashchange',resume);

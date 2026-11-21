@@ -27,7 +27,7 @@ for(const row of plan.baseline){
 // Check new source files in every part of the repository, including backend,
 // native projects, tests, root documents and workflows. Ignore only Git's own
 // internals and installed package trees, never an application source directory.
-async function walk(folder){for(const item of await fs.readdir(path.join(root,folder),{withFileTypes:true})){if(item.isDirectory()&&['.git','node_modules'].includes(item.name))continue;const name=folder?folder+'/'+item.name:item.name;if(item.isDirectory())await walk(name);else if((item.isFile()||item.isSymbolicLink())&&!known.has(name)&&!allowed.has(name)&&!generated.has(name))failures.push('Unreviewed added file: '+name);}}
+async function walk(folder){for(const item of await fs.readdir(path.join(root,folder),{withFileTypes:true})){if(item.isDirectory()&&['.git','node_modules'].includes(item.name)||!folder&&item.name==='.git'&&item.isFile())continue;const name=folder?folder+'/'+item.name:item.name;if(item.isDirectory())await walk(name);else if((item.isFile()||item.isSymbolicLink())&&!known.has(name)&&!allowed.has(name)&&!generated.has(name))failures.push('Unreviewed added file: '+name);}}
 await walk('');
 if(failures.length)throw Error(failures.join('\n'));
 console.log('PASS: '+protectedCount+' unchanged baseline files; every changed or added file belongs to the explicitly reviewed release scope.');

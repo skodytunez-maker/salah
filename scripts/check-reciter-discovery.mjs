@@ -1,3 +1,4 @@
+import{reciterIsAvailable,visibleReciters}from '../dist/js/quran-reciters.js';
 import{createImagePresenter,watchDecodedImages}from '../dist/js/image-presentation.js';
 import*as interfaceLanguage from '../dist/js/i18n.js';
 import*as quranUi from '../dist/js/quran-ui.js';
@@ -26,7 +27,7 @@ let clock=now;class Clock extends Date{static now(){return clock;}};
 const store=new Map([[RECITER_FAVORITES_KEY,saved]]),timers=new Map();let timerId=0;
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const playback={state:{status:'stopped'},subscribe(fn){fn(this.state);return()=>{};}},queue={state:{},subscribe(){return()=>{};}};
-const ctx=vm.createContext({createImagePresenter,watchDecodedImages,...interfaceLanguage,...quranUi,RECITERS,reciterInfo,reciterHasSurah,RECITER_FAVORITES_KEY,normalizeReciterFavorites,toggleReciterFavorite,reciterIsPromoted,recentReciters,orderReciterCatalog,reciterFilterTabs,reciterImageUrl:p=>'./'+p,
+const ctx=vm.createContext({reciterIsAvailable,visibleReciters,createImagePresenter,watchDecodedImages,...interfaceLanguage,...quranUi,RECITERS,reciterInfo,reciterHasSurah,RECITER_FAVORITES_KEY,normalizeReciterFavorites,toggleReciterFavorite,reciterIsPromoted,recentReciters,orderReciterCatalog,reciterFilterTabs,reciterImageUrl:p=>'./'+p,
 read:(k,f)=>store.get(k)??f,write:(k,v)=>{store.set(k,v);return true;},esc,toast(){},recognitionEntry:()=>'<a href="#quran?view=recognize" aria-label="Распознать чтение"></a>',actionIcon:()=>'',actionLabel:(_,label)=>label,ruqyahFor:()=>[],ruqyahMarkup:()=>'',bindRuqyah:()=>()=>{},bindPopularConsent(){},showListeningScanner(){},quranPlayback:playback,quranDownloadQueue:queue,offlineAudioStore:{listRecordings:async()=>[]},listeningDayKey:t=>new Date(t).toISOString().slice(0,10),window:w,document:doc,Event:w.Event,Date:Clock,Intl,Set,Map,
 setInterval:fn=>{const id=++timerId;timers.set(id,fn);return id;},clearInterval:id=>timers.delete(id)});
 const source=await fs.readFile(new URL('../dist/js/quran-reciter-library.js',import.meta.url),'utf8');const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountReciterLibrary});',ctx);

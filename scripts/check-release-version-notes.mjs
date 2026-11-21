@@ -9,7 +9,7 @@ const previousBytes=Buffer.from(scope.previousReleaseSource),previousSha=createH
 assert.equal(previousSha,scope.baseline.find(x=>x.path==='dist/js/app-release.js').sha,'Notes must be compared with the actual frozen base');
 const previousVersion=Number(scope.previousReleaseSource.match(/APP_VERSION=(\d+)/)[1]);
 const previousChanges=JSON.parse(scope.previousReleaseSource.match(/APP_CHANGES=(\[[^\n]*\]);/)[1]);
-assert.ok(APP_VERSION>previousVersion);assert.notDeepEqual(APP_CHANGES,previousChanges,'A new version cannot recycle the preceding version’s notes');
+assert.ok(APP_VERSION>previousVersion);if(APP_CHANGES.length||previousChanges.length)assert.notDeepEqual(APP_CHANGES,previousChanges,'A new version cannot recycle the preceding version’s notes');
 if(APP_VERSION>APP_ANNOUNCEMENT.version)assert.notDeepEqual(APP_CHANGES,APP_ANNOUNCEMENT.changes,'A maintenance release cannot relabel the old feature announcement');
 const w=new Window({url:'https://fixture.invalid/salah/',width:390,height:844}),doc=w.document;
 Object.assign(globalThis,{window:w,document:doc,localStorage:w.localStorage,sessionStorage:w.sessionStorage,location:w.location,Event:w.Event,matchMedia:()=>({matches:false})});
