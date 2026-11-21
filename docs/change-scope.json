@@ -1,73 +1,97 @@
 {
   "schema": 1,
-  "version": 551,
-  "baseCommit": "face5e7530acd0c11329b693da21a750804a81dc",
-  "baseTree": "83e287881118dea0a6e9d3e259245188352fc73b",
-  "note": "Correct the confirmed owner account reciter preview and add documentary portraits for the four currently public recordings. Existing private owner tools retain their MFA grant. The public schedule and historical announcement are preserved.",
+  "version": 552,
+  "baseCommit": "fb91e78b01f68122ade634ec1cf7c07fe4751469",
+  "baseTree": "937ab35353e652a8aec66a3f2e912aa91af5ecf4",
+  "note": "Complete the portraits for all 18 existing reciters. Record the portrait requirement in the project instructions and validate it automatically. Keep portrait sources separate from the catalogue cards.",
   "allowed": [
     {
-      "path": "dist/assets/reciters/abdullahalmatroud.jpg",
-      "reason": "Documentary photograph from the named publication"
+      "path": "AGENTS.md",
+      "reason": "Require a verified portrait from every reciter’s first publication"
     },
     {
-      "path": "dist/assets/reciters/abdullahbasfar.jpg",
-      "reason": "Documentary photograph from the named publication"
+      "path": "dist/assets/reciters/abdulhadikanakeri.jpg",
+      "reason": "Confirmed original named portrait"
     },
     {
-      "path": "dist/assets/reciters/ibrahimalakhdar.jpg",
-      "reason": "Documentary photograph from the named publication"
+      "path": "dist/assets/reciters/abdullahalkhalaf.webp",
+      "reason": "Confirmed original named portrait"
     },
     {
-      "path": "dist/assets/reciters/khalidalqahtani.jpg",
-      "reason": "Documentary photograph from the named publication"
+      "path": "dist/assets/reciters/abdullahkhayyat.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/abdulwadoodhaneef.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/abdurrahmanalshahhat.webp",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/ahmadamer.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/hasansaleh.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/khalifaaltunaiji.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/muhammadalmuhaisni.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/muhammadrashidalsharif.webp",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/nabilalrifai.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/tawfeeqalsayegh.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/yahyahawwa.jpg",
+      "reason": "Confirmed original named portrait"
+    },
+    {
+      "path": "dist/assets/reciters/zainmuhammadahmad.jpg",
+      "reason": "Confirmed original named portrait"
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Quiet 551 revision"
-    },
-    {
-      "path": "dist/js/app.js",
-      "reason": "Bind early reciter access to the separately verified account entitlement"
-    },
-    {
-      "path": "dist/js/owner-auth.js",
-      "reason": "Recognize the server-confirmed account only for public recordings ahead of schedule"
-    },
-    {
-      "path": "dist/js/quran-reciter-discovery.js",
-      "reason": "Show authorized upcoming recordings in the New view"
+      "reason": "Quiet 552 release metadata"
     },
     {
       "path": "dist/js/quran-reciters.js",
-      "reason": "Identify authorized preview recordings without changing public dates"
+      "reason": "Bind confirmed photos to the remaining fourteen reciters"
     },
     {
       "path": "dist/reciter-portrait-credits.html",
-      "reason": "Credit verified original first-wave portrait sources"
+      "reason": "Retain the CC BY-SA attribution for Yahya Hawwa separately from catalogue cards"
     },
     {
       "path": "dist/sw.js",
-      "reason": "Release 551 cache, new first-wave portraits and generated sizes"
+      "reason": "Precache the verified portraits and update the versioned shell manifest"
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record the exact correction scope relative to published 550"
+      "reason": "Exact portrait-only release scope relative to public 551"
     },
     {
       "path": "docs/media-rights-register.json",
-      "reason": "Record first-wave images and documented provenance"
-    },
-    {
-      "path": "scripts/check-owner-client.mjs",
-      "reason": "Exercise early preview entitlement without MFA cabinet access"
+      "reason": "Document the named original sources and file fingerprints"
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "reason": "Verify the first-wave photo bindings and unchanged remaining fallback"
-    },
-    {
-      "path": "scripts/check-reciter-rollout.mjs",
-      "reason": "Check New view through preview grant and public revocation"
+      "reason": "Require a portrait file and source record for each reciter, and distinct portraits for all eighteen scheduled reciters"
     }
   ],
   "generated": [
@@ -810,6 +834,14 @@
       "sha": "e2b612131717877caecf74538a622f20143625d1"
     },
     {
+      "path": "dist/assets/reciters/abdullahalmatroud.jpg",
+      "sha": "fd88ce70aa516c4ae1216ee876e90cbfd3a37bab"
+    },
+    {
+      "path": "dist/assets/reciters/abdullahbasfar.jpg",
+      "sha": "7626558bdef6981e54997c02d932c96a4d759e87"
+    },
+    {
       "path": "dist/assets/reciters/abdullahkamel.jpg",
       "sha": "3259b35cb556af017fc64e3e0ff43cfcd6166e7a"
     },
@@ -906,6 +938,10 @@
       "sha": "4dd567cfc1640aa043fb1f2f5708263803882766"
     },
     {
+      "path": "dist/assets/reciters/ibrahimalakhdar.jpg",
+      "sha": "9c116eabc2c325d160d2f3f3727dd3780c840775"
+    },
+    {
       "path": "dist/assets/reciters/idrisabkar.png",
       "sha": "dfdb582da7d55497da119e8db7b5101504e5c670"
     },
@@ -928,6 +964,10 @@
     {
       "path": "dist/assets/reciters/khalidalmuhanna.jpg",
       "sha": "a16e8c74d9ed20917ca50285359a3cd4fd7a7e16"
+    },
+    {
+      "path": "dist/assets/reciters/khalidalqahtani.jpg",
+      "sha": "631529b0c829e738ab6314546efb9b1bf1b8c655"
     },
     {
       "path": "dist/assets/reciters/mahermuaiqly.png",
@@ -2663,7 +2703,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "7f78c876a2945736c2d105db60c30bdf882c4d2c"
+      "sha": "20f6ebe8360e31cccc3d5f757d042378a9cecc7d"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2683,7 +2723,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "113be9c65bc2cbcb4029351208c91a6a791aeaea"
+      "sha": "608bd011f5fbf29aa8c7ec6abed7c22e7ef1e5dd"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -4207,7 +4247,7 @@
     },
     {
       "path": "dist/js/owner-auth.js",
-      "sha": "664852f29f300b74d44c43b676d8e22d4f975d36"
+      "sha": "12756013669721565657783da2fee57af548fd99"
     },
     {
       "path": "dist/js/owner-card-navigation.js",
@@ -4539,7 +4579,7 @@
     },
     {
       "path": "dist/js/quran-reciter-discovery.js",
-      "sha": "5b4af5885eaae4ada0aa1ba323cba9b228b6a77b"
+      "sha": "88ca88a875d12a2ceb5e67a011075477c91b16ee"
     },
     {
       "path": "dist/js/quran-reciter-favorites.js",
@@ -4555,7 +4595,7 @@
     },
     {
       "path": "dist/js/quran-reciters.js",
-      "sha": "06eba4c716a40b79cb64cab882129e5813316f67"
+      "sha": "781260a89e8e1345e3a2ec66f422019f70c166c8"
     },
     {
       "path": "dist/js/quran-recognition-core.js",
@@ -5087,7 +5127,7 @@
     },
     {
       "path": "dist/reciter-portrait-credits.html",
-      "sha": "e959c292af02b17345ea8fc73d8d2ef2b591ff62"
+      "sha": "1f4e10654daf085a5aa0feed0aea80e5c0ef7716"
     },
     {
       "path": "dist/recover.html",
@@ -5111,7 +5151,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "c747509a787c0d57d94fae324eae7e8ef8f78646"
+      "sha": "5d5640e44e8aa786b63c9be993a20f45d0bb7ec4"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5659,7 +5699,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "5b7f77bc60536e702cebbf572313b124dbb34fac"
+      "sha": "d90da0ba1c35108e553a16302187f1bfa809641d"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5843,7 +5883,7 @@
     },
     {
       "path": "docs/media-rights-register.json",
-      "sha": "3db81f977092232f61eec61f055fdeb4dfc30575"
+      "sha": "b2fb5697dc4f5a7097a4b6fd3578f9a5f9f7810f"
     },
     {
       "path": "docs/message-actions-515.md",
@@ -7195,7 +7235,7 @@
     },
     {
       "path": "scripts/check-owner-client.mjs",
-      "sha": "07af4d253dab813f3070c79af030a84e404cf0b5"
+      "sha": "20403f63dbaa1f4a77a123ae528e430b90233243"
     },
     {
       "path": "scripts/check-owner-course-cache.mjs",
@@ -7587,7 +7627,7 @@
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "sha": "0a0e38ec7cb95a99273302c901aef4e50befd223"
+      "sha": "3eacf6647fbb75c17377fd15c26a0d432185a8a9"
     },
     {
       "path": "scripts/check-reciter-minute-queue.mjs",
@@ -7603,7 +7643,7 @@
     },
     {
       "path": "scripts/check-reciter-rollout.mjs",
-      "sha": "b409d5fd21728aece53922a50164922d8ccf6bc4"
+      "sha": "c74160a5811931f0f6f841c95ed77d7f0cd975c2"
     },
     {
       "path": "scripts/check-recognition-expanded.mjs",
@@ -8670,5 +8710,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=550;\nexport const APP_UPDATED_AT='2026-11-21';\nexport const APP_UPDATE_DATE='21 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=551;\nexport const APP_UPDATED_AT='2026-11-21';\nexport const APP_UPDATE_DATE='21 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

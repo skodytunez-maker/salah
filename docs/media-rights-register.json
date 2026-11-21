@@ -3932,6 +3932,132 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/makkah-phone-trial-provenance.json",
       "note": "Code-authored source-specific silhouette for new private portrait illustration. Original63mattes unchanged."
+    },
+    {
+      "path": "dist/assets/reciters/abdullahkhayyat.jpg",
+      "gitBlobSha": "f4d6712caed57ef25447cc3eb9baab945389a036",
+      "bytes": 91284,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://www.marefa.org/%D9%85%D9%84%D9%81%3A%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D9%84%D9%87_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%BA%D9%86%D9%8A_%D8%AE%D9%8A%D8%A7%D8%B7.jpg",
+      "note": "The file title and biographical record identify Abdullah Abd al-Ghani Khayyat, distinct from Usama Khayyat. Original published image: https://www.marefa.org/w/images/6/67/%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D9%84%D9%87_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%BA%D9%86%D9%8A_%D8%AE%D9%8A%D8%A7%D8%B7.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/hasansaleh.jpg",
+      "gitBlobSha": "358f0212b549dbfa6c55f5ab3f44139497bbc612",
+      "bytes": 37669,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://soundcloud.com/ahmedsayedkotby/xkz1rrxcy0uc?in=ahmedsayedkotby%2Fsets%2Fhassansaleh",
+      "note": "Clearer documentary photograph attached to a named recording of Hassan Saleh. Identity was corroborated against the reciter's channel and earlier recitation artwork. Original published image: https://i1.sndcdn.com/artworks-KKiTrGxCH3IGtX5R-W4gUyw-t500x500.jpg. Image pixels unchanged. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/khalifaaltunaiji.jpg",
+      "gitBlobSha": "aa86befbd7c5508762ac672537fc88f514e8720c",
+      "bytes": 10377,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://alteneiji.net/ar/",
+      "note": "The reciter's personal site publishes the named profile photo. Original published image: https://alteneiji.net/wp-content/uploads/2017/10/personal-image-293x300.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/ahmadamer.jpg",
+      "gitBlobSha": "9d2a9b1bfe61f0c233b559fd3f46aa7b77b91245",
+      "bytes": 15457,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://quran-uni.com/reciter/%D8%A3%D8%AD%D9%85%D8%AF-%D8%B9%D8%A7%D9%85%D8%B1/",
+      "note": "The labeled archive portrait was checked against the family channel and an independent obituary. Original published image: https://i0.wp.com/quran-uni.com/wp-content/uploads/2023/10/%D8%B9%D8%A7%D9%85.jpg?fit=253%2C294&ssl=1. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/abdulhadikanakeri.jpg",
+      "gitBlobSha": "4035007c04767536c616eb5f1e713c3a231fbeef",
+      "bytes": 30496,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://tvquran.com/ar/scholar/57/profile/%D8%B9%D8%A8%D8%AF-%D8%A7%D9%84%D9%87%D8%A7%D8%AF%D9%8A-%D9%83%D9%86%D8%A7%D9%83%D8%B1%D9%8A",
+      "note": "Named photograph on the page hosting this reciter's 114 surahs. Original published image: https://tvquran.com/uploads/authors/images/%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D9%87%D8%A7%D8%AF%D9%8A%20%D9%83%D9%86%D8%A7%D9%83%D8%B1%D9%8A.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/zainmuhammadahmad.jpg",
+      "gitBlobSha": "87419febd0dfd7ffa83732eb83b72db422fe40f2",
+      "bytes": 23055,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://tvquran.com/ar/scholar/12/profile/%D8%A7%D9%84%D8%B2%D9%8A%D9%86-%D9%85%D8%AD%D9%85%D8%AF",
+      "note": "Named photograph on the Sudanese reciter’s catalogue profile. Original published image: https://tvquran.com/uploads/authors/images/%D8%A7%D9%84%D8%B2%D9%8A%D9%86%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%A3%D8%AD%D9%85%D8%AF.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/nabilalrifai.jpg",
+      "gitBlobSha": "da44ba44e1b1a7ff695d7edd9fdf4e5991602593",
+      "bytes": 33208,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://www.quran-now.com/ar",
+      "note": "Closer named portrait from Quran Now. The full-size archive photograph on Assabile identifies Nabil Ar-Rifai and matches the clothing and studio setting. Original published image: https://cdn.prayer-now.com/qcloud/uploads/images/4714269383852032.jpg. Image pixels unchanged. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/yahyahawwa.jpg",
+      "gitBlobSha": "4fb507c4392ee252ea0dc6fadd8cca1090e5d680",
+      "bytes": 288766,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "license-recorded",
+      "rightsEvidence": "https://commons.wikimedia.org/wiki/File:%D9%8A%D8%AD%D9%8A%D9%89_%D8%AD%D9%88%D9%89.jpg",
+      "note": "Original documentary portrait by Kouider bounama, CC BY-SA 4.0. Wikimedia 960px rendition, no framing alteration. Original published image: https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/%D9%8A%D8%AD%D9%8A%D9%89_%D8%AD%D9%88%D9%89.jpg/960px-%D9%8A%D8%AD%D9%8A%D9%89_%D8%AD%D9%88%D9%89.jpg. CC BY-SA 4.0, https://creativecommons.org/licenses/by-sa/4.0/."
+    },
+    {
+      "path": "dist/assets/reciters/tawfeeqalsayegh.jpg",
+      "gitBlobSha": "160a30134ba40deca8b769339cabc20c3bc308ff",
+      "bytes": 21862,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://quran-uni.com/reciter/%D8%AA%D9%88%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D8%B5%D8%A7%D9%8A%D8%BA/",
+      "note": "Named portrait on the reciter's reading profile. Original published image: https://quran-uni.com/wp-content/uploads/2023/10/صا.jpg. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/abdulwadoodhaneef.jpg",
+      "gitBlobSha": "27b110f0eb4b1626f2bcec2e79b1ca303fcabb08",
+      "bytes": 43811,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://books-library.website/a-19969-download",
+      "note": "Clearer named author photograph published by Books Library, corroborated by the portrait in the Okaz profile on Abdul Wadud Maqbool Haneef. Original published image: https://bookslibrary.com/files/books-library.com-10060129Fi6G4.jpg. Image pixels unchanged. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/muhammadalmuhaisni.jpg",
+      "gitBlobSha": "458de118b75597928d99eda91e03b30f63160029",
+      "bytes": 116246,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://alarab.qa/article/25/06/2016/902176-%D8%A7%D9%84%D9%85%D8%AD%D9%8A%D8%B3%D9%86%D9%8A-%D8%A7%D9%84%D9%82%D8%A7%D8%B1%D8%A6-%D8%A7%D9%84%D8%A8%D9%83%D8%A7%D8%A1-%D8%B5%D8%A7%D8%AD%D8%A8-%D8%A7%D9%84%D8%B5%D9%88%D8%AA-%D8%A7%D9%84%D8%AE%D8%A7%D8%B4%D8%B9",
+      "note": "Documentary portrait in the biographical article that names Muhammad ibn Sulayman al-Muhaisni. Original published image: https://alarab.qa/get/maximage/20160625_1466802601-215072.jpg?t=1708992963. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/muhammadrashidalsharif.webp",
+      "gitBlobSha": "4e8535021470bcf25e98a1d1e4bdd10916a95768",
+      "bytes": 8848,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://www.assabile.com/mohammad-rachad-al-shareef-112/mohammad-rachad-al-shareef.htm",
+      "note": "Archive portrait from the reciter's record, corroborated by Al Jazeera’s documentary article. Original published image: https://www.assabile.com/media/portraits/112-200.webp. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/abdullahalkhalaf.webp",
+      "gitBlobSha": "c03f4bf9f0265ee02fe4966379f71fdd9f6b69bf",
+      "bytes": 16008,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://www.linkin1.com/alkhalf_quran",
+      "note": "The same photograph appears on the reciter's link page and Quran-uni under his full name. Original published image: https://www.linkin1.com/linkinbio/uploads/13997/profile-image/cache/profile_13997_6995cb485c5b1_1771424584.webp. Reuse permission not documented."
+    },
+    {
+      "path": "dist/assets/reciters/abdurrahmanalshahhat.webp",
+      "gitBlobSha": "efb6b98738cbe4ee89166a1fbe156364ffc9b09c",
+      "bytes": 7704,
+      "kind": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "https://ar.assabile.com/abdulrahman-al-shahat",
+      "note": "The named Hafs catalogue supplies a portrait consistent with the separate Nourelquran portrait on its named recitation page. A differently attributed television portrait was excluded. Original published image: https://ar.assabile.com/media/portraits/521-200.webp. Reuse permission not documented."
     }
   ],
   "wallpaperSets": [
