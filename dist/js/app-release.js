@@ -1,6 +1,6 @@
-export const APP_VERSION=547;
-export const APP_UPDATED_AT='2026-11-20';
-export const APP_UPDATE_DATE='20 ноября 2026';
-export const APP_CHANGES=[];
+export const APP_VERSION=548;
+export const APP_UPDATED_AT='2026-11-21';
+export const APP_UPDATE_DATE='21 ноября 2026';
+export const APP_CHANGES=["Полный плеер: название открывает список сур текущего чтеца. Значки на главной лучше видны на плотных облаках."];
 export const APP_ANNOUNCEMENT={"version":523,"date":"2026-11-19","changes":["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."]};
 export const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';

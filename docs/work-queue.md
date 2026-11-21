@@ -422,3 +422,7 @@ Keep exact-source public current546notes with a first-party UI illustration;do n
 
 
 547candidate:approved quiet ordinary shell update,new Makkah portrait pair only for verified owner. Original files/public catalogue/landscape unchanged;no new news edition. Phone acceptance pending;poll later insideSALAH. Remaining previous queue continues after this delivery.
+
+### 21 ноября — SALAH 548
+
+The owner explicitly asked for delivery to all phones following the private test preparation. Scope includes the player surah-list action and removal of the redundant full-surah label from the playing display, the cloud contrast fix, and retention of a noninteractive Radio label during brief access revalidation for a previously verified account. A denial, account change or sign-out clears the label. The public update keeps the existing feature announcement and sends no push. The diagnostic client and owner-only Makkah trial remain separate.

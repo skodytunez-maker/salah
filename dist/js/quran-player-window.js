@@ -1,7 +1,7 @@
 // Reuse the connected player controls. Opening this window never touches audio.
 import{t,subscribeLanguage}from './i18n.js';
 import{createPlayerWindowHistory}from './quran-player-navigation.js';
-export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{}}={}){
+export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{},onSurahTitle}={}){
  const sheet=doc.createElement('dialog');sheet.className='quran-player-dialog';sheet.id='quran-player-window';sheet.setAttribute('aria-label',t('player.fullQuranLabel'));doc.body.append(sheet);
  const opener=panel.querySelector('.quran-now-playing'),expandButton=panel.querySelector('[data-expand]'),closeButton=panel.querySelector('[data-collapse]');
  const focusControls=new Set([opener,expandButton,closeButton]);let pointerFocus=false;
@@ -21,13 +21,14 @@ export function mountPlayerWindow(panel,dock,{doc=document,onPlace=()=>{}}={}){
  const resetGesture=()=>{if(gesture?.transport==='pointer'){try{sheet.releasePointerCapture?.(gesture.id);}catch{}}gesture=null;sheet.classList.remove('is-dragging');};
  const finish=()=>{if(!expanded)return;expanded=false;resetGesture();scrollTouch=null;panel.classList.remove('is-expanded');dock.append(panel);doc.body.style.overflow=overflow;doc.body.classList.toggle('has-player-window',bodyHadWindow);doc.documentElement.classList.toggle('quran-player-scroll-locked',rootWasLocked);opener.setAttribute('aria-expanded','false');expandButton.setAttribute('aria-expanded','false');navigation.close();changed();onPlace();focus(returnFocus);};
  const close=event=>{activationIntent(event);if(sheet.open)sheet.close();finish();};
- const open=event=>{event?.preventDefault?.();if(disposed||expanded||panel.hidden||(event&&Date.now()<suppressClickUntil))return;activationIntent(event);returnFocus=event?.currentTarget||doc.activeElement||expandButton;overflow=doc.body.style.overflow;rootWasLocked=doc.documentElement.classList.contains('quran-player-scroll-locked');bodyHadWindow=doc.body.classList.contains('has-player-window');panel.classList.add('is-expanded');sheet.append(panel);try{sheet.showModal();}catch{panel.classList.remove('is-expanded');dock.append(panel);return;}expanded=true;sheet.scrollTop=0;doc.body.style.overflow='hidden';doc.body.classList.add('has-player-window');doc.documentElement.classList.add('quran-player-scroll-locked');opener.setAttribute('aria-expanded','true');expandButton.setAttribute('aria-expanded','true');navigation.open();changed();focus(closeButton);};
+ const onTitle=target=>!!target?.closest?.('.quran-now-playing strong');
+ const open=event=>{event?.preventDefault?.();if(disposed||panel.hidden||(event&&Date.now()<suppressClickUntil))return;if(expanded){if(onSurahTitle&&!panel.classList.contains('is-ruqyah')&&event?.currentTarget===opener&&(event.detail===0||onTitle(event.target)))onSurahTitle();return;}activationIntent(event);returnFocus=event?.currentTarget||doc.activeElement||expandButton;overflow=doc.body.style.overflow;rootWasLocked=doc.documentElement.classList.contains('quran-player-scroll-locked');bodyHadWindow=doc.body.classList.contains('has-player-window');panel.classList.add('is-expanded');sheet.append(panel);try{sheet.showModal();}catch{panel.classList.remove('is-expanded');dock.append(panel);return;}expanded=true;sheet.scrollTop=0;doc.body.style.overflow='hidden';doc.body.classList.add('has-player-window');doc.documentElement.classList.add('quran-player-scroll-locked');opener.setAttribute('aria-expanded','true');expandButton.setAttribute('aria-expanded','true');navigation.open();changed();focus(closeButton);};
  for(const node of [opener,expandButton]){node.setAttribute('aria-haspopup','dialog');node.setAttribute('aria-controls',sheet.id);node.setAttribute('aria-expanded','false');node.addEventListener('click',open);}
  closeButton.addEventListener('click',close);
  const onClose=()=>{if(!sheet.open)finish();};
  const onCancel=event=>{event.preventDefault();keyboardIntent();close();};
  const onBackdrop=event=>{if(event.target!==sheet)return;const r=sheet.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)close(event);};
- const eligible=target=>expanded&&sheet.scrollTop<=1&&!target.closest?.('[data-collapse]')&&(target===sheet||target===panel||!!target.closest?.('.quran-player-heading,.quran-now-playing'));
+ const eligible=target=>expanded&&sheet.scrollTop<=1&&!target.closest?.('[data-collapse]')&&!(onSurahTitle&&!panel.classList.contains('is-ruqyah')&&onTitle(target))&&(target===sheet||target===panel||!!target.closest?.('.quran-player-heading,.quran-now-playing'));
  const begin=(id,x,y,transport)=>{resetGesture();gesture={id,x,y,dy:0,transport};};
  // A deliberate downward swipe still closes on release; the full-screen frame stays fixed.
  const drag=(x,y,event)=>{if(!gesture)return;const dx=x-gesture.x,dy=y-gesture.y;if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)){resetGesture();return;}gesture.dy=Math.max(0,dy);if(dy>8&&dy>Math.abs(dx)){if(event.cancelable)event.preventDefault();sheet.classList.add('is-dragging');}};

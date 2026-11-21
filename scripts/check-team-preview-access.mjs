@@ -25,4 +25,20 @@ const outdated=renewed.verify();await new Promise(resolve=>setImmediate(resolve)
 const responseActor={id:uid,owner:false,role:'admin',mfaRequired:false};
 assert.deepEqual(await requestTeamPreviewActor('fixture-session-token-c',{fetcher:async(url,options)=>{assert.ok(url.endsWith('/staff-cabinet'));assert.equal(options.method,'POST');assert.equal(options.headers.Authorization,'Bearer fixture-session-token-c');assert.deepEqual(JSON.parse(options.body),{action:'gate',args:{}});assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');return Response.json({data:responseActor});}}),responseActor);
 assert.equal(await requestTeamPreviewActor('fixture-token',{fetcher:async()=>new Response('',{status:403})}),null);
+
+let radioNow=0,radioAccount={state:'valid',session},radioReply=responseActor;
+const radioGate=createTeamPreviewAccess({checkSession:async()=>radioAccount,requestActor:async()=>{if(radioReply instanceof Error)throw radioReply;return radioReply;},now:()=>radioNow});
+assert.equal(radioGate.radioHint(),false);
+assert.equal(await radioGate.verify(),true);
+radioNow=45000;radioReply=Error('offline');
+await assert.rejects(radioGate.verify({force:true}),/offline/);
+assert.equal(radioGate.verified(),false);
+assert.equal(radioGate.actor(),null);
+assert.equal(radioGate.radioHint(),true,'Previously verified account keeps only the inactive Radio label during a brief failure');
+await assert.rejects(radioGate.accessToken(),/offline/);
+radioAccount={state:'unavailable'};assert.equal(await radioGate.verify({force:true}),false);assert.equal(radioGate.radioHint(),true);
+radioNow=75000;assert.equal(radioGate.radioHint(),false);
+radioAccount={state:'valid',session};radioReply=responseActor;assert.equal(await radioGate.verify({force:true}),true);assert.equal(radioGate.verified(),true);
+radioReply=null;assert.equal(await radioGate.verify({force:true}),false);assert.equal(radioGate.radioHint(),false,'Explicit denial removes the Radio label immediately');
+radioReply=responseActor;assert.equal(await radioGate.verify({force:true}),true);radioAccount={state:'signed-out'};assert.equal(await radioGate.verify({force:true}),false);assert.equal(radioGate.radioHint(),false);
 console.log('PASS: owner/admin-only preview role, MFA, metadata ignored, minimal actor, token/TTL binding, fresh-grant events, no signed-out requests, deduplication, stale cancellation and no owner-data request.');

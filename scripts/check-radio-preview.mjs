@@ -36,15 +36,21 @@ for(let i=0;i<5;i++){state=stepRadioQuiz(state,{type:'show'});state=stepRadioQui
 assert.equal(state.phase,'finished');assert.deepEqual(state.scores,[3,2]);
 const source=await fs.readFile(new URL('../dist/js/radio-preview.js',import.meta.url),'utf8');
 const win=new Window(),host=win.document.createElement('main');win.document.body.append(host);
-let owner=false,listener=null,loads=0,played=0;const timers=new Set();
+let owner=false,radioHint=false,listener=null,loads=0,played=0;const timers=new Set();
 const context=vm.createContext({...teamUi,subscribeLanguage,translateUi,uiLeaf,setUiMessage,console,URLSearchParams,AbortController,Set,Map,Math,Number,String,Array,Promise,
- ownerVerified:()=>owner,verifyOwner:async()=>owner,onOwnerChange:fn=>{listener=fn;return()=>{if(listener===fn)listener=null;}},
+ ownerVerified:()=>owner,teamPreviewRadioHint:()=>radioHint,verifyOwner:async()=>owner,onOwnerChange:fn=>{listener=fn;return()=>{if(listener===fn)listener=null;}},
  loadIndex:async()=>{loads++;return index;},audioUrl,reciterInfo,reciterHasSurah,reciterRecording,
  quranPlayback:{start:async()=>{played++;}},reciterImageUrl:p=>'./'+p,
  esc:s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
  RADIO_VOICES,radioCandidateBatch,measureRadioTrack,shuffleRadio,selectRadioProgram,measureRadioCandidates,probeRadioDuration,radioQuizQuestions,initialRadioQuiz,stepRadioQuiz,
  setInterval:fn=>{timers.add(fn);return fn;},clearInterval:fn=>timers.delete(fn)});
 vm.runInContext(source.replace(/^import[^\n]*\n/gm,'').replace(/export /g,''),context);
+const entryHost=win.document.createElement('span');win.document.body.append(entryHost);
+const stopEntry=context.mountHomeRadioEntry(entryHost);assert.equal(entryHost.hidden,true);
+owner=true;radioHint=true;listener();const radioEntry=entryHost.querySelector('.home-radio-beacon');assert.equal(radioEntry.getAttribute('href'),'#radio');
+owner=false;listener();assert.equal(entryHost.hidden,false);assert.equal(entryHost.firstElementChild,radioEntry);assert.equal(radioEntry.getAttribute('href'),null);assert.equal(radioEntry.getAttribute('aria-disabled'),'true');
+owner=true;listener();assert.equal(radioEntry.getAttribute('href'),'#radio');assert.equal(radioEntry.hasAttribute('aria-disabled'),false);
+owner=false;radioHint=false;listener();assert.equal(entryHost.hidden,true);assert.equal(entryHost.firstElementChild,null);stopEntry();
 await context.showRadioPreview(host);assert.ok(host.querySelector('a[href="#staff"]'));assert.equal(loads,0);assert.equal(host.querySelector('.radio-preview'),null);
 owner=true;await context.showRadioPreview(host);assert.ok(host.querySelector('.radio-preview'));assert.equal(played,0);assert.doesNotMatch(host.textContent,/макет|предпросмотр|закрытый просмотр/i);
 const stableHeader=host.querySelector('.radio-header'),stableTabs=[...host.querySelectorAll('[data-radio-tab]')];

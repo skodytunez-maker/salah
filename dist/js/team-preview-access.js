@@ -9,15 +9,19 @@ export async function requestTeamPreviewActor(token,{signal,fetcher=globalThis.f
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
 }
 export function createTeamPreviewAccess({checkSession=checkAccountSession,requestActor=requestTeamPreviewActor,now=Date.now,ttl=60000}={}){
- let actor=null,token=null,at=0,revision=0,pending=null;
+ let actor=null,token=null,at=0,revision=0,pending=null,unavailable=false;
  const listeners=new Set(),emit=()=>{for(const fn of listeners)fn();};
- const clear=()=>{revision++;pending?.controller.abort();pending=null;const changed=Boolean(actor);actor=null;token=null;at=0;if(changed)emit();};
- const verified=()=>Boolean(actor&&now()>=at&&now()-at<ttl);
+ const clear=()=>{revision++;pending?.controller.abort();pending=null;const changed=Boolean(actor);actor=null;token=null;at=0;unavailable=false;if(changed)emit();};
+ const verified=()=>Boolean(actor&&!unavailable&&now()>=at&&now()-at<ttl);
+ const radioHint=()=>Boolean(actor&&now()>=at&&now()-at<ttl+15000);
+ const temporarilyUnavailable=()=>{if(!actor||unavailable)return;unavailable=true;emit();};
  async function verify({force=false}={}){
   const began=revision,checked=await checkSession({force});
   if(began!==revision)return false;
+  if(checked.state==='unavailable'){temporarilyUnavailable();return false;}
   const session=checked.session;
   if(checked.state!=='valid'||!session?.access_token||!session.user?.id||!session.user.email_confirmed_at||session.user.is_anonymous){clear();return false;}
+  if(actor&&actor.id!==session.user.id)clear();
   if(!force&&verified()&&actor.id===session.user.id&&token===session.access_token)return true;
   if(pending?.userId===session.user.id&&pending.token===session.access_token)return pending.task;
   pending?.controller.abort();
@@ -28,19 +32,20 @@ export function createTeamPreviewAccess({checkSession=checkAccountSession,reques
     if(controller.signal.aborted||ticket!==revision||pending!==entry)return false;
     if(!eligible(value)||value.id!==session.user.id){clear();return false;}
     const changed=!verified()||actor?.id!==value.id||actor?.role!==value.role;
-    actor=Object.freeze({id:value.id,owner:value.owner,role:value.role});token=session.access_token;at=now();
+    actor=Object.freeze({id:value.id,owner:value.owner,role:value.role});token=session.access_token;at=now();unavailable=false;
     if(changed)emit();return true;
-   }catch(error){const cancelled=controller.signal.aborted;if(ticket===revision&&pending===entry)clear();if(cancelled)return false;throw error;}
+   }catch(error){const cancelled=controller.signal.aborted;if(ticket===revision&&pending===entry)temporarilyUnavailable();if(cancelled)return false;throw error;}
    finally{if(pending===entry)pending=null;}
   })();pending=entry;return entry.task;
  }
- return{verified,verify,clear,actor:()=>verified()?actor:null,knownActor:()=>actor,
+ return{verified,radioHint,verify,clear,actor:()=>verified()?actor:null,knownActor:()=>actor,
   subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
   async accessToken(){if(!await verify()||!verified()||!token)throw Error('Подтвердите защищённый вход команды.');return token;}
  };
 }
 const shared=createTeamPreviewAccess();
 export const teamPreviewVerified=()=>shared.verified();
+export const teamPreviewRadioHint=()=>shared.radioHint();
 export const teamPreviewActor=()=>shared.actor();
 export const verifiedTeamPreviewId=()=>shared.actor()?.id||null;
 export const verifyTeamPreviewAccess=options=>shared.verify(options);
