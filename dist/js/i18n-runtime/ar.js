@@ -3089,7 +3089,7 @@ export default Object.freeze({
  "rankingUi.myTop": "ترتيبي",
  "rankingUi.nextReciter": "القارئ التالي",
  "rankingUi.nicknameHidden": "الاسم المستعار مخفي",
- "rankingUi.nightDisclosure": "بين 23:00 و07:00 بتوقيت مدينتك المختارة، يتوقف احتساب الوقت في الترتيب بعد ساعة ونصف دون تفاعل. يستمر التشغيل والسجل الشخصي. ويستأنف التفاعل مع التطبيق احتساب الوقت.",
+ "rankingUi.nightDisclosure": "بين 23:00 و07:00 بتوقيت مدينتك المختارة، يتوقف احتساب الوقت في الترتيب بعد 60 دقيقة دون تفاعل. يستمر التشغيل والسجل الشخصي. ويستأنف التفاعل مع التطبيق احتساب الوقت.",
  "rankingUi.noMinutes": "لم تُسجَّل دقائق استماع لهذه الفترة بعد.",
  "rankingUi.notificationsBrowser": "لإشعارات الترتيب، استخدم SALAH حاليًا في المتصفح أو من الشاشة الرئيسية.",
  "rankingUi.notificationsConnectFailed": "تعذّر تفعيل الإشعارات",

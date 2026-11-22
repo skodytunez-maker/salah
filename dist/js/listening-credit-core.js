@@ -1,5 +1,5 @@
 import{localTimestamp,shiftDay}from './reminder-events.js';
-export const NIGHT_CREDIT_LIMIT=90*60*1000;
+export const NIGHT_CREDIT_LIMIT=60*60*1000;
 const tokenPattern=/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const stamp=value=>Number.isSafeInteger(value)&&value>=0&&value<4102444800000;
 function localParts(at,zone){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(at),values=Object.fromEntries(parts.map(p=>[p.type,p.value]));return{day:values.year+'-'+values.month+'-'+values.day,hour:Number(values.hour)};}

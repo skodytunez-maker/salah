@@ -74,7 +74,7 @@ export default Object.freeze({
   "rankingUi.saveFailed": "Saxlamaq mümkün olmadı",
   "rankingUi.accounting": "Dinləmələrin uçotu",
   "rankingUi.accountingDisclosure": "Yeni dinləmələr avtomatik və ilkin olaraq anonim qeydə alınır. Ləqəb və şəkil yalnız seçiminizdən sonra göstərilir. Yalnız Quranın səsləndiyi dəqiqələr hesablanır. Qari, dəqiqənin vaxt nişanı və təsadüfi hadisə kodu göndərilir. Təkrarları önləmək üçün server adınızı və ya e-poçtunuzu deyil, hesabın texniki kodunu saxlayır. Ayələr göndərilmir. Qeydlər 30 gün saxlanılır.",
-  "rankingUi.nightDisclosure": "Seçilmiş şəhərin vaxtı ilə 23:00–07:00 arasında 1,5 saat heç bir əməl edilməzsə, Topda vaxtın hesablanması dayandırılır. Oxutma və şəxsi tarixçə davam edir. Tətbiqdə bir əməl etmək hesablanmanı bərpa edir.",
+  "rankingUi.nightDisclosure": "Seçilmiş şəhərin vaxtı ilə 23:00–07:00 arasında 60 dəqiqə heç bir əməl edilməzsə, Topda vaxtın hesablanması dayandırılır. Oxutma və şəxsi tarixçə davam edir. Tətbiqdə bir əməl etmək hesablanmanı bərpa edir.",
   "rankingUi.countMyListening": "Dinləmələrimi nəzərə al",
   "rankingUi.optOutDisclosure": "İstənilən vaxt söndürə bilərsiniz. Artıq hesablanmış dəqiqələr saxlanma müddəti bitənədək ümumi reytinqdə qalır.",
   "rankingUi.saveHistoryAccount": "Tarixçəni hesabda saxla",

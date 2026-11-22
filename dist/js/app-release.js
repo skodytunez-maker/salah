@@ -1,6 +1,6 @@
-export const APP_VERSION=551;
-export const APP_UPDATED_AT='2026-11-21';
-export const APP_UPDATE_DATE='21 ноября 2026';
-export const APP_CHANGES=[];
+export const APP_VERSION=553;
+export const APP_UPDATED_AT='2026-11-23';
+export const APP_UPDATE_DATE='23 ноября 2026';
+export const APP_CHANGES=['В недельном и месячном Топе место определяется по сумме зачтённого времени по всем чтецам.','Ночью с 23:00 до 07:00 зачёт в Топе приостанавливается после 60 минут без действий. Чтение и личная история продолжаются.'];
 export const APP_ANNOUNCEMENT={"version":523,"date":"2026-11-19","changes":["Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве."]};
 export const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';

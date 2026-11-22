@@ -2997,7 +2997,7 @@ export default Object.freeze({
  "rankingUi.myTop": "Mənim reytinqim",
  "rankingUi.nextReciter": "Növbəti qari",
  "rankingUi.nicknameHidden": "Ləqəb gizlədilib",
- "rankingUi.nightDisclosure": "Seçilmiş şəhərin vaxtı ilə 23:00–07:00 arasında 1,5 saat heç bir əməl edilməzsə, Topda vaxtın hesablanması dayandırılır. Oxutma və şəxsi tarixçə davam edir. Tətbiqdə bir əməl etmək hesablanmanı bərpa edir.",
+ "rankingUi.nightDisclosure": "Seçilmiş şəhərin vaxtı ilə 23:00–07:00 arasında 60 dəqiqə heç bir əməl edilməzsə, Topda vaxtın hesablanması dayandırılır. Oxutma və şəxsi tarixçə davam edir. Tətbiqdə bir əməl etmək hesablanmanı bərpa edir.",
  "rankingUi.noMinutes": "Bu dövr üçün hələ dinləmə dəqiqələri qeydə alınmayıb.",
  "rankingUi.notificationsBrowser": "Reytinq bildirişləri üçün hələlik SALAH-ı brauzerdə və ya əsas ekrandan istifadə edin.",
  "rankingUi.notificationsConnectFailed": "Bildirişləri qoşmaq mümkün olmadı",

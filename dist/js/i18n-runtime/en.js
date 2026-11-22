@@ -2997,7 +2997,7 @@ export default Object.freeze({
  "rankingUi.myTop": "My top",
  "rankingUi.nextReciter": "Next reciter",
  "rankingUi.nicknameHidden": "Nickname hidden",
- "rankingUi.nightDisclosure": "Between 23:00 and 07:00 in your selected city, Top credit pauses after 1.5 hours without interaction. Playback and personal history continue. Interacting with the app resumes credit.",
+ "rankingUi.nightDisclosure": "Between 23:00 and 07:00 in your selected city, Top credit pauses after 60 minutes without interaction. Playback and personal history continue. Interacting with the app resumes credit.",
  "rankingUi.noMinutes": "No listening minutes have been recorded for this period yet.",
  "rankingUi.notificationsBrowser": "For ranking notifications, use SALAH in a browser or from your Home Screen for now.",
  "rankingUi.notificationsConnectFailed": "Could not enable notifications",

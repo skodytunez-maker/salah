@@ -116,7 +116,11 @@ export async function loadCompetition(period='all',{force=false,mode='total'}={}
     const totalSeconds=Number.isSafeInteger(data.listeningTotals?.[p])&&data.listeningTotals[p]>=0?data.listeningTotals[p]:null;
     saveAggregate(day,p,totalSeconds,revision);
     if(legacy)saveFullBoard(day,p,'favorite',rows,{revision,totalSeconds,limited});
-    else{saveFullBoard(day,p,'total',rows,{revision,totalSeconds,limited});if(!limited)saveFullBoard(day,p,'favorite',favoriteOrder(rows),{revision,totalSeconds,limited});}
+    else{
+     // Legacy fallback rows can be ranked by one reciter and lack a calendar total.
+     if((p==='week'||p==='month')&&rows.some(row=>row.totalSeconds===undefined))continue;
+     saveFullBoard(day,p,'total',rows,{revision,totalSeconds,limited});if(!limited)saveFullBoard(day,p,'favorite',favoriteOrder(rows),{revision,totalSeconds,limited});
+    }
    }
   })();boardRequests.set(requestKey,entry);
   try{await entry.task;}finally{clearTimeout(timeout);if(boardRequests.get(requestKey)===entry)boardRequests.delete(requestKey);}
@@ -124,6 +128,7 @@ export async function loadCompetition(period='all',{force=false,mode='total'}={}
  const result=cachedCompetition(period,{mode});
  // A capped overall board cannot tell us who would enter a favorite-reciter leaderboard.
  if(!result&&mode==='favorite'&&!legacy&&boards.get(day+':'+period)?.limited)return loadCompetition(period,{mode,force:true});
+ if(!result&&mode==='total'&&(period==='week'||period==='month'))throw Error('unavailable');
  return result||[];
 }
 function parseThinRows(items){

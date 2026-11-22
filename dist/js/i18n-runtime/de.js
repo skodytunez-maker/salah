@@ -2997,7 +2997,7 @@ export default Object.freeze({
  "rankingUi.myTop": "Meine Topliste",
  "rankingUi.nextReciter": "Nächster Rezitator",
  "rankingUi.nicknameHidden": "Spitzname verborgen",
- "rankingUi.nightDisclosure": "Zwischen 23:00 und 07:00 Uhr deiner gewählten Stadt pausiert die Top-Wertung nach 1,5 Stunden ohne Bedienung. Wiedergabe und persönlicher Verlauf laufen weiter. Eine Aktion in der App setzt die Wertung fort.",
+ "rankingUi.nightDisclosure": "Zwischen 23:00 und 07:00 Uhr deiner gewählten Stadt pausiert die Top-Wertung nach 60 Minuten ohne Bedienung. Wiedergabe und persönlicher Verlauf laufen weiter. Eine Aktion in der App setzt die Wertung fort.",
  "rankingUi.noMinutes": "Für diesen Zeitraum wurden noch keine Hörminuten erfasst.",
  "rankingUi.notificationsBrowser": "Nutze SALAH für Ranglisten-Benachrichtigungen vorerst im Browser oder über den Home-Bildschirm.",
  "rankingUi.notificationsConnectFailed": "Benachrichtigungen konnten nicht aktiviert werden",

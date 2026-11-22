@@ -73,7 +73,7 @@ export default Object.freeze({
   "rankingUi.saveFailed": "Could not save",
   "rankingUi.accounting": "Listening records",
   "rankingUi.accountingDisclosure": "New listening time is recorded automatically and is anonymous by default. Your nickname and photo are shown only if you choose. Only minutes of Quran playback are counted. The reciter, minute timestamp and a random event code are sent. To prevent duplicates, the server stores a technical account identifier rather than your name or email. Verses are not sent. Records are kept for 30 days.",
-  "rankingUi.nightDisclosure": "Between 23:00 and 07:00 in your selected city, Top credit pauses after 1.5 hours without interaction. Playback and personal history continue. Interacting with the app resumes credit.",
+  "rankingUi.nightDisclosure": "Between 23:00 and 07:00 in your selected city, Top credit pauses after 60 minutes without interaction. Playback and personal history continue. Interacting with the app resumes credit.",
   "rankingUi.countMyListening": "Include my listening time",
   "rankingUi.optOutDisclosure": "You can turn this off at any time. Minutes already counted remain in the overall ranking until their retention period ends.",
   "rankingUi.saveHistoryAccount": "Save history to an account",

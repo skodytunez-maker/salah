@@ -15,6 +15,7 @@ const w=new Window({url:'https://fixture.invalid/#quran?view=reciters&filter=sal
 Object.assign(globalThis,{window:w,document:doc,location:w.location,Event:w.Event,CustomEvent:w.CustomEvent,localStorage:w.localStorage});
 doc.body.innerHTML='<main id="top"></main><dialog id="modal"><div id="modal-content"></div></dialog>';
 const host=doc.getElementById('top'),a='ar.alafasy',b='ar.yasseraldossaricontinuous',ownId='11111111-1111-4111-8111-111111111111',otherId='22222222-2222-4222-8222-222222222222';
+let missingCalendarTotals=false;
 let clock=Date.parse('2026-11-16T12:00:00Z'),hidden=false,online=true,auth={signedIn:true,userId:ownId},eligible={[a]:20,[b]:10},serverRevision=100,serverTotal=500,otherSeconds=40,ownSeconds=100,ownTotal=150,otherMode='profile',otherPresent=true,emptyDay=false,extraRow=null;
 Object.defineProperty(doc,'hidden',{configurable:true,get:()=>hidden});Object.defineProperty(doc,'visibilityState',{configurable:true,get:()=>hidden?'hidden':'visible'});Object.defineProperty(w.navigator,'onLine',{configurable:true,get:()=>online});
 class ClockDate extends Date{constructor(...args){super(...(args.length?args:[clock]));}static now(){return clock;}}
@@ -25,7 +26,7 @@ const flush=async()=>{for(let i=0;i<12;i++)await new Promise(resolve=>setImmedia
 async function advance(ms){clock+=ms;for(const[id,timer]of [...timers])if(timer.at<=clock){timers.delete(id);timer.fn();}await flush();}
 const clone=value=>JSON.parse(JSON.stringify(value));
 const baseRows=period=>emptyDay&&period==='day'?[]:[{id:ownId,mode:'initial',initial:'Я',guest:false,reciter:a,seconds:ownSeconds,totalSeconds:ownTotal,reciters:[{reciter:a,seconds:ownSeconds},{reciter:b,seconds:ownTotal-ownSeconds}],rank:1,activeForSeconds:45},...(otherPresent?[{id:otherId,mode:otherMode,initial:'Д',nickname:'PUBLIC OTHER',hasPhoto:true,guest:false,reciter:b,seconds:otherSeconds,totalSeconds:otherSeconds,reciters:[{reciter:b,seconds:otherSeconds}],rank:2,activeForSeconds:45}]:[]),...(extraRow?[clone(extraRow)]:[])];
-function fullPayload(url){const day=url.searchParams.get('day');return{day,boards:Object.fromEntries(['all','day','week','month'].map(period=>[period,{revision:serverRevision,items:baseRows(period),limited:false}])),listeningTotals:Object.fromEntries(['all','day','week','month'].map(period=>[period,emptyDay&&period==='day'?0:serverTotal]))};}
+function fullPayload(url){const day=url.searchParams.get('day');return{day,boards:Object.fromEntries(['all','day','week','month'].map(period=>[period,{revision:serverRevision,items:missingCalendarTotals&&['week','month'].includes(period)?baseRows(period).map(({totalSeconds,reciters,...row})=>row):baseRows(period),limited:false}])),listeningTotals:Object.fromEntries(['all','day','week','month'].map(period=>[period,emptyDay&&period==='day'?0:serverTotal]))};}
 function thinPayload(url){const period=url.searchParams.get('period');return{day:url.searchParams.get('day'),period,mode:url.searchParams.get('mode'),revision:serverRevision,listeningTotal:emptyDay&&period==='day'?0:serverTotal,items:baseRows(period).map(({id,mode,guest,reciter,seconds,totalSeconds,reciters,rank,activeForSeconds})=>({id,mode,guest,reciter,seconds,totalSeconds,reciters,rank,activeForSeconds}))};}
 const response=payload=>({ok:true,status:200,json:async()=>clone(payload)});
 const fetcher=async(input,options)=>{
@@ -86,6 +87,17 @@ holdFull=false;newIdentity.resolve(response(newIdentity.payload));await flush();
 holdThin=true;serverRevision++;await advance(1000);assert.equal(thinHolds.length,1);const oldAccount=thinHolds.shift();auth={signedIn:true,userId:'33333333-3333-4333-8333-333333333333'};w.dispatchEvent(new w.Event('salah:counter-status'));oldAccount.resolve(response(oldAccount.payload));holdThin=false;await flush();await advance(1000);assert.equal(maxThinInFlight,1);
 client.clearCompetitionCache();holdThin=true;await advance(1000);const cleared=thinHolds.shift();client.clearCompetitionCache();cleared.resolve(response(cleared.payload));holdThin=false;await flush();assert.equal(client.cachedCompetition('all'),null,'A pre-privacy-clear request cannot repopulate the cache');
 await client.loadCompetition('all',{force:true});stop();const remountCalls=thinCalls;stop=page.mountCompetition(host,()=>'<h1>Коран</h1>');await flush();await advance(0);assert.equal(host.querySelector('[data-competition-entry="'+otherId+'"] [data-competition-score]').textContent,stamp(otherSeconds));assert.equal(number(host.querySelector('[data-listening-total]')),serverTotal,'A remount displays current confirmed values without replaying a foreign tail');assert.ok(thinCalls<=remountCalls+1);
+for(const period of ['week','month']){
+ host.querySelector('[data-competition-period="all"]').click();await flush();await advance(0);
+ host.querySelector('[data-competition-score-mode]').click();await flush();await advance(0);
+ host.querySelector('[data-competition-period="'+period+'"]').click();await flush();await advance(0);
+ assert.equal(host.querySelector('[data-competition-score-mode]'),null,'A calendar period cannot switch to one favorite reciter');
+ const card=host.querySelector('[data-competition-entry="'+ownId+'"]');
+ assert.equal(score(card),stamp(ownTotal),'A calendar period displays total credit across reciters after switching from favorite mode');
+}
+missingCalendarTotals=true;client.clearCompetitionCache();
+await assert.rejects(client.loadCompetition('week',{force:true}),/unavailable/);
+assert.equal(client.cachedCompetition('week'),null);missingCalendarTotals=false;
 // Midnight switches the exact day scope, without replaying a previous-day tail.
 await client.loadCompetition('day',{force:true});host.querySelector('[data-competition-period="day"]').click();await flush();await advance(0);emptyDay=true;clock+=86400000;serverRevision++;[...intervals.values()].find(timer=>timer.ms===1000).fn();await flush();await advance(0);await advance(1000);await flush();assert.equal(number(host.querySelector('[data-listening-total]')),0);assert.equal(host.querySelector('[data-competition-entry="'+otherId+'"]'),null);
 stop();const stoppedCalls=thinCalls;await advance(20000);assert.equal(thinCalls,stoppedCalls,'Unmounted Top consumes no further thin requests');assert.equal(authCalls,0);await w.happyDOM.close();language.setInterfaceLanguage('ru');

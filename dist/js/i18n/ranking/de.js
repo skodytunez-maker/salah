@@ -73,7 +73,7 @@ export default Object.freeze({
   "rankingUi.saveFailed": "Speichern fehlgeschlagen",
   "rankingUi.accounting": "Erfassung der Hördauer",
   "rankingUi.accountingDisclosure": "Neue Hörzeiten werden automatisch und standardmäßig anonym erfasst. Dein Spitzname und Foto werden nur angezeigt, wenn du es wählst. Es zählen nur Minuten der Quran-Wiedergabe. Übermittelt werden der Rezitator, der Minutenzeitpunkt und ein zufälliger Ereigniscode. Zum Schutz vor Duplikaten speichert der Server eine technische Kontokennung statt deines Namens oder deiner E-Mail-Adresse. Verse werden nicht gesendet. Die Einträge werden 30 Tage gespeichert.",
-  "rankingUi.nightDisclosure": "Zwischen 23:00 und 07:00 Uhr deiner gewählten Stadt pausiert die Top-Wertung nach 1,5 Stunden ohne Bedienung. Wiedergabe und persönlicher Verlauf laufen weiter. Eine Aktion in der App setzt die Wertung fort.",
+  "rankingUi.nightDisclosure": "Zwischen 23:00 und 07:00 Uhr deiner gewählten Stadt pausiert die Top-Wertung nach 60 Minuten ohne Bedienung. Wiedergabe und persönlicher Verlauf laufen weiter. Eine Aktion in der App setzt die Wertung fort.",
   "rankingUi.countMyListening": "Meine Hördauer erfassen",
   "rankingUi.optOutDisclosure": "Du kannst dies jederzeit deaktivieren. Bereits erfasste Minuten bleiben bis zum Ende der Aufbewahrungsfrist in der Gesamtrangliste.",
   "rankingUi.saveHistoryAccount": "Verlauf in einem Konto speichern",

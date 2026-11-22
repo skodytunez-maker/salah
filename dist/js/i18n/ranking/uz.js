@@ -74,7 +74,7 @@ export default Object.freeze({
   "rankingUi.saveFailed": "Saqlab bo‘lmadi",
   "rankingUi.accounting": "Tinglash hisobi",
   "rankingUi.accountingDisclosure": "Yangi tinglash vaqti avtomatik va odatda anonim qayd etiladi. Taxallus va rasm faqat o‘zingiz tanlaganingizdan keyin ko‘rsatiladi. Faqat Qur’on ijro etilgan daqiqalar hisoblanadi. Qori, daqiqaning vaqt belgisi va tasodifiy hodisa kodi yuboriladi. Takrorlanishni oldini olish uchun server ism yoki elektron pochtani emas, hisobning texnik kodini saqlaydi. Oyatlar yuborilmaydi. Yozuvlar 30 kun saqlanadi.",
-  "rankingUi.nightDisclosure": "Tanlangan shahar vaqti bilan 23:00–07:00 oralig‘ida 1,5 soat hech qanday amal bajarilmasa, Topda hisoblash to‘xtatiladi. Ijro va shaxsiy tarix davom etadi. Ilovadagi amal hisoblashni qayta boshlaydi.",
+  "rankingUi.nightDisclosure": "Tanlangan shahar vaqti bilan 23:00–07:00 oralig‘ida 60 daqiqa hech qanday amal bajarilmasa, Topda hisoblash to‘xtatiladi. Ijro va shaxsiy tarix davom etadi. Ilovadagi amal hisoblashni qayta boshlaydi.",
   "rankingUi.countMyListening": "Tinglashlarimni hisobga olish",
   "rankingUi.optOutDisclosure": "Istalgan payt o‘chirishingiz mumkin. Oldin hisoblangan daqiqalar saqlash muddati tugaguncha umumiy reytingda qoladi.",
   "rankingUi.saveHistoryAccount": "Tarixni hisobda saqlash",

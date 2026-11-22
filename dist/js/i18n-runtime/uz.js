@@ -2997,7 +2997,7 @@ export default Object.freeze({
  "rankingUi.myTop": "Mening reytingim",
  "rankingUi.nextReciter": "Keyingi qori",
  "rankingUi.nicknameHidden": "Taxallus yashirilgan",
- "rankingUi.nightDisclosure": "Tanlangan shahar vaqti bilan 23:00–07:00 oralig‘ida 1,5 soat hech qanday amal bajarilmasa, Topda hisoblash to‘xtatiladi. Ijro va shaxsiy tarix davom etadi. Ilovadagi amal hisoblashni qayta boshlaydi.",
+ "rankingUi.nightDisclosure": "Tanlangan shahar vaqti bilan 23:00–07:00 oralig‘ida 60 daqiqa hech qanday amal bajarilmasa, Topda hisoblash to‘xtatiladi. Ijro va shaxsiy tarix davom etadi. Ilovadagi amal hisoblashni qayta boshlaydi.",
  "rankingUi.noMinutes": "Bu davr uchun hali tinglash daqiqalari qayd etilmagan.",
  "rankingUi.notificationsBrowser": "Reyting bildirishnomalari uchun hozircha SALAH’dan brauzerda yoki bosh ekrandan foydalaning.",
  "rankingUi.notificationsConnectFailed": "Bildirishnomalarni ulab bo‘lmadi",
