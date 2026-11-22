@@ -2969,6 +2969,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "Loading winners…",
  "rankingUi.historyMonth": "Month",
  "rankingUi.historyMonthWinners": "Monthly winners",
+ "rankingUi.historyOctoberTotal": "Highest total listening time",
  "rankingUi.historyPeriod": "Period",
  "rankingUi.historyPeriodLabel": "Wins history period",
  "rankingUi.historyTitle": "Wins history",

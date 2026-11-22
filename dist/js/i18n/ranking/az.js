@@ -213,6 +213,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "Dövr",
   "rankingUi.historyEarned": "Mükafat qazanılıb",
   "rankingUi.historyListened": "Dinlənilib",
+  "rankingUi.historyOctoberTotal": "Ən uzun ümumi dinləmə vaxtı",
   "rankingUi.historyWinnerCard": "Qalibin kartı",
   "rankingUi.historyEmpty": "Qalib dövr başa çatdıqdan sonra görünəcək.",
   "rankingUi.celebrationAria": "Mükafatın təqdimatı · {title}",

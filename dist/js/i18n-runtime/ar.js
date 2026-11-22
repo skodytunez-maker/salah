@@ -3061,6 +3061,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "جارٍ تحميل الفائزين…",
  "rankingUi.historyMonth": "الشهر",
  "rankingUi.historyMonthWinners": "الفائزون بالشهر",
+ "rankingUi.historyOctoberTotal": "أطول وقت استماع إجمالي",
  "rankingUi.historyPeriod": "الفترة",
  "rankingUi.historyPeriodLabel": "فترة سجل الانتصارات",
  "rankingUi.historyTitle": "سجل الانتصارات",

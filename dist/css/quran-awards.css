@@ -221,3 +221,6 @@ body.reduce-motion .release-motion-preview [data-release-motion-part="element"],
 /* One news card needs neither a paging rail nor an inner scrolling viewport. */
 .release-gallery-single .release-gallery-strip{display:block;overflow:visible;scroll-snap-type:none}
 .release-gallery-single .release-feature{width:100%;max-height:none;overflow:visible;scroll-snap-align:none}
+
+.award-history-recognition{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 12px;border-color:#d8be8866}
+.award-history-recognition-score{display:grid;gap:4px;flex:none;text-align:end;color:#e7d4a8;font-size:13px;font-variant-numeric:tabular-nums}

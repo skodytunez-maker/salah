@@ -212,6 +212,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "Кезең",
   "rankingUi.historyEarned": "Марапат алынды",
   "rankingUi.historyListened": "Тыңдалған уақыт",
+  "rankingUi.historyOctoberTotal": "Ең ұзақ жалпы тыңдау уақыты",
   "rankingUi.historyWinnerCard": "Жеңімпаз карточкасы",
   "rankingUi.historyEmpty": "Жеңімпаз кезең аяқталғаннан кейін көрсетіледі.",
   "rankingUi.celebrationAria": "Марапат табыстау · {title}",

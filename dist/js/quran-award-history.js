@@ -35,6 +35,12 @@ export function awardHistoryLabel(row){
  return new Intl.DateTimeFormat(getLocale(),{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).formatRange(first,last);
 }
 const mounted=new WeakMap();
+// A one-time historical distinction under the all-reciter measure.
+const octoberRecognition=Object.freeze({kind:'month',start:'2026-10-01',end:'2026-11-01',seconds:168802,initial:'Н'});
+function octoberRecognitionMarkup(){
+ const {initial,seconds}=octoberRecognition;
+ return '<article class="award-history-entry award-history-recognition" data-october-recognition><div class="award-history-identity"><strong>'+uiLeaf('rankingUi.historyOctoberTotal')+'</strong><small data-recognition-month>'+esc(awardHistoryLabel(octoberRecognition))+'</small></div><span class="award-history-recognition-score"><b>'+esc(initial)+'</b><span data-rank-ui-text data-rank-ui-seconds="'+seconds+'">'+esc(rankingTime(seconds))+'</span></span></article>';
+}
 // Identify the period won; the actual handover date is supplementary detail.
 export function mountAwardHistory(host,rows,{isActive=()=>true,onCard=()=>{}}={}){
  mounted.get(host)?.();let selected='week',closed=false,rendered=[],observer=null;
@@ -43,6 +49,7 @@ export function mountAwardHistory(host,rows,{isActive=()=>true,onCard=()=>{}}={}
  const paint=()=>{
   if(closed)return;if(!host.isConnected){dispose();return;}translateUi(host);renderRankingTimes(host);
   panel.setAttribute('aria-label',t(selected==='week'?'rankingUi.historyWeekWinners':'rankingUi.historyMonthWinners'));
+  const recognitionMonth=panel.querySelector('[data-recognition-month]');if(recognitionMonth)recognitionMonth.textContent=awardHistoryLabel(octoberRecognition);
   const byId=new Map(rendered.map(row=>[row.id,row]));
   for(const node of panel.querySelectorAll('[data-history-date]')){const row=byId.get(node.dataset.historyRow);if(row)node.textContent=node.dataset.historyDate==='label'?awardHistoryLabel(row):node.dataset.historyDate==='won'?awardWonDate(row):awardUiPeriod(row);}
   for(const node of panel.querySelectorAll('[data-history-caption]'))if(node.firstChild?.nodeType===3)node.firstChild.data=t(node.dataset.historyCaption);
@@ -51,7 +58,12 @@ export function mountAwardHistory(host,rows,{isActive=()=>true,onCard=()=>{}}={}
  const draw=()=>{
   rendered=rows.filter(row=>row.kind===selected).sort((a,b)=>b.start.localeCompare(a.start)||a.id.localeCompare(b.id));
   const date=(row,type,text)=>'<span data-history-date="'+type+'" data-history-row="'+esc(row.id)+'">'+esc(text)+'</span>';
-  panel.innerHTML=rendered.map(row=>'<details class="award-history-entry"><summary><img class="award-history-emblem" src="'+esc(awardArtwork(row.kind))+'" alt=""><span class="award-history-identity"><strong data-history-identity="'+esc(row.id)+'">'+esc(awardUiIdentityLabel(row.listener))+'</strong><small>'+date(row,'label',awardHistoryLabel(row))+'</small></span><span class="award-history-chevron" aria-hidden="true"></span></summary><div class="award-history-detail"><span class="award-history-period" data-history-caption="rankingUi.historyPeriod">'+esc(t('rankingUi.historyPeriod'))+date(row,'period',awardUiPeriod(row))+'</span>'+(awardWonDate(row)?'<span class="award-history-received" data-history-caption="rankingUi.historyEarned">'+esc(t('rankingUi.historyEarned'))+date(row,'won',awardWonDate(row))+'</span>':'')+'<span>'+uiLeaf('rankingUi.historyListened')+'<strong data-rank-ui-text data-rank-ui-seconds="'+row.seconds+'">'+esc(rankingTime(row.seconds))+'</strong></span><button type="button" class="text-button" data-award-winner="'+esc(row.id)+'">'+uiLeaf('rankingUi.historyWinnerCard')+'</button></div></details>').join('')||'<p class="award-note">'+uiLeaf('rankingUi.historyEmpty')+'</p>';
+  const cards=rendered.map(row=>'<details class="award-history-entry"><summary><img class="award-history-emblem" src="'+esc(awardArtwork(row.kind))+'" alt=""><span class="award-history-identity"><strong data-history-identity="'+esc(row.id)+'">'+esc(awardUiIdentityLabel(row.listener))+'</strong><small>'+date(row,'label',awardHistoryLabel(row))+'</small></span><span class="award-history-chevron" aria-hidden="true"></span></summary><div class="award-history-detail"><span class="award-history-period" data-history-caption="rankingUi.historyPeriod">'+esc(t('rankingUi.historyPeriod'))+date(row,'period',awardUiPeriod(row))+'</span>'+(awardWonDate(row)?'<span class="award-history-received" data-history-caption="rankingUi.historyEarned">'+esc(t('rankingUi.historyEarned'))+date(row,'won',awardWonDate(row))+'</span>':'')+'<span>'+uiLeaf('rankingUi.historyListened')+'<strong data-rank-ui-text data-rank-ui-seconds="'+row.seconds+'">'+esc(rankingTime(row.seconds))+'</strong></span><button type="button" class="text-button" data-award-winner="'+esc(row.id)+'">'+uiLeaf('rankingUi.historyWinnerCard')+'</button></div></details>');
+  if(selected==='month'){
+   const older=rendered.findIndex(row=>row.start<octoberRecognition.start);
+   cards.splice(older<0?cards.length:older,0,octoberRecognitionMarkup());
+  }
+  panel.innerHTML=cards.join('')||'<p class="award-note">'+uiLeaf('rankingUi.historyEmpty')+'</p>';
   panel.querySelectorAll('[data-award-winner]').forEach(button=>button.onclick=()=>{if(!closed&&isActive())void onCard(button);});paint();
  };
  host.querySelectorAll('[data-history-period]').forEach(button=>button.onclick=()=>{

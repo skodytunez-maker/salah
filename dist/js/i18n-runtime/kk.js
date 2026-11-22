@@ -2969,6 +2969,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "Жеңімпаздар жүктелуде…",
  "rankingUi.historyMonth": "Ай",
  "rankingUi.historyMonthWinners": "Ай жеңімпаздары",
+ "rankingUi.historyOctoberTotal": "Ең ұзақ жалпы тыңдау уақыты",
  "rankingUi.historyPeriod": "Кезең",
  "rankingUi.historyPeriodLabel": "Жеңістер тарихының кезеңі",
  "rankingUi.historyTitle": "Жеңістер тарихы",

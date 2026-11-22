@@ -3015,6 +3015,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "Загружаем победителей…",
  "rankingUi.historyMonth": "Месяц",
  "rankingUi.historyMonthWinners": "Победители месяца",
+ "rankingUi.historyOctoberTotal": "Лучшее общее время",
  "rankingUi.historyPeriod": "Период",
  "rankingUi.historyPeriodLabel": "Период истории побед",
  "rankingUi.historyTitle": "История побед",

@@ -232,6 +232,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "الفترة",
   "rankingUi.historyEarned": "تم اكتساب الجائزة",
   "rankingUi.historyListened": "مدة الاستماع",
+  "rankingUi.historyOctoberTotal": "أطول وقت استماع إجمالي",
   "rankingUi.historyWinnerCard": "بطاقة الفائز",
   "rankingUi.historyEmpty": "يظهر الفائز بعد انتهاء الفترة.",
   "rankingUi.celebrationAria": "تكريم بالجائزة · {title}",

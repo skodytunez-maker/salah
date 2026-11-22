@@ -213,6 +213,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "Давра",
   "rankingUi.historyEarned": "Ҷоиза гирифта шуд",
   "rankingUi.historyListened": "Шунида шуд",
+  "rankingUi.historyOctoberTotal": "Бештарин вақти умумии шунидан",
   "rankingUi.historyWinnerCard": "Корти ғолиб",
   "rankingUi.historyEmpty": "Ғолиб пас аз анҷоми давра пайдо мешавад.",
   "rankingUi.celebrationAria": "Тақдими ҷоиза · {title}",

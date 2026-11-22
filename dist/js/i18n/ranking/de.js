@@ -212,6 +212,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "Zeitraum",
   "rankingUi.historyEarned": "Auszeichnung erhalten",
   "rankingUi.historyListened": "Gehört",
+  "rankingUi.historyOctoberTotal": "Längste gesamte Hörzeit",
   "rankingUi.historyWinnerCard": "Gewinnerkarte",
   "rankingUi.historyEmpty": "Der Gewinner erscheint nach Ende des Zeitraums.",
   "rankingUi.celebrationAria": "Auszeichnungsverleihung · {title}",

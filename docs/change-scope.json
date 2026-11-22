@@ -1,117 +1,97 @@
 {
   "schema": 1,
-  "version": 553,
-  "baseCommit": "fb91e78b01f68122ade634ec1cf7c07fe4751469",
-  "baseTree": "937ab35353e652a8aec66a3f2e912aa91af5ecf4",
-  "note": "Release only the requested sixty-minute night limit and all-reciter calendar leaderboards. Source and existing public announcement are protected.",
+  "version": 554,
+  "baseCommit": "172d2214fe068984087255cf127bc9e797412ca7",
+  "baseTree": "cbc08412707673e1af97948461666e1a9f6f3f27",
+  "note": "One-time public editorial history card for October 2026 under the total-time measure. No award ledger, account or announcement changes.",
   "allowed": [
     {
+      "path": "dist/css/quran-awards.css",
+      "reason": "Separate editorial history card without a title emblem."
+    },
+    {
       "path": "dist/js/app-release.js",
-      "reason": "Release metadata and exact Top rules in manual update notes."
-    },
-    {
-      "path": "dist/js/competition-client.js",
-      "reason": "Never cache favorite-reciter results as a weekly or monthly all-reciter board."
-    },
-    {
-      "path": "dist/js/competition-page.js",
-      "reason": "Select the total mode for calendar periods, even after viewing favorite ranks."
-    },
-    {
-      "path": "dist/js/competition-view.js",
-      "reason": "Show the score-mode switch only where favorite ranking remains supported."
+      "reason": "Quiet candidate release metadata."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Recompiled client catalogue with the current night threshold."
+      "reason": "Recompile the interface catalogue."
     },
     {
       "path": "dist/js/i18n/ranking/ar.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/az.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/de.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/en.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/kk.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/ru.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/tg.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
       "path": "dist/js/i18n/ranking/uz.js",
-      "reason": "Translate the sixty-minute night inactivity threshold."
+      "reason": "Translate the separate total listening-time distinction."
     },
     {
-      "path": "dist/js/listening-credit-core.js",
-      "reason": "Pause night Top credit at sixty minutes without input."
+      "path": "dist/js/quran-award-history.js",
+      "reason": "Show exactly one October all-reciter recognition with only the public initial."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Versioned client cache and current update metadata and resource sizes."
+      "reason": "Versioned cache and generated resource sizes."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Exact reviewed scope against published SALAH 551."
+      "reason": "Review this change against the published 553 source."
     },
     {
-      "path": "scripts/check-competition-live.mjs",
-      "reason": "Exercise calendar total, favorite-mode transitions and legacy fallbacks."
-    },
-    {
-      "path": "scripts/check-competition-responsive.mjs",
-      "reason": "Compare calendar ranking by sum across different reciters."
-    },
-    {
-      "path": "scripts/check-listening-credit-client.mjs",
-      "reason": "Verify full personal register and sixty-minute eligible queue independently."
-    },
-    {
-      "path": "scripts/check-listening-credit.mjs",
-      "reason": "Verify exact cutoff, overnight boundaries, resume and separate eligible totals."
+      "path": "scripts/check-quran-award-history.mjs",
+      "reason": "Verify the one-time monthly entry and preserve the existing winner."
     }
   ],
   "generated": [
@@ -2723,7 +2703,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "20f6ebe8360e31cccc3d5f757d042378a9cecc7d"
+      "sha": "6481bbf337db18fd8f6c2a8e5b1b11ae1dd11447"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2839,7 +2819,7 @@
     },
     {
       "path": "dist/js/competition-client.js",
-      "sha": "c3f9bcc447d7b4fb00de905b9bca6303c58448d2"
+      "sha": "f82f484af63ba089839683e3c348e2b00e50acf5"
     },
     {
       "path": "dist/js/competition-fast-progress.js",
@@ -2851,11 +2831,11 @@
     },
     {
       "path": "dist/js/competition-page.js",
-      "sha": "65d98161bf3cffc53d9911d4f83b0172771358f9"
+      "sha": "aac357f1bfee66e6988338d8924ac74373c87c44"
     },
     {
       "path": "dist/js/competition-view.js",
-      "sha": "5e75d0a17bfa8765d3685fe7f24e2ddf89d975e7"
+      "sha": "389f1930e264ce1c1bf20840aa16aa4bc9947a94"
     },
     {
       "path": "dist/js/conversation-theme-assets.js",
@@ -3039,35 +3019,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "1b82cf56907148311bef89f5ed656e693846737f"
+      "sha": "32f90483bc9e2dfef6a6ab5b386fc53f83b9eb27"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "2cc3b59847e6e202cab90387433b09848436d457"
+      "sha": "ad164686193a04e02898761146c4f6d65cecbb5c"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "eadf7d4280d4118866203bad99c498ddd6bb0b5e"
+      "sha": "2b8888dae41cbc4371f8fc9eb6373aedc8743247"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "4b07a57d93729282d9f9b62fc3b7614a07fd4c5e"
+      "sha": "44b5bb0b1a316ce3f58a53af339e6e22c33b2470"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "5399a3a76fe5753b9cbc755a1bb20125e72fa496"
+      "sha": "75209feb924a48ea9510a3c213017c5b264458a8"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "3c5406cb4c961b85cabfafc52a73619cb0af176b"
+      "sha": "6d0a1e9509dfc430b055e5a98f9bd781effa9449"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "4fff88f8482a8d55ec0f50e28be4ab0ec81a73c6"
+      "sha": "cc03c932c4b3ba7317b519ee9d0bcdd8a797686d"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "7f6e1bb84e49cf3d1fa45c3eef7ca9bef5eaa9c0"
+      "sha": "237ba9acbcdb29df078a52149687ccabfe3e1a24"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3747,19 +3727,19 @@
     },
     {
       "path": "dist/js/i18n/ranking/ar.js",
-      "sha": "1c55fcf170daac29daf5ce52f2dc2410acbcf61d"
+      "sha": "dd808df60d045f4013c5362595ed5864ff5b39eb"
     },
     {
       "path": "dist/js/i18n/ranking/az.js",
-      "sha": "58284bdb95ee5833a453162e9461a6589cf8526f"
+      "sha": "3648735be55a7f1695286c3665c3544f11fd2611"
     },
     {
       "path": "dist/js/i18n/ranking/de.js",
-      "sha": "dd00ec1372a6bcacaff682d461ff7984b3d1b2f9"
+      "sha": "d5a7ba69865f86ad8e85698b4b519e45a043ff97"
     },
     {
       "path": "dist/js/i18n/ranking/en.js",
-      "sha": "009ac0d3c3dae4ef2c5566c39a51814229943dc6"
+      "sha": "9d1436f8f35a4ee69e5815e4849cce57c563df83"
     },
     {
       "path": "dist/js/i18n/ranking/index.js",
@@ -3767,19 +3747,19 @@
     },
     {
       "path": "dist/js/i18n/ranking/kk.js",
-      "sha": "de4a057fa0666d7511fb8ca389904dd51acc3fa3"
+      "sha": "36a044e071aacfe373f2e50100bf034ca5e77bd4"
     },
     {
       "path": "dist/js/i18n/ranking/ru.js",
-      "sha": "e90926659aa1ac1b36d47657a99c988be98cb0a2"
+      "sha": "ea8bcf68d13d5a3b911fb82f92e1923d1bdb92fb"
     },
     {
       "path": "dist/js/i18n/ranking/tg.js",
-      "sha": "feb3dcd525a6d85acb5b4dd64e57724bfa03af7d"
+      "sha": "4dfb70477e836dfe8d0f9cc69190c0cc2db5e42d"
     },
     {
       "path": "dist/js/i18n/ranking/uz.js",
-      "sha": "a462781079f4f323739ff336081917c1eaad9094"
+      "sha": "68109f0d265f6d728045628d77fd15bd50d2962b"
     },
     {
       "path": "dist/js/i18n/release/ar.js",
@@ -4151,7 +4131,7 @@
     },
     {
       "path": "dist/js/listening-credit-core.js",
-      "sha": "87f39589d724736def64bbed7499d79cedac94a5"
+      "sha": "02ec2c422cc5a9768c197970445d865d0d8aa123"
     },
     {
       "path": "dist/js/listening-credit.js",
@@ -5171,7 +5151,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "5d5640e44e8aa786b63c9be993a20f45d0bb7ec4"
+      "sha": "ebfe4c71e5917415e7eda02ea75e14d25ab1a17f"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5719,7 +5699,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "d90da0ba1c35108e553a16302187f1bfa809641d"
+      "sha": "3c75d208e7c1a21ebfa37ee373ce3bff74727c1b"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6855,7 +6835,7 @@
     },
     {
       "path": "scripts/check-competition-live.mjs",
-      "sha": "55a9ade3404917af7b957b7fa0b76df9785e113a"
+      "sha": "d93dbc4c697b76792170736091683379df9976a4"
     },
     {
       "path": "scripts/check-competition-period-consistency.mjs",
@@ -6863,7 +6843,7 @@
     },
     {
       "path": "scripts/check-competition-responsive.mjs",
-      "sha": "1ca0fc2c79c9fb0cb153a15d0c726258a8211b13"
+      "sha": "04a7599c18b674e7140bcf1c721460a9bc991d4d"
     },
     {
       "path": "scripts/check-competition-sql.mjs",
@@ -7099,11 +7079,11 @@
     },
     {
       "path": "scripts/check-listening-credit-client.mjs",
-      "sha": "b963f8d7f80baa1d6946707f1a783b14767eb82c"
+      "sha": "4c6db74dc19a0e104bb1ffa8684ea5eeaef051ca"
     },
     {
       "path": "scripts/check-listening-credit.mjs",
-      "sha": "d33233d4837d11c001e7bf59b6b590af263c1ac5"
+      "sha": "be4b97312e4b9cafe6602b83930c9a8a20010914"
     },
     {
       "path": "scripts/check-listening-digits.mjs",

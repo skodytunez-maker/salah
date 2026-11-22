@@ -2969,6 +2969,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "Qaliblər yüklənir…",
  "rankingUi.historyMonth": "Ay",
  "rankingUi.historyMonthWinners": "Ayın qalibləri",
+ "rankingUi.historyOctoberTotal": "Ən uzun ümumi dinləmə vaxtı",
  "rankingUi.historyPeriod": "Dövr",
  "rankingUi.historyPeriodLabel": "Qələbələr tarixinin dövrü",
  "rankingUi.historyTitle": "Qələbələr tarixi",

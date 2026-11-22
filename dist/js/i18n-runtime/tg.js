@@ -2969,6 +2969,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "Ғолибон бор мешаванд…",
  "rankingUi.historyMonth": "Моҳ",
  "rankingUi.historyMonthWinners": "Ғолибони моҳ",
+ "rankingUi.historyOctoberTotal": "Бештарин вақти умумии шунидан",
  "rankingUi.historyPeriod": "Давра",
  "rankingUi.historyPeriodLabel": "Давраи таърихи пирӯзиҳо",
  "rankingUi.historyTitle": "Таърихи пирӯзиҳо",

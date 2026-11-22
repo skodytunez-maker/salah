@@ -213,6 +213,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "Davr",
   "rankingUi.historyEarned": "Mukofot olingan",
   "rankingUi.historyListened": "Tinglangan",
+  "rankingUi.historyOctoberTotal": "Eng ko‘p umumiy tinglash vaqti",
   "rankingUi.historyWinnerCard": "G‘olib kartasi",
   "rankingUi.historyEmpty": "G‘olib davr tugagandan keyin ko‘rinadi.",
   "rankingUi.celebrationAria": "Mukofot taqdimoti · {title}",

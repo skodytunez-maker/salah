@@ -222,6 +222,7 @@ export default Object.freeze({
   "rankingUi.historyPeriod": "Период",
   "rankingUi.historyEarned": "Награда получена",
   "rankingUi.historyListened": "Прослушано",
+  "rankingUi.historyOctoberTotal": "Лучшее общее время",
   "rankingUi.historyWinnerCard": "Карточка победителя",
   "rankingUi.historyEmpty": "Победитель появится после завершения периода.",
   "rankingUi.celebrationAria": "Вручение награды · {title}",

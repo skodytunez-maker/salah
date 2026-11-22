@@ -2969,6 +2969,7 @@ export default Object.freeze({
  "rankingUi.historyLoading": "G‘oliblar yuklanmoqda…",
  "rankingUi.historyMonth": "Oy",
  "rankingUi.historyMonthWinners": "Oy g‘oliblari",
+ "rankingUi.historyOctoberTotal": "Eng ko‘p umumiy tinglash vaqti",
  "rankingUi.historyPeriod": "Davr",
  "rankingUi.historyPeriodLabel": "G‘alabalar tarixi davri",
  "rankingUi.historyTitle": "G‘alabalar tarixi",
