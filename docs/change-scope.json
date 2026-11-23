@@ -1,97 +1,45 @@
 {
   "schema": 1,
-  "version": 554,
-  "baseCommit": "172d2214fe068984087255cf127bc9e797412ca7",
-  "baseTree": "cbc08412707673e1af97948461666e1a9f6f3f27",
-  "note": "One-time public editorial history card for October 2026 under the total-time measure. No award ledger, account or announcement changes.",
+  "version": 555,
+  "baseCommit": "09d8d9c121ac7867f8cbe280fcf3389d4b451778",
+  "baseTree": "85612811f024885db3d7c2761c6e4c54c7fcd8bb",
+  "note": "Quiet repair of minute delivery and full/compact snapshot serialization. Existing scoring and privacy rules, personal histories and public news are protected.",
   "allowed": [
     {
-      "path": "dist/css/quran-awards.css",
-      "reason": "Separate editorial history card without a title emblem."
-    },
-    {
       "path": "dist/js/app-release.js",
-      "reason": "Quiet candidate release metadata."
+      "reason": "Quiet maintenance version for ranking delivery."
     },
     {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Recompile the interface catalogue."
+      "path": "dist/js/competition-client.js",
+      "reason": "Use the same whole-second snapshot conversion for full and compact sync."
     },
     {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Recompile the interface catalogue."
+      "path": "dist/js/competition-fast-progress.js",
+      "reason": "Resolve floating-point noise below a tenth of a millisecond using measured day totals. Retain rejection of actual discrepancies."
     },
     {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Recompile the interface catalogue."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Recompile the interface catalogue."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Recompile the interface catalogue."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Recompile the interface catalogue."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Recompile the interface catalogue."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Recompile the interface catalogue."
-    },
-    {
-      "path": "dist/js/i18n/ranking/ar.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/az.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/de.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/en.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/kk.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/ru.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/tg.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/i18n/ranking/uz.js",
-      "reason": "Translate the separate total listening-time distinction."
-    },
-    {
-      "path": "dist/js/quran-award-history.js",
-      "reason": "Show exactly one October all-reciter recognition with only the public initial."
+      "path": "dist/js/reciter-popularity.js",
+      "reason": "Send whole epoch milliseconds for both saved and new listening minutes."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Versioned cache and generated resource sizes."
+      "reason": "Versioned app cache and refreshed resource byte sizes."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Review this change against the published 553 source."
+      "reason": "Exact reviewed scope against published SALAH 554."
     },
     {
-      "path": "scripts/check-quran-award-history.mjs",
-      "reason": "Verify the one-time monthly entry and preserve the existing winner."
+      "path": "scripts/check-competition-account-progress.mjs",
+      "reason": "Verify full and compact rollover precision with the server validator, and reject actual discrepancies."
+    },
+    {
+      "path": "scripts/check-competition-client.mjs",
+      "reason": "Supply the shared snapshot conversion in the authenticated adapter fixture."
+    },
+    {
+      "path": "scripts/check-ruqyah-listening.mjs",
+      "reason": "Replay a fractional timestamp at midnight through the server validator while preserving the recorded date and ID."
     }
   ],
   "generated": [
@@ -1487,7 +1435,7 @@
     },
     {
       "path": "dist/css/quran-awards.css",
-      "sha": "0de0dc31f1f1e26c81cf1136b293e49359757cc7"
+      "sha": "4c39ceda94760143cb01cd2f98edf22ca0d35782"
     },
     {
       "path": "dist/css/radio-preview.css",
@@ -2703,7 +2651,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "6481bbf337db18fd8f6c2a8e5b1b11ae1dd11447"
+      "sha": "916191838895cb34bffe3701e762c22887ddcbd5"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3019,35 +2967,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "32f90483bc9e2dfef6a6ab5b386fc53f83b9eb27"
+      "sha": "2c499f63559e7c3cb616912a755e2b83f29a30c6"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "ad164686193a04e02898761146c4f6d65cecbb5c"
+      "sha": "1421299c114e580e007031562ddf046558ff2093"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "2b8888dae41cbc4371f8fc9eb6373aedc8743247"
+      "sha": "16ed6bfa4d02f34b784ff7ff68076917aae5b841"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "44b5bb0b1a316ce3f58a53af339e6e22c33b2470"
+      "sha": "db35085994175d8191f3d1cb5b107a0dd430792d"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "75209feb924a48ea9510a3c213017c5b264458a8"
+      "sha": "61699c6e281b5ecfd2c803d3f4f33f6319764cd9"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "6d0a1e9509dfc430b055e5a98f9bd781effa9449"
+      "sha": "53d28c6f67f8b679c2573f5c68f25b50e1810371"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "cc03c932c4b3ba7317b519ee9d0bcdd8a797686d"
+      "sha": "44268f27fe5cfae5f6bd38ea7265953a6ee54ccb"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "237ba9acbcdb29df078a52149687ccabfe3e1a24"
+      "sha": "69a1b0f144662912a128affb427272bc18aee04f"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3727,19 +3675,19 @@
     },
     {
       "path": "dist/js/i18n/ranking/ar.js",
-      "sha": "dd808df60d045f4013c5362595ed5864ff5b39eb"
+      "sha": "9dd3de966dc67024ee596df2ee8f106510301069"
     },
     {
       "path": "dist/js/i18n/ranking/az.js",
-      "sha": "3648735be55a7f1695286c3665c3544f11fd2611"
+      "sha": "6e5b537f7d4593dfd674fb4bb1de6f1d8f5c0c22"
     },
     {
       "path": "dist/js/i18n/ranking/de.js",
-      "sha": "d5a7ba69865f86ad8e85698b4b519e45a043ff97"
+      "sha": "8859146ad63da2fcf5916c276fc177ebc3469a63"
     },
     {
       "path": "dist/js/i18n/ranking/en.js",
-      "sha": "9d1436f8f35a4ee69e5815e4849cce57c563df83"
+      "sha": "303f0a4ba8420ef11afdb037bda8fd7c3704b496"
     },
     {
       "path": "dist/js/i18n/ranking/index.js",
@@ -3747,19 +3695,19 @@
     },
     {
       "path": "dist/js/i18n/ranking/kk.js",
-      "sha": "36a044e071aacfe373f2e50100bf034ca5e77bd4"
+      "sha": "22811b088a60000faf79ae62068b9419c51e248a"
     },
     {
       "path": "dist/js/i18n/ranking/ru.js",
-      "sha": "ea8bcf68d13d5a3b911fb82f92e1923d1bdb92fb"
+      "sha": "54ca3bf60fe2a23d279840875e72f3db274a3bf9"
     },
     {
       "path": "dist/js/i18n/ranking/tg.js",
-      "sha": "4dfb70477e836dfe8d0f9cc69190c0cc2db5e42d"
+      "sha": "2f803cc2d4fdca97d8f1dc8bad117b264ff51804"
     },
     {
       "path": "dist/js/i18n/ranking/uz.js",
-      "sha": "68109f0d265f6d728045628d77fd15bd50d2962b"
+      "sha": "91af7b616cc47b148d0f9f88567f3cda8a7f13a8"
     },
     {
       "path": "dist/js/i18n/release/ar.js",
@@ -4431,7 +4379,7 @@
     },
     {
       "path": "dist/js/quran-award-history.js",
-      "sha": "6511f3a9f7690b12f9b68418d8f7aae8fb453363"
+      "sha": "76ccee8c3063a2d98a60b6d07659f7a54b16f658"
     },
     {
       "path": "dist/js/quran-awards-core.js",
@@ -5151,7 +5099,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "ebfe4c71e5917415e7eda02ea75e14d25ab1a17f"
+      "sha": "04b2683687b4b9cfa34668d7cdd178dd237f226a"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5699,7 +5647,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "3c75d208e7c1a21ebfa37ee373ce3bff74727c1b"
+      "sha": "a5034dafb088a92b819dc5dbb58553134ea6c952"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -7407,7 +7355,7 @@
     },
     {
       "path": "scripts/check-quran-award-history.mjs",
-      "sha": "b68694d6094c4654ad1d4bdd5c843c4989d27ec9"
+      "sha": "8a5334355a1bc759932d81aeadc0bcc2d6baf238"
     },
     {
       "path": "scripts/check-quran-awards.mjs",
@@ -8709,5 +8657,6 @@
       "path": "tests/support/check-unlink.cjs",
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
-  ]
+  ],
+  "previousReleaseSource": "export const APP_VERSION=554;\nexport const APP_UPDATED_AT='2026-11-23';\nexport const APP_UPDATE_DATE='23 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

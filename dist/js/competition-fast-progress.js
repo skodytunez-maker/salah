@@ -2,13 +2,30 @@
 // The clock schedules requests; it never creates listening seconds.
 const record=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
 const safeKey=key=>typeof key==='string'&&key.length<=100&&!['__proto__','prototype','constructor'].includes(key);
-function snapshotOf(value){
+export function wholeCompetitionSnapshot(value){
  if(!record(value)||!record(value.totals)||!record(value.days)||Object.keys(value.totals).length>160||Object.keys(value.days).length>94)return null;
- const totals={},days={};
+ const totals={},days={},dailyTotals={};
  for(const[key,n]of Object.entries(value.totals)){if(!safeKey(key)||!Number.isFinite(n)||n<0||n>315360000)return null;totals[key]=Math.floor(n);}
  for(const[day,rows]of Object.entries(value.days)){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||!record(rows)||Object.keys(rows).length>160)return null;
-  let sum=0;const target={};for(const[key,n]of Object.entries(rows)){if(!safeKey(key)||!Number.isFinite(n)||n<0||n>86400||!Object.hasOwn(totals,key))return null;target[key]=Math.floor(n);sum+=target[key];if(target[key]>totals[key])return null;}if(sum>86400)return null;days[day]=target;
+  let sum=0;
+  const target={};
+  for(const[key,n]of Object.entries(rows)){
+   if(!safeKey(key)||!Number.isFinite(n)||n<0||n>86400||!Object.hasOwn(totals,key))return null;
+   const seconds=Math.floor(n);
+   target[key]=seconds;
+   sum+=seconds;
+   dailyTotals[key]=(dailyTotals[key]||0)+seconds;
+  }
+  if(sum>86400)return null;
+  days[day]=target;
+ }
+ for(const[key,seconds]of Object.entries(dailyTotals)){
+  if(seconds<=totals[key])continue;
+  // Independently accumulated daily and lifetime sums can straddle an integer.
+  // Only an already measured whole-second daily sum can resolve sub-ms noise.
+  if(seconds-value.totals[key]>0.0001)return null;
+  totals[key]=seconds;
  }
  return{totals,days};
 }
@@ -60,14 +77,14 @@ export function createCompetitionFastProgress({getContext,send,onResult=()=>true
  }
  return{
   beginFull(){const ctx=context();if(disposed||!ctx.active)return null;invalidate();capability='unknown';wantedFull=false;const token=Object.freeze({id:++serial,epoch,key:ctx.key});full=token;return token;},
-  acknowledgeFull(token,snapshot,reply){const ctx=context();if(disposed||!token||full!==token||token.epoch!==epoch||token.key!==ctx.key||!ctx.active)return false;full=null;const source=snapshotOf(snapshot);wantedFull=false;
+  acknowledgeFull(token,snapshot,reply){const ctx=context();if(disposed||!token||full!==token||token.epoch!==epoch||token.key!==ctx.key||!ctx.active)return false;full=null;const source=wholeCompetitionSnapshot(snapshot);wantedFull=false;
    if(!source||reply?.ok!==true){baseline=null;capability='unknown';return false;}
    if(reply.progressVersion!==1||reply.creditPaused===true){baseline=null;capability=reply.creditPaused===true?'paused':'unsupported';return false;}
    if(reply.accepted!==true||reply.needsFull===true){baseline=null;capability='unknown';wantedFull=true;retryAt=now()+15000;askFull('full-not-accepted');return false;}
    baseline=source;capability='yes';if(!latest||changed(source,latest,ctx.timeZone).needsFull)latest=source;pump();return true;
   },
   failFull(token){if(full!==token||!token)return;full=null;baseline=null;capability='unknown';wantedFull=true;retryAt=now()+15000;askFull('full-failed');},
-  sample(snapshot,{final=false}={}){const ctx=context();if(disposed||!ctx.active)return false;const source=snapshotOf(snapshot);if(!source){requireFull('invalid-snapshot');return false;}latest=source;finalPending=finalPending||final;
+  sample(snapshot,{final=false}={}){const ctx=context();if(disposed||!ctx.active)return false;const source=wholeCompetitionSnapshot(snapshot);if(!source){requireFull('invalid-snapshot');return false;}latest=source;finalPending=finalPending||final;
    if(!baseline&&!full&&capability==='unknown')wantedFull=true;pump();return true;
   },
   refresh(){context();pump();},

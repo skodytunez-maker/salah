@@ -4,7 +4,7 @@ import{read,write}from './storage.js';
 import{RECITERS}from './quran-reciters.js';
 import{listeningDayKey,listeningPeriodTotals}from './reciter-popularity-core.js';
 import{safeListener}from './reciter-ranking-core.js';
-import{createCompetitionFastProgress}from './competition-fast-progress.js';
+import{createCompetitionFastProgress,wholeCompetitionSnapshot}from './competition-fast-progress.js';
 const endpoint=OWNER_PROJECT_URL+'/functions/v1/reciter-competition',allowed=new Set(RECITERS.filter(r=>!r.variantOf).map(r=>r.id));
 const boards=new Map(),favoriteBoards=new Map(),boardRequests=new Map(),aggregateTotals=new Map(),rowRevisions=new Map(),thinRosters=new Map(),liveControllers=new Set();let readEpoch=0,liveReadPending=null;
 export function cachedCompetition(period='all',{mode='total'}={}){const entry=(mode==='favorite'?favoriteBoards:boards).get(listeningDayKey(Date.now())+':'+period);return entry&&Date.now()-entry.at<10000?entry.rows.slice():null;}
@@ -216,8 +216,10 @@ export async function syncCompetitionNow(force=false,{recovery=false}={}){
  if(!user||!enabled()||navigator.onLine===false||inflight||Date.now()<retryAt)return;
  const task=(async()=>{try{
   if(!own||Date.now()-lastOwn>60000)await refreshCompetitionOwn();fastProgress?.refresh();if(user!==account().userId||!own?.enabled||own.mode==='hidden')return;
-  const source=snapshot(),totals=Object.fromEntries(Object.entries(source.totals||{}).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0).map(([id,n])=>[id,Math.floor(n)]));
-  const days=Object.fromEntries(Object.entries(source.days||{}).map(([day,rows])=>[day,Object.fromEntries(Object.entries(rows).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0).map(([id,n])=>[id,Math.floor(n)]))]));
+  const source=snapshot(),onlyAllowed=rows=>Object.fromEntries(Object.entries(rows||{}).filter(([id,n])=>allowed.has(id)&&Number.isFinite(n)&&n>=0));
+  const packet=wholeCompetitionSnapshot({totals:onlyAllowed(source.totals),days:Object.fromEntries(Object.entries(source.days||{}).map(([day,rows])=>[day,onlyAllowed(rows)]))});
+  if(!packet)return;
+  const {totals,days}=packet;
   const resumeCredit=credit?.resumeToken('account:'+user),signature=JSON.stringify({totals,days,resumeCredit});if(!Object.keys(totals).length||signature===lastSignature&&!force||!resumeCredit&&!recovery&&Date.now()-lastUpload<15000)return;
   const body={action:'snapshot',device:deviceId(),totals,days,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC',...(resumeCredit?{resumeCredit}:{})},token=fastProgress?.beginFull();
   let result;try{result=await upload(body,{userId:user});}catch(error){fastProgress?.failFull(token);throw error;}if(user!==account().userId)return;fastProgress?.acknowledgeFull(token,{totals,days},result);lastSignature=signature;lastUpload=Date.now();await refreshCompetitionOwn({force:true});

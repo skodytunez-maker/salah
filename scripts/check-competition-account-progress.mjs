@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
-import{createCompetitionFastProgress}from '../dist/js/competition-fast-progress.js';
-import{listeningDayKey,listeningPeriodTotals}from '../dist/js/reciter-popularity-core.js';
+import{createCompetitionFastProgress,wholeCompetitionSnapshot}from '../dist/js/competition-fast-progress.js';
+import{addListeningDay,listeningDayKey,listeningPeriodTotals}from '../dist/js/reciter-popularity-core.js';
+import{competitionSnapshot,competitionProgress}from '../supabase/functions/reciter-competition/core.mjs';
 import{RECITERS}from '../dist/js/quran-reciters.js';
 import{safeListener}from '../dist/js/reciter-ranking-core.js';
 
@@ -16,8 +17,8 @@ const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{reso
 const session=user=>({data:{session:{user:{id:user},access_token:'token:'+user}}});
 const ledger=seconds=>({totals:{[reciter]:seconds},days:{[day]:{[reciter]:seconds}}});
 
-function fixture({firstFull=ACK}={}){
- let clock=0,serial=0,auth={signedIn:true,userId:A},value=ledger(100),participating=true,activePosts=0,peakPosts=0,sdkCalls=0,inAuthCallback=true;
+function fixture({firstFull=ACK,firstSnapshot=ledger(100)}={}){
+ let clock=0,serial=0,auth={signedIn:true,userId:A},value=firstSnapshot,participating=true,activePosts=0,peakPosts=0,sdkCalls=0,inAuthCallback=true;
  const epoch=Date.parse(day+'T12:00:00Z'),timers=new Map(),intervals=[],stored=new Map(),events=new Map(),docEvents=new Map(),requests=[],creditReplies=[],plans=new Map(),sdkPlans=[],producers=[];
  class ClockDate extends Date{constructor(...args){super(...(args.length?args:[epoch+clock]));}static now(){return epoch+clock;}}
  const schedule=(fn,delay=0)=>{const id=++serial;timers.set(id,{at:clock+Math.max(0,Number(delay)||0),fn});return id;},cancel=id=>timers.delete(id);
@@ -41,7 +42,7 @@ function fixture({firstFull=ACK}={}){
   }finally{entry.finished=true;if(isPost)activePosts--;}}};
  };
  const context=vm.createContext({
-  personalDataAllowed:()=>true,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'public-fixture',RECITERS,safeListener,listeningDayKey,listeningPeriodTotals,
+  personalDataAllowed:()=>true,OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'public-fixture',RECITERS,safeListener,listeningDayKey,listeningPeriodTotals,wholeCompetitionSnapshot,
   createCompetitionFastProgress:options=>{const producer=createCompetitionFastProgress({...options,now:()=>clock,schedule,cancel});producers.push(producer);return producer;},
   read:(key,fallback)=>stored.has(key)?stored.get(key):fallback,write:(key,next)=>{stored.set(key,structuredClone(next));return true;},
   window:win,document:doc,navigator:{onLine:true},Date:ClockDate,Intl,URL,URLSearchParams,AbortController,AbortSignal,
@@ -105,5 +106,30 @@ h=fixture();await h.drain();const locked=deferred();h.sdkPlans.push(locked);cons
 h=fixture();await h.drain();h.queue('progress',{data:{ok:true,progressVersion:1,accepted:false,needsFull:true}});await h.advance(1000);h.setSeconds(101);h.progress();await h.drain();
 assert.equal(h.posts('snapshot').length,2,'requestFull forces a real adapter recovery while the ordinary full throttle is still active');assert.equal(h.posts('snapshot')[1].at,1000);assert.equal(h.posts('snapshot')[1].body.totals[reciter],101);
 await h.advance(1000);h.setSeconds(102);h.progress();await h.drain();assert.equal(h.posts('progress').at(-1).body.totals[reciter],102);assert.equal(h.peakPosts,1);h.dispose();
+
+// Separate daily sums can land exactly on whole seconds while the same
+// lifetime additions land just below that whole value in binary arithmetic.
+const fractional={totals:{[reciter]:0},days:{}};
+function measure(samples,calendarDay){
+ const at=new Date(2026,10,calendarDay,12).getTime();
+ for(const seconds of samples){
+  fractional.totals[reciter]+=seconds;
+  addListeningDay(fractional.days,reciter,seconds,at);
+ }
+}
+measure([0.1,0.1,0.8],15);
+const firstDay=structuredClone(fractional);
+measure([0.2,0.6,0.2],16);
+assert.equal(Math.floor(fractional.totals[reciter]),1);
+const serverClock=Date.parse(day+'T12:00:00Z');
+h=fixture({firstSnapshot:fractional});await h.drain();
+const fullPacket=h.posts('snapshot')[0].body;
+assert.equal(competitionSnapshot(fullPacket,serverClock).totals[reciter],2,'Full sync passes the real server validator despite accumulated floating-point noise');
+assert.equal(Math.floor(fractional.totals[reciter]),1,'Transport leaves the original measured ledger intact');h.dispose();
+h=fixture({firstSnapshot:firstDay});await h.drain();h.setSnapshot(fractional);h.progress();await h.drain();
+const compactPacket=h.posts('progress')[0].body;
+assert.equal(competitionProgress(compactPacket,serverClock).totals[reciter],2,'The compact producer agrees with full sync after a day rollover');h.dispose();
+h=fixture({firstSnapshot:{...fractional,totals:{[reciter]:1.98}}});await h.drain();
+assert.equal(h.posts('snapshot').length,0,'A real missing duration cannot be treated as floating-point noise');h.dispose();
 
 console.log('PASS: actual registered adapter plus real fast producer, full capability ACK, eligible 1Hz/hidden/final progress without per-tick own GET, serialized cancellation drain, delayed-JSON hold rejection, bound queued/SDK account identity and forced full recovery.');
