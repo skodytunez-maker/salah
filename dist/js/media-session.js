@@ -1,17 +1,23 @@
 // Lock-screen controls are optional; the HTML audio remains the playback source.
 const actions=['play','pause','stop','seekto','seekbackward','seekforward','previoustrack','nexttrack'];
 export function createMediaSession({nav=globalThis.navigator,Metadata=globalThis.MediaMetadata}={}){
- const session=nav?.mediaSession,registered=new Map();let owned=null,key='',playbackState='none',currentControls={};
- function clear(){if(session&&owned&&session.metadata===owned){for(const action of actions)try{session.setActionHandler(action,null)}catch{}try{session.playbackState='none';session.setPositionState?.();session.metadata=null}catch{}}owned=null;key='';playbackState='none';currentControls={};registered.clear();}
+ const session=nav?.mediaSession,registered=new Map();let owned=null,commandOwner=null,key='',playbackState='none',currentControls={};
+ function clear(){if(session&&owned&&session.metadata===owned){for(const action of actions)try{session.setActionHandler(action,null)}catch{}try{session.playbackState='none';session.setPositionState?.();session.metadata=null}catch{}}owned=null;commandOwner=null;key='';playbackState='none';currentControls={};registered.clear();}
  function update(info,controls){if(!session)return;if(!info||info.status==='stopped'){clear();return;}
-  const active=['loading','playing'].includes(info.status);if(!active&&(!owned||session.metadata!==owned))return;
+  const active=['loading','playing'].includes(info.status),retainsOwnership=!!owned&&session.metadata===owned;
+  if(!active&&!retainsOwnership)return;
   const nextKey=JSON.stringify([info.title,info.artist,info.artwork]);
-  if(!owned||session.metadata!==owned||key!==nextKey){try{owned=Metadata?new Metadata({title:info.title,artist:info.artist,album:'SALAH',artwork:info.artwork?[{src:info.artwork}]:[]}):{title:info.title,artist:info.artist};session.metadata=owned;key=nextKey;registered.clear();}catch{return}}
+  if(!retainsOwnership||key!==nextKey){
+   try{
+    const metadata=Metadata?new Metadata({title:info.title,artist:info.artist,album:'SALAH',artwork:info.artwork?[{src:info.artwork}]:[]}):{title:info.title,artist:info.artist};
+    session.metadata=metadata;owned=metadata;key=nextKey;
+   }catch{return}
+   if(!retainsOwnership){commandOwner={};registered.clear();}
+  }
   currentControls=controls||{};
-  // Position updates must not repeatedly reconfigure the OS command buttons.
-  // Wrappers read fresh controls, and queued callbacks cannot act for an owner
-  // whose metadata has since been replaced by another recording/player.
-  for(const action of actions){const enabled=typeof currentControls[action]==='function';if(registered.get(action)===enabled)continue;const owner=owned;try{session.setActionHandler(action,enabled?details=>{if(owned===owner&&session.metadata===owner)return currentControls[action]?.(details);}:null);registered.set(action,enabled);}catch{}}
+  // A chapter title does not replace the player that owns the OS controls.
+  // A handoff to another player or Stop still invalidates queued commands.
+  for(const action of actions){const enabled=typeof currentControls[action]==='function';if(registered.get(action)===enabled)continue;const owner=commandOwner;try{session.setActionHandler(action,enabled?details=>{if(commandOwner===owner&&session.metadata===owned)return currentControls[action]?.(details);}:null);registered.set(action,enabled);}catch{}}
   // A loading chapter continues the same listening intent. A false paused hint
   // at every background boundary lets iOS suspend an otherwise active queue.
   playbackState=info.status==='playing'||info.status==='loading'&&playbackState==='playing'?'playing':'paused';

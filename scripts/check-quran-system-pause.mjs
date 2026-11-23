@@ -52,6 +52,13 @@ try{
  first.update(info,{play:()=>oldCalls++,pause:()=>oldCalls++,seekto:()=>latest=0});const originalPlay=handlers.play,originalSeek=handlers.seekto;
  for(let i=1;i<=40;i++)first.update({...info,position:i},{play:()=>oldCalls++,pause:()=>oldCalls++,seekto:()=>latest=i});
  assert.equal(registrations.length,8,'Position updates retain the same platform command registrations');assert.equal(handlers.play,originalPlay);assert.equal(handlers.seekto,originalSeek);originalSeek({seekTime:30});assert.equal(latest,40,'A stable handler still calls the latest recording controls');
+ let chapterPlay=0,chapterPause=0;
+ const originalPause=handlers.pause;
+ first.update({...info,title:'Next chapter'},{play:()=>chapterPlay++,pause:()=>chapterPause++,seekto:()=>latest=40});
+ originalPlay();originalPause();
+ assert.equal(chapterPlay,1,'The pending system Play still reaches the same player after its title changes');
+ assert.equal(chapterPause,1,'The pending system Pause still reaches the same player after its title changes');
+ assert.equal(registrations.length,8,'A title update does not replace handlers for the same player');
  const second=createMediaSession({nav:{mediaSession:native},Metadata});let currentCalls=0;
  second.update({...info,title:'Second'},{play:()=>currentCalls++,pause:()=>currentCalls++});const secondPause=handlers.pause;
  originalPlay();originalSeek({seekTime:50});assert.equal(oldCalls,0,'A queued old-owner command cannot start the previous player');assert.equal(latest,40);

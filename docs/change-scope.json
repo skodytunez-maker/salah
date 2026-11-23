@@ -1,45 +1,49 @@
 {
   "schema": 1,
-  "version": 555,
-  "baseCommit": "09d8d9c121ac7867f8cbe280fcf3389d4b451778",
-  "baseTree": "85612811f024885db3d7c2761c6e4c54c7fcd8bb",
-  "note": "Quiet repair of minute delivery and full/compact snapshot serialization. Existing scoring and privacy rules, personal histories and public news are protected.",
+  "version": 556,
+  "baseCommit": "fe6e3f5b79f75a49daa9be9b9d7bb747f4035f53",
+  "baseTree": "d7cf3e4363c3ad66468a9acc94b4fbc95c3aa004",
+  "note": "Quiet correction to Quran system transport and the night-credit notice, with subtle moonlight only in the existing private live sky. Wallpaper assets and announcement are retained.",
   "allowed": [
     {
+      "path": "dist/day-night.css",
+      "reason": "Subtle local moonlight in the existing private masked night sky."
+    },
+    {
       "path": "dist/js/app-release.js",
-      "reason": "Quiet maintenance version for ranking delivery."
+      "reason": "Quiet release metadata."
     },
     {
-      "path": "dist/js/competition-client.js",
-      "reason": "Use the same whole-second snapshot conversion for full and compact sync."
+      "path": "dist/js/listening-credit.js",
+      "reason": "Read the pause notice duration from the same 60-minute policy."
     },
     {
-      "path": "dist/js/competition-fast-progress.js",
-      "reason": "Resolve floating-point noise below a tenth of a millisecond using measured day totals. Retain rejection of actual discrepancies."
+      "path": "dist/js/media-session.js",
+      "reason": "Keep system controls registered as the same player changes chapter metadata."
     },
     {
-      "path": "dist/js/reciter-popularity.js",
-      "reason": "Send whole epoch milliseconds for both saved and new listening minutes."
+      "path": "dist/js/weather.js",
+      "reason": "Scale moonlight with the actual illuminated phase."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Versioned app cache and refreshed resource byte sizes."
+      "reason": "Align the update manifest, cache version and generated asset sizes."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Exact reviewed scope against published SALAH 554."
+      "reason": "Exact reviewed scope against published SALAH 555."
     },
     {
-      "path": "scripts/check-competition-account-progress.mjs",
-      "reason": "Verify full and compact rollover precision with the server validator, and reject actual discrepancies."
+      "path": "scripts/check-listening-credit-client.mjs",
+      "reason": "Assert the real 60-minute notice in the app fixture."
     },
     {
-      "path": "scripts/check-competition-client.mjs",
-      "reason": "Supply the shared snapshot conversion in the authenticated adapter fixture."
+      "path": "scripts/check-quran-system-pause.mjs",
+      "reason": "Reproduce queued system commands across a same-owner chapter change."
     },
     {
-      "path": "scripts/check-ruqyah-listening.mjs",
-      "reason": "Replay a fractional timestamp at midnight through the server validator while preserving the recorded date and ID."
+      "path": "scripts/check-sky-ui-layout.mjs",
+      "reason": "Verify glow strength and its night, weather and private gates."
     }
   ],
   "generated": [
@@ -2651,7 +2655,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "916191838895cb34bffe3701e762c22887ddcbd5"
+      "sha": "9cfd4223bf1e58069a3471c264dc08157e58a6ec"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2767,11 +2771,11 @@
     },
     {
       "path": "dist/js/competition-client.js",
-      "sha": "f82f484af63ba089839683e3c348e2b00e50acf5"
+      "sha": "4026eacf352c15f73042c8c5eb5799990963502c"
     },
     {
       "path": "dist/js/competition-fast-progress.js",
-      "sha": "ade3c5d956847c7457acc98c5150523970c0ceee"
+      "sha": "f5d90893e1957fbba75011e755c3a1400a5ba842"
     },
     {
       "path": "dist/js/competition-motion.js",
@@ -4639,7 +4643,7 @@
     },
     {
       "path": "dist/js/reciter-popularity.js",
-      "sha": "2bb32754ef3fb15370791af1f2b19a12e8e22e9a"
+      "sha": "d067d6a0728f940cef3a3e6e0c1142e0710a1c67"
     },
     {
       "path": "dist/js/reciter-ranking-core.js",
@@ -5099,7 +5103,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "04b2683687b4b9cfa34668d7cdd178dd237f226a"
+      "sha": "031e7679eab1cfb44e0568c502fd330a7c7868e8"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5647,7 +5651,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "a5034dafb088a92b819dc5dbb58553134ea6c952"
+      "sha": "cba1083990d89b24dbbfe0d8e171733322ef6775"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6767,11 +6771,11 @@
     },
     {
       "path": "scripts/check-competition-account-progress.mjs",
-      "sha": "416b16fb5bf386ace5d10dc53a2011058a8bcae4"
+      "sha": "db84c9f3dfb361d76f13a90630529078768eb121"
     },
     {
       "path": "scripts/check-competition-client.mjs",
-      "sha": "6328fc382a53a1c1bb454840e7968ea125822a85"
+      "sha": "a60aafa45079557cb163dac8601608ccf4de925b"
     },
     {
       "path": "scripts/check-competition-fast-progress-client.mjs",
@@ -7615,7 +7619,7 @@
     },
     {
       "path": "scripts/check-ruqyah-listening.mjs",
-      "sha": "9cadb3298b317b379406f64d66ddefd86edd6f45"
+      "sha": "f917c3af13b4a828b84cd82baaa43aec2f5100b6"
     },
     {
       "path": "scripts/check-scene-load.mjs",
@@ -8658,5 +8662,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=554;\nexport const APP_UPDATED_AT='2026-11-23';\nexport const APP_UPDATE_DATE='23 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=555;\nexport const APP_UPDATED_AT='2026-11-23';\nexport const APP_UPDATE_DATE='23 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

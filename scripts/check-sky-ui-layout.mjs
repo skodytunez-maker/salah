@@ -7,6 +7,17 @@ import {skyObjects,skyProjectionFrame,projectSkyObjects,moonAppearance}from '../
 const sample=Object.freeze({sunX:50,sunY:30,sun:1,moonX:42,moonY:45,moon:.42,horizonY:56,phase:.25});
 for(const obstacles of [[],[{left:0,top:0,right:393,bottom:853}],[{left:100,top:100,right:320,bottom:700}]])assert.equal(layoutSkyObjects(sample,{frame:{left:0,top:0,width:393,height:853},viewport:{width:393,height:853},obstacles}),sample,'UI layouts may cover discs but cannot alter their coordinates/visibility');
 const source=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8'),start=source.indexOf('function paintSky('),end=source.indexOf('function skyNeedsAnimation()',start);assert.ok(start>=0&&end>start);const paintSource=source.slice(start,end);assert.doesNotMatch(paintSource,/getBoundingClientRect|querySelectorAll|layoutSkyObjects/,'Sky painting must not read UI geometry');
+const moonPaint=source.slice(source.indexOf('function paintMoon('),source.indexOf('function paintSceneLight('));
+const moonStyle=new Map();
+let fraction=0;
+const moonContext=vm.createContext({moonPaintKey:null,settings:{city:{}},moonAppearance:()=>({fraction,rotation:15,textureRotation:20}),moonPhasePath:String});
+vm.runInContext(moonPaint,moonContext);
+const moonTarget={querySelector:()=>null,style:{setProperty:(key,value)=>moonStyle.set(key,Number(value))},dataset:{}};
+moonContext.paintMoon(moonTarget,0);assert.equal(moonStyle.get('--sky-moon-glow'),0);
+fraction=.5;moonContext.paintMoon(moonTarget,60000);assert.ok(moonStyle.get('--sky-moon-glow')>0&&moonStyle.get('--sky-moon-glow')<.1);
+fraction=1;moonContext.paintMoon(moonTarget,120000);assert.equal(moonStyle.get('--sky-moon-glow'),1);
+const glowCSS=await readFile(new URL('../dist/day-night.css',import.meta.url),'utf8');
+assert.match(glowCSS,/#home-scene\[data-live-sky="on"\] \.scene-moon::before\{[^}]*radial-gradient[^}]*--scene-day[^}]*--scene-direct-light/);
 const w=new Window({url:'https://fixture.invalid/#home'}),doc=w.document;doc.body.className='home-page';doc.body.innerHTML='<div id="home-scene"></div><div class="app-home-top">SALAH</div><div class="central-prayer timetable"><output id="countdown" tabindex="0">00:21:41</output></div><div class="quran-global-player"></div>';const scene=doc.getElementById('home-scene'),table=doc.querySelector('.central-prayer'),timer=doc.getElementById('countdown');timer.focus();for(const node of doc.querySelectorAll('.app-home-top,.central-prayer,.quran-global-player'))node.getBoundingClientRect=()=>{throw Error('No UI-derived celestial displacement');};
 const city={latitude:57.153,longitude:65.5343};let renders=0,foundSun=false,foundMoon=false;
 for(const viewport of [{width:393,height:853},{width:844,height:390},{width:768,height:1024}])for(const stamp of ['2026-11-17T12:53:00Z','2026-11-19T06:00:00Z']){

@@ -343,6 +343,8 @@ function paintMoon(scene,instant){
  scene.style.setProperty('--sky-moon-texture-rotation',appearance.textureRotation+'deg');
  // Never turn the unlit new Moon into a luminous decorative full disc.
  scene.style.setProperty('--sky-moon-light',String(Math.min(1,Math.max(0,(appearance.fraction-.003)/.025))));
+ const glow=Math.max(0,(appearance.fraction-.3)/.7)**2;
+ scene.style.setProperty('--sky-moon-glow',String(glow));
  scene.dataset.skyFacing=Number.isFinite(settings.city?.latitude)?settings.city.latitude<0?'north':'south':'unknown';
 }
 function paintSceneLight(scene,frame){
