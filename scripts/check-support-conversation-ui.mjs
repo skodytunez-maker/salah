@@ -8,6 +8,7 @@ w.Image=function(){const img=doc.createElement('img');Object.defineProperties(im
 const{themePreferenceKey}=await import('../dist/js/conversation-themes.js');
 w.localStorage.setItem(themePreferenceKey(A,'support:'+U),JSON.stringify({theme:'stars'}));
 const app=doc.createElement('main');app.innerHTML='<a class="settings-back" href="#account" data-support-page-back>Мой аккаунт</a><header><h1 data-support-page-title>Обращения</h1></header><section id="support-root" class="panel section"></section>';doc.body.append(app);const root=app.querySelector('section');let actor=A,changed,closed=false,version=0,failRead=false,scroll=240;const calls=[],scrolls=[];Object.defineProperty(w,'scrollY',{get:()=>scroll});w.scrollTo=options=>{scrolls.push(options.top);scroll=options.top;};
+let failCreate=true;
 let messages=[{id:M,thread_id:OLD,thread_subject:'Первая тема',thread_status:'open',author_id:A,owner_reply:true,body:'Первое сообщение',created_at:'2026-11-17T10:00:00Z'},{id:N,thread_id:T,thread_subject:'Вторая тема',thread_status:'open',author_id:U,owner_reply:false,body:'Новое сообщение',created_at:'2026-11-18T10:00:00Z'}];
 const data=before=>({conversationId:U,anchorId:OLD,thread:{id:T,app:'salah',subject:'Вторая тема',nickname:'Один человек',status:closed?'closed':'open',version:'516',awaiting_owner:!closed,can_reopen:closed},messages:structuredClone(before?[messages[0]].filter(Boolean):messages),photos:[],next:before?null:{at:'2026-11-17T10:00:00Z',id:M},visibilityVersion:String(version),canClearEveryone:true});
 const auth={auth:{getSession:async()=>({data:{session:{user:{id:actor}}}}),onAuthStateChange:fn=>{changed=fn;return{data:{subscription:{unsubscribe(){}}}};}},rpc(name,args){calls.push({name,args});return{abortSignal:async()=>{
@@ -16,6 +17,12 @@ const auth={auth:{getSession:async()=>({data:{session:{user:{id:actor}}}}),onAut
   if(args.p_action==='read'){if(failRead){failRead=false;return{error:{message:'offline'}};}return{data:data(args.p_args.before)};}
   if(args.p_action==='clear'){messages=[];version++;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:args.p_args.scope,visibilityVersion:String(version)}};}
   if(args.p_action==='close'){closed=true;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:'everyone',visibilityVersion:String(version)}};}
+ }
+ if(name==='support_owner_recipient')return{data:{id:args.p_user,nickname:'Новый <адресат>'}};
+ if(name==='support_owner_create'){
+  if(failCreate)return{error:{message:'offline'}};
+  messages.push({id:args.p_id,thread_id:T,thread_subject:args.p_subject,thread_status:'open',author_id:A,owner_reply:true,body:args.p_body,created_at:'2026-11-24T10:00:00Z'});
+  version++;return{data:{ok:true}};
  }
  if(name==='support_chat_request'&&args.p_action==='reply')return{error:{message:'offline'}};
  if(name==='support_chat_request'&&args.p_action==='reopen'){assert.equal(args.p_owner,true,'Owner reopening uses the verified operator path');closed=false;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,status:'open'}};}
@@ -55,4 +62,36 @@ root.querySelector('[data-support-history-earlier]').click();await flush();asser
 root.querySelector('[data-message="'+M+'"] [data-message-actions]').click();assert(root.querySelector('dialog[open]'));root.querySelector('[data-message-menu="self"]').click();await flush();assert(!root.querySelector('[data-message="'+M+'"]'));assert(root.querySelector('[data-message="'+N+'"]'));assert.equal(root.querySelector('textarea').value,'Неотправленный черновик');
 messages[0].body='Свежая строка переписки';root.querySelector('[data-support-reload]').click();await flush();root.querySelector('[data-support-back]').click();await flush();assert.equal(root.querySelector('.support-inbox-preview').textContent,'Свежая строка переписки','Fast Back immediately retains the real latest preview');root.querySelector('[data-support-thread]').click();await flush();
 root.querySelector('[data-support-close]').click();await flush();assert(calls.some(c=>c.name==='support_conversation_request'&&c.args.p_action==='close'&&c.args.p_args.threadId===OLD));assert.equal(root.querySelector('textarea'),null);assert(root.querySelector('.support-chat-footer [data-support-reopen]'),'Closed owner view offers continuation in the bottom bar');assert(root.querySelector('.support-chat-footer [data-support-status]'),'Transient status belongs below the history, not above the person header');root.querySelector('[data-support-reopen]').click();await flush();assert(root.querySelector('.support-chat-footer textarea'));assert.equal(root.querySelector('textarea').value,'Неотправленный черновик','Closing and reopening retains the actual draft');assert.equal(root.querySelector('.support-chat-footer').previousElementSibling.className,'support-messages');
-const oldCheckpoint=stop.checkpoint();actor=U;changed('SIGNED_IN',{user:{id:U}});await flush();assert(!root.textContent.includes('Один человек'));assert(!app.classList.contains('support-route-chat'));stop();assert.equal(root.innerHTML,'');assert(!root.hasAttribute('data-conversation-theme'),'Account cleanup removes the previous actor’s theme');stop=mountSupportPanel(root,{auth,app:'salah',version:520,owner:false,groupConversations:true,resumeThread:oldCheckpoint});await flush();assert.equal(root.dataset.supportView,'list','Another actor cannot restore the old private thread');assert(!root.querySelector('[data-support-profile]'));stop();await w.happyDOM.close();console.log('PASS grouped Support UI: one wrapped heading, combined topics, compact person header, history pages, original-case deletion, preserved composer and list scroll, edge back before Menu, scoped close and account cleanup.');
+const oldCheckpoint=stop.checkpoint();actor=U;changed('SIGNED_IN',{user:{id:U}});await flush();assert(!root.textContent.includes('Один человек'));assert(!app.classList.contains('support-route-chat'));stop();assert.equal(root.innerHTML,'');assert(!root.hasAttribute('data-conversation-theme'),'Account cleanup removes the previous actor’s theme');stop=mountSupportPanel(root,{auth,app:'salah',version:520,owner:false,groupConversations:true,resumeThread:oldCheckpoint});await flush();assert.equal(root.dataset.supportView,'list','Another actor cannot restore the old private thread');assert(!root.querySelector('[data-support-profile]'));stop();
+actor=A;
+stop=mountSupportPanel(root,{auth,app:'salah',version:558,owner:true,groupConversations:true,recipientId:U});await flush();
+assert.equal(root.querySelector('.support-chat-person strong').textContent,'Новый <адресат>');
+assert(root.querySelector('.support-person-avatar[data-member-avatar="'+U+'"]'));
+assert(app.classList.contains('support-route-chat'));assert(doc.body.classList.contains('support-conversation-open'));
+assert.equal(root.querySelectorAll('[data-message]').length,0,'A first-message draft has no fabricated history');
+const ownerForm=root.querySelector('.support-chat-footer [data-support-owner-compose]'),ownerInput=ownerForm.elements.body;
+const ownerSubmit=ownerForm.querySelector('button[type="submit"]');
+assert.equal(ownerInput.getAttribute('rows'),'1');assert(ownerSubmit.querySelector('svg'));assert(ownerForm.querySelector('.salah-emoji-toggle'));
+assert.equal(ownerSubmit.getAttribute('aria-label'),t('supportUi.send'));
+assert.equal(ownerForm.elements.subject.value,t('supportUi.defaultSubject',{app:'SALAH'}));
+ownerForm.elements.subject.value='Тестовая тема';
+ownerInput.value='Первое личное сообщение';ownerInput.dispatchEvent(new w.Event('input',{bubbles:true}));
+ownerInput.focus();Object.defineProperty(w,'visualViewport',{configurable:true,value:new w.EventTarget()});
+Object.assign(w.visualViewport,{width:393,height:460,scale:1,offsetTop:10});w.dispatchEvent(new w.Event('resize'));
+assert(root.hasAttribute('data-support-keyboard'));assert.equal(root.style.getPropertyValue('--support-chat-top'),'10px');
+const submitOwner=()=>ownerForm.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+submitOwner();await flush();
+const firstSend=calls.find(x=>x.name==='support_owner_create');
+assert.equal(firstSend.args.p_user,U);assert.equal(firstSend.args.p_subject,'Тестовая тема');assert.equal(firstSend.args.p_body,'Первое личное сообщение');
+assert.equal(ownerInput.value,'Первое личное сообщение','A failed first send keeps the draft');
+failCreate=false;submitOwner();await flush();
+assert.equal(calls.filter(x=>x.name==='support_owner_create').at(-1).args.p_id,firstSend.args.p_id,'A retry reuses the first message ID');
+assert.equal(root.dataset.supportView,'thread');
+assert(root.textContent.includes('Первое личное сообщение'),'After confirmation open the real transcript');
+stop();assert(!doc.body.classList.contains('support-conversation-open'));
+stop=mountSupportPanel(root,{auth,app:'salah',version:558,owner:true,groupConversations:true,recipientId:U});await flush();
+const startBack=root.querySelector('[data-support-back]');startBack.click();await flush();
+assert.equal(root.dataset.supportView,'list','Back before sending loads the actual request list');
+assert(root.querySelector('[data-support-thread]'));assert(!app.classList.contains('support-route-chat'));
+assert(!doc.body.classList.contains('support-conversation-open'));
+stop();await w.happyDOM.close();console.log('PASS grouped Support UI: one wrapped heading, combined topics, compact person header, history pages, original-case deletion, preserved composer and list scroll, edge back before Menu, scoped close and account cleanup.');

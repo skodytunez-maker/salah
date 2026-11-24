@@ -2,7 +2,7 @@ import{t,getLocale,subscribeLanguage,translateUi}from './i18n.js';
 import{createOwnerCardHistory}from './owner-card-navigation.js';
 import{uiLeaf,uiAttribute,uiMessage,setUiMessage}from './ui.js';
 import{mountMessageEmojis,messageTextMarkup}from './message-emojis.js';
-import{mountSupportChatView,supportInboxMarkup,arrangeSupportInbox,supportInboxDate}from './support-chat-view.js';
+import{mountOwnerSupportComposer,mountSupportChatView,supportInboxMarkup,arrangeSupportInbox,supportInboxDate}from './support-chat-view.js';
 import{createStaffAvatarManager}from './owner-team-avatars.js';
 import{supportPhotoUrl}from './support-photo.js';
 import{saveSupportPhoto}from './support-photo-save.js';
@@ -30,7 +30,7 @@ export function mountSupportPanel(root,{auth,app,version,owner=false,signInHref=
  // Only an opaque marker is persisted; account IDs, messages and drafts stay in memory.
  const chatHistory=grouped?createOwnerCardHistory({win:root.ownerDocument.defaultView,key:'salahSupportConversation',isActive:()=>!disposed&&root.isConnected,dismiss:returnToInbox}):null;
  let returningToInbox=false;
- function returnToInbox(){if(disposed)return;revision++;historyBefore=historyAround=null;returningToInbox=true;try{listView();}finally{returningToInbox=false;}globalThis.window?.scrollTo?.({top:listScroll,behavior:'instant'});}
+ function returnToInbox(){if(disposed)return;const startingConversation=owner&&view==='new';revision++;historyBefore=historyAround=null;returningToInbox=true;try{listView();}finally{returningToInbox=false;}globalThis.window?.scrollTo?.({top:listScroll,behavior:'instant'});if(startingConversation)void loadList();}
  const live=id=>!disposed&&root.isConnected&&id===revision;
  function clearPrivateState(){chatHistory?.reset();historyBefore=historyAround=null;listScroll=0;root.parentElement?.classList.remove('support-route-chat');root.removeAttribute?.('data-support-view');inboxAvatars?.dispose();inboxAvatars=null;root.classList?.remove('support-inbox-shell');chatView?.dispose();chatView=null;mutationAttempts.clear();emojiCleanup?.();emojiCleanup=null;view=null;recipient=null;revision++;photoRevision++;photoBusy=false;for(const request of requests)request.abort();rows=[];before=null;more=false;thread=threadData=null;draft={subject:'',body:'',id:null,diagnostics:'',photo:null};diagnostics?.dispose?.();diagnostics=null;reply={body:'',id:null};replyDrafts.clear();locked=false}
  async function rpc(name,args){
@@ -40,7 +40,7 @@ export function mountSupportPanel(root,{auth,app,version,owner=false,signInHref=
  }
  function notice(message,alert=false){const element=root.querySelector('[data-support-status]');if(element){setUiMessage(element,message);element.setAttribute('role',alert?'alert':'status')}}
  function shell(content){root.classList?.remove('support-inbox-shell');chatView?.dispose();chatView=null;emojiCleanup?.();emojiCleanup=null;root.innerHTML='<div class="support-panel"><div class="support-heading"><h2>'+ uiLeaf(owner?'supportUi.requests':'supportUi.support')+(owner?'<span class="support-state-dot" data-owner-support-status hidden></span>':'<span class="support-state-dot" data-user-support-status hidden></span>')+'</h2>'+'</div>'+(accountId&&enableNotifications?'<button type="button" class="text-button" data-support-enable-notifications>'+uiLeaf('supportUi.notifyReplies')+'</button>':'')+'<p data-support-status role="status" aria-live="polite"></p>'+content+'</div>';emojiCleanup=mountMessageEmojis(root);const select=root.querySelector('#support-app');if(select){select.value=filter;select.onchange=()=>{filter=select.value;void loadList()}}globalThis.window?.dispatchEvent?.(new Event('salah:support-status-refresh'));}
- function hydrateSupportAvatars(){if(!owner||!loadSupportAvatar||!root.ownerDocument)return;if(!inboxAvatars){const avatarActor=accountId;inboxAvatars=createStaffAvatarManager({load:loadSupportAvatar,doc:root.ownerDocument,isActive:()=>!disposed&&accountId===avatarActor&&['list','thread'].includes(view)});}void inboxAvatars.hydrate(root);}
+ function hydrateSupportAvatars(){if(!owner||!loadSupportAvatar||!root.ownerDocument)return;if(!inboxAvatars){const avatarActor=accountId;inboxAvatars=createStaffAvatarManager({load:loadSupportAvatar,doc:root.ownerDocument,isActive:()=>!disposed&&accountId===avatarActor&&(['list','thread'].includes(view)||view==='new'&&grouped&&!!chatView)});}void inboxAvatars.hydrate(root);}
  function listView(){
   if(!returningToInbox)chatHistory?.reset();view='list';root.setAttribute?.('data-support-view','list');root.parentElement?.classList.remove('support-route-chat');recipient=null;thread=threadData=null;reply={body:'',id:null};if(app==='salah'&&root.ownerDocument){shell(supportInboxMarkup(rows,{owner,more}));arrangeSupportInbox(root);hydrateSupportAvatars();return;}shell('<div class="support-actions">'+(!owner?'<button type="button" class="button" data-support-new>'+uiLeaf('supportUi.new')+'</button>':'')+'<button type="button" class="button secondary" data-support-refresh>'+uiLeaf('settingsExtra.update')+'</button></div>'+(rows.length?'<div class="support-list">'+rows.map(row=>'<button type="button" class="support-thread" data-support-thread="'+esc(row.id)+'"><strong>'+esc(row.subject)+'</strong><span>'+(statuses[row.status]?uiLeaf(statuses[row.status]):'')+'</span>'+(owner&&row.owner_unread?'<span class="support-new-badge">'+uiLeaf('supportUi.newBadge')+'</span>':!owner&&row.user_unread?'<span class="support-new-badge is-user-reply">'+uiLeaf('supportUi.replyBadge')+'</span>':'')+(!owner&&row.last_reply?'<span class="support-reply-preview">'+esc(row.last_reply)+'</span>':'')+'<small>'+(owner?esc(row.app.toUpperCase())+' · '+(row.nickname?esc(row.nickname):uiLeaf('supportUi.noNickname'))+' · ':'')+'<time data-support-date datetime="'+esc(row.updated_at)+'">'+esc(date(row.updated_at))+'</time>'+'</small></button>').join('')+'</div>':'<p class="muted support-empty">'+uiLeaf(owner?'supportUi.emptyOwner':'supportUi.emptyUser')+'</p>')+(more?'<button type="button" class="text-button" data-support-more>'+uiLeaf('supportUi.earlier')+'</button>':''));
  }
@@ -58,6 +58,17 @@ export function mountSupportPanel(root,{auth,app,version,owner=false,signInHref=
  function newView(){
   if(owner){
    if(!recipient)return;
+   if(grouped){
+    revision++;view='new';root.setAttribute('data-support-view','new');root.parentElement?.classList.add('support-route-chat');thread=threadData=null;chatHistory.open();
+    const nickname=esc(recipient.nickname),initials=esc(Array.from(recipient.nickname.trim()||'?').slice(0,2).join('').toLocaleUpperCase(getLocale()));
+    const header='<div class="support-actions support-chat-header"><button type="button" class="text-button support-chat-back" data-support-back '+uiAttribute('supportUi.allRequests',{},'aria-label')+'>‹</button><span class="support-inbox-avatar support-person-avatar" data-member-avatar="'+esc(recipient.id)+'" aria-hidden="true">'+initials+'</span><div class="support-chat-person"><strong dir="auto">'+nickname+'</strong></div></div>';
+    const form='<form data-support-create data-support-owner-compose><label class="support-owner-topic"><span>'+uiLeaf('supportUi.subject')+'</span><input name="subject" maxlength="120" required dir="auto" value="'+esc(draft.subject)+'"></label><label for="'+fieldPrefix+'-body">'+uiLeaf('supportUi.message')+'</label><textarea id="'+fieldPrefix+'-body" name="body" maxlength="3000" rows="1" dir="auto" required>'+esc(draft.body)+'</textarea><button type="submit" class="button">'+uiLeaf('supportUi.send')+'</button></form>';
+    shell(header+'<div class="support-owner-compose-space" aria-hidden="true"></div><div class="support-chat-footer">'+form+'</div>');
+    const composeRecipient=recipient,composeActor=accountId;
+    chatView=mountOwnerSupportComposer(root,{recipient:composeRecipient,actorId:composeActor,isActive:()=>!disposed&&root.isConnected&&view==='new'&&recipient===composeRecipient&&accountId===composeActor});
+    hydrateSupportAvatars();
+    return;
+   }
    revision++;view='new';root.setAttribute?.('data-support-view','new');root.parentElement?.classList.remove('support-route-chat');thread=threadData=null;shell('<button type="button" class="text-button" data-support-back>'+uiLeaf('supportUi.allRequests')+'</button><h3 class="support-recipient">'+esc(recipient.nickname)+'</h3><form data-support-create><label for="'+fieldPrefix+'-subject">'+uiLeaf('supportUi.subject')+'</label><input id="'+fieldPrefix+'-subject" name="subject" maxlength="120" required value="'+esc(draft.subject)+'"><label for="'+fieldPrefix+'-body">'+uiLeaf('supportUi.message')+'</label><textarea id="'+fieldPrefix+'-body" name="body" maxlength="3000" rows="6" required>'+esc(draft.body)+'</textarea><button type="submit" class="button">'+uiLeaf('supportUi.send')+'</button></form>');
    return;
   }
