@@ -18,3 +18,75 @@ current.paused=true;current.onpause();assert.equal(session.state.status,'paused'
 current.paused=false;current.onplay();assert.equal(session.state.status,'playing');assert.equal(native.playbackState,'playing');assert.equal(current.plays,nativePlays,'Direct native Play needs no second app play() call');assert.equal(current.currentTime,47);assert.equal(current.src,source);assert.equal(appleAudioSession.type,'playback');
 current.pause();await flush();assert.equal(session.state.status,'paused','A subsequent native Pause remains authoritative after native Play');assert.equal(native.playbackState,'paused');assert.equal(current.plays,nativePlays);
 handlers.stop();assert.equal(session.state.status,'stopped');assert.equal(native.metadata,null);assert.equal(appleAudioSession.type,'auto');assert.ok(Object.values(handlers).every(v=>v===null));console.log('PASS: Quran lock-screen pause/resume, same audio, elapsed time, paused seek, previous/next surah, direct native Play without duplicate play(), authoritative native Pause and owner cleanup');
+
+// iOS can acknowledge Play while the buffered element is still frozen.
+for(const scenario of ['command','native','pause','seek']){
+ const nativePlay=scenario==='native';
+ let timerId=0;
+ const timers=new Map(),systems={};
+ const nav={standalone:true,audioSession:{type:'auto',state:'active'}};
+ const page=new EventTarget();page.hidden=false;
+ const playHistory=[];
+ class BufferedAudio extends Audio{
+  readyState=4;
+  play(){playHistory.push(this.currentTime);return super.play();}
+ }
+ const fixture=createQuranSession({
+  media:createMediaSession({nav:{mediaSession:{setActionHandler(n,fn){systems[n]=fn;},setPositionState(){}}},Metadata}),
+  load:async n=>surah(n),loadCatalog:async()=>catalog,
+  createPlayer:opts=>createQuranPlayer({...opts,audioNavigator:nav,audioDocument:page,audioWindow:new EventTarget(),getAudio:async()=>null,loadTimings:async()=>null,
+   createAudio:src=>new BufferedAudio(src),setTimer(fn,ms){const id=++timerId;timers.set(id,{fn,ms});return id;},clearTimer:id=>timers.delete(id)})
+ });
+ await fixture.start(surah(1),'ar.badralturki');await flush();
+ const element=tracks.at(-1),originalSource=element.src;
+ page.hidden=true;page.dispatchEvent(new Event('visibilitychange'));
+ element.currentTime=37;systems.pause();
+ if(nativePlay){element.paused=false;element.onplay();}
+ else systems.play();
+ await flush();
+ assert.equal(fixture.state.status,'loading','Acknowledging a background Play does not prove playback restarted');
+ const tick=async()=>{
+  assert.equal(timers.size,1,'At most one watchdog is scheduled');
+  const [id,timer]=timers.entries().next().value;timers.delete(id);timer.fn();await flush();
+ };
+ if(scenario==='pause'){
+  const stale=[...timers.values()][0].fn;
+  systems.pause();stale();await flush();
+  assert.equal(fixture.state.status,'paused','A later explicit Pause cancels verification and retry');
+  assert.equal(playHistory.length,2);
+  fixture.stop();
+  assert.equal(timers.size,0);
+  continue;
+ }
+ if(scenario==='seek'){
+  element.seeking=true;element.currentTime=50;element.ontimeupdate();
+  assert.equal(fixture.state.status,'loading');
+  element.seeking=false;element.onseeked();
+  assert.equal(fixture.state.status,'loading','A seek updates the position without confirming playback');
+  element.currentTime=50.25;element.ontimeupdate();
+  assert.equal(fixture.state.status,'playing');
+  assert.equal(playHistory.length,2,'An advancing audio track needs no replay');
+  fixture.stop();
+  continue;
+ }
+ const firstCount=playHistory.length;
+ assert.equal([...timers.values()][0].ms,4000);
+ await tick();
+ assert.equal(playHistory.length,firstCount+1,'Retry a buffered false start once');
+ assert.equal(playHistory.at(-1),37);
+ assert.equal(element.src,originalSource,'Do not reload the file or discard the position');
+ assert.equal(tracks.at(-1),element);
+ if(nativePlay){
+  await tick();
+  assert.equal(fixture.state.status,'paused','A second false start leaves the track paused');
+  assert.equal(element.paused,true);
+  assert.equal(playHistory.length,firstCount+1);
+ }else{
+  element.currentTime=37.25;element.ontimeupdate();
+  assert.equal(fixture.state.status,'playing','Advancing the actual media clock confirms playback');
+  assert.equal([...timers.values()][0].ms,15000,'Normal playback uses the existing watchdog');
+ }
+ fixture.stop();
+ assert.equal(timers.size,0);
+}
+console.log('PASS: frozen lock-screen starts hidden, one same-source replay, verified media time and bounded fallback.');
