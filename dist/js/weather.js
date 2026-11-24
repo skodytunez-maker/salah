@@ -269,7 +269,7 @@ function renderForeground(scene,cache,weather){
  for(const[k,v]of Object.entries({left:b.left,top:b.top,width:b.width,height:b.height}))canvas.style[k]=v+'px';
  if(canvas.width!==b.pixelsW||canvas.height!==b.pixelsH){canvas.width=b.pixelsW;canvas.height=b.pixelsH;cache.mix=null;}
  if(cache.mix===key)return true;blendForeground(canvas,cache.night,cache.day,day);
- if(weather.fog>0){const c=canvas.getContext('2d'),color=[22,29,41].map((v,i)=>Math.round(v+([165,174,183][i]-v)*skyFrame.day)).join(','),g=c.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,'rgba('+color+','+weather.fog*.60+')');g.addColorStop(.6,'rgba('+color+','+weather.fog*.38+')');g.addColorStop(1,'rgba('+color+','+weather.fog*.12+')');c.globalCompositeOperation='source-atop';c.fillStyle=g;c.fillRect(0,0,canvas.width,canvas.height);c.globalCompositeOperation='source-over';}
+ if(weather.fog>0){const c=canvas.getContext('2d'),color=[22,29,41].map((v,i)=>Math.round(v+([165,174,183][i]-v)*skyFrame.day)).join(','),g=c.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,'rgba('+color+','+weather.fog*.34+')');g.addColorStop(.6,'rgba('+color+','+weather.fog*.20+')');g.addColorStop(1,'rgba('+color+','+weather.fog*.07+')');c.globalCompositeOperation='source-atop';c.fillStyle=g;c.fillRect(0,0,canvas.width,canvas.height);c.globalCompositeOperation='source-over';}
  cache.mix=key;return true;
 }
 function renderUnifiedSky(scene,force=false){

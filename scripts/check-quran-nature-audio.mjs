@@ -48,6 +48,30 @@ let unsupportedLoads=0;const unsupported=createQuranNatureAudio({AudioContext:nu
 let requested=false;const decoded=await loadNatureRecording('rain',{decodeAudioData:async bytes=>{assert.equal(bytes.byteLength,4);return buffer('rain');}},{fetcher:async(url,options)=>{requested=true;assert.ok(url.pathname.endsWith('/assets/player-nature-493/rain.mp3'));assert.equal(options.credentials,'same-origin');return{ok:true,arrayBuffer:async()=>new ArrayBuffer(4)};}});assert.equal(requested,true);assert.equal(decoded.numberOfChannels,2);
 await assert.rejects(()=>loadNatureRecording('rain',{}, {fetcher:async()=>({ok:false})}));
 await assert.rejects(()=>loadNatureRecording('rain',{decodeAudioData:async()=>({duration:34,numberOfChannels:1})},{fetcher:async()=>({ok:true,arrayBuffer:async()=>new ArrayBuffer(1)})}));
+let externalPauses=0;
+let remoteAudio;
+remoteAudio=createQuranNatureAudio({AudioContext:Context,load:async kind=>buffer(kind),onExternalPause(){
+ externalPauses++;
+ void remoteAudio.sync(false);
+}});
+await remoteAudio.select('rain');
+await remoteAudio.sync(true);
+const remoteContext=contexts.at(-1);
+remoteContext.state='interrupted';remoteContext.onstatechange();
+assert.equal(externalPauses,0,'A temporary interruption does not become a playback command');
+remoteContext.state='running';remoteContext.onstatechange();
+remoteContext.state='suspended';remoteContext.onstatechange();remoteContext.onstatechange();
+assert.equal(externalPauses,1,'A native pause of an audible mix is forwarded once');
+assert.equal(remoteContext.suspendCalls,1,'The app explicitly suspends ambience after receiving a native pause');
+assert.equal(remoteAudio.state.playing,false);
+await remoteAudio.sync(true);
+assert.equal(remoteAudio.state.playing,true,'Resuming recitation restores ambience');
+await remoteAudio.sync(false);
+assert.equal(externalPauses,1,'The app’s own pause is never forwarded back to the player');
+await remoteAudio.sync(true);
+await remoteAudio.setVolume(0);
+assert.equal(externalPauses,1,'Muting ambience leaves recitation alone');
+remoteAudio.destroy();
 console.log('PASS: selected stereo file loops, default-off/no paused downloads, independent mix and Quran ownership, bounded two-buffer cache, pause/resume phase, stale suspension, load races, abort/dispose, retry and supported-format validation.');
 
 const fs=await import('node:fs/promises'),crypto=await import('node:crypto');

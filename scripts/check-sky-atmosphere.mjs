@@ -62,6 +62,8 @@ assert.equal(render({clouds:0}).discVisibility,1);assert.equal(cloudCanvas.conte
 assert.equal(render({clouds:0}).skyVisibility,1);
 assert.equal(render({clouds:1}).skyVisibility,0,'Dense overcast never forces a decorative Sun through a texture gap');
 assert.equal(render({clouds:1}).discVisibility,0);assert.equal(render({clouds:0,fog:1}).moonVisibility,0);assert.equal(render({clouds:0,fog:1}).skyVisibility,0,'Actual dense fog hides both bodies');
+const fogVeil=cloudCanvas.context.calls.at(-1).fill;
+assert.ok(Number(fogVeil.match(/,([\d.]+)\)$/)?.[1])<=.45,'The second fog layer must leave the atmospheric gradient visible');
 
 // All skyline sizes use the same engine, including a very narrow strip of sky.
 for(const [w,h,horizon]of [[320,640,14],[853,1844,70],[1024,768,300]]){

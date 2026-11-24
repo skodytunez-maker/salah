@@ -23,8 +23,9 @@ doc.body.innerHTML='<div id="atmosphere"></div><div id="weather-layer"></div><ou
 const settings={liveSky:true,wallpaper:'mosque',landmarkCity:'auto',backgroundMode:'auto',city:{latitude:57.153,longitude:65.5343},weather:true,weatherAnimation:true,motion:false,transitions:true};
 let mono=0,wall=Date.parse('2026-11-18T08:46:12Z'),nextRAF=0,loads=0,disposals=0;
 const raf=new Map(),paints=[];
+const mistStops=[];
 const observed={weather_code:3,cloud_cover:100,precipitation:0,temperature_2m:-1,apparent_temperature:-2,wind_speed_10m:1,interval:900,dataAt:wall,fetchedAt:wall};
-w.HTMLCanvasElement.prototype.getContext=function(){return {setTransform(){},clearRect(){},drawImage(){},fillRect(){},createLinearGradient(){return {addColorStop(){}};}};};
+w.HTMLCanvasElement.prototype.getContext=function(){return {setTransform(){},clearRect(){},drawImage(){},fillRect(){},createLinearGradient(){return {addColorStop(position,color){mistStops.push([position,color]);}};}};};
 const makeSurface=()=>{
  const make=()=>{const c=doc.createElement('canvas');c.width=853;c.height=1844;return c;};
  return {valid:true,dayFG:make(),nightFG:make(),dayMetrics:{width:853,height:1844,horizonY:1100},nightMetrics:{width:853,height:1844,horizonY:1100},dispose(){disposals++;}};
@@ -69,6 +70,8 @@ tick(4000);assert.equal(frame().clouds,target);assert.equal(vm.runInContext('sky
 // Fog, disabled weather and freshness remain authoritative; navigation grants no
 // persistent preview or opt-in and never changes playback/countdown content.
 observed.weather_code=45;observed.cloud_cover=100;tick();tick(6000);assert.equal(frame().fog,1);
+const foregroundStops=mistStops.slice(-3).map(([position,color])=>[position,Number(color.match(/,([\d.]+)\)$/)?.[1])]);
+assert.deepEqual(foregroundStops,[[0,.34],[.6,.2],[1,.07]],'Fog leaves the foreground readable and thins towards the viewer');
 route('menu');route('home');assert.equal(frame().fog,1);
 settings.weather=false;tick();assert.deepEqual(sample(),{clouds:0,fog:0});
 settings.weather=true;settings.motion=true;tick();assert.deepEqual(sample(),{clouds:1,fog:1});assert.equal(raf.size,0);

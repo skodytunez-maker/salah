@@ -175,7 +175,8 @@ export function createSkyAtmosphere({canvasFactory,texture=null}={}){
    fieldCanvas.getContext('2d').putImageData(fieldImage,0,0);cloud.imageSmoothingEnabled=true;cloud.drawImage(fieldCanvas,0,0,width,skyHeight);
   }
   // Fog belongs inside the sky matte, never across the photo foreground.
-  if(style.fog>0){cloud.fillStyle='rgba('+rgbMix([22,29,41],[165,174,183],style.day).map(Math.round).join(',')+','+style.fog*.91+')';cloud.fillRect(0,0,width,skyHeight);}
+  // The sky palette already includes fog. Keep this second veil translucent.
+  if(style.fog>0){cloud.fillStyle='rgba('+rgbMix([22,29,41],[165,174,183],style.day).map(Math.round).join(',')+','+style.fog*.42+')';cloud.fillRect(0,0,width,skyHeight);}
   // discVisibility/moonVisibility are diagnostic local transmissions. Do not
   // multiply them into a body that is already drawn below this alpha layer.
   // skyVisibility is the sole global policy gate for those layered consumers.

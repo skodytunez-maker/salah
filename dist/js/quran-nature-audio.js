@@ -4,7 +4,7 @@ export const NATURE_MAX_VOLUME=100;
 export const NATURE_DEFAULT_VOLUME=25;
 // Keep headroom in the nature mix without changing the user's 0–100 scale.
 const NATURE_MIX_CEILING=.9;
-export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,load=loadNatureRecording,AbortController=globalThis.AbortController,volume=NATURE_DEFAULT_VOLUME}={}){
+export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext,load=loadNatureRecording,AbortController=globalThis.AbortController,volume=NATURE_DEFAULT_VOLUME,onExternalPause=()=>{}}={}){
  let context=null,gain=null,active=null,kind=null,wanted=false,armed=false,disposed=false,revision=0,suspension=null,selfSuspended=false,error=false,loading=false,job=null;
  volume=Number.isInteger(volume)?Math.max(0,Math.min(100,volume)):25;
  const listeners=new Set(),cache=new Map(),retiring=new Set();
@@ -18,7 +18,25 @@ export function createQuranNatureAudio({AudioContext=globalThis.AudioContext||gl
   retiring.add(entry);entry.node.onended=()=>disconnect(entry);
   try{if(immediate){entry.node.stop();disconnect(entry);}else{ramp(entry.envelope.gain,0,.08);entry.node.stop(context.currentTime+.1);}}catch{disconnect(entry);}
  }
- function graph(){if(context&&context.state!=='closed')return;context=new AudioContext({latencyHint:'playback'});gain=context.createGain();gain.gain.value=0;gain.connect(context.destination);context.onstatechange=emit;}
+ function graph(){
+  if(context&&context.state!=='closed')return;
+  const audioContext=new AudioContext({latencyHint:'playback'});
+  context=audioContext;
+  gain=context.createGain();
+  gain.gain.value=0;
+  gain.connect(context.destination);
+  let previousState=context.state;
+  context.onstatechange=()=>{
+   if(disposed||context!==audioContext)return;
+   const nextState=audioContext.state;
+   // WebKit can direct the system pause to an audible ambient context.
+   const externalPause=previousState==='running'&&nextState==='suspended'&&
+    !selfSuspended&&kind&&active?.kind===kind&&wanted&&armed&&volume>0;
+   previousState=nextState;
+   if(externalPause)onExternalPause();
+   emit();
+  };
+ }
  function abortLoad(){if(job){job.controller?.abort();job=null;}loading=false;}
  async function bufferFor(chosen){
   if(cache.has(chosen)){const buffer=cache.get(chosen);cache.delete(chosen);cache.set(chosen,buffer);return buffer;}

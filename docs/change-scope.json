@@ -1,49 +1,57 @@
 {
   "schema": 1,
-  "version": 556,
-  "baseCommit": "fe6e3f5b79f75a49daa9be9b9d7bb747f4035f53",
-  "baseTree": "d7cf3e4363c3ad66468a9acc94b4fbc95c3aa004",
-  "note": "Quiet correction to Quran system transport and the night-credit notice, with subtle moonlight only in the existing private live sky. Wallpaper assets and announcement are retained.",
+  "version": 557,
+  "baseCommit": "75747db455eb13a1218a3ebf8eb3dfc37bc0af40",
+  "baseTree": "11208478c8978e9b1156b05143444234ead98aa7",
+  "note": "Quiet correction to the fog effect on wallpaper and background Quran playback when the system pauses ambience.",
   "allowed": [
-    {
-      "path": "dist/day-night.css",
-      "reason": "Subtle local moonlight in the existing private masked night sky."
-    },
     {
       "path": "dist/js/app-release.js",
       "reason": "Quiet release metadata."
     },
     {
-      "path": "dist/js/listening-credit.js",
-      "reason": "Read the pause notice duration from the same 60-minute policy."
+      "path": "dist/js/quran-nature-audio.js",
+      "reason": "Detect a native suspension of an audible ambient context once."
     },
     {
-      "path": "dist/js/media-session.js",
-      "reason": "Keep system controls registered as the same player changes chapter metadata."
+      "path": "dist/js/quran-player-extras.js",
+      "reason": "Use the normal recitation pause when a background system command reaches ambience."
+    },
+    {
+      "path": "dist/js/sky-atmosphere.js",
+      "reason": "Soften the additional sky fog veil."
     },
     {
       "path": "dist/js/weather.js",
-      "reason": "Scale moonlight with the actual illuminated phase."
+      "reason": "Decrease foreground fog density around architecture."
     },
     {
       "path": "dist/sw.js",
       "reason": "Align the update manifest, cache version and generated asset sizes."
     },
     {
+      "path": "dist/weather.css",
+      "reason": "Reduce the fallback fog overlay."
+    },
+    {
       "path": "docs/change-scope.json",
-      "reason": "Exact reviewed scope against published SALAH 555."
+      "reason": "Verify the exact release scope against published SALAH 556."
     },
     {
-      "path": "scripts/check-listening-credit-client.mjs",
-      "reason": "Assert the real 60-minute notice in the app fixture."
+      "path": "scripts/check-home-weather-continuity.mjs",
+      "reason": "Check foreground fog opacity and scene continuity."
     },
     {
-      "path": "scripts/check-quran-system-pause.mjs",
-      "reason": "Reproduce queued system commands across a same-owner chapter change."
+      "path": "scripts/check-quran-nature-audio.mjs",
+      "reason": "Exercise system suspension, interruption and resumption of ambience."
     },
     {
-      "path": "scripts/check-sky-ui-layout.mjs",
-      "reason": "Verify glow strength and its night, weather and private gates."
+      "path": "scripts/check-quran-player-extras.mjs",
+      "reason": "Verify a background ambient pause reaches only the active Quran playback."
+    },
+    {
+      "path": "scripts/check-sky-atmosphere.mjs",
+      "reason": "Verify the fog veil strength without changing sky gates."
     }
   ],
   "generated": [
@@ -2499,7 +2507,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "6770884a256dd21e029583139fddaf5572198148"
+      "sha": "d8b490a72288d0bf3ceef47f56b82160e486a1c1"
     },
     {
       "path": "dist/delete-account.html",
@@ -2655,7 +2663,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "9cfd4223bf1e58069a3471c264dc08157e58a6ec"
+      "sha": "7db753a5baa8ad2adee14dbc8c11741b80c23caa"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4087,7 +4095,7 @@
     },
     {
       "path": "dist/js/listening-credit.js",
-      "sha": "ae54ad2c631a733bc5c442cbb13afc034f9b0069"
+      "sha": "544279038d5aa39561d31252ef33f6f54529a4db"
     },
     {
       "path": "dist/js/listening-summary.js",
@@ -4107,7 +4115,7 @@
     },
     {
       "path": "dist/js/media-session.js",
-      "sha": "6ea5af0969e4b86ad20445d7127cce00321aaa4d"
+      "sha": "9711e0235e10e744596d776465cfb49411a44893"
     },
     {
       "path": "dist/js/message-emojis.js",
@@ -5031,7 +5039,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "78560cf985e740d6985dd59056e3828969ef6ef0"
+      "sha": "1b6cf0cded02a2163d2fcdf394bda80927d0768f"
     },
     {
       "path": "dist/knowledge.css",
@@ -5103,7 +5111,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "031e7679eab1cfb44e0568c502fd330a7c7868e8"
+      "sha": "a8efbb807be20bcdcfd20276268b607767dac505"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5651,7 +5659,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "cba1083990d89b24dbbfe0d8e171733322ef6775"
+      "sha": "9e144de9237d0d535998adda36d157898c1dff6c"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -7031,7 +7039,7 @@
     },
     {
       "path": "scripts/check-listening-credit-client.mjs",
-      "sha": "4c6db74dc19a0e104bb1ffa8684ea5eeaef051ca"
+      "sha": "33aa9c5ccab06e93dbd7c2990fba9bf5a9431b66"
     },
     {
       "path": "scripts/check-listening-credit.mjs",
@@ -7527,7 +7535,7 @@
     },
     {
       "path": "scripts/check-quran-system-pause.mjs",
-      "sha": "b760f9de2cfe2cee18a56d8b114a53d0fba2c38f"
+      "sha": "35e5f42b1fdc2d2b4f2f0b53c81a0b91982ecced"
     },
     {
       "path": "scripts/check-quran-tafsir.mjs",
@@ -7683,7 +7691,7 @@
     },
     {
       "path": "scripts/check-sky-ui-layout.mjs",
-      "sha": "f97b65291f3fc014d7a8e93df250e4a0248023a2"
+      "sha": "ed854fb9912d827ce5e3eb219db9f3670f50129a"
     },
     {
       "path": "scripts/check-staff-cabinet.mjs",
@@ -8662,5 +8670,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=555;\nexport const APP_UPDATED_AT='2026-11-23';\nexport const APP_UPDATE_DATE='23 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=556;\nexport const APP_UPDATED_AT='2026-11-24';\nexport const APP_UPDATE_DATE='24 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

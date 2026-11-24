@@ -53,6 +53,7 @@ body.no-transitions *,body.no-transitions *::before,body.no-transitions *::after
 /* Measured fog scatters daylight and removes direct celestial discs. At night
    its colour remains dark; missing/stale weather never enables this layer. */
 #weather-layer .weather-mist{background:linear-gradient(180deg,rgba(var(--weather-fog-color,35,48,65),.18),rgba(var(--weather-fog-color,35,48,65),.74) 53%,rgba(var(--weather-fog-color,35,48,65),.63) 76%,rgba(var(--weather-fog-color,35,48,65),.22));filter:blur(5px)}
+#weather-layer[data-kind=fog]>.weather-mist{background:linear-gradient(180deg,rgba(var(--weather-fog-color,35,48,65),.28),rgba(var(--weather-fog-color,35,48,65),.36) 53%,rgba(var(--weather-fog-color,35,48,65),.24) 76%,rgba(var(--weather-fog-color,35,48,65),.08))}
 
 /* An explicit opt-in owns the entire advanced Home atmosphere. Photo-only
    mode retains the decoded source pair and its ordinary opacity transition. */
