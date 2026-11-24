@@ -194,3 +194,7 @@ dialog.support-user-profile{outline:none}
 .support-owner-compose-space{flex:1 1 0;min-height:0}
 .support-chat-shell[data-support-grouped] [data-support-owner-compose]>.support-owner-topic{position:static;grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;width:auto;height:auto;clip-path:none;overflow:visible;white-space:normal;color:#c1cad8;font-size:13px}
 .support-owner-topic input{min-width:0;width:100%;min-height:40px;margin:0;border-radius:14px;font-size:16px}
+
+.support-inbox-shell .support-inbox-row[aria-busy=true]{background:rgba(180,190,210,.05);cursor:progress}
+.support-chat-shell[data-support-grouped] .support-photo[data-support-photo-frame]{position:relative;display:block;width:min(216px,55vw);max-width:100%;aspect-ratio:9/10;overflow:hidden;border-radius:12px;background:#09132266}
+.support-chat-shell[data-support-grouped] .support-photo[data-support-photo-frame] img{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain}

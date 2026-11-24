@@ -1,37 +1,37 @@
 {
   "schema": 1,
-  "version": 559,
-  "baseCommit": "9aec25a74dff3f82818fcd5b52f57490d829699e",
-  "baseTree": "86a81b46ca9cb26d6c0bce34471307d45f01922b",
-  "note": "Quiet correction to the first-message composer for the verified owner Support route.",
+  "version": 560,
+  "baseCommit": "4ed532e7dd7cd40ac0b5da98176f3785a28208a7",
+  "baseTree": "2dcb29ea114f643f87c1f4018b110dd84ab34775",
+  "note": "Quiet fix for the Support inbox-to-chat transition and photo preview layout shifts.",
   "allowed": [
     {
       "path": "dist/css/support.css",
-      "reason": "Apply existing grouped-chat composer styling to first-message composition."
+      "reason": "Reserve a stable thumbnail frame and paint the selected inbox row during loading."
     },
     {
       "path": "dist/js/app-release.js",
       "reason": "Quiet release metadata."
     },
     {
-      "path": "dist/js/support-chat-view.js",
-      "reason": "Share compact composer, viewport and swipe cleanup across owner first-message and existing conversations."
-    },
-    {
       "path": "dist/js/support-client.js",
-      "reason": "Render the actual owner first-message route with the compact chat form and same server workflow."
+      "reason": "Keep the same inbox while a grouped conversation loads and preserve signed photo opening and saving."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Align cache version and generated resource sizes."
+      "reason": "Align the cache, release version and decoded asset sizes."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Verify the reviewed 559 scope against published 558."
+      "reason": "Verify exact scope against published 559."
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Exercise owner recipient, retry, keyboard, back and confirmed send."
+      "reason": "Exercise deferred conversation opening and signed photo frame before decoding."
+    },
+    {
+      "path": "scripts/check-support-layout.mjs",
+      "reason": "Verify the decoded image cannot resize the preview or neighboring messages."
     }
   ],
   "generated": [
@@ -1447,7 +1447,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "cb342fe2455494f8074efae3fc3bf9ab875eab01"
+      "sha": "2cebc090001bcb3b620042820b7f7f47f5269717"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -2643,7 +2643,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "591762200ef6b2ffe05d977025887341562cbc81"
+      "sha": "7188e30f837b88b0003e2bc05fa9f03cb99f5967"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4787,11 +4787,11 @@
     },
     {
       "path": "dist/js/support-chat-view.js",
-      "sha": "278256a3310e69df781828b1419fc462639f3834"
+      "sha": "b9577656a2f1c11a0bda2c3b6dd3a593625b93cb"
     },
     {
       "path": "dist/js/support-client.js",
-      "sha": "ecf1475082f8d2d4bfb60a0072d070d373ac1d0c"
+      "sha": "43faeaf46c589702e1b60c1fed4ed167b7425ea8"
     },
     {
       "path": "dist/js/support-diagnostics.js",
@@ -5091,7 +5091,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "4e9bdd87f99f6594ccc2d0acaac62d48f272d198"
+      "sha": "7b892f49b17810e291379a07a3744dceb18737ae"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5639,7 +5639,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "7375b2146718886a96e969d25645edc68af89d93"
+      "sha": "d0f9021dedc30410738ade59124333c78fd15a61"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -7771,7 +7771,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "e9d6f315dfbcb282631c9707d812d6bf4e0e6be1"
+      "sha": "6c22b1bca061255c22313a5373cf603f944e02cd"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -8650,5 +8650,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=558;\nexport const APP_UPDATED_AT='2026-11-24';\nexport const APP_UPDATE_DATE='24 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=559;\nexport const APP_UPDATED_AT='2026-11-24';\nexport const APP_UPDATE_DATE='24 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

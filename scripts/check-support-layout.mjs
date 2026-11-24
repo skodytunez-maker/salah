@@ -29,6 +29,13 @@ for(const [width,height,insets] of [[375,667,{top:20,bottom:0,left:0,right:0}],[
  assert.equal(parseFloat(w.getComputedStyle(d.querySelector('.support-case-closed')).marginTop),0);
  assert.equal(w.getComputedStyle(d.querySelector('.support-chat-footer')).flexShrink,'0');
  const edge=d.querySelector('.support-messages'),edgeHeight=w.getComputedStyle(edge).minHeight;edge.setAttribute('data-support-scrolled','');assert.match(w.getComputedStyle(edge).getPropertyValue('mask-image'),/linear-gradient/,'A scrolled history has a static top fade in the actual CSS cascade');assert.equal(w.getComputedStyle(edge).minHeight,edgeHeight,'The fade does not resize the message log');assert(!/linear-gradient/.test(w.getComputedStyle(d.querySelector('.support-chat-header')).getPropertyValue('mask-image')),'Fixed participant controls are never masked');edge.removeAttribute('data-support-scrolled');
+ const attachment=d.createElement('a');attachment.className='support-photo';attachment.setAttribute('data-support-photo-frame','');
+ attachment.append(d.createElement('img'));d.querySelector('.support-messages').append(attachment);
+ const frame=w.getComputedStyle(attachment),picture=w.getComputedStyle(attachment.firstElementChild);
+ assert.match(frame.getPropertyValue('aspect-ratio'),/^9\s*\/\s*10$/,'Reserve the same preview proportions before decoding');
+ assert.equal(frame.position,'relative');assert.equal(picture.position,'absolute','Decoded image dimensions cannot move neighboring bubbles');
+ assert.equal(picture.objectFit,'contain','The complete original remains visible inside the preview');
+ attachment.remove();
  if(themed){
  const panel=d.querySelector('.support-panel'),header=d.querySelector('.support-chat-header'),footer=d.querySelector('.support-chat-footer'),reopen=d.querySelector('[data-support-reopen]');
  assert.match(surface.backgroundImage,/stars\.webp/,'Wallpaper is on the full fixed viewport');

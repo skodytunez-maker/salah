@@ -8,13 +8,14 @@ w.Image=function(){const img=doc.createElement('img');Object.defineProperties(im
 const{themePreferenceKey}=await import('../dist/js/conversation-themes.js');
 w.localStorage.setItem(themePreferenceKey(A,'support:'+U),JSON.stringify({theme:'stars'}));
 const app=doc.createElement('main');app.innerHTML='<a class="settings-back" href="#account" data-support-page-back>Мой аккаунт</a><header><h1 data-support-page-title>Обращения</h1></header><section id="support-root" class="panel section"></section>';doc.body.append(app);const root=app.querySelector('section');let actor=A,changed,closed=false,version=0,failRead=false,scroll=240;const calls=[],scrolls=[];Object.defineProperty(w,'scrollY',{get:()=>scroll});w.scrollTo=options=>{scrolls.push(options.top);scroll=options.top;};
-let failCreate=true;
+let failCreate=true,holdRead=false,resumeRead=null;
+const samplePhoto="https://kbltwszfvphgbxdbczsb.supabase.co/storage/v1/object/sign/support-photos/salah/example.jpg?token=fixture";
 let messages=[{id:M,thread_id:OLD,thread_subject:'Первая тема',thread_status:'open',author_id:A,owner_reply:true,body:'Первое сообщение',created_at:'2026-11-17T10:00:00Z'},{id:N,thread_id:T,thread_subject:'Вторая тема',thread_status:'open',author_id:U,owner_reply:false,body:'Новое сообщение',created_at:'2026-11-18T10:00:00Z'}];
-const data=before=>({conversationId:U,anchorId:OLD,thread:{id:T,app:'salah',subject:'Вторая тема',nickname:'Один человек',status:closed?'closed':'open',version:'516',awaiting_owner:!closed,can_reopen:closed},messages:structuredClone(before?[messages[0]].filter(Boolean):messages),photos:[],next:before?null:{at:'2026-11-17T10:00:00Z',id:M},visibilityVersion:String(version),canClearEveryone:true});
+const data=before=>({conversationId:U,anchorId:OLD,thread:{id:T,app:'salah',subject:'Вторая тема',nickname:'Один человек',status:closed?'closed':'open',version:'516',awaiting_owner:!closed,can_reopen:closed},messages:structuredClone(before?[messages[0]].filter(Boolean):messages),photos:[{message_id:M,url:samplePhoto}],next:before?null:{at:'2026-11-17T10:00:00Z',id:M},visibilityVersion:String(version),canClearEveryone:true});
 const auth={auth:{getSession:async()=>({data:{session:{user:{id:actor}}}}),onAuthStateChange:fn=>{changed=fn;return{data:{subscription:{unsubscribe(){}}}};}},rpc(name,args){calls.push({name,args});return{abortSignal:async()=>{
  if(name==='support_conversation_request'){
   if(args.p_action==='list')return{data:{rows:actor===A?[{id:OLD,conversation_id:U,user_id:U,app:'salah',nickname:'Один человек',subject:'Вторая тема',last_message:'Новое сообщение',updated_at:'2026-11-18T10:00:00Z',awaiting_owner:true,status:'open',owner_unread:true}]:[],next:null}};
-  if(args.p_action==='read'){if(failRead){failRead=false;return{error:{message:'offline'}};}return{data:data(args.p_args.before)};}
+  if(args.p_action==='read'){if(holdRead)await new Promise(resolve=>{resumeRead=resolve;});if(failRead){failRead=false;return{error:{message:'offline'}};}return{data:data(args.p_args.before)};}
   if(args.p_action==='clear'){messages=[];version++;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:args.p_args.scope,visibilityVersion:String(version)}};}
   if(args.p_action==='close'){closed=true;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:'everyone',visibilityVersion:String(version)}};}
  }
@@ -30,7 +31,21 @@ const auth={auth:{getSession:async()=>({data:{session:{user:{id:actor}}}}),onAut
  throw Error('Unexpected RPC '+name+' '+args.p_action);
 }};}};
 const flush=async()=>{for(let i=0;i<10;i++)await new Promise(r=>setImmediate(r));};let openedProfile=null;let stop=mountSupportPanel(root,{auth,app:'salah',version:520,owner:true,groupConversations:true,onOpenProfile:(person)=>{openedProfile=person;}});await flush();assert.equal(app.querySelectorAll('h1,h2').length,1,'Wrapped route heading is not duplicated');assert.equal(root.querySelectorAll('.support-inbox-row').length,1);
-root.querySelector('[data-support-thread]').click();await flush();assert(root.classList.contains('support-chat-shell'));assert(app.classList.contains('support-route-chat'));assert.equal(root.querySelector('.support-chat-person>strong').textContent,'Один человек');assert.equal(root.querySelectorAll('[data-message]').length,2);assert.equal(root.querySelectorAll('.support-case-divider').length,2);
+const originalInbox=root.querySelector('[data-support-thread]');holdRead=true;
+const readsBeforeOpening=calls.filter(x=>x.args.p_action==='read').length;
+originalInbox.click();await flush();
+assert.equal(root.querySelector('[data-support-thread]'),originalInbox,'The same inbox remains mounted until the conversation arrives');
+assert.equal(originalInbox.getAttribute('aria-busy'),'true');
+assert.equal(root.querySelector('.support-heading'),null,'No legacy loading panel flashes between screens');
+originalInbox.click();await flush();
+assert.equal(calls.filter(x=>x.args.p_action==='read').length,readsBeforeOpening+1,'Repeated taps do not restart the request');
+holdRead=false;resumeRead();await flush();
+assert.equal(originalInbox.hasAttribute('aria-busy'),false);
+const thumbnail=root.querySelector('.support-photo img');
+assert.equal(thumbnail.getAttribute('src'),samplePhoto);
+assert(root.querySelector('.support-photo[data-support-photo-frame]'),'Photo geometry is present before decoding');
+assert.equal(root.querySelector('.support-photo').href,samplePhoto,'Opening the original still uses the authorized file');
+assert(root.classList.contains('support-chat-shell'));assert(app.classList.contains('support-route-chat'));assert.equal(root.querySelector('.support-chat-person>strong').textContent,'Один человек');assert.equal(root.querySelectorAll('[data-message]').length,2);assert.equal(root.querySelectorAll('.support-case-divider').length,2);
 assert.equal(root.dataset.conversationTheme,'stars','The saved theme covers the fixed viewport, including safe-area and side gutters');assert(!root.querySelector('.support-panel').hasAttribute('data-conversation-theme'),'The wallpaper is not restricted to an inset panel');
 const initialLog=root.querySelector('.support-messages'),initialMessage=initialLog.querySelector('[data-message]');initialLog.scrollTop=70;initialLog.dispatchEvent(new w.Event('scroll'));assert(initialLog.hasAttribute('data-support-scrolled'),'Only scrolled history receives the soft edge');assert.equal(initialLog.querySelector('[data-message]'),initialMessage,'Edge updates retain messages');initialLog.scrollTop=0;initialLog.dispatchEvent(new w.Event('scroll'));assert(!initialLog.hasAttribute('data-support-scrolled'),'The first message is fully visible at the start');
 
