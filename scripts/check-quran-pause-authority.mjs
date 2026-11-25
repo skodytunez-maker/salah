@@ -147,3 +147,12 @@ for(const endSignal of ['ended','timeupdate']){
  player.destroy();
 }
 console.log('PASS: the exact Al-Fatihah to Al-Baqarah handoff after an early native pause, duplicate completion suppression, and continuation in verse recordings.');
+
+for(const voice of ['ar.haithamaldukhain','ar.yasseraldossaricontinuous','ar.yasseraldossari']){
+ const f=fixture();await f.session.start(f.data(2),voice);await flush();
+ const a=f.tracks[0],plays=a.plays;a.duration=7200;a.currentTime=7198.75;a.paused=true;a.ended=false;a.onpause();
+ assert.equal(f.session.state.surah.number,2);assert.equal(a.plays,plays);
+ a.currentTime=7200;a.ended=true;a.onended();await flush();
+ assert.equal(f.session.state.surah.number,3,'Confirmed completion must use the final media state, not an older pause clock');
+ assert.equal(f.session.state.status,'playing');assert.equal(a.plays,plays+1);f.session.stop();
+}

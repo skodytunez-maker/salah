@@ -19,7 +19,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  const whole=reciterInfo(reciter).format==='surah',timed=!!timingUrl(surah,reciter);
  let startOffset=0,next=null,durationTable=null,durationTask=null,durationStatus=whole?'ready':'loading';const durationController=new AbortController();
  let audio=null,objectUrl=null,token=0,disposed=false,current=0,continuous=false,status='stopped',ayah=null,timings=null,timingController=null,timingStatus=whole?(timed?'loading':'unavailable'):'ready';
- let watchdog=null,watchedPosition=0,useFallback=false,preparedTimings=null,resumeRevision=0,resumeTask=null,playWanted=false,lockResume=null,pausedNearTrackEnd=false;
+ let watchdog=null,watchedPosition=0,useFallback=false,preparedTimings=null,resumeRevision=0,resumeTask=null,playWanted=false,lockResume=null,pendingNativeCompletion=false;
  const playOwner={};
  // The Quran queue owns one OS session across chapter players. Standalone
  // players still own and dispose their own controller.
@@ -86,7 +86,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    prepared.onerror=()=>{if(next===pending)clearNext();};prepared.load?.();
   }catch{if(next===pending){if(pending.resource)clearNext();else{next=null;if(preparedUrl)URL.revokeObjectURL(preparedUrl);}}}})();
  }
- function release(retainSource=false){pausedNearTrackEnd=false;resumeRevision++;resumeTask=null;lockResume=null;clearWatchdog();timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeking=null;audio.onseeked=null;audio.onloadedmetadata=null;if(!retainSource){audio.pause();clearMediaOutputSources(audio);audio.src='';}audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
+ function release(retainSource=false){pendingNativeCompletion=false;resumeRevision++;resumeTask=null;lockResume=null;clearWatchdog();timingController?.abort();timingController=null;timings=null;if(audio){audio.onplay=null;audio.onpause=null;audio.onended=null;audio.onerror=null;audio.ontimeupdate=null;audio.onseeking=null;audio.onseeked=null;audio.onloadedmetadata=null;if(!retainSource){audio.pause();clearMediaOutputSources(audio);audio.src='';}audio=null}if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}}
  function sync(id,force=false){
   if(disposed||id!==token||!audio||!whole)return;
   if(timings&&Number.isFinite(audio.duration)&&timings.at(-1).end>audio.duration+3){timings=null;timingStatus='unavailable';force=true}
@@ -112,7 +112,7 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    }
    const track=audio,lease={owner:playOwner};playTrack=track;playLease=lease;mediaPlayLeases.set(track,lease);
    audio.onerror=()=>recover(id);
-    audio.onplay=()=>{if(!disposed&&id===token&&!audio.paused){pausedNearTrackEnd=false;const nativeResume=!playWanted;if(nativeResume){
+    audio.onplay=()=>{if(!disposed&&id===token&&!audio.paused){pendingNativeCompletion=false;const nativeResume=!playWanted;if(nativeResume){
      // A native OS Play may bypass our MediaSession action handler. Accept it
      // only after all app play() calls settled; an outstanding call can still
      // deliver a stale play event after a newer Pause, including across leases.
@@ -120,30 +120,30 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
      mediaPlayLeases.set(audio,{owner:playOwner});playWanted=true;resumeRevision++;resumeTask=null;audioSession.setIntent(true);trackLockResume(audio);
     }audioSession.notifyPlaying();if(!lockResume)status='playing';watch(id);if(nativeResume){sync(id);prepareNext();startDurations();}emit();}};
    // Only a confirmed end of this track can continue after a native pause.
-   // A final pause can arrive before the media clock reaches the exact duration.
+   // The native pause clock can lag behind; validate the actual final state.
    const finishTrack=()=>{
     if(disposed||id!==token||track!==audio||status==='ended')return;
-    const finished=playWanted||pausedNearTrackEnd&&track.ended&&audioNavigator?.audioSession?.state!=='interrupted';
-    pausedNearTrackEnd=false;lockResume=null;clearWatchdog();
+    const confirmedEnd=track.ended&&!track.seeking&&(!Number.isFinite(track.duration)||track.duration<=0||track.currentTime>=track.duration-.5);
+    const finished=playWanted||pendingNativeCompletion&&confirmedEnd&&audioNavigator?.audioSession?.state!=='interrupted';
+    pendingNativeCompletion=false;lockResume=null;clearWatchdog();
     if(!finished){status='paused';emit();return;}
     if(!whole&&continuous&&current<surah.verses.length-1)void play(current+1,true);
     else{status='ended';emit();if(!disposed)audioSession.setIntent(false);}
    };
    audio.onpause=()=>{
     if(disposed||id!==token||!audio?.paused||audio.ended||!['playing','loading'].includes(status))return;
-    const {currentTime,duration,seeking}=audio;
-    pausedNearTrackEnd=playWanted&&status==='playing'&&continuous&&!seeking&&
-     audioNavigator?.audioSession?.state!=='interrupted'&&Number.isFinite(duration)&&duration>0&&Math.abs(duration-currentTime)<=.5;
+    pendingNativeCompletion=playWanted&&status==='playing'&&continuous&&!audio.seeking&&
+     audioNavigator?.audioSession?.state!=='interrupted';
     playWanted=false;resumeRevision++;resumeTask=null;lockResume=null;audioSession.setIntent(false,{retainPlayback:true});
     clearWatchdog();clearNext();status='paused';emit();
    };
    audio.ontimeupdate=()=>{
      if(disposed||id!==token)return;
-     if(track.ended&&pausedNearTrackEnd){finishTrack();return;}
+     if(track.ended&&pendingNativeCompletion){finishTrack();return;}
      if(observeLockResume()||!lockResume&&['loading','playing'].includes(status)&&audio.currentTime>watchedPosition+.01)watch(id);
      sync(id);emit();
     };
-   audio.onseeking=()=>{pausedNearTrackEnd=false;};
+   audio.onseeking=()=>{pendingNativeCompletion=false;};
     audio.onseeked=()=>{
      if(lockResume){lockResume.position=audio.currentTime;watch(id);}
      audio.ontimeupdate();
@@ -174,14 +174,14 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
   }catch{if(!disposed&&id===token){timingStatus='unavailable';status='error';emit();}return false;}
  }
  function fail(id){if(disposed||id!==token)return;playWanted=false;audioSession.setIntent(false);token++;clearNext();if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;release();ayah=null;status='error';emit();onError()}
- function pause(){if(disposed)return;pausedNearTrackEnd=false;playWanted=false;const retain=!!audio&&(status!=='loading'||!!resumeTask||!!lockResume);resumeRevision++;resumeTask=null;lockResume=null;audioSession.setIntent(false,{retainPlayback:retain});clearWatchdog();clearNext();if(status==='loading'&&!retain){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{
+ function pause(){if(disposed)return;pendingNativeCompletion=false;playWanted=false;const retain=!!audio&&(status!=='loading'||!!resumeTask||!!lockResume);resumeRevision++;resumeTask=null;lockResume=null;audioSession.setIntent(false,{retainPlayback:retain});clearWatchdog();clearNext();if(status==='loading'&&!retain){if(Number.isFinite(audio?.currentTime)&&audio.currentTime>0)startOffset=audio.currentTime;token++;release();ayah=null}else{
   // Stop the native source before verse/UI notifications: a failing observer
   // must never prevent the listener's Pause from physically reaching audio.
   status='paused';audio?.pause();sync(token);
  }status='paused';emit()}
  function resume({remote=false,lockRetry=false}={}){
   if(disposed)return;
-  pausedNearTrackEnd=false;
+  pendingNativeCompletion=false;
   if(audio&&['playing','loading'].includes(status)&&!audio.paused)return resumeTask;
   if(audio&&status==='loading'&&resumeTask)return resumeTask;
   if(!audio||!['paused','playing','loading'].includes(status))return play(current,continuous,['error','paused'].includes(status)?startOffset:0);
@@ -203,6 +203,6 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
  function toggle(){if(status==='playing'||status==='loading'){pause();return}return resume();}
  function move(delta){if(whole)return;const index=current+delta;if(index>=0&&index<surah.verses.length)void play(index,continuous)}
  function destroy({retainSource=false}={}){playWanted=false;if(!audioSessionOwner)audioSession.destroy();if(sessionOwner.current===sessionHooks)sessionOwner.current=null;disposed=true;durationController.abort();token++;clearNext();release(retainSource)}
- function seek(seconds){if(disposed||!audio||!Number.isFinite(seconds))return;pausedNearTrackEnd=false;if(!whole&&durationTable){const point=timelinePosition(durationTable,seconds);if(point.index!==current){void play(point.index,continuous,point.seconds,status==='playing');return;}seconds=point.seconds;}try{audio.currentTime=Math.max(0,Math.min(seconds,Number.isFinite(audio.duration)?Math.max(0,audio.duration-.01):86400));if(lockResume){lockResume.position=audio.currentTime;watch(token);}sync(token,true);}catch{}}
+ function seek(seconds){if(disposed||!audio||!Number.isFinite(seconds))return;pendingNativeCompletion=false;if(!whole&&durationTable){const point=timelinePosition(durationTable,seconds);if(point.index!==current){void play(point.index,continuous,point.seconds,status==='playing');return;}seconds=point.seconds;}try{audio.currentTime=Math.max(0,Math.min(seconds,Number.isFinite(audio.duration)?Math.max(0,audio.duration-.01):86400));if(lockResume){lockResume.position=audio.currentTime;watch(token);}sync(token,true);}catch{}}
  return{play,playFromAyah,resume,toggle,pause,move,destroy,seek,requestOutput:()=>requestMediaOutput(audio),get state(){return{index:current,status,ayah,timingStatus,durationStatus,durationSeconds:whole?(Number.isFinite(audio?.duration)?audio.duration:0):(durationTable?.total||0),trackPositionSeconds:Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset,positionSeconds:(durationTable?.starts[current]||0)+(Number.isFinite(audio?.currentTime)?Math.max(0,audio.currentTime):startOffset)}}}
 }
