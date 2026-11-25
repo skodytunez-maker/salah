@@ -180,3 +180,45 @@ for(const action of ['native-pause','explicit-pause','seek']){
  f.session.stop();
 }
 console.log('PASS: locked completion keeps the system queue active until its media task; real Pause/seek and a missing completion settle paused without autoplay.');
+
+{
+ const f=fixture();await f.session.start(f.data(96),'ar.yasseraldossaricontinuous');await flush();
+ const a=f.tracks[0],plays=a.plays;a.currentSrc=a.src;a.nextPlay='pending';
+ a.currentTime=a.duration;a.ended=true;a.paused=true;a.onended();await flush();
+ assert.equal(f.session.state.surah.number,97,'The next title has already been selected');
+ assert.equal(a.pending.length,1);assert.equal(f.session.state.status,'loading');
+ a.currentTime=0;a.ended=false;a.paused=true;a.onpause();
+ a.currentSrc=a.src;a.onloadedmetadata?.();a.pending[0].finish();await flush();
+ assert.equal(f.session.state.status,'playing','An old-resource pause must not cancel the new source selection');
+ assert.equal(a.paused,false);assert.equal(a.plays,plays+1);assert.equal(f.tracks.length,1);
+ f.session.stop();
+}
+
+// Selection noise must not swallow a real Pause or interruption.
+for(const action of ['explicit-pause','settled-source-pause','system-interruption','stop']){
+ const f=fixture();await f.session.start(f.data(96),'ar.yasseraldossaricontinuous');await flush();
+ const a=f.tracks[0];a.currentSrc=a.src;a.nextPlay='pending';
+ a.currentTime=a.duration;a.ended=true;a.paused=true;a.onended();await flush();
+ assert.equal(f.session.state.surah.number,97);assert.equal(a.pending.length,1);
+ a.currentTime=0;a.ended=false;
+ if(action==='explicit-pause')f.actions.pause();
+ else if(action==='stop')f.session.stop();
+ else{
+  if(action==='settled-source-pause')a.currentSrc=a.src;
+  if(action==='system-interruption')f.native.change('interrupted');
+  a.paused=true;a.onpause();
+ }
+ const plays=a.plays;a.pending[0].finish({event:false});await flush();
+ assert.equal(a.paused,true,action+' stops late play resolution');
+ assert.equal(a.plays,plays,action+' never retries automatically');
+ assert.equal(f.session.state.status,action==='stop'?'stopped':'paused');
+ f.session.stop();
+}
+{
+ const a=new Audio('');a.play=function(){this.plays++;return Promise.resolve();};
+ const f=fixture();
+ const p=createQuranPlayer({surah:f.data(97),reciter:'ar.yasseraldossaricontinuous',createAudio:()=>a,getAudio:async()=>null,loadTimings:async()=>null,onState(){},onVerse(){},onError(){assert.fail('No unrelated fallback');}});
+ await p.play();assert.equal(p.state.status,'paused','Fulfilled play without native playback is not playing');
+ assert.equal(a.paused,true);assert.equal(a.plays,1);p.destroy();
+}
+console.log('PASS: source selection preserves explicit Pause, settled native Pause, interruption, Stop and paused play-promise truth.');

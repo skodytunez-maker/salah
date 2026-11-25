@@ -135,6 +135,11 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
    audio.onpause=()=>{
     const {currentTime,duration}=track;
     if(disposed||id!==token||!audio?.paused||audio.ended||!['playing','loading'].includes(status))return;
+    // Resource selection can dispatch the old source's queued Pause. Keep the
+    // pending play lease until the new source settles; explicit Pause clears
+    // playWanted synchronously and always takes precedence.
+    const selectingSource=typeof track.currentSrc==='string'&&track.src&&track.currentSrc!==track.src;
+    if(selectingSource&&playWanted&&pendingMediaPlays.get(track)?.has(lease)&&audioNavigator?.audioSession?.state!=='interrupted')return;
     pendingNativeCompletion=playWanted&&status==='playing'&&continuous&&!audio.seeking&&
      audioNavigator?.audioSession?.state!=='interrupted';
     playWanted=false;resumeRevision++;resumeTask=null;lockResume=null;audioSession.setIntent(false,{retainPlayback:true});
@@ -169,7 +174,9 @@ export function createQuranPlayer({surah,reciter,offlineOnly=false,onState,onVer
     Promise.resolve().then(()=>supplied||loadTimings(surah,reciter,{signal:controller.signal,...(offlineOnly?{fetcher:async()=>{throw Error('Offline')}}:{})})).then(table=>{if(disposed||id!==token||!audio)return;timings=table;timingStatus=table?'ready':'unavailable';sync(id,true)}).catch(()=>{if(disposed||id!==token||!audio)return;timingStatus='unavailable';sync(id,true)});
    }
    if(!autoplay){status='paused';startDurations();emit();return;}
-    await requestTrackPlay(track,lease);if(disposed||id!==token||mediaPlayLeases.get(track)!==lease||!playWanted||status==='paused'){stopObsoletePlay(track,lease);return;}status='playing';sync(id);prepareNext();emit();
+    await requestTrackPlay(track,lease);if(disposed||id!==token||mediaPlayLeases.get(track)!==lease||!playWanted||status==='paused'){stopObsoletePlay(track,lease);return;}
+   if(track.paused){playWanted=false;audioSession.setIntent(false,{retainPlayback:true});clearWatchdog();status='paused';emit();return;}
+   status='playing';sync(id);prepareNext();emit();
    startDurations();
   }catch(error){if(playTrack&&mediaPlayLeases.get(playTrack)!==playLease)return;recover(id,error)}
  }
