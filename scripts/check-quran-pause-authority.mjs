@@ -156,3 +156,27 @@ for(const voice of ['ar.haithamaldukhain','ar.yasseraldossaricontinuous','ar.yas
  assert.equal(f.session.state.surah.number,3,'Confirmed completion must use the final media state, not an older pause clock');
  assert.equal(f.session.state.status,'playing');assert.equal(a.plays,plays+1);f.session.stop();
 }
+
+{
+ const f=fixture();await f.session.start(f.data(2),'ar.haithamaldukhain');await flush();
+ const a=f.tracks[0];a.currentTime=a.duration;a.paused=true;a.ended=false;a.onpause();
+ // Model a locked runtime that only drains the queued media completion while
+ // its system session still represents the ongoing queue.
+ if(f.metadata.playbackState==='playing'){a.ended=true;a.onended();}
+ await flush();
+ assert.equal(f.session.state.surah.number,3,'The final native pause must not publish a system pause before queued completion');
+ assert.equal(f.session.state.status,'playing');
+ f.session.stop();
+}
+
+for(const action of ['native-pause','explicit-pause','seek']){
+ const f=fixture();await f.session.start(f.data(2),'ar.yasseraldossaricontinuous');await flush();
+ const a=f.tracks[0],plays=a.plays;a.currentTime=a.duration;a.paused=true;a.ended=false;a.onpause();
+ if(action==='explicit-pause')f.actions.pause();
+ if(action==='seek')f.session.seek(200);
+ await new Promise(resolve=>setTimeout(resolve,20));await flush();
+ assert.equal(f.session.state.surah.number,2,'A pause without a real end never advances');
+ assert.equal(f.session.state.status,'paused');assert.equal(f.metadata.playbackState,'paused');assert.equal(a.plays,plays);
+ f.session.stop();
+}
+console.log('PASS: locked completion keeps the system queue active until its media task; real Pause/seek and a missing completion settle paused without autoplay.');

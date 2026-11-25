@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile}from 'node:fs/promises';
 import {createQuranSession}from '../dist/js/quran-session.js';
 import {createQuranPlayer}from '../dist/js/quran-audio.js';
+import {createMediaSession}from '../dist/js/media-session.js';
 import {reciterRecording}from '../dist/js/quran-reciter-recording.js';
 import {RECITERS,adjacentReciterSurah}from '../dist/js/quran-reciters.js';
 import {loadIndex}from '../dist/js/quran-data.js';
@@ -10,22 +11,25 @@ const originalFetch=globalThis.fetch;globalThis.fetch=async()=>({ok:true,json:as
 const flush=async()=>{for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));};
 let transitions=0,voices=0;
 for(const reciter of RECITERS.filter(r=>r.format==='surah')){
- for(const ending of ['natural','pause-before-end']){
-  const elements=[];
+ for(const ending of ['natural','pause-before-end','locked-pause-before-end']){
+  const elements=[],nativeState={setActionHandler(){},setPositionState(){}};
+  const media=createMediaSession({nav:{mediaSession:nativeState},Metadata:class{constructor(data){Object.assign(this,data);}}});
   class NativeAudio{
    constructor(src){this.src=src;this.currentTime=0;this.duration=120;this.paused=true;this.ended=false;elements.push(this);}
    async play(){assert.equal(elements.length,1,'Keep the same permitted media element');this.paused=false;this.ended=false;this.onplay?.();}
    pause(){this.paused=true;this.onpause?.();}
   }
   const first=Array.from({length:114},(_,i)=>i+1).find(n=>!reciter.availableSurahs||reciter.availableSurahs.includes(n));
-  const session=createQuranSession({loadCatalog:async()=>catalog,getAudio:async()=>null,createAudio:src=>new NativeAudio(src),media:{update(){}},
-   createPlayer:options=>createQuranPlayer({...options,getAudio:async()=>null,loadTimings:async()=>null,loadDurations:async()=>null,setTimer:()=>null,clearTimer(){}})});
+  const session=createQuranSession({loadCatalog:async()=>catalog,getAudio:async()=>null,createAudio:src=>new NativeAudio(src),media,
+   createPlayer:options=>createQuranPlayer({...options,audioDocument:{hidden:ending==='locked-pause-before-end'},getAudio:async()=>null,loadTimings:async()=>null,loadDurations:async()=>null,setTimer:()=>null,clearTimer(){}})});
   await session.start(reciterRecording(catalog,first),reciter.id);await flush();
   for(let number=first;;){
    assert.equal(session.state.surah.number,number,reciter.id+' current surah');assert.equal(session.state.status,'playing',reciter.id+' playback');
    const audio=elements[0],next=adjacentReciterSurah(reciter.id,number,1);
+   if(ending==='locked-pause-before-end'){audio.currentTime=Math.max(0,audio.duration-60);audio.onseeked?.();}
    audio.currentTime=ending==='pause-before-end'?audio.duration-1.25:audio.duration;
-   if(ending==='pause-before-end'){audio.paused=true;audio.onpause?.();assert.equal(session.state.surah.number,number,'Pause alone must never advance');}
+   if(ending!=='natural'){audio.paused=true;audio.onpause?.();assert.equal(session.state.surah.number,number,'Pause alone must never advance');}
+   if(ending==='locked-pause-before-end')assert.equal(nativeState.playbackState,'playing','Keep the locked system queue alive until completion: '+reciter.id+' '+number);
    audio.currentTime=audio.duration;audio.ended=true;audio.paused=true;audio.onended?.();await flush();
    if(next===null){assert.equal(session.state.status,'ended',reciter.id+' final stop');break;}
    assert.equal(session.state.surah.number,next,reciter.id+' '+number+' to '+next);
