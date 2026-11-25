@@ -1,7 +1,7 @@
 import{uiAttrs,uiLeaf,watchPracticeUi}from './practice-i18n.js';
 import{mountLearningCabinetLink}from './learning-cabinet-link.js';
 import{mountOwnerLearningPreview,stopOwnerLearningPreview,canContinueOwnerPreview,preloadOwnerLearning}from './owner-learning-frame.js';
-import{teamPreviewVerified as ownerVerified}from './team-preview-access.js';
+import{teamPreviewActor,teamPreviewVerified as ownerVerified}from './team-preview-access.js';
 import{ownerLearningPreview}from './owner-learning-links.js';
 import{UPCOMING_KNOWLEDGE}from './knowledge-upcoming.js';
 import{showArabicAlphabet}from './arabic-alphabet.js';
@@ -56,7 +56,9 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   if(view==='alphabet'){stopKnowledgeLanguage();stopKnowledgeLanguage=()=>{};if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
   delete container.dataset.alphabetHash;
   const saved=savedLesson(read('learning-progress',null));
-  const catalogKey=JSON.stringify([learningUserId,ownerAccess,saved]);
+  // Temporary iPhone reproduction test for the verified owner.
+  const hideSahabaForTrial=globalThis.navigator?.standalone===true&&teamPreviewActor()?.owner===true;
+  const catalogKey=JSON.stringify([learningUserId,ownerAccess,saved,hideSahabaForTrial]);
   // Status/owner refreshes must not replace the current catalog with a loader.
   if(container.querySelector('.knowledge-page')?.dataset.catalogKey===catalogKey)return;
   container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title"${learningUserId?' aria-busy="true"':''}>
@@ -71,7 +73,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
     <div data-knowledge-content${learningUserId?' hidden':''}>
     ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow" data-i18n="knowledgeUi.resume">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong${uiAttrs(resumeTitleKey(saved.kind))}>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail"${uiAttrs('knowledgeUi.stepOf',{step:saved.index+1,total:courseLength(saved.kind)})}>Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
     <div class="knowledge-cards">
-      ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'} ${entry.external?'target="_blank" rel="noopener noreferrer"':''}>
+      ${entries.filter(entry=>!hideSahabaForTrial||entry.kind!=='sahaba').map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'} ${entry.external?'target="_blank" rel="noopener noreferrer"':''}>
         <div class="knowledge-card-top">
           <span class="knowledge-icon" aria-hidden="true"><span class="knowledge-symbol knowledge-symbol-${entry.icon}"></span></span>
           <span class="knowledge-detail"${uiAttrs(cardKey(entry.kind,'detail'))}>${entry.detail}</span>
