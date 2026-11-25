@@ -12,10 +12,10 @@ import{t}from './i18n.js';
 // it never reloads the conversation or creates a second Support request.
 export function createSupportUserProfile({host,actorId,isActive=()=>true,getActor=verifiedOwnerId,loadUser=ownerAccountUser,loadDetails=ownerUserDetails,loadAvatar=ownerUserAvatar}={}){
  const doc=host.ownerDocument,win=doc.defaultView;
- let dialog=null,card=null,detail=null,opener=null,selected=null,user=null,epoch=0,disposed=false,stopSwipe=null,roomTheme=null;
+ let dialog=null,card=null,detail=null,opener=null,selected=null,user=null,epoch=0,disposed=false,stopSwipe=null,roomTheme=null,stopTheme=null;
  const active=()=>!disposed&&host.isConnected&&isActive()&&getActor()===actorId;
  const clear=()=>{
-  epoch++;roomTheme?.dispose();roomTheme=null;detail?.dispose();detail=null;stopSwipe?.();stopSwipe=null;
+  epoch++;stopTheme?.();stopTheme=null;roomTheme?.dispose();roomTheme=null;detail?.dispose();detail=null;stopSwipe?.();stopSwipe=null;
   if(card)stopOwnerUi(card);if(dialog){stopOwnerUi(dialog);for(const nested of dialog.querySelectorAll('dialog[open]'))nested.close();dialog.close();dialog.remove();}
   dialog=card=null;selected=user=null;const restore=opener;opener=null;if(restore?.isConnected)restore.focus({preventScroll:true});
  };
@@ -40,13 +40,13 @@ export function createSupportUserProfile({host,actorId,isActive=()=>true,getActo
   finally{if(active()&&request===epoch&&button.isConnected)button.disabled=false;}
  }
  return{
-  open(person,source){
+  open(person,source,sharedTheme=null){
    if(!active()||!validOwnerUserId(person?.id))return false;
    if(dialog)return false;if(!history.open())return false;selected=person.id;opener=source;
    dialog=doc.createElement('dialog');dialog.className='support-user-profile';dialog.tabIndex=-1;dialog.setAttribute('aria-label',t('ownerUi.userCard'));
    dialog.innerHTML='<header class="support-profile-header"><button type="button" class="text-button" data-support-profile-back><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg> '+uiLeaf('common.back')+'</button><button type="button" class="text-button" data-support-profile-refresh><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 7v5h-5M19 12a7 7 0 1 1-2-5l3 5"/></svg>'+uiLeaf('settingsExtra.update')+'</button></header><div class="support-profile-body"><div class="owner-profile-screen" data-support-profile-card></div></div>';
    host.append(dialog);card=dialog.querySelector('[data-support-profile-card]');
-   roomTheme=mountConversationTheme(dialog,{actorId,scope:'support:'+selected,isActive:active});const themeButton=conversationThemeButton(doc);dialog.querySelector('.support-profile-header').insertBefore(themeButton,dialog.querySelector('[data-support-profile-refresh]'));themeButton.onclick=()=>roomTheme?.open(themeButton);
+   roomTheme=mountConversationTheme(dialog,{actorId,scope:'support:'+selected,isActive:active,initialSharedTheme:sharedTheme?.initialSharedTheme,setSharedTheme:sharedTheme?.setSharedTheme});stopTheme=sharedTheme?.subscribe(roomTheme.synchronize)||null;const themeButton=conversationThemeButton(doc);dialog.querySelector('.support-profile-header').insertBefore(themeButton,dialog.querySelector('[data-support-profile-refresh]'));themeButton.onclick=()=>roomTheme?.open(themeButton);
    dialog.querySelector('[data-support-profile-back]').onclick=()=>history.back();dialog.querySelector('[data-support-profile-refresh]').onclick=()=>void refresh();
    dialog.addEventListener('cancel',event=>{if(event.target===dialog){event.preventDefault();history.back();}});
    stopSwipe=bindSwipeMotion(dialog,{win,canStart:()=>active()&&!dialog.querySelector('dialog[open]')&&!doc.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'),swipeThreshold:{minDistance:48,maxDistance:100,distanceRatio:.18},canMove:direction=>direction===1,commit:()=>history.back()});

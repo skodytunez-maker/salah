@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
+import {collectStartupTiming,showStartupTiming} from '../dist/js/startup-timing.js';
 import {resolveInterfaceLanguage} from '../dist/js/interface-languages.js';
 
 const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');
@@ -15,8 +16,8 @@ assert.match(css,/\.app-bootstrap__actions\[hidden\]\{display:none!important\}/,
 const webEntry='<script type="module" src="./js/app.js"></script>',nativeEntry='<script type="module" src="./js/native-entry.js"></script>';
 assert.ok(html.includes(webEntry),'Preserve the exact entry consumed by the native bundle builder');
 const nativeHtml=html.replace(webEntry,nativeEntry);
-function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=false,missingSettings=false,alreadyRendered=false,documentHtml=html,native=false}={}){
- const win=new Window({url:'https://example.test/salah/?from=phone#quran?view=surah&n=5',settings:{disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true,disableCSSFileLoading:true}}),doc=win.document;
+function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=false,missingSettings=false,alreadyRendered=false,documentHtml=html,native=false,timingQuery=''}={}){
+ const win=new Window({url:'https://example.test/salah/?from=phone'+timingQuery+'#quran?view=surah&n=5',settings:{disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true,disableCSSFileLoading:true}}),doc=win.document;
  doc.write(documentHtml);doc.close();
  const startupStyle=doc.createElement('style');startupStyle.textContent=css;doc.head.append(startupStyle);
  const host=doc.getElementById('app'),panel=doc.getElementById('app-bootstrap'),entry=doc.querySelector('script[type="module"][src="./js/app.js"],script[type="module"][src="./js/native-entry.js"]');
@@ -27,17 +28,17 @@ function setup({preference='ru',raw,browserLanguages=['en-GB'],deniedStorage=fal
  const classic=[...doc.scripts].find(script=>script.getAttribute('src')==='./js/app-bootstrap.js');assert.ok(classic&&!classic.type,'The independent guard is a self-hosted classic script');assert.equal(classic.defer,true);assert.ok([...doc.scripts].indexOf(classic)<[...doc.scripts].indexOf(entry));
  const policy=doc.querySelector('meta[http-equiv="Content-Security-Policy"]').content;assert.match(policy,/script-src 'self'/);assert.match(policy,/script-src-attr 'none'/);assert.equal(panel.querySelector('[onclick]'),null);
  assert.equal(panel.querySelector('[data-bootstrap-recover]').getAttribute('href'),'./recover.html','Only the existing explicitly operated repair page is linked');
- const timers=new Map(),state={reloads:0,writes:0,forbidden:0,observed:0,disconnected:0,windowErrorListeners:0,entryErrorListeners:0},url=win.location.href;let id=0;
+ const timers=new Map(),state={reloads:0,writes:0,forbidden:0,observed:0,disconnected:0,windowErrorListeners:0,entryErrorListeners:0,timings:[],timingImports:0},url=win.location.href;let id=0;
  const forbidden=()=>{state.forbidden++;throw Error('Bootstrap must not touch audio, stores, service worker or navigation');};
  const storage={getItem(key){assert.equal(key,'salah:settings');if(deniedStorage)throw Error('SecurityError');if(missingSettings)return null;return raw??JSON.stringify({uiLanguage:preference,city:{name:'Тюмень',timezone:'Asia/Yekaterinburg'}});},setItem(){state.writes++;forbidden();},removeItem(){state.writes++;forbidden();},clear(){state.writes++;forbidden();}};
  const originalAdd=win.addEventListener.bind(win),originalRemove=win.removeEventListener.bind(win);win.addEventListener=(name,...args)=>{if(name==='error')state.windowErrorListeners++;return originalAdd(name,...args);};win.removeEventListener=(name,...args)=>{if(name==='error')state.windowErrorListeners--;return originalRemove(name,...args);};
  const entryAdd=entry.addEventListener.bind(entry),entryRemove=entry.removeEventListener.bind(entry);entry.addEventListener=(name,...args)=>{if(name==='error')state.entryErrorListeners++;return entryAdd(name,...args);};entry.removeEventListener=(name,...args)=>{if(name==='error')state.entryErrorListeners--;return entryRemove(name,...args);};
  class Observer extends win.MutationObserver{observe(...args){state.observed++;return super.observe(...args);}disconnect(){state.disconnected++;return super.disconnect();}}
  const navigator={languages:browserLanguages,language:browserLanguages[0]};Object.defineProperties(navigator,{serviceWorker:{get:forbidden},mediaSession:{get:forbidden}});
- const location=Object.freeze({href:url,hash:win.location.hash,reload(){state.reloads++;assert.equal(win.location.href,url,'Retry preserves both the current URL and route');},replace:forbidden,assign:forbidden});
+ const location=Object.freeze({href:url,hash:win.location.hash,search:win.location.search,reload(){state.reloads++;assert.equal(win.location.href,url,'Retry preserves both the current URL and route');},replace:forbidden,assign:forbidden});
  if(alreadyRendered)host.innerHTML='<section><input id="draft" value="Черновик"><p>Рабочий раздел</p></section>';
- const context=vm.createContext({window:win,document:doc,navigator,localStorage:storage,location,Intl,URL,MutationObserver:Observer,setTimeout:(fn,ms)=>{timers.set(++id,{fn,ms});return id;},clearTimeout:key=>timers.delete(key),Audio:forbidden,indexedDB:new Proxy({},{get:forbidden}),caches:new Proxy({},{get:forbidden})});
- vm.runInContext(source,context);
+ const context=vm.createContext({loadTimingModule:async()=>{state.timingImports++;return{showStartupTiming:({phase,at})=>state.timings.push({phase,at})};},window:win,document:doc,navigator,localStorage:storage,location,Intl,URL,MutationObserver:Observer,setTimeout:(fn,ms)=>{timers.set(++id,{fn,ms});return id;},clearTimeout:key=>timers.delete(key),Audio:forbidden,indexedDB:new Proxy({},{get:forbidden}),caches:new Proxy({},{get:forbidden})});
+ vm.runInContext(source.replace("import('./startup-timing.js')", 'loadTimingModule()'),context);
  const fireTimers=()=>{for(const [key,timer] of [...timers]){timers.delete(key);assert.equal(timer.ms,12000,'Only one bounded startup delay is scheduled');timer.fn();}};
  return{win,doc,host,panel,entry,timers,state,url,fireTimers,close:()=>win.happyDOM.close()};
 }
@@ -90,3 +91,73 @@ for(const options of languageCases){
  f.fireTimers();assert.ok(f.panel.querySelector('[data-bootstrap-status]').textContent.trim());assert.ok(f.panel.querySelector('[data-bootstrap-retry]').textContent.trim());assert.ok(f.panel.querySelector('[data-bootstrap-recover]').textContent.trim());assert.equal(f.state.writes,0);assert.equal(f.state.reloads,0);assert.equal(f.state.forbidden,0);await f.close();
 }
 console.log('PASS: actual startup HTML is visible without the module; standalone CSP-compatible guard handles module errors/12s slow load, explicit route-preserving retry, eight language preferences, denied storage and late-app cleanup without automatic navigation, store/audio or draft changes.');
+
+{
+ const regular=setup();
+ regular.host.innerHTML='<p>Home</p>';
+ await flush();
+ assert.equal(regular.state.timingImports,0,'Normal startup must not fetch the timing module');
+ await regular.close();
+
+ const wrongParameter=setup({timingQuery:'&startup-timing=10'});
+ wrongParameter.host.innerHTML='<p>Home</p>';
+ await flush();
+ assert.equal(wrongParameter.state.timingImports,0);
+ await wrongParameter.close();
+
+ const device=setup({documentHtml:nativeHtml,native:true,timingQuery:'&startup-timing=1'});
+ device.host.innerHTML='<p>Home</p>';
+ await flush();
+ assert.equal(device.state.timingImports,0,'The native startup path does not enable web diagnostics');
+ await device.close();
+
+ const timing=setup({timingQuery:'&startup-timing=1'});
+ timing.fireTimers();
+ await flush();
+ timing.host.innerHTML='<p>Home</p>';
+ await flush();
+ assert.deepEqual(timing.state.timings.map(mark=>mark.phase),['delayed','ready']);
+ assert.ok(timing.state.timings.every(mark=>Number.isFinite(mark.at)));
+ assert.equal(timing.state.forbidden,0);
+ assert.equal(timing.state.reloads,0);
+ assert.equal(timing.state.writes,0);
+ await timing.close();
+}
+
+{
+ const performance={
+  getEntriesByType:type=>({
+   navigation:[{type:'reload',workerStart:10,requestStart:33,responseStart:180,responseEnd:260}],
+   paint:[{name:'first-paint',startTime:270},{name:'first-contentful-paint',startTime:310}],
+   resource:[
+    {name:'https://example.test/salah/js/app.js',responseEnd:610,transferSize:45210},
+    {name:'https://example.test/salah/css/main.css',responseEnd:520,transferSize:0},
+    {name:'https://other.test/site.js',responseEnd:200,transferSize:9000},
+    {name:'https://example.test/salah/author.png',responseEnd:240,transferSize:800},
+    {name:'https://example.test/salah/js/late.js',responseEnd:3950,transferSize:1600}
+   ]
+  })[type]||[]
+ };
+ const description={performance,base:'https://example.test/salah/?profile-secret=example',phase:'ready',at:1210};
+ assert.deepEqual(collectStartupTiming(description),{
+  phase:'ready',screenMs:1210,documentFirstByteMs:147,htmlMs:80,firstPaintMs:310,staticCount:2,
+  staticTransferredBytes:45210,lastStaticMs:610,unmeasuredAfterStaticMs:600,workerIntercepted:true,navigationKind:'reload'
+ });
+ assert.equal(collectStartupTiming({...description,phase:'delayed'}).unmeasuredAfterStaticMs,null);
+ assert.equal(collectStartupTiming({...description,performance:null}).documentFirstByteMs,null);
+ assert.equal(collectStartupTiming({...description,at:225}).htmlMs,null,'Incomplete HTML download must not be reported as complete');
+ const panelWindow=new Window();
+ const doc=panelWindow.document;
+ doc.documentElement.lang='ru';
+ showStartupTiming({...description,doc,phase:'failed'});
+ assert.match(doc.querySelector('[data-startup-timing]').textContent,/Сбой загрузки: 1210 мс/);
+ showStartupTiming({...description,doc});
+ assert.equal(doc.querySelectorAll('[data-startup-timing]').length,1);
+ assert.match(doc.querySelector('[data-startup-timing]').textContent,/Экран приложения готов: 1210 мс/);
+ assert.doesNotMatch(doc.querySelector('[data-startup-timing]').textContent,/example\.test|profile-secret|author\.png/);
+ doc.querySelector('[data-startup-timing] button').click();
+ showStartupTiming({...description,doc});
+ assert.equal(doc.querySelector('[data-startup-timing]'),null,'Dismissal survives subsequent startup callbacks');
+ await panelWindow.happyDOM.close();
+}
+console.log('PASS: opt-in browser startup timing, stage breakdown, aggregate-only local display, late content filtering and dismissal.');

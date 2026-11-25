@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "السمات والخلفيات",
  "conversationThemeUi.personal": "هذه السمة مرئية لك فقط وتُحفظ لهذه المحادثة على هذا الجهاز.",
+ "conversationThemeUi.shared": "سيظهر المظهر المدمج لك وللطرف الآخر.",
  "conversationThemeUi.custom": "خلفيتك الخاصة",
  "conversationThemeUi.photoHint": "JPEG أو PNG أو WebP حتى 25 ميغابايت. تبقى الصورة على هذا الجهاز.",
  "conversationThemeUi.done": "تم",

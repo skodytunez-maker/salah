@@ -42,11 +42,12 @@ assert.ok(migration.includes('public.support_actor(true)'));assert.ok(migration.
 const appSource=await readFile(new URL('../dist/js/app.js',import.meta.url),'utf8');
 const menuSource=appSource.slice(appSource.indexOf('function more(){'),appSource.indexOf("\nwindow.addEventListener('salah:counter-status'"));
 for(const owner of [true,false]){
- const menuApp={innerHTML:''},context=createContext({t,teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',appSharingMarkup,bindAppSharing(){}});
+ const dom=new Window({url:'https://fixture.invalid/#more'});
+ const menuApp=dom.document.createElement('main'),context=createContext({t,teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),app:menuApp,counterSyncStatus:()=>({signedIn:true}),ownerVerified:()=>owner,settingsIcon:()=>'',title:()=>'',appSharingMarkup,bindAppSharing(){}});
  new Script(menuSource+';more();').runInContext(context);
  assert.equal(menuApp.innerHTML.includes('menu-helper-badge'),owner,'Helper badge only appears for the verified owner');
  const label=owner?'Обращения пользователей':'Обращения в поддержку',attribute=owner?'data-owner-support-status':'data-user-support-status';
- const dom=new Window({url:'https://fixture.invalid/#more'});dom.document.body.innerHTML=menuApp.innerHTML;
+ dom.document.body.append(menuApp);
  const row=dom.document.querySelector('a[href="'+(owner?'#support?owner=1':'#support')+'"]'),caption=row.querySelector('.menu-item-label'),dot=row.querySelector('.support-state-dot');
  assert.equal(caption.textContent,label);assert.equal(caption.nextElementSibling,dot,'Each account sees its dot directly beside the Menu support label');assert.equal(dot.hasAttribute(attribute),true);assert.equal(dot.hasAttribute(owner?'data-user-support-status':'data-owner-support-status'),false,'Owner and ordinary-account status roles stay separate');
  await dom.happyDOM.close();

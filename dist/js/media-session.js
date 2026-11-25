@@ -20,8 +20,9 @@ export function createMediaSession({nav=globalThis.navigator,Metadata=globalThis
   for(const action of actions){const enabled=typeof currentControls[action]==='function';if(registered.get(action)===enabled)continue;const owner=commandOwner;try{session.setActionHandler(action,enabled?details=>{if(commandOwner===owner&&session.metadata===owned)return currentControls[action]?.(details);}:null);registered.set(action,enabled);}catch{}}
   // A loading chapter continues the same listening intent. A false paused hint
   // at every background boundary lets iOS suspend an otherwise active queue.
-  playbackState=info.status==='playing'||info.status==='loading'&&playbackState==='playing'?'playing':'paused';
-  try{session.playbackState=playbackState;const duration=info.duration,position=info.position;if(Number.isFinite(duration)&&duration>0&&Number.isFinite(position))session.setPositionState?.({duration,position:Math.max(0,Math.min(position,duration)),playbackRate:1});else session.setPositionState?.();}catch{}
+  // A lock-screen resume is different: keep the OS clock unpublished until media advances.
+  playbackState=!info.awaitingAudioClock&&(info.status==='playing'||info.status==='loading'&&playbackState==='playing')?'playing':'paused';
+  try{session.playbackState=playbackState;const duration=info.duration,position=info.position;if(!info.awaitingAudioClock&&Number.isFinite(duration)&&duration>0&&Number.isFinite(position))session.setPositionState?.({duration,position:Math.max(0,Math.min(position,duration)),playbackRate:1});else session.setPositionState?.();}catch{}
  }
  return{update,clear};
 }

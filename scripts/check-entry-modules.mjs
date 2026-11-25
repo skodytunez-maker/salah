@@ -25,18 +25,20 @@ for(const name of await fs.readdir(dist)){
  }
 }
 assert.ok(entries.has(new URL('js/app.js',dist).href),'The actual app entry must be linked');
-// This private entry is lazy at runtime, but must still link before release.
-entries.add(new URL('js/lesson-invitation.js',dist).href);
+// Lazy browser routes must still link before release.
+for(const path of ['js/lesson-invitation.js','js/quran.js','js/video-stories.js','js/startup-timing.js'])entries.add(new URL(path,dist).href);
 function load(url){
  assert.ok(url.startsWith(dist.href),'A browser module must stay inside dist: '+url);
  if(!modules.has(url))modules.set(url,fs.readFile(new URL(url),'utf8').then(source=>new vm.SourceTextModule(source,{identifier:url})));
  return modules.get(url);
 }
-for(const url of entries){
+const mainEntry=new URL('js/app.js',dist).href,quranEntry=new URL('js/quran.js',dist).href;
+for(const url of [mainEntry,...[...entries].filter(entry=>entry!==mainEntry)]){
  const entry=await load(url);
  if(entry.status==='unlinked')await entry.link((specifier,ref)=>{
   assert.ok(specifier.startsWith('.'),'Resolve only bundled browser imports: '+specifier);
   return load(new URL(specifier,ref.identifier).href);
  });
+ if(url===mainEntry)assert.ok(!modules.has(quranEntry),'Home entry must not import the Quran route statically');
 }
 console.log('PASS: '+entries.size+' browser entries and '+modules.size+' modules link with all named exports available.');

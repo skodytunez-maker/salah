@@ -79,6 +79,29 @@ assert.equal(successful.select('#account-form-area').children[0].attributes.id,'
 await successful.select('#counter-account-out').onclick();assert.equal(successful.select('#counter-account-heading').textContent,'Вход и регистрация');assert.ok(successful.select('#counter-account-email'));assert.equal(successful.counterSyncStatus().signedIn,false);
 assert.match(accountMenu.app.querySelector('.list-button').textContent,/Вход и регистрация/);assert.doesNotMatch(accountMenu.app.textContent,/Авторизован/);
 const editing=browser();await open(editing);editing.select('#counter-account-email').value='draft@example.test';editing.select('#counter-account-nickname').value='Draft';const draftForm=editing.select('#counter-account-email-form');await editing.showCounterAccount(editing.app);assert.equal(editing.select('#counter-account-email-form'),draftForm);assert.equal(editing.select('#counter-account-email').value,'draft@example.test');assert.equal(editing.select('#counter-account-nickname').value,'Draft');await requestCode(editing);await editing.select('#counter-email-change').onclick();assert.ok(editing.select('#counter-account-email'));assert.equal(editing.select('#counter-email-code'),null);
+
+assert.equal(editing.select('#counter-account-nickname').value,'Fixture Nick');
+assert.equal(editing.select('#counter-account-email').focused,true);
+assert.equal(editing.fixture.mail.length,1,'Changing address must not send an email automatically');
+const nextAddress='available@example.test';
+editing.select('#counter-account-email').value=nextAddress;
+await editing.select('#counter-account-email-form').submit();
+assert.equal(editing.fixture.mail.length,2);
+assert.equal(editing.fixture.mail[1].email,nextAddress);
+assert.equal(editing.fixture.mail[1].options.data.nickname,'Fixture Nick');
+await confirm(editing);
+assert.equal(editing.fixture.codes.at(-1).email,nextAddress,'The confirmation is bound to the new address');
+assert.equal(editing.counterSyncStatus().nickname,'Fixture Nick');
+const blockedChange=browser();await open(blockedChange);await requestCode(blockedChange);
+blockedChange.fixture.verifyGate=deferred();blockedChange.fixture.verifyError={code:'otp_expired',status:400};
+const verifyingChange=confirm(blockedChange),changeControl=blockedChange.select('#counter-email-change');
+assert.equal(changeControl.disabled,true);
+changeControl.onclick();assert.ok(blockedChange.select('#counter-email-code'));
+blockedChange.fixture.verifyGate.resolve();await verifyingChange;
+assert.equal(changeControl.disabled,false);
+changeControl.onclick();assert.equal(blockedChange.select('#counter-account-nickname').value,'Fixture Nick');
+console.log('PASS: changing the email preserves the nickname and keeps code verification bound to the new address.');
+
 const passwordSuccess=browser();await open(passwordSuccess);const goodPasswordForm=passwordSuccess.select('#counter-account-login');goodPasswordForm.querySelector('input[type=email]').value='fixture@example.test';goodPasswordForm.querySelector('input[type=password]').value='fixture-password';await goodPasswordForm.submit();assert.equal(passwordSuccess.select('#counter-account-heading').textContent,'Мой аккаунт');assert.equal(passwordSuccess.select('#counter-account-login'),null);
 
 for(const mode of ['invalid','expired','unconfirmed']){

@@ -15,12 +15,12 @@ assert.equal(controlCenter('pause'),true);assert.equal(first.paused,true);assert
 handlers.seekto({seekTime:30});assert.equal(first.currentTime,30);assert.equal(first.paused,true,'Seeking paused media cannot auto-play');handlers.play();await flush();assert.equal(first.paused,false);assert.equal(tracks.at(-1),first);handlers.seekforward({seekOffset:10});assert.equal(first.currentTime,40);handlers.nexttrack();await flush();assert.equal(session.state.surah.number,2);assert.equal(first.src,'');assert.equal(native.metadata.title,'Сура 2');handlers.previoustrack();await flush();assert.equal(session.state.surah.number,1);
 const current=tracks.at(-1),nativePlays=current.plays,source=current.src;current.currentTime=47;
 current.paused=true;current.onpause();assert.equal(session.state.status,'paused');await flush();assert.equal(current.plays,nativePlays,'Native pause does not schedule recovery');
-current.paused=false;current.onplay();assert.equal(session.state.status,'playing');assert.equal(native.playbackState,'playing');assert.equal(current.plays,nativePlays,'Direct native Play needs no second app play() call');assert.equal(current.currentTime,47);assert.equal(current.src,source);assert.equal(appleAudioSession.type,'playback');
+current.paused=false;current.onplay();assert.equal(session.state.status,'loading');assert.equal(native.position,undefined);assert.equal(current.currentTime,47);current.currentTime=47.25;current.ontimeupdate();assert.equal(session.state.status,'playing');assert.equal(native.playbackState,'playing');assert.equal(current.plays,nativePlays,'Direct native Play needs no second app play() call');assert.equal(current.src,source);assert.equal(appleAudioSession.type,'playback');
 current.pause();await flush();assert.equal(session.state.status,'paused','A subsequent native Pause remains authoritative after native Play');assert.equal(native.playbackState,'paused');assert.equal(current.plays,nativePlays);
 handlers.stop();assert.equal(session.state.status,'stopped');assert.equal(native.metadata,null);assert.equal(appleAudioSession.type,'auto');assert.ok(Object.values(handlers).every(v=>v===null));console.log('PASS: Quran lock-screen pause/resume, same audio, elapsed time, paused seek, previous/next surah, direct native Play without duplicate play(), authoritative native Pause and owner cleanup');
 
 // iOS can acknowledge Play while the buffered element is still frozen.
-for(const scenario of ['command','native','pause','seek']){
+for(const scenario of ['command','native','pause','seek','buffering','visible-command']){
  const nativePlay=scenario==='native';
  let timerId=0;
  const timers=new Map(),systems={};
@@ -28,27 +28,39 @@ for(const scenario of ['command','native','pause','seek']){
  const page=new EventTarget();page.hidden=false;
  const playHistory=[];
  class BufferedAudio extends Audio{
-  readyState=4;
+  readyState=scenario==='buffering'?2:4;
   play(){playHistory.push(this.currentTime);return super.play();}
  }
+ const nativeFixture={setActionHandler(n,fn){systems[n]=fn;},setPositionState(value){this.position=value;}};
  const fixture=createQuranSession({
-  media:createMediaSession({nav:{mediaSession:{setActionHandler(n,fn){systems[n]=fn;},setPositionState(){}}},Metadata}),
+  media:createMediaSession({nav:{mediaSession:nativeFixture},Metadata}),
   load:async n=>surah(n),loadCatalog:async()=>catalog,
   createPlayer:opts=>createQuranPlayer({...opts,audioNavigator:nav,audioDocument:page,audioWindow:new EventTarget(),getAudio:async()=>null,loadTimings:async()=>null,
    createAudio:src=>new BufferedAudio(src),setTimer(fn,ms){const id=++timerId;timers.set(id,{fn,ms});return id;},clearTimer:id=>timers.delete(id)})
  });
  await fixture.start(surah(1),'ar.badralturki');await flush();
  const element=tracks.at(-1),originalSource=element.src;
- page.hidden=true;page.dispatchEvent(new Event('visibilitychange'));
+ page.hidden=scenario!=='visible-command';page.dispatchEvent(new Event('visibilitychange'));
  element.currentTime=37;systems.pause();
  if(nativePlay){element.paused=false;element.onplay();}
  else systems.play();
  await flush();
- assert.equal(fixture.state.status,'loading','Acknowledging a background Play does not prove playback restarted');
+ assert.equal(fixture.state.status,'loading','Acknowledging a system Play does not prove playback restarted');
+ assert.equal(nativeFixture.playbackState,'paused','The OS must not receive a playing hint while verifying audio');
+ assert.equal(nativeFixture.position,undefined,'The OS must not receive a position to extrapolate while resumed audio is unconfirmed');
  const tick=async()=>{
   assert.equal(timers.size,1,'At most one watchdog is scheduled');
   const [id,timer]=timers.entries().next().value;timers.delete(id);timer.fn();await flush();
  };
+ if(scenario==='buffering'){
+  assert.equal([...timers.values()][0].ms,15000,'An unbuffered resume is given the usual buffering allowance');
+  await tick();
+  assert.equal(fixture.state.status,'paused','An unbuffered frozen start returns to its original pause');
+  assert.equal(element.currentTime,37);
+  assert.equal(nativeFixture.position.position,37,'The confirmed pause restores the real timeline');
+  assert.equal(playHistory.length,2,'Avoid replaying unavailable media');
+  fixture.stop();continue;
+ }
  if(scenario==='pause'){
   const stale=[...timers.values()][0].fn;
   systems.pause();stale();await flush();
@@ -59,6 +71,8 @@ for(const scenario of ['command','native','pause','seek']){
   continue;
  }
  if(scenario==='seek'){
+  systems.seekto({seekTime:45});element.ontimeupdate();
+  assert.equal(fixture.state.status,'loading','A programmatic seek cannot confirm resume before seek events arrive');
   element.seeking=true;element.currentTime=50;element.ontimeupdate();
   assert.equal(fixture.state.status,'loading');
   element.seeking=false;element.onseeked();
@@ -84,6 +98,8 @@ for(const scenario of ['command','native','pause','seek']){
  }else{
   element.currentTime=37.25;element.ontimeupdate();
   assert.equal(fixture.state.status,'playing','Advancing the actual media clock confirms playback');
+  assert.equal(nativeFixture.playbackState,'playing');
+  assert.equal(nativeFixture.position.position,37.25);
   assert.equal([...timers.values()][0].ms,15000,'Normal playback uses the existing watchdog');
  }
  fixture.stop();

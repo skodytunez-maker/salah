@@ -1,5 +1,9 @@
 project_id = "kbltwszfvphgbxdbczsb"
 
+[functions.video-stories]
+# Public playback and server-checked mutations.
+verify_jwt = false
+
 [functions.owner-access]
 # Modern session JWTs are validated by Auth getUser on every request in the handler.
 # The platform's legacy-secret-only check does not support this signing-key setup.

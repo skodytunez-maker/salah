@@ -26,6 +26,9 @@ const hls=await readFile(new URL('dist/js/vendor/hls-light.min.js',root));assert
 const connectSources=policy.split(';').find(x=>x.trim().startsWith('connect-src '));assert.ok(connectSources.trim().split(/\s+/).includes('https://www.mp3quran.net'));
 // Stream online-only recordings from the verified directories without granting fetch access.
 const mediaSources = policy.split(';').find(directive => directive.trim().startsWith('media-src ')).trim().split(/\s+/);
+const signedMediaBase='https://kbltwszfvphgbxdbczsb.supabase.co/storage/v1/object/sign/';
+for(const bucket of ['support-chat-media','salah-video-stories'])assert.ok(mediaSources.includes(signedMediaBase+bucket+'/'));
+assert.ok(!mediaSources.includes(new URL(signedMediaBase).origin)&&!mediaSources.includes(signedMediaBase),'Only the signed media buckets are allowed');
 for (const [id, directory] of [
   ['ar.kamilsamigullin', 'https://azan.info/upload/Audio/'],
   ['ar.jahongirnematov', 'https://mp3muslim.uz/mp3/01-Quran/Jahongir_qori/'],

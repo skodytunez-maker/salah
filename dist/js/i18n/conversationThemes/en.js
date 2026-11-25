@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Themes and wallpaper",
  "conversationThemeUi.personal": "Only you see this theme. It is saved for this conversation on this device.",
+ "conversationThemeUi.shared": "You and the other participant will both see the built-in theme.",
  "conversationThemeUi.custom": "Your own wallpaper",
  "conversationThemeUi.photoHint": "JPEG, PNG or WebP up to 25 MB. The photo stays on this device.",
  "conversationThemeUi.done": "Done",

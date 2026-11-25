@@ -9,7 +9,6 @@ import{settings}from './storage.js';
 import{sceneAt,previewScene,sceneForMode}from './day-night.js';
 import{weatherFrame}from './weather-data.js';
 import{createSkyAtmosphere}from './sky-atmosphere.js';
-import{loadSkyMattes}from './sky-matte.js';
 import{ADVANCED_SKY_AVAILABLE}from './sky-feature-policy.js';
 import{ownerVerified}from './owner-auth.js';
 import{getPosition,getMoonPosition}from './vendor/suncalc.js';
@@ -35,7 +34,12 @@ let skyMotionTime=0,skyMotionAt=null,lastSkyDrawAt=null,lastSkyDrawCost=0,lastSk
 let skyPhotoPair=null,skyAttemptPair=null,skyRequest=null,skyGeneration=0,moonImageStop=null,skyPageHidden=false;
 const createSkyCanvas=(width,height)=>{const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;return canvas;};
 async function prepareSkySurface(dayURL,nightURL,dayImage,nightImage,signal){
- try{return await loadSkyMattes({dayURL,nightURL,dayImage,nightImage,signal,canvasFactory:createSkyCanvas,maxDimension:2400});}catch{return null;}
+ try{
+  if(signal?.aborted)return null;
+  const {loadSkyMattes}=await import('./sky-matte.js');
+  if(signal?.aborted)return null;
+  return await loadSkyMattes({dayURL,nightURL,dayImage,nightImage,signal,canvasFactory:createSkyCanvas,maxDimension:2400});
+ }catch{return null;}
 }
 function releaseSkyForeground(){if(skyForeground){for(const canvas of [skyForeground.day,skyForeground.night]){canvas.width=0;canvas.height=0;}skyForeground=null;}}
 function cancelSkyPreparation(){skyGeneration++;skyRequest?.abort();skyRequest=null;skyAttemptPair=null;}
@@ -167,19 +171,67 @@ window.addEventListener('resize',()=>{
 function landmarkNote(){const note=document.getElementById('landmark-status');if(!note)return;note.hidden=settings.wallpaper!=='landmark'||landmarkState==='ready'||landmarkState==='idle';setUiMessage(note,uiMessage(landmarkState==='loading'?'weatherUi.cityLoading':landmarkState==='unavailable'?'weatherUi.cityPreparing':'weatherUi.cityInternet'))}
 function stopLandmarkRequest(){landmarkRequest?.abort();landmarkRequest=null}
 function releaseLandmarkUrls(urls){for(const url of urls)URL.revokeObjectURL(url)}
+
+let clockFade=null;
+function finishClockFade(fade=clockFade,cancel=true){
+ if(!fade||fade!==clockFade)return;
+ clockFade=null;
+ window.clearTimeout(fade.timer);
+ fade.overlay.remove();
+ if(cancel)fade.animation?.cancel();
+ releaseLandmarkUrls(fade.urls);
+}
+function animateClockFade(fade=clockFade){
+ if(!fade||fade!==clockFade||fade.animation)return;
+ window.clearTimeout(fade.timer);
+ try{fade.animation=fade.overlay.animate([{opacity:1},{opacity:0}],{duration:650,easing:'ease-in-out',fill:'both'});}
+ catch{finishClockFade(fade);return;}
+ void fade.animation.finished.then(()=>finishClockFade(fade,false),()=>finishClockFade(fade,false));
+}
+function fadePreviousClockPhoto(scene,next,urls,home){
+ if(!home||!document.body.classList.contains('home-page')||skyPageHidden||document.hidden||!settings.transitions||settings.motion||
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches||
+  scene.dataset.unifiedSky==='ready'||landmarkEntry?.id!=='makkah'||landmarkEntry.clockPreview===true||
+  next.id!=='makkah'||next.clockPreview!==true||urls.length<2||
+  landmarkEntry.night!=='wallpapers/makkah/night-phone-v1.webp')return false;
+ const shade=scene.querySelector('.scene-shade');
+ if(!shade)return false;
+ const overlay=document.createElement('div');
+ if(typeof overlay.animate!=='function')return false;
+ overlay.className='scene-clock-fade';
+ for(const [name,url] of [['night',urls[1]],['day',urls[0]]]){
+  const layer=scene.querySelector('.scene-'+name);
+  if(!layer)return false;
+  const style=window.getComputedStyle(layer),old=layer.cloneNode(false);
+  old.style.backgroundImage='url("'+url+'")';
+  old.style.opacity=style.opacity|| (name==='night'?'1':scene.style.getPropertyValue('--scene-day')||'0');
+  old.style.filter=style.filter||'none';
+  old.style.transition='none';
+  overlay.append(old);
+ }
+ shade.before(overlay);
+ const fade={overlay,animation:null,timer:null,urls};
+ clockFade=fade;
+ // Wait briefly for the replacement sky when enabled, so it can appear in the same fade.
+ if(liveSkyActive())fade.timer=window.setTimeout(()=>animateClockFade(fade),900);
+ else animateClockFade(fade);
+ return true;
+}
 function neutralLandmark(scene){landmarkEntry=null;landmarkGeometry=null;wallpaperCaption(scene);delete scene.dataset.landmarkCity;for(const key of ['day','night','mask'])scene.style.setProperty('--landmark-'+key,'none')}
-function clearLandmark(scene){stopLandmarkRequest();releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];landmarkImages=[];neutralLandmark(scene)}
+function clearLandmark(scene){finishClockFade();stopLandmarkRequest();releaseLandmarkUrls(landmarkUrls);landmarkUrls=[];landmarkImages=[];neutralLandmark(scene)}
 function keepLandmarkSurface(scene){
  scene.dataset.wallpaper='landmark';document.body.dataset.wallpaper='landmark';
  if(!landmarkUrls.length)neutralLandmark(scene);
 }
 function prepareLandmark(scene,home){
  const selected=settings.wallpaper==='landmark';
+ if(clockFade&&(!home||!settings.transitions||settings.motion))finishClockFade();
  const viewportWidth=document.documentElement?.clientWidth||window.innerWidth||0,viewportHeight=window.innerHeight||0;
  const tablet=Math.min(viewportWidth,viewportHeight)>=600 || viewportWidth>viewportHeight;
  const clockTrial=!tablet&&clockPreviewAccess();
  const key=selected?[settings.landmarkCity,settings.city?.latitude,settings.city?.longitude,tablet?'tablet':'phone',clockTrial?'owner-trial':'standard'].join(':'):null;
  if(key!==landmarkKey){
+  finishClockFade();
   cancelSkyPreparation();
   stopLandmarkRequest();landmarkKey=key;landmarkState='idle';
   if(landmarkEntry?.clockPreview===true&&!clockTrial)clearLandmark(scene);
@@ -201,12 +253,12 @@ function prepareLandmark(scene,home){
    const images=await Promise.all(urls.map((url,i)=>loadDecodedImage(url,{signal:controller.signal}).catch(error=>{error.assetKey=['day','night','mask'][i];throw error;})));
    if(controller.signal.aborted){releaseLandmarkUrls(urls);return}
    if(result.entry.clockPreview===true&&!clockPreviewAccess()){releaseLandmarkUrls(urls);landmarkRequest=null;landmarkKey=null;landmarkState='idle';return;}
-   const previous=landmarkUrls;
+   const previous=landmarkUrls,fading=fadePreviousClockPhoto(scene,result.entry,previous,home);
    // Swap only after both photographs are decoded, then release the old city.
    for(const [i,name]of ['day','night','mask'].entries())scene.style.setProperty('--landmark-'+name,'url("'+urls[i]+'")');
    landmarkUrls=urls;landmarkImages=images;landmarkEntry=result.entry;landmarkGeometry={width:images[0].naturalWidth,height:images[0].naturalHeight,fitSubject:result.entry.fitSubject===true,focalX:result.entry.focalX,focalY:result.entry.focalY,fillViewport:result.entry.fillViewport===true};landmarkRequest=null;landmarkState='ready';
    scene.dataset.wallpaper='landmark';scene.dataset.landmarkCity=result.entry.id;document.body.dataset.wallpaper='landmark';
-   acceptSkyPhotoPair(scene,{dayURL:result.entry.day,nightURL:result.entry.night,dayImage:images[0],nightImage:images[1]});layoutScene(scene);pendingScene(scene,false);ensureSkySurface(scene);releaseLandmarkUrls(previous);landmarkNote();if(previewRequested)atmosphere(Date.now(),lastContext?.times,lastContext?.weather);else smoothPreview();
+   acceptSkyPhotoPair(scene,{dayURL:result.entry.day,nightURL:result.entry.night,dayImage:images[0],nightImage:images[1]});layoutScene(scene);pendingScene(scene,false);ensureSkySurface(scene);if(!fading)releaseLandmarkUrls(previous);landmarkNote();if(previewRequested)atmosphere(Date.now(),lastContext?.times,lastContext?.weather);else smoothPreview();
   }
   catch(error){releaseLandmarkUrls(urls);if(!controller.signal.aborted){if(error.assetKey)void loadLandmark.invalidate?.(result.entry,error.assetKey);landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}}
  }).catch(()=>{if(!controller.signal.aborted){landmarkRequest=null;landmarkState='offline';keepLandmarkSurface(scene);landmarkNote()}});
@@ -287,7 +339,7 @@ function renderUnifiedSky(scene,force=false){
   skyRenderer??=createSkyAtmosphere({canvasFactory:createSkyCanvas,texture:cloudTextureImage});
   const result=skyRenderer.render({skyCanvas:base,cloudCanvas:front,width,height,horizonY:Math.max(1,Math.min(height,(foregroundSkyBottom(cache)-plane.top)/plane.height*height)),sun:point('sun'),moon:point('moon'),day:skyFrame.day,clouds:weather.clouds,fog:weather.fog,instant:skyInstant,latitude:settings.city?.latitude,longitude:settings.city?.longitude,motionTime:skyMotionTime});
   if(!result.sourceReady||!renderForeground(scene,cache,weather))return fallback();
-  const gate=skyWeatherTarget.clouds>=.94||skyWeatherTarget.fog>=.78?0:result.skyVisibility;scene.style.setProperty('--scene-celestial-visibility',String(gate));scene.dataset.unifiedSky='ready';document.getElementById('weather-layer').dataset.unifiedSky='on';lastSkyDrawAt=now;lastSkyDrawCost=Math.max(0,performance.now()-now);return true;
+  const gate=skyWeatherTarget.clouds>=.94||skyWeatherTarget.fog>=.78?0:result.skyVisibility;scene.style.setProperty('--scene-celestial-visibility',String(gate));scene.dataset.unifiedSky='ready';animateClockFade();document.getElementById('weather-layer').dataset.unifiedSky='on';lastSkyDrawAt=now;lastSkyDrawCost=Math.max(0,performance.now()-now);return true;
  }catch{return fallback();}
 }
 function paintWeather(effect,now,weather,frame,home,scene){
@@ -389,7 +441,7 @@ function smoothPreview(){
   if(skyNeedsAnimation())skyAnimation=requestAnimationFrame(draw);else skyMotionAt=null;
  };skyAnimation=requestAnimationFrame(draw);
 }
-function pauseHiddenSky(){pauseSkyAnimation();if(previewActive())stopScenePreview();if(weatherPreview!==null)stopWeatherPreview();if(skyRequest)cancelSkyPreparation();if(cloudTextureState==='loading'){cloudTextureRequest?.abort();cloudTextureRequest=null;cloudTextureState='idle';}}
+function pauseHiddenSky(){finishClockFade();pauseSkyAnimation();if(previewActive())stopScenePreview();if(weatherPreview!==null)stopWeatherPreview();if(skyRequest)cancelSkyPreparation();if(cloudTextureState==='loading'){cloudTextureRequest?.abort();cloudTextureRequest=null;cloudTextureState='idle';}}
 window.addEventListener('pagehide',()=>{skyPageHidden=true;pauseHiddenSky();});
 window.addEventListener('pageshow',()=>{skyPageHidden=false;});
 document.addEventListener?.('visibilitychange',()=>{if(document.hidden)pauseHiddenSky();});

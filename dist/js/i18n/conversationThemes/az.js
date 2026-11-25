@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Mövzular və divar kağızları",
  "conversationThemeUi.personal": "Mövzunu yalnız siz görürsünüz. Bu cihazda bu söhbət üçün saxlanılır.",
+ "conversationThemeUi.shared": "Daxili mövzunu həm siz, həm də həmsöhbətiniz görəcək.",
  "conversationThemeUi.custom": "Öz divar kağızınız",
  "conversationThemeUi.photoHint": "25 MB-a qədər JPEG, PNG və ya WebP. Şəkil bu cihazda qalır.",
  "conversationThemeUi.done": "Hazırdır",

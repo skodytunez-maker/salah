@@ -9,7 +9,10 @@ assert.equal(resolveInterfaceLanguage('de',['ar']),'de');
 assert.equal(resolveInterfaceLanguage('auto',['fr-FR','az-Latn-AZ','en-US']),'az');
 assert.equal(resolveInterfaceLanguage('auto',['uz-Cyrl-UZ','en-US']),'en','An unavailable script is not silently selected');
 assert.equal(resolveInterfaceLanguage('auto',['kk-Cyrl-KZ']),'kk');
-assert.equal(resolveInterfaceLanguage('auto',['not_a_locale']),'ru');
+assert.equal(resolveInterfaceLanguage('auto',['not_a_locale']),'en');
+for(const locale of ['fr-CA','es-MX','pt-BR','it-IT','ky-KG'])assert.equal(resolveInterfaceLanguage('auto',[locale]),'en');
+assert.equal(resolveInterfaceLanguage('auto',['ru-RU']),'ru');
+assert.equal(resolveInterfaceLanguage('ru',['fr-CA']),'ru');
 assert.equal(resolveInterfaceLanguage('invalid',['ar']),'ru');
 for(const info of UI_LANGUAGES){
  if(!Intl.PluralRules.supportedLocalesOf([info.locale]).length)continue;

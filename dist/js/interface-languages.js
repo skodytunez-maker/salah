@@ -19,5 +19,5 @@ export function resolveInterfaceLanguage(preference,browserLanguages=[]){
    if(info&&(!locale.script||locale.script===info.script))return info.code;
   }catch{}
  }
- return 'ru';
+ return 'en';
 }

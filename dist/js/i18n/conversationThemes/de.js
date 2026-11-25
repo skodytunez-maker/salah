@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Designs und Hintergrund",
  "conversationThemeUi.personal": "Nur du siehst dieses Design. Es wird für diese Unterhaltung auf diesem Gerät gespeichert.",
+ "conversationThemeUi.shared": "Das integrierte Design ist für beide sichtbar.",
  "conversationThemeUi.custom": "Eigenes Hintergrundbild",
  "conversationThemeUi.photoHint": "JPEG, PNG oder WebP bis 25 MB. Das Foto bleibt auf diesem Gerät.",
  "conversationThemeUi.done": "Fertig",

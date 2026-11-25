@@ -17,7 +17,7 @@
  };
  // Match the normal interface preference without importing storage or changing
  // any saved setting. With no valid manual choice, follow the phone language.
- let preference='auto',language='ru';
+ let preference='auto',language='en';
  try{const saved=JSON.parse(localStorage.getItem('salah:settings'));if(saved&&typeof saved==='object'&&!Array.isArray(saved)&&typeof saved.uiLanguage==='string'&&(saved.uiLanguage==='auto'||Object.hasOwn(languages,saved.uiLanguage)))preference=saved.uiLanguage;}catch{}
  if(Object.hasOwn(languages,preference))language=preference;
  else if(preference==='auto')for(const candidate of navigator.languages||[navigator.language]){
@@ -26,9 +26,16 @@
  }
  const copy=languages[language];panel.lang=language;panel.dir=language==='ar'?'rtl':'ltr';status.textContent=copy.loading;retry.textContent=copy.retry;recover.textContent=copy.recover;
  let disposed=false,timer=null;
+ const profile=entry?.getAttribute('src')==='./js/app.js'&&/(?:^\?|&)startup-timing=1(?:&|$)/.test(location.search||'');
+ if(profile){try{window.performance?.setResourceTimingBufferSize?.(1000);}catch{}}
+ function capture(phase){
+  if(!profile||typeof window.performance?.now!=='function')return;
+  const performance=window.performance,at=performance.now();
+  void import('./startup-timing.js').then(({showStartupTiming})=>showStartupTiming({doc:document,performance,base:document.baseURI,phase,at})).catch(()=>{});
+ }
  const owns=()=>panel.isConnected&&panel.parentNode===host&&host.isConnected;
- const dispose=()=>{if(disposed)return;disposed=true;document.body?.removeAttribute('data-app-starting');clearTimeout(timer);observer.disconnect();entry?.removeEventListener('error',failed);window.removeEventListener('error',failed,true);retry.removeEventListener('click',repeat);};
- const reveal=reason=>{if(disposed)return;if(!owns()){dispose();return;}clearTimeout(timer);timer=null;status.textContent=copy[reason];panel.setAttribute('aria-busy','false');actions.hidden=false;};
+ const dispose=()=>{if(disposed)return;disposed=true;document.body?.removeAttribute('data-app-starting');clearTimeout(timer);observer.disconnect();entry?.removeEventListener('error',failed);window.removeEventListener('error',failed,true);retry.removeEventListener('click',repeat);capture('ready');};
+ const reveal=reason=>{if(disposed)return;if(!owns()){dispose();return;}clearTimeout(timer);timer=null;status.textContent=copy[reason];panel.setAttribute('aria-busy','false');actions.hidden=false;capture(reason);};
  const failed=event=>{
   // Resource errors belong to the entry element. Evaluation errors are emitted
   // on window with the failed module filename; unrelated assets are ignored.

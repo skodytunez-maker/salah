@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Мавзуъҳо ва пасзамина",
  "conversationThemeUi.personal": "Ин мавзуъро танҳо шумо мебинед. Он барои ин суҳбат дар ин дастгоҳ нигоҳ дошта мешавад.",
+ "conversationThemeUi.shared": "Мавзуи дарунсохт ба шумо ва ҳамсуҳбататон намоён мешавад.",
  "conversationThemeUi.custom": "Пасзаминаи худ",
  "conversationThemeUi.photoHint": "JPEG, PNG ё WebP то 25 МБ. Акс дар ин дастгоҳ мемонад.",
  "conversationThemeUi.done": "Тайёр",

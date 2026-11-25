@@ -18,7 +18,7 @@ export function themePreferenceKey(actor,scope){
 const validPhoto=id=>typeof id==='string'&&/^[\w-]{1,100}$/.test(id);
 export function readThemePreference(storage,key){
  if(!key)return{theme:'default'};
- try{const raw=storage.getItem(key);if(typeof raw!=='string'||raw.length>256)return{theme:'default'};const value=JSON.parse(raw);if(value?.theme==='custom'&&validPhoto(value.photo))return{theme:'custom',photo:value.photo};if(CONVERSATION_THEMES.some(t=>t.id===value?.theme))return{theme:value.theme};}catch{}
+ try{const raw=storage.getItem(key);if(typeof raw!=='string'||raw.length>256)return{theme:'default'};const value=JSON.parse(raw);if(value?.theme==='custom'&&validPhoto(value.photo))return{theme:'custom',photo:value.photo,...(Number.isSafeInteger(value.sharedVersion)&&value.sharedVersion>=0?{sharedVersion:value.sharedVersion}:{})};if(CONVERSATION_THEMES.some(t=>t.id===value?.theme))return{theme:value.theme};}catch{}
  return{theme:'default'};
 }
 // Personal photographs stay on this device, outside localStorage and never in messages.

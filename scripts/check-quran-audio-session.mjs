@@ -86,14 +86,14 @@ remoteAudio.paused=true; // OS paused while the page was suspended; no onpause y
 assert.equal(lock.state.status,'playing');const staleCalls=remoteAudio.calls;
 lockActions.play();await flush();
 assert.equal(remoteAudio.calls,staleCalls+1,'Control Center Play must inspect the retained media, not ignore a stale playing view');
-assert.equal(remoteAudio.src,remoteSrc);assert.equal(remoteAudio.currentTime,97);assert.equal(lock.state.status,'playing');
+assert.equal(remoteAudio.src,remoteSrc);assert.equal(remoteAudio.currentTime,97);assert.equal(lock.state.status,'loading');remoteAudio.currentTime=97.25;remoteAudio.ontimeupdate();assert.equal(lock.state.status,'playing');
 const duplicateCalls=remoteAudio.calls;lockActions.play();await flush();assert.equal(remoteAudio.calls,duplicateCalls,'Repeated system Play never toggles into pause or restarts');
 lockActions.pause();await flush();const pausedSrc=remoteAudio.src,savedPlay=remoteAudio.play;let rejectedRemote=0;
 remoteAudio.play=async()=>{rejectedRemote++;throw Object.assign(Error('not allowed'),{name:'NotAllowedError'});};
 lockActions.play();await flush();assert.equal(rejectedRemote,1);assert.equal(lock.state.status,'paused','Denied background resume stays paused instead of clearing system audio');
-assert.equal(remoteAudio.src,pausedSrc,'Denied resume preserves native media source');assert.equal(remoteAudio.currentTime,97);
+assert.equal(remoteAudio.src,pausedSrc,'Denied resume preserves native media source');assert.equal(remoteAudio.currentTime,97.25);
 lockDoc.hide();lockDoc.show();await flush();assert.equal(rejectedRemote,1,'No automatic retry after a denied explicit command');
-remoteAudio.play=savedPlay;lockActions.play();await flush();assert.equal(lock.state.status,'playing');assert.equal(remoteAudio.currentTime,97);
+remoteAudio.play=savedPlay;lockActions.play();await flush();assert.equal(lock.state.status,'loading');assert.equal(remoteAudio.currentTime,97.25);remoteAudio.currentTime=97.5;remoteAudio.ontimeupdate();assert.equal(lock.state.status,'playing');
 lockActions.pause();let resolveRemote;remoteAudio.play=()=>{remoteAudio.calls++;return new Promise(resolve=>resolveRemote=()=>{remoteAudio.paused=false;resolve();});};
 const beforePendingRemote=remoteAudio.calls;lockActions.play();lockActions.play();assert.equal(remoteAudio.calls,beforePendingRemote+1,'Duplicate pending Play does not issue another native request');lockActions.pause();resolveRemote();await flush();
 assert.equal(lock.state.status,'paused','Pause wins over a delayed remote play completion');assert.equal(remoteAudio.paused,true,'Cancelled play cannot continue silently behind a paused view');
@@ -107,7 +107,7 @@ lock.stop();console.log('PASS: Control Center explicit play, stale native pause,
  const remoteTracks=[];class RemoteAudio{constructor(src){this.src=src;this.paused=true;this.ended=false;this.readyState=1;this.currentTime=0;this.duration=200;this.calls=0;remoteTracks.push(this);}play(){this.calls++;writes.push('play');this.paused=false;this.onplay?.();return Promise.resolve();}pause(){this.paused=true;this.onpause?.();}}
  const remoteFixture=createQuranSession({media:remoteMedia,loadCatalog:async()=>({surahs:Array.from({length:114},(_,i)=>({number:i+1,name:'Сура '+(i+1)}))}),createPlayer:opts=>createQuranPlayer({...opts,audioNavigator:remoteNav,audioDocument:remoteDoc,audioWindow:remoteWin,getAudio:async()=>null,loadTimings:async()=>null,createAudio:src=>new RemoteAudio(src)})});
  await remoteFixture.start({number:85,verses:[{number:5909,ayah:1}]},'ar.yasseraldossaricontinuous');await flush();const retained=remoteTracks[0],source=retained.src;retained.currentTime=37;remoteActions.pause();writes.length=0;
- remoteActions.play();await flush();assert.deepEqual(writes.slice(0,3),['auto','playback','play'],'Explicit remote resume reacquires retained category synchronously before play');assert.equal(retained.currentTime,37);assert.equal(retained.src,source);assert.equal(remoteTracks.length,1);assert.equal(remoteFixture.state.status,'playing');
+ remoteActions.play();await flush();assert.deepEqual(writes.slice(0,3),['auto','playback','play'],'Explicit remote resume reacquires retained category synchronously before play');assert.equal(retained.currentTime,37);assert.equal(retained.src,source);assert.equal(remoteTracks.length,1);assert.equal(remoteFixture.state.status,'loading');retained.currentTime=37.25;retained.ontimeupdate();assert.equal(remoteFixture.state.status,'playing');
  const beforeDuplicate=writes.length;remoteActions.play();await flush();assert.equal(writes.length,beforeDuplicate,'Repeated Play while running cannot reset its category');
  remoteActions.pause();writes.length=0;remoteFixture.resume();await flush();assert.deepEqual(writes,['play'],'In-app resume does not cycle its audio category');
  // Native play/onplay can arrive after a newer pause, before the promise resolves.

@@ -37,7 +37,7 @@ const context=vm.createContext({ADVANCED_SKY_AVAILABLE:true,ownerVerified:()=>fa
  requestAnimationFrame:fn=>{raf.set(++nextRAF,fn);return nextRAF;},cancelAnimationFrame:id=>raf.delete(id)
 });
 const source=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');
-vm.runInContext(source.split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
+vm.runInContext(source.replace("await import('./sky-matte.js')", '({loadSkyMattes:globalThis.loadSkyMattes})').split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
 const turns=async()=>{for(let i=0;i<6;i++)await new Promise(r=>setImmediate(r));};
 const tick=(elapsed=0)=>{mono+=elapsed;wall+=elapsed;context.atmosphere(wall,null,observed);};
 const route=(name)=>{w.location.hash='#'+name;doc.body.className=name==='home'?'home-page':name+'-page';tick();};

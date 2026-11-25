@@ -25,7 +25,7 @@ const context=vm.createContext({ADVANCED_SKY_AVAILABLE,document:doc,window:w,set
  loadDecodedImage:(url,{signal}={})=>{assert.ok(!/home-clouds|home-moon/.test(url));photos.push({url,signal});return Promise.resolve({complete:true,naturalWidth:1536,naturalHeight:1024});},watchDecodedImages:()=>()=>{},
  performance:{now:()=>mono},Date:class extends Date{static now(){return wall;}},AbortController,requestAnimationFrame(){rafCalls++;return 1;},cancelAnimationFrame(){}
 });
-const source=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');vm.runInContext(source.split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
+const source=await readFile(new URL('../dist/js/weather.js',import.meta.url),'utf8');vm.runInContext(source.replace("await import('./sky-matte.js')", '({loadSkyMattes:globalThis.loadSkyMattes})').split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
 const tick=()=>{context.atmosphere(wall,null,{weather_code:45,cloud_cover:100,precipitation:3,temperature_2m:-2,apparent_temperature:-4,wind_speed_10m:1,interval:900,dataAt:wall,fetchedAt:wall});mono+=1000;wall+=1000;},turns=async()=>{for(let i=0;i<6;i++)await new Promise(r=>setImmediate(r));};
 tick();await turns();tick();const scene=doc.getElementById('home-scene');assert.equal(photos.length,2);assert.ok(scene.querySelector('.scene-day').style.backgroundImage);assert.ok(scene.querySelector('.scene-night').style.backgroundImage);
 const assertClosed=()=>{

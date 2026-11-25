@@ -1,37 +1,377 @@
 {
   "schema": 1,
-  "version": 560,
-  "baseCommit": "4ed532e7dd7cd40ac0b5da98176f3785a28208a7",
-  "baseTree": "2dcb29ea114f643f87c1f4018b110dd84ab34775",
-  "note": "Quiet fix for the Support inbox-to-chat transition and photo preview layout shifts.",
+  "version": 561,
+  "baseCommit": "ee6e3928d9ae3429eff4550c404c0145718e7e48",
+  "baseTree": "2b254726be04f2892040e3b41c3cbab0ed363d57",
+  "note": "SALAH 561 with verified changes to iOS playback, Support, Stories, registration, language fallback, web startup and the private Makkah preview.",
   "allowed": [
     {
       "path": "dist/css/support.css",
-      "reason": "Reserve a stable thumbnail frame and paint the selected inbox row during loading."
+      "reason": "Style the directory divider and the owner conversation preview menu."
+    },
+    {
+      "path": "dist/css/video-stories.css",
+      "reason": "Style the Stories entry, viewing and response controls within SALAH."
+    },
+    {
+      "path": "dist/day-night.css",
+      "reason": "Position the short-lived photograph layers under the existing scene shade."
+    },
+    {
+      "path": "dist/index.html",
+      "reason": "Apply the Stories stylesheet and allow signed video playback from its dedicated storage bucket. Load Stories styling and authorize playback only from the dedicated signed media paths."
+    },
+    {
+      "path": "dist/js/app-bootstrap.js",
+      "reason": "Apply the same English fallback in the independent pre-module screen. Capture opt-in browser timing at a readiness, timeout or failed transition without affecting the regular entry."
     },
     {
       "path": "dist/js/app-release.js",
       "reason": "Quiet release metadata."
     },
     {
+      "path": "dist/js/app.js",
+      "reason": "Mount the optional Home stories indicator and provide the Stories menu entry. Defer loading the Quran reader until its route opens, with stale navigation protection."
+    },
+    {
+      "path": "dist/js/chat-translation.js",
+      "reason": "Enable optional on-device translation for browsers with the necessary built-in APIs."
+    },
+    {
+      "path": "dist/js/conversation-theme-view.js",
+      "reason": "Render and synchronize the selected built-in Support theme while keeping photo settings local."
+    },
+    {
+      "path": "dist/js/conversation-themes.js",
+      "reason": "Render and synchronize the selected built-in Support theme while keeping photo settings local."
+    },
+    {
+      "path": "dist/js/counter-account.js",
+      "reason": "Keep the entered nickname when changing the registration email and preserve in-flight OTP boundaries."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
+    },
+    {
+      "path": "dist/js/i18n/account/ar.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/az.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/de.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/en.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/kk.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/ru.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/tg.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/account/uz.js",
+      "reason": "Show video upload and format status in the existing composer."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/ar.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/az.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/de.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/en.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/kk.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/ru.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/tg.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/uz.js",
+      "reason": "Explain that a built-in Support theme is visible to both participants."
+    },
+    {
+      "path": "dist/js/interface-languages.js",
+      "reason": "Use English when no supported device language matches automatic preference."
+    },
+    {
+      "path": "dist/js/media-session.js",
+      "reason": "Keep the iOS position clock unset until audio movement is confirmed."
+    },
+    {
+      "path": "dist/js/owner-auth.js",
+      "reason": "Reuse the authenticated user pager with abort and expected-owner checks."
+    },
+    {
+      "path": "dist/js/quran-audio.js",
+      "reason": "Require movement from the retained native audio clock after a system resume."
+    },
+    {
+      "path": "dist/js/quran-player-navigation.js",
+      "reason": "Allow an independent history key for stories while preserving the default Quran player route."
+    },
+    {
+      "path": "dist/js/quran-session.js",
+      "reason": "Pass the unconfirmed playback state to the system media session."
+    },
+    {
+      "path": "dist/js/staff-cabinet.js",
+      "reason": "Enable optional on-device translation for browsers with the necessary built-in APIs."
+    },
+    {
+      "path": "dist/js/staff-markup.js",
+      "reason": "Record, preview and send voice in the existing Support conversation flow."
+    },
+    {
+      "path": "dist/js/startup-timing.js",
+      "reason": "Display only local aggregate browser startup timings when explicitly requested."
+    },
+    {
+      "path": "dist/js/support-chat-view.js",
+      "reason": "Place contacts below the inbox and anchor a cancellable context menu to the highlighted row."
+    },
+    {
       "path": "dist/js/support-client.js",
-      "reason": "Keep the same inbox while a grouped conversation loads and preserve signed photo opening and saving."
+      "reason": "Separate existing threads from new contacts and wait for a confirmed self-only clear."
+    },
+    {
+      "path": "dist/js/support-media.js",
+      "reason": "Record, preview and send voice in the existing Support conversation flow."
+    },
+    {
+      "path": "dist/js/support-user-directory.js",
+      "reason": "Search and paginate new contacts without duplicating past conversations."
+    },
+    {
+      "path": "dist/js/support-user-profile.js",
+      "reason": "Use the same shared conversation theme in the private participant card opened from that chat."
+    },
+    {
+      "path": "dist/js/support-voice-recorder.js",
+      "reason": "Record, preview and send voice in the existing Support conversation flow."
+    },
+    {
+      "path": "dist/js/support.js",
+      "reason": "Provide the existing owner directory from the owner route only."
+    },
+    {
+      "path": "dist/js/video-stories.js",
+      "reason": "Watch, publish, archive and engage with SALAH stories."
+    },
+    {
+      "path": "dist/js/weather.js",
+      "reason": "Defer the advanced-sky matte atlas until a verified opt-in and cancel pending work on exit. Fade the verified portrait Makkah trial in over the already visible regular photograph and dispose on navigation or grant revocation."
+    },
+    {
+      "path": "dist/owner.html",
+      "reason": "Load Stories styling and authorize playback only from the dedicated signed media paths."
+    },
+    {
+      "path": "dist/share.html",
+      "reason": "Load Stories styling and authorize playback only from the dedicated signed media paths."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Align the cache, release version and decoded asset sizes."
+      "reason": "Align worker version and cache the directory module."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Verify exact scope against published 559."
+      "reason": "Exact checked release scope against 560."
+    },
+    {
+      "path": "scripts/check-app-bootstrap.mjs",
+      "reason": "Verify opt-in-only timing, limited data display and unaffected regular and native bootstrap."
+    },
+    {
+      "path": "scripts/check-chat-translation.mjs",
+      "reason": "Cover account and room isolation, in-memory caching and unchanged message originals."
+    },
+    {
+      "path": "scripts/check-conversation-themes.mjs",
+      "reason": "Verify shared Support theme authorization, synchronization and offline behavior."
+    },
+    {
+      "path": "scripts/check-counter-account.mjs",
+      "reason": "Verify nickname retention and new-address confirmation while preserving recovery and QR behavior."
+    },
+    {
+      "path": "scripts/check-entry-modules.mjs",
+      "reason": "Link and verify the deferred reader and Stories browser modules. Link the optional static diagnostic module before packaging."
+    },
+    {
+      "path": "scripts/check-home-weather-continuity.mjs",
+      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
+    },
+    {
+      "path": "scripts/check-interface-language-core.mjs",
+      "reason": "Verify unsupported regional language variants and preservation of manual Russian."
+    },
+    {
+      "path": "scripts/check-interface-language-settings.mjs",
+      "reason": "Verify consistent initial and runtime fallback on unsupported phone languages."
+    },
+    {
+      "path": "scripts/check-live-sky-opt-in.mjs",
+      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
+    },
+    {
+      "path": "scripts/check-owner-sky-access.mjs",
+      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
+    },
+    {
+      "path": "scripts/check-owner-support.mjs",
+      "reason": "Exercise the existing Support menu against a DOM that includes the new Stories entry."
+    },
+    {
+      "path": "scripts/check-public-sky-policy.mjs",
+      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
+    },
+    {
+      "path": "scripts/check-quran-audio-session.mjs",
+      "reason": "Verify remote Play, retained source and category without an optimistic iOS clock."
+    },
+    {
+      "path": "scripts/check-quran-lockscreen.mjs",
+      "reason": "Cover false starts, buffering, seek and the system playback state."
+    },
+    {
+      "path": "scripts/check-quran-pause-authority.mjs",
+      "reason": "Verify delayed system resume and native Pause using actual audio ticks."
+    },
+    {
+      "path": "scripts/check-quran-reading-progress.mjs",
+      "reason": "Verify reading continuity, deduplicated lazy loading, stale route protection and retry."
+    },
+    {
+      "path": "scripts/check-scene-load.mjs",
+      "reason": "Exercise the real foreground, fallback and device scene against the delayed matte loader. Reproduce the abrupt standard-to-owner wallpaper handoff and verify fading, a bounded sky wait and cleanup."
+    },
+    {
+      "path": "scripts/check-security.mjs",
+      "reason": "Verify exact signed media bucket boundaries in the content security policy."
+    },
+    {
+      "path": "scripts/check-settings-resume.mjs",
+      "reason": "Include the Stories disposer in the existing settings navigation fixture."
+    },
+    {
+      "path": "scripts/check-support-access-continuity.mjs",
+      "reason": "Add the user pager to the verified owner route fixture."
+    },
+    {
+      "path": "scripts/check-support-conversation-theme.mjs",
+      "reason": "Verify shared Support theme authorization, synchronization and offline behavior."
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Exercise deferred conversation opening and signed photo frame before decoding."
+      "reason": "Cover mixed inbox layout, authorization, gestures, cancellation, retry and self-only confirmation."
     },
     {
-      "path": "scripts/check-support-layout.mjs",
-      "reason": "Verify the decoded image cannot resize the preview or neighboring messages."
+      "path": "scripts/check-support-reply-photos.mjs",
+      "reason": "Exercise authenticated photo replies, storage failure, replay and access visibility."
+    },
+    {
+      "path": "scripts/check-support-reply-video.mjs",
+      "reason": "Verify retry, signed video transport and private visibility."
+    },
+    {
+      "path": "scripts/check-support-voice-recorder.mjs",
+      "reason": "Verify recording permission, resource cleanup and cancellation."
+    },
+    {
+      "path": "scripts/check-video-stories.mjs",
+      "reason": "Verify the real Stories route, local database and UI flows."
+    },
+    {
+      "path": "supabase/config.toml",
+      "reason": "Register the independent Stories function with separate account and owner checks."
+    },
+    {
+      "path": "supabase/functions/support-messages/index.ts",
+      "reason": "Scope shared theme access to authenticated Support participants only."
+    },
+    {
+      "path": "supabase/functions/video-stories/core.mjs",
+      "reason": "Validate video publication, polls and viewer actions."
+    },
+    {
+      "path": "supabase/functions/video-stories/index.ts",
+      "reason": "Gate publishing, media and interactions by current authentication and story visibility."
+    },
+    {
+      "path": "supabase/migrations/20261122213000_video_stories.sql",
+      "reason": "Create private Stories storage and publication state."
+    },
+    {
+      "path": "supabase/migrations/20261125023000_support_conversation_theme.sql",
+      "reason": "Scope shared theme access to authenticated Support participants only."
+    },
+    {
+      "path": "supabase/migrations/20261125024500_support_reply_photos.sql",
+      "reason": "Keep private reply photo batches and reject conflicting retries."
+    },
+    {
+      "path": "supabase/migrations/20261125033000_support_reply_media.sql",
+      "reason": "Accept private video and recorded voice with confirmed participant and message visibility checks."
+    },
+    {
+      "path": "supabase/migrations/20261125143000_video_story_engagement.sql",
+      "reason": "Store likes, reactions, votes and private comments with an account-bound interface."
     }
   ],
   "generated": [
@@ -1447,7 +1787,7 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "2cebc090001bcb3b620042820b7f7f47f5269717"
+      "sha": "70f409f426777efd318bc52a52309b3702165d72"
     },
     {
       "path": "dist/css/team-preview.css",
@@ -2643,7 +2983,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "7188e30f837b88b0003e2bc05fa9f03cb99f5967"
+      "sha": "706b16b840371fc95d2125f6d630a007263c9205"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2784,14 +3124,6 @@
     {
       "path": "dist/js/conversation-theme-news.js",
       "sha": "9cadc131e4f172530ac644a92077b2ed1f162967"
-    },
-    {
-      "path": "dist/js/conversation-theme-view.js",
-      "sha": "d83e4f5cbefff5af7e70f44d1e18fd37ba04c77f"
-    },
-    {
-      "path": "dist/js/conversation-themes.js",
-      "sha": "38aebf399e279920d41b187dd1ee66641ad4dfa9"
     },
     {
       "path": "dist/js/counter-account.js",
@@ -2958,38 +3290,6 @@
       "sha": "f7b06aa311e3ce0a0741de0422d9f7e692a47c92"
     },
     {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "2c499f63559e7c3cb616912a755e2b83f29a30c6"
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "sha": "1421299c114e580e007031562ddf046558ff2093"
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "sha": "16ed6bfa4d02f34b784ff7ff68076917aae5b841"
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "sha": "db35085994175d8191f3d1cb5b107a0dd430792d"
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "61699c6e281b5ecfd2c803d3f4f33f6319764cd9"
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "53d28c6f67f8b679c2573f5c68f25b50e1810371"
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "44268f27fe5cfae5f6bd38ea7265953a6ee54ccb"
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "69a1b0f144662912a128affb427272bc18aee04f"
-    },
-    {
       "path": "dist/js/i18n-source-catalogues.js",
       "sha": "0d3d9e9c41e8034f80beb5d7a797996349d24975"
     },
@@ -2998,40 +3298,8 @@
       "sha": "b88c81c728bae9b70282e128acaccf33e4daf77f"
     },
     {
-      "path": "dist/js/i18n/account/ar.js",
-      "sha": "ef78a49057c1e97a0305e424699c5d1aee0a9be5"
-    },
-    {
-      "path": "dist/js/i18n/account/az.js",
-      "sha": "58844f02fdd2dc084e0fe88f978d7ef7027bfc64"
-    },
-    {
-      "path": "dist/js/i18n/account/de.js",
-      "sha": "da6c85f103d1034aec632ecfe174703ede324730"
-    },
-    {
-      "path": "dist/js/i18n/account/en.js",
-      "sha": "e12d4c783548adecf892646605a10ad2106f18bd"
-    },
-    {
       "path": "dist/js/i18n/account/index.js",
       "sha": "c96eabce687a45b6c2291171a0e07f44ed76e23e"
-    },
-    {
-      "path": "dist/js/i18n/account/kk.js",
-      "sha": "7e5b6dd8348aac647f722f4d63df29612227f7b9"
-    },
-    {
-      "path": "dist/js/i18n/account/ru.js",
-      "sha": "b48ce97a03c3a43c7cab3d599d75480d71bf57fb"
-    },
-    {
-      "path": "dist/js/i18n/account/tg.js",
-      "sha": "06512bdd107ebcb1e3462eaa9fadcbf694fc8be7"
-    },
-    {
-      "path": "dist/js/i18n/account/uz.js",
-      "sha": "ff1de5e49c49a28b0da7926721cae867e12a2e8a"
     },
     {
       "path": "dist/js/i18n/ar.js",
@@ -3078,40 +3346,8 @@
       "sha": "7321c86be8820382002aad1b002045d37d6aa700"
     },
     {
-      "path": "dist/js/i18n/conversationThemes/ar.js",
-      "sha": "031bed94d1f9b103d77432b4e87d3517e0366c99"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/az.js",
-      "sha": "d94038bc47a4379ebd0dfad2780936e39cac2d5f"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/de.js",
-      "sha": "bf850117924eba7949cbcf88e24169fc11522961"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/en.js",
-      "sha": "94b1c97b7bdceb247fdb3b4d89be732d83ad3299"
-    },
-    {
       "path": "dist/js/i18n/conversationThemes/index.js",
       "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/kk.js",
-      "sha": "48dc2a771cbd9e1fbbfd8a4d0149462cd6af7adf"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/ru.js",
-      "sha": "42c9ca99607efa0b4e271a2f8e9fcea938a42908"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/tg.js",
-      "sha": "2bf557a73050c6dc1af5d5e9741576b1cf600a0c"
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/uz.js",
-      "sha": "226a84795264f8baec0e0e3ff8f4e41e327aa704"
     },
     {
       "path": "dist/js/i18n/de.js",
@@ -4094,10 +4330,6 @@
       "sha": "e16fb6b00e9241358265acf3cfcd3a9a43d414ae"
     },
     {
-      "path": "dist/js/media-session.js",
-      "sha": "9711e0235e10e744596d776465cfb49411a44893"
-    },
-    {
       "path": "dist/js/message-emojis.js",
       "sha": "edbce30df90e764d11da0a6a2ae817c49bb96942"
     },
@@ -4366,10 +4598,6 @@
       "sha": "4e47d8edd0595025f40fccca0f882a4efef356c1"
     },
     {
-      "path": "dist/js/quran-audio.js",
-      "sha": "59639b347b103ea6f23e6b3e0356d4b3599173c0"
-    },
-    {
       "path": "dist/js/quran-award-history.js",
       "sha": "76ccee8c3063a2d98a60b6d07659f7a54b16f658"
     },
@@ -4562,10 +4790,6 @@
       "sha": "2ccbb6c3457eec7a0441d4f60780d1bc1b358383"
     },
     {
-      "path": "dist/js/quran-session.js",
-      "sha": "4870bdab2251bb6a1ea9862e7a1908ea54175759"
-    },
-    {
       "path": "dist/js/quran-sleep-timer.js",
       "sha": "1572a05fd6ca0506079ff16e5ea981b9059fac8f"
     },
@@ -4734,14 +4958,6 @@
       "sha": "5eeb6f01fd3cc0ae9b68ada6161ad4f37657d2ff"
     },
     {
-      "path": "dist/js/staff-cabinet.js",
-      "sha": "3983009bb6115247c2f37b28686d78d978bcad14"
-    },
-    {
-      "path": "dist/js/staff-markup.js",
-      "sha": "6e2186ab0f983d8a8407031fd5cc73fc77bf4978"
-    },
-    {
       "path": "dist/js/staff-message-actions.js",
       "sha": "ffc256d0a48e54885fc306de0731ff20cfddc92d"
     },
@@ -4786,14 +5002,6 @@
       "sha": "a1d78ab8ef832321fb96a65ed4ab4c50247bdb32"
     },
     {
-      "path": "dist/js/support-chat-view.js",
-      "sha": "b9577656a2f1c11a0bda2c3b6dd3a593625b93cb"
-    },
-    {
-      "path": "dist/js/support-client.js",
-      "sha": "43faeaf46c589702e1b60c1fed4ed167b7425ea8"
-    },
-    {
       "path": "dist/js/support-diagnostics.js",
       "sha": "7b944ea6a02236e4084d2c7b9fbeb47972414aab"
     },
@@ -4816,10 +5024,6 @@
     {
       "path": "dist/js/support-transport.js",
       "sha": "53d4ce796f51130650f7f5f3d3af9c16704dfc98"
-    },
-    {
-      "path": "dist/js/support-user-profile.js",
-      "sha": "cade281fcfd53c827a3317855aa977cb3373b674"
     },
     {
       "path": "dist/js/support.js",
@@ -5091,7 +5295,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "7b892f49b17810e291379a07a3744dceb18737ae"
+      "sha": "cc0ceb204b309b3a274fbbc168bd3dd27bfa5a10"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5639,7 +5843,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "d0f9021dedc30410738ade59124333c78fd15a61"
+      "sha": "20463245ccca44423d866ec2ab03e1ef08ddeec2"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6790,10 +6994,6 @@
       "sha": "5ab5e39fef590329d7714d036b2b9497012b065a"
     },
     {
-      "path": "scripts/check-conversation-themes.mjs",
-      "sha": "c97695928e5b4c30eaf170354053a58023a148ab"
-    },
-    {
       "path": "scripts/check-counter-account.mjs",
       "sha": "f4d5cb0ccb6f1537713e8798847222165aacc71c"
     },
@@ -7342,10 +7542,6 @@
       "sha": "14f46fbb6804b7cb94703c37786e13434fe5889e"
     },
     {
-      "path": "scripts/check-quran-audio-session.mjs",
-      "sha": "16f0a731aac212033e39cc3d94e3b093e86dfbd9"
-    },
-    {
       "path": "scripts/check-quran-award-history.mjs",
       "sha": "8a5334355a1bc759932d81aeadc0bcc2d6baf238"
     },
@@ -7398,10 +7594,6 @@
       "sha": "730fc28a09e4f2fcf2777d1e0865a0c06ccbf745"
     },
     {
-      "path": "scripts/check-quran-lockscreen.mjs",
-      "sha": "3559eb899e57dcc952708e29122e32783ed4dbec"
-    },
-    {
       "path": "scripts/check-quran-mini-dismiss.mjs",
       "sha": "0c8907d37a8a6892557216395b0065c05e5867f4"
     },
@@ -7428,10 +7620,6 @@
     {
       "path": "scripts/check-quran-nature-video-cache.mjs",
       "sha": "35173479b4109599e79091e2d081458531d1be50"
-    },
-    {
-      "path": "scripts/check-quran-pause-authority.mjs",
-      "sha": "b51d0c233db54edf6c3d5d17958b644083aadfad"
     },
     {
       "path": "scripts/check-quran-player-cascade.mjs",
@@ -7771,7 +7959,7 @@
     },
     {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "6c22b1bca061255c22313a5373cf603f944e02cd"
+      "sha": "9de1abdcfd0289585142f03dbe68c286a82179f7"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -7783,7 +7971,7 @@
     },
     {
       "path": "scripts/check-support-layout.mjs",
-      "sha": "d30f6f3bd5bfc57c28c3f36f172a9f0331a3d012"
+      "sha": "f8a27bb1b3f11d63be785a317834ea4a316f2e16"
     },
     {
       "path": "scripts/check-support-multiple.mjs",
@@ -8314,10 +8502,6 @@
       "sha": "823e7f2d55aa1ffb19dc213e4083580f926e2bea"
     },
     {
-      "path": "supabase/functions/support-messages/index.ts",
-      "sha": "92bb61e03dc7b617af148a9ce4253ad2be97ee40"
-    },
-    {
       "path": "supabase/guest-competition.sql",
       "sha": "6357fe00b4d6b62eecc37ebc20d42887c698ba48"
     },
@@ -8650,5 +8834,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=559;\nexport const APP_UPDATED_AT='2026-11-24';\nexport const APP_UPDATE_DATE='24 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=560;\nexport const APP_UPDATED_AT='2026-11-24';\nexport const APP_UPDATE_DATE='24 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

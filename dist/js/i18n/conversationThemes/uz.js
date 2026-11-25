@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Mavzular va fon rasmlari",
  "conversationThemeUi.personal": "Mavzuni faqat siz koʻrasiz. U bu qurilmada ushbu suhbat uchun saqlanadi.",
+ "conversationThemeUi.shared": "Ilova mavzusini siz ham, suhbatdoshingiz ham koʻradi.",
  "conversationThemeUi.custom": "Oʻz fon rasmingiz",
  "conversationThemeUi.photoHint": "25 MB gacha JPEG, PNG yoki WebP. Rasm shu qurilmada qoladi.",
  "conversationThemeUi.done": "Tayyor",

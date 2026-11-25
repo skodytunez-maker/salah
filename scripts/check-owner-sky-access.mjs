@@ -42,7 +42,7 @@ const context=vm.createContext({ADVANCED_SKY_AVAILABLE,ownerVerified,document:do
  createSkyAtmosphere:()=>({setTexture(){},dispose(){painterDisposals++;},render(frame){paints.push(frame);return{sourceReady:true,skyVisibility:1};}}),
  requestAnimationFrame:fn=>{raf.set(++nextRAF,fn);return nextRAF;},cancelAnimationFrame:id=>raf.delete(id)
 });
-vm.runInContext(source.split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
+vm.runInContext(source.replace("await import('./sky-matte.js')", '({loadSkyMattes:globalThis.loadSkyMattes})').split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
 const tick=()=>{context.atmosphere(wall,null,observed);mono+=1000;wall+=1000;},state=code=>vm.runInContext(code,context);
 const finishMatte=task=>{const make=()=>{const canvas=doc.createElement('canvas');canvas.width=853;canvas.height=1844;return canvas;},dayFG=make(),nightFG=make();let disposed=0;const surface={valid:true,dayFG,nightFG,dayMetrics:{width:853,height:1844,horizonY:1100},nightMetrics:{width:853,height:1844,horizonY:1100},dispose(){disposed++;dayFG.width=dayFG.height=nightFG.width=nightFG.height=0;}};task.resolve(surface);return{surface,get disposed(){return disposed;}};};
 

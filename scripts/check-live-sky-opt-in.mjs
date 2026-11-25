@@ -35,7 +35,7 @@ const context=vm.createContext({ADVANCED_SKY_AVAILABLE:OWNER_PILOT_ADVANCED_SKY_
  createSkyAtmosphere:()=>({setTexture(){},dispose(){painterDisposals++;},render(frame){paints.push(frame);return{sourceReady:true,skyVisibility:1};}}),
  requestAnimationFrame:fn=>{raf.set(++nextRAF,fn);return nextRAF;},cancelAnimationFrame:id=>raf.delete(id)
 });
-vm.runInContext(source.split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
+vm.runInContext(source.replace("await import('./sky-matte.js')", '({loadSkyMattes:globalThis.loadSkyMattes})').split('\n').filter(line=>!line.startsWith('import')&&!line.startsWith('export{')).join('\n').replaceAll('export function','function'),context);
 const tick=()=>{context.atmosphere(wall,null,observed);mono+=1000;wall+=1000;},state=code=>vm.runInContext(code,context);
 const finishMatte=task=>{const make=()=>{const canvas=doc.createElement('canvas');canvas.width=853;canvas.height=1844;return canvas;},dayFG=make(),nightFG=make();let disposed=0;const surface={valid:true,dayFG,nightFG,dayMetrics:{width:853,height:1844,horizonY:1100},nightMetrics:{width:853,height:1844,horizonY:1100},dispose(){disposed++;dayFG.width=dayFG.height=nightFG.width=nightFG.height=0;}};task.resolve(surface);return{surface,get disposed(){return disposed;}};};
 const assertBasic=()=>{
@@ -96,3 +96,19 @@ saved.liveSky=true;saved.wallpaper='new-york';tick();const newPhotos=photos.slic
 w.dispatchEvent(new w.Event('pageshow'));tick();assert.equal(mattes.length,beforeLatePhoto+1,'The retained newly decoded pair becomes eligible only after pageshow');saved.liveSky=false;tick();assertBasic();
 await w.happyDOM.close();
 console.log('PASS: default-off original photos with no advanced allocations/loading/astronomy/UI reads; retained-photo opt-in, independent sky cancellation and stale disposal, ready-buffer release, hidden/reduced motion and temporary demo exit; weather preferences and photo downloads preserved.');
+
+assert.doesNotMatch(source,/^import[^\n]*from '\.\/sky-matte\.js'/m,'The first screen does not import matte data statically');
+const preparation=source.slice(source.indexOf('async function prepareSkySurface'),source.indexOf('\nfunction releaseSkyForeground'));
+const delayedModule=deferred();
+let loadedMasks=0;
+context.loadMatteModule=()=>delayedModule.promise;
+const prepare=vm.runInContext('('+preparation.replace("import('./sky-matte.js')",'loadMatteModule()')+')',context);
+const stop=new AbortController();
+const stopped=prepare('day','night',{}, {},stop.signal);
+stop.abort();
+delayedModule.resolve({loadSkyMattes:()=>{loadedMasks++;return {valid:true};}});
+assert.equal(await stopped,null);
+assert.equal(loadedMasks,0,'Turning off the feature during the module load prevents canvas preparation');
+assert.equal((await prepare('day','night',{}, {},new AbortController().signal)).valid,true);
+assert.equal(loadedMasks,1);
+console.log('PASS: matte atlas loading is deferred and an aborted opt-in does not prepare masks.');

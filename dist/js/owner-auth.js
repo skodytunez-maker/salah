@@ -147,7 +147,13 @@ export function initOwnerAccess(onChanged,{keepPreviewActive=()=>false}={}){
 export const accountAuthClient=()=>authClient();
 export const checkAccountSession=createSessionGuard({getAuth:()=>authClient().auth});
 
-export async function ownerUsers(page=1){if(!Number.isSafeInteger(page)||page<1||page>10000)throw uiError('ownerAuthUi.page');const {data,error}=await authClient().auth.getSession();if(error)throw uiError('deviceUi.signIn');return callOwner(data.session,"?mode=users&page="+page);}
+export async function ownerUsers(page=1,{expectedActor=null,signal=null}={}){
+ if(!Number.isSafeInteger(page)||page<1||page>10000)throw uiError('ownerAuthUi.page');
+ const {data,error}=await authClient().auth.getSession();
+ if(error)throw uiError('deviceUi.signIn');
+ if(expectedActor&&(data.session?.user?.id!==expectedActor||verifiedOwnerId()!==expectedActor))throw uiError('ownerAuthUi.confirmOwner');
+ return callOwner(data.session,"?mode=users&page="+page,{signal});
+}
 
 export async function ownerRankUser(id){
  if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw uiError('ownerAuthUi.rankingUser');

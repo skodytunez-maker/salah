@@ -195,3 +195,6 @@ body[data-wallpaper="new-york"] #weather-layer[data-scene-layout="phone-landscap
 @media(max-width:599px) and (orientation:portrait){
  #home-scene[data-live-sky=on] .scene-sun,#home-scene[data-live-sky=on] .scene-moon{transform:translate(-50%,-50%) translateY(clamp(-72px,-7svh,-24px))}
 }
+
+/* The previous phone photograph stays beneath the shade while the verified preview appears. */
+#home-scene>.scene-clock-fade>.scene-night,#home-scene>.scene-clock-fade>.scene-day{position:absolute;inset:0;pointer-events:none}

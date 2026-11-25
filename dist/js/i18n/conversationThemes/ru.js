@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Темы и обои",
  "conversationThemeUi.personal": "Тема видна только вам и сохраняется для этой переписки на этом устройстве.",
+ "conversationThemeUi.shared": "Встроенная тема будет видна вам и собеседнику.",
  "conversationThemeUi.custom": "Свои обои",
  "conversationThemeUi.photoHint": "JPEG, PNG или WebP до 25 МБ. Фото остаётся на этом устройстве.",
  "conversationThemeUi.done": "Готово",

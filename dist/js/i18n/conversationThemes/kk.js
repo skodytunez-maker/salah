@@ -1,6 +1,7 @@
 export default Object.freeze({
  "conversationThemeUi.title": "Тақырыптар мен тұсқағаздар",
  "conversationThemeUi.personal": "Бұл тақырыпты тек сіз көресіз. Ол осы құрылғыда осы сөйлесу үшін сақталады.",
+ "conversationThemeUi.shared": "Кірістірілген тақырып сізге де, әңгімелесушіңізге де көрінеді.",
  "conversationThemeUi.custom": "Өз тұсқағазыңыз",
  "conversationThemeUi.photoHint": "25 МБ-қа дейінгі JPEG, PNG немесе WebP. Фото осы құрылғыда қалады.",
  "conversationThemeUi.done": "Дайын",

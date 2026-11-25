@@ -26,7 +26,7 @@ for(const typeOnly of [false,true]){
  if(!typeOnly)f.native.change('interrupted');a.pause();assert.equal(f.session.state.status,'paused');assert.equal(f.metadata.playbackState,'paused');
  if(!typeOnly)f.native.change('active');await flush();f.doc.show();f.win.dispatchEvent(new Event('focus'));f.win.dispatchEvent(new Event('pageshow'));await flush();
  assert.equal(a.plays,before,'Native pause cannot auto-resume after OS/lifecycle recovery');assert.equal(a.paused,true);assert.equal(f.session.state.status,'paused');assert.equal(a.src,source);assert.equal(a.currentTime,2559);
- f.actions.play();await flush();assert.equal(a.plays,before+1);assert.equal(a.paused,false);assert.equal(f.session.state.status,'playing');assert.equal(a.src,source);assert.equal(a.currentTime,2559,'Explicit Play preserves the existing position');
+ f.actions.play();await flush();assert.equal(a.plays,before+1);assert.equal(a.paused,false);assert.equal(f.session.state.status,'loading');assert.equal(a.src,source);assert.equal(a.currentTime,2559,'Explicit Play preserves the existing position');a.currentTime+=.25;a.ontimeupdate();assert.equal(f.session.state.status,'playing');
  f.actions.pause();a.ended=true;a.onended?.();await flush();assert.equal(f.session.state.surah.number,7,'A queued ended event cannot advance after a newer MediaSession pause');assert.equal(a.paused,true);assert.equal(a.plays,before+1);assert.equal(f.metadata.playbackState,'paused');f.session.stop();
 }
 
@@ -40,7 +40,7 @@ for(const typeOnly of [false,true]){
 // Older promises cannot cancel a newer explicit Play on the same retained media.
 {
  const f=fixture();await f.session.start(f.data(7),'ar.yasseraldossaricontinuous');await flush();const a=f.tracks[0];f.actions.pause();a.nextPlay='pending';f.actions.play();f.actions.pause();a.nextPlay='pending';f.actions.play();assert.equal(a.pending.length,2);const pauses=a.pauses;
- a.pending[0].finish({event:false});await flush();assert.equal(a.pauses,pauses,'An old attempt cannot pause a newer explicit Play');a.pending[1].finish();await flush();assert.equal(a.paused,false);assert.equal(f.session.state.status,'playing');
+ a.pending[0].finish({event:false});await flush();assert.equal(a.pauses,pauses,'An old attempt cannot pause a newer explicit Play');a.pending[1].finish();await flush();assert.equal(a.paused,false);assert.equal(f.session.state.status,'loading');a.currentTime+=.25;a.ontimeupdate();assert.equal(f.session.state.status,'playing');
  f.actions.pause();a.nextPlay='pending';f.actions.play();f.actions.pause();a.nextPlay='deny';f.actions.play();await flush();a.pending[2].finish({event:false});await flush();assert.equal(a.paused,true,'A stale attempt is stopped when the latest explicit attempt was denied and intent is paused');assert.equal(f.session.state.status,'paused');f.session.stop();
 }
 
@@ -57,7 +57,7 @@ for(const order of [[0,1],[1,0]]){
  for(let i=0;i<2;i++){a.nextPlay='pending';f.actions.play();f.actions.pause();}
  const plays=a.plays;assert.equal(a.pending.length,2);
  for(const index of order){a.pending[index].finish();await flush();assert.equal(a.paused,true,'A late native onplay from any unresolved app attempt cannot override Pause');assert.equal(f.session.state.status,'paused');assert.equal(f.metadata.playbackState,'paused');}
- a.paused=false;a.onplay();assert.equal(a.paused,false);assert.equal(f.session.state.status,'playing','A new native OS Play is accepted after every app attempt has settled');assert.equal(f.metadata.playbackState,'playing');assert.equal(a.plays,plays,'The OS already started media; no duplicate app play()');assert.equal(a.src,source);assert.equal(a.currentTime,2559);
+ a.paused=false;a.onplay();assert.equal(a.paused,false);assert.equal(a.currentTime,2559);assert.equal(f.session.state.status,'loading');a.currentTime+=.25;a.ontimeupdate();assert.equal(f.session.state.status,'playing','A new native OS Play is accepted after every app attempt has settled');assert.equal(f.metadata.playbackState,'playing');assert.equal(a.plays,plays,'The OS already started media; no duplicate app play()');assert.equal(a.src,source);
  a.pause();f.native.change('interrupted');f.native.change('active');f.doc.show();f.win.dispatchEvent(new Event('pageshow'));await flush();assert.equal(a.paused,true);assert.equal(f.session.state.status,'paused');assert.equal(a.plays,plays,'Native Play does not grant future lifecycle autoplay');f.session.stop();
 }
 // onplay may precede its play() promise settlement. A rejected old promise is

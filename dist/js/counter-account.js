@@ -187,12 +187,14 @@ export async function showCounterAccount(container,message='',force=false,mode='
   };
  }else{
   const recovery=mode==='recover';setUiMessage(container.querySelector('#counter-account-heading'),uiMessage('accountUi.signInRegistration'));if(recovery)setUiMessage(container.querySelector('#counter-account-heading'),uiMessage('accountUi.recoverPassword'));
-  area.innerHTML=recovery?'<form id="counter-account-email-form" novalidate><label for="counter-account-email">'+uiLeaf('accountUi.email')+'</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">'+uiLeaf('accountUi.getCode')+'</button><p class="muted owner-note">'+uiLeaf('accountUi.recoveryNote')+'</p></form><button class="text-button" id="counter-recovery-back">'+uiLeaf('accountUi.backSignIn')+'</button>':'<form id="counter-account-email-form" novalidate><label for="counter-account-nickname">'+uiLeaf('accountUi.nickname')+'</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required><label for="counter-account-email">'+uiLeaf('accountUi.email')+'</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">'+uiLeaf('accountUi.getRegistrationCode')+'</button><p class="muted owner-note">'+uiLeaf('accountUi.registrationNote')+'</p></form><button class="text-button" type="button" id="counter-login-method" aria-controls="counter-account-email-form counter-account-login" aria-expanded="false">'+uiLeaf('accountUi.passwordSignIn')+'</button><form id="counter-account-login" novalidate hidden><label for="counter-password-email">'+uiLeaf('accountUi.email')+'</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">'+uiLeaf('accountUi.password')+'</label><input id="counter-account-password" type="password" autocomplete="current-password" required><p class="muted" id="counter-password-status" role="status"></p><button class="button" type="submit">'+uiLeaf('accountUi.signIn')+'</button><button class="text-button" type="button" id="counter-password-forgot">'+uiLeaf('accountUi.forgotPassword')+'</button></form>';
+  const emailFields=(recovery?'':'<label for="counter-account-nickname">'+uiLeaf('accountUi.nickname')+'</label><input id="counter-account-nickname" type="text" autocomplete="nickname" minlength="2" maxlength="40" required>')+'<label for="counter-account-email">'+uiLeaf('accountUi.email')+'</label><input id="counter-account-email" placeholder="name@mail.ru" type="email" autocomplete="email" required><button class="button" type="submit">'+
+   uiLeaf(recovery?'accountUi.getCode':'accountUi.getRegistrationCode')+'</button><p class="muted owner-note">'+uiLeaf(recovery?'accountUi.recoveryNote':'accountUi.registrationNote')+'</p>';
+  area.innerHTML='<form id="counter-account-email-form" novalidate>'+emailFields+'</form>'+(recovery?'<button class="text-button" id="counter-recovery-back">'+uiLeaf('accountUi.backSignIn')+'</button>':'<button class="text-button" type="button" id="counter-login-method" aria-controls="counter-account-email-form counter-account-login" aria-expanded="false">'+uiLeaf('accountUi.passwordSignIn')+'</button><form id="counter-account-login" novalidate hidden><label for="counter-password-email">'+uiLeaf('accountUi.email')+'</label><input id="counter-password-email" type="email" autocomplete="username" required><label for="counter-account-password">'+uiLeaf('accountUi.password')+'</label><input id="counter-account-password" type="password" autocomplete="current-password" required><p class="muted" id="counter-password-status" role="status"></p><button class="button" type="submit">'+uiLeaf('accountUi.signIn')+'</button><button class="text-button" type="button" id="counter-password-forgot">'+uiLeaf('accountUi.forgotPassword')+'</button></form>');
   if(!recovery){mountQrLogin(area,()=>showCounterAccount(container,'',true));if(hasQrApproval())await mountQrApproval(area,null,()=>showCounterAccount(container,'',true));}
   const forgot=area.querySelector('#counter-password-forgot');if(forgot)forgot.onclick=()=>{if(active())return showCounterAccount(container,'',true,'recover');};
   if(recovery)area.querySelector('#counter-recovery-back').onclick=()=>{if(active())return showCounterAccount(container,'',true);};
   const mailForm=area.querySelector('#counter-account-email-form'),mailActive=()=>active()&&area.querySelector('#counter-account-email-form')===mailForm;
-  mailForm.onsubmit=async e=>{
+  const sendEmailCode=async e=>{
    e.preventDefault();if(!mailActive())return;const email=mailForm.querySelector('input[type=email]').value.trim(),nickname=recovery?null:mailForm.querySelector('#counter-account-nickname').value.trim(),button=mailForm.querySelector('button');if(button.disabled)return;button.disabled=true;
    if(!email||!mailForm.querySelector('input[type=email]').checkValidity()){button.disabled=false;report(uiMessage('accountUi.emailInvalid'));mailForm.querySelector('input[type=email]').focus();return;}
    if(!recovery&&(nickname.length<2||nickname.length>40)){button.disabled=false;report(uiMessage('accountUi.nicknameInvalid'));mailForm.querySelector('#counter-account-nickname').focus();return;}
@@ -202,25 +204,33 @@ export async function showCounterAccount(container,message='',force=false,mode='
     const {error}=await accountAuthClient().auth.signInWithOtp({email,options:recovery?{shouldCreateUser:false}:{shouldCreateUser:true,data:{nickname}}});if(error)throw error;if(!mailActive())return;
     mailForm.innerHTML='<p class="muted">'+uiLeaf('accountUi.codeEmailNote',{email})+'</p><label for="counter-email-code">'+uiLeaf('accountUi.emailCode')+'</label><input id="counter-email-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required><button class="button" type="submit">'+uiLeaf('accountUi.verifyAndSignIn')+'</button><button class="text-button" type="button" id="counter-email-resend">'+uiLeaf('accountUi.resend')+'</button><button class="text-button" type="button" id="counter-email-change">'+uiLeaf('accountUi.changeEmail')+'</button>';
     let sentAt=Date.now(),resending=false,verifying=false;
+    const changeEmail=mailForm.querySelector('#counter-email-change');
     mailForm.querySelector('#counter-email-resend').onclick=async()=>{
      if(!mailActive()||resending||verifying)return;
      const remaining=Math.ceil((60000-(Date.now()-sentAt))/1000);
      if(remaining>0){report(uiMessage('accountUi.resendWait',{seconds:remaining}));return;}
-     const resend=mailForm.querySelector('#counter-email-resend'),confirm=mailForm.querySelector('button[type=submit]');resending=true;resend.disabled=true;confirm.disabled=true;setUiMessage(resend,uiMessage('accountUi.sendingCode'));
+     const resend=mailForm.querySelector('#counter-email-resend'),confirm=mailForm.querySelector('button[type=submit]');resending=true;resend.disabled=true;confirm.disabled=true;changeEmail.disabled=true;setUiMessage(resend,uiMessage('accountUi.sendingCode'));
      try{
       if(navigator.onLine===false)throw Error('offline');
       const {error}=await accountAuthClient().auth.signInWithOtp({email,options:recovery?{shouldCreateUser:false}:{shouldCreateUser:true,data:{nickname}}});if(error)throw error;
       if(!mailActive())return;sentAt=Date.now();mailForm.querySelector('#counter-email-code').value='';report(uiMessage('accountUi.newEmailSent'));
      }catch(error){if(mailActive())report(emailErrorMessage(error));}
-     finally{resending=false;if(mailActive()){resend.disabled=false;confirm.disabled=false;setUiMessage(resend,uiMessage('accountUi.resend'));}}
+     finally{resending=false;if(mailActive()){resend.disabled=false;confirm.disabled=false;changeEmail.disabled=false;setUiMessage(resend,uiMessage('accountUi.resend'));}}
     };
-    mailForm.querySelector('#counter-email-change').onclick=()=>{if(mailActive())return showCounterAccount(container,'',true,recovery?'recover':'');};
+    changeEmail.onclick=()=>{
+     if(!mailActive()||resending||verifying||mailForm.querySelector('#counter-email-change')!==changeEmail)return;
+     mailForm.innerHTML=emailFields;
+     mailForm.onsubmit=sendEmailCode;
+     if(!recovery)mailForm.querySelector('#counter-account-nickname').value=nickname;
+     mailForm.querySelector('input[type=email]').focus();
+     report('');
+    };
     mailForm.onsubmit=async event=>{
      event.preventDefault();if(!mailActive()||resending||verifying)return;
      const code=mailForm.querySelector('input'),submit=mailForm.querySelector('button[type=submit]'),resend=mailForm.querySelector('#counter-email-resend'),token=code.value.trim();
      if(!/^[0-9]{6,8}$/.test(token)){report(uiMessage('accountUi.codeLength'));code.focus();return;}
      if(navigator.onLine===false){report(uiMessage('accountUi.loginOffline'));return;}
-     verifying=true;submit.disabled=true;resend.disabled=true;setUiMessage(submit,uiMessage('accountUi.checkingCode'));report(uiMessage('accountUi.checkingEmailCode'));
+     verifying=true;submit.disabled=true;resend.disabled=true;changeEmail.disabled=true;setUiMessage(submit,uiMessage('accountUi.checkingCode'));report(uiMessage('accountUi.checkingEmailCode'));
      try{
       const {data,error}=await accountAuthClient().auth.verifyOtp({email,token,type:'email'});
       if(error)throw error;
@@ -228,7 +238,7 @@ export async function showCounterAccount(container,message='',force=false,mode='
       code.value='';
      }catch(error){
       verifying=false;
-      if(mailActive()){submit.disabled=false;resend.disabled=false;setUiMessage(submit,uiMessage('accountUi.verifyAndSignIn'));report(loginErrorMessage(error,'code'));}
+      if(mailActive()){submit.disabled=false;resend.disabled=false;changeEmail.disabled=false;setUiMessage(submit,uiMessage('accountUi.verifyAndSignIn'));report(loginErrorMessage(error,'code'));}
       return;
      }
      if(!mailActive())return;
@@ -240,6 +250,7 @@ export async function showCounterAccount(container,message='',force=false,mode='
     mailForm.querySelector('input').focus();report(recovery?uiMessage('accountUi.recoveryEmailSent'):uiMessage('accountUi.emailSent'));
    }catch(error){if(mailActive()){button.disabled=false;setUiMessage(button,label);report(recovery&&['otp_disabled','user_not_found','signup_disabled'].includes(error?.code)?uiMessage('accountUi.recoveryEmailSent'):emailErrorMessage(error));}}
   };
+  mailForm.onsubmit=sendEmailCode;
   const passwordLogin=area.querySelector('#counter-account-login'),method=area.querySelector('#counter-login-method');
   if(method)method.onclick=()=>{if(!active())return;const passwordMode=passwordLogin.hidden;const from=passwordMode?mailForm.querySelector('input[type=email]'):passwordLogin.querySelector('input[type=email]'),to=passwordMode?passwordLogin.querySelector('input[type=email]'):mailForm.querySelector('input[type=email]');if(from&&to)to.value=from.value.trim();mailForm.hidden=passwordMode;passwordLogin.hidden=!passwordMode;setUiMessage(method,passwordMode?uiMessage('accountUi.codeSignIn'):uiMessage('accountUi.passwordSignIn'));method.setAttribute('aria-expanded',String(passwordMode));setUiMessage(container.querySelector('#counter-account-heading'),passwordMode?uiMessage('accountUi.passwordSignInTitle'):uiMessage('accountUi.signInRegistration'));report('');(to||mailForm.querySelector('input'))?.focus();};
   if(passwordLogin){const submitPassword=async e=>{

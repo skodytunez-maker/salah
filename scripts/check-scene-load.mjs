@@ -49,7 +49,7 @@ for(const code of [3,45,61,71]){
  const matteLoader=args=>{if(typeof args.dayURL==='string'&&/makkah|madinah/.test(args.dayURL)){const task=deferred();matteTasks.push({...task,args});return task.promise;}return Promise.resolve({valid:false});};
  const finishMatte=task=>{const make=image=>{const c=doc.createElement('canvas');c.width=image.naturalWidth;c.height=image.naturalHeight;return c;},dayFG=make(task.args.dayImage),nightFG=make(task.args.nightImage);let disposed=0;const value={valid:true,dayFG,nightFG,dayMetrics:{width:dayFG.width,height:dayFG.height,horizonY:dayFG.height*.6},nightMetrics:{width:nightFG.width,height:nightFG.height,horizonY:nightFG.height*.6},dispose(){disposed++;for(const canvas of [dayFG,nightFG]){canvas.width=0;canvas.height=0;}}};task.resolve(value);return{value,get disposed(){return disposed;}};};
  const real=vm.createContext({ADVANCED_SKY_AVAILABLE:OWNER_PILOT_ADVANCED_SKY_AVAILABLE,layoutSkyObjects,createSkyAtmosphere:painterFactory,loadSkyMattes:matteLoader,getPosition,getMoonPosition,wallpapers,previewClock,SCENE_PREVIEW_DURATION,SCENE_PREVIEW_STOPS,skyObjects:realSkyObjects,sceneForMode,sceneAt,previewScene,weatherFrame,skyProjectionFrame,projectSkyObjects,moonAppearance,moonPhasePath,applyWallpaperLayout,t:translate,uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute,actionIcon,settings:saved,document:doc,window:w,Date:class extends Date{static now(){return wall;}},performance:{now:()=>mono},AbortController,URL:{createObjectURL:()=> 'blob:fixture-'+images.length,revokeObjectURL(){}},loadLandmark:landmarkLoad,loadDecodedImage:(url,{signal}={})=>{const task=deferred();(url==='./assets/home-clouds-509.webp'?cloudImages:images).push({url,signal,...task});return task.promise;},watchDecodedImages:()=>()=>{},requestAnimationFrame:fn=>{raf.set(++rafId,fn);return rafId;},cancelAnimationFrame:id=>raf.delete(id)});
- vm.runInContext(source.split('\n').filter(l=>!l.startsWith('import')&&!l.startsWith('export{')).join('\n').replaceAll('export function','function'),real);
+ vm.runInContext(source.replace("await import('./sky-matte.js')", '({loadSkyMattes:globalThis.loadSkyMattes})').split('\n').filter(l=>!l.startsWith('import')&&!l.startsWith('export{')).join('\n').replaceAll('export function','function'),real);
  const tick=()=>real.atmosphere(wall,null,observedWeather),state=key=>vm.runInContext(key,real),finish=image=>image.resolve({complete:true,naturalWidth:853,naturalHeight:1844});
  real.startScenePreview();mono=7000;tick();assert.equal(state('previewStarted'),null,'Navigation time does not consume the dawn stage');assert.equal(images.length,0);
  w.location.hash='home';doc.body.classList.add('home-page');tick();const photo=doc.getElementById('home-scene');assert.equal(images.length,2);mono=10000;finish(images[0]);await turns();assert.equal(state('previewStarted'),null,'A half-ready photo pair cannot start the preview');finish(images[1]);await turns();assert.equal(state('previewStarted'),10000);assert.equal(state('previewAnchor'),wall);const started=mono,anchor=wall;
@@ -107,3 +107,94 @@ console.log('PASS: actual Tyumen astronomy and production renderer under overcas
 const cloudCss=await readFile(new URL('../dist/weather.css',import.meta.url),'utf8'),sceneCss=await readFile(new URL('../dist/day-night.css',import.meta.url),'utf8');
 assert.ok(!source.includes('scene-sky-light')&&!sceneCss.includes('.scene-sky-light'),'No legacy full-plane sky tint remains');assert.ok(!source.includes('scene-weather-texture')&&!cloudCss.includes('scene-weather-texture'),'Photographic fade overlays cannot create a second sky');assert.ok(cloudCss.includes('[data-unified-sky=ready] .scene-sky{-webkit-mask-image:none!important;mask-image:none!important;opacity:1}'),'Opaque atmosphere is never clipped by the conservative rectangular body masks');assert.ok(cloudCss.includes('[data-unified-sky=ready]>.scene-night')&&cloudCss.includes('[data-unified-sky=ready]>.scene-foreground{display:block}'));assert.ok(cloudCss.includes('#weather-layer[data-unified-sky=on]>.weather-mist{opacity:0!important}'),'Sky fog is not scattered twice by an external full-frame veil');assert.ok(sceneCss.includes('var(--scene-celestial-visibility,var(--scene-sky-visibility,1))'));assert.ok(!source.includes('result.discVisibility')&&!source.includes('result.moonVisibility'),'Local cloud alpha already attenuates the bodies once');assert.ok(sceneCss.includes('--scene-sun-size:clamp(18px,4.4vw,28px)'),'The approved responsive Sun size is preserved');assert.ok(cloudCss.includes('(1 - var(--scene-day)*.06)*var(--scene-photo-exposure,1)'),'Common foreground lighting retains day/night endpoints without per-frame CPU image filters');for(const rule of sceneCss.matchAll(/[^{}]*\\.scene-(?:day|night)[^{]*\\{([^}]*filter:[^}]+)\\}/g))assert.ok(!rule[1].includes('--scene-clouds'),'Cloud variation never globally washes the photograph');const textureBytes=await readFile(new URL('../dist/assets/home-clouds-509.webp',import.meta.url));assert.equal(createHash('sha256').update(textureBytes).digest('hex'),'61e394b84339081aa245ab1aa84601496d86a0b52c1e133ccb6d527159a65cf8');
 console.log('PASS: one unified sky behind independently cropped premultiplied foregrounds, atomic matte/texture readiness, bounded single animation loop, smooth measured weather and unchanged physical Sun/Moon gates; sharp fallback and existing source assets preserved.');
+
+{
+ const matteWindow=new Window({url:'https://fixture.invalid/#home'});
+ const doc=matteWindow.document;
+ matteWindow.innerWidth=390;matteWindow.innerHeight=844;
+ doc.body.classList.add('home-page');
+ doc.body.innerHTML='<div id="home-scene"><div class="scene-night"></div><div class="scene-day"></div><div class="scene-shade"></div></div>';
+ const scene=doc.getElementById('home-scene');
+ const tasks=[],revoked=[],animations=[];
+ let granted=false,live=false;
+ const timers=new Map();let timerSequence=0;
+ const pref={wallpaper:'landmark',landmarkCity:'makkah',city:{latitude:57,longitude:65},transitions:true,motion:false};
+ const basePhoto={id:'makkah',day:'wallpapers/makkah/day-phone-v1.webp',night:'wallpapers/makkah/night-phone-v1.webp'};
+ const stagedPhoto={...basePhoto,day:'wallpapers/makkah/day-phone-clock-v2.webp',night:'wallpapers/makkah/night-phone-clock-v2.webp',clockPreview:true};
+ const of=entry=>({status:'ready',entry,blobs:[entry.day,entry.night,entry.day+'.svg']});
+ const loadLandmark=(_city,options)=>{
+  const task=deferred();tasks.push({...task,options});return task.promise;
+ };
+ let photos=0;
+ matteWindow.HTMLElement.prototype.animate=function(frames,options){
+  const task=deferred();animations.push({frames,options,overlay:this,resolve:task.resolve});
+  return{finished:task.promise,cancel:()=>task.reject(Error('cancelled'))};
+ };
+ const runLandmark=vm.runInNewContext(`
+ let landmarkKey=null,landmarkRequest=null,landmarkUrls=[],landmarkImages=[],landmarkEntry=null,landmarkState='idle',landmarkGeometry=null;
+ let builtinRequest=null,builtinKey=null,builtinState='idle',builtinImages=[],previewRequested=false,skyPageHidden=false;
+ `+source.slice(source.indexOf('function landmarkNote()'),source.indexOf("window.addEventListener('online'"))+`
+ ;({prepareLandmark,animateClockFade,entry:()=>landmarkEntry});
+ `,{
+  document:doc,window:{innerWidth:390,innerHeight:844,matchMedia:matteWindow.matchMedia.bind(matteWindow),getComputedStyle:matteWindow.getComputedStyle.bind(matteWindow),setTimeout(fn,ms){assert.equal(ms,900);timers.set(++timerSequence,fn);return timerSequence;},clearTimeout:id=>timers.delete(id)},settings:pref,AbortController,URL:{createObjectURL:()=> 'blob:wallpaper-'+(++photos),revokeObjectURL:url=>revoked.push(url)},
+  clockPreviewAccess:()=>granted,wallpaperCaption(){},cancelSkyPreparation(){},clearBuiltinStyles(){},layoutScene(){},ensureSkySurface(){},smoothPreview(){},
+  pendingScene(s,pending){s.dataset.imagePending=String(pending);},
+  acceptSkyPhotoPair(s){s.dataset.unifiedSky='off';},
+  loadLandmark,loadDecodedImage:async()=>({naturalWidth:853,naturalHeight:1844}),liveSkyActive:()=>live
+ });
+ runLandmark.prepareLandmark(scene,true);tasks[0].resolve(of(basePhoto));await turns();
+ assert.equal(runLandmark.entry(),basePhoto);
+ assert.equal(animations.length,0);
+ granted=true;
+ runLandmark.prepareLandmark(scene,true);assert.equal(runLandmark.entry(),basePhoto);
+ tasks[1].resolve(of(stagedPhoto));await turns();
+ assert.equal(runLandmark.entry(),stagedPhoto);
+ assert.equal(animations.length,1,'The verified replacement must fade over the already displayed Makkah photo');
+ assert.match(animations[0].overlay.querySelector('.scene-night').style.backgroundImage,/blob:wallpaper-2/);
+ assert.equal(scene.style.getPropertyValue('--landmark-night'),'url("blob:wallpaper-5")');
+ assert.deepEqual(revoked,[],'The original photo must stay decoded throughout the fade');
+ animations[0].resolve();await turns();
+ assert.equal(animations[0].overlay.isConnected,false);
+ assert.deepEqual(revoked,['blob:wallpaper-1','blob:wallpaper-2','blob:wallpaper-3']);
+ granted=false;runLandmark.prepareLandmark(scene,true);assert.equal(runLandmark.entry(),null,'A revoked grant immediately removes the preview');
+ tasks[2].resolve(of(basePhoto));await turns();
+ pref.motion=true;granted=true;runLandmark.prepareLandmark(scene,true);tasks[3].resolve(of(stagedPhoto));await turns();
+ assert.equal(animations.length,1,'Reduced motion skips the replacement animation');
+ assert.equal(runLandmark.entry(),stagedPhoto);
+ granted=false;runLandmark.prepareLandmark(scene,true);tasks[4].resolve(of(basePhoto));await turns();
+ pref.motion=false;granted=true;runLandmark.prepareLandmark(scene,true);tasks[5].resolve(of(stagedPhoto));await turns();
+ assert.equal(animations.length,2);
+ granted=false;runLandmark.prepareLandmark(scene,true);await turns();
+ assert.equal(animations[1].overlay.isConnected,false,'Revocation terminates the transition and releases both versions');
+ assert.equal(runLandmark.entry(),null);
+
+ live=true;granted=false;
+ for(const delayedSky of [false,true]){
+  const baseRequest=tasks.length;
+  if(!tasks.at(-1).options.previewAccess())tasks.at(-1).resolve(of(basePhoto));
+  await turns();
+  assert.equal(runLandmark.entry(),basePhoto);
+  granted=true;runLandmark.prepareLandmark(scene,true);
+  assert.equal(tasks.length,baseRequest+1);
+  tasks.at(-1).resolve(of(stagedPhoto));await turns();
+  assert.equal(scene.querySelectorAll('.scene-clock-fade').length,1);
+  assert.equal(timers.size,1,'An optional sky cannot hold the previous photo indefinitely');
+  const attempts=animations.length;
+  if(delayedSky){
+   const runTimer=timers.values().next().value;
+   runTimer();
+  }else runLandmark.animateClockFade();
+  assert.equal(animations.length,attempts+1);
+  assert.equal(timers.size,0);
+  scene.dataset.unifiedSky='ready';
+  runLandmark.animateClockFade();
+  assert.equal(animations.length,attempts+1,'Repeated drawing may not restart an active fade');
+  doc.body.classList.remove('home-page');
+  runLandmark.prepareLandmark(scene,false);await turns();
+  assert.equal(scene.querySelector('.scene-clock-fade'),null,'Leaving Home releases the old photo immediately');
+  doc.body.classList.add('home-page');
+  granted=false;runLandmark.prepareLandmark(scene,true);
+ }
+ await matteWindow.happyDOM.close();
+}
+console.log('PASS: the verified portrait Makkah replacement preserves its old photo until the fade ends, with reduced-motion and authorization cleanup.');

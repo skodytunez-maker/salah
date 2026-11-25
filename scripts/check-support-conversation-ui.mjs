@@ -8,17 +8,29 @@ w.Image=function(){const img=doc.createElement('img');Object.defineProperties(im
 const{themePreferenceKey}=await import('../dist/js/conversation-themes.js');
 w.localStorage.setItem(themePreferenceKey(A,'support:'+U),JSON.stringify({theme:'stars'}));
 const app=doc.createElement('main');app.innerHTML='<a class="settings-back" href="#account" data-support-page-back>Мой аккаунт</a><header><h1 data-support-page-title>Обращения</h1></header><section id="support-root" class="panel section"></section>';doc.body.append(app);const root=app.querySelector('section');let actor=A,changed,closed=false,version=0,failRead=false,scroll=240;const calls=[],scrolls=[];Object.defineProperty(w,'scrollY',{get:()=>scroll});w.scrollTo=options=>{scrolls.push(options.top);scroll=options.top;};
-let failCreate=true,holdRead=false,resumeRead=null;
+let failCreate=true,holdRead=false,resumeRead=null,directoryFixture=false,failInboxClear=false,photoReplyReject=true;
+const OTHER='77777777-7777-4777-8777-777777777777',NEW='88888888-8888-4888-8888-888888888888',OLDER='99999999-9999-4999-8999-999999999999';
 const samplePhoto="https://kbltwszfvphgbxdbczsb.supabase.co/storage/v1/object/sign/support-photos/salah/example.jpg?token=fixture";
+let testSharedTheme={theme:null,version:0},testVideosEnabled=false,videoUploaded=false,videoPublished=null,failFinish=true,testVoiceEnabled=false,lastFixtureMime='video/mp4';
+const fixtureVideoBase='https://kbltwszfvphgbxdbczsb.supabase.co/storage/v1/object/';
 let messages=[{id:M,thread_id:OLD,thread_subject:'Первая тема',thread_status:'open',author_id:A,owner_reply:true,body:'Первое сообщение',created_at:'2026-11-17T10:00:00Z'},{id:N,thread_id:T,thread_subject:'Вторая тема',thread_status:'open',author_id:U,owner_reply:false,body:'Новое сообщение',created_at:'2026-11-18T10:00:00Z'}];
-const data=before=>({conversationId:U,anchorId:OLD,thread:{id:T,app:'salah',subject:'Вторая тема',nickname:'Один человек',status:closed?'closed':'open',version:'516',awaiting_owner:!closed,can_reopen:closed},messages:structuredClone(before?[messages[0]].filter(Boolean):messages),photos:[{message_id:M,url:samplePhoto}],next:before?null:{at:'2026-11-17T10:00:00Z',id:M},visibilityVersion:String(version),canClearEveryone:true});
+const data=before=>({sharedTheme:testSharedTheme,videoReplies:testVideosEnabled,voiceReplies:testVoiceEnabled,media:videoPublished?[{message_id:videoPublished,url:fixtureVideoBase+'sign/support-chat-media/fixture.mp4?token=test',mime:lastFixtureMime}]:[],conversationId:U,anchorId:OLD,thread:{id:T,app:'salah',subject:'Вторая тема',nickname:'Один человек',status:closed?'closed':'open',version:'516',awaiting_owner:!closed,can_reopen:closed},messages:structuredClone(before?[messages[0]].filter(Boolean):messages),photos:[{message_id:M,url:samplePhoto}],next:before?null:{at:'2026-11-17T10:00:00Z',id:M},visibilityVersion:String(version),canClearEveryone:true});
 const auth={auth:{getSession:async()=>({data:{session:{user:{id:actor}}}}),onAuthStateChange:fn=>{changed=fn;return{data:{subscription:{unsubscribe(){}}}};}},rpc(name,args){calls.push({name,args});return{abortSignal:async()=>{
  if(name==='support_conversation_request'){
-  if(args.p_action==='list')return{data:{rows:actor===A?[{id:OLD,conversation_id:U,user_id:U,app:'salah',nickname:'Один человек',subject:'Вторая тема',last_message:'Новое сообщение',updated_at:'2026-11-18T10:00:00Z',awaiting_owner:true,status:'open',owner_unread:true}]:[],next:null}};
-  if(args.p_action==='read'){if(holdRead)await new Promise(resolve=>{resumeRead=resolve;});if(failRead){failRead=false;return{error:{message:'offline'}};}return{data:data(args.p_args.before)};}
-  if(args.p_action==='clear'){messages=[];version++;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:args.p_args.scope,visibilityVersion:String(version)}};}
+  if(args.p_action==='list'&&directoryFixture&&args.p_args.before)return{data:{rows:[{id:OLDER,conversation_id:OTHER}],next:null}};
+  if(args.p_action==='list')return{data:{rows:actor===A?[{id:OLD,conversation_id:U,user_id:U,app:'salah',nickname:'Один человек',subject:'Вторая тема',last_message:'Новое сообщение',updated_at:'2026-11-18T10:00:00Z',awaiting_owner:true,status:'open',owner_unread:true}]:[],next:directoryFixture?{at:'2026-11-18T10:00:00Z',id:OLD}:null}};
+  if(args.p_action==='read'){if(holdRead)await new Promise(resolve=>{resumeRead=resolve;});if(failRead){failRead=false;return{error:{message:'offline'}};}if(args.p_args.threadId===OLDER){const older=data(null);return{data:{...older,conversationId:OTHER,anchorId:OLDER,thread:{...older.thread,id:OLDER,nickname:'Старый диалог'}}};}return{data:data(args.p_args.before)};}
+  if(args.p_action==='clear'){if(failInboxClear){failInboxClear=false;return{error:{message:'offline'}};}messages=[];version++;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:args.p_args.scope,visibilityVersion:String(version)}};}
   if(args.p_action==='close'){closed=true;return{data:{ok:true,threadId:args.p_args.threadId,operationId:args.p_args.operationId,scope:'everyone',visibilityVersion:String(version)}};}
  }
+ if(name==='support_conversation_theme'){assert.equal(args.p_thread,OLD);assert.equal(args.p_owner,true);testSharedTheme={theme:args.p_theme,version:testSharedTheme.version+1};return{data:testSharedTheme};}
+ if(name==='support_reply_media_start'){lastFixtureMime=args.p_mime;return{data:{uploaded:videoUploaded,uploadUrl:fixtureVideoBase+'upload/sign/support-chat-media/fixture.mp4?token=test'}};}
+ if(name==='support_reply_media_finish'){
+  assert(videoUploaded);if(!videoPublished)messages.push({id:args.p_id,thread_id:T,thread_subject:'Видео',thread_status:'open',author_id:actor,owner_reply:false,body:'📎',created_at:'2026-11-25T10:00:00Z'});videoPublished=args.p_id;
+  if(failFinish){failFinish=false;return{error:{message:'offline'}};}
+  return{data:{ok:true,threadId:args.p_thread,messageId:args.p_id}};
+ }
+ if(name==='support_reply_photos'){if(photoReplyReject){photoReplyReject=false;return{error:{message:'offline'}};}return{data:{ok:true,threadId:args.p_thread,messageId:args.p_id}};}
  if(name==='support_owner_recipient')return{data:{id:args.p_user,nickname:'Новый <адресат>'}};
  if(name==='support_owner_create'){
   if(failCreate)return{error:{message:'offline'}};
@@ -30,7 +42,7 @@ const auth={auth:{getSession:async()=>({data:{session:{user:{id:actor}}}}),onAut
  if(name==='support_chat_request'&&args.p_action==='delete'){assert.equal(args.p_args.threadId,OLD,'Delete routes to the selected message original case');messages=messages.filter(m=>m.id!==args.p_args.messageId);version++;return{data:{ok:true,...args.p_args,visibilityVersion:String(version)}};}
  throw Error('Unexpected RPC '+name+' '+args.p_action);
 }};}};
-const flush=async()=>{for(let i=0;i<10;i++)await new Promise(r=>setImmediate(r));};let openedProfile=null;let stop=mountSupportPanel(root,{auth,app:'salah',version:520,owner:true,groupConversations:true,onOpenProfile:(person)=>{openedProfile=person;}});await flush();assert.equal(app.querySelectorAll('h1,h2').length,1,'Wrapped route heading is not duplicated');assert.equal(root.querySelectorAll('.support-inbox-row').length,1);
+const flush=async()=>{for(let i=0;i<10;i++)await new Promise(r=>setImmediate(r));};let openedProfile=null,profileThemeAdapter=null;let stop=mountSupportPanel(root,{auth,app:'salah',version:520,owner:true,groupConversations:true,onOpenProfile:(person,_opener,theme)=>{openedProfile=person;profileThemeAdapter=theme;}});await flush();assert.equal(app.querySelectorAll('h1,h2').length,1,'Wrapped route heading is not duplicated');assert.equal(root.querySelectorAll('.support-inbox-row').length,1);
 const originalInbox=root.querySelector('[data-support-thread]');holdRead=true;
 const readsBeforeOpening=calls.filter(x=>x.args.p_action==='read').length;
 originalInbox.click();await flush();
@@ -64,6 +76,9 @@ for(const locale of ['ru','en','az','tg','uz','kk','de','ar']){setInterfaceLangu
 
 compactInput.value='Черновик при потере сети';compactInput.dispatchEvent(new w.Event('input',{bubbles:true}));compactInput.closest('form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await flush();assert.equal(root.querySelector('textarea').value,'Черновик при потере сети','A failed real submit retains the draft');assert.equal(root.querySelector('.support-chat-send').disabled,false);assert(calls.some(c=>c.name==='support_chat_request'&&c.args.p_action==='reply'&&c.args.p_args.body==='Черновик при потере сети'));
 root.querySelector('[data-support-profile]').click();assert.equal(openedProfile.id,U);assert.equal(root.dataset.supportView,'thread','Opening a profile leaves its conversation selected');
+assert.deepEqual(profileThemeAdapter.initialSharedTheme,{theme:null,version:0});
+await profileThemeAdapter.setSharedTheme('emerald',new AbortController().signal);await flush();
+assert.equal(root.dataset.conversationTheme,'emerald','The profile picker updates the same chat through the authenticated RPC');
 const textarea=root.querySelector('textarea');textarea.value='Неотправленный черновик';textarea.dispatchEvent(new w.Event('input',{bubbles:true}));const checkpoint=stop.checkpoint();initialLog.scrollTop=70;initialLog.dispatchEvent(new w.Event('scroll'));stop();assert(!initialLog.hasAttribute('data-support-scrolled'),'Disposal clears the old scroll-edge presentation');initialLog.dispatchEvent(new w.Event('scroll'));assert(!initialLog.hasAttribute('data-support-scrolled'),'Detached history cannot restore a disposed effect');stop=mountSupportPanel(root,{auth,app:'salah',version:520,owner:true,groupConversations:true,resumeThread:checkpoint});await flush();assert.equal(root.dataset.supportView,'thread');assert.equal(root.querySelector('textarea').value,'Неотправленный черновик','Reauthorization restores the same actor’s actual draft');changed('TOKEN_REFRESHED',{user:{id:A}});await flush();assert.equal(root.dataset.supportView,'thread');
 const back=root.querySelector('[data-support-back]');back.getClientRects=()=>[{width:44,height:44}];let routeBack=0;resolveBackAction(app,{canBack:()=>true,back:()=>routeBack++})();await flush();assert.equal(routeBack,0,'Gesture returns to inbox before browser route history');assert.equal(root.dataset.supportView,'list');assert(!root.hasAttribute('data-conversation-theme'),'Leaving the chat clears its wallpaper before rendering the inbox');assert.equal(scrolls.at(-1),240);root.querySelector('[data-support-thread]').click();await flush();assert.equal(root.querySelector('textarea').value,'Неотправленный черновик');
 // Native Safari's edge gesture traverses browser history without our pointer handler.
@@ -109,4 +124,181 @@ const startBack=root.querySelector('[data-support-back]');startBack.click();awai
 assert.equal(root.dataset.supportView,'list','Back before sending loads the actual request list');
 assert(root.querySelector('[data-support-thread]'));assert(!app.classList.contains('support-route-chat'));
 assert(!doc.body.classList.contains('support-conversation-open'));
-stop();await w.happyDOM.close();console.log('PASS grouped Support UI: one wrapped heading, combined topics, compact person header, history pages, original-case deletion, preserved composer and list scroll, edge back before Menu, scoped close and account cleanup.');
+stop();
+directoryFixture=true;
+const pages=[];
+const directoryOptions={auth,app:'salah',version:560,owner:true,groupConversations:true,loadOwnerUsers:async(page,{expectedActor,signal})=>{
+ pages.push(page);assert.equal(expectedActor,A);assert.equal(signal.aborted,false);
+ const users=page===1?[{id:U,nickname:'Уже есть чат'},{id:NEW,nickname:'Новый адресат'}]:[{id:OTHER,nickname:'Старый диалог'}];
+ return {users,total:51};
+}};
+stop=mountSupportPanel(root,directoryOptions);await flush();
+assert.deepEqual(pages,[],'Opening the inbox does not load a private user list');
+const openUsers=()=>root.querySelector('[data-support-users]').click();
+openUsers();await flush();
+assert.equal(w.location.hash,nativeHash);
+const inbox=root.querySelector('.support-list:not([data-support-users-results])'),newContacts=root.querySelector('.support-user-directory');
+assert(!inbox.hidden,'Existing conversations stay visible above contacts');
+assert(inbox.compareDocumentPosition(newContacts)&w.Node.DOCUMENT_POSITION_FOLLOWING);
+assert.equal(root.querySelector('[data-support-user-choice="'+U+'"]'),null,'Do not duplicate a current conversation in the contact list');
+const search=newContacts.querySelector('input');search.value='Старый';search.dispatchEvent(new w.Event('input',{bubbles:true}));
+await new Promise(r=>setTimeout(r,275));await flush();
+assert.deepEqual(pages,[1,2],'Search loads subsequent authorized pages');
+assert.equal(root.querySelectorAll('[data-support-user-choice]').length,0);
+assert(calls.some(c=>c.args.p_action==='list'&&c.args.p_args.before),'Older conversations are excluded from contacts even before their inbox page is shown');
+root.querySelector('[data-support-more]').click();await flush();
+assert(root.querySelector('[data-support-thread="'+OLDER+'"]'),'Older conversation belongs in the inbox');
+root.querySelector('[data-support-thread="'+OLDER+'"]').click();await flush();
+assert.equal(root.querySelector('.support-chat-person strong').textContent,'Старый диалог');
+assert.equal(calls.at(-1).args.p_args.threadId,OLDER);
+root.querySelector('[data-support-back]').click();await flush();
+openUsers();await flush();
+const sendsBefore=calls.filter(c=>c.name==='support_owner_create').length;
+root.querySelector('[data-support-user-choice="'+NEW+'"]').click();await flush();
+assert.equal(root.dataset.supportView,'new');
+assert.equal(calls.at(-1).name,'support_owner_recipient');assert.equal(calls.at(-1).args.p_user,NEW);
+assert.equal(calls.filter(c=>c.name==='support_owner_create').length,sendsBefore,'Choosing a new user only opens the compose view');
+root.querySelector('[data-support-back]').click();await flush();
+root.querySelector('[data-support-more]').click();await flush();
+const activeRow=root.querySelector('[data-support-thread="'+OLD+'"]');
+const context=()=>root.querySelector('.support-inbox-context');
+let rowTop=330;const activeRect=()=>({left:20,top:rowTop,width:353,height:88});activeRow.getBoundingClientRect=activeRect;
+const originalRect=w.HTMLElement.prototype.getBoundingClientRect;
+w.HTMLElement.prototype.getBoundingClientRect=function(){
+ if(this.classList.contains('support-inbox-context-frame'))return {left:12,top:54,width:369,height:764};
+ if(this.classList.contains('support-inbox-context-actions'))return {height:this.querySelector('[role=alert]')?158:98};
+ return originalRect.call(this);
+};
+const readCount=()=>calls.filter(c=>c.args.p_action==='read').length;
+const clearCount=()=>calls.filter(c=>c.args.p_action==='clear').length;
+const readsBeforeHold=readCount(),clearsBeforeHold=clearCount();
+const rowPointer=(type,clientY)=>activeRow.dispatchEvent(new w.PointerEvent(type,{bubbles:true,pointerId:7,pointerType:'touch',isPrimary:true,button:0,clientX:120,clientY}));
+rowPointer('pointerdown',200);rowPointer('pointermove',230);await new Promise(r=>setTimeout(r,530));
+assert.equal(context().open,false,'A scrolling gesture does not open the menu');
+rowPointer('pointerdown',200);await new Promise(r=>setTimeout(r,530));assert(context().open,'Holding a conversation opens its actions');
+const highlighted=()=>context().querySelector('.support-inbox-context-preview');
+const actions=()=>context().querySelector('.support-inbox-context-actions');
+assert(highlighted().textContent.includes('Один человек')&&highlighted().textContent.includes('Новое сообщение'));
+assert(highlighted().querySelector('.support-inbox-avatar'),'Highlighted row includes its existing avatar');
+assert.equal(highlighted().style.top,'276px','The highlighted row stays at the selected position');
+assert.equal(highlighted().style.left,'8px');
+assert.equal(actions().style.top,'372px','Open under the highlighted row when there is room');
+assert.equal(actions().style.left,highlighted().style.left);
+assert.equal(root.querySelector('[data-support-thread="'+OLD+'"]'),activeRow,'Opening the menu does not replace the actual inbox row');
+assert.equal(readCount(),readsBeforeHold,'A preview must not open the thread or mark it as read');
+rowPointer('pointerup',200);activeRow.dispatchEvent(new w.MouseEvent('click',{bubbles:true,cancelable:true,detail:1}));await flush();
+assert.equal(root.dataset.supportView,'list','Release of a long press does not navigate');
+context().querySelector('[data-support-context-delete]').click();
+assert(context().querySelector('[data-support-context-confirm]'));assert.equal(clearCount(),clearsBeforeHold);
+context().querySelector('[data-support-context-cancel]').click();
+assert(!context().open);assert.equal(clearCount(),clearsBeforeHold,'Cancelling never clears a conversation');
+rowTop=670;
+activeRow.dispatchEvent(new w.KeyboardEvent('keydown',{bubbles:true,key:'F10',shiftKey:true,cancelable:true}));assert(context().open,'Menu is also available with the keyboard');
+assert.equal(highlighted().style.top,'616px');
+assert.equal(actions().style.top,'510px','Use the space above a row near the bottom edge');
+context().querySelector('[data-support-context-delete]').click();
+failInboxClear=true;
+context().querySelector('[data-support-context-confirm]').click();await flush();
+assert.equal(clearCount(),clearsBeforeHold+1);
+assert.equal(root.querySelector('[data-support-thread="'+OLD+'"]'),activeRow,'The conversation stays in the inbox if the server rejects the operation');
+const failedOperation=calls.at(-1).args.p_args.operationId;
+activeRow.dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true,cancelable:true,button:2}));
+assert(context().open,'The context menu is available from a mouse');
+context().querySelector('[data-support-context-delete]').click();
+context().querySelector('[data-support-context-confirm]').click();await flush();
+assert.equal(calls.at(-1).args.p_args.operationId,failedOperation,'A retry uses the original operation ID');
+assert.equal(clearCount(),clearsBeforeHold+2);
+assert.deepEqual(calls.at(-1).args.p_args,{threadId:OLD,scope:'self',operationId:calls.at(-1).args.p_args.operationId});
+assert(!root.querySelector('[data-support-thread="'+OLD+'"]'),'Remove the row only after the authenticated acknowledgement');
+assert(root.querySelector('[data-support-thread="'+OLDER+'"]'),'Keep the other conversations');
+w.HTMLElement.prototype.getBoundingClientRect=originalRect;
+stop();
+stop=mountSupportPanel(root,{...directoryOptions,owner:false});await flush();
+assert.equal(root.querySelector('[data-support-users]'),null,'Ordinary accounts cannot mount the directory');assert.equal(root.querySelector('.support-inbox-context'),null,'Ordinary accounts cannot mount owner inbox actions');
+stop();
+const prepareFixturePhoto=async()=>({data:'fixture-photo',preview:'data:image/jpeg;base64,AAAA'});
+for(const asOwner of [true,false]){
+ actor=asOwner?A:U;photoReplyReject=true;
+ stop=mountSupportPanel(root,{auth,app:'salah',version:561,owner:asOwner,groupConversations:true,initialThreadId:OLD,preparePhoto:prepareFixturePhoto});
+ await flush();
+ const form=root.querySelector('[data-support-reply]'),picker=form?.querySelector('[data-support-reply-photo-input]');
+ assert(picker&&form.querySelector('.salah-message-input-row [data-support-reply-photo-pick]'),'Both participants can attach photos without adding a separate composer row');
+ Object.defineProperty(picker,'files',{configurable:true,value:[new w.File(['photo'],'fixture.jpg',{type:'image/jpeg'})]});
+ picker.dispatchEvent(new w.Event('change',{bubbles:true}));await flush();
+ assert.equal(form.querySelector('textarea').required,false,'Attachments can be sent without a caption');
+ assert.equal(form.querySelectorAll('[data-support-reply-photos] img').length,1);
+ const submit=()=>form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+ submit();await flush();
+ const getLast=()=>calls.findLast(c=>c.name==='support_reply_photos').args;
+ const firstAttempt=getLast();
+ assert.equal(firstAttempt.p_body,'');assert.equal(firstAttempt.p_owner,asOwner);
+ assert.deepEqual(firstAttempt.p_photos,['fixture-photo']);
+ assert.equal(form.querySelectorAll('[data-support-reply-photos] img').length,1,'A failure keeps the selected photo');
+ submit();await flush();
+ assert.equal(getLast().p_id,firstAttempt.p_id,'A normal retry uses exactly the same message id');
+ assert.equal(form.querySelectorAll('[data-support-reply-photos] img').length,0);
+ stop();
+}
+testVideosEnabled=true;
+const originalFetch=globalThis.fetch;let videoPuts=0;
+globalThis.fetch=async(url,request)=>{
+ assert(url.includes('/upload/sign/support-chat-media/'));assert.equal(request.method,'PUT');videoPuts++;
+ if(videoPuts===1)return new Response(null,{status:503});
+ videoUploaded=true;return new Response(null,{status:200});
+};
+stop=mountSupportPanel(root,{auth,app:'salah',version:561,owner:false,groupConversations:true,initialThreadId:OLD,preparePhoto:prepareFixturePhoto});await flush();
+const videoForm=root.querySelector('[data-support-reply]'),videoInput=videoForm.querySelector('[data-support-reply-photo-input]');
+assert(videoInput.accept.includes('video/quicktime'));
+Object.defineProperty(videoInput,'files',{configurable:true,value:[new File(['01234567890123456789'],'fixture.mov',{type:'video/quicktime'})]});
+videoInput.dispatchEvent(new w.Event('change',{bubbles:true}));await flush();
+assert(videoForm.querySelector('[data-support-reply-video-remove]'));assert.equal(videoForm.querySelector('textarea').required,false);
+const sendVideo=()=>videoForm.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+sendVideo();await flush();
+assert(!calls.some(c=>c.name==='support_reply_media_finish'),'A failed upload never attempts to post a message');
+assert(videoForm.querySelector('[data-support-reply-video-remove]'));
+sendVideo();await flush();
+assert(videoForm.querySelector('[data-support-reply-video-remove]'),'Lost final acknowledgement keeps the composer draft');
+sendVideo();await flush();
+assert.equal(videoPuts,2,'Retry after successful upload skips uploading the bytes again');
+assert.equal(new Set(calls.filter(c=>c.name.startsWith('support_reply_media_')).map(c=>c.args.p_id)).size,1);
+assert(!videoForm.querySelector('[data-support-reply-video-remove]'));
+const playButton=root.querySelector('[data-support-media-play]');assert(playButton,'Delivered video is rendered in the chat');
+const inlineVideo=playButton.parentElement.querySelector('video');assert(inlineVideo.hidden&&inlineVideo.getAttribute('src')===null);
+inlineVideo.play=async()=>{};playButton.click();assert(!inlineVideo.hidden);assert(inlineVideo.src.includes('/sign/support-chat-media/'));
+stop();
+testVoiceEnabled=true;videoUploaded=false;videoPublished=null;failFinish=true;
+const microphoneTracks=[];let createdVoiceUrls=0;const revokedVoiceUrls=[];
+Object.defineProperty(w.navigator,'mediaDevices',{configurable:true,value:{async getUserMedia(){
+ const track={stops:0,stop(){this.stops++;}};microphoneTracks.push(track);return {getTracks:()=>[track]};
+}}});
+w.MediaRecorder=class{
+ static isTypeSupported(mime){return mime==='audio/mp4';}
+ constructor(_stream,options){this.mimeType=options.mimeType;this.state='inactive';}
+ start(){this.state='recording';}
+ stop(){this.state='inactive';this.ondataavailable?.({data:new Blob(['0123456789abcdef'],{type:'audio/mp4'})});this.onstop?.();}
+};
+w.URL.createObjectURL=()=> 'blob:voice-'+(++createdVoiceUrls);
+w.URL.revokeObjectURL=url=>revokedVoiceUrls.push(url);
+globalThis.fetch=async(_url,init)=>{
+ assert.equal(init.body.get('').type,'audio/mp4');videoUploaded=true;return new Response(null,{status:200});
+};
+stop=mountSupportPanel(root,{auth,app:'salah',version:561,owner:false,groupConversations:true,initialThreadId:OLD,preparePhoto:prepareFixturePhoto});await flush();
+const voiceForm=root.querySelector('[data-support-reply]'),mic=voiceForm.querySelector('[data-support-voice-toggle]');
+assert(!mic.hidden,'The microphone is available on a supported browser');
+mic.click();await flush();
+assert.equal(mic.getAttribute('aria-pressed'),'true');
+assert(voiceForm.querySelector('[type=submit]').disabled,'A recording cannot post until the user stops it');
+voiceForm.querySelector('[data-support-voice-cancel]').click();
+assert.equal(microphoneTracks.at(-1).stops,1);assert(!voiceForm.querySelector('audio'));
+mic.click();await flush();mic.click();await flush();
+const preview=voiceForm.querySelector('audio');assert(preview.src.startsWith('blob:voice-'));
+assert.equal(voiceForm.querySelector('textarea').required,false);assert.equal(microphoneTracks.at(-1).stops,1);
+voiceForm.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await flush();
+assert.equal(voiceForm.querySelector('audio'),preview,'A lost acknowledgement retains the playable recording');
+voiceForm.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await flush();
+assert(!voiceForm.querySelector('audio'));assert(revokedVoiceUrls.includes(preview.src));
+assert(root.querySelector('.support-chat-media audio'),'Received voice messages render an audio player');
+mic.click();await flush();stop();
+assert.equal(microphoneTracks.at(-1).stops,1,'Leaving the route releases the mic immediately');
+globalThis.fetch=originalFetch;
+await w.happyDOM.close();console.log('PASS grouped Support UI: one wrapped heading, combined topics, compact person header, history pages, original-case deletion, preserved composer and list scroll, edge back before Menu, scoped close and account cleanup.');

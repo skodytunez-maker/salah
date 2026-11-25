@@ -1,7 +1,7 @@
 let sequence=0;
-const key='salahPlayerWindow';
 // A native Back gesture consumes the player layer before the originating route.
-export function createPlayerWindowHistory({dismiss,restore=()=>null,onRestoreFailure=()=>{},win,onChange=()=>{}}){
+export function createPlayerWindowHistory({dismiss,restore=()=>null,onRestoreFailure=()=>{},win,onChange=()=>{},historyKey='salahPlayerWindow'}){
+ const key=historyKey;
  const history=win?.history;
  let active=false,suspended=false,pending=false,disposed=false,token=null,url=null,previous=null,destination=null;
  const owns=()=>!!token&&history?.state?.[key]===token&&win.location?.href===url;
