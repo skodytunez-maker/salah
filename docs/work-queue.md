@@ -430,3 +430,11 @@ The owner explicitly asked for delivery to all phones following the private test
 ### SALAH 549
 
 After the owner saw a Back swipe from the reciter's surah list reveal Home, the inline player return was corrected and the owner explicitly asked to release it with functional diagnostics. A failed restoration of an eligible player adds one consented report. The owner summary identifies the failed transition, version and device category. The existing summary remains compatible and the owner authorization requirement stays in effect. Existing reports retain their prior meaning. The migration only extends the private aggregate validation. No automatic account linkage or new feature announcement. Use the new nested history rule in AGENTS.md for future screens. The personal travel-city proposal remains a separate candidate.
+
+## 25 ноября 2026 — восстановление чтения
+
+- После повторного сообщения об остановке Аль-Фатихи пользователь потребовал сохранять уже принятую работу приложения. Ближайший кандидат 563 сужен до окончания записи и продолжения следующей суры.
+- Правки главной, индикатора и внешнего вида сохранены отдельным локальным вариантом. В пакет восстановления чтения они не включены.
+- Тест воспроизводит остановку на опубликованной 562 после ранней финальной паузы. Кандидат запускает Аль-Бакару в этом сценарии. Проверка на реальном iPhone остаётся открытой.
+
+- Владелец прямо поручил опубликовать узкое исправление 563. Публикация выполняется после проверки точного состава. Физическое подтверждение остаётся открытым.

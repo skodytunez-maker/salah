@@ -1,17 +1,25 @@
 {
   "schema": 1,
-  "version": 562,
-  "baseCommit": "b08c5e3b3c52718a969924ed0bc3d5b245c07cdb",
-  "baseTree": "7a543b8e3226ddc22b3d4b3e4b53e0940a2c189c",
-  "note": "Local SALAH 562 candidate for natural continuation after a final pause event.",
+  "version": 563,
+  "baseCommit": "fcfa31cf1b67487483521241da56bab39927d217",
+  "baseTree": "182b2c27cef0977991836bcf9fe63512e976739a",
+  "note": "SALAH 563 audio-only maintenance candidate. Home changes remain in a separate local draft.",
   "allowed": [
     {
       "path": "dist/js/quran-audio.js",
-      "reason": "Distinguish a final pause followed by a confirmed end of a recording from an explicit or interrupted pause."
+      "reason": "Handle a confirmed recording end following an early final native pause without overriding explicit pause or seeking."
     },
     {
       "path": "scripts/check-quran-pause-authority.mjs",
-      "reason": "Reproduce and verify natural chapter continuation without overriding pause, seek, interruption or the sleep timer."
+      "reason": "Verify Al-Fatihah to Al-Baqarah, verse handoff and existing pause authority."
+    },
+    {
+      "path": "AGENTS.md",
+      "reason": "Record the owner requirement to preserve accepted behavior and keep emergency audio corrections narrow."
+    },
+    {
+      "path": "docs/work-queue.md",
+      "reason": "Record the audio-only scope and outstanding physical verification."
     },
     {
       "path": "dist/js/app-release.js",
@@ -19,11 +27,11 @@
     },
     {
       "path": "dist/sw.js",
-      "reason": "Match candidate version and exact resource bytes."
+      "reason": "Candidate cache version and actual resource sizes."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Review exact 562 scope against the released 561 tree."
+      "reason": "Authenticate the narrow change against the published 562 source."
     }
   ],
   "generated": [
@@ -2639,7 +2647,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "26860a77cb6c2dc31f285449fb1967d87a4e63cd"
+      "sha": "df2db111db8e891a010300de91db5f17dc0f32e5"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4367,7 +4375,7 @@
     },
     {
       "path": "dist/js/quran-audio.js",
-      "sha": "cef2a57962bf45b599cc6629f63bb3ea69e1ca45"
+      "sha": "200777730e959379f713f3c59a5facaab2380ce2"
     },
     {
       "path": "dist/js/quran-award-history.js",
@@ -5111,7 +5119,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "5fd344cea6a82a0f0a9ad6b67d48d324bb014b69"
+      "sha": "d508f08713d42c46ed61c7ccca7737df38a56ee7"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5659,7 +5667,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "d6d002a1e8bf0eee0e1e190fe2f77e2c9bd89c66"
+      "sha": "736255d478cb6789803304231c54bba88662921b"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -7455,7 +7463,7 @@
     },
     {
       "path": "scripts/check-quran-pause-authority.mjs",
-      "sha": "be01fa1620fa96763020c029b8e83e5d4fcf7440"
+      "sha": "464e0ec93be786ac602fa422b7cbe277e276088d"
     },
     {
       "path": "scripts/check-quran-player-cascade.mjs",
@@ -8722,5 +8730,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=561;\nexport const APP_UPDATED_AT='2026-11-25';\nexport const APP_UPDATE_DATE='25 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=562;\nexport const APP_UPDATED_AT='2026-11-25';\nexport const APP_UPDATE_DATE='25 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

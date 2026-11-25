@@ -91,7 +91,7 @@ console.log('PASS: native and lockscreen pause authority, no recovery/queued-end
  f.session.stop();
 }
 
-for(const separateAction of ['explicit-pause','seek','mid-track-pause','system-interruption']){
+for(const separateAction of ['explicit-pause','seek','native-seek','mid-track-pause','system-interruption']){
  const f=fixture();await f.session.start(f.data(7),'ar.yasseraldossaricontinuous');await flush();
  const a=f.tracks[0],before=a.plays;
  a.currentTime=separateAction==='mid-track-pause'?200:a.duration;
@@ -99,6 +99,7 @@ for(const separateAction of ['explicit-pause','seek','mid-track-pause','system-i
  a.paused=true;a.ended=false;a.onpause?.();
  if(separateAction==='explicit-pause')f.actions.pause();
  if(separateAction==='seek')f.session.seek(200);
+ if(separateAction==='native-seek')a.onseeking?.();
  a.ended=true;a.onended?.();await flush();
  assert.equal(f.session.state.surah.number,7,'Do not continue after '+separateAction);
  assert.equal(a.plays,before);
@@ -116,3 +117,33 @@ console.log('PASS: final pause before ended advances once, with explicit pause, 
  assert.equal(f.session.state.status,'paused');assert.equal(a.plays,before);
  f.session.stop();
 }
+
+for(const endSignal of ['ended','timeupdate']){
+ const f=fixture(),whole='ar.yasseraldossaricontinuous';
+ await f.session.start(f.data(1),whole);await flush();
+ const audio=f.tracks[0],plays=audio.plays;
+ audio.duration=43;audio.currentTime=42.73;audio.paused=true;audio.onpause();
+ assert.equal(f.session.state.surah.number,1,'An early pause can only wait for the actual end');
+ assert.equal(audio.plays,plays);
+ audio.currentTime=43;audio.ended=true;
+ const previousEnded=audio.onended;
+ if(endSignal==='ended')previousEnded();else audio.ontimeupdate();
+ await flush();previousEnded();await flush();
+ assert.equal(f.session.state.surah.number,2,'Al-Fatihah must advance to Al-Baqarah after confirmed completion');
+ assert.match(audio.src,/002\.mp3$/);assert.equal(f.session.state.status,'playing');
+ assert.equal(audio.plays,plays+1);assert.equal(f.tracks.length,1);
+ f.session.stop();
+}
+
+{
+ const tracks=[];
+ const player=createQuranPlayer({surah:{number:1,verses:[{number:1,ayah:1},{number:2,ayah:2}]},reciter:'ar.alafasy',createAudio:url=>{const audio=new Audio(url);tracks.push(audio);return audio;},getAudio:async()=>null,loadDurations:async()=>null,onState(){},onVerse(){},onError(){assert.fail('Audio failed');}});
+ await player.play(0,true);
+ const audio=tracks[0];audio.duration=5;audio.currentTime=4.8;audio.paused=true;audio.onpause();assert.equal(player.state.index,0);
+ audio.currentTime=5;audio.ended=true;audio.onended();
+ await flush();
+ assert.equal(player.state.index,1,'Verse-by-verse reading continues through a near-end pause before the final ayah');
+ assert.equal(player.state.status,'playing');
+ player.destroy();
+}
+console.log('PASS: the exact Al-Fatihah to Al-Baqarah handoff after an early native pause, duplicate completion suppression, and continuation in verse recordings.');
