@@ -1,377 +1,29 @@
 {
   "schema": 1,
-  "version": 561,
-  "baseCommit": "ee6e3928d9ae3429eff4550c404c0145718e7e48",
-  "baseTree": "2b254726be04f2892040e3b41c3cbab0ed363d57",
-  "note": "SALAH 561 with verified changes to iOS playback, Support, Stories, registration, language fallback, web startup and the private Makkah preview.",
+  "version": 562,
+  "baseCommit": "b08c5e3b3c52718a969924ed0bc3d5b245c07cdb",
+  "baseTree": "7a543b8e3226ddc22b3d4b3e4b53e0940a2c189c",
+  "note": "Local SALAH 562 candidate for natural continuation after a final pause event.",
   "allowed": [
     {
-      "path": "dist/css/support.css",
-      "reason": "Style the directory divider and the owner conversation preview menu."
-    },
-    {
-      "path": "dist/css/video-stories.css",
-      "reason": "Style the Stories entry, viewing and response controls within SALAH."
-    },
-    {
-      "path": "dist/day-night.css",
-      "reason": "Position the short-lived photograph layers under the existing scene shade."
-    },
-    {
-      "path": "dist/index.html",
-      "reason": "Apply the Stories stylesheet and allow signed video playback from its dedicated storage bucket. Load Stories styling and authorize playback only from the dedicated signed media paths."
-    },
-    {
-      "path": "dist/js/app-bootstrap.js",
-      "reason": "Apply the same English fallback in the independent pre-module screen. Capture opt-in browser timing at a readiness, timeout or failed transition without affecting the regular entry."
-    },
-    {
-      "path": "dist/js/app-release.js",
-      "reason": "Quiet release metadata."
-    },
-    {
-      "path": "dist/js/app.js",
-      "reason": "Mount the optional Home stories indicator and provide the Stories menu entry. Defer loading the Quran reader until its route opens, with stale navigation protection."
-    },
-    {
-      "path": "dist/js/chat-translation.js",
-      "reason": "Enable optional on-device translation for browsers with the necessary built-in APIs."
-    },
-    {
-      "path": "dist/js/conversation-theme-view.js",
-      "reason": "Render and synchronize the selected built-in Support theme while keeping photo settings local."
-    },
-    {
-      "path": "dist/js/conversation-themes.js",
-      "reason": "Render and synchronize the selected built-in Support theme while keeping photo settings local."
-    },
-    {
-      "path": "dist/js/counter-account.js",
-      "reason": "Keep the entered nickname when changing the registration email and preserve in-flight OTP boundaries."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants. Translate Stories publishing, viewing and interactions."
-    },
-    {
-      "path": "dist/js/i18n/account/ar.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/az.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/de.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/en.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/kk.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/ru.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/tg.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/account/uz.js",
-      "reason": "Show video upload and format status in the existing composer."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/ar.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/az.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/de.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/en.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/kk.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/ru.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/tg.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/i18n/conversationThemes/uz.js",
-      "reason": "Explain that a built-in Support theme is visible to both participants."
-    },
-    {
-      "path": "dist/js/interface-languages.js",
-      "reason": "Use English when no supported device language matches automatic preference."
-    },
-    {
-      "path": "dist/js/media-session.js",
-      "reason": "Keep the iOS position clock unset until audio movement is confirmed."
-    },
-    {
-      "path": "dist/js/owner-auth.js",
-      "reason": "Reuse the authenticated user pager with abort and expected-owner checks."
-    },
-    {
       "path": "dist/js/quran-audio.js",
-      "reason": "Require movement from the retained native audio clock after a system resume."
-    },
-    {
-      "path": "dist/js/quran-player-navigation.js",
-      "reason": "Allow an independent history key for stories while preserving the default Quran player route."
-    },
-    {
-      "path": "dist/js/quran-session.js",
-      "reason": "Pass the unconfirmed playback state to the system media session."
-    },
-    {
-      "path": "dist/js/staff-cabinet.js",
-      "reason": "Enable optional on-device translation for browsers with the necessary built-in APIs."
-    },
-    {
-      "path": "dist/js/staff-markup.js",
-      "reason": "Record, preview and send voice in the existing Support conversation flow."
-    },
-    {
-      "path": "dist/js/startup-timing.js",
-      "reason": "Display only local aggregate browser startup timings when explicitly requested."
-    },
-    {
-      "path": "dist/js/support-chat-view.js",
-      "reason": "Place contacts below the inbox and anchor a cancellable context menu to the highlighted row."
-    },
-    {
-      "path": "dist/js/support-client.js",
-      "reason": "Separate existing threads from new contacts and wait for a confirmed self-only clear."
-    },
-    {
-      "path": "dist/js/support-media.js",
-      "reason": "Record, preview and send voice in the existing Support conversation flow."
-    },
-    {
-      "path": "dist/js/support-user-directory.js",
-      "reason": "Search and paginate new contacts without duplicating past conversations."
-    },
-    {
-      "path": "dist/js/support-user-profile.js",
-      "reason": "Use the same shared conversation theme in the private participant card opened from that chat."
-    },
-    {
-      "path": "dist/js/support-voice-recorder.js",
-      "reason": "Record, preview and send voice in the existing Support conversation flow."
-    },
-    {
-      "path": "dist/js/support.js",
-      "reason": "Provide the existing owner directory from the owner route only."
-    },
-    {
-      "path": "dist/js/video-stories.js",
-      "reason": "Watch, publish, archive and engage with SALAH stories."
-    },
-    {
-      "path": "dist/js/weather.js",
-      "reason": "Defer the advanced-sky matte atlas until a verified opt-in and cancel pending work on exit. Fade the verified portrait Makkah trial in over the already visible regular photograph and dispose on navigation or grant revocation."
-    },
-    {
-      "path": "dist/owner.html",
-      "reason": "Load Stories styling and authorize playback only from the dedicated signed media paths."
-    },
-    {
-      "path": "dist/share.html",
-      "reason": "Load Stories styling and authorize playback only from the dedicated signed media paths."
-    },
-    {
-      "path": "dist/sw.js",
-      "reason": "Align worker version and cache the directory module."
-    },
-    {
-      "path": "docs/change-scope.json",
-      "reason": "Exact checked release scope against 560."
-    },
-    {
-      "path": "scripts/check-app-bootstrap.mjs",
-      "reason": "Verify opt-in-only timing, limited data display and unaffected regular and native bootstrap."
-    },
-    {
-      "path": "scripts/check-chat-translation.mjs",
-      "reason": "Cover account and room isolation, in-memory caching and unchanged message originals."
-    },
-    {
-      "path": "scripts/check-conversation-themes.mjs",
-      "reason": "Verify shared Support theme authorization, synchronization and offline behavior."
-    },
-    {
-      "path": "scripts/check-counter-account.mjs",
-      "reason": "Verify nickname retention and new-address confirmation while preserving recovery and QR behavior."
-    },
-    {
-      "path": "scripts/check-entry-modules.mjs",
-      "reason": "Link and verify the deferred reader and Stories browser modules. Link the optional static diagnostic module before packaging."
-    },
-    {
-      "path": "scripts/check-home-weather-continuity.mjs",
-      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
-    },
-    {
-      "path": "scripts/check-interface-language-core.mjs",
-      "reason": "Verify unsupported regional language variants and preservation of manual Russian."
-    },
-    {
-      "path": "scripts/check-interface-language-settings.mjs",
-      "reason": "Verify consistent initial and runtime fallback on unsupported phone languages."
-    },
-    {
-      "path": "scripts/check-live-sky-opt-in.mjs",
-      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
-    },
-    {
-      "path": "scripts/check-owner-sky-access.mjs",
-      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
-    },
-    {
-      "path": "scripts/check-owner-support.mjs",
-      "reason": "Exercise the existing Support menu against a DOM that includes the new Stories entry."
-    },
-    {
-      "path": "scripts/check-public-sky-policy.mjs",
-      "reason": "Keep verified opt-in, cancellation and original weather behavior under the deferred matte loader."
-    },
-    {
-      "path": "scripts/check-quran-audio-session.mjs",
-      "reason": "Verify remote Play, retained source and category without an optimistic iOS clock."
-    },
-    {
-      "path": "scripts/check-quran-lockscreen.mjs",
-      "reason": "Cover false starts, buffering, seek and the system playback state."
+      "reason": "Distinguish a final pause followed by a confirmed end of a recording from an explicit or interrupted pause."
     },
     {
       "path": "scripts/check-quran-pause-authority.mjs",
-      "reason": "Verify delayed system resume and native Pause using actual audio ticks."
+      "reason": "Reproduce and verify natural chapter continuation without overriding pause, seek, interruption or the sleep timer."
     },
     {
-      "path": "scripts/check-quran-reading-progress.mjs",
-      "reason": "Verify reading continuity, deduplicated lazy loading, stale route protection and retry."
+      "path": "dist/js/app-release.js",
+      "reason": "Quiet candidate version."
     },
     {
-      "path": "scripts/check-scene-load.mjs",
-      "reason": "Exercise the real foreground, fallback and device scene against the delayed matte loader. Reproduce the abrupt standard-to-owner wallpaper handoff and verify fading, a bounded sky wait and cleanup."
+      "path": "dist/sw.js",
+      "reason": "Match candidate version and exact resource bytes."
     },
     {
-      "path": "scripts/check-security.mjs",
-      "reason": "Verify exact signed media bucket boundaries in the content security policy."
-    },
-    {
-      "path": "scripts/check-settings-resume.mjs",
-      "reason": "Include the Stories disposer in the existing settings navigation fixture."
-    },
-    {
-      "path": "scripts/check-support-access-continuity.mjs",
-      "reason": "Add the user pager to the verified owner route fixture."
-    },
-    {
-      "path": "scripts/check-support-conversation-theme.mjs",
-      "reason": "Verify shared Support theme authorization, synchronization and offline behavior."
-    },
-    {
-      "path": "scripts/check-support-conversation-ui.mjs",
-      "reason": "Cover mixed inbox layout, authorization, gestures, cancellation, retry and self-only confirmation."
-    },
-    {
-      "path": "scripts/check-support-reply-photos.mjs",
-      "reason": "Exercise authenticated photo replies, storage failure, replay and access visibility."
-    },
-    {
-      "path": "scripts/check-support-reply-video.mjs",
-      "reason": "Verify retry, signed video transport and private visibility."
-    },
-    {
-      "path": "scripts/check-support-voice-recorder.mjs",
-      "reason": "Verify recording permission, resource cleanup and cancellation."
-    },
-    {
-      "path": "scripts/check-video-stories.mjs",
-      "reason": "Verify the real Stories route, local database and UI flows."
-    },
-    {
-      "path": "supabase/config.toml",
-      "reason": "Register the independent Stories function with separate account and owner checks."
-    },
-    {
-      "path": "supabase/functions/support-messages/index.ts",
-      "reason": "Scope shared theme access to authenticated Support participants only."
-    },
-    {
-      "path": "supabase/functions/video-stories/core.mjs",
-      "reason": "Validate video publication, polls and viewer actions."
-    },
-    {
-      "path": "supabase/functions/video-stories/index.ts",
-      "reason": "Gate publishing, media and interactions by current authentication and story visibility."
-    },
-    {
-      "path": "supabase/migrations/20261122213000_video_stories.sql",
-      "reason": "Create private Stories storage and publication state."
-    },
-    {
-      "path": "supabase/migrations/20261125023000_support_conversation_theme.sql",
-      "reason": "Scope shared theme access to authenticated Support participants only."
-    },
-    {
-      "path": "supabase/migrations/20261125024500_support_reply_photos.sql",
-      "reason": "Keep private reply photo batches and reject conflicting retries."
-    },
-    {
-      "path": "supabase/migrations/20261125033000_support_reply_media.sql",
-      "reason": "Accept private video and recorded voice with confirmed participant and message visibility checks."
-    },
-    {
-      "path": "supabase/migrations/20261125143000_video_story_engagement.sql",
-      "reason": "Store likes, reactions, votes and private comments with an account-bound interface."
+      "path": "docs/change-scope.json",
+      "reason": "Review exact 562 scope against the released 561 tree."
     }
   ],
   "generated": [
@@ -1787,11 +1439,15 @@
     },
     {
       "path": "dist/css/support.css",
-      "sha": "70f409f426777efd318bc52a52309b3702165d72"
+      "sha": "86039039d0c75cc0c851c558d4f6c8c0d15efec2"
     },
     {
       "path": "dist/css/team-preview.css",
       "sha": "2ca889aa618811eca6f2a385bebb5c9722f5441e"
+    },
+    {
+      "path": "dist/css/video-stories.css",
+      "sha": "610f2ba67c583998c382f536d31b48d8e32ad229"
     },
     {
       "path": "dist/daily-dua.css",
@@ -2827,7 +2483,7 @@
     },
     {
       "path": "dist/day-night.css",
-      "sha": "d8b490a72288d0bf3ceef47f56b82160e486a1c1"
+      "sha": "f8447e9ab5e15dc0612714e79b89cb0e37242db0"
     },
     {
       "path": "dist/delete-account.html",
@@ -2859,7 +2515,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha": "e83f1ea46774d90f37c9a1153afa08795678f034"
+      "sha": "cb5ef17846bf2470cd2a0887aae314be860155f9"
     },
     {
       "path": "dist/iphone.css",
@@ -2975,7 +2631,7 @@
     },
     {
       "path": "dist/js/app-bootstrap.js",
-      "sha": "1c357eb5764b00535338e9f73b8b63247fcafc2f"
+      "sha": "0492edd68d2c8333510c04d90a65b66457144f29"
     },
     {
       "path": "dist/js/app-recover.js",
@@ -2983,7 +2639,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "706b16b840371fc95d2125f6d630a007263c9205"
+      "sha": "26860a77cb6c2dc31f285449fb1967d87a4e63cd"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3003,7 +2659,7 @@
     },
     {
       "path": "dist/js/app.js",
-      "sha": "608bd011f5fbf29aa8c7ec6abed7c22e7ef1e5dd"
+      "sha": "49064d44695a51ded1c59a449b1abb5d049cd4b9"
     },
     {
       "path": "dist/js/approved-catalog.js",
@@ -3082,6 +2738,10 @@
       "sha": "5c59a19ea74ce9b5ec72991683bd9ab035f5a00e"
     },
     {
+      "path": "dist/js/chat-translation.js",
+      "sha": "8d63d2028c6f52ff477fbcd7e9245c7fa703dd6d"
+    },
+    {
       "path": "dist/js/city-data.js",
       "sha": "a8c752c0fbb49a6a73a6fae3875af578f4ad3ce4"
     },
@@ -3126,8 +2786,16 @@
       "sha": "9cadc131e4f172530ac644a92077b2ed1f162967"
     },
     {
+      "path": "dist/js/conversation-theme-view.js",
+      "sha": "81d0034cbbc2b384f2b8dc818b4bfddf40843bca"
+    },
+    {
+      "path": "dist/js/conversation-themes.js",
+      "sha": "69952d491d9ebc5887d6c69173307475426552a5"
+    },
+    {
       "path": "dist/js/counter-account.js",
-      "sha": "735a0b01672fa442e24003f7701b522c3fef484d"
+      "sha": "d3f9f8317bdc2d1c4d3be79b6bfb5496a9c232e8"
     },
     {
       "path": "dist/js/counter-sync-core.js",
@@ -3290,6 +2958,38 @@
       "sha": "f7b06aa311e3ce0a0741de0422d9f7e692a47c92"
     },
     {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "sha": "244ec4732874441aa094326a65f2bdbaf4b13592"
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "sha": "8277b4c9b32510202cdacc2c912acabc20753f0e"
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "sha": "1f9cf59a346ec22d22f3af20a584135145b483d2"
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "sha": "03e81cdb8225ddbeb0f551602f29b98aa7baf75e"
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "sha": "0fbef1ce1c8def536b080e7497dedd6d4cd298c2"
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "sha": "6a7911d8af0147662240d74ced5b4fdfc1dcf87c"
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "sha": "3b61ae917fdcf9855dd58d9fcb1a34be8ee475a1"
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "sha": "631897b043e9cef27914929e6cee7faccf6e76a7"
+    },
+    {
       "path": "dist/js/i18n-source-catalogues.js",
       "sha": "0d3d9e9c41e8034f80beb5d7a797996349d24975"
     },
@@ -3298,8 +2998,40 @@
       "sha": "b88c81c728bae9b70282e128acaccf33e4daf77f"
     },
     {
+      "path": "dist/js/i18n/account/ar.js",
+      "sha": "5967b89231eea4be6ee6a90ecbd9c52d04e4e902"
+    },
+    {
+      "path": "dist/js/i18n/account/az.js",
+      "sha": "d17e896f480e207d4af1017a6e5dfa17f8e261c2"
+    },
+    {
+      "path": "dist/js/i18n/account/de.js",
+      "sha": "7ccf85745666c165d0c6ceb7681c7c6b6c2c5c56"
+    },
+    {
+      "path": "dist/js/i18n/account/en.js",
+      "sha": "f8e4699bcebf57a43fcb0d8f4219ec59d959fe80"
+    },
+    {
       "path": "dist/js/i18n/account/index.js",
       "sha": "c96eabce687a45b6c2291171a0e07f44ed76e23e"
+    },
+    {
+      "path": "dist/js/i18n/account/kk.js",
+      "sha": "be9ea30328f09fa9a67dcadacfe0fd54dc5d3bc8"
+    },
+    {
+      "path": "dist/js/i18n/account/ru.js",
+      "sha": "538a7090c1f1bcc134c6f4aaee58992e4de23c47"
+    },
+    {
+      "path": "dist/js/i18n/account/tg.js",
+      "sha": "94ab3c34d5f3a159712d4b5582511385c53134b1"
+    },
+    {
+      "path": "dist/js/i18n/account/uz.js",
+      "sha": "1801db666b67e42cd1c3eec5536c02bf9daa8540"
     },
     {
       "path": "dist/js/i18n/ar.js",
@@ -3346,8 +3078,40 @@
       "sha": "7321c86be8820382002aad1b002045d37d6aa700"
     },
     {
+      "path": "dist/js/i18n/conversationThemes/ar.js",
+      "sha": "c1fa897c61862044d0e0c762b4be05c3d47432a8"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/az.js",
+      "sha": "2f11496fbc29a18b5da02dd7dbefff800f5d54ed"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/de.js",
+      "sha": "1361b4021c857676dd77ca88dec0603b09d35361"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/en.js",
+      "sha": "955cac4e4d502d92fb826dcc37ca3a20ccd99b4c"
+    },
+    {
       "path": "dist/js/i18n/conversationThemes/index.js",
       "sha": "7c828a3d23f73d9a5c23e8b44942b1fb9d94d205"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/kk.js",
+      "sha": "8844eda08a5c813e865b53bc988f4041a8c7143b"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/ru.js",
+      "sha": "b74f9cc1ddd5f8cf4378ba9245d55d83c6dd8923"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/tg.js",
+      "sha": "b6053931acdca96d3b8b97304689439f86539ed6"
+    },
+    {
+      "path": "dist/js/i18n/conversationThemes/uz.js",
+      "sha": "228fadb05f569682f5d7bc755a37da2079d5aa9b"
     },
     {
       "path": "dist/js/i18n/de.js",
@@ -4211,7 +3975,7 @@
     },
     {
       "path": "dist/js/interface-languages.js",
-      "sha": "796290f65fdc41a6732a61ee71b8eb891fa752f6"
+      "sha": "d4c336824be80a030059e1b6103253e292ab9d83"
     },
     {
       "path": "dist/js/interface-plurals.js",
@@ -4330,6 +4094,10 @@
       "sha": "e16fb6b00e9241358265acf3cfcd3a9a43d414ae"
     },
     {
+      "path": "dist/js/media-session.js",
+      "sha": "e4fe35ec24a2377cdcb8fa2e250819baafe66662"
+    },
+    {
       "path": "dist/js/message-emojis.js",
       "sha": "edbce30df90e764d11da0a6a2ae817c49bb96942"
     },
@@ -4419,7 +4187,7 @@
     },
     {
       "path": "dist/js/owner-auth.js",
-      "sha": "12756013669721565657783da2fee57af548fd99"
+      "sha": "d720bc2b2e0929d232fe3a70b495a49e915b665c"
     },
     {
       "path": "dist/js/owner-card-navigation.js",
@@ -4598,6 +4366,10 @@
       "sha": "4e47d8edd0595025f40fccca0f882a4efef356c1"
     },
     {
+      "path": "dist/js/quran-audio.js",
+      "sha": "cef2a57962bf45b599cc6629f63bb3ea69e1ca45"
+    },
+    {
       "path": "dist/js/quran-award-history.js",
       "sha": "76ccee8c3063a2d98a60b6d07659f7a54b16f658"
     },
@@ -4719,7 +4491,7 @@
     },
     {
       "path": "dist/js/quran-player-navigation.js",
-      "sha": "3784843d29fc7fad4c0a27dd70b19dd5786399f8"
+      "sha": "bafc86f182e69e2e91a2b7720481ccc349967e36"
     },
     {
       "path": "dist/js/quran-player-window.js",
@@ -4788,6 +4560,10 @@
     {
       "path": "dist/js/quran-session-recovery.js",
       "sha": "2ccbb6c3457eec7a0441d4f60780d1bc1b358383"
+    },
+    {
+      "path": "dist/js/quran-session.js",
+      "sha": "6dd341a87f9f2ff2db9f694d71d8a9f7a59946d3"
     },
     {
       "path": "dist/js/quran-sleep-timer.js",
@@ -4958,6 +4734,14 @@
       "sha": "5eeb6f01fd3cc0ae9b68ada6161ad4f37657d2ff"
     },
     {
+      "path": "dist/js/staff-cabinet.js",
+      "sha": "0dba416eb6391c8d3d5f937370e62d2a33d12d68"
+    },
+    {
+      "path": "dist/js/staff-markup.js",
+      "sha": "dd89dadd444873e1fb4040ae07e9dd56f1d0ae8d"
+    },
+    {
       "path": "dist/js/staff-message-actions.js",
       "sha": "ffc256d0a48e54885fc306de0731ff20cfddc92d"
     },
@@ -4986,6 +4770,10 @@
       "sha": "9692a9864852ebc9a3376e3defbb287ffa48ca89"
     },
     {
+      "path": "dist/js/startup-timing.js",
+      "sha": "679ca15358121c0da73164bc148849388aba081e"
+    },
+    {
       "path": "dist/js/storage-cache.js",
       "sha": "a94e98e496a7bdb44c56a99970cbad9142e262ad"
     },
@@ -5002,8 +4790,20 @@
       "sha": "a1d78ab8ef832321fb96a65ed4ab4c50247bdb32"
     },
     {
+      "path": "dist/js/support-chat-view.js",
+      "sha": "554ffd9ba9f9dbbaa522e5dc40c16f85b9e80d34"
+    },
+    {
+      "path": "dist/js/support-client.js",
+      "sha": "94d17c653ae96392ceb79f7f91d4d9b0e96a640f"
+    },
+    {
       "path": "dist/js/support-diagnostics.js",
       "sha": "7b944ea6a02236e4084d2c7b9fbeb47972414aab"
+    },
+    {
+      "path": "dist/js/support-media.js",
+      "sha": "8baaf100dd9b02720764ba8cf7ed0077058190b9"
     },
     {
       "path": "dist/js/support-notice.js",
@@ -5026,8 +4826,20 @@
       "sha": "53d4ce796f51130650f7f5f3d3af9c16704dfc98"
     },
     {
+      "path": "dist/js/support-user-directory.js",
+      "sha": "0318ea1abe059da1a0639718a918cc2af86528d3"
+    },
+    {
+      "path": "dist/js/support-user-profile.js",
+      "sha": "008ce968ee28392b6afcf6506aeea1c126fc0b05"
+    },
+    {
+      "path": "dist/js/support-voice-recorder.js",
+      "sha": "a585e1a319bf1307f03e8e5a13122ed2c6c3577a"
+    },
+    {
       "path": "dist/js/support.js",
-      "sha": "c5ec9558796010365121ab97f49bee6d405b79c0"
+      "sha": "9105267996d37746ee71762011e5de0a59576d43"
     },
     {
       "path": "dist/js/swipe-motion.js",
@@ -5210,6 +5022,10 @@
       "sha": "82c22417f7b906852d8cce3da92f29cf0ac99558"
     },
     {
+      "path": "dist/js/video-stories.js",
+      "sha": "d6fe1aa63c76b9d4a9d21da413e0e4e3f067ec6a"
+    },
+    {
       "path": "dist/js/wallpaper-layout.js",
       "sha": "9d5598eddfde138fa417ef4f8c30858a0db691de"
     },
@@ -5223,7 +5039,7 @@
     },
     {
       "path": "dist/js/weather.js",
-      "sha": "ccd1c281e9755d1b3da1c25988790803cd05b460"
+      "sha": "6e8e6c7f1a51d79d9cc5c12971fccdeeea3c275c"
     },
     {
       "path": "dist/knowledge.css",
@@ -5251,7 +5067,7 @@
     },
     {
       "path": "dist/owner.html",
-      "sha": "ebc31c9917e12db732a62784b2e67f5c0ad458e2"
+      "sha": "700dcb082babd7dd6e932b61c2d054b71276b6ea"
     },
     {
       "path": "dist/privacy.html",
@@ -5283,7 +5099,7 @@
     },
     {
       "path": "dist/share.html",
-      "sha": "a42a15638ce3ce8f7433a969c3f14bb1b986dcb8"
+      "sha": "477df9ce66cb00f72697c71060454821338fb52d"
     },
     {
       "path": "dist/soft-depth.css",
@@ -5295,7 +5111,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "cc0ceb204b309b3a274fbbc168bd3dd27bfa5a10"
+      "sha": "5fd344cea6a82a0f0a9ad6b67d48d324bb014b69"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5843,7 +5659,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "20463245ccca44423d866ec2ab03e1ef08ddeec2"
+      "sha": "d6d002a1e8bf0eee0e1e190fe2f77e2c9bd89c66"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6839,7 +6655,7 @@
     },
     {
       "path": "scripts/check-app-bootstrap.mjs",
-      "sha": "bf2b90661ff9c53f9b978ddef5c0a7b2a86c3139"
+      "sha": "cbb8c0639194d88ce4544b557bc1dc28d4d28480"
     },
     {
       "path": "scripts/check-app-sharing.mjs",
@@ -6934,6 +6750,10 @@
       "sha": "5440b4a81b659deecdce0597eb49145c4ae1d449"
     },
     {
+      "path": "scripts/check-chat-translation.mjs",
+      "sha": "005d923b1cdf499ded752b6017a1909c68ac2db2"
+    },
+    {
       "path": "scripts/check-city-lookup-lifecycle.mjs",
       "sha": "247a36ef8e1f5aa8591764f1061422a618a61c4b"
     },
@@ -6994,8 +6814,12 @@
       "sha": "5ab5e39fef590329d7714d036b2b9497012b065a"
     },
     {
+      "path": "scripts/check-conversation-themes.mjs",
+      "sha": "f02898e90b850abfca2bc13d8cc01a050bd63de4"
+    },
+    {
       "path": "scripts/check-counter-account.mjs",
-      "sha": "f4d5cb0ccb6f1537713e8798847222165aacc71c"
+      "sha": "a3cace5acd04dcef1588140ea5ff022482dcdf99"
     },
     {
       "path": "scripts/check-counter-sync.mjs",
@@ -7031,7 +6855,7 @@
     },
     {
       "path": "scripts/check-entry-modules.mjs",
-      "sha": "f9e25684ec9e12e9754ed2c49cd7019e05688f7c"
+      "sha": "00e807052dfa5e87ba85743c6eaf8d11e41e1d5c"
     },
     {
       "path": "scripts/check-error-summary.mjs",
@@ -7123,7 +6947,7 @@
     },
     {
       "path": "scripts/check-home-weather-continuity.mjs",
-      "sha": "85797ede4a41cea4d0529a5f73b3950affa25518"
+      "sha": "327c56927f14caaca0458fa6ed7ab8000ee6c3db"
     },
     {
       "path": "scripts/check-homework-exchange.mjs",
@@ -7151,11 +6975,11 @@
     },
     {
       "path": "scripts/check-interface-language-core.mjs",
-      "sha": "1690195f9a1b91685ec5bcd9c0bc45ca4c9fd28e"
+      "sha": "530e069a875063e2b6dc7006860ace9ea3929d81"
     },
     {
       "path": "scripts/check-interface-language-settings.mjs",
-      "sha": "5b1d020362f54a62d19c00074c29deb75db648c3"
+      "sha": "c2864a400f1af5a7a6d839424159b22b8e1fea3f"
     },
     {
       "path": "scripts/check-interface-shell.mjs",
@@ -7243,7 +7067,7 @@
     },
     {
       "path": "scripts/check-live-sky-opt-in.mjs",
-      "sha": "5cbcd0496be83217feb34fa48d098dadf3331363"
+      "sha": "3e26f7ac0c63c6f6f3198b05ba352254be9072ca"
     },
     {
       "path": "scripts/check-live-update.mjs",
@@ -7439,11 +7263,11 @@
     },
     {
       "path": "scripts/check-owner-sky-access.mjs",
-      "sha": "28d2a42c410d823edc844473ee53d97731411888"
+      "sha": "1bad3fc251b588dd63435cbd53d45acf5f4d7c28"
     },
     {
       "path": "scripts/check-owner-support.mjs",
-      "sha": "90a807fcc7189d617252222b0e78880cf2a7a2cf"
+      "sha": "2e7915e119b083531c6074f83146a331c915fdf8"
     },
     {
       "path": "scripts/check-owner-user-list.mjs",
@@ -7503,7 +7327,7 @@
     },
     {
       "path": "scripts/check-public-sky-policy.mjs",
-      "sha": "01396e83bb95841ec4a129f2c6d1dec2cb93c3ec"
+      "sha": "b1cec8183f9eac9b663bcb29ddafefb27a552fa0"
     },
     {
       "path": "scripts/check-push-bundle.mjs",
@@ -7540,6 +7364,10 @@
     {
       "path": "scripts/check-qr-scanner.mjs",
       "sha": "14f46fbb6804b7cb94703c37786e13434fe5889e"
+    },
+    {
+      "path": "scripts/check-quran-audio-session.mjs",
+      "sha": "853c220910dff4db745d0f5aed8f3adb72dc46fa"
     },
     {
       "path": "scripts/check-quran-award-history.mjs",
@@ -7594,6 +7422,10 @@
       "sha": "730fc28a09e4f2fcf2777d1e0865a0c06ccbf745"
     },
     {
+      "path": "scripts/check-quran-lockscreen.mjs",
+      "sha": "7dc1f6a8b02ad8eef1409dcfa157077f87e6e76a"
+    },
+    {
       "path": "scripts/check-quran-mini-dismiss.mjs",
       "sha": "0c8907d37a8a6892557216395b0065c05e5867f4"
     },
@@ -7620,6 +7452,10 @@
     {
       "path": "scripts/check-quran-nature-video-cache.mjs",
       "sha": "35173479b4109599e79091e2d081458531d1be50"
+    },
+    {
+      "path": "scripts/check-quran-pause-authority.mjs",
+      "sha": "be01fa1620fa96763020c029b8e83e5d4fcf7440"
     },
     {
       "path": "scripts/check-quran-player-cascade.mjs",
@@ -7671,7 +7507,7 @@
     },
     {
       "path": "scripts/check-quran-reading-progress.mjs",
-      "sha": "f8f6b1b6cad8f5ebefe21dd73504c0c8c5e5a8a0"
+      "sha": "db68c2d859972cdc1aa334d3a06fb20f92803771"
     },
     {
       "path": "scripts/check-quran-recognition.mjs",
@@ -7799,11 +7635,11 @@
     },
     {
       "path": "scripts/check-scene-load.mjs",
-      "sha": "7279254acfea2e974ca7f9b3257e48ceed0d90af"
+      "sha": "88110cc2a3518b20c8ebaaba0d9ce794b618a1ba"
     },
     {
       "path": "scripts/check-security.mjs",
-      "sha": "6d9cc4758177cd93d5789ded19fc684b32a288fe"
+      "sha": "5d1c20ec00a4de0caa4f754dcc69efc07a5cc15c"
     },
     {
       "path": "scripts/check-series-celebration.mjs",
@@ -7819,7 +7655,7 @@
     },
     {
       "path": "scripts/check-settings-resume.mjs",
-      "sha": "a5bca1ab4c7f1b723a0df3642adf535e84c70910"
+      "sha": "745d4cbd34222ab718b9760847e2777a29f4663a"
     },
     {
       "path": "scripts/check-settings.mjs",
@@ -7923,7 +7759,7 @@
     },
     {
       "path": "scripts/check-support-access-continuity.mjs",
-      "sha": "da7a2dfc5ff18b6e1cf10eb65b01a9494502c57e"
+      "sha": "ea71507c906abcdbff2e8c54242b2230d4de013d"
     },
     {
       "path": "scripts/check-support-cancellation-preview.mjs",
@@ -7958,8 +7794,12 @@
       "sha": "17846bea75e6ecfcbc56332936bcaeb55451756c"
     },
     {
+      "path": "scripts/check-support-conversation-theme.mjs",
+      "sha": "b3e96cfa99de8eb831124f868c928312c16fa2d3"
+    },
+    {
       "path": "scripts/check-support-conversation-ui.mjs",
-      "sha": "9de1abdcfd0289585142f03dbe68c286a82179f7"
+      "sha": "713d208ffe8bb5e604c4ad1fef3b452e7d55ec73"
     },
     {
       "path": "scripts/check-support-diagnostics.mjs",
@@ -8002,6 +7842,14 @@
       "sha": "62caab20d194698cbb219aed41309964128ec9e5"
     },
     {
+      "path": "scripts/check-support-reply-photos.mjs",
+      "sha": "1713845bcef88fc21da326e1c754ff6ad01cfce1"
+    },
+    {
+      "path": "scripts/check-support-reply-video.mjs",
+      "sha": "be55b2f268d6bdb3d53e581635e81bd83add2f59"
+    },
+    {
       "path": "scripts/check-support-request-actor.mjs",
       "sha": "2cc3e3c5b810fc16cdb85c07ce85768945736e6e"
     },
@@ -8020,6 +7868,10 @@
     {
       "path": "scripts/check-support-user-profile.mjs",
       "sha": "f3fa15f16b71da3b1f5d5836803ff534274c4676"
+    },
+    {
+      "path": "scripts/check-support-voice-recorder.mjs",
+      "sha": "da626ce01d33673524a2cf206822442042d82a2e"
     },
     {
       "path": "scripts/check-swipe-motion.mjs",
@@ -8122,6 +7974,10 @@
       "sha": "d3d922d6359ef2348812cf867a40ae1d2c7573ea"
     },
     {
+      "path": "scripts/check-video-stories.mjs",
+      "sha": "311ec110800f5a969f7572d9b0c8d2f62c44a360"
+    },
+    {
       "path": "scripts/check-wallpapers.mjs",
       "sha": "25eb461dd6270aa86eb3eaf275b42d1896fcf200"
     },
@@ -8171,7 +8027,7 @@
     },
     {
       "path": "supabase/config.toml",
-      "sha": "8537905db421c68e53602ea210797ba347ff1b3e"
+      "sha": "e750957aeb28a01b5318a0398dab7e224960172d"
     },
     {
       "path": "supabase/error-summary-schema.sql",
@@ -8502,6 +8358,18 @@
       "sha": "823e7f2d55aa1ffb19dc213e4083580f926e2bea"
     },
     {
+      "path": "supabase/functions/support-messages/index.ts",
+      "sha": "1b0459ae7e2b32b97ab0e6cde1a0d28692bb7793"
+    },
+    {
+      "path": "supabase/functions/video-stories/core.mjs",
+      "sha": "210fb509439bdb23c401f3234ab41df13b2f773d"
+    },
+    {
+      "path": "supabase/functions/video-stories/index.ts",
+      "sha": "ec23a334b6f0db84dc5f0f5889feb1b4d61c74e2"
+    },
+    {
       "path": "supabase/guest-competition.sql",
       "sha": "6357fe00b4d6b62eecc37ebc20d42887c698ba48"
     },
@@ -8710,6 +8578,26 @@
       "sha": "549bca8de8320d87d63e62be5a7a94fe0fff1d57"
     },
     {
+      "path": "supabase/migrations/20261122213000_video_stories.sql",
+      "sha": "dfb44dbed96991889a51c5091de80d1339c51971"
+    },
+    {
+      "path": "supabase/migrations/20261125023000_support_conversation_theme.sql",
+      "sha": "909613c64bc3a95dd3d3d78dafd9b8f5a641a7c1"
+    },
+    {
+      "path": "supabase/migrations/20261125024500_support_reply_photos.sql",
+      "sha": "d30cbc827bedc499470a6d0e7876e72231fbcfad"
+    },
+    {
+      "path": "supabase/migrations/20261125033000_support_reply_media.sql",
+      "sha": "101d87e2040e30e05c9e111e7d91425d07e302c4"
+    },
+    {
+      "path": "supabase/migrations/20261125143000_video_story_engagement.sql",
+      "sha": "2af862591b4a04fbfacec6f3ca6d0e56be3025f9"
+    },
+    {
       "path": "supabase/native-support-devices.sql",
       "sha": "ba5aff3b83767ebcf89d776acd1034dbb78d7da9"
     },
@@ -8834,5 +8722,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=560;\nexport const APP_UPDATED_AT='2026-11-24';\nexport const APP_UPDATE_DATE='24 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=561;\nexport const APP_UPDATED_AT='2026-11-25';\nexport const APP_UPDATE_DATE='25 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

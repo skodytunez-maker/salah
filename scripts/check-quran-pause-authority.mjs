@@ -77,3 +77,42 @@ for(const order of [[0,1],[1,0]]){
  const f=fixture();await f.session.start(f.data(7),'ar.yasseraldossaricontinuous');await flush();const a=f.tracks[0],before=a.plays;a.ended=true;a.paused=true;a.onpause?.();a.onended?.();await flush();assert.equal(f.session.state.surah.number,8);assert.equal(f.session.state.status,'playing');assert.equal(a.plays,before+1);assert.equal(f.tracks.length,1);f.session.stop();
 }
 console.log('PASS: native and lockscreen pause authority, no recovery/queued-ended override, same-source explicit resume, delayed initial/remote play ownership, retained chapter handoff pause and unchanged natural continuation.');
+
+{
+ const f=fixture();await f.session.start(f.data(7),'ar.yasseraldossaricontinuous');await flush();
+ const a=f.tracks[0],before=a.plays;
+ a.currentTime=a.duration;a.paused=true;a.ended=false;a.onpause?.();
+ assert.equal(f.session.state.surah.number,7,'A pause event alone does not start a different surah');
+ a.ended=true;a.onended?.();await flush();
+ assert.equal(f.session.state.surah.number,8,'Completion still advances when the final pause event preceded the ended state');
+ assert.equal(f.session.state.status,'playing');
+ assert.equal(a.plays,before+1);
+ assert.equal(f.tracks.length,1,'The next full recording keeps the existing audio element');
+ f.session.stop();
+}
+
+for(const separateAction of ['explicit-pause','seek','mid-track-pause','system-interruption']){
+ const f=fixture();await f.session.start(f.data(7),'ar.yasseraldossaricontinuous');await flush();
+ const a=f.tracks[0],before=a.plays;
+ a.currentTime=separateAction==='mid-track-pause'?200:a.duration;
+ if(separateAction==='system-interruption')f.native.change('interrupted');
+ a.paused=true;a.ended=false;a.onpause?.();
+ if(separateAction==='explicit-pause')f.actions.pause();
+ if(separateAction==='seek')f.session.seek(200);
+ a.ended=true;a.onended?.();await flush();
+ assert.equal(f.session.state.surah.number,7,'Do not continue after '+separateAction);
+ assert.equal(a.plays,before);
+ f.session.stop();
+}
+console.log('PASS: final pause before ended advances once, with explicit pause, seek and interruption taking precedence.');
+
+{
+ const f=fixture();await f.session.start(f.data(7),'ar.yasseraldossaricontinuous');await flush();
+ const a=f.tracks[0],before=a.plays;
+ f.session.setSleepTimer('end');
+ a.currentTime=a.duration;a.paused=true;a.ended=false;a.onpause?.();
+ a.ended=true;a.onended?.();await flush();
+ assert.equal(f.session.state.surah.number,7,'The end-of-surah sleep timer stops consecutive playback');
+ assert.equal(f.session.state.status,'paused');assert.equal(a.plays,before);
+ f.session.stop();
+}
