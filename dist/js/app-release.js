@@ -1,4 +1,4 @@
-export const APP_VERSION=566;
+export const APP_VERSION=567;
 export const APP_UPDATED_AT='2026-11-25';
 export const APP_UPDATE_DATE='25 ноября 2026';
 export const APP_CHANGES=[];

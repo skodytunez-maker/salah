@@ -212,3 +212,7 @@ The owner reconfirmed failure after564and provided the reproduction: seek Al-Baq
 
 ### Release566 — observed next-source launch failure
 The new iPhone video shows Yasser al-Dossari 96→97 title selection followed by 0:00 and Play. This establishes the failure phase, not the native cause. A modeled old-resource Pause while currentSrc differs from the requested src must not cancel its pending play lease. Explicit Pause/Stop, settled-source native Pause and interruption still win. A fulfilled play promise while the element is paused cannot report playing. Test source-selection events for every available pair, the mounted player across short surahs, saved/listening state and existing system/nature controls. Keep the 565 baseline scope, quiet announcement and separate Story/Home drafts. Full device correction remains open until actual iPhone follow-up.
+
+
+### Release567 — ambience during automatic chapter handoffs
+Keep the ambience audio context active through a natural surah or playlist handoff. The owner isolated the iPhone failure to audible rain. On 566 the mounted player issues a native suspend/resume cycle at the chapter boundary. Preserve ordinary ended/loading notifications for other observers, real system and user Pause, end and time sleep timers, terminal failures, the last surah and rain-disabled listening. The regression checks actual commands to a modeled native audio context; the phone outcome is still open.
