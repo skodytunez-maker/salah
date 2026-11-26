@@ -1,4 +1,6 @@
 export default Object.freeze({
+  "reciterUi.downloadQueued": "Navbatda",
+  "reciterUi.queuedNamed": "Navbatda: {name} · {reciter}",
   "quranUi.listen": "Tinglash",
   "quranUi.surahsCount": {
     "one": "{count} sura",

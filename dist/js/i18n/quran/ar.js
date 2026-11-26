@@ -1,4 +1,8 @@
 export default Object.freeze({
+  "reciterUi.downloadQueued": "في قائمة الانتظار",
+  "reciterUi.queuedNamed": "في قائمة الانتظار: {name} · {reciter}",
+  "reciterUi.downloadQueued": "في قائمة الانتظار",
+  "reciterUi.queuedNamed": "في قائمة الانتظار: {name} · {reciter}",
   "quranUi.listen": "استماع",
   "quranUi.surahsCount": {
     "zero": "{count} سورة",

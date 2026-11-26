@@ -12,10 +12,30 @@ reset();await mount({lessons:[{}],canTeach:false});assert.equal(root.querySelect
 reset();await mount({lessons:[{}],canTeach:true});await mount({lessons:[{}],canTeach:true});assert.equal(root.querySelectorAll('nav').length,1);assert.equal(root.querySelectorAll('[data-learning-cabinet]').length,2);
 reset();const before=calls;await mount({lessons:[{}],canTeach:true},{checkSession:async()=>({state:'valid',session:{...session,user:{...session.user,id:'22222222-2222-4222-8222-222222222222'}}})});assert.equal(calls,before);assert.equal(root.querySelector('nav'),null);
 await mount({lessons:[{}],canTeach:true},{isActive:()=>false});assert.equal(root.querySelector('nav'),null,'A late reply cannot mount into a departed page');
-// First reveal must include both the permitted cabinet and the public cards.
-const layout=()=>{reset();const cards=root.querySelector('.knowledge-cards'),body=doc.createElement('div');body.dataset.knowledgeContent='';body.hidden=true;cards.replaceWith(body);body.append(cards);const status=doc.createElement('p');status.dataset.learningAccessStatus='';status.textContent='Открываем знания…';root.querySelector('.knowledge-head').after(status);root.setAttribute('aria-busy','true');return body;};
-let release,body=layout();const pending=mount({},{fetcher:()=>new Promise(resolve=>release=resolve)});await Promise.resolve();await Promise.resolve();assert.equal(body.hidden,true,'Cards never appear before a delayed cabinet decision');assert.equal(root.querySelector('nav'),null);release(Response.json({lessons:[],canTeach:true}));await pending;assert.equal(body.hidden,false);assert.ok(root.querySelector('[data-learning-cabinet=teacher]'));assert.equal(root.querySelector('[data-learning-access-status]'),null);assert.equal(root.hasAttribute('aria-busy'),false);
-body=layout();await mount({lessons:[],canTeach:false});assert.equal(body.hidden,false,'Ordinary signed-in users see the public catalog after denial');assert.equal(root.querySelector('nav'),null);
-body=layout();await mount({},{fetcher:async()=>{throw Error('offline');}});assert.equal(body.hidden,false,'A role-check failure cannot hide public learning');
-let expire,resolveSession;body=layout();const late=mount({lessons:[],canTeach:true},{schedule:fn=>{expire=fn;return 1;},cancel(){},checkSession:()=>new Promise(resolve=>resolveSession=resolve)});expire();assert.equal(body.hidden,false,'Bounded wait always reveals public topics');assert.equal(root.querySelector('[data-learning-access-status]'),null);resolveSession({state:'valid',session});await late;assert.equal(root.querySelector('nav'),null,'A late permission reply cannot push visible cards down');
-await w.happyDOM.close();console.log('PASS: stable first reveal, bounded role check, failure/timeout fallback, no late layout insertion, enrolled role paths and no forged/stale account access.');
+const {showKnowledge}=await import('../dist/js/knowledge.js');
+Object.assign(globalThis,{window:w,document:doc,location:w.location,history:w.history,localStorage:w.localStorage});
+let release,firstFrame,running;
+root.replaceChildren();
+showKnowledge(root,{ownerAccess:false,hash:'#knowledge',learningUserId:userId,mountCabinetLink:(page,opts)=>{
+ running=mountLearningCabinetLink(page,{...opts,loadDecision:()=>new Promise(resolve=>release=resolve),
+  scheduleFrame:callback=>{firstFrame=callback;return 1;},cancelFrame:()=>{}});
+}});
+const page=root.querySelector('.knowledge-page'),body=page.querySelector('[data-knowledge-content]');
+assert.equal(body.hidden,false,'Public knowledge is immediately visible while the cabinet check hangs');
+assert.equal(page.querySelector('[data-learning-access-status]'),null);
+const firstCard=body.querySelector('.knowledge-card');
+firstCard.focus();
+firstFrame();
+release({teacher:true,student:false});
+await running;
+assert.equal(body.nextElementSibling,page.querySelector('nav'),'A late verified cabinet follows the public catalogue');
+assert.equal(body.querySelector('.knowledge-card'),firstCard);
+assert.equal(doc.activeElement,firstCard,'Resolving access preserves keyboard focus on the visible card');
+let expire,resolveSession;
+reset();
+const late=mount({lessons:[],canTeach:true},{schedule:fn=>{expire=fn;return 1;},cancel(){},checkSession:()=>new Promise(resolve=>resolveSession=resolve)});
+expire();
+resolveSession({state:'valid',session});
+await late;
+assert.equal(root.querySelector('nav'),null,'A result past the role deadline cannot mount');
+await w.happyDOM.close();console.log('PASS: immediate public catalogue, warm cabinet placement, stable late insertion, bounded permission check, and no stale account access.');

@@ -34,6 +34,9 @@
   display: grid;
   gap: 12px;
 }
+.knowledge-page > [data-knowledge-content] + .learning-cabinet-links {
+  margin-block-start: 18px;
+}
 
 .knowledge-page .knowledge-card {
   display: block;

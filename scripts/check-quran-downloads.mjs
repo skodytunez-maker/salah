@@ -54,10 +54,37 @@ const active=queue.start('ar.test',[1,2,3]);
 assert.equal(queue.busy,true);
 assert.equal(queue.start('ar.test',[4]),active,'There is only one foreground queue');
 while(!released)await Promise.resolve();queue.pause();assert.equal((await active).status,'paused');assert.deepEqual(completed,[1]);assert.equal(queue.busy,false);
+assert.deepEqual(queue.state.pending.map(track=>track.number),[2]);
 const synchronousFailure=createQuranDownloadQueue({loadSurah(){throw Error('unavailable');},saveSurah:async()=>0});
 assert.equal((await synchronousFailure.start('ar.test',[1])).status,'error');
 assert.equal(synchronousFailure.busy,false,'A synchronous loader failure cannot leave the queue locked');
 await synchronousFailure.start('ar.test',[1]);assert.equal(synchronousFailure.busy,false);
+
+let finishFirst,offline=true;
+const downloaded=[];
+const tapQueue=createQuranDownloadQueue({
+ loadSurah:async number=>({number}),
+ saveSurah:async(surah,reciter)=>{
+  if(surah.number===3)await new Promise(resolve=>{finishFirst=resolve;});
+  if(surah.number===4&&offline)throw Error('No connection');
+  downloaded.push([reciter,surah.number]);
+  return 4;
+ }
+});
+const downloading=tapQueue.enqueue('reciter-a',3);
+while(!finishFirst)await Promise.resolve();
+assert.equal(tapQueue.enqueue('reciter-a',4),downloading);
+assert.equal(tapQueue.enqueue('reciter-a',4),downloading);
+assert.equal(tapQueue.enqueue('reciter-b',1),downloading);
+assert.equal(tapQueue.state.total,3);
+assert.deepEqual(tapQueue.state.pending.map(track=>track.number),[3,4,1]);
+finishFirst();
+assert.equal((await downloading).status,'error');
+assert.deepEqual(downloaded,[['reciter-a',3]],'A failed download leaves later rows queued');
+offline=false;
+assert.equal((await tapQueue.resume()).status,'complete');
+assert.deepEqual(downloaded,[['reciter-a',3],['reciter-a',4],['reciter-b',1]]);
+assert.deepEqual(tapQueue.state.pending,[]);
 
 await store.clearAll();assert.equal(responses.size,0,'Clear touches only the dedicated public-audio cache');
 console.log('PASS: saved audio without network, partial-file resume, eviction, invalid/empty/ranged responses, quota failure, cancellation, settled workers and restartable queues.');

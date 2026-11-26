@@ -31,12 +31,18 @@ export function createLearningCabinetLoader({checkSession=checkAccountSession,fe
 }
 const sharedLoader=createLearningCabinetLoader();
 export const preloadLearningCabinetLink=userId=>sharedLoader.load(userId).catch(()=>null);
-export async function mountLearningCabinetLink(root,{userId,isActive=()=>root.isConnected,checkSession=checkAccountSession,fetcher=fetch,loadDecision=null,timeoutMs=3000,schedule=setTimeout,cancel=clearTimeout}={}){
- const content=root.querySelector('[data-knowledge-content]'),status=root.querySelector('[data-learning-access-status]');
- let accepting=true,timer=null;const controller=new AbortController();
- const finish=()=>{if(!accepting)return;accepting=false;if(timer!==null)cancel(timer);controller.abort();if(isActive()){if(content)content.hidden=false;status?.remove();root.removeAttribute('aria-busy');}};
- if(!userId){finish();return;}
- timer=schedule(finish,timeoutMs);
+export async function mountLearningCabinetLink(root,{
+ userId,isActive=()=>root.isConnected,
+ checkSession=checkAccountSession,fetcher=fetch,loadDecision=null,
+ timeoutMs=3000,schedule=setTimeout,cancel=clearTimeout,
+ scheduleFrame=callback=>root.ownerDocument.defaultView?.requestAnimationFrame?.(callback),
+ cancelFrame=id=>root.ownerDocument.defaultView?.cancelAnimationFrame?.(id)
+}={}){
+ if(!userId)return;
+ let accepting=true,beforeFirstPaint=false;
+ const frame=scheduleFrame(()=>{beforeFirstPaint=false;});
+ beforeFirstPaint=frame!=null;
+ const timer=schedule(()=>{accepting=false;},timeoutMs);
  try{
   const load=loadDecision||(checkSession===checkAccountSession&&fetcher===fetch?sharedLoader.load:createLearningCabinetLoader({checkSession,fetcher}).load);
   const data=await load(userId);
@@ -47,6 +53,10 @@ export async function mountLearningCabinetLink(root,{userId,isActive=()=>root.is
   if(!entries.length)return;
   const doc=root.ownerDocument,nav=doc.createElement('nav');nav.className='learning-cabinet-links';nav.dataset.learningCabinets='';uiAttribute(nav,'aria-label','knowledgeUi.cabinetsLabel','Мои кабинеты обучения');
   for(const[href,label,detail,role]of entries){const link=doc.createElement('a');link.href=href;link.className='learning-cabinet-card';link.dataset.learningCabinet=role;link.innerHTML='<span class="knowledge-icon" aria-hidden="true">'+(role==='teacher'?'<img src="./assets/knowledge-teacher.svg" alt="">':'<span class="knowledge-symbol knowledge-symbol-knowledge-prayer"></span>')+'</span><span class="learning-cabinet-copy"><strong>'+uiLeaf('knowledgeUi.'+(role==='teacher'?'teacherTitle':'studentTitle'),label)+'</strong><small>'+uiLeaf('knowledgeUi.'+role+'CabinetDetail',detail)+'</small></span><span class="learning-cabinet-arrow" aria-hidden="true">→</span>';nav.append(link);}
-  root.querySelector('.knowledge-head')?.after(nav);
- }catch{}finally{finish();}
+  // Preserve the usual top placement for warm permissions without moving
+  // cards after the first frame when the permission check takes longer.
+  const heading=root.querySelector('.knowledge-head');
+  if(beforeFirstPaint&&heading)heading.after(nav);
+  else root.append(nav);
+ }catch{}finally{cancel(timer);if(frame!=null)cancelFrame(frame);}
 }

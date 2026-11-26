@@ -115,7 +115,6 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
     showFaithFoundations(container);
     return;
   }
-  if(ownerAccess)preloadOwnerLearning();
   if(view!=='names')delete container.dataset.namesHash;
   if(view==='names'){stopKnowledgeLanguage();stopKnowledgeLanguage=()=>{};delete container.dataset.alphabetHash;if(container.dataset.namesHash!==hash||!container.querySelector('.names-page')){showAllahNames(container,{hash});container.dataset.namesHash=hash;}return;}
   if(view==='alphabet'){stopKnowledgeLanguage();stopKnowledgeLanguage=()=>{};if(container.dataset.alphabetHash!==hash||!container.querySelector('.alphabet-page')){showArabicAlphabet(container,{hash});container.dataset.alphabetHash=hash;}return;}
@@ -124,7 +123,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   const catalogKey=JSON.stringify([learningUserId,canNavigatePreview,saved]);
   // Status/owner refreshes must not replace the current catalog with a loader.
   if(container.querySelector('.knowledge-page')?.dataset.catalogKey===catalogKey)return;
-  container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title"${learningUserId?' aria-busy="true"':''}>
+  container.innerHTML = `<section class="knowledge-page" aria-labelledby="knowledge-title">
     <div class="page-head knowledge-head">
       <div>
         <span class="knowledge-eyebrow" data-i18n="knowledgeUi.eyebrow">УЧИТЬСЯ И ПОВТОРЯТЬ</span>
@@ -132,8 +131,7 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
         <p class="knowledge-intro" data-i18n="knowledgeUi.intro">В своём темпе. По одному шагу.</p>
       </div>
     </div>
-    ${learningUserId?'<p class="muted knowledge-access-status" role="status" data-learning-access-status data-i18n="knowledgeUi.loading">Открываем знания…</p>':''}
-    <div data-knowledge-content${learningUserId?' hidden':''}>
+    <div data-knowledge-content>
     ${saved?`<a class="knowledge-resume" href="#learning" data-learning-entry="resume"><span class="knowledge-eyebrow" data-i18n="knowledgeUi.resume">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</span><strong${uiAttrs(resumeTitleKey(saved.kind))}>${courseName(saved.kind)}</strong><span class="knowledge-resume-detail"${uiAttrs('knowledgeUi.stepOf',{step:saved.index+1,total:courseLength(saved.kind)})}>Шаг ${saved.index+1} из ${courseLength(saved.kind)}</span><span class="knowledge-resume-track" aria-hidden="true"><span style="width:${(saved.index+1)/courseLength(saved.kind)*100}%"></span></span></a>`:''}
     <div class="knowledge-cards">
       ${entries.map(entry => `<a class="knowledge-card" href="${entry.href||'#learning'}" ${entry.href?'':'data-learning-entry="'+entry.kind+'"'} ${entry.external?'target="_blank" rel="noopener noreferrer"':''}>
@@ -164,7 +162,11 @@ export function showKnowledge(container, { onStart,hash=globalThis.location?.has
   stopKnowledgeLanguage();stopKnowledgeLanguage=watchPracticeUi(page);
   page.dataset.learningUser=learningUserId||'';
   page.dataset.catalogKey=catalogKey;
-  if(learningUserId)void mountCabinetLink(page,{userId:learningUserId,isActive:()=>page.isConnected&&container.querySelector('.knowledge-page')===page});
+  const isActive=()=>page.isConnected&&container.querySelector('.knowledge-page')===page;
+  if(learningUserId)void mountCabinetLink(page,{userId:learningUserId,isActive});
+  if(ownerAccess)page.ownerDocument.defaultView?.requestIdleCallback?.(()=>{
+    if(isActive())preloadOwnerLearning();
+  });
   if (typeof onStart === 'function') {
     container.querySelectorAll('[data-learning-entry]').forEach(link => {
       link.addEventListener('click', event => {

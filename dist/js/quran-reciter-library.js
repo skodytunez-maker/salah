@@ -52,17 +52,61 @@ export function mountReciterLibrary(host,index,chosen,filter){
   const search=host.querySelector('#reciter-search');if(search)search.oninput=()=>{currentQuery=search.value;const q=search.value.toLocaleLowerCase('ru').replace(/ё/g,'е').trim();let count=0;host.querySelectorAll('.reciter-card').forEach(card=>{card.hidden=!card.textContent.toLocaleLowerCase('ru').replace(/ё/g,'е').includes(q);if(!card.hidden)count++;});host.querySelector('#reciter-search-empty').hidden=count>0||!q;};
   if(search){search.value=currentQuery;search.oninput();}
   host.querySelectorAll('[data-reciter-play]').forEach(button=>button.onclick=async()=>{
-   if(!reciterIsAvailable(r.id))return;const token=++request,number=Number(button.dataset.reciterPlay),status=host.querySelector('#reciter-listen-status');const active=quranPlayback.state;if((active.reciter===r.id||active.reciter===r.continuousReciter)&&active.surah?.number===number&&['playing','paused','loading'].includes(active.status)){quranPlayback.toggle();return;}setUiLabel(status,'reciterUi.loadingNamed',{name:index.surahs[number-1].name});
-   try{const surah=reciterRecording(index,number);if(closed||token!==request)return;write('quran-preferences',{...read('quran-preferences',{}),reciter:r.id});await quranPlayback.start(surah,r.id,0,true);if(!closed&&token===request)clearUiLabel(status);}catch{if(!closed&&token===request)setUiLabel(status,'reciterUi.surahFailed')}
+   if(!reciterIsAvailable(r.id))return;
+   const token=++request,number=Number(button.dataset.reciterPlay),status=host.querySelector('#reciter-listen-status');
+   try{
+    const offline=navigator.onLine===false;
+    const active=quranPlayback.state;
+    const same=(active.reciter===r.id||active.reciter===r.continuousReciter)&&active.surah?.number===number&&['playing','paused','loading'].includes(active.status);
+    if(same&&(!offline||['playing','loading'].includes(active.status))){quranPlayback.toggle();return;}
+    const saved=offline&&(await offlineAudioStore.listRecordings(r.id).catch(()=>[])).some(record=>record.surah===number);
+    if(closed||token!==request)return;
+    if(offline&&!saved){setUiLabel(status,'offlineAudioUi.playFailed');return;}
+    if(same&&active.offlineOnly&&active.reciter===r.id){quranPlayback.toggle();return;}
+    setUiLabel(status,'reciterUi.loadingNamed',{name:index.surahs[number-1].name});
+    const surah=reciterRecording(index,number),resume=offline&&same&&active.reciter===r.id;
+    write('quran-preferences',{...read('quran-preferences',{}),reciter:r.id});
+    await quranPlayback.start(surah,r.id,resume?active.index:0,true,offline,resume?active.trackPositionSeconds:0);
+    if(!closed&&token===request){
+     const failed=quranPlayback.state.status==='error';
+     if(failed)setUiLabel(status,offline?'offlineAudioUi.playFailed':'reciterUi.surahFailed');
+     else clearUiLabel(status);
+    }
+   }catch{if(!closed&&token===request)setUiLabel(status,'reciterUi.surahFailed');}
   });
 
-  host.querySelectorAll('[data-reciter-download]').forEach(button=>button.onclick=()=>{if(!r||r.offline===false)return;if(savedSurahs.has(Number(button.dataset.reciterDownload))){toast(t('reciterUi.alreadySaved'));return;}if(quranDownloadQueue.busy){toast(t('reciterUi.waitDownload'));return;}void quranDownloadQueue.start(r.id,[Number(button.dataset.reciterDownload)]);});
+  host.querySelectorAll('[data-reciter-download]').forEach(button=>button.onclick=()=>{
+   if(!r||r.offline===false)return;
+   const number=Number(button.dataset.reciterDownload);
+   if(savedSurahs.has(number)){toast(t('reciterUi.alreadySaved'));return;}
+   void quranDownloadQueue.enqueue(r.id,number);
+  });
   const pauseDownload=host.querySelector('#reciter-download-pause');if(pauseDownload)pauseDownload.onclick=()=>quranDownloadQueue.pause();paintLanguage();
  };
+const seenDownloads=new WeakSet(quranDownloadQueue.state.completed);
 function syncDownload(state){
  if(closed||!r)return;const matches=state.reciter===r.id,busy=quranDownloadQueue.busy;
- if(matches&&state.status==='complete'&&state.done===1&&state.total===1)savedSurahs.add(state.surah);
- host.querySelectorAll('[data-reciter-download]').forEach(button=>{const number=Number(button.dataset.reciterDownload),working=matches&&state.surah===number&&busy;const label=r.offline===false?t('reciterUi.online'):working?t('downloadUi.downloading'):savedSurahs.has(number)?t('reciterUi.saved'):t('downloadUi.download');if(button.dataset.downloadLabel!==label){button.innerHTML=r.offline===false?label:actionLabel('download',label);button.dataset.downloadLabel=label;}setUiAttribute(button,'aria-label',savedSurahs.has(number)?'reciterUi.savedNamed':'reciterUi.downloadNamed',{name:index.surahs[number-1].name,reciter:r.name});const disabled=busy||r.offline===false;if(button.disabled!==disabled)button.disabled=disabled;});
+ for(const track of state.completed){
+  if(seenDownloads.has(track))continue;
+  seenDownloads.add(track);
+  if(track.reciter===r.id)savedSurahs.add(track.number);
+ }
+ const waiting=new Set(state.pending.filter(track=>track.reciter===r.id).map(track=>track.number));
+ host.querySelectorAll('[data-reciter-download]').forEach(button=>{
+  const number=Number(button.dataset.reciterDownload),queued=waiting.has(number);
+  const working=queued&&matches&&state.surah===number&&busy,saved=savedSurahs.has(number);
+  const label=working?t('downloadUi.downloading'):saved?t('reciterUi.saved'):queued
+   ?t(busy?'reciterUi.downloadQueued':'downloadUi.resume'):t('downloadUi.download');
+  const visibleLabel=r.offline===false?t('reciterUi.online'):label;
+  if(button.dataset.downloadLabel!==visibleLabel){
+   button.innerHTML=r.offline===false?visibleLabel:actionLabel('download',visibleLabel);
+   button.dataset.downloadLabel=visibleLabel;
+  }
+  const accessibleLabel=saved?'reciterUi.savedNamed':queued&&busy?'reciterUi.queuedNamed':'reciterUi.downloadNamed';
+  setUiAttribute(button,'aria-label',accessibleLabel,{name:index.surahs[number-1].name,reciter:r.name});
+  const disabled=r.offline===false||(queued&&busy);
+  if(button.disabled!==disabled)button.disabled=disabled;
+ });
  const status=host.querySelector('#reciter-download-status');if(status){if(matches&&busy)setUiLabel(status,'reciterUi.downloadProgress',{name:index.surahs[state.surah-1].name,value:new Intl.NumberFormat(getLocale()).format(Math.round((state.bytes+(state.currentBytes||0))/1024))});else{const key=matches?{complete:'reciterUi.savedHint',paused:'reciterUi.downloadPaused',error:downloadErrorKey(state)}[state.status]:busy?'reciterUi.otherDownload':null;if(key)setUiLabel(status,key);else clearUiLabel(status);}}
  const pause=host.querySelector('#reciter-download-pause');if(pause)pause.hidden=!matches||!busy;
 }

@@ -36,32 +36,54 @@ export async function downloadAudioFiles({urls,store,fetcher=fetch,signal,onProg
  }finally{signal?.removeEventListener('abort',abort);}
 }
 export function createQuranDownloadQueue({loadSurah,saveSurah,hasSurah=()=>true}){
- let task=null,controller=null,state={status:'idle',reciter:null,total:0,done:0,bytes:0,surah:null,verse:0,error:null};const listeners=new Set();
- const emit=()=>{for(const listener of listeners)try{listener({...state});}catch{}};
- return {
-  get state(){return {...state};},
-  get busy(){return !!task;},
-  subscribe(listener){listeners.add(listener);listener({...state});return()=>listeners.delete(listener);},
-  pause(){if(task){state.status='pausing';emit();controller.abort();}return task||Promise.resolve({...state});},
-  reset(){if(task)return false;state={status:'idle',reciter:null,total:0,done:0,bytes:0,surah:null,verse:0,error:null};emit();return true;},
-  start(reciter,numbers){
-   if(task)return task;
-   const selected=[...new Set(numbers)].filter(n=>Number.isInteger(n)&&n>=1&&n<=114&&hasSurah(reciter,n));if(!selected.length)return Promise.reject(Error('Нет доступных сур'));
-   controller=new AbortController();const current=controller;
-   state={status:'downloading',reciter,total:selected.length,done:0,bytes:0,surah:selected[0],verse:0,error:null};
-   task=Promise.resolve().then(async()=>{
-    try{
-     for(const number of selected){
-      if(current.signal.aborted)throw cancelled();state.surah=number;state.verse=0;emit();
-      const surah=await loadSurah(number);if(current.signal.aborted)throw cancelled();
-      const bytes=await saveSurah(surah,reciter,(count,partialBytes)=>{state.verse=count;state.currentBytes=partialBytes;emit();},current.signal);
-      state.done++;state.bytes+=bytes;state.currentBytes=0;emit();
-     }
-     state.status='complete';
-    }catch(error){state.status=error.name==='AbortError'?'paused':'error';state.reason=String(error.message||'').slice(0,180);state.error=error.name==='QuotaExceededError'?'Недостаточно места на устройстве':error.name==='AbortError'?null:error.name==='TimeoutError'?'Аудиосервер долго не отвечает. Можно продолжить скачивание.':'Загрузка прервана. Можно продолжить.';}
-    finally{task=null;controller=null;emit();}
-    return {...state};
-   });emit();return task;
+ const idle=()=>({status:'idle',reciter:null,total:0,done:0,bytes:0,surah:null,verse:0,error:null});
+ const pending=[],completed=[],listeners=new Set();
+ let task=null,controller=null,state=idle();
+ const snapshot=()=>({...state,pending:pending.slice(),completed:completed.slice()});
+ const emit=()=>{for(const listener of listeners)try{listener(snapshot());}catch{}};
+ const same=(track,reciter,number)=>track.reciter===reciter&&track.number===number;
+ function add(reciter,numbers){
+  const selected=[...new Set(numbers)].filter(n=>Number.isInteger(n)&&n>=1&&n<=114&&hasSurah(reciter,n));
+  if(!selected.length)return Promise.reject(Error('Нет доступных сур'));
+  if(!task&&!pending.length){state=idle();completed.length=0;}
+  for(const number of selected){
+   if(pending.some(track=>same(track,reciter,number))||completed.some(track=>same(track,reciter,number)))continue;
+   pending.push(Object.freeze({reciter,number}));
+   state.total++;
   }
+  return resume();
+ }
+ function resume(){
+  if(task){emit();return task;}
+  if(!pending.length)return Promise.resolve(snapshot());
+  state.status='downloading';state.error=null;state.reason=null;
+  state.reciter=pending[0].reciter;state.surah=pending[0].number;
+  controller=new AbortController();const current=controller;
+  task=Promise.resolve().then(async()=>{
+   try{
+    while(pending.length){
+     if(current.signal.aborted)throw cancelled();
+     const track=pending[0];
+     state.reciter=track.reciter;state.surah=track.number;state.verse=0;state.currentBytes=0;emit();
+     const surah=await loadSurah(track.number);if(current.signal.aborted)throw cancelled();
+     const bytes=await saveSurah(surah,track.reciter,(count,partialBytes)=>{state.verse=count;state.currentBytes=partialBytes;emit();},current.signal);
+     pending.shift();completed.push(track);state.done++;state.bytes+=bytes;state.currentBytes=0;emit();
+    }
+    state.status='complete';
+   }catch(error){state.status=error.name==='AbortError'?'paused':'error';state.reason=String(error.message||'').slice(0,180);state.error=error.name==='QuotaExceededError'?'Недостаточно места на устройстве':error.name==='AbortError'?null:error.name==='TimeoutError'?'Аудиосервер долго не отвечает. Можно продолжить скачивание.':'Загрузка прервана. Можно продолжить.';}
+   const finished=snapshot();
+   task=null;controller=null;emit();
+   return finished;
+  });emit();return task;
+ }
+ return {
+  get state(){return snapshot();},
+  get busy(){return !!task;},
+  subscribe(listener){listeners.add(listener);listener(snapshot());return()=>listeners.delete(listener);},
+  pause(){if(task){state.status='pausing';emit();controller.abort();}return task||Promise.resolve(snapshot());},
+  reset(){if(task)return false;pending.length=0;completed.length=0;state=idle();emit();return true;},
+  resume,
+  start(reciter,numbers){return task||add(reciter,numbers);},
+  enqueue(reciter,number){return add(reciter,[number]);}
  };
 }
