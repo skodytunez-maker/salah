@@ -142,7 +142,12 @@
       "reason": "Identify the new tablet and phone test candidate."
     }
   ],
-  "generated": [],
+  "generated": [
+    {
+      "path": "dist/data/haramain-schedule.json",
+      "reason": "Existing official schedule refresh at publication."
+    }
+  ],
   "baseline": [
     {
       "path": ".gitattributes",
