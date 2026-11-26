@@ -1,145 +1,69 @@
 {
   "schema": 1,
-  "version": 572,
-  "baseCommit": "f91821591140f86344e8695a6a71e41972f92c3c",
-  "baseTree": "12372028af6c859c36dfd75adf385bd7f8bd804e",
-  "note": "SALAH 572 based on published 571. Invitation credit, exact word timings, and reciter catalogue preferences.",
+  "version": 573,
+  "baseCommit": "3a2b94abd75863638c47c2812b254c4192e04bde",
+  "baseTree": "97af6f07bedebc56c2b6e862c437d2d5f484d23b",
+  "note": "Public access to the existing external women reciter collection, plus the official Maryam Masud channel.",
   "allowed": [
     {
-      "path": "dist/css/quran-awards.css",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "dist/js/account-referrals.js",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "dist/js/counter-account.js",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
+      "path": "dist/js/app-release.js",
+      "reason": "Identify the public catalogue update."
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
-    },
-    {
-      "path": "dist/js/i18n-source-catalogues.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
-    },
-    {
-      "path": "dist/js/i18n/referrals/index.js",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "dist/sw.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
-    },
-    {
-      "path": "docs/change-scope.json",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
-    },
-    {
-      "path": "scripts/check-account-language.mjs",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "scripts/check-account-referrals.mjs",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "scripts/check-counter-account.mjs",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "supabase/config.toml",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "supabase/functions/account-referrals/core.mjs",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "supabase/functions/account-referrals/index.ts",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "supabase/migrations/20261126223230_account_referrals.sql",
-      "reason": "Local preparation for invitation codes and the private Ajr listening-time card."
-    },
-    {
-      "path": "dist/data/mushaf-word/dausari-001.json",
-      "reason": "Local word highlighting for two exact Daussari recordings in the printed Mushaf."
-    },
-    {
-      "path": "dist/data/mushaf-word/dausari-002.json",
-      "reason": "Local word highlighting for two exact Daussari recordings in the printed Mushaf."
-    },
-    {
-      "path": "dist/js/quran-mushaf-listening.js",
-      "reason": "Local word highlighting for two exact Daussari recordings in the printed Mushaf."
-    },
-    {
-      "path": "dist/js/quran-mushaf-print.js",
-      "reason": "Local word highlighting for two exact Daussari recordings in the printed Mushaf."
-    },
-    {
-      "path": "dist/js/quran-mushaf-word-follow.js",
-      "reason": "Local word highlighting for two exact Daussari recordings in the printed Mushaf."
-    },
-    {
-      "path": "dist/quran.css",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
-    },
-    {
-      "path": "scripts/check-mushaf-listening.mjs",
-      "reason": "Local word highlighting for two exact Daussari recordings in the printed Mushaf."
+      "reason": "Regenerate the localized reciter labels."
     },
     {
       "path": "dist/js/i18n/reciter-audience.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Localize the new name and retire unused gender controls."
     },
     {
       "path": "dist/js/quran-reciter-audience.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "reason": "Expose selected Quran recordings to all catalogue visitors and add the official Maryam Masud channel."
     },
     {
-      "path": "dist/js/quran-reciter-library.js",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
+      "path": "dist/quran.css",
+      "reason": "Remove stale rules for the former gender control."
+    },
+    {
+      "path": "dist/sw.js",
+      "reason": "Update the offline shell version and declared byte sizes."
+    },
+    {
+      "path": "docs/change-scope.json",
+      "reason": "Record the change against the published baseline."
     },
     {
       "path": "scripts/check-reciter-audience.mjs",
-      "reason": "Local optional reciter catalogue preference and verified external sources."
-    },
-    {
-      "path": "dist/js/app-release.js",
-      "reason": "Identify the new tablet and phone test candidate."
+      "reason": "Cover access across absent and legacy gender preferences."
     }
   ],
   "generated": [
@@ -1535,7 +1459,7 @@
     },
     {
       "path": "dist/css/quran-awards.css",
-      "sha": "4c39ceda94760143cb01cd2f98edf22ca0d35782"
+      "sha": "9c0cf8586165a831457cfbcbdfefbc1775c20292"
     },
     {
       "path": "dist/css/radio-preview.css",
@@ -1628,6 +1552,14 @@
     {
       "path": "dist/data/mushaf-print/madani-layout.json",
       "sha": "75c750643656e5770129cc30f1244bf81485f821"
+    },
+    {
+      "path": "dist/data/mushaf-word/dausari-001.json",
+      "sha": "fc32aa03b2e5d9587dd7f7790e1b464bec9c5c1b"
+    },
+    {
+      "path": "dist/data/mushaf-word/dausari-002.json",
+      "sha": "275f0c12d71813c0873749554093302f67464275"
     },
     {
       "path": "dist/data/nature-sources-493.json",
@@ -2670,6 +2602,10 @@
       "sha": "e870b1b44bb3ede8c7fd8c4c820eb165e68c4993"
     },
     {
+      "path": "dist/js/account-referrals.js",
+      "sha": "def5b3e73fe93593c860eb364cd58642edcf903f"
+    },
+    {
       "path": "dist/js/account-summary-core.js",
       "sha": "9c3f6fc96fedc5fd5b49714b93d6e2c7048105bc"
     },
@@ -2755,7 +2691,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "81cd8f2433cedca01b1585b5b3690d8b3ce48bae"
+      "sha": "4194053bff5b2eca78d585b2f16444ebb9709983"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -2911,7 +2847,7 @@
     },
     {
       "path": "dist/js/counter-account.js",
-      "sha": "d3f9f8317bdc2d1c4d3be79b6bfb5496a9c232e8"
+      "sha": "d8fb6869708f438bef4a715fc7f49d7a25d7e9ec"
     },
     {
       "path": "dist/js/counter-sync-core.js",
@@ -3075,39 +3011,39 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "908803fc461f9764b430f8dfe52f6cce90afe28a"
+      "sha": "aad8aef425bb17118db8cc56b8dedd93c7ebcc98"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "5bdb3aea87bc705d3c71ca4eab02d280969238d9"
+      "sha": "94b7d627828d0f377dbe99daa220528ea1283c24"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "8b8c003c1c5a69b453073a05092ae10d959d9c46"
+      "sha": "6a06f08bb791a8df6bef3235a2af8ca986168115"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "58822326970eeebc799532cb5ea02fd9f88e1713"
+      "sha": "4b7fdc91b400d96d4692a57492381c1b6a9fa580"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "a639bc0b5506104298eb0ad87bda3bc10d738f3e"
+      "sha": "74e6348682c54413287eb57e3c49b593f3954a0a"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "d7569eab940098030031a1c50fa8e1c68d89d6eb"
+      "sha": "e6724f61f654c5c25f35d9323f9979bec8e12ef0"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "1cb55a7e7f2db2e07e004fd2c74de618e9b29dad"
+      "sha": "e5d3e56f3ce5357d27541db0973020640a773fec"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "f08e4ebded76b385abab6fb81e90f234c939998f"
+      "sha": "e036c1ecaad16645021f59d4b17747794eafd56d"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
-      "sha": "8234ab50851362a61a6d9e832a56dd156fe09192"
+      "sha": "0c6024d52148d5bf5c087643e98eb4319fdce90a"
     },
     {
       "path": "dist/js/i18n.js",
@@ -3852,6 +3788,14 @@
     {
       "path": "dist/js/i18n/ranking/uz.js",
       "sha": "91af7b616cc47b148d0f9f88567f3cda8a7f13a8"
+    },
+    {
+      "path": "dist/js/i18n/reciter-audience.js",
+      "sha": "864bb94a813f513887dc9ac2bd473344a395391d"
+    },
+    {
+      "path": "dist/js/i18n/referrals/index.js",
+      "sha": "c972c89da3c33bbbbe8925f5f4209e29f12e81b1"
     },
     {
       "path": "dist/js/i18n/release/ar.js",
@@ -4619,7 +4563,7 @@
     },
     {
       "path": "dist/js/quran-mushaf-listening.js",
-      "sha": "2bbab91428463333b723cc355c91211c8385f2ea"
+      "sha": "a7e4c5a3444f1bf65669f166a5cb651625f92f91"
     },
     {
       "path": "dist/js/quran-mushaf-offline.js",
@@ -4639,7 +4583,11 @@
     },
     {
       "path": "dist/js/quran-mushaf-print.js",
-      "sha": "202eee1a556cf5da54f1d4335ae68185d8e98df8"
+      "sha": "9bb73a46654f09345f41cf0562a5a97a5b5ba308"
+    },
+    {
+      "path": "dist/js/quran-mushaf-word-follow.js",
+      "sha": "1cb7965661bbcb91174f48d711ab0cd21b41fcbd"
     },
     {
       "path": "dist/js/quran-mushaf.js",
@@ -4706,6 +4654,10 @@
       "sha": "3cb71c3664461fbf8db212bd1490d301cc5fe5fd"
     },
     {
+      "path": "dist/js/quran-reciter-audience.js",
+      "sha": "a82c229220aab9571f7fe2e86761882d30e4b9e0"
+    },
+    {
       "path": "dist/js/quran-reciter-discovery.js",
       "sha": "88ca88a875d12a2ceb5e67a011075477c91b16ee"
     },
@@ -4715,7 +4667,7 @@
     },
     {
       "path": "dist/js/quran-reciter-library.js",
-      "sha": "8abc567b79a415ba6ea2439879824d2a6fab866d"
+      "sha": "8ddddd4426d47802f046885801536808de812e87"
     },
     {
       "path": "dist/js/quran-reciter-recording.js",
@@ -5271,7 +5223,7 @@
     },
     {
       "path": "dist/quran.css",
-      "sha": "6e4c2d556f1f6b754eca57c3c89c312f85617717"
+      "sha": "3137aa53bc81883bc3ff319e0e62f759168cd5c5"
     },
     {
       "path": "dist/reciter-portrait-credits.html",
@@ -5299,7 +5251,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "04646cadacabdb997d25a13765e274a19723fa83"
+      "sha": "e848cdefb130bcc700a58adb5bb1e7c0744ee924"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5847,7 +5799,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "4680d945becc9f638cc218812bec23cf7817e1c9"
+      "sha": "ded6b971dc56bba005b38f0518ea9149b1fd0663"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6759,7 +6711,7 @@
     },
     {
       "path": "scripts/check-account-language.mjs",
-      "sha": "11a77a251d5dd3b3331c6b0071a7426e895021cc"
+      "sha": "5e64642fba60a4e3ab2834cf382ee728e1107912"
     },
     {
       "path": "scripts/check-account-learning-links.mjs",
@@ -6772,6 +6724,10 @@
     {
       "path": "scripts/check-account-reading-context.mjs",
       "sha": "0a5aae8a976c07843a2a7a729b573a8da893a011"
+    },
+    {
+      "path": "scripts/check-account-referrals.mjs",
+      "sha": "be0c153a59e2efc769daa280bba9f03cd4886dd1"
     },
     {
       "path": "scripts/check-activity-presence.mjs",
@@ -7011,7 +6967,7 @@
     },
     {
       "path": "scripts/check-counter-account.mjs",
-      "sha": "a3cace5acd04dcef1588140ea5ff022482dcdf99"
+      "sha": "e5a76e5ea6ed5674b0ea4401c12d98a2734c02c7"
     },
     {
       "path": "scripts/check-counter-sync.mjs",
@@ -7299,7 +7255,7 @@
     },
     {
       "path": "scripts/check-mushaf-listening.mjs",
-      "sha": "f0e49ab417d267be95cb8fc8b527b434d00e931e"
+      "sha": "1b1ef85954db0cc80a673a8f815cb8a207e0a4d3"
     },
     {
       "path": "scripts/check-mushaf-print.mjs",
@@ -7782,6 +7738,10 @@
       "sha": "6ca87d048d47163b432ea815d7d41cd79a9ec701"
     },
     {
+      "path": "scripts/check-reciter-audience.mjs",
+      "sha": "53d1755aa869c761e1487b66952b9db1483dbda7"
+    },
+    {
       "path": "scripts/check-reciter-competition.mjs",
       "sha": "379d66335e29aa5e827d527f42dc32fc453fe731"
     },
@@ -8231,7 +8191,7 @@
     },
     {
       "path": "supabase/config.toml",
-      "sha": "e750957aeb28a01b5318a0398dab7e224960172d"
+      "sha": "73699f781b1587112d04ca263c7a8d5fdccf212f"
     },
     {
       "path": "supabase/error-summary-schema.sql",
@@ -8260,6 +8220,14 @@
     {
       "path": "supabase/functions/account-presence/index.ts",
       "sha": "38fe67af9eaae2f744cb2e908158644163f1515e"
+    },
+    {
+      "path": "supabase/functions/account-referrals/core.mjs",
+      "sha": "b828b1220376fe08225669495b3d96125dbb0d3c"
+    },
+    {
+      "path": "supabase/functions/account-referrals/index.ts",
+      "sha": "3d7cd406d0ffe5d7f2c33cfd635373ecd5a28aea"
     },
     {
       "path": "supabase/functions/adhkar-sync/index.ts",
@@ -8802,6 +8770,10 @@
       "sha": "2af862591b4a04fbfacec6f3ca6d0e56be3025f9"
     },
     {
+      "path": "supabase/migrations/20261126223230_account_referrals.sql",
+      "sha": "15f48d79165cb1374a5a9ca9a049df170f220e24"
+    },
+    {
       "path": "supabase/native-support-devices.sql",
       "sha": "ba5aff3b83767ebcf89d776acd1034dbb78d7da9"
     },
@@ -8925,6 +8897,5 @@
       "path": "tests/support/check-unlink.cjs",
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
-  ],
-  "previousReleaseSource": "export const APP_VERSION=571;\nexport const APP_UPDATED_AT='2026-11-27';\nexport const APP_UPDATE_DATE='27 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  ]
 }

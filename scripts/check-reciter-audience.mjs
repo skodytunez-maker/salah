@@ -12,33 +12,32 @@ try{
  const mount=()=>{
   host.innerHTML='<label><input id="reciter-search"></label><div class="reciter-card">Existing reciter</div>';
   mountReciterAudience(host);
-  return host.querySelector('#reciter-audience-gender');
+  return host.querySelector('.reciter-audience');
  };
  setInterfaceLanguage('ru');
- let select=mount();
- const women=()=>host.querySelector('[aria-labelledby="women-reciter-title"]');
- assert.equal(select.value,'');
- assert.equal(women().hidden,true);
- assert.equal(women().querySelectorAll('a').length,0);
- assert.match(host.querySelector('.reciter-audience').textContent,/Омар ибн Дия ад-Дин/);
- select.value='female';select.onchange();
- assert.equal(women().hidden,false);
- assert.equal(women().querySelectorAll('a').length,4);
- assert.match(women().textContent,/Мария Ульфа/);
- assert.match(women().textContent,/Зайнаб Тальха/);
- assert.match(women().textContent,/Марьям Джазим/);
- assert.equal(host.querySelector('.reciter-card').hidden,false);
- for(const link of host.querySelectorAll('.reciter-audience a')){
-  assert.equal(new URL(link.href).protocol,'https:');
-  assert.equal(link.rel,'noopener noreferrer');
+ const key='reciter-catalog-gender';
+ for(const saved of [null,'male','female','legacy']){
+  if(saved===null)win.localStorage.removeItem(key);
+  else win.localStorage.setItem(key,saved);
+  const section=mount(),women=section.querySelector('details');
+  assert.equal(section.querySelector('select'),null);
+  assert.equal(women.open,false);
+  assert.match(women.querySelector('summary').textContent,/Женщины-чтецы/);
+  women.open=true;
+  assert.equal(women.querySelectorAll('a').length,5);
+  for(const name of ['Мария Ульфа','Зайнаб Тальха','Марьям Джазим','Марьям Масуд','Qariah']){
+   assert.ok(women.textContent.includes(name),name);
+  }
+  assert.match(section.querySelector(':scope > div').textContent,/Омар ибн Дия ад-Дин/);
+  assert.equal(host.querySelector('.reciter-card').hidden,false);
+  for(const link of section.querySelectorAll('a')){
+   assert.equal(new URL(link.href).protocol,'https:');
+   assert.equal(link.rel,'noopener noreferrer');
+  }
+  assert.equal(win.localStorage.getItem(key),saved);
  }
- select=mount();assert.equal(select.value,'female');
  setInterfaceLanguage('en');translateQuranUi(host);
- assert.match(women().textContent,/Women reciters/);
- assert.equal(select.options[2].textContent,'Female');
- select.value='male';select.onchange();
- assert.equal(women().hidden,true);
- assert.equal(women().querySelectorAll('a').length,0);
- assert.equal(mount().value,'male');
+ assert.match(host.querySelector('.reciter-audience summary').textContent,/Women reciters/);
+ assert.match(host.querySelector('.reciter-audience details').textContent,/Maryam Masud/);
 }finally{delete globalThis.localStorage;await win.happyDOM.close();}
-console.log('PASS: optional device-local preference, female access, persistent selection, localization and verified outbound source links.');
+console.log('PASS: the women reciter collection opens for all legacy preference states, with localized names and secure outbound links.');

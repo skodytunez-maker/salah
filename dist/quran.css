@@ -515,8 +515,5 @@ body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mush
 
 .reciter-audience{margin:0 0 14px}
 .reciter-audience summary{width:fit-content;padding:.45rem 0;color:#ddc591;cursor:pointer}
-.reciter-audience details>.field{margin:.4rem 0 .65rem}
 .reciter-audience-list{display:grid;gap:8px;padding:12px;margin-top:8px;border:1px solid #ffffff24;border-radius:14px}
-.reciter-audience-list[hidden]{display:none}
-.reciter-audience-list h2{margin:0;font-size:1.05rem}
 .reciter-audience-list .list-button{display:grid;gap:4px}
