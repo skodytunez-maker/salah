@@ -22,6 +22,37 @@ for(const hash of ['#knowledge','#knowledge?view=muallim','#knowledge?view=onlin
  assert.ok(host.querySelector('a[href="#knowledge?view=names"]'),'Existing names remain available');
  const links=host.querySelectorAll('[data-learning-entry]');assert.equal(links.length,3);links[0].click();assert.equal(started,1);started=0;
 }
+const{setInterfaceLanguage,t}=await import('../dist/js/i18n.js');
+const{UI_LANGUAGE_CODES}=await import('../dist/js/interface-languages.js');
+const faithHash='#knowledge?view=faith';
+w.location.hash='#knowledge';
+showKnowledge(host,{hash:w.location.hash});
+assert.equal(host.querySelector('a[href="'+faithHash+'"] h2').textContent,'Основы веры');
+w.location.hash=faithHash;
+showKnowledge(host,{hash:faithHash});
+const faithPage=host.querySelector('.faith-page');
+assert.ok(faithPage,'The public card opens without a signed-in account');
+assert.deepEqual([...faithPage.querySelectorAll('.faith-group ol')].map(list=>list.children.length),[5,6]);
+assert.equal(faithPage.querySelector('.faith-source').getAttribute('href'),'https://sunnah.com/muslim:8a');
+assert.equal(faithPage.querySelector('.faith-back').getAttribute('href'),'#knowledge');
+for(const language of UI_LANGUAGE_CODES){
+ setInterfaceLanguage(language);
+ assert.equal(host.querySelector('.faith-page'),faithPage,'Changing language preserves the current study screen');
+ assert.equal(faithPage.querySelector('h1').textContent,t('knowledgeUi.cards.faith.title'));
+ for(const node of faithPage.querySelectorAll('[data-i18n]')){
+  const key=node.dataset.i18n;
+  assert.ok(node.textContent.trim()&&node.textContent!==key,'Missing localised text '+language+': '+key);
+  assert.equal(node.textContent,t(key));
+ }
+}
+setInterfaceLanguage('ru');
+showKnowledge(host,{hash:faithHash,ownerAccess:true});
+assert.equal(host.querySelector('.faith-page'),faithPage,'Owner verification refresh preserves the page');
+w.location.hash='#knowledge';
+showKnowledge(host,{hash:w.location.hash});
+assert.ok(host.querySelector('.knowledge-page'),'Back returns directly to the Knowledge catalogue');
+assert.equal(host.querySelector('.faith-page'),null);
+
 const historical502Changes=['Коран без интернета: все страницы.','Намаз без интернета: сохранённое расписание.','Скачанное аудио: своя библиотека.'];
 host.innerHTML=illustratedReleaseMarkup(502,historical502Changes);
 assert.equal(host.querySelectorAll('.release-feature').length,3,'News502 contains exactly offline Quran, prayer schedules and downloaded audio');

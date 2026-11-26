@@ -1,37 +1,149 @@
 {
   "schema": 1,
-  "version": 569,
-  "baseCommit": "33b94324b2b8776990246b91ce54305afb141ea4",
-  "baseTree": "d69b3e3849bdf0fb73e290cd665b7305d3474c03",
-  "note": "Restore the original SAHABA Knowledge link after the verified owner’s 568 test did not correct iOS system-player navigation. Restore exact release 567 Knowledge source, remove temporary owner/standalone hide, and retain dedicated card visibility regression. Preserve installed identity, audio and all account behavior.",
+  "version": 570,
+  "baseCommit": "20c83f7984484db132fe6ea056d8b9366759f24e",
+  "baseTree": "fb1405051f3ec5cf10aa42f6e8fa11d5d759c41b",
+  "note": "Local Foundations and private Knowledge access candidate.",
   "allowed": [
     {
-      "path": "dist/js/knowledge.js",
-      "reason": "Restore the exact previously published Knowledge catalog."
-    },
-    {
-      "path": "scripts/check-knowledge-sahaba-trial.mjs",
-      "reason": "Remove the temporary test that required the trial filter."
-    },
-    {
-      "path": "scripts/check-knowledge-sahaba.mjs",
-      "reason": "Verify the link is restored in the actual owner flow as well as Safari, admin and unverified state."
-    },
-    {
       "path": "dist/js/app-release.js",
-      "reason": "Quiet reversion version."
+      "reason": "Identify the local candidate with a distinct version."
+    },
+    {
+      "path": "dist/js/knowledge.js",
+      "reason": "Add Foundations and keep previously verified private card navigation stable while the server rechecks access."
+    },
+    {
+      "path": "dist/knowledge.css",
+      "reason": "Style the Foundations screen with existing theme variables."
+    },
+    {
+      "path": "dist/js/team-preview-access.js",
+      "reason": "Retry transient verification once on the active private Knowledge route using the current account."
+    },
+    {
+      "path": "dist/js/i18n-source-catalogues.js",
+      "reason": "Register the Foundations and existing Stories translation sources."
+    },
+    {
+      "path": "scripts/check-knowledge-coming-soon.mjs",
+      "reason": "Check Foundations groups, all eight languages and back navigation alongside public gating."
+    },
+    {
+      "path": "scripts/check-team-preview-access.mjs",
+      "reason": "Reproduce card flicker and lost retry. Verify stable same-account navigation, denial, and cancellation."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Update release, shell and exact resource sizes."
+      "reason": "Refresh cache identity and exact resource sizes for the candidate."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Validate scoped change against published 568."
+      "reason": "Validate the local candidate against the exact published 569 file inventory."
     },
     {
-      "path": "docs/work-queue.md",
-      "reason": "Record the owner-confirmed experiment and reversion."
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Compile Foundations copy and retain all previously published messages."
+    },
+    {
+      "path": "dist/js/i18n/faith/index.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/index.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/ru.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/ru.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/en.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/en.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/az.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/az.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/tg.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/tg.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/uz.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/uz.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/kk.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/kk.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/de.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/de.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
+    },
+    {
+      "path": "dist/js/i18n/faith/ar.js",
+      "reason": "Keep the localized Foundations source in the standard catalogue."
+    },
+    {
+      "path": "dist/js/i18n/video-stories/ar.js",
+      "reason": "Restore source parity from the already shipped Stories strings without changing them."
     }
   ],
   "generated": [
@@ -2647,7 +2759,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "4471f09ac0d32fc7ecc13215e3fbe205c03ef17d"
+      "sha": "6b787282222f4ffb5f26d3cb2f838a8652e845c8"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3999,7 +4111,7 @@
     },
     {
       "path": "dist/js/knowledge.js",
-      "sha": "01e5bf91f74f48432cb86495d80daa9aa11228c1"
+      "sha": "d955801ef0a45dad84f2d854ada8a85ed9b3bdc3"
     },
     {
       "path": "dist/js/landmark-settings.js",
@@ -5119,7 +5231,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "7575715875d39961e71dffec6145d7135019aea7"
+      "sha": "b81489db852ffe51eca0bc6638797ba8853e32d6"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5667,7 +5779,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "751fad40e268e9cdade1eae1c369832daf791890"
+      "sha": "784c9bce19f637fd9c67c4fec3e9bd8e9e23e40a"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6207,7 +6319,7 @@
     },
     {
       "path": "docs/work-queue.md",
-      "sha": "9dcf77cd5ad50817030141fd890361442be660d4"
+      "sha": "fcf0a4756e109da33c5920906fa55b5028cc30a6"
     },
     {
       "path": "docs/yookassa-sandbox.md",
@@ -7014,8 +7126,8 @@
       "sha": "98b7d5b805a9c45748baba459c0e172deb61117d"
     },
     {
-      "path": "scripts/check-knowledge-sahaba-trial.mjs",
-      "sha": "86483a298aab137b01a4bb15e814655563d21648"
+      "path": "scripts/check-knowledge-sahaba.mjs",
+      "sha": "6615f2ddb11b46e56c53fe023286b609513316a9"
     },
     {
       "path": "scripts/check-landmarks.mjs",
@@ -8746,5 +8858,5 @@
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
   ],
-  "previousReleaseSource": "export const APP_VERSION=568;\nexport const APP_UPDATED_AT='2026-11-25';\nexport const APP_UPDATE_DATE='25 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
+  "previousReleaseSource": "export const APP_VERSION=569;\nexport const APP_UPDATED_AT='2026-11-25';\nexport const APP_UPDATE_DATE='25 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

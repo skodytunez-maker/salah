@@ -14,7 +14,7 @@ export function createTeamPreviewAccess({checkSession=checkAccountSession,reques
  const clear=()=>{revision++;pending?.controller.abort();pending=null;const changed=Boolean(actor);actor=null;token=null;at=0;unavailable=false;if(changed)emit();};
  const verified=()=>Boolean(actor&&!unavailable&&now()>=at&&now()-at<ttl);
  const radioHint=()=>Boolean(actor&&now()>=at&&now()-at<ttl+15000);
- const temporarilyUnavailable=()=>{if(!actor||unavailable)return;unavailable=true;emit();};
+ const temporarilyUnavailable=()=>{if(unavailable)return;unavailable=true;if(actor)emit();};
  async function verify({force=false}={}){
   const began=revision,checked=await checkSession({force});
   if(began!==revision)return false;
@@ -38,7 +38,7 @@ export function createTeamPreviewAccess({checkSession=checkAccountSession,reques
    finally{if(pending===entry)pending=null;}
   })();pending=entry;return entry.task;
  }
- return{verified,radioHint,verify,clear,actor:()=>verified()?actor:null,knownActor:()=>actor,
+ return{verified,radioHint,verify,clear,actor:()=>verified()?actor:null,knownActor:()=>actor,unavailable:()=>unavailable,
   subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
   async accessToken(){if(!await verify()||!verified()||!token)throw Error('Подтвердите защищённый вход команды.');return token;}
  };
@@ -46,27 +46,64 @@ export function createTeamPreviewAccess({checkSession=checkAccountSession,reques
 const shared=createTeamPreviewAccess();
 export const teamPreviewVerified=()=>shared.verified();
 export const teamPreviewRadioHint=()=>shared.radioHint();
+// Keep navigation stable for the same known account; protected mounts still require a current grant.
+export const teamPreviewKnowledgeHint=userId=>Boolean(userId&&shared.knownActor()?.id===userId);
 export const teamPreviewActor=()=>shared.actor();
 export const verifiedTeamPreviewId=()=>shared.actor()?.id||null;
 export const verifyTeamPreviewAccess=options=>shared.verify(options);
 export const teamPreviewAccessToken=()=>shared.accessToken();
 export const onTeamPreviewChange=listener=>shared.subscribe(listener);
+function privateKnowledgeRoute(hash){
+ const [route,query]=hash.split('?');
+ if(route!=='#knowledge'||!query)return false;
+ const params=new URLSearchParams(query);
+ return ['online-lessons','muallim','live-stream','teacher-preview'].includes(params.get('preview')||params.get('view'));
+}
 let stopInit=null;
-export function initTeamPreviewAccess({getAccount,onChange=()=>{},doc=document,win=window,interval=setInterval,cancel=clearInterval}={}){
- stopInit?.();let userId=null,lastAttempted=null,working=null,retryEligible=false,lastRoute=null;
+export function initTeamPreviewAccess({getAccount,onChange=()=>{},doc=document,win=window,interval=setInterval,cancel=clearInterval,scheduleRetry=setTimeout,cancelRetry=clearTimeout}={}){
+ stopInit?.();
+ let userId=null,lastAttempted=null,working=null,retryEligible=false,routeRetry=null;
+ let lastRoute=(win.location?.hash||'#home').split('?')[0];
  const active=()=>!doc.hidden&&['#home','#knowledge','#radio','#more','#staff'].includes((win.location?.hash||'#home').split('?')[0]);
+ const clearRouteRetry=()=>{
+  if(routeRetry?.timer!=null)cancelRetry(routeRetry.timer);
+  routeRetry=null;
+ };
+ function retryPrivateRoute(){
+  const hash=win.location?.hash||'';
+  if(!active()||!userId||!shared.unavailable()||!privateKnowledgeRoute(hash)||routeRetry?.hash===hash)return;
+  const attempt={hash,userId,timer:null};
+  routeRetry=attempt;
+  attempt.timer=scheduleRetry(()=>{
+   attempt.timer=null;
+   const account=getAccount();
+   if(routeRetry===attempt&&account.signedIn&&account.userId===attempt.userId&&win.location?.hash===hash&&shared.unavailable())void refresh(true);
+  },750);
+ }
  async function refresh(force=false){
   const state=getAccount(),id=state.signedIn?state.userId:null;
-  if(id!==userId){userId=id;lastAttempted=null;working=null;retryEligible=false;shared.clear();}
+  if(id!==userId){clearRouteRetry();userId=id;lastAttempted=null;working=null;retryEligible=false;shared.clear();}
   if(!id||!active()||working||!force&&lastAttempted===id&&!shared.knownActor())return;
   lastAttempted=id;const job=shared.verify({force});working=job;
-  try{const permitted=await job;if(working===job)retryEligible=permitted;}catch{}finally{if(working===job)working=null;}
+  try{
+   const permitted=await job;
+   if(working===job){retryEligible=permitted;if(permitted)clearRouteRetry();}
+  }catch{}finally{
+   if(working===job){working=null;retryPrivateRoute();}
+  }
  }
  const account=()=>{const state=getAccount(),id=state.signedIn?state.userId:null;if(id!==userId){shared.clear();lastAttempted=null;}void refresh();};
- const resume=()=>{if(!doc.hidden)void refresh(true);},route=()=>{const next=(win.location?.hash||'#home').split('?')[0],changed=next!==lastRoute;lastRoute=next;void refresh(changed&&!shared.knownActor());};
+ const resume=()=>{if(!doc.hidden)void refresh(true);};
+ const route=()=>{
+  const hash=win.location?.hash||'#home',next=hash.split('?')[0],changed=next!==lastRoute;
+  lastRoute=next;
+  if(routeRetry&&routeRetry.hash!==hash)clearRouteRetry();
+  void refresh(changed&&!shared.knownActor());
+  if(!working)retryPrivateRoute();
+ };
  win.addEventListener('salah:counter-status',account);win.addEventListener('hashchange',route);win.addEventListener('online',resume);doc.addEventListener('visibilitychange',resume);
  const timer=interval(()=>{if(shared.knownActor()||retryEligible)void refresh(true);},45000),off=shared.subscribe(onChange);
  void refresh();
- stopInit=()=>{cancel(timer);off();win.removeEventListener('salah:counter-status',account);win.removeEventListener('hashchange',route);win.removeEventListener('online',resume);doc.removeEventListener('visibilitychange',resume);shared.clear();};
+ stopInit=()=>{clearRouteRetry();working=null;cancel(timer);off();win.removeEventListener('salah:counter-status',account);win.removeEventListener('hashchange',route);win.removeEventListener('online',resume);doc.removeEventListener('visibilitychange',resume);shared.clear();};
  return stopInit;
 }

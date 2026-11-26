@@ -198,3 +198,34 @@
 
 /* An unavailable embed must never leave a blank white panel. */
 .owner-learning-frame{color-scheme:dark}.owner-learning-shell[aria-busy="true"]>.owner-learning-status{min-height:40px}
+
+.knowledge-symbol-knowledge-faith { --knowledge-symbol: url("./assets/icons/book-open.svg"); }
+.faith-page {
+  display: grid;
+  gap: 16px;
+  max-width: 760px;
+  margin-inline: auto;
+}
+.faith-heading { margin: 0; }
+.faith-heading h1 { margin: 0; overflow-wrap: anywhere; }
+.faith-back, .faith-source {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-block-size: 44px;
+  color: var(--gold);
+}
+.faith-source { text-decoration: underline; text-underline-offset: .2em; }
+.faith-group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(16px, 4vw, 24px);
+}
+.faith-group h2 { margin: 0 0 12px; font-size: 1.25rem; }
+.faith-group ol { margin: 0; padding-inline-start: 1.45em; }
+.faith-group li { padding-block: 9px; padding-inline-start: .24em; }
+.faith-group li + li { border-block-start: 1px solid var(--line); }
+.faith-group li::marker { color: var(--gold); font-weight: 650; }
+.faith-group h3 { margin: 0; font-size: 1rem; }
+.faith-group p { margin: .25em 0 0; line-height: 1.55; }
