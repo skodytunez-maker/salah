@@ -62,8 +62,16 @@
       "reason": "Record the change against the published baseline."
     },
     {
+      "path": "scripts/check-quran-io-language.mjs",
+      "reason": "Provide the real Mushaf word follower when executing the localization fixture."
+    },
+    {
       "path": "scripts/check-reciter-audience.mjs",
       "reason": "Cover access across absent and legacy gender preferences."
+    },
+    {
+      "path": "scripts/check-reciter-discovery.mjs",
+      "reason": "Provide the real catalogue section in the catalogue navigation fixture."
     }
   ],
   "generated": [
@@ -8897,5 +8905,6 @@
       "path": "tests/support/check-unlink.cjs",
       "sha": "3882645ac7dd7b3ec4a2461f022ee742152ecb43"
     }
-  ]
+  ],
+  "previousReleaseSource": "export const APP_VERSION=572;\nexport const APP_UPDATED_AT='2026-11-27';\nexport const APP_UPDATE_DATE='27 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n"
 }

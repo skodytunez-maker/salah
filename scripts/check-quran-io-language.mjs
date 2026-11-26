@@ -13,6 +13,7 @@ import{arabicWithHints,parseTajweed,TAJWEED_RULES}from '../dist/js/tajweed.js';
 import{uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups}from '../dist/js/quran-ui.js';
 import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from '../dist/js/quran-reciters.js';
 import{createMushafFollower,mushafAudioPosition}from '../dist/js/quran-mushaf-follow.js';
+import{mountMushafWordFollow}from '../dist/js/quran-mushaf-word-follow.js';
 import{printedVerseKeys,printedPageForPosition}from '../dist/js/quran-mushaf-print.js';
 import{timingUrl}from '../dist/js/quran-timing.js';
 import{actionIcon}from '../dist/js/action-icons.js';
@@ -58,7 +59,7 @@ const scripture=arabic.textContent,originalParts=JSON.stringify(parseTajweed(ver
 // recreate its icon, change the selected reciter or operate audio.
 let mushafState={surah,ayah:1,status:'playing',timingStatus:'ready',reciter:'ar.alafasy'},follow=true,getLineCalls=0,mushafAudioCalls=0;const mushafListeners=new Set(),navigation=[];
 const mushafPlayback={get state(){return mushafState;},subscribe(fn){mushafListeners.add(fn);fn(mushafState);return()=>mushafListeners.delete(fn);},pause(){mushafAudioCalls++;},toggle(){mushafAudioCalls++;},startFromAyah(){mushafAudioCalls++;},start(){mushafAudioCalls++;}};
-const mushafCtx=vm.createContext({reciterIsAvailable,visibleReciters,t,translateUi,subscribeLanguage,uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups,esc,mushafThemeButton,document:doc,innerHeight:852,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,actionIcon,quranPlayback:mushafPlayback,loadSurah:async()=>surah,read:(_key,fallback)=>fallback,write:()=>true,toast(){},console});
+const mushafCtx=vm.createContext({reciterIsAvailable,visibleReciters,t,translateUi,subscribeLanguage,uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups,esc,mushafThemeButton,document:doc,innerHeight:852,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,mountMushafWordFollow,actionIcon,quranPlayback:mushafPlayback,loadSurah:async()=>surah,read:(_key,fallback)=>fallback,write:()=>true,toast(){},console});
 const mushafSource=await fs.readFile(new URL('../dist/js/quran-mushaf-listening.js',import.meta.url),'utf8'),mushafApi=vm.runInContext('(function(){'+mushafSource.replace(/^import[^\n]*\n/gm,'').replace(/export /g,'')+';return{mushafListeningOptions,mountMushafListening};})()',mushafCtx);
 const mushafHost=doc.createElement('section');mushafHost.innerHTML='<div class="mushaf-top"></div><details class="mushaf-options" open><summary>Aa</summary>'+mushafApi.mushafListeningOptions()+'</details><div class="mushaf-tools"></div><article class="mushaf-paper"><span class="mushaf-print-word" data-verse="1:1">بِسْمِ</span></article>';doc.body.append(mushafHost);
 const mushaf=mushafApi.mountMushafListening(mushafHost,{page:1,index:{surahs:[{name:'Подлинное имя суры'}]},getEdition:()=> 'madani',getLines:()=>{getLineCalls++;return[[1,'text',0,[[1,1,1,'x']]]];},getFollow:()=>follow,setFollow:value=>{follow=value;},navigate:page=>navigation.push(page),playback:mushafPlayback});mushaf.refresh();
