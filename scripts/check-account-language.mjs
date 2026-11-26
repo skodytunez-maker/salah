@@ -14,14 +14,19 @@ updateSettings({uiLanguage:'ru'});const stopLanguage=initializeInterfaceLanguage
 const uid='11111111-1111-4111-8111-111111111111';let current=null,sendCalls=0,verifyCalls=0,passwordCalls=0,finishMail;
 const auth={getSession:async()=>({data:{session:current}}),signInWithOtp:()=>{sendCalls++;return new Promise(resolve=>finishMail=resolve);},verifyOtp:async()=>{verifyCalls++;return{data:{session:current}};},signInWithPassword:async()=>{passwordCalls++;return{error:{code:'invalid_credentials'}};},updateUser:async()=>({error:null})};
 const source=await fs.readFile(new URL('../dist/js/counter-account.js',import.meta.url),'utf8');
+const {normalizeReferralCode}=await import('../dist/js/account-referrals.js');
 const account=vm.runInNewContext(source.replace(/^import.*\r?\n/gm,'').replace(/export /g,'')+';({showCounterAccount});',{
  ...ui,t,document:doc,window:win,location:win.location,history:win.history,navigator:{onLine:true},localStorage:win.localStorage,URLSearchParams,Event:win.Event,crypto:globalThis.crypto,
  createCounterSync:()=>({activate:async()=>{},sync:async()=>({ok:true})}),createAdhkarActivityQueue:()=>({pending:()=>[]}),checkAccountSession:async()=>({state:'valid',session:current}),accountAuthClient:()=>({auth}),
+ normalizeReferralCode,mountAccountReferrals(){},
  hasFounderWelcomeSeen:()=>false,lessonAccountReturn:()=>null,accountProfileMarkup,mountStaffEntry(){},mountAccountAwards(){},mountAccountAvatar(){},mountAccountDevices(area,{mountIn}){const panel=doc.createElement('details');panel.innerHTML='<div class="account-device-body"></div>';mountIn.append(panel);return panel;},mountQrScanner(){},captureQrApproval:()=>false,hasQrApproval:()=>false,mountQrApproval(){},mountQrLogin(){},stopQrLogin(){},mountOwnerAccount(){},setQrApproval(){},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0
 });
 await account.showCounterAccount(app);
 const mail=app.querySelector('#counter-account-email-form'),email=app.querySelector('#counter-account-email'),nick=app.querySelector('#counter-account-nickname');email.value='draft@example.test';nick.value='Мой аккаунт';
+const invite=app.querySelector('#counter-account-invite');invite.value='SALAH-12AB34CD';
 setInterfaceLanguage('en');assert.equal(app.querySelector('#counter-account-email-form'),mail);assert.equal(email.value,'draft@example.test');assert.equal(nick.value,'Мой аккаунт');assert.equal(app.querySelector('h1').textContent,t('accountUi.signInRegistration'));assert.equal(sendCalls,0);
+assert.equal(invite.value,'SALAH-12AB34CD');
+assert.equal(app.querySelector('label[for="counter-account-invite"]').textContent,t('referralUi.optional'));
 const pendingMail=mail.onsubmit({preventDefault(){},currentTarget:mail}),send=mail.querySelector('button');assert.equal(send.disabled,true);assert.equal(send.textContent,t('accountUi.sendingCode'));
 setInterfaceLanguage('de');assert.equal(mail.querySelector('button'),send);assert.equal(send.textContent,t('accountUi.sendingCode'));assert.equal(email.value,'draft@example.test');assert.equal(send.disabled,true);assert.equal(sendCalls,1);
 setInterfaceLanguage('ru');assert.equal(mail.querySelector('button'),send);assert.equal(send.textContent,t('accountUi.sendingCode'));assert.equal(send.disabled,true);assert.equal(sendCalls,1);

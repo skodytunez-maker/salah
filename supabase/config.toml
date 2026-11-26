@@ -1,5 +1,9 @@
 project_id = "kbltwszfvphgbxdbczsb"
 
+[functions.account-referrals]
+# Modern JWT signature, confirmed user, and active session checked in the handler.
+verify_jwt = false
+
 [functions.video-stories]
 # Public playback and server-checked mutations.
 verify_jwt = false

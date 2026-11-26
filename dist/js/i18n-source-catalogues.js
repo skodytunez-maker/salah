@@ -36,7 +36,9 @@ import experienceRelease from './i18n/experience-release/index.js';
 import supportConversation from './i18n/supportConversation/index.js';
 import faith from './i18n/faith/index.js';
 import videoStories from './i18n/video-stories/index.js';
-const groups=[{ru,en,az,tg,uz,kk,de,ar},settings,quran,practice,notifications,account,translations,learning,ranking,team,publicUi,owner,staff,classroom,extra,lessons,release,subscription,nativeSupport,offlineaudio,offlineRelease,offline,prayerOffline,skyRelease,messageDeletion,experienceRelease,supportConversation,conversationThemes,faith,videoStories];
+import referrals from './i18n/referrals/index.js';
+import reciterAudience from './i18n/reciter-audience.js';
+const groups=[reciterAudience,{ru,en,az,tg,uz,kk,de,ar},settings,quran,practice,notifications,account,translations,learning,ranking,team,publicUi,owner,staff,classroom,extra,lessons,release,subscription,nativeSupport,offlineaudio,offlineRelease,offline,prayerOffline,skyRelease,messageDeletion,experienceRelease,supportConversation,conversationThemes,faith,videoStories,referrals];
 const merged=Object.create(null);
 for(const code of UI_LANGUAGE_CODES){
  const messages=Object.create(null);

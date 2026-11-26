@@ -4,7 +4,8 @@ import vm from 'node:vm';
 import{Window}from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import{mushafThemeButton}from '../dist/js/quran-mushaf-controls.js';
 import{createMushafFollower,mushafAudioPosition}from '../dist/js/quran-mushaf-follow.js';
-import{printedVerseKeys,printedPageForPosition}from '../dist/js/quran-mushaf-print.js';
+import{printedVerseKeys,printedPageForPosition,printedPageMarkup}from '../dist/js/quran-mushaf-print.js';
+import{mountMushafWordFollow,mushafWordAt}from '../dist/js/quran-mushaf-word-follow.js';
 import{createQuranPlayer}from '../dist/js/quran-audio.js';
 import{createQuranSession}from '../dist/js/quran-session.js';
 import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions}from '../dist/js/quran-reciters.js';
@@ -41,7 +42,7 @@ const w=new Window({url:'https://fixture.invalid/#quran?view=mushaf&page=1'}),do
 const saved=new Map(),listeners=new Set(),navigations=[],starts=[];let current={status:'stopped',surah:null,ayah:null,timingStatus:'unavailable'},enabled=true,lines=[[1,'text',0,[[1,1,1,'x'],[1,7,1,'y']]]];
 const playback={get state(){return current;},subscribe(fn){listeners.add(fn);fn(current);return()=>listeners.delete(fn);},pause(){current={...current,status:'paused'};emit();},toggle(){current={...current,status:'playing'};emit();},async startFromAyah(s,r,a){starts.push([s.number,r,a]);current={...state(s,a),reciter:r};emit();},async start(s,r){starts.push([s.number,r,0]);current={...state(s,null),reciter:r,timingStatus:'unavailable'};emit();}};
 function emit(){for(const fn of listeners)fn(current);}
-const ctx=vm.createContext({t,translateUi,subscribeLanguage,uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups,esc,mushafThemeButton,document:doc,innerHeight:853,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,actionIcon,quranPlayback:playback,loadSurah:async()=>first,read:(k,d)=>saved.get(k)??d,write:(k,v)=>{saved.set(k,v);return true;},toast:()=>{},console});
+const ctx=vm.createContext({t,translateUi,subscribeLanguage,uiLeaf,uiAttribute,setUiAttribute,translateQuranUi,translateReciterGroups,esc,mushafThemeButton,document:doc,innerHeight:853,RECITERS,reciterInfo,reciterHasSurah,reciterOptions,timingUrl,printedVerseKeys,printedPageForPosition,createMushafFollower,mushafAudioPosition,mountMushafWordFollow,actionIcon,quranPlayback:playback,loadSurah:async()=>first,read:(k,d)=>saved.get(k)??d,write:(k,v)=>{saved.set(k,v);return true;},toast:()=>{},console});
 const source=await fs.readFile(new URL('../dist/js/quran-mushaf-listening.js',import.meta.url),'utf8'),api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mushafListeningOptions,mountMushafListening});',ctx);
 host.innerHTML='<div class="mushaf-top"></div><details class="mushaf-options"><summary>Aa</summary>'+api.mushafListeningOptions()+'</details><div class="mushaf-tools"></div><article class="mushaf-paper"><span class="mushaf-print-word" data-verse="1:1"></span><span class="mushaf-print-word" data-verse="1:7"></span></article>';
 let quickTheme='night',legendOpens=0;
@@ -55,5 +56,36 @@ current={...state(first,1),timingStatus:'unavailable'};emit();assert.equal(host.
 // Persistent pagination retains a single playback subscription and follows the new page.
 ui.manualNavigation(2);lines=[[1,'text',0,[[2,1,1,'x'],[2,10,1,'y']]]];host.querySelector('.mushaf-paper').innerHTML='<span class="mushaf-print-word" data-verse="2:10"></span>';ui.setPage(2);current=state(second,10);ui.refresh();assert.equal(listeners.size,1);assert.match(host.querySelector('#mushaf-listening-status').textContent,/слежение на паузе/);host.querySelector('#mushaf-follow-current').click();assert.equal(host.querySelector('.is-playing-ayah').dataset.verse,'2:10');assert.equal(starts.length,1,'Changing a rendered page never restarts audio');
 ui.dispose();assert.equal(listeners.size,0);current=state(first,7);emit();assert.equal(host.querySelector('.mushaf-listening'),null);assert.equal(host.querySelector('.mushaf-actions'),null,'Unmount removes pinned controls');
+{
+ const read=async name=>JSON.parse(await fs.readFile(new URL('../dist/data/'+name,import.meta.url),'utf8'));
+ const {words}=await read('mushaf-word/dausari-002.json');
+ assert.equal(new Set(words.map(word=>word[0])).size,286);
+ assert.deepEqual(mushafWordAt(words,5261000).slice(0,2),[230,2]);
+ assert.equal(mushafWordAt(words,17050),null,'Conflicting provider intervals keep ayah-level fallback');
+ const paper=host.querySelector('.mushaf-paper');
+ const index=await read('quran-index.json');
+ const follow=mountMushafWordFollow(paper,{load:async()=>words});
+ const playing={status:'playing',surah:second,reciter:'ar.yasseraldossaricontinuous',trackPositionSeconds:5261};
+ for(const [edition,file]of [['tajweed','layout'],['madani','madani-layout']]){
+  const layout=(await read('mushaf-print/'+file+'.json')).pages[35];
+  paper.innerHTML=printedPageMarkup(layout,36,index,new Map(),esc,'',edition);
+  follow.update(playing);await flush();
+  assert.equal(paper.querySelectorAll('.is-spoken-word').length,1);
+  assert.equal(paper.querySelector('.is-spoken-word').dataset.verse,'2:230');
+  assert.equal(paper.querySelector('.is-spoken-word').dataset.word,'2');
+  follow.update({...playing,trackPositionSeconds:5262.5});
+  assert.equal(paper.querySelector('.is-spoken-word').dataset.word,'4');
+  follow.update({...playing,trackPositionSeconds:17.05});
+  assert.equal(paper.querySelector('.is-spoken-word'),null);
+  assert.equal(paper.classList.contains('has-word-timing'),true,'An ambiguous interval must not flash the full ayah');
+  follow.update({...playing,status:'paused'});
+  assert.equal(paper.querySelector('.is-spoken-word'),null);
+  assert.equal(paper.classList.contains('has-word-timing'),false);
+  follow.update({...playing,reciter:'ar.yasseraldossari'});
+  assert.equal(paper.querySelector('.is-spoken-word'),null,'Single-ayah files cannot borrow continuous recording timestamps');
+ }
+ follow.dispose();
+ assert.equal(paper.classList.contains('has-word-timing'),false);
+}
 await w.happyDOM.close();
 console.log('PASS: exact ayah starts, timing reuse/failure/cancellation, shared session, verse highlight, page and surah transitions, spanning ayat, pause, manual browse/resume, no timing fallback, no audio restart on page turns and listener disposal.');

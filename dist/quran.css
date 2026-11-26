@@ -390,8 +390,13 @@ header.quran-section-title{height:auto}
  background:linear-gradient(var(--mushaf-ayah-fill),var(--mushaf-ayah-fill)) center / calc(100% - .09em) 68% no-repeat;
  border-radius:.15em;
 }
+.mushaf-paper.has-word-timing .mushaf-print-word.is-playing-ayah{background:none}
+.mushaf-shell .mushaf-print-word.is-spoken-word{color:#ffdf73}
+.mushaf-shell[data-theme=paper] .mushaf-print-word.is-spoken-word{color:#926000}
 @media(forced-colors:active){
  .mushaf-print-word.is-playing-ayah,.mushaf-ayah.is-playing-ayah{outline:1px solid Highlight;outline-offset:-1px}
+ .mushaf-paper.has-word-timing .mushaf-print-word:not(.is-spoken-word).is-playing-ayah{outline:none}
+ .mushaf-print-word.is-spoken-word{outline:1px solid Highlight;outline-offset:-1px}
 }
 @media(max-width:480px){.mushaf-top{width:calc(100% - 10px)}}
 @media(max-width:350px){.mushaf-listening{gap:6px;margin-inline:2px}.mushaf-listening>button{padding:8px;font-size:11px}.mushaf-listening-copy>button{font-size:11px}}
@@ -507,3 +512,11 @@ body.mushaf-reading .mushaf-print-line{border-bottom:0}body.mushaf-reading .mush
 @media(max-width:600px){
  body.quran-focus:has(.quran-reader) .workspace{padding-left:var(--salah-safe-left,0px);padding-right:var(--salah-safe-right,0px)}
 }
+
+.reciter-audience{margin:0 0 14px}
+.reciter-audience summary{width:fit-content;padding:.45rem 0;color:#ddc591;cursor:pointer}
+.reciter-audience details>.field{margin:.4rem 0 .65rem}
+.reciter-audience-list{display:grid;gap:8px;padding:12px;margin-top:8px;border:1px solid #ffffff24;border-radius:14px}
+.reciter-audience-list[hidden]{display:none}
+.reciter-audience-list h2{margin:0;font-size:1.05rem}
+.reciter-audience-list .list-button{display:grid;gap:4px}

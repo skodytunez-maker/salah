@@ -2,6 +2,7 @@ import{createAdhkarActivityQueue}from '../dist/js/adhkar-activity-core.js';
 import{lessonAccountReturn}from '../dist/js/lesson-invitation.js';
 import{hasFounderWelcomeSeen}from '../dist/js/founder-welcome-core.js';
 import{accountProfileMarkup}from '../dist/js/account-summary-core.js';
+import{normalizeReferralCode}from '../dist/js/account-referrals.js';
 
 import{bindAppSharing,appSharingMarkup}from '../dist/js/app-sharing.js';
 import assert from 'node:assert/strict';
@@ -57,9 +58,11 @@ function browser(){
   signOut:async options=>{fixture.signOuts.push(options);fixture.session=null;return{error:null};}
  };
  const navigator={onLine:true};class FixtureDate extends Date{static now(){return fixture.now;}}
+ const mountAccountReferrals=(area,{userId})=>{fixture.referralUserId=userId;};
  const context=createContext({t,uiLeaf,uiAttribute,uiMessage,setUiMessage,setUiAttribute,teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},createAdhkarActivityQueue,mountAccountLessonLink:()=>{},lessonAccountReturn,hasFounderWelcomeSeen,accountProfileMarkup,mountQrScanner:(area,options)=>{fixture.scannerOptions=options;},setQrApproval:request=>{fixture.qrApproval=request;},history:{state:{},replaceState(state,title,url){fixture.qrUrl=url;location.hash=url.slice(url.indexOf('#'));}},mountAccountAwards:()=>{},mountAccountAvatar:()=>{},mountAccountDevices:(area,options)=>{fixture.deviceMount=options.mountIn;const panel=new Element('details');panel.innerHTML='<div class="account-device-body"></div>';options.mountIn.append(panel);return panel;},captureQrApproval:()=>false,hasQrApproval:()=>!!fixture.qrApproval,mountQrApproval:async(area,session)=>{fixture.qrMounted=!!session;fixture.qrGate?.resolve();return true;},mountQrLogin:()=>{},stopQrLogin:()=>{},Date:FixtureDate,location,document:{createElement:tag=>new Element(tag),getElementById:id=>app.querySelector('#'+id)},window,navigator,crypto:{randomUUID:()=> '22222222-2222-4222-8222-222222222222'},localStorage:storage,URLSearchParams,mountStaffEntry:async container=>{assert.ok(container);container.hidden=true;},mountOwnerAccount:async container=>{assert.ok(container);container.hidden=true;},createCounterSync,accountAuthClient:()=>({auth}),checkAccountSession:createSessionGuard({getAuth:()=>auth,now:()=>fixture.now}),OWNER_PROJECT_URL:'https://fixture.invalid',OWNER_PUBLIC_KEY:'fixture-public-key',Event,AbortSignal,Response,
   fetch:async(url,options)=>{assert.equal(url,'https://fixture.invalid/functions/v1/adhkar-sync');assert.equal(options.cache,'no-store');assert.equal(options.credentials,'omit');fixture.syncRequests++;if(fixture.syncGate)await fixture.syncGate.promise;return Response.json({totals:{}});},
   esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),setTimeout:()=>0,clearTimeout(){},setInterval:()=>0});
+ Object.assign(context,{mountAccountReferrals,normalizeReferralCode});
  return{app,location,window,navigator,fixture,select:selector=>app.querySelector(selector),...new Script(executable).runInContext(context)};
 }
 function menu(b){const app=new Element(),context=createContext({t,teamPreviewVerified:()=>false,teamPreviewNews:{refresh(){},open(){}},releaseHighlightMarkup:()=>'',bindReleaseHighlight(){},mountMenuAvatar(){},syncAvatarSession(){},app,window:b.window,currentRoute:'more',counterSyncStatus:b.counterSyncStatus,esc:value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),ownerVerified:()=>false,settingsIcon:()=>'<svg aria-hidden="true"></svg>',ownerReleaseCard:{refresh(){}},title:()=>'',bindAppSharing,appSharingMarkup});const screen=new Script(menuExecutable).runInContext(context);context.render=()=>screen.more();screen.more();return{app,...screen};}
@@ -92,6 +95,25 @@ assert.equal(editing.fixture.mail[1].options.data.nickname,'Fixture Nick');
 await confirm(editing);
 assert.equal(editing.fixture.codes.at(-1).email,nextAddress,'The confirmation is bound to the new address');
 assert.equal(editing.counterSyncStatus().nickname,'Fixture Nick');
+const referral=browser();await open(referral);
+referral.select('#counter-account-invite').value='wrong';
+await requestCode(referral);
+assert.equal(referral.fixture.mail.length,0);
+assert.equal(referral.select('#counter-account-invite').focused,true);
+referral.select('#counter-account-invite').value='salah-12ab34cd';
+await requestCode(referral);
+assert.equal(referral.fixture.mail[0].options.data.salah_invite_code,'SALAH-12AB34CD');
+referral.fixture.now=60001;
+await referral.select('#counter-email-resend').onclick();
+assert.equal(referral.fixture.mail[1].options.data.salah_invite_code,'SALAH-12AB34CD');
+await referral.select('#counter-email-change').onclick();
+assert.equal(referral.select('#counter-account-invite').value,'SALAH-12AB34CD');
+await requestCode(referral);
+await confirm(referral);
+assert.equal(referral.fixture.referralUserId,referral.counterSyncStatus().userId);
+assert.equal(referral.select('#counter-account-invite'),null);
+assert.equal(successful.fixture.mail[0].options.data.salah_invite_code,undefined);
+console.log('PASS: optional referral code survives a registration resend and email edit, and remains separate from signed-in account details.');
 const blockedChange=browser();await open(blockedChange);await requestCode(blockedChange);
 blockedChange.fixture.verifyGate=deferred();blockedChange.fixture.verifyError={code:'otp_expired',status:400};
 const verifyingChange=confirm(blockedChange),changeControl=blockedChange.select('#counter-email-change');

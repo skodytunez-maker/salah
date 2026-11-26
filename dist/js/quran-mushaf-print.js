@@ -17,6 +17,10 @@ function fontPalette(page,family){
  if(document.getElementById('mushaf-palette-'+page))return;
  const style=document.createElement('style');style.id='mushaf-palette-'+page;
  style.textContent='@font-palette-values --mushaf-light-'+page+'{font-family:"'+family+'";base-palette:0}@font-palette-values --mushaf-dark-'+page+'{font-family:"'+family+'";base-palette:1}.quran-reader.quran-light [data-font-page="'+page+'"],.mushaf-shell[data-theme=paper] [data-font-page="'+page+'"]{font-palette:--mushaf-light-'+page+'}.quran-reader:not(.quran-light) [data-font-page="'+page+'"],.mushaf-shell[data-theme=night] [data-font-page="'+page+'"]{font-palette:--mushaf-dark-'+page+'}';
+ style.textContent+='@font-palette-values --mushaf-word-light-'+page+'{font-family:"'+family+'";base-palette:0;override-colors:0 #926000}'+
+  '@font-palette-values --mushaf-word-dark-'+page+'{font-family:"'+family+'";base-palette:1;override-colors:0 #ffdf73}'+
+  '.mushaf-shell[data-theme=paper] [data-font-page="'+page+'"].is-spoken-word{font-palette:--mushaf-word-light-'+page+'}'+
+  '.mushaf-shell[data-theme=night] [data-font-page="'+page+'"].is-spoken-word{font-palette:--mushaf-word-dark-'+page+'}';
  document.head.append(style);
 }
 export async function ensurePrintedFont(page,edition='tajweed'){
@@ -43,7 +47,7 @@ export function printedPageMarkup(lines,page,index,surahs,escape,basmalaGlyphs,e
   if(type==='surah-header')return '<div class="mushaf-print-line mushaf-print-heading" data-print-line="'+number+'" data-print-type="'+type+'"><span lang="ar" dir="rtl">'+escape(index.surahs[surah-1].arabicName)+'</span></div>';
   if(type==='basmala')return '<div class="mushaf-print-line mushaf-print-basmala" data-print-line="'+number+'" data-print-type="'+type+'"><span class="mushaf-print-glyph" data-font-page="1" style="font-family:SALAHMushaf1'+suffix+'" lang="ar" dir="rtl" aria-label="'+escape(surahs.get(1)?.verses[0].arabic||'')+'">'+escape(basmalaGlyphs)+'</span></div>';
   const centered=page<=2||lines[lineIndex+1]?.[1]==='surah-header'||(page===604&&lineIndex===lines.length-1);
-  return '<div class="mushaf-print-line'+(centered?' mushaf-print-centered':'')+'" data-print-line="'+number+'" data-print-type="text" dir="rtl" lang="ar">'+words.map(([s,a,w,glyph])=>'<span class="mushaf-print-word mushaf-print-glyph" data-font-page="'+page+'" data-verse="'+s+':'+a+'" aria-hidden="true" style="font-family:SALAHMushaf'+page+suffix+'">'+escape(glyph)+'</span>').join('')+'</div>';
+  return '<div class="mushaf-print-line'+(centered?' mushaf-print-centered':'')+'" data-print-line="'+number+'" data-print-type="text" dir="rtl" lang="ar">'+words.map(([s,a,w,glyph])=>'<span class="mushaf-print-word mushaf-print-glyph" data-font-page="'+page+'" data-verse="'+s+':'+a+'" data-word="'+w+'" aria-hidden="true" style="font-family:SALAHMushaf'+page+suffix+'">'+escape(glyph)+'</span>').join('')+'</div>';
  }).join('');
  const accessible='<div class="mushaf-accessible">'+keys.map(key=>{const [s,a]=key.split(':').map(Number),verse=surahs.get(s)?.verses[a-1];return '<span class="mushaf-ayah-text" lang="ar" dir="rtl">'+escape(verse?.arabic||'')+'</span>';}).join(' ')+'</div>';
  return header+'<div class="mushaf-print-scroll"><div class="mushaf-print-page" data-print-page="'+page+'">'+rows+'</div></div><div class="mushaf-print-number mushaf-print-number-bottom">'+page+'</div>'+accessible;

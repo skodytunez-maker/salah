@@ -17,6 +17,7 @@ import{read,write}from './storage.js';
 import{esc,toast}from './ui.js';
 import{reciterRecording}from './quran-reciter-recording.js';
 import{quranPlayback}from './quran-session.js';
+import{mountReciterAudience}from './quran-reciter-audience.js';
 const formatListeningTime=seconds=>{const total=Math.floor(Math.max(0,Number(seconds)||0)),minutes=Math.floor(total/60),rest=total%60;return !minutes?t(total?'reciterUi.timeSeconds':'reciterUi.timeZero',{count:total}):t(rest?'reciterUi.timeWithSeconds':'reciterUi.timeMinutes',{hours:Math.floor(minutes/60),minutes:minutes%60,seconds:rest});};
 const favorites=()=>[...new Set(normalizeReciterFavorites(read(RECITER_FAVORITES_KEY,[]),RECITERS).map(id=>reciterInfo(id).variantOf||id))];
 const catalogReciters={get length(){return visibleReciters().filter(r=>!r.variantOf).length;},filter(fn){return visibleReciters().filter(r=>!r.variantOf).filter(fn);}};
@@ -51,6 +52,7 @@ export function mountReciterLibrary(host,index,chosen,filter){
   host.querySelector('#quran-open-listening-scanner').onclick=showListeningScanner;
   const search=host.querySelector('#reciter-search');if(search)search.oninput=()=>{currentQuery=search.value;const q=search.value.toLocaleLowerCase('ru').replace(/ё/g,'е').trim();let count=0;host.querySelectorAll('.reciter-card').forEach(card=>{card.hidden=!card.textContent.toLocaleLowerCase('ru').replace(/ё/g,'е').includes(q);if(!card.hidden)count++;});host.querySelector('#reciter-search-empty').hidden=count>0||!q;};
   if(search){search.value=currentQuery;search.oninput();}
+  if(!r&&(!filter||filter==='all'))mountReciterAudience(host);
   host.querySelectorAll('[data-reciter-play]').forEach(button=>button.onclick=async()=>{
    if(!reciterIsAvailable(r.id))return;
    const token=++request,number=Number(button.dataset.reciterPlay),status=host.querySelector('#reciter-listen-status');

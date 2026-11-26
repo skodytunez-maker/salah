@@ -4,6 +4,7 @@ import{RECITERS,reciterInfo,reciterHasSurah,reciterOptions,reciterIsAvailable}fr
 import{timingUrl}from './quran-timing.js';
 import{printedVerseKeys,printedPageForPosition}from './quran-mushaf-print.js';
 import{createMushafFollower,mushafAudioPosition}from './quran-mushaf-follow.js';
+import{mountMushafWordFollow}from './quran-mushaf-word-follow.js';
 import{loadSurah}from './quran-data.js';
 import{read,write}from './storage.js';
 import{actionIcon}from './action-icons.js';
@@ -17,6 +18,7 @@ export function mushafListeningOptions(){
 }
 export function mountMushafListening(host,{page,index,getEdition,getLines,getFollow,setFollow,navigate,getTheme=()=> 'night',setTheme=()=>{},openColors=()=>{},pageForPosition=printedPageForPosition,playback=quranPlayback,load=loadSurah}){
  const paper=host.querySelector('.mushaf-paper'),anchor=host.querySelector('.mushaf-tools'),select=host.querySelector('#mushaf-reciter'),check=host.querySelector('#mushaf-auto-follow');
+ const wordFollow=mountMushafWordFollow(paper);
  const panel=document.createElement('div');panel.className='mushaf-listening';panel.innerHTML='<div class="mushaf-actions" role="group" '+uiAttribute('quranUi.mushafActionsLabel')+'><button type="button" id="mushaf-listen" disabled>'+actionIcon('play')+'<span>'+esc(t('quranUi.mushafListen'))+'</span></button><button type="button" id="mushaf-theme-toggle"></button><button type="button" id="mushaf-colors" aria-haspopup="dialog" aria-controls="mushaf-colors-dialog"><span class="mushaf-colors-symbol" aria-hidden="true"><i></i><i></i><i></i></span>'+uiLeaf('quranUi.mushafColors')+'</button></div><div class="mushaf-listening-detail"><div class="mushaf-listening-copy"><button type="button" id="mushaf-listening-reciter"></button><small id="mushaf-listening-status" role="status" aria-live="polite"></small></div><button type="button" id="mushaf-follow-current" hidden>'+uiLeaf('quranUi.mushafReturnAyah')+'</button></div>';anchor.after(panel);
  let closed=false,starting=0,selected=chosen(),observedReciter=playback.state.reciter,lastHighlighted=null,lastScrolled=null,edition=getEdition(),loaded=false;
  const handed=arrival?.page===page&&arrival.edition===edition&&Date.now()<=arrival.until?arrival:null;arrival=null;
@@ -51,6 +53,7 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
    paper.querySelectorAll('.mushaf-print-word,.mushaf-ayah[data-verse]').forEach(word=>word.classList.toggle('is-playing-ayah',word.dataset.verse===mode.key));
    lastHighlighted=mode.key;
   }
+  wordFollow.update(state);
   if(mode.following&&mode.key&&state.status==='playing')scrollToAyah(mode.key);
   if(mode.target){arrival={page:mode.target,edition:getEdition(),automatic:true,until:Date.now()+10000};navigate(mode.target);}
  }
@@ -100,6 +103,6 @@ export function mountMushafListening(host,{page,index,getEdition,getLines,getFol
    draw(playback.state);
   },
   manualNavigation(target){follower.suspend();arrival={page:target,edition:getEdition(),automatic:false,until:Date.now()+10000};},
-  dispose(){closed=true;starting++;offLanguage();unsubscribe();toolbar.remove();panel.remove();}
+  dispose(){closed=true;starting++;offLanguage();unsubscribe();wordFollow.dispose();toolbar.remove();panel.remove();}
  };
 }

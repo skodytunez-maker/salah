@@ -224,3 +224,12 @@ body.reduce-motion .release-motion-preview [data-release-motion-part="element"],
 
 .award-history-recognition{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 12px;border-color:#d8be8866}
 .award-history-recognition-score{display:grid;gap:4px;flex:none;text-align:end;color:#e7d4a8;font-size:13px;font-variant-numeric:tabular-nums}
+.account-referral-total{
+ margin:0 0 14px;
+ padding:14px 16px;
+ border:1px solid #d8be8840;
+ border-radius:14px;
+ background:#d8be880c;
+}
+.account-referral-total h3{margin:0 0 6px;color:#e7d4a8;font-size:1rem}
+.account-referral-total p{margin:0;color:#f4f0e5;line-height:1.5}
