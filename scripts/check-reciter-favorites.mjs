@@ -2,13 +2,13 @@ import assert from 'node:assert/strict';
 import {RECITERS,RECITER_RELEASE_WEEKS,reciterOptions,groupedReciters,reciterHasSurah,adjacentReciterSurah} from '../dist/js/quran-reciters.js';
 import {normalizeReciterFavorites,toggleReciterFavorite} from '../dist/js/quran-reciter-favorites.js';
 import {readFile} from 'node:fs/promises';
-const ids=RECITERS.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);assert.equal(RECITERS.length,80);
+const ids=RECITERS.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);assert.equal(RECITERS.length,81);
 const damaged=['ar.ahmedkaseb','unknown','ar.ahmedkaseb',null,{id:'ar.husary'}];assert.deepEqual(normalizeReciterFavorites(damaged,RECITERS),['ar.ahmedkaseb']);assert.deepEqual(normalizeReciterFavorites({},RECITERS),[]);assert.equal(toggleReciterFavorite([], 'unknown',RECITERS),null);
 const saved=toggleReciterFavorite(damaged,'ar.siratulloraupov',RECITERS);assert.deepEqual(saved,['ar.ahmedkaseb','ar.siratulloraupov']);assert.deepEqual(damaged,['ar.ahmedkaseb','unknown','ar.ahmedkaseb',null,{id:'ar.husary'}]);assert.deepEqual(toggleReciterFavorite(saved,'ar.ahmedkaseb',RECITERS),['ar.siratulloraupov']);
 const groups=groupedReciters(saved),ordered=groups.flatMap(g=>g.reciters.map(r=>r.id));assert.deepEqual(ordered.slice(0,2),saved);assert.equal(new Set(ordered).size,RECITERS.length);
 const html=reciterOptions('ar.ahmedkaseb',saved);assert.equal((html.match(/value="ar.ahmedkaseb"/g)||[]).length,1);assert.equal((html.match(/selected/g)||[]).length,1);assert.ok(!reciterOptions('ar.alafasy',saved,{offline:true}).includes('value="ar.siratulloraupov"'));
 assert.equal(reciterHasSurah('ar.abdulrahmanmossad',1),false);assert.equal(reciterHasSurah('ar.abdulrahmanmossad',10),true);assert.equal(adjacentReciterSurah('ar.abdulrahmanmossad',10,1),19);assert.equal(reciterHasSurah('ar.abdelazizsheim',2),false);
-const withoutPortrait = ["ar.tawfeeqalsayegh","ar.khalifaaltunaiji","ar.ahmadamer","ar.abdulhadikanakeri","ar.abdullahkhayyat","ar.abdulwadoodhaneef","ar.zainmuhammadahmad","ar.muhammadalmuhaisni","ar.nabilalrifai","ar.yahyahawwa","ar.muhammadrashidalsharif","ar.abdullahalkhalaf","ar.hasansaleh","ar.abdurrahmanalshahhat"];
+const withoutPortrait = ["ar.tawfeeqalsayegh","ar.khalifaaltunaiji","ar.ahmadamer","ar.abdulhadikanakeri","ar.abdullahkhayyat","ar.abdulwadoodhaneef","ar.zainmuhammadahmad","ar.muhammadalmuhaisni","ar.nabilalrifai","ar.yahyahawwa","ar.muhammadrashidalsharif","ar.abdullahalkhalaf","ar.hasansaleh","ar.abdurrahmanalshahhat","ar.omaribndiyaaldin"];
 assert.deepEqual(RECITERS.filter(r=>!r.portrait).map(r=>r.id),withoutPortrait);
 for(const id of RECITER_RELEASE_WEEKS[0])assert.equal(RECITERS.find(r=>r.id===id)?.portrait,'assets/reciters/'+id.slice(3)+'.jpg');
 const {reciterImageUrl}=await import('../dist/js/approved-catalog.js');
@@ -23,7 +23,7 @@ const {reciterRecording}=await import('../dist/js/quran-reciter-recording.js');c
 const {COMPETITION_RECITERS,competitionSnapshot}=await import('../supabase/functions/reciter-competition/core.mjs');
 const {timingUrl}=await import('../dist/js/quran-timing.js');
 const extraIds=["ar.islamsobhi","ar.abdulrahmanalawsi","ar.saadalghamdi","ar.ahmadalajmi","ar.faresabbad"];
-assert.equal(RECITERS.filter(r=>!r.variantOf).length,77);
+assert.equal(RECITERS.filter(r=>!r.variantOf).length,78);
 for(const id of extraIds){const r=RECITERS.find(r=>r.id===id);assert.ok(r);assert.ok(COMPETITION_RECITERS.includes(id));const now=Date.parse('2026-10-17T12:00:00Z');assert.equal(competitionSnapshot({action:'snapshot',device:'11111111-1111-4111-8111-111111111111',totals:{[id]:60},days:{'2026-10-17':{[id]:60}},timeZone:'UTC'},now).totals[id],60);if(id!=='ar.islamsobhi')assert.match(timingUrl({number:2},id),/surah=2&read=\d+$/);}
 assert.equal(timingUrl({number:2},'ar.islamsobhi'),null);
 assert.equal(reciterHasSurah('ar.islamsobhi',37),false);assert.equal(reciterHasSurah('ar.islamsobhi',114),true);assert.equal(adjacentReciterSurah('ar.islamsobhi',36,1),38);assert.equal(adjacentReciterSurah('ar.islamsobhi',38,1),41);assert.equal(adjacentReciterSurah('ar.islamsobhi',64,1),66);

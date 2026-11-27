@@ -16,7 +16,8 @@ export const COMPETITION_RECITERS=["ar.alafasy","ar.husary","ar.minshawi","ar.ma
   "ar.muhammadrashidalsharif",
   "ar.abdullahalkhalaf",
   "ar.hasansaleh",
-  "ar.abdurrahmanalshahhat"
+  "ar.abdurrahmanalshahhat",
+  "ar.omaribndiyaaldin"
 ];
 export const COMPETITION_PERIODS=['day','week','month','all'];
 const competitionUUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;

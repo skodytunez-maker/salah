@@ -37,6 +37,28 @@ try {
 }
 
 const popularity = await read('supabase/functions/reciter-popularity/index.ts');
+const omarId = 'ar.omaribndiyaaldin';
+const omar = RECITERS.find(reciter => reciter.id === omarId);
+const omarDirectory = 'https://media.way2quran.com/omar-diaa-al-din/hafs-an-asim/';
+const omarSurahs = [2,3,4,5,6,8,9,10,12,15,17,18,19,20,23,24,25,29,31,32,33,34,35,40,44,47,49,50,53,55,56,57,58,59,60,62,63,64,66,67,68,69,70,71,72,73,74,75,76,77,78];
+assert.deepEqual(omar.availableSurahs, omarSurahs);
+assert.equal(omar.offline, false);
+assert.ok(reciterOptions(omarId).includes('value="' + omarId + '" selected'));
+assert.ok(!reciterOptions(omarId, [], { offline: true }).includes('value="' + omarId + '"'));
+assert.equal(reciterHasSurah(omarId, 1), false);
+const csp = (await read('dist/index.html')).match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+const mediaSources = csp.split(';').find(directive => directive.trim().startsWith('media-src ')).trim().split(/\s+/);
+assert.ok(mediaSources.includes(omarDirectory));
+assert.ok(!mediaSources.includes(new URL(omarDirectory).origin));
+for (const [position, number] of omarSurahs.entries()) {
+  const url = omarDirectory + String(number).padStart(3, '0') + '.mp3';
+  assert.equal(audioUrl(1, omarId, number), url);
+  assert.equal(adjacentReciterSurah(omarId, number, 1), omarSurahs[position + 1] ?? null);
+}
+assert.ok(COMPETITION_RECITERS.includes(omarId));
+assert.ok(GUEST_RECITERS.includes(omarId));
+assert.ok(popularity.includes(JSON.stringify(omarId)));
+
 for (const [id, [source, sourceId]] of sources) {
   const entry = RECITERS.find(reciter => reciter.id === id);
   assert.equal(entry.format, 'surah');
@@ -71,11 +93,16 @@ try {
   const before = await routines();
   const migration = await read('supabase/migrations/20261121140524_quran_streaming_reciters.sql');
   await db.exec(migration);
+  const omarMigration = await read('supabase/migrations/20261127030930_omar_ibn_diya_al_din_listening.sql');
+  await db.exec(omarMigration);
   const after = await routines();
-  const added = [...sources.keys()].map(id => ",'" + id + "'").join('');
+  await db.exec(omarMigration);
+  assert.deepEqual(await routines(), after);
+  const ids = [...sources.keys(), omarId];
+  const added = ids.map(id => ",'" + id + "'").join('');
   assert.deepEqual(after.map(row => ({ ...row, body: row.body.replace(added, '') })), before);
 
-  for (const [position, id] of [...sources.keys()].entries()) {
+  for (const [position, id] of ids.entries()) {
     for (const argumentCount of [3, 4]) {
       const listener = (argumentCount * 100 + position).toString(16).padStart(64, '0');
       const event = '22222222-2222-4222-8222-' + String(argumentCount * 100 + position).padStart(12, '0');
@@ -95,4 +122,4 @@ try {
   await db.close();
 }
 
-console.log('PASS: 18 streaming reciters, all 2052 chapter URLs, online/offline selection and deduplicated listening in both PostgreSQL overloads.');
+console.log('PASS: streaming reciter sources, Omar’s 51 playable surahs and sparse handoffs, offline selection and deduplicated listening in both PostgreSQL overloads.');

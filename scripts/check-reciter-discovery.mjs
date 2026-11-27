@@ -34,7 +34,11 @@ setInterval:fn=>{const id=++timerId;timers.set(id,fn);return id;},clearInterval:
 const source=await fs.readFile(new URL('../dist/js/quran-reciter-library.js',import.meta.url),'utf8');const api=vm.runInContext(source.replace(/^import.*\n/gm,'').replace(/export /g,'')+';({mountReciterLibrary});',ctx);
 const cards=()=>[...host.querySelectorAll('.reciter-card')],cardId=c=>new URL(c.querySelector('a').href).hash.split('reciter=')[1];
 let cleanup=api.mountReciterLibrary(host,{surahs:[]},null,null);
-assert.equal(host.querySelector('.reciter-audience details summary').textContent,interfaceLanguage.t('reciterAudience.title'));
+assert.equal(host.querySelector('.reciter-audience details summary').textContent,interfaceLanguage.t('reciterAudience.options'));
+assert.equal(host.querySelector('[aria-labelledby="women-reciter-title"]').hidden,true);
+const omar=cards().find(card=>cardId(card)==='ar.omaribndiyaaldin');
+assert.match(omar.textContent,/Омар ибн Дия ад-Дин/);
+assert.equal(host.querySelector('a[href*="UCtU4a32r3E1-RLHI72u_JbA"]'),null);
 assert.equal(cards().length,catalogCount);assert.deepEqual(cards().slice(0,3).map(cardId),['ar.husary','ar.islamsobhi','ar.ahmadalnufais']);assert.equal(host.querySelectorAll('.reciter-new-badge').length,13);assert.equal(host.querySelectorAll('.reciter-filter-tabs a').length,4);assert.match(host.querySelector('a[href$="filter=new"]').textContent,/Новые 13/);
 const firstCard=cards()[0],firstPortrait=firstCard.querySelector('img'),sameSearch=host.querySelector('#reciter-search'),samePortrait=firstPortrait.getAttribute('src'),sameTimers=timers.size;sameSearch.value='draft';sameSearch.focus();for(const language of ['en','ru']){interfaceLanguage.setInterfaceLanguage(language);assert.equal(cards()[0],firstCard);assert.equal(host.querySelector('#reciter-search'),sameSearch);assert.equal(sameSearch.value,'draft');assert.equal(doc.activeElement,sameSearch);assert.equal(firstCard.querySelector('img'),firstPortrait);assert.equal(firstPortrait.getAttribute('src'),samePortrait);assert.equal(timers.size,sameTimers);assert.equal(host.querySelector('a[href$=\"filter=new\"]').textContent,interfaceLanguage.t('reciterUi.newCount',{count:13}));}sameSearch.blur();
 const input=host.querySelector('#reciter-search');input.value='Нуфайс';input.oninput();assert.equal(cards().filter(c=>!c.hidden).length,1);cleanup();assert.equal(timers.size,0);
