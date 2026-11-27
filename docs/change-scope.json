@@ -1,122 +1,42 @@
 {
   "schema": 1,
-  "version": 574,
-  "baseCommit": "e334f48ce97f0a8ec4736f82f33cd7cc6d195637",
-  "baseTree": "855dc1bdadaec4578af612deaf451b7636057238",
-  "note": "Restore the female catalogue preference and add Omar to the ordinary reciter catalogue with verified online recordings.",
-  "previousReleaseSource": "export const APP_VERSION=573;\nexport const APP_UPDATED_AT='2026-11-27';\nexport const APP_UPDATE_DATE='27 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n",
+  "version": 575,
+  "baseCommit": "46a137a68bb8820e1c7355257b50949f70f4ffc2",
+  "baseTree": "b71c991f6973854cfc778fcf2fb967f1e6c3ec1e",
+  "note": "Add Omar’s portrait and restore the normal new-reciter presentation.",
+  "previousReleaseSource": "export const APP_VERSION=574;\nexport const APP_UPDATED_AT='2026-11-27';\nexport const APP_UPDATE_DATE='27 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n",
   "allowed": [
     {
-      "path": "dist/index.html",
-      "reason": "Permit media playback only from Omar’s verified provider directory."
+      "path": "dist/js/quran-reciters.js",
+      "reason": "Use the verified portrait and original delivery for Omar’s new-reciter window."
+    },
+    {
+      "path": "dist/assets/reciters/omaribndiyaaldin.jpg",
+      "reason": "Show the unaltered portrait in the existing reciter surfaces."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Identify the catalogue correction."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ar.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/az.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/de.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/en.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/kk.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/ru.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/tg.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n-runtime/uz.js",
-      "reason": "Regenerate localized catalogue controls."
-    },
-    {
-      "path": "dist/js/i18n/reciter-audience.js",
-      "reason": "Restore localized catalogue controls while keeping the new reciter."
-    },
-    {
-      "path": "dist/js/quran-reciter-audience.js",
-      "reason": "Restore the female catalogue preference and remove the standalone Omar link."
-    },
-    {
-      "path": "dist/js/quran-reciters.js",
-      "reason": "Add Omar as an ordinary online reciter with the verified surah coverage."
-    },
-    {
-      "path": "dist/owner.html",
-      "reason": "Allow the same reciter audio directory when the shared Quran app opens through this entry."
-    },
-    {
-      "path": "dist/quran.css",
-      "reason": "Style the restored controls and hidden list with established rules."
-    },
-    {
-      "path": "dist/share.html",
-      "reason": "Allow the same reciter audio directory when the shared Quran app opens through this entry."
+      "reason": "Identify the catalogue update."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Update the offline shell version and declared byte sizes."
+      "reason": "Precache the portrait and update release metadata."
+    },
+    {
+      "path": "docs/omar-portrait-provenance.json",
+      "reason": "Record the original portrait source and first delivery."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record the exact published source and reviewed change scope."
-    },
-    {
-      "path": "scripts/check-adhkar-recordings.mjs",
-      "reason": "Verify the existing Adhkar source by exact membership in the media policy instead of its position."
-    },
-    {
-      "path": "scripts/check-quran-streaming-reciters.mjs",
-      "reason": "Verify Omar’s source, sparse transitions and listening registration."
-    },
-    {
-      "path": "scripts/check-reciter-audience.mjs",
-      "reason": "Test correct access, stored selection, removing links on switch, and public Omar entry."
+      "reason": "Record the exact reviewed baseline."
     },
     {
       "path": "scripts/check-reciter-discovery.mjs",
-      "reason": "Verify the gender-controlled listing through the actual catalogue entry point."
-    },
-    {
-      "path": "scripts/check-reciter-expansion-418.mjs",
-      "reason": "Verify the original expansion while counting the newly added reciter."
+      "reason": "Verify Omar’s portrait and badge through the catalogue."
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "reason": "Verify catalogue size and generic portrait fallback with the new reciter."
-    },
-    {
-      "path": "supabase/functions/guest-competition/competition-core.mjs",
-      "reason": "Accept the new reciter in guest listening snapshots."
-    },
-    {
-      "path": "supabase/functions/reciter-competition/core.mjs",
-      "reason": "Accept the new reciter in authenticated listening snapshots."
-    },
-    {
-      "path": "supabase/functions/reciter-popularity/index.ts",
-      "reason": "Accept the reciter ID under existing verified-user popularity rules."
-    },
-    {
-      "path": "supabase/migrations/20261127030930_omar_ibn_diya_al_din_listening.sql",
-      "reason": "Add the reciter to both existing recorded-listening overloads."
+      "reason": "Update the list of reciters using the generic portrait."
     }
   ],
   "generated": [
@@ -2616,7 +2536,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha": "cb5ef17846bf2470cd2a0887aae314be860155f9"
+      "sha": "44ba34d9e1a364ce135784b06426fe6f9bdab96e"
     },
     {
       "path": "dist/iphone.css",
@@ -2744,7 +2664,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "e3b350cdd157a09a2f76ee2e703d8bba3f379a36"
+      "sha": "19d316ecbd793ab0b343f5f8613b3966115fa4df"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -3064,35 +2984,35 @@
     },
     {
       "path": "dist/js/i18n-runtime/ar.js",
-      "sha": "79efd8b0fa86fd09fc128648f8a88e4aa90c2fc0"
+      "sha": "20f554d7462e8d261cc13b61b7db941104004481"
     },
     {
       "path": "dist/js/i18n-runtime/az.js",
-      "sha": "3ce62af34ed52d2ea8eeaacc312d2ae823ca7b54"
+      "sha": "76b391ca357f8d72aa9d9eee2ca39c5f6a5ce1aa"
     },
     {
       "path": "dist/js/i18n-runtime/de.js",
-      "sha": "3cb9cffa704d6f426d8b5c6274c1c4241c330f13"
+      "sha": "8265b2e219e9937c0529df90ee441b870bdc547b"
     },
     {
       "path": "dist/js/i18n-runtime/en.js",
-      "sha": "b4f71765bcfec752ec5d04dff30cfa028da30972"
+      "sha": "a6e72187505be2db2ee58fffba6e73ff7e207cbc"
     },
     {
       "path": "dist/js/i18n-runtime/kk.js",
-      "sha": "e92a682d1885bb43fbfbc19b214f3ac618d219a7"
+      "sha": "6b38533d3a98c33d0ffab32c69ffa8a5772df75d"
     },
     {
       "path": "dist/js/i18n-runtime/ru.js",
-      "sha": "70ea9f34aa7fb8d2cb0089ddfba47c47947f6b51"
+      "sha": "d024351923e08976af0c8560f37e0cc571bbdf6f"
     },
     {
       "path": "dist/js/i18n-runtime/tg.js",
-      "sha": "e3072442f5654cce8ae227612cfa951b2afdfb3b"
+      "sha": "0e420fca0533c5d0eaa2653d5a5c3cd61c9f9efd"
     },
     {
       "path": "dist/js/i18n-runtime/uz.js",
-      "sha": "f8985b4c090cb8eed85a93bcca582ec0ae942744"
+      "sha": "3b770ba659663ceeec27fb0f248d43c0fd34d576"
     },
     {
       "path": "dist/js/i18n-source-catalogues.js",
@@ -3844,7 +3764,7 @@
     },
     {
       "path": "dist/js/i18n/reciter-audience.js",
-      "sha": "4cb91acbeee7f75d103480dd06443b6406e0ceb0"
+      "sha": "93a2d2ab24a94f47609188816023c660db09d6c5"
     },
     {
       "path": "dist/js/i18n/referrals/index.js",
@@ -4708,7 +4628,7 @@
     },
     {
       "path": "dist/js/quran-reciter-audience.js",
-      "sha": "257db14ef47d86c625cea0ee5dcfa7862701c414"
+      "sha": "f4f798b4fc0dab1456227311e3b6ff32f4355efe"
     },
     {
       "path": "dist/js/quran-reciter-discovery.js",
@@ -4728,7 +4648,7 @@
     },
     {
       "path": "dist/js/quran-reciters.js",
-      "sha": "781260a89e8e1345e3a2ec66f422019f70c166c8"
+      "sha": "5709abc6077044ffb45231c88355a772a2ab3cb8"
     },
     {
       "path": "dist/js/quran-recognition-core.js",
@@ -5260,7 +5180,7 @@
     },
     {
       "path": "dist/owner.html",
-      "sha": "700dcb082babd7dd6e932b61c2d054b71276b6ea"
+      "sha": "5748fd1bc09728cc25df5e084db904a02bab4c96"
     },
     {
       "path": "dist/privacy.html",
@@ -5276,7 +5196,7 @@
     },
     {
       "path": "dist/quran.css",
-      "sha": "10bb432df7f8ae44967bbae955d88680f3b9d5a3"
+      "sha": "3137aa53bc81883bc3ff319e0e62f759168cd5c5"
     },
     {
       "path": "dist/reciter-portrait-credits.html",
@@ -5292,7 +5212,7 @@
     },
     {
       "path": "dist/share.html",
-      "sha": "477df9ce66cb00f72697c71060454821338fb52d"
+      "sha": "268494d38daf3f665048d110c6663a375e9aee39"
     },
     {
       "path": "dist/soft-depth.css",
@@ -5304,7 +5224,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "cbce9cf11a9eb1cfd4b9ef443f6a384439a7f5bf"
+      "sha": "39ab97fc44938dfea09b421934bba6a5ad3d9ce2"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5852,7 +5772,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "f67b6550597f869f0e13f52aff30a55bc49913d8"
+      "sha": "b0665e442b22c7bed6b0411324b40c4c13f29ee5"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -6800,7 +6720,7 @@
     },
     {
       "path": "scripts/check-adhkar-recordings.mjs",
-      "sha": "9c991e8d749f0e6afd3bb113753baf6de17ff02e"
+      "sha": "0e5e5cda8517fbd42d44239e5d9a79ef7652f1ee"
     },
     {
       "path": "scripts/check-adhkar-resume.mjs",
@@ -7748,7 +7668,7 @@
     },
     {
       "path": "scripts/check-quran-streaming-reciters.mjs",
-      "sha": "1ce37eb217f538a1785fe76ff55ac54284e8dd3e"
+      "sha": "b4830bfcf3ac053933b572647f824851b49e797a"
     },
     {
       "path": "scripts/check-quran-system-pause.mjs",
@@ -7792,7 +7712,7 @@
     },
     {
       "path": "scripts/check-reciter-audience.mjs",
-      "sha": "8f5815812ac299ed4b076aceaa615e5cad6e5e9f"
+      "sha": "29778753b2b50934a57d3fa76e243c3d2997a5c8"
     },
     {
       "path": "scripts/check-reciter-competition.mjs",
@@ -7800,15 +7720,15 @@
     },
     {
       "path": "scripts/check-reciter-discovery.mjs",
-      "sha": "6dc30498e76bbbc7d61aa7731d56aafef3ccdc53"
+      "sha": "709601b2f205d4a1dca23fda5014dc0f615919ca"
     },
     {
       "path": "scripts/check-reciter-expansion-418.mjs",
-      "sha": "819619203e276bfd6bb67da87bde99827a916c27"
+      "sha": "889f219ef8ef9c46948003309f61d49375fab995"
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "sha": "3eacf6647fbb75c17377fd15c26a0d432185a8a9"
+      "sha": "83177cd903971ecf47ca68383417a2702a40c550"
     },
     {
       "path": "scripts/check-reciter-minute-queue.mjs",
@@ -8404,7 +8324,7 @@
     },
     {
       "path": "supabase/functions/guest-competition/competition-core.mjs",
-      "sha": "c8a7da443617d2709dba9302976cf40d5a533837"
+      "sha": "3f636895cabde6fa16a0f58d5591b4248ddba3a7"
     },
     {
       "path": "supabase/functions/guest-competition/core.mjs",
@@ -8480,7 +8400,7 @@
     },
     {
       "path": "supabase/functions/reciter-competition/core.mjs",
-      "sha": "c8a7da443617d2709dba9302976cf40d5a533837"
+      "sha": "3f636895cabde6fa16a0f58d5591b4248ddba3a7"
     },
     {
       "path": "supabase/functions/reciter-competition/guest-board.mjs",
@@ -8524,7 +8444,7 @@
     },
     {
       "path": "supabase/functions/reciter-popularity/index.ts",
-      "sha": "73e83558b0e8697b19e37757ec39e6b26d4c2256"
+      "sha": "5d5b9cbff1299a0b9a6d02b30d180dd55050671a"
     },
     {
       "path": "supabase/functions/reciter-popularity/listener-labels.mjs",
@@ -8825,6 +8745,10 @@
     {
       "path": "supabase/migrations/20261126223230_account_referrals.sql",
       "sha": "15f48d79165cb1374a5a9ca9a049df170f220e24"
+    },
+    {
+      "path": "supabase/migrations/20261127030930_omar_ibn_diya_al_din_listening.sql",
+      "sha": "2db95f9ffa429c51f02a35dc877f9a9573e2b6eb"
     },
     {
       "path": "supabase/native-support-devices.sql",

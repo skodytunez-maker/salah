@@ -1,0 +1,11 @@
+{
+  "reciter": "ar.omaribndiyaaldin",
+  "name": "Omar ibn Diaa al-Din",
+  "portrait": "dist/assets/reciters/omaribndiyaaldin.jpg",
+  "sourcePage": "https://way2quran.com/en/reciters/omar-diaa-al-din",
+  "sourceImage": "https://media.way2quran.com/imgs/omar-diaa-al-din.jpg?v=1783684276348",
+  "sha256": "c42023e3004a92402981dae238bc4d5594cb8f34b8d7fe463b15b8895f378e1b",
+  "alterations": "None. Source attribution and watermark are retained.",
+  "firstPublicAt": "2026-11-27T03:13:10.000Z",
+  "firstPublicEvidence": "https://github.com/skodytunez-maker/salah/actions/runs/45932747526"
+}

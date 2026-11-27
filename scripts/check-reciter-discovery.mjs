@@ -48,5 +48,20 @@ clock=Date.parse('2026-10-29T00:00:00.000Z');for(const fn of [...timers.values()
 clock=lastAdded+RECITER_RECENT_MS;for(const fn of [...timers.values()])fn();assert.equal(cards().length,catalogCount);assert.equal(host.querySelector('a[href$="filter=new"]'),null);assert.ok(!host.textContent.includes('Новые 0'));cleanup();assert.equal(timers.size,0);
 cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'new');assert.equal(cards().length,catalogCount,'An expired bookmarked New link falls back to All');assert.equal(host.querySelectorAll('.reciter-filter-tabs a').length,3);cleanup();
 cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'favorites');assert.deepEqual(cards().map(cardId),saved);cleanup();
+const omarInfo=reciterInfo('ar.omaribndiyaaldin'),omarPublicAt=Date.parse(omarInfo.addedAt);
+assert.equal(reciterIsPromoted(omarInfo,omarPublicAt-1),false);
+assert.equal(reciterIsPromoted(omarInfo,omarPublicAt),true);
+assert.equal(reciterIsPromoted(omarInfo,omarPublicAt+RECITER_PROMOTION_MS),false);
+clock=omarPublicAt;
+cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'new');
+const newOmar=cards().find(c=>cardId(c)===omarInfo.id);
+assert.ok(newOmar.querySelector('.reciter-new-badge'));
+assert.equal(newOmar.querySelector('img').getAttribute('src'),'./assets/reciters/omaribndiyaaldin.jpg');
+cleanup();
+clock=omarPublicAt+RECITER_PROMOTION_MS;
+cleanup=api.mountReciterLibrary(host,{surahs:[]},null,'new');
+assert.equal(cards().find(c=>cardId(c)===omarInfo.id).querySelector('.reciter-new-badge'),null);
+cleanup();
+
 assert.equal(reciterInfo('ar.raadalkurdi').portrait,'assets/reciters/raadalkurdi-v349.png');
 console.log('PASS: seven-day promotion and filter, UTC boundaries, favorites priority, stable old order, actual catalog DOM, search, expiry fallback, hidden empty tab, future batch return and cleanup.');await w.happyDOM.abort();

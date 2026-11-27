@@ -8,7 +8,7 @@ const saved=toggleReciterFavorite(damaged,'ar.siratulloraupov',RECITERS);assert.
 const groups=groupedReciters(saved),ordered=groups.flatMap(g=>g.reciters.map(r=>r.id));assert.deepEqual(ordered.slice(0,2),saved);assert.equal(new Set(ordered).size,RECITERS.length);
 const html=reciterOptions('ar.ahmedkaseb',saved);assert.equal((html.match(/value="ar.ahmedkaseb"/g)||[]).length,1);assert.equal((html.match(/selected/g)||[]).length,1);assert.ok(!reciterOptions('ar.alafasy',saved,{offline:true}).includes('value="ar.siratulloraupov"'));
 assert.equal(reciterHasSurah('ar.abdulrahmanmossad',1),false);assert.equal(reciterHasSurah('ar.abdulrahmanmossad',10),true);assert.equal(adjacentReciterSurah('ar.abdulrahmanmossad',10,1),19);assert.equal(reciterHasSurah('ar.abdelazizsheim',2),false);
-const withoutPortrait = ["ar.tawfeeqalsayegh","ar.khalifaaltunaiji","ar.ahmadamer","ar.abdulhadikanakeri","ar.abdullahkhayyat","ar.abdulwadoodhaneef","ar.zainmuhammadahmad","ar.muhammadalmuhaisni","ar.nabilalrifai","ar.yahyahawwa","ar.muhammadrashidalsharif","ar.abdullahalkhalaf","ar.hasansaleh","ar.abdurrahmanalshahhat","ar.omaribndiyaaldin"];
+const withoutPortrait = ["ar.tawfeeqalsayegh","ar.khalifaaltunaiji","ar.ahmadamer","ar.abdulhadikanakeri","ar.abdullahkhayyat","ar.abdulwadoodhaneef","ar.zainmuhammadahmad","ar.muhammadalmuhaisni","ar.nabilalrifai","ar.yahyahawwa","ar.muhammadrashidalsharif","ar.abdullahalkhalaf","ar.hasansaleh","ar.abdurrahmanalshahhat"];
 assert.deepEqual(RECITERS.filter(r=>!r.portrait).map(r=>r.id),withoutPortrait);
 for(const id of RECITER_RELEASE_WEEKS[0])assert.equal(RECITERS.find(r=>r.id===id)?.portrait,'assets/reciters/'+id.slice(3)+'.jpg');
 const {reciterImageUrl}=await import('../dist/js/approved-catalog.js');
