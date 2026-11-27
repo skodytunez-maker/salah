@@ -228,6 +228,7 @@ body.owner-page .owner-menu-grid .owner-support-link>.support-state-dot{position
 .owner-profile-screen .owner-profile-periods{padding-top:12px}
 .owner-profile-screen .owner-award-grid .owner-award-button img{width:54px;height:54px}
 }
+.owner-profile-screen .owner-profile-adjr>.owner-profile-adjr-intention{margin-top:14px;padding-top:12px;border-top:1px solid rgba(176,196,225,.13)}
 
 /* About keeps its return link below the iPhone system area. */
 @media(max-width:759px){body.about-screen #app{padding-top:calc(var(--salah-safe-top,env(safe-area-inset-top,0px)) + 16px)}body.about-screen .about-page .about-back{display:inline-flex;align-items:center;min-height:44px;scroll-margin-top:calc(var(--salah-safe-top,0px) + 16px)}}

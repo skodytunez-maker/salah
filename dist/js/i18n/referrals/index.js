@@ -1,5 +1,11 @@
 export default Object.freeze({
  ru:Object.freeze({
+  'referralUi.invitedListening':"Прослушали по приглашениям · 2 уровня",
+  'referralUi.directCount':"Пригласил лично · {count}",
+  'referralUi.communityListening':"Общее прослушивание SALAH",
+  'referralUi.communityTotal':"В SALAH за всё время прослушали {duration}",
+  'referralUi.recommendations':"Рекомендованные чтецы",
+  'referralUi.intention':"Приглашайте с искренним намерением ради Аллаха.",
   'referralUi.title':"Приглашения",
   'referralUi.ajr':"Аджр",
   'referralUi.code':"Личный код",
@@ -15,6 +21,12 @@ export default Object.freeze({
   'referralUi.invalid':"Проверь код приглашения. Пример — SALAH-12AB34CD."
  }),
  en:Object.freeze({
+  'referralUi.invitedListening':"Listening from two levels of invitations",
+  'referralUi.directCount':"Direct invitees · {count}",
+  'referralUi.communityListening':"Total SALAH listening",
+  'referralUi.communityTotal':"All-time listening in SALAH: {duration}",
+  'referralUi.recommendations':"Recommended reciters",
+  'referralUi.intention':"Invite others with a sincere intention for the sake of Allah.",
   'referralUi.title':"Invitations",
   'referralUi.ajr':"Ajr",
   'referralUi.code':"Your code",
@@ -30,6 +42,12 @@ export default Object.freeze({
   'referralUi.invalid':"Check your invitation code. Example: SALAH-12AB34CD."
  }),
  az:Object.freeze({
+  'referralUi.invitedListening':"İki dəvət səviyyəsi üzrə dinləmə vaxtı",
+  'referralUi.directCount':"Birbaşa dəvət olunanlar · {count}",
+  'referralUi.communityListening':"SALAH-da ümumi dinləmə",
+  'referralUi.communityTotal':"SALAH-da bütün dövrlər üzrə dinləmə: {duration}",
+  'referralUi.recommendations':"Tövsiyə etdiyin qarilər",
+  'referralUi.intention':"Allah rizası üçün səmimi niyyətlə dəvət edin.",
   'referralUi.title':"Dəvətlər",
   'referralUi.ajr':"Əcr",
   'referralUi.code':"Şəxsi kodun",
@@ -45,6 +63,12 @@ export default Object.freeze({
   'referralUi.invalid':"Dəvət kodunu yoxla. Məsələn: SALAH-12AB34CD."
  }),
  tg:Object.freeze({
+  'referralUi.invitedListening':"Вақти шунидани ду зинаи даъват",
+  'referralUi.directCount':"Даъватшудагони мустақим · {count}",
+  'referralUi.communityListening':"Шунидани умумӣ дар SALAH",
+  'referralUi.communityTotal':"Вақти умумии шунидан дар SALAH: {duration}",
+  'referralUi.recommendations':"Қориҳои тавсиядодаи ту",
+  'referralUi.intention':"Бо нияти холис барои ризои Аллоҳ даъват кунед.",
   'referralUi.title':"Даъватҳо",
   'referralUi.ajr':"Аҷр",
   'referralUi.code':"Рамзи шахсии ту",
@@ -60,6 +84,12 @@ export default Object.freeze({
   'referralUi.invalid':"Рамзи даъватро бисанҷ. Мисол: SALAH-12AB34CD."
  }),
  uz:Object.freeze({
+  'referralUi.invitedListening':"Ikki bosqichdagi takliflar orqali tinglangan vaqt",
+  'referralUi.directCount':"Bevosita taklif qilinganlar · {count}",
+  'referralUi.communityListening':"SALAH’da jami tinglangan vaqt",
+  'referralUi.communityTotal':"SALAH’da barcha davrlarda tinglangan vaqt: {duration}",
+  'referralUi.recommendations':"Sen tavsiya qilgan qorilar",
+  'referralUi.intention':"Alloh roziligi uchun ixlos bilan taklif qiling.",
   'referralUi.title':"Takliflar",
   'referralUi.ajr':"Ajr",
   'referralUi.code':"Shaxsiy koding",
@@ -75,6 +105,12 @@ export default Object.freeze({
   'referralUi.invalid':"Taklif kodini tekshir. Masalan: SALAH-12AB34CD."
  }),
  kk:Object.freeze({
+  'referralUi.invitedListening':"Екі деңгейдегі шақырулар бойынша тыңдалған уақыт",
+  'referralUi.directCount':"Тікелей шақырылғандар · {count}",
+  'referralUi.communityListening':"SALAH-та жалпы тыңдалған уақыт",
+  'referralUi.communityTotal':"SALAH-та барлық уақыттағы тыңдау: {duration}",
+  'referralUi.recommendations':"Өзің ұсынған қарилар",
+  'referralUi.intention':"Алланың разылығы үшін шынайы ниетпен шақырыңыз.",
   'referralUi.title':"Шақырулар",
   'referralUi.ajr':"Ажр",
   'referralUi.code':"Жеке кодың",
@@ -90,6 +126,12 @@ export default Object.freeze({
   'referralUi.invalid':"Шақыру кодын тексер. Мысалы: SALAH-12AB34CD."
  }),
  de:Object.freeze({
+  'referralUi.invitedListening':"Hörzeit aus zwei Einladungsebenen",
+  'referralUi.directCount':"Direkt Eingeladene · {count}",
+  'referralUi.communityListening':"Gesamte Hörzeit in SALAH",
+  'referralUi.communityTotal':"Bisherige Hörzeit in SALAH: {duration}",
+  'referralUi.recommendations':"Von dir empfohlene Rezitatoren",
+  'referralUi.intention':"Lade andere mit aufrichtiger Absicht um Allahs willen ein.",
   'referralUi.title':"Einladungen",
   'referralUi.ajr':"Ajr",
   'referralUi.code':"Dein persönlicher Code",
@@ -105,6 +147,12 @@ export default Object.freeze({
   'referralUi.invalid':"Prüfe deinen Einladungscode. Beispiel: SALAH-12AB34CD."
  }),
  ar:Object.freeze({
+  'referralUi.invitedListening':"وقت الاستماع عبر مستويين من الدعوات",
+  'referralUi.directCount':"المدعوون مباشرةً · {count}",
+  'referralUi.communityListening':"إجمالي الاستماع في SALAH",
+  'referralUi.communityTotal':"إجمالي وقت الاستماع في SALAH منذ البداية: {duration}",
+  'referralUi.recommendations':"القراء الذين أوصيت بهم",
+  'referralUi.intention':"ادعوا الآخرين بنية خالصة لله.",
   'referralUi.title':"الدعوات",
   'referralUi.ajr':"الأجر",
   'referralUi.code':"رمزك الشخصي",

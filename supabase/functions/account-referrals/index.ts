@@ -1,6 +1,8 @@
 import {createClient} from 'npm:@supabase/supabase-js@2.117.2';
 import postgres from 'npm:postgres@3.4.9';
 import {createReferralHandler} from './core.mjs';
+import {readReferralInvitees} from './invitees.mjs';
+import {readAccountAdjr} from './ajr-summary.mjs';
 
 const project=Deno.env.get('SUPABASE_URL')?.replace(/\/$/,'');
 const keys=JSON.parse(Deno.env.get('SUPABASE_PUBLISHABLE_KEYS')??'{}');
@@ -24,8 +26,6 @@ Deno.serve(createReferralHandler({
     return row.active===true;
   },
   ensureCode:uid=>sql`select salah_referrals_private.own_code(${uid}::uuid)`,
-  readSummary:async uid=>{
-    const [row]=await sql`select code,seconds from salah_referrals_private.own_summary(${uid}::uuid)`;
-    return row;
-  }
+  readInvitees:uid=>readReferralInvitees(sql,uid),
+  readSummary:uid=>readAccountAdjr(sql,uid)
 }));

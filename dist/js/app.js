@@ -57,6 +57,7 @@ import{initAccountPresence}from './account-presence.js';
 import{initGuestPresence}from './guest-presence.js';
 import{APP_VERSION,APP_CHANGES,APP_UPDATE_DATE,APP_UPDATED_AT,APP_ANNOUNCEMENT}from './app-release.js';
 import{bindAppSharing,appSharingMarkup,createFriendInvite}from './app-sharing.js';
+import{mountAccountReferrals}from './account-referrals.js';
 const friendInvite=createFriendInvite({canShow:()=>settings.onboarded&&personalDataAllowed()&&currentRoute==='home'&&!foregroundAudioBusy()&&!document.querySelector('.founder-welcome,.series-celebration')&&(hasSeenAnnouncement()||!releaseHighlightActive()),playback:quranPlayback});
 import{showCounterAccount,initCounterAccounts,counterSyncStatus}from './counter-account.js';
 import{initSeriesCelebration}from './series-celebration.js';
@@ -176,7 +177,13 @@ function more(){
  const signedIn=counterSyncStatus().signedIn,owner=ownerVerified(),nickname=counterSyncStatus().nickname,accountKey=signedIn?(nickname?null:'menu.account'):'menu.signIn',account=['account',signedIn?(nickname||t('menu.account')):t('menu.signIn'),signedIn?'':'menuExtra.accountNote',accountKey];
  app.innerHTML='<a class="menu-home-access" href="#home" data-i18n="common.backHome">'+esc(t('common.backHome'))+'</a>'+title(t('menu.title')).replace('<h1>','<h1 data-i18n="menu.title">')+'<section class="panel section">'+[account,['qibla',t('menu.qibla'),'menuExtra.qiblaNote','menu.qibla'],['calendar',t('menu.calendar'),'menuExtra.calendarNote','menu.calendar'],['settings',t('common.settings'),'menuExtra.settingsNote','common.settings'],['support',t(owner?'menu.supportOwner':'menu.supportUser'),'',owner?'menu.supportOwner':'menu.supportUser'],['support-salah','Поддержать SALAH','По желанию'],['about',t('menu.about'),'menuExtra.aboutNote','menu.about']].map(([r,n,s,key])=>'<a class="list-button'+(r==='account'?' account-entry'+(signedIn?' account-entry-compact':''):'')+'" href="#'+r+(r==='support'&&owner?'?owner=1':'')+'"><span class="menu-item-label">'+(r==='account'?'<span class="menu-avatar" data-menu-avatar>'+settingsIcon(r)+'</span>':settingsIcon(r))+(r==='account'?'<span class="menu-account-name"'+(key?' data-i18n="'+key+'"':'')+'>'+esc(n)+'</span>'+(signedIn&&owner?helperBadge:''):'<span'+(key?' data-i18n="'+key+'"':'')+'>'+esc(n)+'</span>')+'</span>'+(r==='support'?'<span class="support-state-dot" '+(owner?'data-owner-support-status':'data-user-support-status')+' hidden></span>':s?'<small'+(r==='support-salah'?'':' data-i18n="'+s+'"')+'>'+esc(r==='support-salah'?s:t(s))+'</small>':'')+'</a>'+(r==='account'?appSharingMarkup():'')).join('')+'<button type="button" class="list-button menu-video-stories" id="menu-video-stories"><span class="menu-item-label"><span class="video-story-menu-icon" aria-hidden="true">▷</span><span data-i18n="videoStories.title">'+esc(t('videoStories.title'))+'</span></span></button></section>';
 
- bindAppSharing(app);mountMenuAvatar(app,counterSyncStatus());
+ bindAppSharing(app);
+ const accountStatus=counterSyncStatus(),share=app.querySelector('.app-share-row');
+ if(accountStatus.signedIn&&accountStatus.userId&&share){
+  mountAccountReferrals(share.parentElement,{userId:accountStatus.userId,title:'referralUi.ajr',before:share.nextSibling,
+   isActive:()=>currentRoute==='more'&&share.isConnected&&counterSyncStatus().userId===accountStatus.userId});
+ }
+ mountMenuAvatar(app,accountStatus);
  const stories=app.querySelector('#menu-video-stories');
  stories.onclick=async()=>{try{const {showVideoStories}=await import('./video-stories.js');if(stories.isConnected&&currentRoute==='more')showVideoStories();}catch{if(stories.isConnected)toast(t('videoStories.loadFailed'));}};
 

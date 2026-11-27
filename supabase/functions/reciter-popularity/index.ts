@@ -1,4 +1,4 @@
-import{recordedMinuteDay}from './recorded-minute.mjs';
+import{recordedMinuteDay,writeRecordedMinute}from './recorded-minute.mjs';
 import{publicListenerRows}from './listener-labels.mjs';
 import postgres from 'npm:postgres@3.4.9';
 // Public aggregate reads; writes require a verified, confirmed Auth user and explicit consent.
@@ -7,7 +7,6 @@ const sql=postgres(Deno.env.get('SUPABASE_DB_URL')!,{max:1,prepare:false,idle_ti
 const reciters=new Set(["ar.alafasy","ar.husary","ar.minshawi","ar.mahermuaiqly","ar.badralturki","ar.muhammadalluhaidan","ar.tariqmuhammad","ar.abdurrahmanalsudais","ar.saudalshuraim","ar.abdullahaljuhany","ar.bandarbalilah","ar.salahalbudair","ar.abdulmuhsinalqasim","ar.alialhuthaifi","ar.abdulbarialthubaity","ar.abdullahalbuayjan","ar.khalidalmuhanna","ar.ahmadalhuthaifi","ar.raadalkurdi","ar.hazzaalbalushi","ar.haithamaljadani","ar.haithamaldukhain","ar.abdelazizsheim","ar.ahmedkaseb","ar.obaidamuafaq","ar.abdulrahmanmossad","ar.siratulloraupov","ar.idrisabkar","ar.abubakrshatri","ar.nasseralqatami","ar.yasseraldossaricontinuous","ar.abdulbasitabdussamad","ar.mansouralsalimi","ar.islamsobhi","ar.abdulrahmanalawsi","ar.saadalghamdi","ar.ahmadalajmi","ar.faresabbad","ar.ahmadalnufais","ar.khalidaljalil","ar.wadeealyamani","ar.abdullahkamel","ar.haniarrifai","ar.alijaber","ar.muhammadayyub","ar.salahbukhatir","ar.peshawaalkurdi","ar.muhammadalfaqih","ar.fahadalkandari","ar.noreensiddiq","ar.muhammadjibreel","ar.mustafaismail","ar.mahmoudalbanna","ar.muhammadaltablawi","ar.ahmadtalib","ar.muhammaddibirov","ar.kamilsamigullin","ar.alijonqori","ar.jahongirnematov","ar.abdullahbasfar","ar.ibrahimalakhdar","ar.khalidalqahtani","ar.tawfeeqalsayegh","ar.khalifaaltunaiji","ar.ahmadamer","ar.abdulhadikanakeri","ar.abdullahalmatroud","ar.abdullahkhayyat","ar.abdulwadoodhaneef","ar.zainmuhammadahmad","ar.muhammadalmuhaisni","ar.nabilalrifai","ar.yahyahawwa","ar.muhammadrashidalsharif","ar.abdullahalkhalaf","ar.hasansaleh","ar.abdurrahmanalshahhat","ar.omaribndiyaaldin"]);
 const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Content-Type':'application/json','X-Content-Type-Options':'nosniff'};
 const reply=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{...headers,'Cache-Control':'no-store'}});
-async function rpc(name:string,body:any){if(name==='reciter_popularity_rank')return await sql`select * from public.reciter_popularity_rank()`;if(name==='reciter_popularity_add'){const rows=await sql`select public.reciter_popularity_add(${body.p_listener},${body.p_reciter},${body.p_event}::uuid) as counted`;return rows[0].counted;}throw Error('invalid_operation');}
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 async function verifiedUser(req:Request){
  const bearer=req.headers.get('authorization')||'';
@@ -74,7 +73,9 @@ Deno.serve(async req=>{
  if(!body||body.consent!==true||!allowedReciters.has(body.reciter)||typeof body.eventId!=='string'||!uuid.test(body.eventId)||Object.keys(body).some(k=>!['consent','reciter','eventId','occurredAt','timeZone'].includes(k)))return reply({error:'invalid_input'},400);
  const hash=await listenerCode(user.id);
   let day;try{day=recordedMinuteDay(body);}catch{return reply({error:'invalid_input'},400);}
-  const counted=await rpc('reciter_popularity_add',{p_listener:hash,p_reciter:body.reciter,p_event:body.eventId,...(day?{p_day:day}:{})});
+  let counted;
+  try{counted=await writeRecordedMinute(sql,{listener:hash,reciter:body.reciter,eventId:body.eventId,day});}
+  catch(error){if(error instanceof Error&&error.message==='invalid_day')return reply({error:'invalid_input'},400);throw error;}
   if(counted)await sql`insert into public.reciter_listener_visibility(user_id,listener_hash,mode) values(${user.id}::uuid,${hash},'initial') on conflict(user_id) do nothing`;
  return reply({ok:true,counted});
  }catch{return reply({error:'temporarily_unavailable'},503);}
