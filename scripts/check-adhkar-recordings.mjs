@@ -35,5 +35,6 @@ assert.match(ikhlas.verses[0].transliteration,/Куль хува-Ллаху ах
 assert.equal(ikhlas.verses[2].transliteration,'Лям ялид уа лям юляд.');assert.equal(ikhlas.verses[3].transliteration,'Уа лям якулляху куфуван ахад.');
 assert.equal(JSON.stringify(data),before);
 const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8'),worker=await readFile(new URL('../dist/sw.js',import.meta.url),'utf8');
-assert.match(html,/media-src https:\/\/azkar.ru /);for(const path of ['./js/adhkar-recordings.js','./css/adhkar-audio.css','./assets/updates/adhkar-audio-380.svg'])assert.ok(worker.includes(JSON.stringify(path)));
+const mediaSources=html.match(/(?:^|;)\s*media-src\s+([^;"]+)/)?.[1].split(/\s+/);
+assert.ok(mediaSources?.includes('https://azkar.ru'));for(const path of ['./js/adhkar-recordings.js','./css/adhkar-audio.css','./assets/updates/adhkar-audio-380.svg'])assert.ok(worker.includes(JSON.stringify(path)));
 console.log('PASS: original catalogue/counters preserved; 14 provider-text matches including the selected salawat, two different recordings excluded, user spelling and guarded fallback retained.');

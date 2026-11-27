@@ -79,6 +79,10 @@
       "reason": "Record the exact published source and reviewed change scope."
     },
     {
+      "path": "scripts/check-adhkar-recordings.mjs",
+      "reason": "Verify the existing Adhkar source by exact membership in the media policy instead of its position."
+    },
+    {
       "path": "scripts/check-quran-streaming-reciters.mjs",
       "reason": "Verify Omar’s source, sparse transitions and listening registration."
     },
