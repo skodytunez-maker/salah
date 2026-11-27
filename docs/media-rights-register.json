@@ -3932,6 +3932,16 @@
       "rightsReviewStatus": "origin-supported",
       "rightsEvidence": "docs/makkah-phone-trial-provenance.json",
       "note": "Code-authored source-specific silhouette for new private portrait illustration. Original63mattes unchanged."
+    },
+    {
+      "path": "dist/assets/reciters/omaribndiyaaldin.jpg",
+      "gitBlobSha": "1cda9483fecba0bb121a5e96ee063e83e1a50ab4",
+      "bytes": 104556,
+      "kind": "photo",
+      "role": "reciter-portrait",
+      "rightsReviewStatus": "needs-review",
+      "rightsEvidence": "docs/omar-portrait-provenance.json",
+      "note": "Already delivered in SALAH 575. Source and unchanged watermark are documented. Explicit redistribution permission has not been recorded."
     }
   ],
   "wallpaperSets": [

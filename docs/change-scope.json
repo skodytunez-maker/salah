@@ -129,6 +129,26 @@
     {
       "path": "dist/js/i18n-runtime/uz.js",
       "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "scripts/check-quran-continuity.mjs",
+      "reason": "Align the catalogue fixture count with the previously published Omar entry without altering playback."
+    },
+    {
+      "path": "scripts/check-radio-all-reciters.mjs",
+      "reason": "Carry forward the published catalogue count with the Omar entry."
+    },
+    {
+      "path": "scripts/check-reading-reciters-460.mjs",
+      "reason": "Carry forward the published catalogue count with the Omar entry."
+    },
+    {
+      "path": "docs/media-rights-register.json",
+      "reason": "Document the existing public Omar portrait as a source with rights review pending."
+    },
+    {
+      "path": "scripts/check-recognition-expanded.mjs",
+      "reason": "Keep the recognition fixture strict for existing voices and track the already published unindexed Omar entry explicitly."
     }
   ],
   "generated": [
