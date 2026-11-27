@@ -3,6 +3,8 @@ import {readFile} from 'node:fs/promises';
 import {PGlite} from '../tests/staff/node_modules/@electric-sql/pglite/dist/index.js';
 import {Window} from '../tests/staff/node_modules/happy-dom/lib/index.js';
 import {createReferralHandler} from '../supabase/functions/account-referrals/core.mjs';
+import {readAccountAdjr,SALAH_OWNER_ID} from '../supabase/functions/account-referrals/ajr-summary.mjs';
+import {combinedPublicBoard} from '../supabase/functions/reciter-competition/guest-board.mjs';
 import {mountAccountReferrals,normalizeReferralCode} from '../dist/js/account-referrals.js';
 import {t,setInterfaceLanguage} from '../dist/js/i18n.js';
 
@@ -22,18 +24,24 @@ const db=new PGlite();
 try{
  await db.exec(`
   create role anon; create role authenticated; create role service_role;
-  create schema auth;
-  create table auth.users(id uuid primary key,raw_user_meta_data jsonb,email_confirmed_at timestamptz,is_anonymous boolean);
-  create table auth.sessions(id uuid primary key);
+  create schema auth; create schema storage; create schema salah_visits_private;
+  create table auth.users(id uuid primary key,raw_user_meta_data jsonb,email_confirmed_at timestamptz,is_anonymous boolean,banned_until timestamptz);
+  create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);
+  create table storage.objects(bucket_id text,name text);
+  create table salah_visits_private.guest_activity_presence(device_hash text,kind text,active boolean,reported_at timestamptz);
   create table public.reciter_popularity_minutes(listener_hash text,reciter text,day date,minutes integer,extra_seconds integer);
-  create table public.reciter_listener_visibility(user_id uuid primary key,listener_hash text,mode text not null);
+  create table public.reciter_listener_visibility(user_id uuid primary key,listener_hash text,mode text not null,public_id uuid default gen_random_uuid());
  `);
  const competition=await read('supabase/reciter-competition.sql');
  await db.exec(competition.split('-- Automatic participation is initialized')[0]);
  await db.exec(await read('supabase/guest-competition.sql'));
+ await db.exec(`create table salah_competition_private.listener_presence(user_id uuid,session_id uuid,playing boolean,reported_at timestamptz);
+ create table salah_competition_private.guest_aliases(guest_id uuid primary key,nickname text);`);
  await db.exec(await read('supabase/migrations/20261126223230_account_referrals.sql'));
+ await db.exec(await read('supabase/migrations/20261127074807_second_level_referral_listening.sql'));
+ await db.exec(await read('supabase/migrations/20261127075031_adjr_reciter_recommendations.sql'));
  const user=(id,code,{confirmed=true,anonymous=false}={})=>db.query(
-  'insert into auth.users values($1,$2::jsonb,case when $3::boolean then now() end,$4)',
+  'insert into auth.users(id,raw_user_meta_data,email_confirmed_at,is_anonymous) values($1,$2::jsonb,case when $3::boolean then now() end,$4)',
   [id,JSON.stringify(code?{salah_invite_code:code}:{}),confirmed,anonymous]
  );
  const score=async(id,reciter,seconds)=>{
@@ -115,14 +123,85 @@ try{
    has_table_privilege($1,'salah_referrals_private.members','select') as members,
    has_function_privilege($1,'salah_referrals_private.own_summary(uuid)','execute') as summary`,[role]);
   assert.deepEqual(permissions,{schema:false,members:false,summary:false});
+  const {rows:[{allowed}]}=await db.query("select has_table_privilege($1,'salah_referrals_private.reciter_recommendations','select') as allowed",[role]);
+  assert.equal(allowed,false);
  }
  await db.query('delete from auth.users where id=$1',[listener]);
  assert.deepEqual(await summary(owner),{code,seconds:0});
  await db.query('delete from auth.users where id=$1',[owner]);
  assert.equal(await summary(owner),undefined);
  assert.equal((await db.query('select count(*)::integer as count from salah_referrals_private.members')).rows[0].count,0);
+
+ const luhaidan='ar.muhammadalluhaidan',talib='ar.ahmadtalib';
+ await user(owner,otherCode);
+ const firstCode=await codeFor(owner);
+ await user(listener,firstCode);
+ const secondCode=await codeFor(listener);
+ await user(SALAH_OWNER_ID);
+ await score(owner,luhaidan,180);
+ await score(listener,luhaidan,120);
+ assert.deepEqual(await summary(other),{code:otherCode,seconds:300});
+ assert.deepEqual(await summary(owner),{code:firstCode,seconds:120});
+ assert.deepEqual(await summary(listener),{code:secondCode,seconds:0});
+ assert.equal((await db.query("select sum(seconds)::int as seconds from public.competition_scores('all',current_date) where user_id=$1",[listener])).rows[0].seconds,120);
+ const fourth='afaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+ await user(fourth,secondCode);
+ await score(fourth,talib,60);
+ assert.deepEqual(await summary(other),{code:otherCode,seconds:300});
+ assert.deepEqual(await summary(owner),{code:firstCode,seconds:180});
+ assert.deepEqual(await summary(listener),{code:secondCode,seconds:60});
+
+ const sql=async(parts,...params)=>(await db.query(parts.reduce((query,part,index)=>query+(index?'$'+index:'')+part,''),params)).rows;
+ await db.query('insert into salah_referrals_private.reciter_recommendations(reciter,recommender_id) values($1,$2),($3,$4)',[luhaidan,owner,talib,plain]);
+ await db.query("update auth.users set raw_user_meta_data=raw_user_meta_data||jsonb_build_object('nickname','Renamed profile') where id=$1",[plain]);
+ await db.query("update auth.users set raw_user_meta_data=raw_user_meta_data||'{\"nickname\":\"Gulshan\"}'::jsonb where id=$1",[listener]);
+ await db.query("insert into salah_competition_private.guest_players(public_id,device_hash,secret_hash,activity_hash,claimed_by) values($1,repeat('e',64),repeat('f',64),repeat('1',64),$2)",[fourth,listener]);
+ await db.query("insert into salah_competition_private.guest_totals values($1,$2,20)",[fourth,luhaidan]);
+ const unclaimed='bbaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+ await db.query("insert into salah_competition_private.guest_players(public_id,device_hash,secret_hash,activity_hash) values($1,repeat('2',64),repeat('3',64),repeat('4',64))",[unclaimed]);
+ await db.query("insert into salah_competition_private.guest_totals values($1,$2,30)",[unclaimed,talib]);
+ await score(pending,luhaidan,361);
+ assert.deepEqual(await readAccountAdjr(sql,owner),{code:firstCode,seconds:180,
+  recommendations:[{reciter:luhaidan,seconds:320}]});
+ assert.deepEqual(await readAccountAdjr(sql,plain),{code:null,seconds:0,
+  recommendations:[{reciter:talib,seconds:90}]});
+ assert.deepEqual(await readAccountAdjr(sql,listener),{code:secondCode,seconds:60});
+ assert.deepEqual(await readAccountAdjr(sql,SALAH_OWNER_ID),{code:null,seconds:2150,scope:'community'});
+
+ const makeSummaryRequest=id=>createReferralHandler({
+  issuer,getUser:async()=>({data:{user:{id,email_confirmed_at:'confirmed'}}}),
+  getClaims:async()=>({data:{claims:{sub:id,iss:issuer,session_id:session}}}),isSessionActive:async()=>true,
+  readSummary:uid=>readAccountAdjr(sql,uid),ensureCode:codeFor
+ })(new Request('https://fixture.invalid/referrals',{
+  method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Authorization:'Bearer fixture.access.token'},
+  body:JSON.stringify({action:'summary'})
+ }));
+ const community=await makeSummaryRequest(SALAH_OWNER_ID);
+ assert.equal(community.status,200);
+ assert.deepEqual(await community.json(),{code:null,seconds:2150,scope:'community'});
+ const recommended=await makeSummaryRequest(plain);
+ assert.equal(recommended.status,200);
+ assert.deepEqual(await recommended.json(),{code:null,seconds:0,recommendations:[{reciter:talib,seconds:90}]});
+
+ const day='2026-11-27';
+ await db.query('update public.reciter_listener_visibility set listener_hash=$1 where user_id=$2',['9'.repeat(64),owner]);
+ await db.query('insert into public.reciter_popularity_minutes values($1,$2,$3,36,0)',['9'.repeat(64),luhaidan,day]);
+ await db.query('insert into salah_competition_private.days values($1,$2,$3,$4,180,0)',[owner,device,day,luhaidan]);
+ const publicDay=()=>combinedPublicBoard(sql,'day',day,{},true,{thin:true});
+ const publicAll=()=>combinedPublicBoard(sql,'all',day,{},true,{thin:true});
+ const ownerAdjr=()=>readAccountAdjr(sql,SALAH_OWNER_ID);
+ assert.equal((await publicDay()).listeningTotal,2160);
+ const before=await ownerAdjr();
+ assert.equal(before.seconds,(await publicAll()).listeningTotal);
+ const recommendedBefore=await readAccountAdjr(sql,owner);
+ const publishedDailySource=await read('supabase/migrations/20261127081627_prefer_measured_daily_listening.sql');
+ await db.exec(publishedDailySource);
+ assert.equal((await publicDay()).listeningTotal,180);
+ assert.deepEqual(await ownerAdjr(),before);
+ assert.equal((await ownerAdjr()).seconds,(await publicAll()).listeningTotal);
+ assert.deepEqual(await readAccountAdjr(sql,owner),recommendedBefore);
 }finally{await db.close();}
-console.log('PASS: PostgreSQL signup binding, private codes, exact credited aggregate, imported guest exclusion, existing visibility choices and deletion.');
+console.log('PASS: two referral levels, pinned attribution after a rename, and owner lifetime total matches the public board with the daily fix.');
 
 const code=exampleCode;
 let active=true,confirmed=true,verified=true,claimsActor=owner,ensured=0,reads=0;
@@ -202,5 +281,17 @@ try{
  assert.equal(normalizeReferralCode(' salah-12ab34cd '),code);
  assert.equal(normalizeReferralCode(' '),'');
  assert.equal(normalizeReferralCode('SALAH-12AB34CЯ'),null);
+
+ for(const summary of [{code:null,seconds:2150,scope:'community'},
+  {code:null,seconds:0,recommendations:[{reciter:'ar.ahmadtalib',seconds:90}]}]){
+  area.replaceChildren();
+  mountAccountReferrals(area,{userId:owner,isActive:()=>true,request:async()=>summary});
+  await area.querySelector('[data-referral-refresh]').onclick();
+  assert.equal(area.querySelector('[data-referral-total]').hidden,false);
+  assert.equal(area.querySelector('[data-referral-create]').hidden,false);
+  assert.equal(area.querySelector('[data-referral-duration]').hidden,!summary.scope);
+  if(summary.scope)assert.match(area.querySelector('[data-referral-duration]').textContent,/В SALAH за всё время прослушали 35 мин 50 с/);
+  else assert.match(area.querySelector('[data-referral-recommendations]').textContent,/Ахмад Талиб бин Хумайд.*1 мин 30 с/);
+ }
 }finally{await win.happyDOM.close();delete globalThis.document;}
 console.log('PASS: account panel is lazy, retries temporary failure, creates and displays two hours for the signed-in inviter.');

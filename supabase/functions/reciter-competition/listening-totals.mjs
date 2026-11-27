@@ -9,6 +9,31 @@ export async function readListeningTotals(sql,day){
  const totals={};for(const row of rows){const n=Number(row.seconds);if(!['day','week','month','all'].includes(row.period)||!Number.isSafeInteger(n)||n<0)throw Error('invalid_total');totals[row.period]=n;}
  if(Object.keys(totals).length!==4)throw Error('incomplete_totals');return totals;
 }
+
+// Use the same eligible listeners as the combined public board.
+export async function readCommunityListeningByReciter(sql,reciters=null){
+ const filter=reciters===null?null:JSON.stringify(reciters);
+ const rows=await sql`with credited as (
+  select s.reciter,s.seconds from public.competition_scores('all',current_date) s
+  join salah_competition_private.preferences p using(user_id)
+  join public.reciter_listener_visibility v using(user_id)
+  join auth.users u on u.id=s.user_id
+  where p.enabled and v.mode in ('initial','profile')
+   and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false)
+  union all
+  select s.reciter,s.seconds from salah_competition_private.guest_scores('all',current_date) s
+  join salah_competition_private.guest_players g on g.public_id=s.guest_id
+  where g.claimed_by is null
+ )
+ select reciter,sum(seconds)::text as seconds from credited
+ where (${filter}::jsonb is null or ${filter}::jsonb ? reciter)
+ group by reciter`;
+ return new Map(rows.map(row=>{
+  const seconds=Number(row.seconds);
+  if(!Number.isSafeInteger(seconds)||seconds<0)throw Error('invalid_listening_total');
+  return [row.reciter,seconds];
+ }));
+}
 export function createListeningTotalsLoader({now=Date.now,ttl=10000}={}){
  const cached=new Map(),pending=new Map();
  return async(sql,day)=>{const saved=cached.get(day);if(saved&&now()-saved.at<ttl)return {...saved.value};if(pending.has(day))return {...await pending.get(day)};

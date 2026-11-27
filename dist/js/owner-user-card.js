@@ -1,4 +1,5 @@
 import{listeningTime}from './ranking-ui.js';
+import{referralInviteesMarkup,referralRecommendationsMarkup}from './account-referrals.js';
 import{awardUiTitle,awardUiPeriod}from './quran-award-history.js';
 import{ownerDateMessageLeaf,uiNumberLeaf,ownerMessage,ownerLeaf,ownerText,ownerMarkup,ownerError,ownerHeading,ownerDate,ownerDateLeaf,ownerPaint,watchOwnerUi,stopOwnerUi,uiMessage,uiLeaf,uiSet,uiRaw,uiAttrs,uiAttribute,uiAttributeAttrs,t,getLocale}from './owner-i18n.js';
 import{staffIcon}from './staff-markup.js';
@@ -54,13 +55,21 @@ export function ownerUserStatistics(details){
  if(!details)return '';
  const time=value=>listeningMarkup(value);
  const periods=details.periods||{},reciters=Array.isArray(details.reciters)?details.reciters:[],awards=Array.isArray(details.awards)?details.awards:[];
+ const adjrKey=details.adjrScope==='community'?'referralUi.communityListening':'referralUi.invitedListening';
+ const adjr=Object.hasOwn(details,'adjrSeconds')?
+  '<section class="owner-profile-panel owner-profile-adjr" aria-labelledby="owner-profile-adjr-title">'+
+  '<h2 id="owner-profile-adjr-title" data-i18n="referralUi.ajr">'+esc(t('referralUi.ajr'))+'</h2>'+
+  '<div class="owner-profile-total"><span data-i18n="'+adjrKey+'">'+esc(t(adjrKey))+'</span>'+
+  '<strong>'+time(details.adjrSeconds)+'</strong></div>'+referralInviteesMarkup(details.referrals)+
+  referralRecommendationsMarkup(details.adjrRecommendations,time)+
+  '<p class="muted owner-profile-adjr-intention" data-i18n="referralUi.intention">'+esc(t('referralUi.intention'))+'</p></section>':'';
  const listening="<section class=\"owner-profile-panel owner-profile-listening\" aria-labelledby=\"owner-profile-listening-title\"><h2 id=\"owner-profile-listening-title\" data-i18n=\"ownerUi.listening\">Прослушивание</h2>"+(details.connected?"<div class=\"owner-profile-total\"><span data-i18n=\"ownerUi.listenedTotal\">Всего прослушано</span><strong>"+time(periods.all)+'</strong></div><dl class="owner-profile-periods">'+[['day','Сегодня'],['week','За неделю'],['month','За месяц']].map(([period,label])=>'<div><dt>'+ownerLeaf(label)+'</dt><dd>'+time(periods[period])+'</dd></div>').join('')+'</dl>':"<p class=\"muted\" data-i18n=\"ownerUi.listeningNotSaved\">Данные прослушивания ещё не сохранены.</p>")+'</section>';
  const activity="<section class=\"owner-profile-panel owner-profile-activity\" aria-labelledby=\"owner-profile-activity-title\"><div><h2 id=\"owner-profile-activity-title\" data-i18n=\"nav.adhkar\">Азкары</h2><span data-i18n=\"ownerUi.today\">Сегодня</span></div><strong class=\""+(details.adhkar?.active===true?'is-active':'')+'">'+ownerLeaf(typeof details.adhkar?.active==='boolean'?(details.adhkar.active?'Есть отметка':'Пока нет отметок'):'Данных пока нет')+'</strong></section>';
  const favorites=reciters.length?"<section class=\"owner-profile-panel owner-profile-favorites\" aria-labelledby=\"owner-profile-favorites-title\"><h2 id=\"owner-profile-favorites-title\" data-i18n=\"ownerUi.favoriteReciters\">Любимые чтецы</h2><ol class=\"owner-profile-reciters\">"+reciters.slice(0,5).map(row=>reciterRow(row,time)).join('')+'</ol></section>':'';
  const achievements=ownerAwards(awards);
  const checkpoint=details.context?.reading,validPage=Number.isInteger(checkpoint?.page)&&checkpoint.page>=1&&checkpoint.page<=604&&['madani','tajweed'].includes(checkpoint.edition);
  const reading="<section class=\"owner-profile-panel owner-profile-reading\" aria-labelledby=\"owner-profile-reading-title\"><h2 id=\"owner-profile-reading-title\" data-i18n=\"ownerUi.quranReading\">Чтение Корана</h2><dl class=\"owner-profile-context\"><div><dt data-i18n=\"ownerUi.lastPage\">Последняя страница</dt><dd>"+(validPage?uiLeaf('ownerUi.pageOf','Стр. {page} / 604',{page:checkpoint.page}):ownerLeaf('Пока нет данных'))+'</dd></div>'+(validPage?'<div><dt>'+ownerLeaf(checkpoint.edition==='madani'?'Мединский мусхаф':'Цветной таджвид')+'</dt><dd>'+userDateMarkup(checkpoint.savedAt)+'</dd></div>':'')+'</dl></section>';
- return listening+reading+activity+favorites+achievements;
+ return listening+adjr+reading+activity+favorites+achievements;
 }
 export function ownerUserCardPreview(label){
  const nickname=typeof label==='string'&&label.trim()?label:'Карточка пользователя';

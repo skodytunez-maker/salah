@@ -233,3 +233,9 @@ body.reduce-motion .release-motion-preview [data-release-motion-part="element"],
 }
 .account-referral-total h3{margin:0 0 6px;color:#e7d4a8;font-size:1rem}
 .account-referral-total p{margin:0;color:#f4f0e5;line-height:1.5}
+.account-referral-recommendations{margin-top:12px;padding-top:10px;border-top:1px solid rgba(176,196,225,.16)}
+.account-referral-recommendations h3{margin:0 0 6px;font-size:.95rem}
+.account-referral-recommendations dl{margin:0}
+.account-referral-recommendations dl>div{display:flex;justify-content:space-between;gap:12px;padding-block:6px}
+.account-referral-recommendations dd{margin:0;text-align:end;flex-shrink:0}
+.account-referral-total .account-referral-intention{margin-top:12px;opacity:.78;font-size:.875rem}

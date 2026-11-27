@@ -1,7 +1,7 @@
 const origins = new Set(['https://skodytunez-maker.github.io', 'capacitor://localhost', 'http://localhost', 'https://localhost']);
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 
-export function createReferralHandler({issuer,getUser,getClaims,isSessionActive,readSummary,ensureCode}) {
+export function createReferralHandler({issuer,getUser,getClaims,isSessionActive,readSummary,ensureCode,readInvitees=null}) {
   if(typeof issuer!=='string'||!issuer.endsWith('/auth/v1'))throw Error('invalid_auth_issuer');
   return async request => {
     const origin=request.headers.get('Origin');
@@ -29,10 +29,17 @@ export function createReferralHandler({issuer,getUser,getClaims,isSessionActive,
       if(!await isSessionActive(user.id,claims.session_id))return reply(401,{error:'invalid_session'});
       if(input.action==='create')await ensureCode(user.id);
       const row=await readSummary(user.id);
-      if(!row)return reply(200,{code:null,seconds:0});
+      if(!row&&input.action==='summary')return reply(200,{code:null,seconds:0});
+      if(!row)throw Error('missing_summary');
       const seconds=Number(row.seconds);
-      if(!/^SALAH-[A-F0-9]{8}$/.test(row.code)||!Number.isSafeInteger(seconds)||seconds<0)throw Error('invalid_summary');
-      return reply(200,{code:row.code,seconds});
+      const code=row.code??null;
+      const scope=row.scope==='community'?'community':null;
+      if((code===null ? input.action==='create'||(!scope&&seconds!==0) : !/^SALAH-[A-F0-9]{8}$/.test(code))||
+          !Number.isSafeInteger(seconds)||seconds<0)throw Error('invalid_summary');
+      let invitees=null;
+      try{if(readInvitees&&code)invitees=await readInvitees(user.id);}catch{/* Keep code and listening summary available. */}
+      return reply(200,{code,seconds,...(scope?{scope}:{}),...(invitees?{referrals:invitees}:{}),
+       ...(row.recommendations?.length?{recommendations:row.recommendations}:{})});
     }catch{return reply(503,{error:'temporarily_unavailable'});}
   };
 }

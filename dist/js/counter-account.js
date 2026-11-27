@@ -3,7 +3,7 @@ import{createAdhkarActivityQueue}from './adhkar-activity-core.js';
 import{lessonAccountReturn}from './lesson-invitation.js';
 import{hasFounderWelcomeSeen}from './founder-welcome-core.js';
 import{accountProfileMarkup}from './account-summary-core.js';
-import{mountAccountReferrals,normalizeReferralCode}from './account-referrals.js';
+import{normalizeReferralCode}from './account-referrals.js';
 import{mountStaffEntry}from './staff-cabinet.js';
 import{mountAccountAwards}from './quran-awards.js';
 import{mountAccountAvatar}from './account-avatar.js';
@@ -123,7 +123,6 @@ export async function showCounterAccount(container,message='',force=false,mode='
   secureEntry.onclick=event=>{event.preventDefault();if(!active())return;location.hash='#account?owner=1';void showCounterAccount(container,'',true);};
   void mountOwnerAccount(area.querySelector('#account-owner-panel'),{isActive:active});void mountStaffEntry(area.querySelector('#account-team-panel'),{isActive:active});
   area.querySelector('#account-profile-edit').onclick=()=>{if(!active())return;area.querySelector('.account-details').open=true;area.querySelector('#counter-profile-nick').focus();};
-  mountAccountReferrals(area,{userId:awardsUserId,isActive:()=>active()&&counterSyncStatus().userId===awardsUserId});
   const profile=area.querySelector('#counter-profile'),profileInput=profile.querySelector('input'),profileSave=profile.querySelector('button');let savedNickname=profileInput.value.trim(),savingNickname=false;
   const updateNicknameSaveState=()=>{const changed=profileInput.value.trim()!==savedNickname;profileSave.setAttribute('data-dirty',String(changed));setUiAttribute(profileSave,'aria-label',changed?'accountUi.saveNickname':'accountUi.nicknameSaved');setUiAttribute(profileSave,'title',changed?'accountUi.saveNickname':'accountUi.nicknameSaved');if(!savingNickname)profileSave.disabled=!changed;};
   updateNicknameSaveState();profileInput.oninput=updateNicknameSaveState;

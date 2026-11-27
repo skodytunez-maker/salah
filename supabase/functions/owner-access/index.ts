@@ -117,7 +117,7 @@ const PUBLISHABLE_KEY='sb_publishable_D2OGfXHyZCN_DQJpR9LTNg_mOD03jnR';
 const OWNER_RELEASES={salah:[{date:'2026-10-16',version:'339',changes:['Профили пользователей открываются из списка: фото, сохранённое время прослушивания, любимые чтецы и полученные награды.','Доступ к профилям и фото проверяется на сервере при каждом запросе: только владелец с действующей сессией и вторым фактором.']},{date:'2026-10-06',version:'180',changes:['В карточках показаны версия SALAH и последнее успешное сохранение счёта.','Карточка закрывается повторным нажатием или свайпом влево.']},{date:'2026-10-05',version:'179',changes:['Добавлены отдельные карточки пользователей: посещения, регистрация и состояние напоминаний.']},{date:'2026-10-04',version:'158',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.']},{date:'2026-10-04',version:'157',changes:['У пользователей показаны настройки уведомлений о намазе и состояние фоновой доставки. Отсутствующие данные отмечаются отдельно.']},{date:'2026-10-04',version:'155',changes:['Обращения пользователей доступны внутри кабинета; переписка двух приложений разделена.']}],sahaba:[{date:'2026-10-04',version:'',changes:['Изменения кабинета убраны из общих уведомлений; личная история доступна здесь.','Поддержка подключена к отдельному защищённому списку обращений SAHABA.']}]};
 const STATS_URL='https://salah-saadi.goatcounter.com/api/v0/stats/total';
 
-export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readRankUser=null,readAccountUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,readLiveActivity=null,readAppState=null,isSessionActive=null}){
+export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetch,now=Date.now,readUsers=null,readProfiles=null,readUser=null,readUserAdjr=null,readRankUser=null,readAccountUser=null,readAvatar=null,readGeography=null,readGeoMembers=null,readVisitors=null,readLiveActivity=null,readAppState=null,isSessionActive=null}){
  return async function handle(req){
   const origin=req.headers.get('Origin');
   const headers={'Cache-Control':'no-store, private','Pragma':'no-cache','Vary':'Origin','X-Content-Type-Options':'nosniff','Content-Type':'application/json'};
@@ -212,7 +212,10 @@ export function createOwnerHandler({getUser,getClaims,statsToken='',fetcher=fetc
      if(!(bytes instanceof Uint8Array)||bytes.length<3||bytes.length>200000||bytes[0]!==255||bytes[1]!==216||bytes[2]!==255)return reply(404,{error:'not_found'});
      return new Response(bytes,{status:200,headers:{...headers,'Content-Type':'image/jpeg','Content-Disposition':'inline'}});
     }
-    return reply(200,safeOwnerUserDetails(details,id.toLowerCase()));
+    let adjr=null;
+    try{if(readUserAdjr)adjr=await readUserAdjr(id.toLowerCase());}catch{/* The profile remains usable if the referral summary is temporarily unavailable. */}
+    return reply(200,safeOwnerUserDetails({...details,adjrSeconds:adjr?.seconds,referrals:adjr?.referrals,
+     adjrScope:adjr?.scope,adjrRecommendations:adjr?.recommendations},id.toLowerCase()));
    }catch{return reply(503,{error:'user_unavailable'});}
   }
   if(url.searchParams.has('ids'))return reply(400,{error:'invalid_parameters'});
@@ -304,7 +307,17 @@ export function safeOwnerUserDetails(details,id){
  const periods={};for(const period of ['all','day','week','month'])periods[period]=details.connected===true?seconds(details.periods?.[period]):null;
  const context=details.context,city=typeof context?.city==='string'&&context.city.trim()?context.city.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,160):null;const v=context?.reading,reading=v&&Number.isInteger(v.page)&&v.page>=1&&v.page<=604&&['madani','tajweed'].includes(v.edition)&&Number.isFinite(Date.parse(v.savedAt))?{page:v.page,edition:v.edition,savedAt:new Date(v.savedAt).toISOString()}:null;
  const resolvedLocation=canonicalAccountLocation(city,context?.country);const country=resolvedLocation.country;
- return{id,context:{city:resolvedLocation.city,reading,...(country?{country}:{})},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
+ const referrals=details.referrals;
+ const verifiedReferrals=Number.isSafeInteger(referrals?.count)&&referrals.count>=0&&Array.isArray(referrals.invitees)&&
+  referrals.invitees.length===Math.min(100,referrals.count)?{count:referrals.count,invitees:referrals.invitees.map(name=>
+   typeof name==='string'?name.replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40)||null:null)}:null;
+ const adjrScope=id===OWNER_ID&&details.adjrScope==='community'?'community':null;
+ const adjrRecommendations=Array.isArray(details.adjrRecommendations)?details.adjrRecommendations
+  .filter(row=>/^ar\.[a-z0-9_-]{1,80}$/.test(row?.reciter||'')&&seconds(row.seconds)!==null)
+  .map(row=>({reciter:row.reciter,seconds:seconds(row.seconds)})):[];
+ return{id,context:{city:resolvedLocation.city,reading,...(country?{country}:{})},hasAvatar:details.hasAvatar===true,connected:details.connected===true,periods,adjrSeconds:seconds(details.adjrSeconds),referrals:verifiedReferrals,
+  ...(adjrScope?{adjrScope}:{}),...(adjrRecommendations.length?{adjrRecommendations}:{}),
+  adhkar:details.adhkar&&/^\d{4}-\d{2}-\d{2}$/.test(details.adhkar.day)&&typeof details.adhkar.active==='boolean'?{day:details.adhkar.day,active:details.adhkar.active}:null,
   reciters:(Array.isArray(details.reciters)?details.reciters:[]).filter(row=>typeof row.id==='string'&&/^ar\.[a-z0-9_-]{1,80}$/.test(row.id)&&seconds(row.seconds)>0).slice(0,5).map(row=>({id:row.id,seconds:seconds(row.seconds)})),
   awards:(Array.isArray(details.awards)?details.awards:[]).filter(row=>kinds.has(row.kind)&&Number.isSafeInteger(Number(row.count))&&Number(row.count)>0).slice(0,20).map(row=>({kind:row.kind,count:Number(row.count),earnedAt:Number.isFinite(Date.parse(row.earnedAt))?new Date(row.earnedAt).toISOString():null,...(['week','month'].includes(row.kind)?{wins:wins(row)}:{})})),
   updatedAt:Number.isFinite(Date.parse(details.updatedAt))?new Date(details.updatedAt).toISOString():null};
@@ -344,7 +357,13 @@ if(typeof Deno!=='undefined'){
  const {createClient}=await import('npm:@supabase/supabase-js@2.117.2');
  const {default:postgres}=await import('npm:postgres@3.4.9');
  const {readOwnerAppState}=await import('./app-state.mjs');
+ const {readReferralInvitees}=await import('../account-referrals/invitees.mjs');
+ const {readAccountAdjr}=await import('../account-referrals/ajr-summary.mjs');
  const sql=postgres(Deno.env.get('SUPABASE_DB_URL'),{max:1,prepare:false,idle_timeout:20,connect_timeout:10});
+ const readUserAdjr=async id=>{
+  const summary=await readAccountAdjr(sql,id);
+  return {...summary,referrals:await readReferralInvitees(sql,id,{owner:true})};
+ };
  const readUsers=async page=>sql.begin(async tx=>{
  const [count]=await tx`select count(*)::int as total from auth.users where email_confirmed_at is not null and coalesce(is_anonymous,false)=false`;
  const [presence]=await tx`select count(distinct p.user_id)::int as online from public.app_presence p join auth.users u on u.id=p.user_id where p.app='salah' and p.active and p.last_seen>=now()-interval '90 seconds' and u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false`;
@@ -355,5 +374,5 @@ if(typeof Deno!=='undefined'){
  const client=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  // Accept the already saved legacy name while preferring the canonical name.
  const readAvatar=async id=>{const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');if(!key)return null;const response=await fetch(PROJECT_URL+'/storage/v1/object/authenticated/profile-avatars/'+id+'/profile.jpg',{headers:{apikey:key,Authorization:'Bearer '+key},redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok||Number(response.headers.get('content-length'))>200000)return null;const reader=response.body?.getReader();if(!reader)return null;const parts=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>200000){await reader.cancel();return null;}parts.push(value);}}finally{reader.releaseLock();}const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}return bytes;};
- Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readRankUser:async id=>(await readOwnerUserSummaries(sql,1,id))[0]||null,readAccountUser:async id=>(await readOwnerUserSummaries(sql,1,null,id))[0]||null,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readLiveActivity:(kind,page)=>readOwnerLiveActivity(sql,kind,page),readAppState:page=>readOwnerAppState(sql,page),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid and (not_after is null or not_after>now())) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
+ Deno.serve(createOwnerHandler({getUser:token=>client.auth.getUser(token),getClaims:token=>client.auth.getClaims(token),readUsers,readProfiles,readUserAdjr,readRankUser:async id=>(await readOwnerUserSummaries(sql,1,id))[0]||null,readAccountUser:async id=>(await readOwnerUserSummaries(sql,1,null,id))[0]||null,readGeoMembers:(days,selection,page)=>readOwnerGeoMembers(sql,days,selection,page),readVisitors:days=>readOwnerVisitors(sql,days),readLiveActivity:(kind,page)=>readOwnerLiveActivity(sql,kind,page),readAppState:page=>readOwnerAppState(sql,page),readGeography:days=>readOwnerGeography(sql,days),readUser:(id,day)=>readOwnerUserDetails(sql,id,day),readAvatar,isSessionActive:async(uid,sid)=>{const [row]=await sql`select exists(select 1 from auth.sessions where id=${sid}::uuid and user_id=${uid}::uuid and (not_after is null or not_after>now())) as active`;return row.active===true;},statsToken:Deno.env.get('GOATCOUNTER_READ_TOKEN')||Deno.env.get('GOATCOUNTER_READ_TOKEN.')||''}));
 }

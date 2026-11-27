@@ -7,3 +7,10 @@ export function recordedMinuteDay(body,now=Date.now()){
  const part=name=>parts.find(p=>p.type===name)?.value;
  return part('year')+'-'+part('month')+'-'+part('day');
 }
+
+export async function writeRecordedMinute(sql,{listener,reciter,eventId,day}){
+ const [row]=day===null
+  ?await sql`select public.reciter_popularity_add(${listener},${reciter},${eventId}::uuid) as counted`
+  :await sql`select public.reciter_popularity_add(${listener},${reciter},${eventId}::uuid,${day}::date) as counted`;
+ return row.counted;
+}

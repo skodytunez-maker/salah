@@ -1,42 +1,134 @@
 {
   "schema": 1,
-  "version": 575,
-  "baseCommit": "46a137a68bb8820e1c7355257b50949f70f4ffc2",
-  "baseTree": "b71c991f6973854cfc778fcf2fb967f1e6c3ec1e",
-  "note": "Add Omar’s portrait and restore the normal new-reciter presentation.",
-  "previousReleaseSource": "export const APP_VERSION=574;\nexport const APP_UPDATED_AT='2026-11-27';\nexport const APP_UPDATE_DATE='27 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n",
+  "version": 576,
+  "baseCommit": "99e4490e087d589010227b8a1e44a84a647dfa42",
+  "baseTree": "987fe9740bfe856c0fc75d4cf8d0fa7b1523eb58",
+  "note": "Publish the Adjr menu and user-card summaries with two referral levels, verified recommendations and owner-only lifetime community listening.",
+  "previousReleaseSource": "export const APP_VERSION=575;\nexport const APP_UPDATED_AT='2026-11-27';\nexport const APP_UPDATE_DATE='27 ноября 2026';\nexport const APP_CHANGES=[];\nexport const APP_ANNOUNCEMENT={\"version\":523,\"date\":\"2026-11-19\",\"changes\":[\"Темы переписок: восемь тёмных оформлений, свои обои и сохранение темы для каждой переписки на этом устройстве.\"]};\nexport const APP_NEWS_UNTIL='2026-11-26T23:59:59Z';\n",
   "allowed": [
     {
-      "path": "dist/js/quran-reciters.js",
-      "reason": "Use the verified portrait and original delivery for Omar’s new-reciter window."
+      "path": "dist/js/app.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     },
     {
-      "path": "dist/assets/reciters/omaribndiyaaldin.jpg",
-      "reason": "Show the unaltered portrait in the existing reciter surfaces."
+      "path": "dist/js/counter-account.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/account-referrals.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/owner-user-card.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/css/quran-awards.css",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/css/owner-workspace.css",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n/referrals/index.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "scripts/check-account-referrals.mjs",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "scripts/check-counter-account.mjs",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/functions/account-referrals/index.ts",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/functions/account-referrals/core.mjs",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/functions/account-referrals/ajr-summary.mjs",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/functions/account-referrals/invitees.mjs",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/functions/reciter-competition/listening-totals.mjs",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/functions/reciter-popularity/index.ts",
+      "reason": "Record the previously deployed listening-date and daily scoreboard fixes."
+    },
+    {
+      "path": "supabase/functions/reciter-popularity/recorded-minute.mjs",
+      "reason": "Record the previously deployed listening-date and daily scoreboard fixes."
+    },
+    {
+      "path": "supabase/migrations/20261127074807_second_level_referral_listening.sql",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/migrations/20261127075031_adjr_reciter_recommendations.sql",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "supabase/migrations/20261127081627_prefer_measured_daily_listening.sql",
+      "reason": "Record the previously deployed listening-date and daily scoreboard fixes."
+    },
+    {
+      "path": "supabase/functions/owner-access/index.ts",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     },
     {
       "path": "dist/js/app-release.js",
-      "reason": "Identify the catalogue update."
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     },
     {
       "path": "dist/sw.js",
-      "reason": "Precache the portrait and update release metadata."
-    },
-    {
-      "path": "docs/omar-portrait-provenance.json",
-      "reason": "Record the original portrait source and first delivery."
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     },
     {
       "path": "docs/change-scope.json",
-      "reason": "Record the exact reviewed baseline."
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     },
     {
-      "path": "scripts/check-reciter-discovery.mjs",
-      "reason": "Verify Omar’s portrait and badge through the catalogue."
+      "path": "dist/js/i18n-runtime/ar.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     },
     {
-      "path": "scripts/check-reciter-favorites.mjs",
-      "reason": "Update the list of reciters using the generic portrait."
+      "path": "dist/js/i18n-runtime/az.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n-runtime/de.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n-runtime/en.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n-runtime/kk.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n-runtime/ru.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n-runtime/tg.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
+    },
+    {
+      "path": "dist/js/i18n-runtime/uz.js",
+      "reason": "Deliver the approved Adjr interface, private summaries or exact release verification."
     }
   ],
   "generated": [
@@ -969,6 +1061,10 @@
     {
       "path": "dist/assets/reciters/obaidamuafaq.jpg",
       "sha": "0bc92b3e2b8c4256843bd5882971cebe5142a255"
+    },
+    {
+      "path": "dist/assets/reciters/omaribndiyaaldin.jpg",
+      "sha": "1cda9483fecba0bb121a5e96ee063e83e1a50ab4"
     },
     {
       "path": "dist/assets/reciters/peshawaalkurdi-salah-420.jpg",
@@ -2664,7 +2760,7 @@
     },
     {
       "path": "dist/js/app-release.js",
-      "sha": "19d316ecbd793ab0b343f5f8613b3966115fa4df"
+      "sha": "af1411eb041e224e2e27d690abd9a04b12498c88"
     },
     {
       "path": "dist/js/app-sharing.js",
@@ -4648,7 +4744,7 @@
     },
     {
       "path": "dist/js/quran-reciters.js",
-      "sha": "5709abc6077044ffb45231c88355a772a2ab3cb8"
+      "sha": "ca01e924035abf11ce1dd9313b941501d57d5736"
     },
     {
       "path": "dist/js/quran-recognition-core.js",
@@ -5224,7 +5320,7 @@
     },
     {
       "path": "dist/sw.js",
-      "sha": "39ab97fc44938dfea09b421934bba6a5ad3d9ce2"
+      "sha": "ada778da189923b289b16cb62d00cdb933c27660"
     },
     {
       "path": "dist/theme-boot.js",
@@ -5772,7 +5868,7 @@
     },
     {
       "path": "docs/change-scope.json",
-      "sha": "b0665e442b22c7bed6b0411324b40c4c13f29ee5"
+      "sha": "644b3c59d23ec9dc26083484d28dd3bd50b54e18"
     },
     {
       "path": "docs/city-wallpapers-20261016.json",
@@ -5989,6 +6085,10 @@
     {
       "path": "docs/night-listening-credit-499.md",
       "sha": "771aa6bd1810c67a1a98b1e238b5be3a3f6b4615"
+    },
+    {
+      "path": "docs/omar-portrait-provenance.json",
+      "sha": "433e80aaf342674ffc0bb8f4c0043b975dc331e2"
     },
     {
       "path": "docs/owner-current-activity-500.md",
@@ -7720,7 +7820,7 @@
     },
     {
       "path": "scripts/check-reciter-discovery.mjs",
-      "sha": "709601b2f205d4a1dca23fda5014dc0f615919ca"
+      "sha": "1ec4b0f7f67db55ca7c54422f5341da078767b16"
     },
     {
       "path": "scripts/check-reciter-expansion-418.mjs",
@@ -7728,7 +7828,7 @@
     },
     {
       "path": "scripts/check-reciter-favorites.mjs",
-      "sha": "83177cd903971ecf47ca68383417a2702a40c550"
+      "sha": "6b0fb23b6d212467bf699f16d5f9e7c0cc30155a"
     },
     {
       "path": "scripts/check-reciter-minute-queue.mjs",
